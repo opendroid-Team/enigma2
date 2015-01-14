@@ -18,7 +18,7 @@ import commands
 import datetime
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDate, getImageVersion, getImageBuild, getBrandOEM, getMachineBuild, getImageFolder, getMachineUBINIZE, getMachineMKUBIFS, getMachineMtdKernel, getMachineKernelFile, getMachineRootFile, getImageFileSystem
 
-VERSION = "Version 4.1 openATV"
+VERSION = "Version 4.3 opendroid"
 
 HaveGZkernel = True
 if getBrandOEM() in ("fulan"):
