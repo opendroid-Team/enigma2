@@ -7,29 +7,12 @@ SUBDIRS = SoftwareManager PositionerSetup Satfinder \
 	VideoEnhancement WirelessLan NetworkWizard \
 	SABnzbdSetup OSD3DSetup DeviceManager SwapManager
 
-if XTREND
-SUBDIRS += SatelliteEquipmentControl DiseqcTester
-endif
-
-if ODIN
-SUBDIRS += SatelliteEquipmentControl DiseqcTester
-endif
-
-if VUSOLO2
-SUBDIRS += SatelliteEquipmentControl DiseqcTester
-endif
-
-if VUUNO
-SUBDIRS += SatelliteEquipmentControl DiseqcTester CableScan
-endif
-
-if VUULTIMO
-SUBDIRS += SatelliteEquipmentControl DiseqcTester CableScan
+if HAVE_LIBVUGLES2
+SUBDIRS += AnimationSetup
 endif
 
 if DREAMBOX
 SUBDIRS += FrontprocessorUpgrade NFIFlash SatelliteEquipmentControl DiseqcTester CableScan
 endif
 
-install_PYTHON =	\
-	__init__.py
+install_PYTHON = __init__.py
