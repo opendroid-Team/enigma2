@@ -103,39 +103,7 @@ except (SkinError, IOError, AssertionError), err:
 addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
-
-# Only one of these is present, compliments of AM_CONDITIONAL
-if getBoxType() in ('vuultimo' 'vuduo2' 'gbquad' 'gbquadplus' 'gb800ue' 'gb800ueplus' 'xpeedlx3'):
-	config.skin.display_skin = ConfigText(default = "skin_display.xml")
-
-if getBoxType() == "inihde":
-	config.skin.display_skin = ConfigText(default = "skin_display_text.xml")
-
-#else:
-#	config.skin.display_skin = ConfigNothing()
-
 display_skin_id = 1
-from Components.SystemInfo import SystemInfo
-if SystemInfo["OledDisplay"]:
-	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
-		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
-			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
-		else:	
-			addSkin('display/' + config.skin.display_skin.value)
-
-if addSkin('skin_display.xml'):
-	# Color OLED DM800 / DM800SE
-	display_skin_id = 2
-
-if addSkin('skin_display96.xml'):
-	# Color OLED
-	display_skin_id = 2
-
-if addSkin('skin_display128.xml'):
-	# Color OLED DM7020HD / DM8000
-	display_skin_id = 2
-
-# Add Skin for Display
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "display skin not found"
