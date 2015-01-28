@@ -105,7 +105,7 @@ addSkin('skin_box.xml')
 addSkin('skin_second_infobar.xml')
 
 # Only one of these is present, compliments of AM_CONDITIONAL
-if getBoxType() in ('vuultimo' 'vuduo2' 'gbquad' 'gbquadplus' 'gb800ue' 'gb800ueplus' 'xpeedlx3' 'et8500'):
+if getBoxType() in ('vuultimo' 'vuduo2' 'gbquad' 'gbquadplus' 'gb800ue' 'gb800ueplus' 'xpeedlx3'):
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 
 if getBoxType() == "inihde":
@@ -117,13 +117,6 @@ if getBoxType() == "inihde":
 display_skin_id = 1
 from Components.SystemInfo import SystemInfo
 if SystemInfo["OledDisplay"]:
-	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
-		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
-			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
-		else:	
-			addSkin('display/' + config.skin.display_skin.value)
-
-if SystemInfo["FBLCDDisplay"]:
 	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
 		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
 			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
@@ -349,17 +342,6 @@ class AttributeParser:
 			self.guiObject.resize(eSize(*value))
 		else:
 			self.guiObject.resize(parseSize(value, self.scale, self.guiObject, self.desktop))
-	def animationPaused(self, value):
-		pass
-	def animationMode(self, value):
-		self.guiObject.setAnimationMode(
-			{ "disable": 0x00,
-				"off": 0x00,
-				"offshow": 0x10,
-				"offhide": 0x01,
-				"onshow": 0x01,
-				"onhide": 0x10,
-			}[value])
 	def title(self, value):
 		self.guiObject.setTitle(_(value))
 	def text(self, value):
@@ -737,7 +719,7 @@ def loadSkinData(desktop):
 				else:
 					# without name, it's useless!
 					elem.clear()
-			else:OM
+			else:
 				# non-screen element, no need for it any longer
 				elem.clear()
 	# no longer needed, we know where the screens are now.
