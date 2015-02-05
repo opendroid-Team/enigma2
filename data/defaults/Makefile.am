@@ -42,5 +42,4 @@ dist_install_DATA = \
 	userbouquet.vh30.tv \
 	userbouquet.vh31.tv \
 	userbouquet.vh32.tv \
-	userbouquet.vh207.tv \
 	userbouquet.vh208.tv
