@@ -71,7 +71,7 @@ class AVSwitch:
 		widescreen_modes = {"720p", "1080i"}
 
 	modes["YPbPr"] = modes["HDMI"]
-	if getBrandOEM() == 'vuplus':
+	if getBoxType().startswith('vu') or getBoxType() in ('gbipbox'):
 		modes["Scart-YPbPr"] = modes["HDMI"]
 
 	# if modes.has_key("DVI-PC") and not getModeList("DVI-PC"):
@@ -491,7 +491,7 @@ def InitAVSwitch():
 		config.av.bypass_edid_checking = ConfigSelection(choices={
 				"00000000": _("off"),
 				"00000001": _("on")},
-				default = "00000001")
+				default = "00000000")
 		config.av.bypass_edid_checking.addNotifier(setEDIDBypass)
 	else:
 		config.av.bypass_edid_checking = ConfigNothing()
