@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2015-02-18 12:02+0100\n"
+"PO-Revision-Date: 2015-02-18 18:15+0100\n"
 "Last-Translator: Opendroid <opendroid2013@gmail.com>\n"
 "Language-Team: WWW.DROIDSAT.ORG <opendroid2013@gmail.com>\n"
 "Language: it\n"
@@ -1450,7 +1450,7 @@ msgstr "Pulsante"
 msgid "Button setup"
 msgstr "Pulsante di impostazione"
 
-msgid "By Team ViX"
+msgid "By Team Opendroid"
 msgstr "By Team Opendroid"
 
 msgid "Bypass HDMI EDID Check"
@@ -2896,6 +2896,9 @@ msgstr ""
 "Vuoi eliminare tutti i file selezionati:\n" 
 "(scegliere 'No' solo eliminare il file selezionato.)"
 
+msgid "Vuoi cancellare le altre lingue?"
+msgstr "Do you want to delete other languages?"
+
 #
 msgid "Do you want to do a service scan?"
 msgstr "Effettuare una ricerca canali?"
@@ -2926,7 +2929,7 @@ msgid "Do you want to reboot your %s %s"
 msgstr "Vuoi riavviare il %s %s"
 
 msgid "Do you want to reboot your receiver?"
-msgstr "Vuoi riavviare il ricevitore?"
+msgstr ""
 
 #
 msgid "Do you want to remove the package:\n"
@@ -5906,7 +5909,7 @@ msgid "Please wait (downloading channel list)"
 msgstr "Attendere (lista canali in caricamento)"
 
 msgid "Please wait (updating packages)"
-msgstr "Attendere (Opendroid in caricamento)"
+msgstr "Attendere Immagine Opendroid in caricamento....."
 
 #
 msgid "Please wait for activation of your network configuration..."
@@ -8285,7 +8288,7 @@ msgstr ""
 msgid "TRANSLATOR_INFO"
 msgstr "INFO_TRADUZIONE"
 "Traduzione italiana\n"
-"enigma2 - %s %s\n"
+"enigma2\n"
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
@@ -8544,7 +8547,7 @@ msgstr "File Timer (timers.xml) corrotto: NON caricabile!"
 #
 #, fuzzy, python-format
 msgid "The user interface of your %s %s is restarting"
-msgstr "L'interfaccia utente del %s %s Sta riavviando"
+msgstr "L interfaccia utente del %s %s Sta riavviando"
 "\n"
 "Ripristinare configurazione %s %s."
 
@@ -8554,7 +8557,7 @@ msgid ""
 "The user interface of your %s %s is restarting\n"
 "due to an error in mytest.py"
 msgstr ""
-"L'interfaccia utente del %s %s Sta riavviando\n"
+"L interfaccia utente del %s %s Sta riavviando\n"
 "Ripristinare configurazione %s %s."
 "a causa di un errore in mytest.py"
 
@@ -9583,6 +9586,11 @@ msgid ""
 "\n"
 "The next input port will be automatically probed in 20 seconds."
 msgstr ""
+"selezionare porta video\n"
+"\n"
+"Si prega di premere OK se si può vedere questa pagina sul proprio TV ( o selezionare una porta d'ingresso diversa.\n"
+"\n"
+" la prossima porta di ingresso cambiera automaticamente in 20 secondi . "
 
 #
 msgid "Video mode selection."
@@ -9848,7 +9856,7 @@ msgid ""
 msgstr ""
 "Benvenuto.\n"
 "\n"
-"Questa configurazione guidata fornirà supporto di base per la configurazione di rete del %s %s e la sua connessione a Internet.\n"
+"Questa configurazione guidata fornira supporto di base per la configurazione di rete del %s %s e la sua connessione a Internet.\n"
 "\n"
 "Premere OK per iniziare la configurazione della rete."
 
@@ -9862,8 +9870,7 @@ msgid ""
 msgstr ""
 "Benvenuto.\n"
 "\n"
-"Questa configurazione guidata fornirà supporto di base per la configurazione di rete del %s %s e la sua connessione a Internet.\n"
-"\n"
+"Questa configurazione guidata fornira supporto di base per la configurazione di rete del %s %s e la sua connessione a Internet."
 "Premere OK per iniziare la configurazione della rete."
 
 #
