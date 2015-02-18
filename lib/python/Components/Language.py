@@ -25,8 +25,8 @@ class Language:
 		self.ll = os.listdir(LPATH)
 		# FIXME make list dynamically
 		# name, iso-639 language, iso-3166 country. Please don't mix language&country!
-		self.addLanguage("English (UK)", "en", "GB", "ISO-8859-15")
 		self.addLanguage("Italiano", "it", "IT", "ISO-8859-15")
+                self.addLanguage("English (UK)", "en", "GB", "ISO-8859-15")
 		self.addLanguage("Български", "bg", "BG", "ISO-8859-15")
 		self.addLanguage("Bokmål", "nb", "NO", "ISO-8859-15")
 		self.addLanguage("Català", "ca", "AD", "ISO-8859-15")
@@ -62,7 +62,7 @@ class Language:
 		self.addLanguage("Srpski", "sr", "YU", "ISO-8859-15")
 		self.addLanguage("Svenska", "sv", "SE", "ISO-8859-15")
 		self.addLanguage("ภาษาไทย", "th", "TH", "ISO-8859-15")
-		self.addLanguage("Türkçe", "tr", "TR", "ISO-8859-15")
+		self.addLanguage("Ukrainian", "uk", "UA", "ISO-8859-15")
 		self.addLanguage("Ukrainian", "uk", "UA", "ISO-8859-15")
 
 	def addLanguage(self, name, lang, country, encoding):
