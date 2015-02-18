@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2014-01-22 23:31+0100\n"
+"PO-Revision-Date: 2015-02-18 12:02+0100\n"
 "Last-Translator: Opendroid <opendroid2013@gmail.com>\n"
 "Language-Team: WWW.DROIDSAT.ORG <opendroid2013@gmail.com>\n"
 "Language: it\n"
@@ -2923,7 +2923,7 @@ msgstr "Mostrare l'anteprima del DVD prima di masterizzare?"
 #
 #, fuzzy, python-format
 msgid "Do you want to reboot your %s %s"
-msgstr "Ripristinare la configurazione?"
+msgstr "Vuoi riavviare il %s %s"
 
 msgid "Do you want to reboot your receiver?"
 msgstr "Vuoi riavviare il ricevitore?"
@@ -8283,13 +8283,13 @@ msgstr ""
 
 #. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
-msgstr ""
+msgstr "INFO_TRADUZIONE"
 "Traduzione italiana\n"
 "enigma2 - %s %s\n"
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 08 gennaio 2015"
+"aggiornamento: 18 feb 2015"
 
 #
 msgid "TS file is too large for ISO9660 level 1!"
@@ -8313,7 +8313,7 @@ msgstr "PID TXT"
 #
 #, fuzzy
 msgid "Table of contents for collection"
-msgstr "Elenco contenuti raccolta"
+msgstr "Elenco raccolta contenuti"
 
 #
 msgid "Tags"
@@ -8323,7 +8323,7 @@ msgid "Teletext subtitle color"
 msgstr "Televideo sottotitoli colore"
 
 msgid "Telnet Interface"
-msgstr ""
+msgstr "Interfaccia Telnet "
 
 msgid "Telnet Port"
 msgstr "Porta Telnet"
@@ -8361,7 +8361,7 @@ msgid "Test type"
 msgstr "Tipo test"
 
 msgid "Text"
-msgstr ""
+msgstr "Testo"
 
 #
 #, fuzzy
@@ -8544,7 +8544,7 @@ msgstr "File Timer (timers.xml) corrotto: NON caricabile!"
 #
 #, fuzzy, python-format
 msgid "The user interface of your %s %s is restarting"
-msgstr ""
+msgstr "L'interfaccia utente del %s %s Sta riavviando"
 "\n"
 "Ripristinare configurazione %s %s."
 
@@ -8554,8 +8554,9 @@ msgid ""
 "The user interface of your %s %s is restarting\n"
 "due to an error in mytest.py"
 msgstr ""
-"\n"
+"L'interfaccia utente del %s %s Sta riavviando\n"
 "Ripristinare configurazione %s %s."
+"a causa di un errore in mytest.py"
 
 msgid ""
 "The wireless LAN plugin is not installed!\n"
