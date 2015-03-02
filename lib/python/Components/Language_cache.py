@@ -3,17 +3,17 @@
 #
 
 LANG_TEXT = {
-"en_GB": {
-	 "T1": "Please use the UP and DOWN keys to select your language. Afterwards press the OK button.",
-	 "T2": "Language selection",
-	 "T3": "Cancel",
-	 "T4": "Save",
-},
 "it_IT": {
 	 "T1": "Selezionare la propria lingua utilizzando i tasti Sù/Giù. Premere OK per confermare.",
 	 "T2": "Selezione lingua",
 	 "T3": "Annull.",
 	 "T4": "Salvare",
+},
+"en_GB": {
+	 "T1": "Please use the UP and DOWN keys to select your language. Afterwards press the OK button.",
+	 "T2": "Language selection",
+	 "T3": "Cancel",
+	 "T4": "Save",
 },
 "bg_BG": {
 	 "T1": "Използвайте UP и DOWN бутони за избор на вашия език. След това натиснете ОК",

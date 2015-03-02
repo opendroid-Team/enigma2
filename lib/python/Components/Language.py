@@ -62,7 +62,7 @@ class Language:
 		self.addLanguage("Srpski", "sr", "YU", "ISO-8859-15")
 		self.addLanguage("Svenska", "sv", "SE", "ISO-8859-15")
 		self.addLanguage("ภาษาไทย", "th", "TH", "ISO-8859-15")
-		self.addLanguage("Ukrainian", "uk", "UA", "ISO-8859-15")
+		self.addLanguage("Türkçe", "tr", "TR", "ISO-8859-15")
 		self.addLanguage("Ukrainian", "uk", "UA", "ISO-8859-15")
 
 	def addLanguage(self, name, lang, country, encoding):
@@ -160,7 +160,7 @@ class Language:
 			else:
 				os.system("opkg remove --autoremove --force-depends " + Lpackagename + delLang[:2])
 		else:
-			print "Delete all lang except ", lang
+			print"Delete all lang except ", lang
 			ll = os.listdir(LPATH)
 			for x in ll:
 				if len(x) > 2:
