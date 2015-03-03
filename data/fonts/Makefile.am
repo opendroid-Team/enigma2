@@ -33,7 +33,6 @@ dist_install_DATA = \
         nmsbd2.ttf \
         tpb.otf \
         tpb.ttf \
-        tuxtxt.otb \
         verdana.ttf \
         tuxtxt.ttf_ 
 
