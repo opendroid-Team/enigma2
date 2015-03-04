@@ -542,7 +542,7 @@ def runScreenTest():
 	profile("Init:PowerKey")
 	power = PowerKey(session)
 
-	if getBoxType() == 'et7500' or getBoxType() == 'odinm9' or getBoxType() == 'maram9' or getBoxType() == 'ventonhdx' or getBoxType() == 'ebox5000' or getBoxType() == 'ebox7358' or getBoxType() == 'eboxlumi' or getBoxType() == 'ixussone' or getBoxType() == 'ixusszero' or getBoxType() == 'ini-1000ru' or getBoxType() == 'ini-1000sv'or getBoxType() == 'fulan':
+	if getBoxType() == 'nano' or getBoxType() == 'nanoc' or getBoxType() == 'et7500' or getBoxType() == 'mixosf5' or getBoxType() == 'mixosf7' or getBoxType() == 'mixoslumi' or getBoxType() == 'gi9196m' or getBoxType() == 'mara9' or getBoxType() == 'ixusszero' or getBoxType() == 'ixussone' or getBoxType() == 'uniboxhd1' or getBoxType() == 'uniboxhd2' or getBoxType() == 'uniboxhd3' or getBoxType() == 'sezam5000hd' or getBoxType() == 'sezam1000hd' or getBoxType() == 'mbtwin' or getBoxType() == 'mbmini' or getBoxType() == 'atemio5x00' or getBoxType() == 'beyonwizt3' or getBoxType() == 'fulan':
 		profile("VFDSYMBOLS")
 		import Components.VfdSymbols
 		Components.VfdSymbols.SymbolsCheck(session)
@@ -561,7 +561,7 @@ def runScreenTest():
 	profile("RunReactor")
 	profile_final()
 		
-	if getBoxType() == 'odinm7' or getBoxType() == 'odinm6' or getBoxType() == 'xp1000s':
+	if getBoxType() == 'sf8' or getBoxType() == 'classm' or getBoxType() == 'axodin' or getBoxType() == 'axodinc' or getBoxType() == 'starsatlx' or getBoxType() == 'genius' or getBoxType() == 'evo':
 		f = open("/dev/dbox/oled0", "w")
 		f.write('-E2-')
 		f.close()
@@ -712,8 +712,8 @@ profile("LCD")
 import Components.Lcd
 Components.Lcd.InitLcd()
 Components.Lcd.IconCheck()
-# Disable internal clock vfd for Venton-HD1 until we can adjust it for standby
-if getBoxType() == 'ventonhdx':
+# Disable internal clock vfd for ini5000 until we can adjust it for standby
+if getBoxType() == 'uniboxhd1' or getBoxType() == 'uniboxhd2' or getBoxType() == 'uniboxhd3' or getBoxType() == 'sezam5000hd' or getBoxType() == 'mbtwin' or getBoxType() == 'beyonwizt3':
 	try:
 		f = open("/proc/stb/fp/enable_clock", "r").readline()[:-1]
 		if f != '0':
@@ -721,7 +721,7 @@ if getBoxType() == 'ventonhdx':
 			f.write('0')
 			f.close()
 	except:
-		print "Error disable enable_clock for venton boxes"
+		print "Error disable enable_clock for ini5000 boxes"
 
 profile("UserInterface")
 import Screens.UserInterfacePositioner
