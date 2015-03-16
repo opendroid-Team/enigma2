@@ -8991,9 +8991,6 @@ msgstr "Films afspelen..."
 msgid "Watch recordings..."
 msgstr "Opnames afspelen..."
 
-msgid "Web Interface"
-msgstr "Webinterface"
-
 msgid "Wed"
 msgstr "Wo"
 
