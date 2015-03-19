@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-02-26 23:57+0100\n"
+"PO-Revision-Date: 2015-03-19 15:55+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -268,7 +268,7 @@ msgstr "Mostra lista Film"
 
 #, python-format
 msgid "Show Simple Movie List"
-msgstr "ZMostra Lista Film Semplice"
+msgstr "Mostra Lista Film Semplice"
 
 #, python-format
 msgid "Bookmark button mode"
@@ -831,7 +831,7 @@ msgstr "Informazioni..."
 msgid "Accesspoint:"
 msgstr "Accesspoint:"
 
-msgid "Action on long power button press"
+msgid "Action on long powerbutton press"
 msgstr "Premere a lungo il pulsante di acensione"
 
 msgid "Action on short power button press"
@@ -1534,7 +1534,7 @@ msgid "Button"
 msgstr "Pulsante"
 
 msgid "Button setup"
-msgstr "Pulsante di impostazione"
+msgstr "Impostazione Pulsanti"
 
 msgid "By Team Opendroid"
 msgstr "By Team Opendroid"
@@ -1907,7 +1907,7 @@ msgid "Choose which tuner to configure."
 msgstr "Selezionare il tuner da configurare."
 
 msgid "Choose Tuner"
-msgstr "Scegli Tuner"
+msgstr "Configurazione Tuner"
 
 msgid "Reception Settings"
 msgstr "Impostazioni Tuner"
@@ -3090,7 +3090,7 @@ msgid "Download plugins"
 msgstr "Scaricare plugins"
 
 msgid "Downloading"
-msgstr "Sto scaricando..."
+msgstr "Scaricando Aggiornamenti Opendroid..."
 
 msgid "Downloading plugin information. Please wait..."
 msgstr "Ricerca informazioni sul plugin in corso. Attendere..."
@@ -4274,7 +4274,7 @@ msgstr "Aumentare il voltaggio"
 msgid "Index allocated:"
 msgstr "Indice allocato:"
 
-msgid "Info"
+msgid "Informazioni"
 msgstr "Informazioni"
 
 msgid "Info button (long)"
@@ -4474,10 +4474,7 @@ msgid "Jump to prime time"
 msgstr "Vai al prime time"
 
 msgid "Just change channels"
-msgstr "Basta cambiare canale"
-
-msgid "Just change channels revert"
-msgstr "Solo cambiare canali- ritornare"
+msgstr "Cambiare Canali"
 
 #. TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
 msgid "Just scale"
@@ -4845,7 +4842,7 @@ msgid "Medium is not empty!"
 msgstr "Il supporto non è vuoto!"
 
 msgid "Memory"
-msgstr "Memoria"
+msgstr "Info Memoria"
 
 msgid "Memory Information"
 msgstr "Informazioni Memoria"
@@ -5099,7 +5096,7 @@ msgid "Netmask:"
 msgstr "Netmask:"
 
 msgid "Network"
-msgstr "Rete"
+msgstr "Info Rete"
 
 msgid "Network ID"
 msgstr "ID rete"
@@ -5138,7 +5135,7 @@ msgid "Network wizard"
 msgstr "Conf. guidata rete"
 
 msgid "Network:"
-msgstr "Rete:"
+msgstr "Info Rete:"
 
 msgid "Network MAC settings"
 msgstr "Impostazioni di rete MAC"
@@ -6057,7 +6054,7 @@ msgid "Plugin manager help"
 msgstr "Aiuto gestore plugin..."
 
 msgid "Plugins"
-msgstr "Plugin"
+msgstr "Selezionare Plugins"
 
 msgid "Polarisation"
 msgstr "Polarizzazione"
@@ -6646,7 +6643,7 @@ msgstr ""
 msgid "Resolution"
 msgstr "Risoluzione"
 
-msgid "Autoresolution"
+msgid "Auto resolution"
 msgstr "Risoluzione automatica"
 
 msgid "Restart"
@@ -7158,7 +7155,7 @@ msgid "Servers:"
 msgstr "Server:"
 
 msgid "Service"
-msgstr "Canale"
+msgstr "Servizio Info Canale"
 
 msgid "Service Information"
 msgstr "Servizio informazioni"
@@ -8257,7 +8254,7 @@ msgstr ""
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 24 feb 2015"
+"aggiornamento: 19 Marzo 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -9003,7 +9000,7 @@ msgid "Track"
 msgstr "Traccia"
 
 msgid "Translation Information"
-msgstr "Informazioni"
+msgstr "Informazioni Tradotte"
 
 msgid "Translations"
 msgstr "Traduzione"
@@ -10128,11 +10125,11 @@ msgstr ""
 
 #, python-format
 msgid "Your %s %s is rebooting"
-msgstr "Il tuo %s %s e in fase di riavvio"
+msgstr "Il tuo Ricevitore %s %s sta effettuando un Riavvio Completo Attendere...."
 
 #, python-format
 msgid "Your %s %s is shutting down"
-msgstr "Il tuo %s %s e in fase di spegnimento"
+msgstr "Il tuo %s %s è in fase di spegnimento"
 
 #, python-format
 msgid "Your %s %s is shutting down. Please wait..."
