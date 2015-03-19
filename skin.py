@@ -104,7 +104,7 @@ addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 
-if getBoxType() in ('vuultimo', 'gbquad', 'gbquadplus', 'gb800ueplus', 'xpeedlx3', 'et10000', 'et8500', 'et9x00', 'vuuno', 'atemionemesis'):
+if getBoxType() in ('vuultimo', 'vuduo2', 'gb800ue', 'gb800ueplus', 'gbultraue', 'gbquad', 'gbquadplus', 'xpeedlx3', 'et10000', 'et8500', 'et9x00', 'vuuno', 'atemionemesis'):
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 
 if getBoxType() == "inihde":
