@@ -1,18 +1,6 @@
 import sys, os
 from time import time
 
-if os.path.exists('/dev/lcd2'): # VuDuo2 lcd
-	from fcntl import ioctl
-	led_fd = open("/dev/lcd2",'rw')
-	ioctl(led_fd, 0x10, 25)
-	led_fd.close()
-
-	from pngutil import png_util
-	pngutil = png_util.PNGUtil()
-	pngutilconnect = pngutil.connect()
-	if pngutilconnect:
-		pngutil.send("/usr/share/enigma2/distro-lcd-logo.png")
-
 if os.path.isfile("/usr/lib/enigma2/python/enigma.zip"):
 	sys.path.append("/usr/lib/enigma2/python/enigma.zip")
 
@@ -55,7 +43,7 @@ from Components.config import config, configfile, ConfigText, ConfigYesNo, Confi
 InitFallbackFiles()
 
 profile("config.misc")
-config.misc.boxtype = ConfigText(default = getBoxType())
+config.misc.boxtype = ConfigText(default = boxtype)
 config.misc.blackradiopic = ConfigText(default = resolveFilename(SCOPE_ACTIVE_SKIN, "black.mvi"))
 radiopic = resolveFilename(SCOPE_ACTIVE_SKIN, "radio.mvi")
 if os.path.exists(resolveFilename(SCOPE_CONFIG, "radio.mvi")):
@@ -74,8 +62,8 @@ config.misc.DeepStandby = NoSave(ConfigYesNo(default=False)) # detect deepstandb
 #def leaveStandby():
 #	print "!!!!!!!!!!!!!!!!!leave standby"
 
-#def standbyCountChanged(configElement):
-#	print "!!!!!!!!!!!!!!!!!enter standby num", configElement.value
+#def standbyCountChanged(configelement):
+#	print "!!!!!!!!!!!!!!!!!enter standby num", configelement.value
 #	from Screens.Standby import inStandby
 #	inStandby.onClose.append(leaveStandby)
 
@@ -445,7 +433,6 @@ class PowerKey:
 	def standby(self):
 		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 			self.session.open(Screens.Standby.Standby)
-
 profile("Scart")
 from Screens.Scart import Scart
 
@@ -518,7 +505,7 @@ def runScreenTest():
 	profile("Init:PowerKey")
 	power = PowerKey(session)
 
-	if getBoxType() == 'nano' or getBoxType() == 'nanoc' or getBoxType() == 'et7500' or getBoxType() == 'mixosf5' or getBoxType() == 'mixosf7' or getBoxType() == 'mixoslumi' or getBoxType() == 'gi9196m' or getBoxType() == 'mara9' or getBoxType() == 'ixusszero' or getBoxType() == 'ixussone' or getBoxType() == 'uniboxhd1' or getBoxType() == 'uniboxhd2' or getBoxType() == 'uniboxhd3' or getBoxType() == 'sezam5000hd' or getBoxType() == 'sezam1000hd' or getBoxType() == 'mbtwin' or getBoxType() == 'mbmini' or getBoxType() == 'atemio5x00' or getBoxType() == 'beyonwizt3' or getBoxType() == 'fulan':
+	if boxtype in ('sf3038', 'tomcat', 'nano', 'nanoc', 'et7500', 'mixosf5', 'mixosf7', 'mixoslumi', 'gi9196m', 'maram9', 'ixussone', 'ixussone', 'uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'sezam1000hd', 'mbmini', 'atemio5x00', 'beyonwizt3') or getBrandOEM() in ('fulan'):
 		profile("VFDSYMBOLS")
 		import Components.VfdSymbols
 		Components.VfdSymbols.SymbolsCheck(session)
@@ -537,7 +524,7 @@ def runScreenTest():
 	profile("RunReactor")
 	profile_final()
 		
-	if getBoxType() == 'sf8' or getBoxType() == 'classm' or getBoxType() == 'axodin' or getBoxType() == 'axodinc' or getBoxType() == 'starsatlx' or getBoxType() == 'genius' or getBoxType() == 'evo':
+	if boxtype in ('sf8', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo'):
 		f = open("/dev/dbox/oled0", "w")
 		f.write('-E2-')
 		f.close()
@@ -615,7 +602,7 @@ def runScreenTest():
 				wptime = startTime[0] + 240 # Gigaboxes already starts 2 min. before wakeup time
 			else:
 				wptime = startTime[0]
-		if not config.misc.SyncTimeUsing.value == "0" or getBoxType().startswith('gb'):
+		if not config.misc.SyncTimeUsing.value == "0" or getBrandOEM() == 'gigablue':
 			print "dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime))
 			setRTCtime(nowTime)
 		print "set wakeup time to", strftime("%Y/%m/%d %H:%M", localtime(wptime+60))
@@ -689,7 +676,7 @@ import Components.Lcd
 Components.Lcd.InitLcd()
 Components.Lcd.IconCheck()
 # Disable internal clock vfd for ini5000 until we can adjust it for standby
-if getBoxType() == 'uniboxhd1' or getBoxType() == 'uniboxhd2' or getBoxType() == 'uniboxhd3' or getBoxType() == 'sezam5000hd' or getBoxType() == 'mbtwin' or getBoxType() == 'beyonwizt3':
+if boxtype in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'beyonwizt3'):
 	try:
 		f = open("/proc/stb/fp/enable_clock", "r").readline()[:-1]
 		if f != '0':
