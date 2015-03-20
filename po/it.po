@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-03-19 15:55+0100\n"
+"PO-Revision-Date: 2015-03-20 23:15+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -490,8 +490,8 @@ msgstr "%s/%s: %s"
 msgid "'%s' contains %d file(s) and %d sub-directories.\n"
 msgstr "'%s' contiene %d File(s) e %d sottodirectory.\n"
 
-msgid "( All readers)"
-msgstr "( Tutti i Lettori)"
+msgid "(All readers)"
+msgstr "(Tutti i Lettori)"
 
 msgid "Show only reader:"
 msgstr "mostra solo lettore:"
@@ -512,7 +512,7 @@ msgid "* Only available if more than one interface is active."
 msgstr "* Disponibile solo se più di un'interfaccia è attiva."
 
 msgid "/s"
-msgstr ""
+msgstr "/s"
 
 msgid "1.0"
 msgstr "1.0"
@@ -726,7 +726,7 @@ msgid ""
 msgstr ""
 "Si esegue una registrazione, il ricevitore registrera fino alla fine\n"
 "\n"
-"AOffset registrazione in standby."
+"A Offset registrazione in standby."
 
 msgid "Use workaround for recordings from deep standby"
 msgstr "Utilizzare soluzione per le registrazioni dal Deep Standby"
@@ -829,7 +829,7 @@ msgid "About..."
 msgstr "Informazioni..."
 
 msgid "Accesspoint:"
-msgstr "Accesspoint:"
+msgstr "Access point:"
 
 msgid "Action on long powerbutton press"
 msgstr "Premere a lungo il pulsante di acensione"
@@ -1137,10 +1137,10 @@ msgid "Show record indicator"
 msgstr "Mostra indicatore di registrazione"
 
 msgid "Red colored"
-msgstr "colore rosso"
+msgstr "Colore rosso"
 
 msgid "Divide"
-msgstr "dividere"
+msgstr "Dividere"
 
 #, python-format
 msgid "%d pixels wide"
@@ -1309,7 +1309,7 @@ msgid "Auto Deep Standby"
 msgstr "Spegnimento (Deep-Standby)"
 
 msgid "Auto Standby"
-msgstr "Standby Opendroid"
+msgstr "Auto Standby Opendroid"
 
 msgid "Auto chapter split every ? minutes (0=never)"
 msgstr "Divisione automatica capitoli ogni x minuti (0=mai)"
@@ -1527,7 +1527,7 @@ msgstr "Scrivere immagine esistente su DVD"
 msgid "Burn to DVD"
 msgstr "Masterizzare su DVD"
 
-msgid "Bus: "
+msgid "Bus:"
 msgstr "Bus:"
 
 msgid "Button"
@@ -2351,7 +2351,7 @@ msgid "Connect to a wireless network"
 msgstr "Connettere a rete wireless"
 
 msgid "Connected clients"
-msgstr "Connettere clients"
+msgstr "Connettere client"
 
 msgid "Connected to"
 msgstr "Connesso a:"
@@ -2415,7 +2415,7 @@ msgstr "Nomi estesi"
 
 #, python-format
 msgid "Cores:\t%s"
-msgstr "Kerne:\t%s"
+msgstr "Cores:\t%s"
 
 #, python-format
 msgid "Clock Speed:\t%s"
@@ -2575,7 +2575,7 @@ msgid "DVB-C"
 msgstr "DVB-C"
 
 msgid "DVB-C ANNEX C"
-msgstr "DVB-C incorporare C"
+msgstr "DVB-C ANNEX C"
 
 #
 msgid "DVB-S"
@@ -2627,7 +2627,7 @@ msgid "deep standby"
 msgstr "Spegnimento (Deep-Standby)"
 
 msgid "auto and deep standby"
-msgstr "auto e Deep-Standby"
+msgstr "Auto e Deep-Standby"
 
 msgid "Deep standby"
 msgstr "Spegnimento (Deep-Standby)"
@@ -2701,7 +2701,7 @@ msgid "Depth"
 msgstr "Profondita"
 
 msgid "Descramble & record ECM' gives the option to descramble afterwards if descrambling on recording failed. 'Don't descramble, record ECM' save a scramble recording that can be descrambled on playback. 'Normal' means descramble the recording and don't record ECM."
-msgstr "'Decodificare & registrare ECM da la possibilità di decodificare in seguito se la ricomposizione sulla registrazione non è riuscita. 'Non decodificare, registrare ECM' salvare una registrazione scramble che può essere decodificato in riproduzione. Significa 'normali' decodificare la registrazione e non registrano ECM. record 'si riferisce a cifrare e decifrare permesso in seguito. Mezzi normali, incorporata decifrato e memorizzati senza ECM volontà.record si riferisce a cifrare e decifrare permesso in seguito. Mezzi normali, incorporata decifrato e memorizzati senza ECMvolonta."
+msgstr "Decodificare & registrare ECM da la possibilità di decodificare in seguito se la ricomposizione sulla registrazione non è riuscita. 'Non decodificare, registrare ECM' salvare una registrazione scramble che può essere decodificato in riproduzione. Significa 'normali' decodificare la registrazione e non registrano ECM. record 'si riferisce a cifrare e decifrare permesso in seguito. Mezzi normali, incorporata decifrato e memorizzati senza ECM volontà.record si riferisce a cifrare e decifrare permesso in seguito. Mezzi normali, incorporata decifrato e memorizzati senza ECMvolonta."
 
 msgid "Descramble http streams"
 msgstr "Decodificare flussi http"
@@ -2816,7 +2816,7 @@ msgstr "Stato LED in Deep-Standby e Standby"
 
 #, python-format
 msgid "Power LED state during deep-standby and standby."
-msgstr "Stato LED di alimentazione durante profonde standby e standby."
+msgstr "Stato LED di alimentazione durante profondo standby."
 
 #, python-format
 msgid "LCD scroll speed"
@@ -2840,7 +2840,7 @@ msgid ""
 "Do you want to Restart the GUI now?"
 msgstr ""
 "Enigma ha bisogno di un riavvio per applicare la nuova skin.\n"
-"Vuoi riavviare enigma ora?"
+"Vuoi riavviare enigma2 ora?"
 
 #, python-format
 msgid "Select skin:"
@@ -2850,7 +2850,7 @@ msgid "LED Manager..."
 msgstr "Giga LED Manager"
 
 msgid "Giga LED Setup"
-msgstr "Setup Giga LED"
+msgstr "Impostare Giga LED"
 
 msgid "Display 16:9 content as"
 msgstr "Mostrare contenuti in 16:9 come"
@@ -2942,7 +2942,7 @@ msgstr "Vuoi veramente rimuovere definitivamente dal cestino?"
 
 #, python-format
 msgid "Do you really want to hold the plugin \"%s\"?"
-msgstr "Vuoi davvero tenere il plugin  \"%s\"?"
+msgstr "Vuoi davvero Conservare il plugin  \"%s\"?"
 
 #, python-format
 msgid "Do you really want to remove directory %s from the disk?"
@@ -2962,10 +2962,10 @@ msgstr "Rimuovere il contrassegno per %s?"
 
 #, python-format
 msgid "Do you really want to unhold the plugin \"%s\"?"
-msgstr "Vuoi davvero Riprendi il plugin  \"%s\"?"
+msgstr "Vuoi davvero Riprendere il plugin  \"%s\"?"
 
 msgid "Do you want to add any additional information ?"
-msgstr "Vuoi aggiungere qualsiasi ulteriore informazione?"
+msgstr "Vuoi aggiungere ulteriore informazione?"
 
 msgid ""
 "Do you want to also install samba client ?\n"
@@ -3039,7 +3039,7 @@ msgid "Do you want to update your %s %s ?"
 msgstr "Ripristinare la configurazione%s %s ?"
 
 msgid "Aborting updateprogress"
-msgstr "Aggiornamento è stato annullato"
+msgstr "L'aggiornamento è stato annullato"
 
 #, python-format
 msgid "Do you want to update your %s %s?"
@@ -3064,11 +3064,11 @@ msgstr "Non interrompere l'evento corrente ma annullare i futuri"
 
 #, python-format
 msgid "Done - Installed or upgraded %d packages"
-msgstr "Fatto - installato o aggiornato - %d pacchetti"
+msgstr "Fatto - installato o aggiornato %d pacchetti"
 
 #, python-format
 msgid "Done - Installed, upgraded or removed %d packages with %d errors"
-msgstr "Fatto - Installato, aggiornato o rimosso %d pacchetti %d errori"
+msgstr "Fatto - Installato , aggiornato o rimosso %d pacchetti %d errori"
 
 #, python-format
 msgid "Done - Installed, upgraded or removed %d package (%s)"
@@ -3197,7 +3197,7 @@ msgid "Edit the network configuration of your %s %s.\n"
 msgstr "Modificare configurazione di rete del %s %s.\n"
 
 msgid "Edit title"
-msgstr "Mod. titolo"
+msgstr "Moddificare titolo"
 
 msgid "Edit upgrade source url."
 msgstr "Modificare URL sorgenti aggiornamento."
@@ -3259,8 +3259,8 @@ msgstr "Abilitato"
 msgid "Enables a feature so that the receiver can decrypt streams (if the ECM data is included in the stream and a valid card is available)."
 msgstr "Attiva Funzione modo che il ricevitore può decodificare i flussi (se i dati ECM sono inclusi nel flusso di una carta valida è disponibile)."
 
-msgid "Encrypted: "
-msgstr "Codificato: "
+msgid "Encrypted:"
+msgstr "Codificato:"
 
 msgid "Encryption"
 msgstr "Codifica"
@@ -3500,7 +3500,7 @@ msgid ""
 "Please enter username/password manually."
 msgstr ""
 "File oscam.conf non trovato. \n"
-"Si prega di inserire username / password manualmente."
+"Si prega di inserire username/password manualmente."
 
 msgid "Filesystem Check"
 msgstr "Verifica filesystem"
@@ -3548,7 +3548,7 @@ msgid "Following tasks will be done after you press OK!"
 msgstr "I processi seguenti saranno eseguiti premendo Ok!"
 
 msgid "Fontsize"
-msgstr "Fontsize"
+msgstr "Font size"
 
 msgid "Format"
 msgstr "Formattare"
@@ -3560,13 +3560,13 @@ msgid "change"
 msgstr "Modifica"
 
 msgid "add Current"
-msgstr "aggiungere Current"
+msgstr "Aggiungere Current"
 
 msgid "add Service"
 msgstr "Aggiungere Servizio"
 
 msgid "press the menu button to set a general AC3/Dolby offset"
-msgstr "premere il tasto menu per impostare un AC3 generale/Dolby Offset"
+msgstr "Premere il tasto menu per impostare un AC3 generale/Dolby Offset"
 
 msgid "Forward volume keys"
 msgstr "Tasti del volume Forward"
@@ -3704,8 +3704,11 @@ msgstr "Consente di nascondere le estensioni dei tipi di file conosciuti."
 msgid "Configure the number of days after which items are automatically removed from the trash can."
 msgstr "Dopo quanti giorni verranno eliminati automaticamente i file dal Cestino?"
 
+msgid "Clean network trash cans"
+msgstr "Si desidera pulire la rete e buttare il suo contenuto nel cestino?"
+
 msgid "When enabled, network trash cans are probed for cleaning."
-msgstr "When enabled, network trash cans are probed for cleaning."
+msgstr "Quando è abilitato, il cestino di rete viene sondato per la pulizia."
 
 msgid "GB"
 msgstr "GB"
@@ -3714,8 +3717,8 @@ msgid ""
 "GUI needs a restart to apply a new skin\n"
 "Do you want to restart the GUI now?"
 msgstr ""
-"GUI ha bisogno di un riavvio per applicare un nuovo skin\n"
-"Vuoi riavviare Enigma ora?"
+"Enigma2 ha bisogno di un riavvio per applicare il nuovo skin\n"
+"Vuoi riavviare Enigma2 ora?"
 
 msgid "Gateway"
 msgstr "Gateway"
@@ -3775,7 +3778,7 @@ msgid "Go to previous page of service"
 msgstr "Vai alla pagina precedente del servizio"
 
 msgid "Go up the list"
-msgstr "Salire su la lista"
+msgstr "Andare su alla lista"
 
 msgid "Goto"
 msgstr "Vai a"
@@ -3784,7 +3787,7 @@ msgid "Goto 0"
 msgstr "Vai a 0"
 
 msgid "Goto :"
-msgstr "Vai a :"
+msgstr "Vai a:"
 
 msgid "Goto X"
 msgstr "Vai a 0"
@@ -4476,6 +4479,9 @@ msgstr "Vai al prime time"
 msgid "Just change channels"
 msgstr "Cambiare Canali"
 
+msgid "Just change channels revert"
+msgstr "Solo cambiare Vanale - inverso"
+
 #. TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
 msgid "Just scale"
 msgstr "Scalare solamente"
@@ -4900,10 +4906,10 @@ msgstr "Regolazione automatica del volume "
 
 #, python-format
 msgid "Model:\t%s %s\n"
-msgstr "Modell:\t%s %s\n"
+msgstr "Modello:\t%s %s\n"
 
 msgid "Model: "
-msgstr "Modello: "
+msgstr "Modello:"
 
 msgid "Modulation"
 msgstr "Modulazione"
@@ -8249,12 +8255,12 @@ msgstr "TB"
 #. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
 msgstr ""
-"INFO_TRADUZIONETraduzione italiana\n"
+"INFO_TRADUZIONE Traduzione italiana\n"
 "enigma2\n"
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 19 Marzo 2015"
+"aggiornamento: 20 Marzo 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -10897,7 +10903,7 @@ msgid "month"
 msgstr "Mese"
 
 msgid "motor sport"
-msgstr ""
+msgstr "Motor Sport"
 
 msgid "motoring"
 msgstr "automobilismo"
@@ -11531,7 +11537,7 @@ msgid "Yellow"
 msgstr "Giallo"
 
 msgid "Yellow long"
-msgstr "Giallo lungo"
+msgstr "Giallo lungo"motor spor"
 
 msgid "yes"
 msgstr "Sì"
