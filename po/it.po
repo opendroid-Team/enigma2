@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-03-21 01:11+0100\n"
+"PO-Revision-Date: 2015-03-21 15:42+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -2840,7 +2840,7 @@ msgid ""
 "Do you want to Restart the GUI now?"
 msgstr ""
 "Enigma ha bisogno di un riavvio per applicare la nuova skin.\n"
-"Vuoi riavviare enigma2 ora?"
+"Vuoi riavviare enigma ora?"
 
 #, python-format
 msgid "Select skin:"
@@ -3039,7 +3039,7 @@ msgid "Do you want to update your %s %s ?"
 msgstr "Ripristinare la configurazione%s %s ?"
 
 msgid "Aborting updateprogress"
-msgstr "L'aggiornamento è stato annullato"
+msgstr "L aggiornamento è stato annullato"
 
 #, python-format
 msgid "Do you want to update your %s %s?"
@@ -3197,7 +3197,7 @@ msgid "Edit the network configuration of your %s %s.\n"
 msgstr "Modificare configurazione di rete del %s %s.\n"
 
 msgid "Edit title"
-msgstr "Moddificare titolo"
+msgstr "Modificare titolo"
 
 msgid "Edit upgrade source url."
 msgstr "Modificare URL sorgenti aggiornamento."
@@ -3259,8 +3259,8 @@ msgstr "Abilitato"
 msgid "Enables a feature so that the receiver can decrypt streams (if the ECM data is included in the stream and a valid card is available)."
 msgstr "Attiva Funzione modo che il ricevitore può decodificare i flussi (se i dati ECM sono inclusi nel flusso di una carta valida è disponibile)."
 
-msgid "Encrypted:"
-msgstr "Codificato:"
+msgid "Encrypted: "
+msgstr "Codificato: "
 
 msgid "Encryption"
 msgstr "Codifica"
@@ -3704,9 +3704,6 @@ msgstr "Consente di nascondere le estensioni dei tipi di file conosciuti."
 msgid "Configure the number of days after which items are automatically removed from the trash can."
 msgstr "Dopo quanti giorni verranno eliminati automaticamente i file dal Cestino?"
 
-msgid "Clean network trash cans"
-msgstr "Si desidera pulire la rete e buttare il suo contenuto nel cestino?"
-
 msgid "When enabled, network trash cans are probed for cleaning."
 msgstr "Quando è abilitato, il cestino di rete viene sondato per la pulizia."
 
@@ -3717,7 +3714,7 @@ msgid ""
 "GUI needs a restart to apply a new skin\n"
 "Do you want to restart the GUI now?"
 msgstr ""
-"Enigma2 ha bisogno di un riavvio per applicare il nuovo skin\n"
+"Enigma ha bisogno di un riavvio per applicare il nuovo skin\n"
 "Vuoi riavviare Enigma2 ora?"
 
 msgid "Gateway"
@@ -4480,7 +4477,7 @@ msgid "Just change channels"
 msgstr "Cambiare Canali"
 
 msgid "Just change channels revert"
-msgstr "Solo cambiare Vanale - inverso"
+msgstr "Solo cambiare Canale - inverso"
 
 #. TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
 msgid "Just scale"
@@ -4909,7 +4906,7 @@ msgid "Model:\t%s %s\n"
 msgstr "Modello:\t%s %s\n"
 
 msgid "Model: "
-msgstr "Modello:"
+msgstr "Modello: "
 
 msgid "Modulation"
 msgstr "Modulazione"
