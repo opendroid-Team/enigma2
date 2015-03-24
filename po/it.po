@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-03-24 00:55+0100\n"
+"PO-Revision-Date: 2015-03-24 01:46+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -3197,7 +3197,7 @@ msgid "Edit the network configuration of your %s %s.\n"
 msgstr "Modificare configurazione di rete del %s %s.\n"
 
 msgid "Edit title"
-msgstr "Moddificare titolo"
+msgstr "Modificare titolo"
 
 msgid "Edit upgrade source url."
 msgstr "Modificare URL sorgenti aggiornamento."
@@ -4477,7 +4477,7 @@ msgid "Just change channels"
 msgstr "Cambiare Canali"
 
 msgid "Just change channels revert"
-msgstr "Solo cambiare Vanale - inverso"
+msgstr "Solo cambiare Canale - inverso"
 
 #. TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
 msgid "Just scale"
