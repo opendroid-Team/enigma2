@@ -204,11 +204,11 @@ class doFlashImage(Screen):
 		machinename = getMachineName()
 		if box in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3'):
 			box = "ventonhdx"
-		elif box == "odinm6":
+		elif box == 'odinm6':
 			box = getMachineName().lower()
-		elif box == "xpeedlx3":
-			box = "xpeedlx3"
-		elif box == "xpeedlx1" or box == "xpeedlx2":
+		elif box == "inihde" and machinename.lower() == "xpeedlx":
+			box = "xpeedlx"
+		elif box in ('xpeedlx1', 'xpeedlx2'):
 			box = "xpeedlx"
 		elif box == "inihde" and machinename.lower() == "hd-1000":
 			box = "sezam-1000hd"
@@ -220,7 +220,7 @@ class doFlashImage(Screen):
 			box = "sf8"
 		elif box.startswith('et') and not box in ('et8000', 'et8500', 'et10000'):
 			box = box[0:3] + 'x00'
-		elif box == "odinm9" and self.feed == "opendroid":
+		elif box == 'odinm9' and self.feed == "opendroid":
 			box = 'maram9'
 		return box
 
@@ -377,7 +377,7 @@ class doFlashImage(Screen):
 					self["key_blue"].setText("opendroidimages")
 				else:
 					self.feedurl = feedurl_opendroid
-					self["key_blue"].setText("opendroid V5.0")
+					self["key_blue"].setText("opendroid 4.3")
 			else:
 				self.feedurl = feedurl_atv
 				self["key_blue"].setText("")

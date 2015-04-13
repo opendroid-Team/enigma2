@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-03-20 22:11+0100\n"
+"PO-Revision-Date: 2015-04-11 00:23+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: de\n"
@@ -800,6 +800,12 @@ msgstr ""
 msgid "A/V settings"
 msgstr "Audio/Video-Einstellungen"
 
+msgid "Audio settings"
+msgstr "Audio-Einstellungen"
+
+msgid "Video settings"
+msgstr "Video-Einstellungen"
+
 msgid "AA"
 msgstr "AA"
 
@@ -1141,6 +1147,21 @@ msgstr "Rot eingefärbt"
 
 msgid "Divide"
 msgstr "Aufgeteilt"
+
+msgid "Enable fallback remote receiver"
+msgstr "Aktiviere Reservereceiver"
+
+msgid "Enable remote enigma2 receiver to be tried to tune into services that cannot be tuned into locally (e.g. tuner is occupied or service type is unavailable on the local tuner. Specify complete URL including http:// and port number (normally ...:8001), e.g. http://second_box:8001."
+msgstr "Reserve-Enigma2-Receiver aktivieren der versucht wird wenn ein Sender lokal nicht empfangen werden kann. (z.B. wenn Tuner belegt oder Sender lokal nicht verfügbar ist). Gebe komplette URL inklusive http:// und Portnummer (normal ...:8001), e.g. http://zweite_box:8001."
+
+msgid "Fallback remote receiver URL"
+msgstr "Reservereceiver URL"
+
+msgid "URL of fallback remote receiver"
+msgstr "URL des Reservereceiver"
+
+msgid "Configure which tuner will be preferred for recordings, when more than one tuner is available. 'Disabled' would select a tuner based on preferred tuner in customise screen. 'Auto' would choose based on E2's default rules, ignoring preferred tuner in customise screen."
+msgstr "Konfiguriere welcher Tuner für Aufnahmen bevorzugt werden soll wenn mehr als ein Tuner verfügbar ist. 'Deaktiviert' verwendet den bevorzugten Tuner der unter Anpassen eingestellt ist. 'Auto' wählt den Tuner nach E2-Regeln und ignoriert die Einstellung in Anpassen."
 
 #, python-format
 msgid "%d pixels wide"
@@ -2861,6 +2882,9 @@ msgstr "4:3-Inhalt anzeigen als"
 msgid "Display >16:9 content as"
 msgstr "16:9-Inhalt anzeigen als"
 
+msgid "Graphical UI"
+msgstr "Oberfläche"
+
 msgid "Display and userinterface"
 msgstr "Anzeige und Benutzeroberfläche"
 
@@ -3656,6 +3680,12 @@ msgstr "DeInterlacing erzwingen"
 
 msgid "Automatic resolution label"
 msgstr "Info Einblendung zur Auflösung"
+
+msgid "Always use smart1080p mode"
+msgstr "Smart1080p-Modus benutzen"
+
+msgid "This option allows you to always use e.g. 1080p50 for TV/.ts, and 1080p24/p50/p60 for videos"
+msgstr "Mit dieser Option wird, je nach Auswahl, z.B. 1080p50 für TV und Aufnahmen und 1080p24/p50/p60 für Videodateien benutzt."
 
 msgid "Show 1080p 24fps as"
 msgstr "Zeige 1080p mit 24FPS als"
@@ -4949,7 +4979,7 @@ msgstr "Linker Rand"
 msgid "Move PiP to main picture"
 msgstr "PiP tauschen und beenden"
 
-msgid "Setup Picture in Picture"
+msgid "Picture in Picture Setup"
 msgstr "Bild-in-Bild Einstellungen"
 
 msgid "Move Up/Down"
@@ -5019,7 +5049,7 @@ msgid "Multi EPG"
 msgstr "Multi-EPG"
 
 msgid "Load/Save/Delete"
-msgstr "Laden/Speichern/Löschen"
+msgstr "EPG Laden/Speichern/Löschen"
 
 msgid "Delete EPG"
 msgstr "EPG Löschen"
@@ -5028,7 +5058,7 @@ msgid "Are you sure you want to delete the EPG data from:\n"
 msgstr "Soll wirklich diese EPG Datei gelöscht werden:\n"
 
 msgid "MultiEPG settings"
-msgstr "MultiEPG Einstellungen"
+msgstr "Multi-EPG-Einstellungen"
 
 msgid "Multimedia"
 msgstr "Multimedia"
@@ -5706,6 +5736,9 @@ msgstr "Jugendschutz"
 
 msgid "Parental control editor"
 msgstr "Jugendschutz Editor"
+
+msgid "Parental control services Editor"
+msgstr "Jugendschutz Sender Editor"
 
 msgid "Parental control setup"
 msgstr "Jugendschutz Einstellungen"
@@ -6537,6 +6570,9 @@ msgstr "Download fehlgeschlagen"
 msgid "Make your selection"
 msgstr "Bitte auswählen"
 
+msgid "Remote Control"
+msgstr "Fernbedienung-Einstellungen"
+
 msgid "Remote control type"
 msgstr "Fernbedienungstyp"
 
@@ -7225,7 +7261,7 @@ msgid "Service scan"
 msgstr "Sendersuche"
 
 msgid "Service searching"
-msgstr "Sendersuche / Tunereinstellung"
+msgstr "Sender / Tuner"
 
 msgid "Service title mode"
 msgstr "Sendertitel Modus"
@@ -7868,7 +7904,7 @@ msgid "Software Update"
 msgstr "Software Update"
 
 msgid "Software management"
-msgstr "Softwareverwaltung"
+msgstr "Softwareverwaltung/Flash/Backup"
 
 msgid "Software manager setup"
 msgstr "Softwareverwaltung Einstellungen"
@@ -8126,7 +8162,42 @@ msgstr "Stärkste Position"
 msgid "Subservice mode"
 msgstr "Unterkanal Modus"
 
-#
+msgid "EPG button mode"
+msgstr "EPG Button Belegung"
+
+msgid "INFO button mode"
+msgstr "INFO Button Belegung"
+
+msgid "FAV button mode"
+msgstr "FAV Button Belegung"
+
+msgid "F1 button mode"
+msgstr "F1 Button Belegung"
+
+msgid "F2 button mode"
+msgstr "F2 Button Belegung"
+
+msgid "F3 button mode"
+msgstr "F3 Button Belegung"
+
+msgid "F4 button mode"
+msgstr "F4 Button Belegung"
+
+msgid "Plugin button mode"
+msgstr "Plugin Button Belegung"
+
+msgid "Web button mode"
+msgstr "Web Button Belegung"
+
+msgid "Home button mode"
+msgstr "Home Button Belegung"
+
+msgid "End button mode"
+msgstr "End Button Belegung"
+
+msgid "QuickEPG mode"
+msgstr "QuickEPG Modus"
+
 msgid "Subservices"
 msgstr "Unterkanäle"
 
@@ -8174,6 +8245,75 @@ msgstr "Untertitel-Einstellungen"
 
 msgid "Subtitles"
 msgstr "Untertitel"
+
+msgid "Show Subtitles"
+msgstr "Zeige Untertitel"
+
+msgid "Show Extensions"
+msgstr "Zeige Erweiterungen"
+
+msgid "Show Plugins"
+msgstr "Zeige Plugins"
+
+msgid "HbbTV Red-Button"
+msgstr "HbbTV Red-Button"
+
+msgid "Web browser base visibility"
+msgstr "Sichtbarkeit Webbrowser"
+
+msgid "Base transparency for OpenOpera web browser"
+msgstr "Setzt die Transparenz für den OpenOpera Webbrowser"
+
+msgid "show EventInfoPlugins"
+msgstr "Zeige Event-Infos"
+
+msgid "Show InfoBar EPG"
+msgstr "Zeige InfoBar EPG"
+
+msgid "Show Subservices"
+msgstr "Zeige Unterkanäle"
+
+msgid "start instantRecord"
+msgstr "Starte Sofortaufnahme"
+
+msgid "start Timeshift"
+msgstr "Starte Timeshift"
+
+msgid "Red button mode"
+msgstr "Rote Taste Belegung"
+
+msgid "Red button long mode"
+msgstr "Rote Taste (lang) Belegung"
+
+msgid "Green button mode"
+msgstr "Grüne Taste Belegung"
+
+msgid "Green button long mode"
+msgstr "Grüne Taste (lang) Belegung"
+
+msgid "Yellow button mode"
+msgstr "Gelbe Taste Belegung"
+
+msgid "Yellow button long mode"
+msgstr "Gelbe Taste (lang) Belegung"
+
+msgid "Blue button mode"
+msgstr "Blaue Taste Belegung"
+
+msgid "Blue button long mode"
+msgstr "Blaue Taste (lang) Belegung"
+
+msgid "show red button information..."
+msgstr "Zeige Belegung für rote Taste..."
+
+msgid "show green button information..."
+msgstr "Zeige Belegung für grüne Taste..."
+
+msgid "show yellow button information..."
+msgstr "Zeige Belegung für gelbe Taste..."
+
+msgid "show blue button information..."
+msgstr "Zeige Belegung für blaue Taste..."
 
 msgid "Sun"
 msgstr "So"
@@ -10092,10 +10232,6 @@ msgid "You have to wait %s!"
 msgstr "Du musst %s warten!"
 
 #, python-format
-msgid "Must wait for%s!"
-msgstr ""
-
-#, python-format
 msgid ""
 "You need a PC connected to your %s %s. If you need further instructions, please visit the website http://www.dm7025.de.\n"
 "Your %s %s will now be halted. After you have performed the update instructions from the website, your new firmware will ask you to restore your settings."
@@ -10318,10 +10454,10 @@ msgid "Zap back to service before tuner setup?"
 msgstr "Zurückschalten zum vorher laufenden Sender?"
 
 msgid "Zap focus to Picture in Picture"
-msgstr "Fokus auf Bild-in-Bild legen"
+msgstr "Zap-Fokus auf Bild-in-Bild"
 
 msgid "Zap focus to main screen"
-msgstr "Fokus auf Hauptbild legen"
+msgstr "Zap-Fokus auf Hauptbild legen"
 
 msgid "Zap mode"
 msgstr "Umschalt Modus"
@@ -10843,6 +10979,9 @@ msgid "jump forward to the next title"
 msgstr "Zum nächsten Titel springen"
 
 msgid "languages"
+msgstr "Sprachen"
+
+msgid "Languages"
 msgstr "Sprachen"
 
 msgid "Sources"
@@ -12324,4 +12463,22 @@ msgstr "Schnelltasten haben Vorrang"
 
 msgid "Confirmation on hotkey action"
 msgstr "Bestätigung bei Schnelltasten Druck"
+
+msgid "Protect configuration"
+msgstr "Konfiguration schützen"
+
+msgid "Protect main menu"
+msgstr "Hauptmenü schützen"
+
+msgid "Protect movie list"
+msgstr "Filmliste schützen"
+
+msgid "Protect plugin browser"
+msgstr "Erweiterungen schützen"
+
+msgid "Protect standby menu"
+msgstr "Ausschaltmenü schützen"
+
+msgid "Protect timer menu"
+msgstr "Timermenü schützen"
 
