@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-04-14 23:52+0100\n"
+"PO-Revision-Date: 2015-04-17 02:27+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -5126,7 +5126,7 @@ msgid "Netmask:"
 msgstr "Netmask:"
 
 msgid "Network"
-msgstr "Informazione Rete"
+msgstr "Configurazione Reti"
 
 msgid "Network ID"
 msgstr "ID rete"
@@ -11948,23 +11948,23 @@ msgstr "a distanza"
 
 #
 msgid "Select a scirpt to run"
-msgstr "Script zum starten auswählen"
+msgstr "Selezionare uno script per avviare"
 
 #
 msgid "Scan All"
-msgstr "Alles scannen"
+msgstr "Scansione completa"
 
 #
 msgid "Please select a resolution..."
-msgstr "Bitte die Auflösung wählen"
+msgstr "Si prega di selezionare la risoluzione"
 
 #
 msgid "Auto(not available)"
-msgstr "Auto(nicht Verfügbar)"
+msgstr "Auto(non disponibile)"
 
 #
 msgid "Aspect list..."
-msgstr "Seitenverhältnis"
+msgstr "Aspect"
 
 #
 msgid ""
@@ -11972,51 +11972,51 @@ msgid ""
 "This will take between 4 and 15 minutes depending on the used filesystem and is fully automatic.\n"
 "Make sure you first insert an USB flash drive before you select USB."
 msgstr ""
-"USB = Willst du ein Backup auf USB erstellen? \n"
-"Das dauert nur ein paar Minuten und geht vollautomatisch.\n"
-"Bitte erst einen USB Stick anschließen bevor man USB auswählt."
+"USB = Vuoi fare un back-up su USB? \n"
+"Questo richiederà tra i 4 ei 15 minuti a seconda del file system utilizzato ed è completamente automatico.\n"
+"Assicurati di aver inserito un flash drive USB prima di selezionare USB."
 
 #
 msgid ""
 "HDD = Do you want to make an USB-back-up image on HDD? \n"
 "This only takes 2 or 10 minutes and is fully automatic."
 msgstr ""
-"HDD = Willst du ein Backup auf HDD erstellen? \n"
-"Das dauert nur ein paar Minuten und geht vollautomatisch."
+"HDD = Volete creare un'immagine USB-back-up su disco fisso? \n"
+"Ci vogliono solo pochi minuti ed è completamente automatizzato."
 
 #
 msgid ""
 "Press Yellow Button to switch between TV/Backup \n"
 "during the backup is running."
-msgstr "Zum Wechsel zwischen Backup und TV die gelbe Taste drücken."
+msgstr "Per passare Backup e TV premere il tasto giallo."
 
 #
 msgid "via Network"
-msgstr "über netzwerk"
+msgstr "sulla rete"
 
 #
 msgid "OK/ green = activate settings"
-msgstr "OK/grün = aktivire Einstellungen"
+msgstr "OK/verde = attivare le impostazioni"
 
 #
 msgid "Bouquet + = install or update driver"
-msgstr "Bouquet + = installiere oder update Treiber"
+msgstr "Bouquet + = installare o aggiornare i driver"
 
 #
 msgid "Bouquet - = scan for IPTV server addresses"
-msgstr "Bouquet - = suche nach IPTV Server Anschluß"
+msgstr "Bouquet - = cercare collegamento server di IPTV"
 
 #
 msgid ""
 "Sundtek legal notice:\n"
 "This software comes without any warranty, use it at your own risk?"
 msgstr ""
-"Sundtek allgemeine Info:\n"
-"Verwendung auf eigenes Risiko!"
+"Sundtek informazioni generali:\n"
+"Utilizzare a proprio rischio e pericolo!"
 
 #
 msgid "No IPTV media server found"
-msgstr "Kein IPTV Media Server gefunden"
+msgstr "Non é Stato Trovato nessun media server IPTV"
 
 #
 msgid ""
@@ -12026,11 +12026,11 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Bitte folgenden Anschluß Verwenden für IPTV Media Server?\n"
+"Usare seguente indirizzo di server multimediale IPTV?\n"
 
 #
 msgid "installs the sundtek driver and runs related shellscripts"
-msgstr "Installiert den Sundtek Treiber über ein Shell Script"
+msgstr "Installa il driver Sundtek in uno script shell"
 
 #
 msgid "VideoWizard"
