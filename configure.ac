@@ -132,7 +132,6 @@ AM_CONDITIONAL(DM820, test "$BOXTYPE" == dm820)
 AM_CONDITIONAL(DM7020HD, test "$BOXTYPE" == dm7020hd)
 AM_CONDITIONAL(DM7020HDV2, test "$BOXTYPE" == dm7020hdv2)
 AM_CONDITIONAL(DM800, test "$BOXTYPE" == dm800)
-AM_CONDITIONAL(DM800HD, test "$BOXTYPE" == dm800hd)
 AM_CONDITIONAL(DM800SE, test "$BOXTYPE" == dm800se)
 AM_CONDITIONAL(DM800SEV2, test "$BOXTYPE" == dm800sev2)
 AM_CONDITIONAL(DM500HD, test "$BOXTYPE" == dm500hd)
@@ -417,8 +416,14 @@ if test "$BOXTYPE" == "odinm9"; then
 	AC_DEFINE(FORCE_NO_BLENDING_ACCELERATION, 1,[define when the framebuffer acceleration does not have alphablending support, though the autodetection might indicate that it does])
 fi
 
-if test "$BOXTYPE" == "odinm7" -o "$BOXTYPE" == "odinm6" -o "$BOXTYPE" == "e3hd"; then
+if test "$BOXTYPE" == "odinm7" ; then
 	AC_DEFINE(FORCE_NO_BLENDING_ACCELERATION, 1,[define when the framebuffer acceleration does not have alphablending support, though the autodetection might indicate that it does])
+	AC_DEFINE(KEY_POWER2_TO_KEY_WWW, 1,[define when rc sends a KEY_POWER2 event for its KEY_WWW key])
+	AC_DEFINE(KEY_DIRECTORY_TO_KEY_FILE, 1,[define when rc sends a KEY_DIRECTORY event for its KEY_FILE key])
+fi
+
+if test "$BOXTYPE" == "e3hd"; then
+	AC_DEFINE(FORCE_BLENDING_ACCELERATION, 1,[define when the framebuffer acceleration has alphablending support, but detection slow down all])
 	AC_DEFINE(KEY_POWER2_TO_KEY_WWW, 1,[define when rc sends a KEY_POWER2 event for its KEY_WWW key])
 	AC_DEFINE(KEY_DIRECTORY_TO_KEY_FILE, 1,[define when rc sends a KEY_DIRECTORY event for its KEY_FILE key])
 fi
