@@ -1,4 +1,4 @@
-AC_INIT([enigma2],[3.0.0],[enigma2-devel@lists.elitedvb.net])
+AC_INIT([enigma2],[5.0],[http://www.droidsat.org])
 AM_INIT_AUTOMAKE([dist-bzip2 no-define tar-pax -Wno-portability])
 AC_CONFIG_HEADERS([enigma2_config.h])
 
@@ -38,6 +38,7 @@ AC_ARG_WITH(gstversion,
 	AS_HELP_STRING([--with-gstversion],[use gstreamer version (major.minor)]),
 	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=0.10])
 
+PKG_CHECK_MODULES(GSTREAMER, gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR)
 PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 sigc++-1.2 libssl libcrypto])
 PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
 AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
@@ -60,6 +61,41 @@ AC_ARG_WITH(boxtype,
 AC_SUBST(BOXTYPE)
 AC_DEFINE_UNQUOTED(BOXTYPE,"$BOXTYPE",[box type])
 
+AC_ARG_WITH(distro,
+	[  --with-distro=NAME distro name [[openvix,opendroid,...]]],
+	[DISTRO="$withval"],[DISTRO="opendroid"])
+AC_SUBST(DISTRO)
+AC_DEFINE_UNQUOTED(DISTRO,"$DISTRO",[distro name])
+
+AC_ARG_WITH(machinebrand,
+	[  --with-machinebrand=NAME brand name [[Vu,Xtrend,...]]],
+	[MACHINE_BRAND="$withval"],[MACHINE_BRAND="Vu+"])
+AC_SUBST(MACHINE_BRAND)
+AC_DEFINE_UNQUOTED(MACHINE_BRAND,"$MACHINE_BRAND",[machine brand])
+
+AC_ARG_WITH(machinename,
+	[  --with-machinename=NAME machine name [[Solo,Ultimo,...]]],
+	[MACHINE_NAME="$withval"],[MACHINE_NAME="Ultimo"])
+AC_SUBST(MACHINE_NAME)
+AC_DEFINE_UNQUOTED(MACHINE_NAME,"$MACHINE_NAME",[machine name])
+
+AC_ARG_WITH(imageversion,
+	[  --with-imageversion=NAME version number [[2.0]]],
+	[IMAGEVERSION="$withval"],[IMAGEVERSION=""])
+AC_SUBST(IMAGEVERSION)
+AC_DEFINE_UNQUOTED(IMAGEVERSION,"$IMAGEVERSION",[version number])
+
+AC_ARG_WITH(imagebuild,
+	[  --with-imagebuild=NAME build number [[5]]],
+	[IMAGEBUILD="$withval"],[IMAGEBUILD=""])
+AC_SUBST(IMAGEBUILD)
+AC_DEFINE_UNQUOTED(IMAGEBUILD,"$IMAGEBUILD",[build number])
+
+AC_ARG_WITH(driverdate,
+	[  --with-driverdate=NAME driver date [[5]]],
+	[DRIVERDATE="$withval"],[DRIVERDATE=""])
+AC_SUBST(DRIVERDATE)
+AC_DEFINE_UNQUOTED(DRIVERDATE,"$DRIVERDATE",[driver date])
 AM_CONDITIONAL(AZBOX, test `echo "$BOXTYPE" | cut -b 1-5` == "azbox")
 AM_CONDITIONAL(CUBE, test `echo "$BOXTYPE" | cut -b 1-4` == "cube")
 AM_CONDITIONAL(DAGS, test `echo "$BOXTYPE" | cut -b 1-4` == "dags")
