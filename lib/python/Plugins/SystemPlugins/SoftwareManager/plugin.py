@@ -1527,7 +1527,7 @@ class UpdatePlugin(Screen):
 		# TODO: Use Twisted's URL fetcher, urlopen is evil. And it can
 		# run in parallel to the package update.
 		try:
-			urlopenSTATUS = "http://droidsat.org/feeds-status//index.php"
+			urlopenSTATUS = "http://droidsat.org/feeds-status/index.php"
 			d = urlopen(urlopenSTATUS)
 			tmpStatus = d.read()
 			if config.softwareupdate.updatebeta.value and 'gelb.png' in tmpStatus:
