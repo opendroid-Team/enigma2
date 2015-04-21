@@ -250,7 +250,7 @@ class doFlashImage(Screen):
 			job_manager.failed_jobs = []
 			self.session.openWithCallback(self.ImageDownloadCB, JobView, job, backgroundable = False, afterEventChangeable = False)
 		else:
-			if sel == str(flashTmp):
+			if sel == str(flashTmp):https://github.com/opendroid-Team/enigma2-4.3/commit/e59e945c5eb9d71c3dce3fef8d4bbdbecfec1d10
 				self.Start_Flashing()
 			else:
 				self.unzip_image(self.filename, flashPath)
@@ -377,7 +377,7 @@ class doFlashImage(Screen):
 					self["key_blue"].setText("opendroidimages")
 				else:
 					self.feedurl = feedurl_opendroid
-					self["key_blue"].setText("opendroid 4.3")
+					self["key_blue"].setText("opendroid 5.0")
 			else:
 				self.feedurl = feedurl_atv
 				self["key_blue"].setText("")
