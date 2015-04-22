@@ -4,7 +4,6 @@
 # MAKES A FULLBACK-UP READY FOR FLASHING.                                     #
 ################################################################################
 
-#
 #!/bin/sh
 VERSION="Version 9.3 MOD"
 START=$(date +%s)
