@@ -1,12 +1,12 @@
 ###############################################################################
 # FULL BACKUP UYILITY FOR ENIGMA2/OPENPLI, SUPPORTS THE MODELS ET-XX00 & VU+  #
-#  							& Gigablue & Venton HD Models			   		  #
-#                   MAKES A FULLBACK-UP READY FOR FLASHING.                   #
-#                                                                             #
-###############################################################################
+# & ALL GIGABLUE MODELS & Venton HD Models                                    #
+# MAKES A FULLBACK-UP READY FOR FLASHING.                                     #
+################################################################################
+
 #
 #!/bin/sh
-VERSION="Version 9.2 MOD"
+VERSION="Version 9.3 MOD"
 START=$(date +%s)
 
 ##DECLARATION OF VARIABLES
@@ -183,7 +183,8 @@ elif [ $MODEL = "iqonios300hd" ] ; then
 	MAINDEST=$DIRECTORY/update/$MODEL/cfe
 	EXTRA=$DIRECTORY/fullbackup_IQON/$DATE/update/$MODEL/cfe
 ## TESTING THE Gigablue HD 800 SE Model
-elif [ $MODEL = "gb800se" ] ; then
+MODEL=$( cat /etc/model )
+if [ $MODEL = "gb800se" ] ; then
 	TYPE=GIGABLUE
 	MODEL="se"
 	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
@@ -192,7 +193,7 @@ elif [ $MODEL = "gb800se" ] ; then
 	MTDKERNEL="mtd2"
 	MAINDESTOLD=$DIRECTORY/$MODEL
 	MAINDEST=$DIRECTORY/gigablue/$MODEL
-	EXTRA=$DIRECTORY/fullbackup_$TYPE/$DATE/gigablue
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
 ## TESTING THE Gigablue HD 800 UE Models
 elif [ $MODEL = "gb800ue" ]; then
 	TYPE=GIGABLUE
@@ -203,7 +204,40 @@ elif [ $MODEL = "gb800ue" ]; then
 	MTDKERNEL="mtd2"
 	MAINDESTOLD=$DIRECTORY/$MODEL
 	MAINDEST=$DIRECTORY/gigablue/$MODEL
-	EXTRA=$DIRECTORY/fullbackup_$TYPE/$DATE/gigablue
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+## TESTING THE Gigablue HD 800 UE Plus Models
+elif [ $MODEL = "gb800ueplus" ]; then
+	TYPE=GIGABLUE
+	MODEL="ueplus"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+## TESTING THE Gigablue HD 800 SE Plus Models
+elif [ $MODEL = "gb800seplus" ]; then
+	TYPE=GIGABLUE
+	MODEL="seplus"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+## TESTING THE Gigablue GB IPBox Models
+elif [ $MODEL = "gbipbox" ]; then
+	TYPE=GIGABLUE
+	MODEL="ipbox"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
 ## TESTING THE Gigablue HD 800 Solo Model
 elif [ $MODEL = "gb800solo" ] ; then
 	TYPE=GIGABLUE
@@ -213,7 +247,7 @@ elif [ $MODEL = "gb800solo" ] ; then
 	MTDKERNEL="mtd2"
 	MAINDESTOLD=$DIRECTORY/$MODEL
 	MAINDEST=$DIRECTORY/gigablue/$MODEL
-	EXTRA=$DIRECTORY/fullbackup_$TYPE/$DATE/gigablue
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
 ## TESTING THE Gigablue HD Quad Model
 elif [ $MODEL = "gbquad" ] ; then
 	TYPE=GIGABLUE
@@ -224,7 +258,57 @@ elif [ $MODEL = "gbquad" ] ; then
 	MTDKERNEL="mtd2"
 	MAINDESTOLD=$DIRECTORY/$MODEL
 	MAINDEST=$DIRECTORY/gigablue/$MODEL
-	EXTRA=$DIRECTORY/fullbackup_$TYPE/$DATE/gigablue
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+elif [ $MODEL = "gbquadplus" ] ; then
+	TYPE=GIGABLUE
+	MODEL="quadplus"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4000"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue	
+elif [ $MODEL = "gbultra" ]; then
+	TYPE=GIGABLUE
+	MODEL="ultra"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+elif [ $MODEL = "gbultraue" ]; then
+	TYPE=GIGABLUE
+	MODEL="ultraue"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+elif [ $MODEL = "gbultrase" ]; then
+	TYPE=GIGABLUE
+	MODEL="ultrase"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
+elif [ $MODEL = "gbx1" ]; then
+	TYPE=GIGABLUE
+	MODEL="x1"
+	MKUBIFS_ARGS="-m 2048 -e 126976 -c 4096"
+	UBINIZE_ARGS="-m 2048 -p 128KiB"
+	SHOWNAME="GigaBlue $MODEL"
+	MTDKERNEL="mtd2"
+	MAINDESTOLD=$DIRECTORY/$MODEL
+	MAINDEST=$DIRECTORY/gigablue/$MODEL
+	EXTRA=$DIRECTORY/fullbackup_gigablue/$DATE/gigablue
 
 ## TESTING THE VU+ MODELS
 elif [ $MODEL = "vusolo" ] || [ $MODEL = "vuduo" ] || [ $MODEL = "vuuno" ] || [ $MODEL = "vuultimo" ] || [ $MODEL = "vusolo2" ] || [ $MODEL = "vuduo2" ]; then
@@ -248,12 +332,12 @@ else
 	exit 0
 fi
 
-echo "Back-up Tool for a $SHOWNAME" | tr  a-z A-Z
+echo "Back-up Tool for $SHOWNAME" | tr  a-z A-Z
 echo "$VERSION"
 echo "_________________________________________________"
 echo "Please be patient, a backup will now be made,"
 if [ $ROOTFSTYPE = "ubifs" ] ; then
-	echo "because of the used filesystem the back-up"
+	echo "because of the used filesystem the backup"
 	echo "will take about 5-12 minutes for this system"
 	echo " "
 	echo " "
@@ -744,7 +828,23 @@ if [ $TYPE = "GIGABLUE" ] ; then
 		cp $MAINDEST/../../burn.bat $EXTRA/..
 		mv $MAINDEST/../../burn.bat $MAINDEST/../../noburn.bat
 	fi
-
+	if [ $MODEL = "ue" ]; then #copy needed lcdwaitkey and lcdwarning to backup
+		cp /usr/share/lcdwaitkey.bin $MAINDEST/lcdwaitkey.bin
+		cp /usr/share/lcdwarning.bin $MAINDEST/lcdwarning.bin
+	fi
+	if [ $MODEL = "ueplus" ]; then
+		cp /usr/share/lcdwaitkey.bin $MAINDEST/lcdwaitkey.bin
+		cp /usr/share/lcdwarning.bin $MAINDEST/lcdwarning.bin
+	fi
+	if [ $MODEL = "quad" ]; then
+		cp /usr/share/lcdwaitkey.bin $MAINDEST/lcdwaitkey.bin
+		cp /usr/share/lcdwarning.bin $MAINDEST/lcdwarning.bin
+	fi
+	if [ $MODEL = "quadplus" ]; then
+		cp /usr/share/lcdwaitkey.bin $MAINDEST/lcdwaitkey.bin
+		cp /usr/share/lcdwarning.bin $MAINDEST/lcdwarning.bin
+	fi
+	
 	cp -r $MAINDEST $EXTRA #copy the made back-up to images
 	if [ -f $MAINDEST/rootfs.bin -a -f $MAINDEST/kernel.bin -a -f $MAINDEST/imageversion -a -f $MAINDEST/noforce ]  ; then
 		echo "_________________________________________________\n"
