@@ -60,5 +60,3 @@ endif
 if HAVE_BWLCD140
 SUBDIRS += display140
 endif
-skin_display.xml: $(srcdir)/skin_display_default.xml
-	test -f $(srcdir)/skin_display_$(BOXTYPE).xml && cp $(srcdir)/skin_display_$(BOXTYPE).xml skin_display.xml || cp $(srcdir)/skin_display_default.xml skin_display.xml
