@@ -69,6 +69,9 @@ transponders
 00820000:2d50:013e
 	s 10834000:27500000:1:3:130:2:0:1:2:2:2
 /
+00820000:0258:013e
+	s 11317000:27500000:1:3:130:2:0
+/
 00820000:1388:013e
 	s 11727000:27500000:1:3:130:2:0
 /
@@ -80,9 +83,6 @@ transponders
 /
 00820000:24b8:013e
 	s 12596000:27500000:1:3:130:2:0
-/
-00820000:0258:013e
-	s 11317000:27500000:1:3:130:2:0
 /
 00820000:1b58:013e
 	s 12111000:27500000:1:3:130:2:0
@@ -110,9 +110,6 @@ transponders
 /
 00820000:3bc4:013e
 	s 11565000:27500000:0:3:130:2:0
-/
-00820000:20d0:013e
-	s 12379000:27500000:1:3:130:2:0
 /
 00820000:1c20:013e
 	s 12149000:27500000:1:3:130:2:0
@@ -251,6 +248,9 @@ transponders
 /
 00820000:06a4:013e
 	s 11526000:27500000:0:3:130:2:0
+/
+00820000:20d0:013e
+	s 12379000:27500000:1:3:130:2:0
 /
 00820000:2c24:fbff
 	s 10775000:29900000:0:4:130:2:0
@@ -901,7 +901,7 @@ Rete 4
 p:Mediaset
 0004:00820000:03de:0110:1:0
 Iris
-p:Mediaset,c:000686,c:010687,c:030686
+p:Mediaset
 0005:00820000:03de:0110:1:0
 CANALE 5
 p:Mediaset
@@ -1838,6 +1838,45 @@ p:nc+
 0dd8:00820000:2d50:013e:1:0
 HBO COMEDY HD
 p:nc+
+4506:00820000:0258:013e:1:0
+Karbala Satellite Channel
+p:Arqiva
+450e:00820000:0258:013e:1:0
+RTA
+p:Arqiva
+4511:00820000:0258:013e:1:0
+Kanal Hayat
+p:Arqiva
+44da:00820000:0258:013e:1:0
+Wesal Haq
+p:Arqiva
+44db:00820000:0258:013e:1:0
+Rudaw
+p:Arqiva
+44dd:00820000:0258:013e:1:0
+Russia Today
+p:Arqiva
+44de:00820000:0258:013e:1:0
+Imam Hussein 3
+p:Arqiva
+44e0:00820000:0258:013e:1:0
+RT Arab
+p:Arqiva
+44e4:00820000:0258:013e:1:0
+iMovie
+p:Arqiva
+44e5:00820000:0258:013e:1:0
+Imam Hussein TV
+p:
+44e6:00820000:0258:013e:1:0
+Baqi TV
+p:Arqiva
+44e7:00820000:0258:013e:1:0
+Al-Hayat
+p:Arqiva
+44f2:00820000:0258:013e:1:0
+Family 1
+p:Arqiva
 000a:00820000:1388:013e:1:0
 SCT HD
 p:Harmonic
@@ -1917,7 +1956,7 @@ p:Telefonica Servicios Audiovisuales
 HB SEXYSAT 2
 p:Telefonica Servicios Audiovisuales
 35da:00820000:1388:013e:1:0
-CITTAITALIA
+Citta Italia HD
 p:Telefonica Servicios Audiovisuales
 2e0a:00820000:1a2c:fbff:1:0
 Fox Sports
@@ -1942,10 +1981,10 @@ Sky Sport 3
 p:SkyItalia
 2dc3:00820000:1a2c:fbff:1:0
 Cinema Max +1
-p:SkyItalia,c:0000ac,c:0101bd,c:0201da,c:0300ac
+p:SkyItalia
 2dc6:00820000:1a2c:fbff:1:0
 Sky Uno
-p:SkyItalia,c:0000a5,c:0101a4,c:0300a5
+p:SkyItalia
 2dc7:00820000:1a2c:fbff:1:0
 Sky Uno
 p:SkyItalia
@@ -1957,13 +1996,13 @@ Cinema +1
 p:SkyItalia
 2dcc:00820000:1a2c:fbff:1:0
 Cinema Hits
-p:SkyItalia,c:0000a8,c:0101b0,c:0201de,c:0300a8
+p:SkyItalia
 2dcd:00820000:1a2c:fbff:1:0
 Cinema Comedy
-p:SkyItalia,c:0000ad,c:0101c0,c:0201db,c:0300ad
+p:SkyItalia
 2dd0:00820000:1a2c:fbff:1:0
 Mosaico Cinema
-p:SkyItalia,c:0000a7,c:0101ec,c:0300a7
+p:SkyItalia
 2de9:00820000:1a2c:fbff:1:0
 .BLU
 p:SkyItalia
@@ -2075,45 +2114,6 @@ p:Globecast
 2030:00820000:24b8:013e:2:0
 WRN Sawt Al Alam
 p:Globecast
-450e:00820000:0258:013e:1:0
-RTA
-p:Arqiva
-4511:00820000:0258:013e:1:0
-Kanal Hayat
-p:Arqiva
-44da:00820000:0258:013e:1:0
-Wesal Haq
-p:Arqiva
-44db:00820000:0258:013e:1:0
-Rudaw
-p:Arqiva
-44dd:00820000:0258:013e:1:0
-Russia Today
-p:Arqiva
-44de:00820000:0258:013e:1:0
-Imam Hussein 3
-p:Arqiva
-44e0:00820000:0258:013e:1:0
-RT Arab
-p:Arqiva
-44e4:00820000:0258:013e:1:0
-iMovie
-p:Arqiva
-44e5:00820000:0258:013e:1:0
-Imam Hussein TV
-p:
-44e6:00820000:0258:013e:1:0
-Baqi TV
-p:Arqiva
-44e7:00820000:0258:013e:1:0
-Al-Hayat
-p:Arqiva
-44f2:00820000:0258:013e:1:0
-Family 1
-p:Arqiva
-4506:00820000:0258:013e:1:0
-Karbala Satellite Channel
-p:Arqiva
 0310:00820000:1b58:013e:1:0
 Class Horse TV
 p:Telespazio
@@ -2672,186 +2672,6 @@ p:Overon
 0337:00820000:3bc4:013e:1:0
 IRAN E ARYAEE TV
 p:OVERON
-0321:00820000:20d0:013e:1:0
-RFI RMC
-p:Harmonic
-0322:00820000:20d0:013e:1:0
-RFI Franais
-p:Harmonic
-0323:00820000:20d0:013e:1:0
-RFI Cameroun
-p:Harmonic
-0324:00820000:20d0:013e:1:0
-RFI Cap Vert
-p:Harmonic
-0325:00820000:20d0:013e:1:0
-RFI Gambie
-p:Harmonic
-0326:00820000:20d0:013e:1:0
-RFI Ghana
-p:Harmonic
-0327:00820000:20d0:013e:1:0
-RFI Bissau
-p:Harmonic
-0328:00820000:20d0:013e:1:0
-RFI Malabo Pico
-p:Harmonic
-0329:00820000:20d0:013e:1:0
-RFI Lesotho
-p:Harmonic
-032a:00820000:20d0:013e:1:0
-RFI Liberia
-p:Harmonic
-032b:00820000:20d0:013e:1:0
-RFI Mozambique
-p:Harmonic
-032c:00820000:20d0:013e:1:0
-RFI Namibie
-p:Harmonic
-032d:00820000:20d0:013e:1:0
-RFI Ouganda
-p:Harmonic
-032e:00820000:20d0:013e:1:0
-RFI Sao Tome
-p:Harmonic
-032f:00820000:20d0:013e:1:0
-RFI Ocean Indien
-p:Harmonic
-0330:00820000:20d0:013e:1:0
-RFI Sierra Leone
-p:Harmonic
-0331:00820000:20d0:013e:1:0
-RFI Zambie
-p:Harmonic
-0332:00820000:20d0:013e:1:0
-RFI Burkina
-p:Harmonic
-0334:00820000:20d0:013e:1:0
-RFI Gabon
-p:Harmonic
-0335:00820000:20d0:013e:1:0
-RFI Tchad
-p:Harmonic
-0336:00820000:20d0:013e:1:0
-RFI Mali
-p:Harmonic
-0337:00820000:20d0:013e:1:0
-RFI Malabo Ville
-p:Harmonic
-0338:00820000:20d0:013e:1:0
-RFI Sngal
-p:Harmonic
-0339:00820000:20d0:013e:1:0
-RFI 4/15 Swahili
-p:Harmonic
-033a:00820000:20d0:013e:1:0
-RFI Nord Cameroun
-p:Harmonic
-033b:00820000:20d0:013e:1:0
-RFI Niger
-p:Harmonic
-033c:00820000:20d0:013e:1:0
-RFI AF Centrale
-p:Harmonic
-033d:00820000:20d0:013e:1:0
-RFI Kenya
-p:Harmonic
-033e:00820000:20d0:013e:1:0
-RFI Niamey
-p:Harmonic
-0340:00820000:20d0:013e:1:0
-RFI Juba
-p:Harmonic
-0341:00820000:20d0:013e:1:0
-RFI Langues 1
-p:Harmonic
-0342:00820000:20d0:013e:1:0
-RFI Langues 2
-p:Harmonic
-0345:00820000:20d0:013e:1:0
-RFI Divers 2
-p:Harmonic
-0346:00820000:20d0:013e:1:0
-RFI Divers 3
-p:Harmonic
-0347:00820000:20d0:013e:1:0
-RFI Pub 1
-p:Harmonic
-0348:00820000:20d0:013e:1:0
-RFI Pub 2
-p:Harmonic
-0349:00820000:20d0:013e:1:0
-RFI Pub 6
-p:Harmonic
-034b:00820000:20d0:013e:1:0
-RFI Congo
-p:Harmonic
-034c:00820000:20d0:013e:1:0
-RFI Benin
-p:Harmonic
-034d:00820000:20d0:013e:1:0
-RFI Togo
-p:Harmonic
-034e:00820000:20d0:013e:1:0
-RFI 5/15 Swahili
-p:Harmonic
-034f:00820000:20d0:013e:1:0
-RFI RDC Ouest
-p:Harmonic
-0350:00820000:20d0:013e:1:0
-RFI Conakry
-p:Harmonic
-0351:00820000:20d0:013e:1:0
-RFI Centrafrique
-p:Harmonic
-0352:00820000:20d0:013e:1:0
-RFI Cote dIvoire
-p:Harmonic
-0bb8:00820000:20d0:013e:1:0
-AL ETEJAH TV
-p:GLOBECAST
-0bbb:00820000:20d0:013e:1:0
-Sat7 Plus
-p:GLOBECAST
-0bbd:00820000:20d0:013e:1:0
-Al Iraqia 2
-p:GLOBECAST
-0bbe:00820000:20d0:013e:1:0
-News Horn TV
-p:GLOBECAST
-0bc1:00820000:20d0:013e:1:0
-Zahraa TV
-p:Harmonic
-0bc2:00820000:20d0:013e:1:0
-ERI TV
-p:GLOBECAST
-0bc3:00820000:20d0:013e:1:0
-NABA TV
-p:Harmonic
-0bc5:00820000:20d0:013e:1:0
-CGN
-p:GLOBECAST
-0bc9:00820000:20d0:013e:1:0
-Saudi - Sunnah
-p:GLOBECAST
-0beb:00820000:20d0:013e:1:0
-Equidia PRO1
-p:GLOBECAST
-0bec:00820000:20d0:013e:1:0
-Equidia PRO2
-p:GLOBECAST
-0c0b:00820000:20d0:013e:2:0
-Emirates FM
-p:GLOBECAST
-0c0f:00820000:20d0:013e:2:0
-RFI Francais
-p:GLOBECAST
-0bf4:00820000:20d0:013e:2:0
-Radio Zara
-p:GLOBECAST
-0bf5:00820000:20d0:013e:2:0
-Dimtsi Hafash
-p:GLOBECAST
 1c22:00820000:1c20:013e:1:0
 Tunisie Nationale
 p:AH-EDP
@@ -3004,6 +2824,9 @@ RADIO 06 WORLD SERVICE
 p:IRIB
 1f33:00820000:013e:21fc:2:0
 RADIO 07 WORLD SERVICE
+p:IRIB
+1ef6:00820000:013e:21fc:1:0
+SAHAR AZERI
 p:IRIB
 0226:00820000:1964:013e:1:0
 JMC Promotion Channel
@@ -3457,6 +3280,9 @@ Supertennis HD
 p:GlobeCast
 07d4:00820000:22c4:013e:1:0
 Telepace HD
+p:GLOBECAST
+07d5:00820000:22c4:013e:1:0
+iTV
 p:GLOBECAST
 07d6:00820000:22c4:013e:1:0
 BBC BRIT
@@ -3970,7 +3796,7 @@ Cinema +24
 p:SkyItalia
 2b65:00820000:19c8:fbff:1:0
 Cinema Classics
-p:SkyItalia,c:0000a5,c:0101a4,c:0201d9,c:0300a5
+p:SkyItalia
 2b66:00820000:19c8:fbff:1:0
 cielo
 p:
@@ -3979,7 +3805,7 @@ Disney Ch. +2
 p:SkyItalia
 2b6b:00820000:19c8:fbff:1:0
 Cinema Max
-p:SkyItalia,c:0000a7,c:0101ac,c:0201dd,c:0300a7
+p:SkyItalia
 2b6e:00820000:19c8:fbff:1:0
 Disney Channel
 p:SkyItalia
@@ -3988,7 +3814,7 @@ Discovery
 p:SkyItalia
 2b73:00820000:19c8:fbff:1:0
 Cinema Passion
-p:SkyItalia,c:0000a1,c:010194,c:0201d7,c:0300a1
+p:SkyItalia
 2b7c:00820000:19c8:fbff:1:0
 Disney Junior
 p:SkyItalia
@@ -4825,13 +4651,13 @@ Sky Sport24
 p:SkyItalia
 2a97:00820000:1838:fbff:1:0
 Sky Uno +1
-p:SkyItalia,c:0000af,c:0101cf,c:0300af
+p:SkyItalia
 2a9a:00820000:1838:fbff:1:0
 Sky Sport24
 p:SkyItalia
 2a9b:00820000:1838:fbff:1:0
-11958V SID 0x2a9b
-p:DVB-S QPSK 11958V 13.0°E
+Reteconomy
+p:SkyItalia
 2a9d:00820000:1838:fbff:1:0
 Sky Sport24
 p:SkyItalia
@@ -4928,6 +4754,9 @@ p:
 08ac:00820000:01f4:013e:1:0
 Hot Bird 4k1
 p:
+3a99:00820000:0514:013e:1:0
+11449H SID 0x3a99
+p:DVB-S2 8PSK 11449H 13.0°E
 3a9b:00820000:0514:013e:1:0
 ID HD
 p:nc+
@@ -5191,7 +5020,7 @@ Fox Life
 p:SkyItalia
 1fc9:00820000:189c:fbff:1:0
 Cinema Cult
-p:SkyItalia,c:000999,c:01099a,c:021fa5,c:030999
+p:SkyItalia
 1fcb:00820000:189c:fbff:1:0
 Fox Crime
 p:SkyItalia
@@ -5240,6 +5069,51 @@ p:Swiss Satellite Radio
 36e3:00820000:06a4:013e:25:0
 RSI LA 1 HD
 p:Radiotelevisione svizzera
+0bb8:00820000:20d0:013e:1:0
+AL ETEJAH TV
+p:GLOBECAST
+0bbb:00820000:20d0:013e:1:0
+Sat7 Plus
+p:GLOBECAST
+0bbd:00820000:20d0:013e:1:0
+Al Iraqia 2
+p:GLOBECAST
+0bbe:00820000:20d0:013e:1:0
+News Horn TV
+p:GLOBECAST
+0bc1:00820000:20d0:013e:1:0
+Zahraa TV
+p:Harmonic
+0bc2:00820000:20d0:013e:1:0
+ERI TV
+p:GLOBECAST
+0bc3:00820000:20d0:013e:1:0
+NABA TV
+p:Harmonic
+0bc5:00820000:20d0:013e:1:0
+CGN
+p:GLOBECAST
+0bc9:00820000:20d0:013e:1:0
+Saudi - Sunnah
+p:GLOBECAST
+0beb:00820000:20d0:013e:1:0
+Equidia PRO1
+p:GLOBECAST
+0bec:00820000:20d0:013e:1:0
+Equidia PRO2
+p:GLOBECAST
+0c0b:00820000:20d0:013e:2:0
+Emirates FM
+p:GLOBECAST
+0c0f:00820000:20d0:013e:2:0
+RFI Francais
+p:GLOBECAST
+0bf4:00820000:20d0:013e:2:0
+Radio Zara
+p:GLOBECAST
+0bf5:00820000:20d0:013e:2:0
+Dimtsi Hafash
+p:GLOBECAST
 0fbd:00820000:2c24:fbff:1:0
 Fox +1
 p:SkyItalia
@@ -5420,6 +5294,9 @@ p:Yemen TV
 34ca:00820000:3c28:013e:1:0
 EWTN CATHOLIC TV
 p:GlobeCast
+34cb:00820000:3c28:013e:1:0
+iTV
+p:DiviCom Customer
 34cd:00820000:3c28:013e:1:0
 !FunSpice
 p:GlobeCast
@@ -5589,7 +5466,7 @@ p:TVN
 TTV
 p:TVN
 10de:00820000:03e8:013e:1:0
-TVN Meteo
+TVN Meteo Active
 p:TVN
 10df:00820000:03e8:013e:1:0
 TVN Turbo
