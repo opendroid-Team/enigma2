@@ -35,8 +35,6 @@ def InitUsageConfig():
 	config.usage.alternative_number_mode.addNotifier(alternativeNumberModeChange)
 	config.usage.crypto_icon_mode = ConfigSelection(default = "0", choices = [("0", _("None")), ("1", _("Left from servicename")), ("2", _("Right from servicename"))])
 	config.usage.crypto_icon_mode.addNotifier(refreshServiceList)
-	config.usage.record_indicator_mode = ConfigSelection(default = "1", choices = [("0", _("None")), ("1", _("Left from servicename")), ("2", _("Right from servicename")), ("3", _("Red colored"))])
-	config.usage.record_indicator_mode.addNotifier(refreshServiceList)
 
 	config.usage.panicbutton = ConfigYesNo(default = False)
 	config.usage.servicetype_icon_mode = ConfigSelection(default = "0", choices = [("0", _("None")), ("1", _("Left from servicename")), ("2", _("Right from servicename"))])
@@ -45,7 +43,7 @@ def InitUsageConfig():
 	choicelist = [("-1", _("Divide")), ("0", _("Disable"))]
 	for i in range(100,1300,100):
 		choicelist.append(("%d" % i, ngettext("%d pixel wide", "%d pixels wide", i) % i))
-	config.usage.servicelist_column = ConfigSelection(default="-1", choices=choicelist)
+	config.usage.servicelist_column = ConfigSelection(default="0", choices=choicelist)
 	config.usage.servicelist_column.addNotifier(refreshServiceList)
 
 	config.usage.service_icon_enable = ConfigYesNo(default = False)
@@ -65,7 +63,7 @@ def InitUsageConfig():
 	config.usage.e1like_radio_mode = ConfigYesNo(default = True)
 
 	choicelist = []
-	for i in range(1, 21):
+	for i in range(1, 11):
 		choicelist.append(("%d" % i, ngettext("%d second", "%d seconds", i) % i))
 	config.usage.infobar_timeout = ConfigSelection(default = "5", choices = [("0", _("No timeout"))] + choicelist)
 	config.usage.show_infobar_on_zap = ConfigYesNo(default = True)
@@ -74,8 +72,6 @@ def InitUsageConfig():
 	config.usage.show_infobar_channel_number = ConfigYesNo(default = False)
 	config.usage.show_infobar_lite = ConfigYesNo(default = False)
 	config.usage.show_infobar_channel_number = ConfigYesNo(default = False)
-	config.usage.show_infobar_do_dimming = ConfigYesNo(default = False)
-	config.usage.show_infobar_dimming_speed = ConfigSelectionNumber(min = 1, max = 40, stepwidth = 1, default = 3, wraparound = True)
 	config.usage.show_second_infobar = ConfigSelection(default = "2", choices = [("0", _("Off")), ("1", _("Event Info")), ("2", _("2nd Infobar INFO"))])
 	config.usage.second_infobar_timeout = ConfigSelection(default = "0", choices = [("0", _("No timeout"))] + choicelist)
 	def showsecondinfobarChanged(configElement):
@@ -112,13 +108,8 @@ def InitUsageConfig():
 	config.usage.pip_zero_button = ConfigSelection(default = "swapstop", choices = [
 		("standard", _("Standard")), ("swap", _("Swap PiP and main picture")),
 		("swapstop", _("Move PiP to main picture")), ("stop", _("Stop PiP")) ])
-	config.usage.pip_hideOnExit = ConfigSelection(default = "no", choices = [
+	config.usage.pip_hideOnExit = ConfigSelection(default = "without popup", choices = [
 		("no", _("No")), ("popup", _("With popup")), ("without popup", _("Without popup")) ])
-	choicelist = [("-1", _("Disabled")), ("0", _("No timeout"))]
-	for i in [60, 300, 600, 900, 1800, 2700, 3600]:
-		m = i/60
-		choicelist.append(("%d" % i, ngettext("%d minute", "%d minutes", m) % m))
-	config.usage.pip_last_service_timeout = ConfigSelection(default = "0", choices = choicelist)
 
 	if not os.path.exists(resolveFilename(SCOPE_HDD)):
 		try:
@@ -194,7 +185,6 @@ def InitUsageConfig():
 		("ask", _("Ask user")), ("movielist", _("Return to movie list")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end")), ("playlist", _("Play next (return to movie list)")),
 		("playlistquit", _("Play next (return to previous service)")), ("loop", _("Continues play (loop)")), ("repeatcurrent", _("Repeat"))])
 	config.usage.next_movie_msg = ConfigYesNo(default = True)
-	config.usage.last_movie_played = ConfigText()
 	config.usage.leave_movieplayer_onExit = ConfigSelection(default = "no", choices = [
 		("no", _("No")), ("popup", _("With popup")), ("without popup", _("Without popup")) ])
 
@@ -231,11 +221,7 @@ def InitUsageConfig():
 		("2", "DVB-C/-S/-T"),
 		("3", "DVB-C/-T/-S"),
 		("4", "DVB-T/-C/-S"),
-		("5", "DVB-T/-S/-C"),
-		("127", "No priority") ])
-
-	config.usage.remote_fallback_enabled = ConfigYesNo(default = False);
-	config.usage.remote_fallback = ConfigText(default = "", fixed_size = False);
+		("5", "DVB-T/-S/-C") ])
 
 	nims = [("-1", _("auto"))]
 	rec_nims = [("-2", _("Disabled")), ("-1", _("auto"))]
@@ -268,12 +254,10 @@ def InitUsageConfig():
 	config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
 					("0", _("Just change channels")),
 					("1", _("Channel List")),
-					("2", _("Just change channels revert")),
-					("3", _("Volume Adjust"))])
+					("2", _("Just change channels revert"))])
 	config.usage.leftrightbutton_mode = ConfigSelection(default="0", choices = [
 					("0", _("Just change channels")),
-					("1", _("Channel List")),
-					("3", _("Volume Adjust"))])
+					("1", _("Channel List"))])
 	config.usage.okbutton_mode = ConfigSelection(default="0", choices = [
 					("0", _("InfoBar")),
 					("1", _("Channel List"))])
@@ -408,7 +392,6 @@ def InitUsageConfig():
 	config.osd.dst_height = ConfigSelectionNumber(default = 576, stepwidth = 1, min = 0, max = 576, wraparound = False)
 	config.osd.alpha = ConfigSelectionNumber(default = 255, stepwidth = 1, min = 0, max = 255, wraparound = False)
 	config.osd.alpha_teletext = ConfigSelectionNumber(default = 255, stepwidth = 1, min = 0, max = 255, wraparound = False)
-	config.osd.alpha_webbrowser = ConfigSelectionNumber(default = 255, stepwidth = 1, min = 0, max = 255, wraparound = False)
 	config.av.osd_alpha = NoSave(ConfigNumber(default = 255))
 	config.osd.threeDmode = ConfigSelection([("off", _("Off")), ("auto", _("Auto")), ("sidebyside", _("Side by Side")),("topandbottom", _("Top and Bottom"))], "auto")
 	config.osd.threeDznorm = ConfigSlider(default = 50, increment = 1, limits = (0, 100))
@@ -451,19 +434,32 @@ def InitUsageConfig():
 		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 	config.usage.keymap = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"))
-	if fileExists(eEnv.resolve("${datadir}/enigma2/keymap.usr")):
-		config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"), choices = [
-			(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.usr"), _("User keymap - keymap.usr")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.xpe"), _("Xpeed keymap - keymap.xpe")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
+	if getMachineName().lower().startswith('xp') or getMachineName().lower().startswith('lx') or getBoxType().startswith('atemio'):
+		if fileExists(eEnv.resolve("${datadir}/enigma2/keymap.usr")):
+			config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xpe"), choices = [
+				(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.xpe"), _("Xpeed keymap - keymap.xpe")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.usr"), _("User keymap - keymap.usr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
+		else:
+			config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xpe"), choices = [
+				(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.xpe"), _("Xpeed keymap - keymap.xpe")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
 	else:
-		config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"), choices = [
-			(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.xpe"), _("Xpeed keymap - keymap.xpe")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
-			(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
+		if fileExists(eEnv.resolve("${datadir}/enigma2/keymap.usr")):
+			config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"), choices = [
+				(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.usr"), _("User keymap - keymap.usr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
+		else:
+			config.usage.keymap = ConfigSelection(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"), choices = [
+				(eEnv.resolve("${datadir}/enigma2/keymap.xml"), _("Default keymap - keymap.xml")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.ntr"), _("Neutrino keymap - keymap.ntr")),
+				(eEnv.resolve("${datadir}/enigma2/keymap.u80"), _("U80 keymap - keymap.u80"))])
 
 	config.network = ConfigSubsection()
 	if SystemInfo["WakeOnLAN"]:
@@ -490,7 +486,6 @@ def InitUsageConfig():
 	config.softwareupdate.updatefound = NoSave(ConfigBoolean(default = False))
 	config.softwareupdate.updatebeta = ConfigYesNo(default = False)
 	config.softwareupdate.updateisunstable = ConfigYesNo(default = False)
-	config.softwareupdate.disableupdates = ConfigYesNo(default = False)
 
 	config.timeshift = ConfigSubsection()
 	choicelist = [("0", "Disabled")]
@@ -506,9 +501,6 @@ def InitUsageConfig():
 	config.timeshift.autorecord = ConfigYesNo(default = False)
 	config.timeshift.isRecording = NoSave(ConfigYesNo(default = False))
 	config.timeshift.timeshiftMaxHours = ConfigSelectionNumber(min = 1, max = 999, stepwidth = 1, default = 12, wraparound = True)
-	config.timeshift.timeshiftMaxEvents = ConfigSelectionNumber(min = 1, max = 999, stepwidth = 1, default = 12, wraparound = True)
-	config.timeshift.timeshiftCheckEvents = ConfigSelection(default = "0", choices = [("0", _("Disabled")), "15", "30", "60", "120", "240", "480"])
-	config.timeshift.timeshiftCheckFreeSpace = ConfigYesNo(default = False)
 	config.timeshift.deleteAfterZap = ConfigYesNo(default = True)
 
 	config.seek = ConfigSubsection()
@@ -548,10 +540,7 @@ def InitUsageConfig():
 
 	def updatedebug_path(configElement):
 		if not os.path.exists(config.crash.debug_path.value):
-			try:
-				os.mkdir(config.crash.debug_path.value,0755)
-			except:
-				print "Failed to create log path: %s" %config.crash.debug_path.value
+			os.mkdir(config.crash.debug_path.value,0755)
 	config.crash.debug_path.addNotifier(updatedebug_path, immediate_feedback = False)
 
 	config.usage.timerlist_finished_timer_position = ConfigSelection(default = "end", choices = [("beginning", _("at beginning")), ("end", _("at end"))])
@@ -598,7 +587,7 @@ def InitUsageConfig():
 		zapoptions = [("mute", _("Black screen")), ("hold", _("Hold screen")), ("mutetilllock", _("Black screen till locked")), ("holdtilllock", _("Hold till locked"))]
 		config.misc.zapmode = ConfigSelection(default = "mute", choices = zapoptions )
 		config.misc.zapmode.addNotifier(setZapmode, immediate_feedback = False)
-	config.usage.historymode = ConfigSelection(default = "1", choices = [("1", _("Show menu")), ("0", _("Just zap")), ("2", _("Show Zap-History Browser")), ("3", _("Volume Adjust"))])
+	config.usage.historymode = ConfigSelection(default = "1", choices = [("1", _("Show menu")), ("0", _("Just zap")), ("2", _("Show Zap-History Browser"))])
 	config.usage.bookmarkmode = ConfigSelection(default = "0", choices = [("1", _("Show EMC")), ("0", _("Show Movielist")), ("2", _("Show Simple Movie List"))])
 
 	config.subtitles = ConfigSubsection()
@@ -611,7 +600,7 @@ def InitUsageConfig():
 	config.subtitles.subtitle_alignment = ConfigSelection(choices = [("left", _("left")), ("center", _("center")), ("right", _("right"))], default = "center")
 	config.subtitles.subtitle_rewrap = ConfigYesNo(default = False)
 	config.subtitles.subtitle_borderwidth = ConfigSelection(choices = ["1", "2", "3", "4", "5"], default = "3")
-	config.subtitles.subtitle_fontsize  = ConfigSelection(choices = ["16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "62", "64", "68", "70", "72"], default = "34")
+	config.subtitles.subtitle_fontsize  = ConfigSelection(choices = ["16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"], default = "34")
 
 	subtitle_delay_choicelist = []
 	for i in range(-900000, 1845000, 45000):
@@ -649,7 +638,6 @@ def InitUsageConfig():
 		("25000", _("25")),
 		("29970", _("29.97")),
 		("30000", _("30"))])
-	config.subtitles.pango_subtitle_removehi = ConfigYesNo(default = False)
 	config.subtitles.pango_autoturnon = ConfigYesNo(default = True)
 
 	config.autolanguage = ConfigSubsection()
@@ -753,8 +741,6 @@ def InitUsageConfig():
 					("eventview", _("Show Eventview")),
 					("epgpress", _("Show EPG")),
 					("single", _("Show Single EPG")),
-					("0", _("Show InfoBar")),
-					("1", _("Show Channel List")),
 					("coolsingleguide", _("Show CoolSingleGuide")),
 					("coolinfoguide", _("Show CoolInfoGuide")),
 					("cooltvguide", _("Show CoolTVGuide")),
@@ -776,27 +762,15 @@ def InitUsageConfig():
 					("pliepg", _("Show Graphical EPG")),
 					("single", _("Show Single EPG")),
 					("multi", _("Show Multi EPG")),
-					("showfavourites", _("Show Favourites")),
-					("eventview", _("Show Eventview")),
-					("etportal", _("Show EtPortal"))])
+					("eventview", _("Show Eventview"))])
 		config.plisettings.PLIINFO_mode = ConfigSelection(default="eventview", choices = [
 					("eventview", _("Show Eventview")),
 					("epgpress", _("Show EPG")),
-					("showfavourites", _("Show Favourites")),
-					("single", _("Show Single EPG")),
-					("0", _("Show InfoBar")),
-					("1", _("Show Channel List")),
-					("etportal", _("Show EtPortal"))])
+					("single", _("Show Single EPG"))])
 		config.plisettings.PLIFAV_mode = ConfigSelection(default="eventview", choices = [
 					("eventview", _("Show Eventview")),
 					("epgpress", _("Show EPG")),
-					("showfavourites", _("Show Favourites")),
-					("single", _("Show Single EPG")),
-					("emc", _("Show Enhanced Movie Center")),
-					("mediaportal", _("Show Media Portal")),
-					("dreamplex", _("Show DreamPlex")),
-					("etportal", _("Show EtPortal"))])
-
+					("single", _("Show Single EPG"))])
 					
 	config.epgselection = ConfigSubsection()
 	config.epgselection.sort = ConfigSelection(default="0", choices = [("0", _("Time")),("1", _("Alphanumeric"))])
@@ -909,7 +883,6 @@ def InitUsageConfig():
 	config.streaming.descramble = ConfigYesNo(default = True)
 	config.streaming.stream_eit = ConfigYesNo(default = True)
 	config.streaming.stream_ait = ConfigYesNo(default = True)
-	config.streaming.authentication = ConfigYesNo(default = False)
 
 	config.pluginbrowser = ConfigSubsection()
 	config.pluginbrowser.po = ConfigYesNo(default = False)
