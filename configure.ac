@@ -447,9 +447,9 @@ if test "$BOXTYPE" == "gb800solo" -o "$BOXTYPE" == "gb800se" -o "$BOXTYPE" == "g
 	AC_DEFINE(KEY_GUIDE_TO_KEY_EPG, 1,[define when rc sends a KEY_HELP event for its KEY_EPG key])
 fi
 
-if test "$BOXTYPE" == "gbipbox"; then
-	AC_DEFINE(FORCE_SERVICEAVAIL, 1,[define SERVICEAVAIL for GBIPBOX allways true ])
-fi
+#if test "$BOXTYPE" == "gbipbox"; then
+#	AC_DEFINE(FORCE_SERVICEAVAIL, 1,[define SERVICEAVAIL for GBIPBOX allways true ])
+#fi
 
 if test "$BOXTYPE" == "inihde" -o "$BOXTYPE" == "inihdx" -o "$BOXTYPE" == "inihdp" -o "$BOXTYPE" == "inihde2am"; then
 	AC_DEFINE(KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE, 1,[define when rc sends a KEY_PLAY event for its KEY_PLAYPAUSE key])
