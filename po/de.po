@@ -16,6 +16,24 @@ msgstr ""
 "X-Generator: Poedit 1.7.5\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
 
+msgid "Question"
+msgstr "Frage"
+
+msgid "Warning"
+msgstr "Warnung"
+
+msgid "Video content: %ix%i%s %iHz"
+msgstr "Videoinhalt:  %ix%i%s %iHz"
+
+msgid "Video mode: %s not available"
+msgstr "Videomodus: %s nicht verfügbar"
+
+msgid "Video mode: 1080p also not available"
+msgstr "Videomodus: 1080p nicht verfügbar"
+
+msgid "Video mode: %s"
+msgstr "Videomodus: %s"
+
 msgid ""
 "\n"
 "Advanced options and settings."
@@ -754,6 +772,36 @@ msgstr "Wollen Sie die Aufnahme wirklich löschen?"
 
 msgid "A repeating timer or just once?"
 msgstr "Ein wiederholender oder einmaliger Timer?"
+
+msgid "Recordings abort PIP"
+msgstr "Aufnahmen beenden PIP"
+
+msgid "When enabled, a recording is allowed to abort picture-in-picture mode, when there are no free tuners."
+msgstr "Wenn aktiviert, beendet eine Aufnahme das PIP, wenn keine weiteren freien Tuner verfügbar sind."
+
+msgid "Recordings abort pseudo recordings"
+msgstr "Aufnahmen beenden Pseudo Aufnahmen"
+
+msgid "When enabled, a recording is allowed to abort pseudo recordings, when there are no free tuners."
+msgstr "Wenn aktiviert, beendet eine Aufnahme Pseudo Aufnahmen, wenn keine weiteren freien Tuner verfügbar sind."
+
+msgid "Recordings abort streaming"
+msgstr "Aufnahmen beenden Streaming"
+
+msgid "When enabled, a recording is allowed to abort streaming, when there are no free tuners."
+msgstr "Wenn aktiviert, beendet eine Aufnahme das Streaming, wenn keine weiteren freien Tuner verfügbar sind."
+
+msgid "ask user"
+msgstr "Nachfragen"
+
+msgid "just abort, no message"
+msgstr "Abbrechen ohne Meldung"
+
+msgid "just abort, show message"
+msgstr "Abbrechen mit Meldung"
+
+msgid "never abort"
+msgstr "Niemals abbrechen"
 
 #, python-format
 msgid "A required tool (%s) was not found."
@@ -1679,7 +1727,7 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 msgid "Cancel save timeshift as movie"
-msgstr "Film speichern abbrechen"
+msgstr "Timeshift nicht als Film speichern"
 
 msgid "Cancel next timer"
 msgstr "NÃ¤chsten Timer abbrechen"
@@ -2229,6 +2277,42 @@ msgstr "Konfiguriere die horizontale Ausrichtung der Untertitel."
 msgid "Configure the initial fast forward speed. When you press the fast forward button, winding will start at this speed."
 msgstr "Stelle die Anfangsgeschwindigkeit für den schnellen Vorlauf ein. Wenn die Vorlauftaste gedrückt wird startet der schnelle Vorlauf mit dieser Geschwindigkeit."
 
+msgid "Use time jumps for fast forward/backward"
+msgstr "Zeitsprünge für schnellen Vorlauf ( >> ) und Rücklauf ( << ) benutzen"
+
+msgid "This will go fast forward/backward with time frames of x secs"
+msgstr "Hiermit werden beim schnellen Vorlauf/Rücklauf Zeitsprünge von x Sekunden benutzt."
+
+msgid "Time jump multiplier for fast forward"
+msgstr "Zeitsprung Multiplikator für schnellen Vorlauf"
+
+msgid "Time jump: Use normal fast forward for speeds"
+msgstr "Zeitsprung: Benutzt die normalen Spulgeschwindigkeiten"
+
+msgid "Defines which fast forward speeds are using normal cueing. All other forward speeds and all rewind speeds use time jumps."
+msgstr "Legt fest, welche Vorspulgeschwindigkeit beim Cueing benutzt wird. Alle anderen Vor- und Rückspulgeschwindigkeiten verwenden Zeitsprünge."
+
+msgid "Defines the jump distance for forward jumps. The value is multiplied by the wind speed, e.g. 4x. Values significantly lower than 4s may not work with all media files."
+msgstr "Definiert die Sprungweite für Vorwärtssprünge. Der Wert wird mit der Spulgeschwindigkeit multipliziert. Werte unter 4s funktionieren nicht mit allen Media Dateien."
+
+msgid "Time jump multiplier for fast backward"
+msgstr "Zeitsprung Multiplikator für schnellen Rücklauf"
+
+msgid "Defines the jump distance for backward jumps. The value is multiplied by the rewind speed, e.g. -4x. Values significantly lower than 2s may not work with all media files."
+msgstr "Definiert die Sprungweite für Rückwärtssprünge. Der Wert wird mit der Rückspulgeschwindigkeit multipliziert. Werte unter 2s funktionieren nicht mit allen Media Dateien."
+
+msgid "Defines how fast the time jumps are repeated. Values lower than 500ms may be problematic with NAS."
+msgstr "Legt fest wie schnell die Zeitsprünge wiederholt werden. Werte unter 0,5s machen eventuell Probleme mit NAS Laufwerken."
+
+msgid "Time jump repeat interval for fast forward/backward"
+msgstr "Zeitsprung Wiederholungsintervall für schnellen Vor-/Rücklauf"
+
+msgid "Time jump avoid zero step size"
+msgstr "Nullschritte beim Zeitsprung vermeiden"
+
+msgid "Avoid getting stuck (at the expense of some stuttering) when the jump time is smaller than the time between I-frames."
+msgstr "Vermeidet Videohänger (eventuell mit kleinem Stocken), wenn die Sprungzeit kleiner ist als die Zeit zwischen I-Frames."
+
 msgid "Configure the initial rewind speed. When you press the rewind button, winding will start at this speed."
 msgstr "Stelle die Anfangsgeschwindigkeit für den schnellen Rücklauf ein. Wenn die Rücklauftaste gedrückt wird startet der schnelle Rücklauf mit dieser Geschwindigkeit."
 
@@ -2557,7 +2641,7 @@ msgid "Custom skip time for '7'/'9' buttons"
 msgstr "Gewünschte Sprungzeit für '7'/'9'-Tasten"
 
 msgid "Customize"
-msgstr "Anpassen"
+msgstr "Anpassungen"
 
 msgid "Cut"
 msgstr "Schneiden"
@@ -3870,10 +3954,10 @@ msgid "Graphical EPG"
 msgstr "Grafischer EPG"
 
 msgid "Record Infobar Setup"
-msgstr "Record Infobar Einstellungen"
+msgstr "Aufnahme Infobar Einstellungen"
 
 msgid "Enable record infobar"
-msgstr "Aktiviere Record Infobar"
+msgstr "Aktiviere Aufnahme Infobar"
 
 msgid "Increase direction"
 msgstr "Startpunkt Richtung"
@@ -4538,6 +4622,9 @@ msgstr "Tastaturlayout"
 msgid "Keyboard setup"
 msgstr "Tastatur Einstellungen"
 
+msgid "Transcoding Setup"
+msgstr "Transcoding Einstellungen"
+
 msgid "HotKey Settings"
 msgstr "HotKey-Tasten-Belegungen"
 
@@ -4770,6 +4857,9 @@ msgstr "Log Datei die älter sind als diese Anzahl von Tagen werden gelöscht."
 msgid "Logs settings"
 msgstr "Log Einstellungen"
 
+msgid "PluginBrowser filter setting"
+msgstr "Pluginbrowser-Filter-Einstellungen"
+
 msgid "Long << / >>"
 msgstr "Lang Rücklauf/Vorlauf"
 
@@ -4926,6 +5016,18 @@ msgctxt "Satellite configuration mode"
 msgid "Mode"
 msgstr "Modus [Satelliten Konfiguration]"
 
+msgid "Positioner (selecting satellites)"
+msgstr "Rotor (Satellit auswählen)"
+
+msgid "Press OK to select satellites"
+msgstr "Drücke OK um einen Satellit zu wählen"
+
+msgid "Extra motor options"
+msgstr "Zusätzliche Motor Optionen"
+
+msgid "Max memory positions"
+msgstr "Maximale Speicherpositionen"
+
 msgctxt "Video output mode"
 msgid "Mode"
 msgstr "Auflösung [Video Ausgang]"
@@ -5071,6 +5173,9 @@ msgstr "Multiplex"
 
 msgid "Multisat"
 msgstr "Multisat"
+
+msgid "Multisat all select"
+msgstr "Multisat alle auswählen"
 
 msgid "Music/Ballet/Dance"
 msgstr "Musik/Ballett/Tanz"
@@ -6537,6 +6642,10 @@ msgid "Remote Box Channel Import"
 msgstr "Entfernte Box Bouquet Import"
 
 #, python-format
+msgid "Remote Tuner Server Setup"
+msgstr "Entfernter Tuner-Einstellungen"
+
+#, python-format
 msgid "Select bouquets to convert"
 msgstr "Bouquet auswählen"
 
@@ -6809,11 +6918,11 @@ msgstr "SSID:"
 msgid "Samba Log"
 msgstr "Samba/CIFS Log"
 
-msgid "Samba Setup"
-msgstr "Samba Einstellungen"
-
 msgid "Samba setup"
-msgstr "Samba/CIFS Einstellungen"
+msgstr "Samba-Einstellungen"
+
+msgid "Samba Setup"
+msgstr "Samba-Einstellungen"
 
 msgid "Same resolution as skin"
 msgstr "Gleiche Auflösung wie Skin"
@@ -8411,7 +8520,7 @@ msgstr ""
 "Erstellt von Opendroid-Team\n"
 "www.droidsat.org\n"
 "Support: www.droidsat.org\n"
-"Aktualisierung: 20 Marzo 2015"
+"Aktualisierung: 16 Maggio 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "TS-Datei ist zu groß für ISO9660 level 1!"
@@ -9043,9 +9152,6 @@ msgstr "TimeShift-Einstellungen"
 msgid "Older files in the timeshift directory are removed on every event change."
 msgstr "Ältere Timeshift Dateien werden bei jedem Event gelöscht."
 
-msgid "If set to 'no', can you save older events even after zapping or interruption of the timeshift."
-msgstr "Wenn auf Nein gestellt bleiben Timeshift Dateien beim Umschalten oder Unterbrechung erhalten."
-
 msgid "Timeshift buffer limit [in hours]"
 msgstr "Timeshift-speichern [in Stunden}"
 
@@ -9064,8 +9170,23 @@ msgstr "Zusätzlich zur Kontrolle bei Timeshift Start kann ein anderes Ereignis 
 msgid "Timeshift checking for free space?"
 msgstr "Timeshift Prüfung auf freien Speicherplatz?"
 
-msgid "If the free space is less than 1024 MB, then an attempt is made to delete the old timeshift files"
-msgstr "Wenn der freie Speicher unter 1GB fällt, wird versucht ältere Timeshift Events zu löschen"
+msgid "If the free space is less than setting value, then an attempt is made to delete the old timeshift files."
+msgstr "Wenn der freie Speicherplatz kleiner als der eingestellt Wert ist, wird versucht, die alten Timeshift-Dateien löschen."
+
+msgid "Timeshift event based file splitting"
+msgstr "Timeshift-Sendungsbasierende Dateitrennung"
+
+msgid "If set to 'no', can you save older events even after zapping or interruption of the timeshift."
+msgstr "Wenn 'Nein' eingestellt ist, bleiben Timeshift-Aufnahmen nach Umschalten oder Beenden im Timeshift-Verzeichnis erhalten."
+
+msgid "If set to 'no', timeshift used only one buffer file. It's recommend 'Timeshift checking for older files [in minutes]' and 'Timeshift checking for free space?' to adjust."
+msgstr "Wenn 'Nein' eingestellt ist, wird nur eine Datei als Puffer verwendet. Es wird empfohlen 'Timeshift-Überprüfung auf ältere Dateien [in Minuten]' und 'Timeshift-Überprüfung auf freien Speicherplatz?' anzupassen."
+
+msgid "In addition to the check at an event start, a repetitive check can be used, so that the conditions 'buffer limit in hours' or 'check free space' are detected earlier."
+msgstr "Zusätzlich zu der Überprüfung bei einem Event-Start kann diese Einstellung genutzt werden. Damit wird die Bedingung 'Puffer Limit in Stunden' oder 'Überprüfung auf freien Speicherplatzt' eher erkannt."
+
+msgid "'Buffer in hours' or 'number of last events'. For deleting older timeshift files, the condition which occurred first has priority."
+msgstr "'Puffer in Stunden' oder 'Anzahl der letzten Ereignisse'. Priorität hat die Bedingung zum Löschen älterer Timeshift Dateien, die zuerst aufgetreten ist."
 
 msgid "Timeshift will get saved at end of event!"
 msgstr "TimeShift wird am Ende der Sendung gesichert."
@@ -9573,6 +9694,7 @@ msgstr "ViX EPG"
 msgid "Video Enhancement Settings"
 msgstr "Bildoptimierungs-Einstellungen"
 
+#, python-format
 msgid "Record Infobar"
 msgstr "Aufnahme Infobar-Einstellungen"
 
@@ -10025,6 +10147,9 @@ msgstr "Installiere Plugins"
 #: Backup/restore
 msgid "Installing plugins..."
 msgstr "Installiere Plugins..."
+
+msgid "Installing Software..."
+msgstr "Installiere Software..."
 
 #: Backup/restore
 msgid "Please wait while we check your installed plugins..."
