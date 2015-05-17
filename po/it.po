@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-04-17 02:27+0100\n"
+"PO-Revision-Date: 2015-05-17 02:07+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -15,6 +15,24 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Poedit 1.7.4\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
+
+msgid "Question"
+msgstr "Domanda"
+
+msgid "Warning"
+msgstr "Avvertimento"
+
+msgid "Video content: %ix%i%s %iHz"
+msgstr "I contenuti video:  %ix%i%s %iHz"
+
+msgid "Video mode: %s not available"
+msgstr "Modalità video: %s non disponibile"
+
+msgid "Video mode: 1080p also not available"
+msgstr "Modalità video: 1080p non disponibile"
+
+msgid "Video mode: %s"
+msgstr "Modalità video: %s"
 
 msgid ""
 "\n"
@@ -754,6 +772,36 @@ msgstr "Vuoi davvero eliminare la registrazione"
 
 msgid "A repeating timer or just once?"
 msgstr "Un timer a ripetizione o solo una volta?"
+
+msgid "Recordings abort PIP"
+msgstr "Fine Registrazione PIP"
+
+msgid "When enabled, a recording is allowed to abort picture-in-picture mode, when there are no free tuners."
+msgstr "Quando è abilitata, la registrazione è permesso di interrompere la modalità PIP, quando non ci sono Tuner liberi."
+
+msgid "Recordings abort pseudo recordings"
+msgstr "Registrazioni Termina registrazioni pseudo"
+
+msgid "When enabled, a recording is allowed to abort pseudo recordings, when there are no free tuners."
+msgstr "Quando è abilitata, la registrazione è permesso di interrompere le registrazioni pseudo, quando non ci sono Tuner liberi."
+
+msgid "Recordings abort streaming"
+msgstr "Registrazioni Terminano lo Streaming"
+
+msgid "When enabled, a recording is allowed to abort streaming, when there are no free tuners."
+msgstr "Quando è abilitata, la registrazione è permesso di interrompere lo streaming, quando non ci sono tuner liberi."
+
+msgid "ask user"
+msgstr "Domanda"
+
+msgid "just abort, no message"
+msgstr "Annulla senza notifica"
+
+msgid "just abort, show message"
+msgstr "Annulla con messaggio"
+
+msgid "never abort"
+msgstr "Mai cancellare"
 
 #, python-format
 msgid "A required tool (%s) was not found."
@@ -2229,6 +2277,42 @@ msgstr "Opzione per impostare l'allineamento orizzontale dei sottotitoli."
 msgid "Configure the initial fast forward speed. When you press the fast forward button, winding will start at this speed."
 msgstr "Opzione per impostare la velocità iniziale per la funzione FFW. Premendo il tasto FFW, l'avanzamento veloce si avvierà a questa velocità."
 
+msgid "Use time jumps for fast forward/backward"
+msgstr "Usa salti temporali per l'avanzamento rapido/contrario"
+
+msgid "This will go fast forward/backward with time frames of x secs"
+msgstr "Consente l'avanzamento veloce/all'indietro con tempi di x secondi"
+
+msgid "Time jump multiplier for fast forward"
+msgstr "Tempo moltiplicatore salto in avanti veloce"
+
+msgid "Time jump: Use normal fast forward for speeds"
+msgstr "Tempo di Salto : Utilizzare i normali velocità di avvolgimento"
+
+msgid "Defines which fast forward speeds are using normal cueing. All other forward speeds and all rewind speeds use time jumps."
+msgstr "Definisce che marcia avanti veloce viene utilizzata quando normale. Tutte le altre marce avanti e tutte le velocità di riavvolgimento utilizzano salti temporali."
+
+msgid "Defines the jump distance for forward jumps. The value is multiplied by the wind speed, e.g. 4x. Values significantly lower than 4s may not work with all media files."
+msgstr "Definisce la distanza di salto per salti in avanti. Il valore viene moltiplicato per la velocità di avvolgimento. Valori inferiori 4S non funzionano con tutti i file multimediali."
+
+msgid "Time jump multiplier for fast backward"
+msgstr "Salto Tempo, moltiplicatore per riavvolgimento veloce"
+
+msgid "Defines the jump distance for backward jumps. The value is multiplied by the rewind speed, e.g. -4x. Values significantly lower than 2s may not work with all media files."
+msgstr "Definisce la distanza di salto per salti all'indietro. Il valore viene moltiplicato per la velocità di riavvolgimento. Valori inferiori a 2s non funzionano con tutti i file multimediali."
+
+msgid "Defines how fast the time jumps are repeated. Values lower than 500ms may be problematic with NAS."
+msgstr "Determina quanto velocemente si ripetono i salti temporali. Valori al di sotto 0.5s creano problemi con unità NAS."
+
+msgid "Time jump repeat interval for fast forward/backward"
+msgstr "Tempo intervallo di ripetizione salto per avanti / indietro veloce"
+
+msgid "Time jump avoid zero step size"
+msgstr "Tempo salto, evitare passo pari a zero"
+
+msgid "Avoid getting stuck (at the expense of some stuttering) when the jump time is smaller than the time between I-frames."
+msgstr "Evita video trailer (possibilmente con piccolo Stocken) quando il tempo salto è più breve del tempo che intercorre tra I-frame."
+
 msgid "Configure the initial rewind speed. When you press the rewind button, winding will start at this speed."
 msgstr "Opzione per impostare la velocità iniziale per la funzione REW. Premendo il tasto REW, il riavvolgimento veloce si avvierà a questa velocità."
 
@@ -2429,7 +2513,7 @@ msgid "Cool TV Guide"
 msgstr "Cool TV Guide"
 
 msgid "Copy"
-msgstr "copia"
+msgstr "Copia"
 
 msgid "Copying files"
 msgstr "Nomi estesi"
@@ -2617,11 +2701,11 @@ msgstr "Formato dati DVD"
 msgid "DVD file browser"
 msgstr "File browser DVD"
 
-msgid "DVD media toolbox"
+msgid "DVD media"
 msgstr "Strumenti DVD"
 
 msgid "DVD player"
-msgstr "Nascondere il player"
+msgstr "DVD player"
 
 msgid "DVD titlelist"
 msgstr "Elenco titoli DVD"
@@ -2636,7 +2720,7 @@ msgid "Date"
 msgstr "Data"
 
 msgid "Debug Logs"
-msgstr "log di debug"
+msgstr "Log di debug"
 
 msgid "Deep Standby"
 msgstr "Spegnimento (Deep-Standby)"
@@ -2994,9 +3078,7 @@ msgstr "Vuoi aggiungere ulteriore informazione?"
 msgid ""
 "Do you want to also install samba client ?\n"
 "This allows you to mount your windows shares on this device."
-msgstr ""
-"Vuoi installare anche client samba?\n"
-"Questo permette di montare le condivisioni di Windows su questo dispositivo."
+msgstr "Vuoi installare anche client samba? Questo permette di montare le condivisioni di Windows su questo dispositivo."
 
 msgid ""
 "Do you want to attach a text file to explain the log ?\n"
@@ -3732,7 +3814,10 @@ msgid "Allows you to hide the extensions of known file types."
 msgstr "Consente di nascondere le estensioni dei tipi di file conosciuti."
 
 msgid "Configure the number of days after which items are automatically removed from the trash can."
-msgstr "Dopo quanti giorni verranno eliminati automaticamente i file dal Cestino?"
+msgstr "Configurare il numero di giorni dopo i quali gli elementi vengono rimossi automaticamente dal cestino."
+
+msgid "Clean network trash cans"
+msgstr "Se si desidera è possibile Pulire il cestino di rete"
 
 msgid "When enabled, network trash cans are probed for cleaning."
 msgstr "Quando è abilitato, il cestino di rete viene sondato per la pulizia."
@@ -4536,6 +4621,9 @@ msgstr "Mappatura tastiera"
 msgid "Keyboard setup"
 msgstr "Impostazione tastiera"
 
+msgid "Transcoding Setup"
+msgstr "Impostazioni transcodifica"
+
 msgid "HotKey Settings"
 msgstr "Impostazioni HotKey"
 
@@ -4768,6 +4856,9 @@ msgstr "Registri di età superiore il no di giorni specificato verranno eliminat
 msgid "Logs settings"
 msgstr "Impostazioni Logs"
 
+msgid "PluginBrowser filter setting"
+msgstr "Plugin per il browser Impostazioni filtro"
+
 msgid "Long << / >>"
 msgstr "Lungo << / >>"
 
@@ -4924,6 +5015,18 @@ msgctxt "Satellite configuration mode"
 msgid "Mode"
 msgstr "Modalità [configurazione del satellite]"
 
+msgid "Positioner (selecting satellites)"
+msgstr "Rotore (Selezzionare satellite)"
+
+msgid "Press OK to select satellites"
+msgstr "Premere OK per selezionare i satelliti"
+
+msgid "Extra motor options"
+msgstr "Opzioni Extra rotore"
+
+msgid "Max memory positions"
+msgstr "Max Posizioni in memoria"
+
 msgctxt "Video output mode"
 msgid "Mode"
 msgstr "Risoluzione [video]"
@@ -5046,6 +5149,9 @@ msgstr "Muovere a ovest"
 msgid "Multi EPG"
 msgstr "Multi-EPG"
 
+msgid "Load/Save/Delete"
+msgstr "Carica EPG/Salva/Cancella"
+
 msgid "Delete EPG"
 msgstr "Cancellare EPG"
 
@@ -5066,6 +5172,9 @@ msgstr "Multiplex"
 
 msgid "Multisat"
 msgstr "Multisat"
+
+msgid "Multisat all select"
+msgstr "Multisat seleziona tutto"
 
 msgid "Music/Ballet/Dance"
 msgstr "Musica/Balletto/danza"
@@ -5214,7 +5323,7 @@ msgid "No Connection"
 msgstr "Nessuna connessione"
 
 msgid "No HDD found or HDD not initialized!"
-msgstr "HDD non trovato o non formattato!"
+msgstr "Nessun hard disk trovato oDisco rigido non inizializzato."
 
 #, python-format
 msgid ""
@@ -6523,11 +6632,15 @@ msgid "Blind scan"
 msgstr "Blind-Scan"
 
 msgid "Remote box"
-msgstr "Remote box"
+msgstr "Box remoto"
 
 #, python-format
 msgid "Remote Box Channel Import"
-msgstr "Remote Box Channel Import"
+msgstr "Box remoto Importa Bouquet"
+
+#, python-format
+msgid "Remote Tuner Server Setup"
+msgstr "Impostazione Tuner a distanza"
 
 #, python-format
 msgid "Select bouquets to convert"
@@ -6800,11 +6913,11 @@ msgstr "SSID:"
 msgid "Samba Log"
 msgstr "Samba/CIFS Log"
 
-msgid "Samba Setup"
+msgid "Samba setup"
 msgstr "Impostazioni Samba"
 
-msgid "Samba setup"
-msgstr "Impostazioni Samba/CIFS"
+msgid "Samba Setup"
+msgstr "Impostazioni Samba"
 
 msgid "Same resolution as skin"
 msgstr "Stessa risoluzione della skin"
@@ -7281,7 +7394,7 @@ msgid "Set end time"
 msgstr "Conf. ora fine"
 
 msgid "Set fixed"
-msgstr ""
+msgstr "Impostazione l'indirizzo fisso"
 
 msgid "Set fps for external subtitles"
 msgstr "Impostare fps per i sottotitoli esterni"
@@ -8400,7 +8513,7 @@ msgstr ""
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 20 Marzo 2015"
+"aggiornamento: 17 Maggio 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -9035,9 +9148,6 @@ msgstr "Impostazioni TimeShift"
 msgid "Older files in the timeshift directory are removed on every event change."
 msgstr "File TimeShift vecchi vengono cancellati ad ogni evento."
 
-msgid "If set to 'no', can you save older events even after zapping or interruption of the timeshift."
-msgstr "Su 'no', si può salvare gli eventi più grandi, anche dopo zapping o interruzione del timeshift."
-
 msgid "Timeshift buffer limit [in hours]"
 msgstr "Limite di buffer Timeshift [ore]"
 
@@ -9058,6 +9168,21 @@ msgstr "Timeshift controllando lo spazio libero?"
 
 msgid "If the free space is less than 1024 MB, then an attempt is made to delete the old timeshift files"
 msgstr "Se lo spazio libero è inferiore a 1024 MB, cercare di cancellare i vecchi file timeshift"
+
+msgid "Timeshift event based file splitting"
+msgstr "Timeshift evento basato su file splitting"
+
+msgid "If set to 'no', can you save older events even after zapping or interruption of the timeshift."
+msgstr "Su 'no', si può risparmiare eventi più vecchi, anche dopo lo zapping o interruzione del timeshift."
+
+msgid "If set to 'no', timeshift used only one buffer file. It's recommend 'Timeshift checking for older files [in minutes]' and 'Timeshift checking for free space?' to adjust."
+msgstr "Su 'no', timeshift utilizzato un solo file di buffer. E 'consiglia' Timeshift controllo per i file più vecchi [in minuti] 'e' Timeshift controllando lo spazio libero? 'regolare."
+
+msgid "In addition to the check at an event start, a repetitive check can be used, so that the conditions 'buffer limit in hours' or 'check free space' are detected earlier."
+msgstr "Oltre al controllo a ogni un inizio evento, un controllo ripetitivo può essere utilizzato, in modo che 'limite di buffer tra ore' condizioni o 'controllare lo spazio libero' vengono rilevati in precedenza."
+
+msgid "'Buffer in hours' or 'number of last events'. For deleting older timeshift files, the condition which occurred first has priority."
+msgstr "'Buffer ore 'o' il numero degli ultimi eventi '. Per l'eliminazione di file timeshift meno recenti, la condizione che si è verificata è la prima priorità."
 
 msgid "Timeshift will get saved at end of event!"
 msgstr "Timeshift sara salvato alla fine dell'evento"
@@ -10017,6 +10142,9 @@ msgstr "Installare Plugins"
 msgid "install Plugins..."
 msgstr "Installare Plugins..."
 
+msgid "Installing Software..."
+msgstr "Installazione del software ..."
+
 #: Backup/restore
 msgid "Please wait while we check your installed plugins..."
 msgstr "Per favore attendere Stiamo controllando i plugin installati..."
@@ -10220,12 +10348,8 @@ msgid "You have selected no logs to send."
 msgstr "Avete selezionato alcun log da inviare."
 
 #, python-format
-msgid "You have to wait %s! pressing 0 will zap you to the first channel in your first bouquet and delete your zap history."
-msgstr "Quando e attivata  %s! premendo 0 colpira voi al primo canale nel tuo primo mazzo e cancellare il vostro zap storia."
-
-#, python-format
-msgid "Must wait for%s!"
-msgstr "Occorre attendere per %s!"
+msgid "You have to wait %s!"
+msgstr "Devi Attendere %s!"
 
 #, python-format
 msgid ""
@@ -10539,7 +10663,7 @@ msgid "add to parental protection"
 msgstr "Aggiungere al controllo parentale"
 
 msgid "address:"
-msgstr ""
+msgstr "Indirizzo"
 
 msgid "adult movie/drama"
 msgstr "film adulti/drama"
@@ -10941,7 +11065,7 @@ msgid "height"
 msgstr "quota"
 
 msgid "hops:"
-msgstr ""
+msgstr "hops"
 
 msgid "horizontal"
 msgstr "Orizzontale"
@@ -11076,7 +11200,7 @@ msgid "move up to previous entry"
 msgstr "Tornare alla voce precedente"
 
 msgid "movie/drama (general)"
-msgstr ""
+msgstr "Film/dramma (generale)"
 
 msgid "ms"
 msgstr "ms"
@@ -11169,7 +11293,7 @@ msgid "on"
 msgstr "On"
 
 msgid "on READ ONLY medium."
-msgstr "su supporto DI SOLA LETTURA."
+msgstr "su supporto di sola lettura."
 
 msgid "once"
 msgstr "Una volta"
@@ -11190,7 +11314,7 @@ msgid "packages selected."
 msgstr "pacchetti selezionati"
 
 msgid "page left"
-msgstr ""
+msgstr "Pagina sinistra"
 
 msgid "pass"
 msgstr "Pass"
@@ -11202,10 +11326,10 @@ msgid "pid:"
 msgstr "PID:"
 
 msgid "play as picture in picture"
-msgstr "avviare come picture in picture"
+msgstr "Avviare come PIP"
 
 msgid "play in mainwindow"
-msgstr "avviare nella finestra principale"
+msgstr "Avviare nella finestra principale"
 
 msgid "please press OK when ready"
 msgstr "Premere OK quando pronti"
@@ -11214,23 +11338,23 @@ msgid "please wait, loading picture..."
 msgstr "Immagine in caricamento, attendere..."
 
 msgid "please wait..."
-msgstr "attendere prego ..."
+msgstr "Attendere prego ..."
 
 msgid "popular culture/traditional arts"
-msgstr "popolare/tradizionale"
+msgstr "Popolare/tradizionale"
 
 msgid "pre-school children's program"
-msgstr "programma per bambini in età pre-scolastica"
+msgstr "Programma per bambini in età pre-scolastica"
 
 msgid "provid:"
 msgstr "ProvID"
 
 msgid "provider:"
-msgstr "provider"
+msgstr "Provider"
 
 #, python-format
 msgid "reboot system"
-msgstr "riavvio sistema"
+msgstr "Riavvio del sistema"
 
 msgid "record"
 msgstr "Registrare"
@@ -11242,10 +11366,10 @@ msgid "red"
 msgstr "Rosso"
 
 msgid "religion"
-msgstr "religione"
+msgstr "Religione"
 
 msgid "remarkable people"
-msgstr "persone straordinarie"
+msgstr "Persone straordinarie"
 
 msgid "remove after this position"
 msgstr "Rimuovere dopo questa pos."
@@ -11302,7 +11426,7 @@ msgid "right"
 msgstr "Destro"
 
 msgid "right, wrapped"
-msgstr "destra, avvolto "
+msgstr "Destra, avvolto "
 
 msgid "rock/pop"
 msgstr "Rock/Pop"
@@ -11323,7 +11447,7 @@ msgid "scan state"
 msgstr "Stato ricerca"
 
 msgid "science fiction/fantasy/horror"
-msgstr "scienza/fantasia/horror"
+msgstr "Scienza/fantasia/horror"
 
 msgid "second cable of motorized LNB"
 msgstr "Cavo secondario da LNB motorizzato"
@@ -11344,19 +11468,19 @@ msgid "select menu entry"
 msgstr "Selezionare voce menu"
 
 msgid "serious music/classic music"
-msgstr "musica/musica classica"
+msgstr "Musica/musica classica"
 
 msgid "serious/classical/religious/historical movie/drama"
-msgstr "grave/classica/religioso/film storico/drammatico"
+msgstr "Seriali/classica/religioso/film storico/drammatico"
 
 msgid "service PIN"
 msgstr "PIN canale"
 
 msgid "set as startup service"
-msgstr "impostare come servizio di avvio"
+msgstr "Impostare come servizio di avvio"
 
 msgid "set as startup service from standby"
-msgstr "impostato come un servizio di avvio dalla modalità standby"
+msgstr "Impostato come un servizio di avvio dalla modalità standby"
 
 msgid "stop using as startup service from standby"
 msgstr "smettere di usare il servizio di avvio dalla modalità standby"
@@ -11365,7 +11489,7 @@ msgid "setup PIN"
 msgstr "PIN configurazione"
 
 msgid "share:"
-msgstr ""
+msgstr "Rilascio"
 
 msgid "show DVD main menu"
 msgstr "Mostrare il Menu principale DVD"
@@ -11425,16 +11549,16 @@ msgid "show mediaplayer on mainmenu"
 msgstr "mostra mediaplayer sul menu principale"
 
 msgid "show program information..."
-msgstr "visualizzare informazioni sul programma ..."
+msgstr "Visualizzare informazioni sul programma ..."
 
 msgid "show softwaremanager in plugin menu"
-msgstr "mostra softwaremanager Nel Menu Plugin"
+msgstr "Mostra softwaremanager Nel Menu Plugin"
 
 msgid "show softwaremanager in setup menu"
-msgstr "mostrare software manager nel menu Configurazione"
+msgstr "Mostra software manager nel menu Configurazione"
 
 msgid "show softwaremanager on blue button"
-msgstr "mostra softwaremanager sul pulsante blu"
+msgstr "Mostra softwaremanager sul pulsante blu"
 
 msgid "show transponder info"
 msgstr "Informazioni transponder"
@@ -11443,7 +11567,7 @@ msgid "show/game show (general)"
 msgstr "mostra/game show (generale)"
 
 msgid "shuffle"
-msgstr "per caso"
+msgstr "Per caso"
 
 msgid "shut down"
 msgstr "Spegnimento"
@@ -11467,25 +11591,25 @@ msgid "soap/melodram/folkloric"
 msgstr "Sapone/Melodram/Folklore"
 
 msgid "social/political issues/economics (general)"
-msgstr "politica sociale/economia sociale (generale)"
+msgstr "Politica sociale/economia sociale (generale)"
 
 msgid "social/spiritual science"
-msgstr "sociale/scienza spirituale"
+msgstr "Sociale/scienza spirituale"
 
 msgid "sorting of playlists"
-msgstr "ordinamento delle playlist"
+msgstr "Ordinamento delle playlist"
 
 msgid "special characters"
 msgstr "Caratteri speciali"
 
 msgid "special events"
-msgstr "eventi speciali"
+msgstr "Eventi speciali"
 
 msgid "sports (general)"
-msgstr "sport (generale)"
+msgstr "Sport (generale)"
 
 msgid "sports magazine"
-msgstr "giornale sportivo"
+msgstr "Giornale sportivo"
 
 msgid "standard"
 msgstr "Predefinito"
@@ -11497,13 +11621,13 @@ msgid "start directory"
 msgstr "Cartella di avvio"
 
 msgid "stepsize"
-msgstr "incremento"
+msgstr "Incremento"
 
 msgid "stereo"
 msgstr "Stereo"
 
 msgid "stop using as startup service"
-msgstr "smettere di usare il servizio come avvio"
+msgstr "Smettere di usare il servizio come avvio"
 
 msgid "switch to bookmarks"
 msgstr "Passare ai contrassegni"
@@ -11521,13 +11645,13 @@ msgid "switch to the next subtitle language"
 msgstr "Passare alla lingua sottotitoli successiva"
 
 msgid "system:"
-msgstr "sistema:"
+msgstr "Sistema:"
 
 msgid "talk show"
 msgstr "Talk-Show"
 
 msgid "team sports"
-msgstr ""
+msgstr "Sport Di Squadra"
 
 msgid "technology/natural science"
 msgstr "Tecnologia/scienza naturale"
@@ -11551,10 +11675,10 @@ msgid "top"
 msgstr "Top"
 
 msgid "tourism/travel"
-msgstr "turismo/viaggi"
+msgstr "Turismo/viaggi"
 
 msgid "true"
-msgstr "vero"
+msgstr "Vero"
 
 msgid "tuner is not supported"
 msgstr "Tuner non supportato"
@@ -11563,13 +11687,13 @@ msgid "Tuner is not supported"
 msgstr "Tuner non supportato"
 
 msgid "uShare Log"
-msgstr "uShare Log"
+msgstr "Log uShare"
 
 msgid "uShare Name"
-msgstr "uShare Nome"
+msgstr "Nome uShare"
 
 msgid "uShare Port"
-msgstr "uShare Porta"
+msgstr "Porta uShare"
 
 msgid "uShare Setup"
 msgstr "Impostazioni uShare"
@@ -11596,16 +11720,16 @@ msgid "until standby/restart"
 msgstr "Fino allo standby/riavvio"
 
 msgid "updates available."
-msgstr "aggiornamenti disponibili.il riavvio di enigma2"
+msgstr "Aggiornamenti disponibili.il riavvio di enigma2"
 
 msgid "user defined"
 msgstr "Definito dall utente"
 
 msgid "using:"
-msgstr "utilizza:"
+msgstr "Utilizza:"
 
 msgid "variety show"
-msgstr "varietà"
+msgstr "Varietà"
 
 msgid "vertical"
 msgstr "Verticale"
@@ -11650,7 +11774,7 @@ msgstr ""
 "Una copia è stata inviata a te stesso."
 
 msgid "white"
-msgstr "bianco"
+msgstr "Bianco"
 
 msgid "whitelist"
 msgstr "Lista bianca"
@@ -11808,7 +11932,7 @@ msgid "Show pressed buttons in telnet debug mode"
 msgstr "Mostra tasti premuti in modalità debug telnet "
 
 msgid "Select if you want to show every pressed button in telnet init 4 mode."
-msgstr "ASelezionare se si desidera visualizzare ogni tasto premuto in telnet init 4 della moda."
+msgstr "Selezionare se si desidera visualizzare ogni tasto premuto in telnet init 4 della moda."
 
 #
 msgid "an internal error has occur"
