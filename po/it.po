@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-05-17 02:07+0100\n"
+"PO-Revision-Date: 2015-05-17 03:06+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -3815,9 +3815,6 @@ msgstr "Consente di nascondere le estensioni dei tipi di file conosciuti."
 
 msgid "Configure the number of days after which items are automatically removed from the trash can."
 msgstr "Configurare il numero di giorni dopo i quali gli elementi vengono rimossi automaticamente dal cestino."
-
-msgid "Clean network trash cans"
-msgstr "Se si desidera è possibile Pulire il cestino di rete"
 
 msgid "When enabled, network trash cans are probed for cleaning."
 msgstr "Quando è abilitato, il cestino di rete viene sondato per la pulizia."
