@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-05-17 03:06+0100\n"
+"PO-Revision-Date: 2015-05-17 14:43+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -6247,7 +6247,7 @@ msgid "Power threshold in mA"
 msgstr "Limite di potenza in mA"
 
 msgid "PowerManager entry"
-msgstr "Rimuovere voce nameserver"
+msgstr "Ingresso PowerManager"
 
 msgid "PowerManager log"
 msgstr "PowerManager Log"
@@ -12178,41 +12178,41 @@ msgstr ""
 
 # Powerlost usage.config
 msgid "just boot"
-msgstr "Normal Starten"
+msgstr "Boot Normale"
 
 # Powerlost usage.config
 msgid "goto standby"
-msgstr "In Standby gehen"
+msgstr "Mettere in standby"
 
 # Powerlost usage.config
 msgid "goto deep-standby"
-msgstr "Ausschalten"
+msgstr "Mettere in deep-standby"
 
 # Powerlost setup.xml
 msgid "After PowerLost"
-msgstr "Verhalten der Box nach Stromausfall"
+msgstr "Dopo mancanza di corrente"
 
 # Powerlost setup.xml
 msgid "Select what should be done when the %s %s was shutdown incorrectly, or after the Power was lost."
-msgstr "Wählen Sie aus, was passieren soll, nachdem ihre %s %s nicht sauber heruntergefahren wurde, bzw. was nach einem Stromausfall geschehen soll."
+msgstr "Selezionare cosa si dovrebbe fare quando il %s %s è stato arrestato in modo non corretto, o dopo che è mancata la corrente."
 
 #
 msgid "Show MiniTV in the Front Display"
-msgstr "Zeige MiniTV im Display"
+msgstr "Mostra miniTV sul display anteriore"
 
 msgid "You can Display MiniTV with or without OSD Menu"
-msgstr "Zeige im Display MiniTV mit oder ohne OSD Menu"
+msgstr "Mostra la miniTV display con o senza menu OSD"
 
 msgid "MiniTV with OSD"
-msgstr "MiniTV mit OSD"
+msgstr "MiniTV con OSD"
 
 #
 msgid "Set Framerate for MiniTV"
-msgstr "Setzen der Framerate im MiniTV"
+msgstr "Impostare il frame rate in miniTV"
 
 #
 msgid "Lower Framerate save CPU Time"
-msgstr "Geringe Framerate reduziert die CPU Belastung"
+msgstr "Il Frame rate basso riduce il carico della CPU"
 
 # python\Screens\LanguageSelection.py
 msgid "Do you want to delete all other languages?"
@@ -12235,7 +12235,7 @@ msgstr "La Lingua di default non può essere cancellata !!"
 
 #, python-format
 msgid "Show \"add to EPGRefresh\" in"
-msgstr "Mostra \"aggiungere a EPGRefresh\" in"
+msgstr "Mostra\"aggiungere a EPGRefresh\" in"
 
 msgid "nowhere"
 msgstr "Da nessuna parte"
