@@ -203,6 +203,8 @@ void bsodFatal(const char *component)
 
 		xml.string("skin", getConfigString("config.skin.primary_skin", "Default Skin"));
 		xml.string("sourcedate", enigma2_date);
+		xml.string("branch", enigma2_branch);
+		xml.string("rev", enigma2_rev);
 		xml.string("version", PACKAGE_VERSION);
 		xml.close();
 
@@ -216,11 +218,17 @@ void bsodFatal(const char *component)
 		else if (access("/proc/stb/info/model", F_OK) != -1) {
 			xml.stringFromFile("stbmodel", "/proc/stb/info/model");
 		}
+		xml.cDataFromFile("imageversion", "/etc/image-version");
 		xml.cDataFromCmd("kernelversion", "uname -a");
 		xml.stringFromFile("kernelcmdline", "/proc/cmdline");
-		xml.stringFromFile("nimsockets", "/proc/bus/nim_sockets");
-		xml.cDataFromFile("imageversion", "/etc/image-version");
-		xml.cDataFromFile("imageissue", "/etc/issue.net");
+		xml.cDataFromCmd("memory", "free -l");
+		xml.cDataFromCmd("filesystems", "df -h");
+		xml.cDataFromCmd("mounts", "mount");
+		xml.cDataFromCmd("nimsockets", "cat /proc/bus/nim_sockets");
+		xml.cDataFromCmd("networkifconfig", "ifconfig");
+		xml.cDataFromFile("networkinterfaces", "/etc/network/interfaces");
+		xml.cDataFromFile("dns", "/etc/resolv.conf");
+		xml.cDataFromFile("defaultgateway", "/etc/default_gw");
 		xml.close();
 
 		if (detailedCrash)
@@ -354,7 +362,7 @@ void handleFatalSignal(int signum, siginfo_t *si, void *ctx)
 	ucontext_t *uc = (ucontext_t*)ctx;
 	oops(uc->uc_mcontext);
 #endif
-	eDebug("-------");
+	eDebug("-------FATAL SIGNAL");
 	bsodFatal("enigma2, signal");
 }
 
