@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-05-17 14:43+0100\n"
+"PO-Revision-Date: 2015-05-30 01:10+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -2214,8 +2214,14 @@ msgstr "Opzione per impostare la funzione associata alla pressione prolungata de
 msgid "Configure the function of a short press on the power button."
 msgstr "Opzione per impostare la funzione associata alla pressione breve del tasto power."
 
+msgid "History buttons mode"
+msgstr "Storia Modalità pulsanti"
+
 msgid "Configure the function of the <  > buttons."
 msgstr "Configurare la funzione dei <  > tasti."
+
+msgid "Configure the function of the &lt;  &gt; buttons."
+msgstr "Configurare la funzione del &lt;  &gt; Per passare le chiavi."
 
 msgid "Select what you want the Bookmark button to activate:"
 msgstr "Selezionare ciò che si desidera fare con il tasto Bookmark:"
@@ -4130,9 +4136,6 @@ msgstr "Informazioni gerarchia"
 msgid "High bitrate support"
 msgstr "Supporto hight bitrate"
 
-msgid "History buttons mode"
-msgstr "Modalità Storia pulsanti"
-
 msgid "History zap..."
 msgstr "Storia zap ..."
 
@@ -5186,7 +5189,7 @@ msgstr "Flash immagine NFI in corso"
 msgid "NFI image flashing completed. Press Yellow to Reboot!"
 msgstr ""
 "Immagine NFI Flashing completato.\n"
-"Premere la casella gialla per riavviare!"
+"Premere il pulsante giallo per riavviare!"
 
 msgid "NFS Setup"
 msgstr "Impostazioni NFS"
@@ -5320,7 +5323,9 @@ msgid "No Connection"
 msgstr "Nessuna connessione"
 
 msgid "No HDD found or HDD not initialized!"
-msgstr "Nessun hard disk trovato oDisco rigido non inizializzato."
+msgstr ""
+"Nessun hard disk trovato\n"
+"Disco rigido non inizializzato."
 
 #, python-format
 msgid ""
@@ -5810,6 +5815,9 @@ msgstr "Gestione pacchetti"
 
 msgid "Packet manager"
 msgstr "Gestore pacchetti"
+
+msgid "PacketManager"
+msgstr "Gestore-pacchetti"
 
 msgid "Page down"
 msgstr "Pagina giù"
@@ -6413,7 +6421,7 @@ msgid "Provider to scan"
 msgstr "Provider su cui cercare"
 
 msgid "Provider: "
-msgstr ""
+msgstr "Provider"
 
 msgid "Providers"
 msgstr "Provider"
@@ -6754,7 +6762,9 @@ msgid "Repeat type"
 msgstr "Tipo ripetizione"
 
 msgid "Repeating event currently recording... What do you want to do?"
-msgstr "Registrazione in corso di evento ricorrente. Cosa si desidera fare?"
+msgstr ""
+"Registrazione in corso di evento ricorrente...\n"
+"cosa si desidera fare?"
 
 msgid "Repeats"
 msgstr "Ripetizioni"
@@ -8429,6 +8439,12 @@ msgstr "Scambiare PiP e schermo principale"
 msgid "Swap SNR in '%' with SNR in 'db'"
 msgstr "Swap SNR in '%' with SNR in 'db"
 
+msgid "Percent"
+msgstr "Percentuale"
+
+msgid "Decibel"
+msgstr "decibel"
+
 msgid "Swap services"
 msgstr "Servizi Swap"
 
@@ -8592,7 +8608,7 @@ msgid "Text color"
 msgstr "Colore testo"
 
 msgid "Thai"
-msgstr ""
+msgstr "Thai"
 
 msgid ""
 "Thank you for using the wizard.\n"
@@ -12428,10 +12444,13 @@ msgid "Fastforward"
 msgstr "Avanti veloce"
 
 msgid "File long"
-msgstr "Solo i file"
+msgstr "file lungo"
+
+msgid "Help"
+msgstr "Aiuto"
 
 msgid "Help long"
-msgstr "Guida lungo"
+msgstr "Aiuto lungo"
 
 msgid "HDMI Rx long"
 msgstr "HDMI Rx lungo"
