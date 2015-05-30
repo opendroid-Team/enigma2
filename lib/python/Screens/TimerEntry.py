@@ -211,8 +211,6 @@ class TimerEntry(Screen, ConfigListScreen):
 				self.list.append(getConfigListEntry(_("Friday"), self.timerentry_day[4]))
 				self.list.append(getConfigListEntry(_("Saturday"), self.timerentry_day[5]))
 				self.list.append(getConfigListEntry(_("Sunday"), self.timerentry_day[6]))
-			if self.timerentry_justplay.value != "zap":
-				self.list.append(getConfigListEntry(_("Rename name and description for new events"), self.timerentry_renamerepeat))
 
 		self.entryDate = getConfigListEntry(_("Date"), self.timerentry_date, _("Set the date the timer must start."))
 		if self.timerentry_type.value == "once":
