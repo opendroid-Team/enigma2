@@ -116,7 +116,37 @@ eDVBResourceManager::eDVBResourceManager()
 		m_boxtype = DM800SE;
 	else if (!strncmp(tmp, "dm7020hd\n", rd))
 		m_boxtype = DM7020HD;
+	else if (!strncmp(tmp, "dm7080\n", rd))
+		m_boxtype = DM7080;
+	else if (!strncmp(tmp, "dm820\n", rd))
+		m_boxtype = DM820;
+	else if (!strncmp(tmp, "Gigablue\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gb800solo\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gb800se\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gb800ue\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gb800seplus\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gb800ueplus\n", rd))
+		m_boxtype = GIGABLUE;
 	else if (!strncmp(tmp, "gbipbox\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbquad\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbquadplus\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbultra\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbultrase\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbultraue\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbx1\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbx3\n", rd))
 		m_boxtype = GIGABLUE;
 	else {
 		eDebug("boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
