@@ -263,13 +263,13 @@
 		<key id="KEY_GREEN" mapto="timerAdd" flags="m" />
 	</map>
 
-	<!--map context="InfobarAudioSelectionActions">
+	<map context="InfobarAudioSelectionActions">
 		<key id="KEY_AUDIO" mapto="audioSelection" flags="m" />
-	</map-->
+	</map>
 
-	<!--map context="InfobarSubtitleSelectionActions">
+	<map context="InfobarSubtitleSelectionActions">
 		<key id="KEY_SUBTITLE" mapto="subtitleSelection" flags="m" />
-	</map-->
+	</map>
 
 	<map context="InfobarSubserviceSelectionActions">
 		<!--key id="KEY_GREEN" mapto="GreenPressed" flags="b" /-->
