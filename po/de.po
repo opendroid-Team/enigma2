@@ -16,6 +16,201 @@ msgstr ""
 "X-Generator: Poedit 1.7.5\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
 
+msgid "Switch to Radio Mode"
+msgstr "Wechselt zum Radio Modus"
+
+msgid "Start Timeshift"
+msgstr "Startet zeitversetzes Fernsehen"
+
+msgid "Show Movies"
+msgstr "Zeige die Aufnahmen"
+
+msgid "Main Menu"
+msgstr "Öffnet das Hauptmenü"
+
+msgid "Stop Timeshift"
+msgstr "Stoppt zeitversetzes Fernsehen"
+
+msgid "Show Infobar EPG"
+msgstr "Zeige das EPG in der Infobar"
+
+msgid "Zap up"
+msgstr "Hochschalten"
+
+msgid "Show Extension Selection"
+msgstr "Zeige die installierten Erweiterungen"
+
+msgid "Activate HbbTV (Redbutton)"
+msgstr "Startet HbbTV (RedButton)"
+
+msgid "Show Event Info Plugins"
+msgstr "Zeige die Event Plugins"
+
+msgid "Switch Channel up in Infobar"
+msgstr "Kanalwechsel Senderliste nach oben"
+
+msgid "Switch Channel down in Infobar"
+msgstr "Kanalwechsel Senderliste nach unten"
+
+msgid "Show Plugin Selection"
+msgstr "Zeige die installierten Plugins"
+
+msgid "Start instant recording"
+msgstr "Startet eine Sofortaufnahme"
+
+msgid "Hotkey Setup"
+msgstr "Offnet die Hotkey Einstellungen"
+
+msgid "History next"
+msgstr "Zap Verlauf vor"
+
+msgid "History Zap Menu +"
+msgstr "Zap Verlauf Menü vor"
+
+msgid "History Zap Menu -"
+msgstr "Zap Verlauf Menü zurück"
+
+msgid "History back"
+msgstr "Zap Verlauf zurück"
+
+msgid "Show Subtitle Selection"
+msgstr "Zeige verfügbare Untertitel"
+
+msgid "Show Single Service EPG"
+msgstr "Zeige das EPG für den aktuellen Sender"
+
+msgid "Show Graphical Multi EPG"
+msgstr "Zeige das grafische EPG"
+
+msgid "Switch to TV Mode"
+msgstr "Wechselt zum TV Modus"
+
+msgid "Zap down"
+msgstr "Runterschalten"
+
+msgid "Start Teletext"
+msgstr "Zeige den Videotext"
+
+msgid "Show Subservice Selection"
+msgstr "Zeige verfügbare Unterkanäle"
+
+msgid "Show Audioselection"
+msgstr "Zeige Audiospuren und Optionen"
+
+msgid "Show Multi Service EPG"
+msgstr "Zeige Mehrfach EPG"
+
+msgid "Show Event View"
+msgstr "Zeige Event Anzeige"
+
+msgid "Show Event Info"
+msgstr "Zeige Event Informationen"
+
+msgid "Show Help"
+msgstr "Zeige die Hilfe"
+
+msgid "Toggle Infobar/SecondInfobar"
+msgstr "Wechsel Infobar und Secondinfobar"
+
+msgid "Show First Infobar"
+msgstr "Zeige die erste Infobar"
+
+msgid "Show Second Infobar"
+msgstr "Zeige die zweite Infobar"
+
+msgid "BackZap [0]"
+msgstr "BackZap [Taste 0]"
+
+msgid "Volume down"
+msgstr "Lautstärke verringern"
+
+msgid "Volume up"
+msgstr "Lautstärke erhöhen"
+
+msgid "Show Service List"
+msgstr "Zeige die Senderliste"
+
+msgid "History Zap Menü"
+msgstr "Zeige die Zap Historie"
+
+msgid "Show Favourites List"
+msgstr "Zeige die Sender Favoriten"
+
+msgid "Show Satellites List"
+msgstr "Zeige die Satellitenliste"
+
+msgid "Instant Record"
+msgstr "Sofortaufnahme"
+
+msgid "ZoomInOut"
+msgstr "Zoomen rein/raus"
+
+msgid "ZoomOff"
+msgstr "Zoom deaktivieren"
+
+msgid "Show Picture In Picture"
+msgstr "Bild in Bild anzeigen"
+
+msgid "Swap Picture In Picture"
+msgstr "Bild in Bild wechseln"
+
+msgid "Move Picture In Picture"
+msgstr "Bild in Bild verschieben"
+
+msgid "Toggle Picture In Picture Zap"
+msgstr "Bild in Bild Umschaltung wechseln"
+
+msgid "Toggle HDMI-In Full Screen"
+msgstr "Wechselt den HDMI-Eingang Fullscreen"
+
+msgid "Toggle HDMI-In Picture In Picture"
+msgstr "Wechselt den HDMI-In Bild in Bild"
+
+msgid "Zap to"
+msgstr "Schalte zu ..."
+
+msgid "Panic to"
+msgstr "Panikfunktion zu ..."
+
+msgid "Restart Enigma"
+msgstr "Enigma Neustart"
+
+msgid "Scanning"
+msgstr "Sendersuche"
+
+msgid "Tuner Configuration"
+msgstr "Tuner-Einstellungen"
+
+msgid "Setp"
+msgstr "Einstellungen"
+
+msgid "Network Menu"
+msgstr "Netzwerk-Einstellungen"
+
+msgid "Plugin Browser"
+msgstr "Alle Plugins anzeigen"
+
+msgid "Open AutoTimer"
+msgstr "Öffnet den AutoTimer"
+
+msgid "Memory Info"
+msgstr "Speicher Informationen"
+
+msgid "Usage Setup"
+msgstr "Benutzereinstellungen"
+
+msgid "User Interface"
+msgstr "Benutzeroberfläche"
+
+msgid "Recording Setup"
+msgstr "Aufnahme-Einstellungen"
+
+msgid "Harddisk Setup"
+msgstr "Festplatten-Einstellungen"
+
+msgid "Subtitles Settings"
+msgstr "Untertitel-Einstellungen"
+
 msgid "Question"
 msgstr "Frage"
 
@@ -686,6 +881,13 @@ msgid ""
 msgstr ""
 "Ein Powertimer will die %s %s neu starten.\n"
 "Jetzt neu starten?"
+
+msgid ""
+"A finished powertimer wants to shutdown your %s %s.\n"
+"Do that now?"
+msgstr ""
+"Ein Powertimer will Ihren Receiver ausschalten.\n"
+"Ihre %s %s jetzt ausschalten?"
 
 msgid ""
 "A finished powertimer wants to restart the user interface.\n"
@@ -5292,7 +5494,7 @@ msgstr "MAC-Adresse Einstellungen"
 msgid "MAC-adress"
 msgstr "MAC-Adresse"
 
-msgid "Press OK to set the MAC-adress."
+msgid "Press OK to set the MAC-address."
 msgstr "Drücken Sie OK, um die MAC-Adresse zu setzen."
 
 msgid "New"
@@ -6253,7 +6455,10 @@ msgid "Positioner"
 msgstr "Rotor"
 
 msgid "Positioner setup"
-msgstr "Rotor Einstellungen"
+msgstr "Rotoreinstellungen"
+
+msgid "Positioner fine movement"
+msgstr "Rotorfeinabstimmung"
 
 msgid "Power threshold in mA"
 msgstr "Strom Schwellwert in mA"
@@ -6638,7 +6843,11 @@ msgstr "Service PIN merken"
 
 #, python-format
 msgid "Blind scan"
-msgstr "Blind-Scan"
+msgstr "Hintergrundsuchlauf"
+
+#, python-format
+msgid "Blindscan was canceled by the user."
+msgstr "Hintergrundsuchlauf durch Nutzer abgebrochen."
 
 msgid "Remote box"
 msgstr "Entfernte Box"
@@ -6826,6 +7035,18 @@ msgstr "Test wiederholen"
 
 msgid "Restart your network connection and interfaces.\n"
 msgstr "Neustart der Netzwerk-Konfiguration.\n"
+
+msgid "Use the network wizard to configure your Network\n"
+msgstr "Starte den Assistenten zur Netzwerk Konfiguration.\n"
+
+msgid "Set the MAC-address of your %s %s.\n"
+msgstr "Setze die Mac-Adresse deiner %s %s.\n"
+
+msgid "MAC-address settings"
+msgstr "Mac-Adresse Einstellung"
+
+msgid "Nameserver Setup"
+msgstr "DNS Einstellungen"
 
 msgid "Schedule a auto remount of your network shares."
 msgstr "Automatischen Neuverbinden aller Netzwerkverbindungen."
@@ -8443,7 +8664,7 @@ msgid "Swap PiP and main picture"
 msgstr "Tausche PiP mit Hauptbild"
 
 msgid "Swap SNR in '%' with SNR in 'db'"
-msgstr "Wechsel SNR in '%' gegen SNR in 'dB'"
+msgstr "Zeige SNR (Signal-Rausch-Verhältnis) in:"
 
 msgid "Percent"
 msgstr "Prozent"
@@ -8532,7 +8753,7 @@ msgstr ""
 "Erstellt von Opendroid-Team\n"
 "www.droidsat.org\n"
 "Support: www.droidsat.org\n"
-"Aktualisierung: 30 Mei 2015"
+"Aktualisierung: 16 Juni 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "TS-Datei ist zu groß für ISO9660 level 1!"
@@ -10655,6 +10876,15 @@ msgstr "startet gleich"
 
 msgid "activate network adapter configuration"
 msgstr "Netzwerkverbindung aktivieren"
+
+msgid "Select Network Adapter"
+msgstr "Wähle Adapter"
+
+msgid "Network Configuration..."
+msgstr "Netzwerkeinstellungen"
+
+msgid "Network test..."
+msgstr "Netzwerktest"
 
 msgid "add alternatives"
 msgstr "Alternativen hinzufügen"
