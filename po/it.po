@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-06-16 02:15+0100\n"
+"PO-Revision-Date: 2015-06-16 02:34+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -186,9 +186,6 @@ msgstr "Impostazioni"
 
 msgid "Network Menu"
 msgstr "Menu Rete"
-
-msgid "Plugin Browser"
-msgstr "Visualizza tutti i plugin"
 
 msgid "Open AutoTimer"
 msgstr "Aprire AutoTimer"
@@ -7032,9 +7029,6 @@ msgstr "Ripetere il test"
 msgid "Restart your network connection and interfaces.\n"
 msgstr "Riavviare connessioni di rete e relative interfacce.\n"
 
-msgid "Use the network wizard to configure your Network\n"
-msgstr "Utilizzare la procedura guidata di rete per configurare la rete\n"
-
 msgid "Set the MAC-address of your %s %s.\n"
 msgstr "Impostare l'indirizzo MAC della vostra %s %s.\n"
 
@@ -7720,9 +7714,6 @@ msgstr "Configurazione EPG"
 
 msgid "PluginBrowser filter settings..."
 msgstr "PluginBrowser impostazioni del filtro ..."
-
-msgid "Setup"
-msgstr "Configurazione"
 
 msgid "Setup how to control the channel changing."
 msgstr "Configurazione come controllare il cambio canale."
