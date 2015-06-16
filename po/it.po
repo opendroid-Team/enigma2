@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-05-30 01:20+0100\n"
+"PO-Revision-Date: 2015-06-16 02:15+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -15,6 +15,201 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Poedit 1.7.4\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
+
+msgid "Switch to Radio Mode"
+msgstr "Passare alla modalità Radio"
+
+msgid "Start Timeshift"
+msgstr "Start Timeshift"
+
+msgid "Show Movies"
+msgstr "Mostra i Films"
+
+msgid "Main Menu"
+msgstr "Apre il menu principale"
+
+msgid "Stop Timeshift"
+msgstr "Stop Timeshift"
+
+msgid "Show Infobar EPG"
+msgstr "Mostra EPG in Infobar"
+
+msgid "Zap up"
+msgstr "Zap up"
+
+msgid "Show Extension Selection"
+msgstr "Mostra le estensioni installate"
+
+msgid "Activate HbbTV (Redbutton)"
+msgstr "Attivare HbbTV (RedButton)"
+
+msgid "Show Event Info Plugins"
+msgstr "Mostra Evento Plugin"
+
+msgid "Switch Channel up in Infobar"
+msgstr "Passare Canale verso alto in Infobar"
+
+msgid "Switch Channel down in Infobar"
+msgstr "Passare Canale verso il basso in Infobar"
+
+msgid "Show Plugin Selection"
+msgstr "Mostrare selezione Plugin"
+
+msgid "Start instant recording"
+msgstr "Iniziare registrazione istantanea"
+
+msgid "Hotkey Setup"
+msgstr "Impostazioni Hotkey"
+
+msgid "History next"
+msgstr "Naturalmente Zap prima"
+
+msgid "History Zap Menu +"
+msgstr "Storia Zap Menu +"
+
+msgid "History Zap Menu -"
+msgstr "Storia Zap Menu -"
+
+msgid "History back"
+msgstr "Storia indietro"
+
+msgid "Show Subtitle Selection"
+msgstr "Mostra selezione dei sottotitoli"
+
+msgid "Show Single Service EPG"
+msgstr "Mostra Singolo Servizio EPG"
+
+msgid "Show Graphical Multi EPG"
+msgstr "Mostra Graphical Multi EPG"
+
+msgid "Switch to TV Mode"
+msgstr "Passare alla modalità TV"
+
+msgid "Zap down"
+msgstr "zap giù"
+
+msgid "Start Teletext"
+msgstr "Start Televideo"
+
+msgid "Show Subservice Selection"
+msgstr "Mostra Selezione subservice"
+
+msgid "Show Audioselection"
+msgstr "Mostra Audioselection"
+
+msgid "Show Multi Service EPG"
+msgstr "Mostra Multi Service EPG"
+
+msgid "Show Event View"
+msgstr "Mostra Eventi nel Display"
+
+msgid "Show Event Info"
+msgstr "Mostra Informazioni Eventi"
+
+msgid "Show Help"
+msgstr "Mostra Aiuto"
+
+msgid "Toggle Infobar/SecondInfobar"
+msgstr "Alterna Infobar/SecondInfobar"
+
+msgid "Show First Infobar"
+msgstr "Mostra prima Infobar"
+
+msgid "Show Second Infobar"
+msgstr "Mostra seconda Infobar"
+
+msgid "BackZap [0]"
+msgstr "BackZap [0]"
+
+msgid "Volume down"
+msgstr "Volume Giù"
+
+msgid "Volume up"
+msgstr "Volume su"
+
+msgid "Show Service List"
+msgstr "Mostra Lista Servizio"
+
+msgid "History Zap Menu"
+msgstr "Mostra Storia Zap"
+
+msgid "Show Favourites List"
+msgstr "Mostra i canali preferiti"
+
+msgid "Show Satellites List"
+msgstr "Mostra Lista Satelliti"
+
+msgid "Instant Record"
+msgstr "Registrazione istantanea"
+
+msgid "ZoomInOut"
+msgstr "Zoom Fuori"
+
+msgid "ZoomOff"
+msgstr "Disattiva Zoom"
+
+msgid "Show Picture In Picture"
+msgstr "Moostra PIP"
+
+msgid "Swap Picture In Picture"
+msgstr "Cambiare PIP"
+
+msgid "Move Picture In Picture"
+msgstr "Sposta PIP"
+
+msgid "Toggle Picture In Picture Zap"
+msgstr "Cambiare PIP Zap"
+
+msgid "Toggle HDMI-In Full Screen"
+msgstr "Cambia HDMI-a tutto schermo"
+
+msgid "Toggle HDMI-In Picture In Picture"
+msgstr "Cambia HDMI- In PIP"
+
+msgid "Zap to"
+msgstr "Passa a ..."
+
+msgid "Panic to"
+msgstr "Funzione antipanico a ..."
+
+msgid "Restart Enigma"
+msgstr "Riavviare Enigma"
+
+msgid "Scanning"
+msgstr "Sintonia"
+
+msgid "Tuner Configuration"
+msgstr "Configurazione-Tuner"
+
+msgid "Setup"
+msgstr "Impostazioni"
+
+msgid "Network Menu"
+msgstr "Menu Rete"
+
+msgid "Plugin Browser"
+msgstr "Visualizza tutti i plugin"
+
+msgid "Open AutoTimer"
+msgstr "Aprire AutoTimer"
+
+msgid "Memory Info"
+msgstr "Informazioni sulla memoria"
+
+msgid "Usage Setup"
+msgstr "Preferenze utente"
+
+msgid "User Interface"
+msgstr "interfaccia utente"
+
+msgid "Recording Setup"
+msgstr "Impostazioni di registrazione"
+
+msgid "Harddisk Setup"
+msgstr "Impostazioni HDD"
+
+msgid "Subtitles Settings"
+msgstr "Impostazioni sottotitoli"
 
 msgid "Question"
 msgstr "Domanda"
@@ -688,6 +883,13 @@ msgstr ""
 "di porre il %s %s in standby. Farlo ora?"
 
 msgid ""
+"A finished powertimer wants to shutdown your %s %s.\n"
+"Do that now?"
+msgstr ""
+"Un powertimer finito vuole spegnere il%s %s.\n"
+"Farlo ora?"
+
+msgid ""
 "A finished powertimer wants to restart the user interface.\n"
 "Do that now?"
 msgstr ""
@@ -1280,8 +1482,8 @@ msgid ""
 "%s\n"
 "Your receiver will restart after the backup has been restored!"
 msgstr ""
-"Ripristinare il seguente backup?\n"
-"\n"
+"Sei sicuro di voler ripristinare\n"
+"il seguente backup:\n"
 "%s\n"
 "Al termine del ripristino, il ricevitore verrà riavviato."
 
@@ -6251,6 +6453,9 @@ msgstr "Rotore"
 msgid "Positioner setup"
 msgstr "Configurazione Rotore"
 
+msgid "Positioner fine movement"
+msgstr "Posizionatore fine movimento"
+
 msgid "Power threshold in mA"
 msgstr "Limite di potenza in mA"
 
@@ -6636,6 +6841,10 @@ msgstr "Ricordare il PIN canale"
 msgid "Blind scan"
 msgstr "Blind-Scan"
 
+#, python-format
+msgid "Blindscan was canceled by the user."
+msgstr "Blindscan è stato annullato dall'utente."
+
 msgid "Remote box"
 msgstr "Box remoto"
 
@@ -6822,6 +7031,18 @@ msgstr "Ripetere il test"
 
 msgid "Restart your network connection and interfaces.\n"
 msgstr "Riavviare connessioni di rete e relative interfacce.\n"
+
+msgid "Use the network wizard to configure your Network\n"
+msgstr "Utilizzare la procedura guidata di rete per configurare la rete\n"
+
+msgid "Set the MAC-address of your %s %s.\n"
+msgstr "Impostare l'indirizzo MAC della vostra %s %s.\n"
+
+msgid "MAC-address settings"
+msgstr "Impostazioni MAC-address"
+
+msgid "Nameserver Setup"
+msgstr "Impostazioni DNS"
 
 msgid "Schedule a auto remount of your network shares."
 msgstr "Pianificare un remount automatico delle condivisioni di rete."
@@ -8526,7 +8747,7 @@ msgstr ""
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 30 Maggio 2015"
+"aggiornamento: 16 Giugno 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -10654,6 +10875,15 @@ msgstr "Avvio in corso"
 msgid "activate network adapter configuration"
 msgstr "Attivare la configurazione interfaccia di rete"
 
+msgid "Select Network Adapter"
+msgstr "Selezionare scheda di rete"
+
+msgid "Network Configuration..."
+msgstr "Configurazione di rete ..."
+
+msgid "Network test..."
+msgstr "Test di rete ..."
+
 msgid "add alternatives"
 msgstr "Aggiungere alternative"
 
@@ -10712,7 +10942,7 @@ msgid "arts/culture magazine"
 msgstr "arte/cultura magazine"
 
 msgid "as plugin in extended bar"
-msgstr ""
+msgstr "Come un elenco di estensioni plugin"
 
 msgid "at beginning"
 msgstr "all'inizio"
@@ -10806,7 +11036,7 @@ msgid "circular right"
 msgstr "Circolare a destra"
 
 msgid "close share view"
-msgstr ""
+msgstr "Chiudi Share view"
 
 msgid "comedy"
 msgstr "commedia"
@@ -11005,10 +11235,10 @@ msgid "fitness & health"
 msgstr "fitness & salute"
 
 msgid "flat alphabetic"
-msgstr ""
+msgstr "Rigorosamente in ordine alfabetico"
 
 msgid "flat alphabetic reverse"
-msgstr ""
+msgstr "Rigorosamente capovolto in ordine alfabetico"
 
 msgid "folk/traditional music"
 msgstr "folk/musica tradizionale"
@@ -11026,22 +11256,22 @@ msgid "free"
 msgstr "Libero"
 
 msgid "free diskspace"
-msgstr "di spazio libero su disco"
+msgstr "Spazio libero su disco"
 
 msgid "full"
 msgstr "pieno"
 
 msgid "further education"
-msgstr "perfezionamento"
+msgstr "Perfezionamento"
 
-msgid "game show/quiz/contest"
-msgstr "game show/quiz/contest"
+msgid "Game show/quiz/contest"
+msgstr "Game show/quiz/contest"
 
 msgid "gardening"
-msgstr "giardinaggio"
+msgstr "Giardinaggio"
 
 msgid "get the cards' server"
-msgstr ""
+msgstr "ottenere Card Server"
 
 msgid "go to deep standby"
 msgstr "Spegnimento (deep standby)"
@@ -11053,22 +11283,22 @@ msgid "grab this frame as bitmap"
 msgstr "Grab dell'mmagine come bitmap"
 
 msgid "green"
-msgstr "verde"
+msgstr "Verde"
 
 msgid "Green"
-msgstr "verde"
+msgstr "Verde"
 
 msgid "Green long"
-msgstr "verde lungo"
+msgstr "Verde lungo"
 
 msgid "handicraft"
-msgstr "artigianato"
+msgstr "Artigianato"
 
 msgid "handled"
-msgstr "gestito"
+msgstr "Gestito"
 
 msgid ""
-"has been sent to the ViX beta team.\n"
+"has been sent to the Opendroid-Team.\n"
 "please quote"
 msgstr ""
 "è stato inviato al team Opendroid.\n"
@@ -11084,10 +11314,10 @@ msgid "horizontal"
 msgstr "Orizzontale"
 
 msgid "increase uphop by 1"
-msgstr "aumentare uphop di 1"
+msgstr "Aumentare uphop di 1"
 
 msgid "information/education/school program"
-msgstr "programma di informazione/formazione/scuola"
+msgstr "Programma di informazione/formazione/scuola"
 
 msgid "init module"
 msgstr "Init modulo"
