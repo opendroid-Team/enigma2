@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-06-16 02:34+0100\n"
+"PO-Revision-Date: 2015-06-23 02:16+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -187,6 +187,9 @@ msgstr "Impostazioni"
 msgid "Network Menu"
 msgstr "Menu Rete"
 
+msgid "Plugin Browser"
+msgstr "Visualizza tutti i plugin"
+
 msgid "Open AutoTimer"
 msgstr "Aprire AutoTimer"
 
@@ -204,6 +207,24 @@ msgstr "Impostazioni di registrazione"
 
 msgid "Harddisk Setup"
 msgstr "Impostazioni HDD"
+
+msgid "Select HDD"
+msgstr "Selezionare HDD"
+
+msgid "Same as in active"
+msgstr "Impostare come Attivo"
+
+msgid "Hard disk standby in box standby after"
+msgstr "Sospensione HDD quando il Box è in standby:"
+
+msgid "Use Harddisk Hardware Standby Timer"
+msgstr "Usa Harddisk Hardware in Standby Timer"
+
+msgid "Option to enable the Hardware Standby Timer"
+msgstr "Opzione per la selezione del timer di standby interna del disco"
+
+msgid "Configure the hard disk drive to go to standby after the specified idle time when the box is in standby."
+msgstr "Configurare il disco rigido di andare in standby dopo il tempo di inattività specificato quando il Box è in standby."
 
 msgid "Subtitles Settings"
 msgstr "Impostazioni sottotitoli"
@@ -5820,7 +5841,7 @@ msgstr ""
 "Path: %s"
 
 msgid "Not mounted"
-msgstr "non montato"
+msgstr "Non montato"
 
 msgid "Not-Associated"
 msgstr "Non associato"
@@ -6383,9 +6404,6 @@ msgstr "Attendere..."
 
 msgid "Please wait... Loading list..."
 msgstr "Elenco in caricamento. Attendere..."
-
-msgid "Plugin Browser"
-msgstr "Plugin Browser"
 
 msgid "Downloadable plugins"
 msgstr "Plugins scaricabili"
@@ -7715,9 +7733,6 @@ msgstr "Configurazione EPG"
 msgid "PluginBrowser filter settings..."
 msgstr "PluginBrowser impostazioni del filtro ..."
 
-msgid "Setup how to control the channel changing."
-msgstr "Configurazione come controllare il cambio canale."
-
 msgid "Setup menu"
 msgstr "Impostazioni menu"
 
@@ -8733,7 +8748,7 @@ msgstr "TB"
 #. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
 msgstr ""
-"INFO_TRADUZIONE Traduzione italiana\n"
+"Traduzione italiana\n"
 "enigma2\n"
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
