@@ -135,7 +135,7 @@ class LCD:
 				f = open("/proc/stb/lcd/symbol_usb", "w")
 				f.write("0")
 				f.close()
-
+				
 	def setPower(self, value):
 		if fileExists("/proc/stb/power/vfd"):
 			print 'setLCDPower',value
@@ -146,7 +146,7 @@ class LCD:
 			print 'setLCDPower',value
 			f = open("/proc/stb/lcd/vfd", "w")
 			f.write(value)
-			f.close()
+			f.close()		
 
 	def setShowoutputresolution(self, value):
 		if fileExists("/proc/stb/lcd/show_outputresolution"):
@@ -197,7 +197,7 @@ def standbyCounterChanged(configElement):
 	config.lcd.ledbrightnessdeepstandby.apply()
 
 def InitLcd():
-	if getBoxType() in ('nanoc', 'nano', 'axodinc', 'axodin', 'amikomini', 'dynaspark', 'amiko8900', 'sognorevolution', 'arguspingulux', 'arguspinguluxmini', 'arguspinguluxplus', 'sparkreloaded', 'sabsolo', 'sparklx', 'gis8120', 'gb800se', 'gb800solo', 'gb800seplus', 'gbultrase', 'gbipbox', 'tmsingle', 'tmnano2super', 'iqonios300hd', 'iqonios300hdv2', 'optimussos1plus', 'optimussos1', 'vusolo', 'et4x00', 'et5x00', 'et6x00', 'et7000', 'mixosf7', 'mixoslumi', 'gbx1', 'gbx3'):
+	if getBoxType() in ('mbmicro', 'nanoc', 'nano', 'axodinc', 'axodin', 'amikomini', 'dynaspark', 'amiko8900', 'sognorevolution', 'arguspingulux', 'arguspinguluxmini', 'arguspinguluxplus', 'sparkreloaded', 'sabsolo', 'sparklx', 'gis8120', 'gb800se', 'gb800solo', 'gb800seplus', 'gbultrase', 'gbipbox', 'tmsingle', 'tmnano2super', 'iqonios300hd', 'iqonios300hdv2', 'optimussos1plus', 'optimussos1', 'vusolo', 'et4x00', 'et5x00', 'et6x00', 'et7000', 'mixosf7', 'mixoslumi', 'gbx1', 'gbx3'):
 		detected = False
 	else:
 		detected = eDBoxLCD.getInstance().detected()
@@ -288,7 +288,7 @@ def InitLcd():
 
 		def setLCDmode(configElement):
 			ilcd.setMode(configElement.value);
-
+			
 		def setLCDpower(configElement):
 			ilcd.setPower(configElement.value);
 
@@ -371,7 +371,7 @@ def InitLcd():
 			config.lcd.repeat = ConfigNothing()
 			config.lcd.scrollspeed = ConfigNothing()
 			config.lcd.hdd = ConfigNothing()
-
+			
 		if fileExists("/proc/stb/power/vfd") or fileExists("/proc/stb/lcd/vfd"):
 			config.lcd.power = ConfigSelection([("0", _("No")), ("1", _("Yes"))], "1")
 			config.lcd.power.addNotifier(setLCDpower);
