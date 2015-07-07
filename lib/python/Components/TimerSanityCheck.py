@@ -1,6 +1,6 @@
 from time import localtime, mktime, gmtime
 
-from enigma import iServiceInformation, eServiceCenter, eServiceReference
+from enigma import iServiceInformation, eServiceCenter, eServiceReference, getBestPlayableServiceReference
 
 import NavigationInstance
 from timer import TimerEntry
