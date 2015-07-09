@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-06-23 02:09+0100\n"
+"PO-Revision-Date: 2015-07-09 13:58+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: de\n"
@@ -885,6 +885,14 @@ msgstr ""
 "Diese Version behalten?"
 
 #, python-format
+msgid "Powertimer Message Popup counter (in seconds)"
+msgstr "Powertimer Nachrichtenfenster Countdown (in Sekunden)"
+
+#, python-format
+msgid "Configure how long the powertimer message is displayed."
+msgstr "Legt fest wie lange die Nachricht zum Ausführen eines Powertimers angezeigt wird."
+
+#, python-format
 msgid ""
 "A finished power timer wants to shut down\n"
 "your %s %s. Shutdown now?"
@@ -1518,8 +1526,9 @@ msgid ""
 "Are you sure you want to restore the backup?\n"
 "Your receiver will restart after the backup has been restored!"
 msgstr ""
-"Sicher das dieses Backup wiederhergestellt werden soll?\n"
-"Deine Box wird neu gestartet wenn das Backup wiederhergestellt wurde."
+"Sind Sie sicher, dass die Einstellungen Ihres Receivers wiederhergestellt werden sollen?\n"
+"\n"
+"Nach der Wiederherstellung wird Ihr Receiver neu gestartet!"
 
 msgid "Are you sure you want to save the EPG Cache to:\n"
 msgstr "Bist Du sicher das die EPG Daten an diesen Ort gespeichert werden sollen:\n"
@@ -3785,10 +3794,10 @@ msgid "FLASH"
 msgstr "FLASH"
 
 msgid "FTP Setup"
-msgstr "FTP Einstellungen"
+msgstr "FTP-Server-Einstellungen"
 
 msgid "FTP setup"
-msgstr "FTP Einstellungen"
+msgstr "FTP-Server-Einstellungen"
 
 msgid "Factory reset"
 msgstr "Werkseinstellungen"
@@ -12869,4 +12878,7 @@ msgstr "Ausschaltmenü schützen"
 
 msgid "Protect timer menu"
 msgstr "Timermenü schützen"
+
+msgid "SCPC optimized search range"
+msgstr "SCPC optimierter Suchbereich"
 
