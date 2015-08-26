@@ -2,7 +2,7 @@ import os
 import time
 import cPickle as pickle
 
-from enigma import eServiceReference, eServiceCenter, eTimer, eSize, iPlayableService, iServiceInformation, getPrevAsciiCode, eRCInput
+from enigma import eServiceReference, eServiceCenter, eTimer, eSize, iPlayableService, iServiceInformation, getPrevAsciiCode, eRCInput, pNavigation
 
 from Screen import Screen
 from Components.Button import Button
@@ -1933,7 +1933,7 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo, InfoBarBase):
 			mbox.setTitle(self.getTitle())
 
 	def purgeAll(self):
-		recordings = self.session.nav.getRecordings()
+		recordings = self.session.nav.getRecordings(False,pNavigation.isRealRecording)
 		next_rec_time = -1
 		if not recordings:
 			next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()

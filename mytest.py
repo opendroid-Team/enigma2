@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 from time import time
 
 if os.path.isfile("/usr/lib/enigma2/python/enigma.zip"):
@@ -369,7 +370,7 @@ class PowerKey:
 	def shutdown(self):
 		wasRecTimerWakeup = False
 		from time import time
-		recordings = self.session.nav.getRecordings()
+		recordings = self.session.nav.getRecordings(False,Components.RecordingConfig.recType(config.recording.warn_box_restart_rec_types.getValue()))
 		if not recordings:
 			next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
 		if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):

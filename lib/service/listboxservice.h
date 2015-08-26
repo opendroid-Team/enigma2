@@ -6,6 +6,7 @@
 #include <lib/service/iservice.h>
 #include <lib/python/python.h>
 #include <set>
+#include <lib/nav/core.h>
 
 class eListboxServiceContent: public virtual iListboxContent
 {
@@ -82,12 +83,15 @@ public:
 
 	int getItemHeight() { return m_itemheight; }
 	void setItemHeight(int height);
+	void setHideNumberMarker(bool doHide) { m_hide_number_marker = doHide; }
 	void setServiceTypeIconMode(int mode) { m_servicetype_icon_mode = mode; }
 	void setCryptoIconMode(int mode) { m_crypto_icon_mode = mode; }
 	void setRecordIndicatorMode(int mode) { m_record_indicator_mode = mode; }
 	void setColumnWidth(int value) { m_column_width = value; }
 	void setProgressbarHeight(int value) {	m_progressbar_height = value; }
 	void setProgressbarBorderWidth(int value) { m_progressbar_border_width = value; }
+	void setNonplayableMargins(int value) { m_nonplayable_margins = value; }
+	void setItemsDistances(int value) { m_items_distances = value; }
 
 	static void setGetPiconNameFunc(SWIG_PYOBJECT(ePyObject) func);
 
@@ -110,11 +114,13 @@ public:
 		serviceEventProgressbarBorderColor,
 		serviceEventProgressbarBorderColorSelected,
 		serviceRecorded,
+		servicePseudoRecorded,
+		serviceStreamed,
 		colorElements
 	};
 
 	void setColor(int color, gRGB &col);
-	bool checkServiceIsRecorded(eServiceReference ref);
+	bool checkServiceIsRecorded(eServiceReference ref,pNavigation::RecordType type=pNavigation::isAnyRecording);
 protected:
 	void cursorHome();
 	void cursorEnd();
@@ -168,12 +174,15 @@ private:
 	eServiceReference m_is_playable_ignore;
 
 	int m_itemheight;
+	bool m_hide_number_marker;
 	int m_servicetype_icon_mode;
 	int m_crypto_icon_mode;
 	int m_record_indicator_mode;
 	int m_column_width;
 	int m_progressbar_height;
 	int m_progressbar_border_width;
+	int m_nonplayable_margins;
+	int m_items_distances;
 };
 
 #endif
