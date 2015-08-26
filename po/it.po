@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-07-09 14:48+0100\n"
+"PO-Revision-Date: 2015-08-04 22:41+0100\n"
 "Last-Translator: opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -4604,6 +4604,12 @@ msgstr "Impostazioni Inadyn"
 msgid "Include AIT in http streams"
 msgstr "Includi AIT in flussi http"
 
+msgid "Include AIT in recordings"
+msgstr "Includi AIT nelle registrazioni"
+
+msgid "If enabled, AIT data is included in recordings."
+msgstr "Se abilitato, i dati AIT sono inclusi nelle registrazioni."
+
 msgid "Include ECM in http streams"
 msgstr "Includi ECM in flussi http"
 
@@ -5793,6 +5799,9 @@ msgstr "No, ma riprendere dall'inizio"
 
 msgid "No, do nothing."
 msgstr "No, non fare nulla."
+
+msgid "Do nothing"
+msgstr "Non fare niente"
 
 #, python-format
 msgid "No, just start my %s %s"
@@ -10933,6 +10942,10 @@ msgstr "avanzato"
 
 msgid "not available"
 msgstr "non disponibile"
+
+#, python-format
+msgid "%s: Not Available"
+msgstr "%s: Non disponibile"
 
 msgid "adventure/western/war"
 msgstr "avventura/western/guerra"

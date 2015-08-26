@@ -1407,47 +1407,68 @@ void eEPGCache::save()
 		fwrite( &size, sizeof(int), 1, f);
 		for (timeMap::iterator time_it(timemap.begin()); time_it != timemap.end(); ++time_it)
 		{
-			uint8_t len = time_it->second->ByteSize;
-			fwrite( &time_it->second->type, sizeof(uint8_t), 1, f );
-			fwrite( &len, sizeof(uint8_t), 1, f);
-			fwrite( time_it->second->EITdata, len, 1, f);
-			++cnt;
+			eDebug("[EPGC] not enough free space at path '%s' %lld bytes availd but %d needed", buf, tmp, (eventData::CacheSize*12)/10);
+			fclose(f);
+			return;
 		}
-	}
-	eDebug("[EPGC] %d events written to %s", cnt, EPGDAT);
-	eventData::save(f);
-#ifdef ENABLE_PRIVATE_EPG
-	const char* text3 = "PRIVATE_EPG";
-	fwrite( text3, 11, 1, f );
-	size = content_time_tables.size();
-	fwrite( &size, sizeof(int), 1, f);
-	for (contentMaps::iterator a = content_time_tables.begin(); a != content_time_tables.end(); ++a)
-	{
-		contentMap &content_time_table = a->second;
-		fwrite( &a->first, sizeof(uniqueEPGKey), 1, f);
-		int size = content_time_table.size();
-		fwrite( &size, sizeof(int), 1, f);
-		for (contentMap::iterator i = content_time_table.begin(); i != content_time_table.end(); ++i )
+	
+		int cnt=0;
+		unsigned int magic = 0x98765432;
+		fwrite( &magic, sizeof(int), 1, f);
+		const char *text = "UNFINISHED_V7";
+		fwrite( text, 13, 1, f );
+		int size = eventDB.size();
+		fwrite( &size, sizeof(int), 1, f );
+		for (eventCache::iterator service_it(eventDB.begin()); service_it != eventDB.end(); ++service_it)
 		{
-			int size = i->second.size();
-			fwrite( &i->first, sizeof(int), 1, f);
+			timeMap &timemap = service_it->second.second;
+			fwrite( &service_it->first, sizeof(uniqueEPGKey), 1, f);
+			size = timemap.size();
 			fwrite( &size, sizeof(int), 1, f);
-			for ( contentTimeMap::iterator it(i->second.begin());
-				it != i->second.end(); ++it )
+			for (timeMap::iterator time_it(timemap.begin()); time_it != timemap.end(); ++time_it)
 			{
-				fwrite( &it->first, sizeof(time_t), 1, f);
-				fwrite( &it->second.first, sizeof(time_t), 1, f);
-				fwrite( &it->second.second, sizeof(uint16_t), 1, f);
+				uint8_t len = time_it->second->ByteSize;
+				fwrite( &time_it->second->type, sizeof(uint8_t), 1, f );
+				fwrite( &len, sizeof(uint8_t), 1, f);
+				fwrite( time_it->second->EITdata, len, 1, f);
+				++cnt;
 			}
 		}
-	}
+		eDebug("[EPGC] %d events written to %s", cnt, EPGDAT);
+		eventData::save(f);
+#ifdef ENABLE_PRIVATE_EPG
+		const char* text3 = "PRIVATE_EPG";
+		fwrite( text3, 11, 1, f );
+		size = content_time_tables.size();
+		fwrite( &size, sizeof(int), 1, f);
+		for (contentMaps::iterator a = content_time_tables.begin(); a != content_time_tables.end(); ++a)
+		{
+			contentMap &content_time_table = a->second;
+			fwrite( &a->first, sizeof(uniqueEPGKey), 1, f);
+			int size = content_time_table.size();
+			fwrite( &size, sizeof(int), 1, f);
+			for (contentMap::iterator i = content_time_table.begin(); i != content_time_table.end(); ++i )
+			{
+				int size = i->second.size();
+				fwrite( &i->first, sizeof(int), 1, f);
+				fwrite( &size, sizeof(int), 1, f);
+				for ( contentTimeMap::iterator it(i->second.begin());
+					it != i->second.end(); ++it )
+				{
+					fwrite( &it->first, sizeof(time_t), 1, f);
+					fwrite( &it->second.first, sizeof(time_t), 1, f);
+					fwrite( &it->second.second, sizeof(uint16_t), 1, f);
+				}
+			}
+		}
 #endif
-	// write version string after binary data
-	// has been written to disk.
-	fsync(fileno(f));
-	fseek(f, sizeof(int), SEEK_SET);
-	fwrite("ENIGMA_EPG_V7", 13, 1, f);
-	fclose(f);
+		// write version string after binary data
+		// has been written to disk.
+		fsync(fileno(f));
+		fseek(f, sizeof(int), SEEK_SET);
+		fwrite("ENIGMA_EPG_V7", 13, 1, f);
+		fclose(f);
+	}
 }
 
 eEPGCache::channel_data::channel_data(eEPGCache *ml)
@@ -2274,6 +2295,45 @@ RESULT eEPGCache::lookupEventId(const eServiceReference &service, int event_id, 
 	RESULT ret = lookupEventId(service, event_id, data);
 	if ( !ret && data )
 		result = data->get();
+	return ret;
+}
+
+RESULT eEPGCache::saveEventToFile(const char* filename, const eServiceReference &service, int eit_event_id, time_t begTime, time_t endTime)
+{
+	RESULT ret = -1;
+	singleLock s(cache_lock);
+	const eventData *data = NULL;
+	if ( eit_event_id != -1 )
+	{
+		eDebug("[EPGC] %s epg event id %x", __func__, eit_event_id);
+		ret = lookupEventId(service, eit_event_id, data);
+	}
+	if ( (ret != 0) && (begTime != -1) )
+	{
+		time_t queryTime = begTime;
+		if (endTime != -1)
+			queryTime += (endTime - begTime) / 2;
+		ret = lookupEventTime(service, queryTime, data);
+	}
+	if (ret == 0)
+	{
+		int fd = open(filename, O_CREAT|O_WRONLY, 0666);
+		if (fd < 0)
+		{
+			eDebug("[EPGC] Failed to create file: %s", filename);
+			return fd;
+		}
+		const eit_event_struct *event = data->get();
+		int evLen = HILO(event->descriptors_loop_length) + 12/*EIT_LOOP_SIZE*/;
+		int wr = ::write( fd, event, evLen );
+		::close(fd);
+		if ( wr != evLen )
+		{
+			::unlink(filename); /* Remove faulty file */
+			eDebug("[EPGC] eit write error (%m) writing %s", filename);
+			ret = (wr < 0) ? wr : -1;
+		}
+	}
 	return ret;
 }
 
