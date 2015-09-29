@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-09-23 16:58+0100\n"
+"PO-Revision-Date: 2015-09-29 11:55+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -8313,6 +8313,9 @@ msgstr "Mostra /tmp/ecm.info"
 msgid "Show AutoTimer List"
 msgstr "Mostra elenco autotimer"
 
+msgid "Show CCcam in extensions?"
+msgstr "Mostra CCcam in estensioni?"
+
 msgid "Show CCcam Info in extensions?"
 msgstr "Mostra CCcam Info in estensioni?"
 
@@ -8352,6 +8355,9 @@ msgstr ""
 
 msgid "Show OE Log"
 msgstr "Mostra OE Log"
+
+msgid "Show OScam in extensions?"
+msgstr "Mostra Oscam in Estensioni?"
 
 msgid "Show OScam Info in extensions?"
 msgstr "Mostra Oscam Info in Estensioni?"
