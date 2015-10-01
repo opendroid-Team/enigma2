@@ -371,8 +371,10 @@ class SecondInfoBar(Screen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.skinName = "SecondInfoBar"
-
+		if config.usage.show_second_infobar.value == "3" and (config.skin.primary_skin.value == "nowa-HD/skin.xml" or config.skin.primary_skin.value.startswith('oDreamy/')):
+			self.skinName = "SecondInfoBarECM"
+		else:
+			self.skinName = "SecondInfoBar"
 		self["epg_description"] = ScrollLabel()
 		self["channel"] = Label()
 		self["key_red"] = Label()
@@ -650,7 +652,24 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			self.pvrStateDialog = None
 
 	def OkPressed(self):
-		self.toggleShow()
+		if config.usage.okbutton_mode.value == "0":
+			self.toggleShow()
+		elif config.usage.okbutton_mode.value == "1":
+			try:
+				self.openServiceList()
+			except:
+				self.toggleShow()
+		elif config.usage.okbutton_mode.value == "2" and COOLTVGUIDE:
+				self.showCoolInfoGuide()
+		elif config.usage.okbutton_mode.value == "3" and COOLTVGUIDE:
+				self.showCoolSingleGuide()
+		elif config.usage.okbutton_mode.value == "4" and COOLTVGUIDE:
+				if self.isInfo:
+					self.showCoolTVGuide()
+		elif config.usage.okbutton_mode.value == "5" and COOLTVGUIDE:
+				self.showCoolEasyGuide()
+		elif config.usage.okbutton_mode.value == "6" and COOLTVGUIDE:
+				self.showCoolChannelGuide()
 
 	def SwitchSecondInfoBarScreen(self):
 		if self.lastSecondInfoBar == config.usage.show_second_infobar.value:
@@ -1035,6 +1054,7 @@ class NumberZap(Screen):
 		self.field = self.numberString
 
 		self.handleServiceName()
+		self["service_summary"].setText(self["servicename"].getText())
 
 		if len(self.numberString) >= 4:
 			self.keyOK()
@@ -1053,8 +1073,10 @@ class NumberZap(Screen):
 		self["number"] = Label(self.numberString)
 		self["number_summary"] = StaticText(self.numberString)
 		self["servicename"] = Label()
+		self["service_summary"] = StaticText("")
 
 		self.handleServiceName()
+		self["service_summary"].setText(self["servicename"].getText())
 
 		self["actions"] = NumberActionMap( [ "SetupActions", "ShortcutActions" ],
 			{
@@ -1139,6 +1161,7 @@ class InfoBarNumberZap:
 				if config.usage.multibouquet.value:
 					bqrootstr = '1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "bouquets.tv" ORDER BY bouquet'
 				else:
+					self.service_types = service_types_tv
 					bqrootstr = '%s FROM BOUQUET "userbouquet.favourites.tv" ORDER BY bouquet'% self.service_types
 				serviceHandler = eServiceCenter.getInstance()
 				rootbouquet = eServiceReference(bqrootstr)
@@ -2971,6 +2994,15 @@ class InfoBarExtensions:
 		else:
 			return []
 
+	def getSoftcamPanelname(self):
+		return _("Softcam-Panel")
+
+	def getSoftcamPanel(self):
+		if config.plugins.showinfopanelextensions.value:
+			return [((boundFunction(self.getSoftcamPanelname), boundFunction(self.openSoftcamPanel), lambda: True), None)]
+		else:
+			return []
+
 	def getRestartNetworkname(self):
 		return _("Restart Network")
 
@@ -2990,10 +3022,10 @@ class InfoBarExtensions:
 		return _("CCcam Info")
 
 	def getCCcamInfo(self):
-		softcams = sorted(filter(lambda x: x.startswith('softcam.'), os.listdir("/etc/init.d/")))
-
+		if pathExists('/usr/bin/'):
+			softcams = os.listdir('/usr/bin/')
 		for softcam in softcams:
-			if "cccam" in os.readlink('/etc/init.d/softcam').lower() and config.cccaminfo.showInExtensions.value:
+			if softcam.lower().startswith('cccam') and config.cccaminfo.showInExtensions.value:
 				return [((boundFunction(self.getCCname), boundFunction(self.openCCcamInfo), lambda: True), None)] or []
 		else:
 			return []
@@ -3002,10 +3034,10 @@ class InfoBarExtensions:
 		return _("OScam Info")
 
 	def getOScamInfo(self):
-		softcams = sorted(filter(lambda x: x.startswith('softcam.'), os.listdir("/etc/init.d/")))
-
+		if pathExists('/usr/bin/'):
+			softcams = os.listdir('/usr/bin/')
 		for softcam in softcams:
-			if "oscam" in os.readlink('/etc/init.d/softcam') and config.oscaminfo.showInExtensions.value:
+			if softcam.lower().startswith('oscam') and config.oscaminfo.showInExtensions.value:
 				return [((boundFunction(self.getOSname), boundFunction(self.openOScamInfo), lambda: True), None)] or []
 		else:
 			return []
@@ -3096,6 +3128,10 @@ class InfoBarExtensions:
 	def open3DSetup(self):
 		from Screens.UserInterfacePositioner import OSD3DSetupScreen
 		self.session.open(OSD3DSetupScreen)
+
+	def openSoftcamPanel(self):
+		from Plugins.Extensions.Infopanel.SoftcamPanel import SoftcamPanel
+		self.session.open(SoftcamPanel)
 
 	def openRestartNetwork(self):
 		try:
@@ -3435,7 +3471,11 @@ class InfoBarINFOpanel:
 		if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/HbbTV/plugin.pyo"):
 			isHBBTV = True
 		if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/E3Opera/plugin.pyo"):
-			isHBBTV = True			
+			isHBBTV = True
+		if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/NXHbbTV/plugin.pyo"):
+			isHBBTV = True
+		if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/OpenOpera/plugin.pyo"):
+			isHBBTV = True
 
 		if isWEBBROWSER or isHBBTV:
 			service = self.session.nav.getCurrentService()
@@ -3444,33 +3484,67 @@ class InfoBarINFOpanel:
 				for x in self.onHBBTVActivation:
 					x()
 					
-			elif config.plugins.infopanel_redpanel.enabled.value == True:
-				try:
-					from Plugins.Extensions.Infopanel.plugin import Infopanel
-					self.session.open(Infopanel, services = self.servicelist)
-				except:
-					pass
+			elif config.plugins.infopanel_redpanel.selection.value == '0':
+				self.instantRecord()
 			else:
-				self.instantRecord()		
+				self.doRedKeyTask()
 		
-		elif config.plugins.infopanel_redpanel.enabled.value == True:
-			try:
+		elif config.plugins.infopanel_redpanel.selection.value == '0':
+			self.instantRecord()
+		else:
+			self.doRedKeyTask()
+
+	def doRedKeyTask(self):
+		try:
+			if config.plugins.infopanel_redpanel.selection.value =='0':
+				self.instantRecord()
+			elif config.plugins.infopanel_redpanel.selection.value =='1':
 				from Plugins.Extensions.Infopanel.plugin import Infopanel
 				self.session.open(Infopanel, services = self.servicelist)
-			except:
-				pass
-		else:
-			self.instantRecord()
+			elif config.plugins.infopanel_redpanel.selection.value == '2':
+				self.session.open(TimerEditList)
+			elif config.plugins.infopanel_redpanel.selection.value == '3':
+				self.showMovies()
+			elif config.plugins.infopanel_redpanel.selection.value == '4':
+				self.StartsoftcamPanel()
+			else:
+				self.StartPlugin(config.plugins.infopanel_redpanel.selection.value)
+
+		except:
+			print "Error on RedKeyTask !!"
 		
 	def softcamPanel(self):
-		if config.plugins.infopanel_redpanel.enabledlong.value == True:
-			try:
-				from Plugins.Extensions.Infopanel.SoftcamPanel import SoftcamPanel
-				self.session.open(SoftcamPanel)
-			except:
-				pass
-		else:
+		try:
+			if config.plugins.infopanel_redpanel.selectionLong.value =='0':
+				self.instantRecord()
+			elif config.plugins.infopanel_redpanel.selectionLong.value =='1':
+				from Plugins.Extensions.Infopanel.plugin import Infopanel
+				self.session.open(Infopanel, services = self.servicelist)
+			elif config.plugins.infopanel_redpanel.selectionLong.value == '2':
+				self.session.open(TimerEditList)
+			elif config.plugins.infopanel_redpanel.selectionLong.value == '3':
+				self.showMovies()
+			elif config.plugins.infopanel_redpanel.selectionLong.value == '4':
+				self.StartsoftcamPanel()
+			else:
+				self.StartPlugin(config.plugins.infopanel_redpanel.selectionLong.value)
+
+		except:
+			print "Error on RedKeyTask Long!!"
+			
+	def StartsoftcamPanel(self):
+		try:
+			from Plugins.Extensions.Infopanel.SoftcamPanel import SoftcamPanel
+			self.session.open(SoftcamPanel)
+		except:
 			pass
+
+	def StartPlugin(self, name):
+		pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
+		for p in pluginlist:
+			if p.name == name:
+				p(session=self.session)
+				break
 
 class InfoBarQuickMenu:
 	def __init__(self):
@@ -3519,11 +3593,15 @@ class InfoBarInstantRecord:
 		# try to get event info
 		event = None
 		try:
-			service = self.session.nav.getCurrentService()
 			epg = eEPGCache.getInstance()
 			event = epg.lookupEventTime(info["serviceref"], -1, 0)
 			if event is None:
-				event = service.info().getEvent(0)
+				if hasattr(self, "SelectedInstantServiceRef") and self.SelectedInstantServiceRef:
+					service_info = eServiceCenter.getInstance().info(self.SelectedInstantServiceRef)
+					event = service_info and service_info.getEvent(self.SelectedInstantServiceRef)
+				else:
+					service = self.session.nav.getCurrentService()
+					event = service and service.info().getEvent(0)
 		except:
 			pass
 
@@ -3759,8 +3837,38 @@ class InfoBarAudioSelection:
 			})
 
 	def audioSelection(self):
-		from Screens.AudioSelection import AudioSelection
-		self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
+		if not hasattr(self, "LongButtonPressed"):
+			self.LongButtonPressed = False
+		if not self.LongButtonPressed:
+			if config.plugins.infopanel_yellowkey.list.value == '0':
+				from Screens.AudioSelection import AudioSelection
+				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
+			elif config.plugins.infopanel_yellowkey.list.value == '2':
+				global AUDIO
+				AUDIO = True
+				ToggleVideo()
+			elif config.plugins.infopanel_yellowkey.list.value == '3':
+				self.startTeletext()
+			else:
+				try:
+					self.startTimeshift()
+				except:
+					pass
+		else:
+			if config.plugins.infopanel_yellowkey.listLong.value == '0':
+				from Screens.AudioSelection import AudioSelection
+				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
+			elif config.plugins.infopanel_yellowkey.listLong.value == '2':
+				global AUDIO
+				AUDIO = True
+				ToggleVideo()
+			elif config.plugins.infopanel_yellowkey.listLong.value == '3':
+				self.startTeletext()
+			else:
+				try:
+					self.startTimeshift()
+				except:
+					pass
 				
 	def audio_key(self):
 		from Screens.AudioSelection import AudioSelection
