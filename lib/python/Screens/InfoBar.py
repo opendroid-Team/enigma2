@@ -60,6 +60,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				"showTv": (self.TvRadioToggle, _("Show the tv player...")),
 				"showMediaPlayer": (self.showMediaPlayer, _("Show the media player...")),
 				"openBouquetList": (self.openBouquetList, _("open bouquetlist")),
+				"openWeather": (self.openWeather, _("Open Weather...")),
 				"openSleepTimer": (self.openPowerTimerList, _("Show the Sleep Timer...")),
 				"showEMC": (self.showEMC, _("Show the media center...")),
 				"showETPORTAL": (self.showETPORTAL, _("Open EtPortal...")),
@@ -305,6 +306,14 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		else:
 			self.session.open(MoviePlayer, service, slist = self.servicelist, lastservice = ref)
 
+	def openWeather(self):
+		try:
+			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
+				if plugin.name == _("Weather Details"):
+					self.runPlugin(plugin)
+					break
+		except Exception, e:
+			self.session.open(MessageBox, _("The Weather plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
 	def showBoxPortal(self):
 		if getMachineBrand() == 'GI' or boxtype.startswith('azbox') or boxtype.startswith('ini') or boxtype.startswith('venton'):
 			from Screens.BoxPortal import BoxPortal
