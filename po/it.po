@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-09-29 11:55+0100\n"
+"PO-Revision-Date: 2015-10-11 18:10+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -11716,7 +11716,7 @@ msgstr ""
 
 #, python-format
 msgid "Your internet connection is working (ip: %s)"
-msgstr "Il vostro collegamento internet funziona correttamente (ip: %s)"
+msgstr "Il collegamento internet funziona correttamente (ip: %s)"
 
 msgid "Your network configuration has been activated."
 msgstr "Configurazione di rete attivata correttamente."
