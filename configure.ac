@@ -605,6 +605,8 @@ lib/python/Plugins/Extensions/GraphMultiEPG/meta/Makefile
 lib/python/Plugins/Extensions/Volume_adjust/Makefile
 lib/python/Plugins/Extensions/epgsearch/Makefile
 lib/python/Plugins/Extensions/epgsearch/meta/Makefile
+lib/python/Plugins/Extensions/epgsearch/po/Makefile
+lib/python/Plugins/Extensions/epgsearch/src/Makefile
 lib/python/Plugins/Extensions/Volume_adjust/nl/Makefile
 lib/python/Plugins/SystemPlugins/CableScan/Makefile
 lib/python/Plugins/SystemPlugins/CommonInterfaceAssignment/Makefile
