@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-09 21:55+0200\n"
-"PO-Revision-Date: 2015-10-09 22:30+0200\n"
+"POT-Creation-Date: 2015-10-31 14:12+0100\n"
+"PO-Revision-Date: 2015-10-31 14:17+0100\n"
 "Last-Translator: Pr2 <dummy@dummy.com>\n"
 "Language-Team: french\n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.8.5\n"
+"X-Generator: Poedit 1.8.6\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
 
 msgid ""
@@ -278,6 +278,10 @@ msgstr "%a %e/%m"
 #. TRANSLATORS: long date representation short dayname daynum short monthname hour:minute in strftime() format! See 'man strftime'
 msgid "%a %e/%m  %-H:%M"
 msgstr "%a %e/%m  %-H:%M"
+
+#, python-format
+msgid "%d"
+msgstr "%d"
 
 msgid "%d %B %Y"
 msgstr "%d %B %Y"
@@ -2268,6 +2272,9 @@ msgstr "Configure un délai additionnel pour améliorer la synchronisation des s
 msgid "Configure for how many minutes finished events should remain visible in the EPG. Useful when you need information about an event which has just finished, or has been delayed."
 msgstr "Configure combien de temps un événements terminé doit rester visible dans l’EPG. Utile lorsque vous avez besoin d’informations sur un événement qui vient de se terminer, ou a été retardé."
 
+msgid "Configure for which types of recordings a warning about active recordings is shown when attempting to restart the box or the GUI."
+msgstr "Configure pour quels types d’enregistrements un avertissement à propros d’enregistrements actif est émis lorsqu’on tente de redémarrer le récepteur ou l’IGU."
+
 msgid "Configure how recording filenames are constructed."
 msgstr "Configure la façon dont les noms de fichiers d’enregistrement sont construits."
 
@@ -2486,6 +2493,9 @@ msgstr "Configurer pour garder le focus sur le service actuel lorsqu’on entre 
 
 msgid "Configure to show the channel names, picons, or both in the EPG."
 msgstr "Configure pour afficher le nom des chaînes, les picons, ou les deux dans l’EPG."
+
+msgid "Configure whether the 'recording' symbol (in the display skin and LCD skin) is visible for real recordings only or also for streaming and pseuso recordings (e.g. EPGrefresh)."
+msgstr "Configure si le symbole ‘enregistrement’ (dans le théme de l’affichage et le théme du LCD) est visible pour les enregistrements réels uniquement ou aussi pour le streaming et les pseudos enregistrements (par exemple EPGrefresh)."
 
 msgid "Configure which color format should be used on the SCART output."
 msgstr "Configure quelle format de couleur utiliser pour la sortie SCART/Peritel."
@@ -3605,6 +3615,9 @@ msgstr "End long"
 msgid "End time"
 msgstr "Heure fin"
 
+msgid "Ene"
+msgstr "Ene"
+
 msgid "English"
 msgstr "Anglais"
 
@@ -4505,6 +4518,9 @@ msgstr "Hongrois"
 msgid "IMDB search for current event"
 msgstr "Recherche IMDb pour l’événement en cours"
 
+msgid "IMDb Details"
+msgstr "Détails IMDb"
+
 msgid "IMDb Search"
 msgstr "Recherche IMDb"
 
@@ -4537,6 +4553,9 @@ msgstr "Si activé la résolution de sortie du récepteur va essayer de correspo
 
 msgid "If enabled the video will always be de-interlaced."
 msgstr "Si activé la vidéo sera toujours désinterlacée."
+
+msgid "If enabled, AIT data is included in recordings."
+msgstr "Si activé, les données AIT seront incluses dans les enregistrements."
 
 msgid "If logs are using the set maximum space used the eldest will be deleted."
 msgstr "Si les logs utilisent le maximum d'espace le plus vieux sera supprimé."
@@ -4691,6 +4710,9 @@ msgstr "Configuration Inadyn"
 
 msgid "Include AIT in http streams"
 msgstr "Inclure AIT dans les flux HTTP"
+
+msgid "Include AIT in recordings"
+msgstr "Inclure AIT dans les enregistrements"
 
 msgid "Include ECM in http streams"
 msgstr "Inclure ECM dans les flux HTTP"
@@ -5155,6 +5177,9 @@ msgstr "Lien:"
 
 msgid "Linked titles with a DVD menu"
 msgstr "Titres liés avec un menu DVD"
+
+msgid "List EPG functions..."
+msgstr "Lister les fonctions EPG…"
 
 msgid "List available networks"
 msgstr "Liste des réseaux disponibles"
@@ -5667,6 +5692,9 @@ msgstr "Musique/Ballet/Dance"
 msgid "Mute long"
 msgstr "Silence long"
 
+msgid "N"
+msgstr "N"
+
 msgid "N/A"
 msgstr "N/A"
 
@@ -5712,6 +5740,9 @@ msgstr "Paramètres nom serveur"
 
 msgid "Namespace"
 msgstr "Espace nom"
+
+msgid "Ne"
+msgstr "Ne"
 
 msgid "NetDrive Setup"
 msgstr "Configuration disque réseau"
@@ -5806,6 +5837,15 @@ msgstr "Suivant"
 
 msgid "Next long"
 msgstr "Suivant long"
+
+msgid "Next:"
+msgstr "Suivant:"
+
+msgid "Nne"
+msgstr "Nne"
+
+msgid "Nnw"
+msgstr "Nno"
 
 msgid "No"
 msgstr "Non"
@@ -6131,6 +6171,9 @@ msgstr "Maintenant sauvegarder le PauseDirect comme film et continuer l’enregi
 msgid "Now, use the contrast setting to turn up the brightness of the background as much as possible, but make sure that you can still see the difference between the two brightest levels of shades.If you have done that, press OK."
 msgstr "Maintenant, utilisez les paramètres de contraste pour indiquer la luminosité du fond autant que possible, mais assurez-vous que vous pouvez toujours voir la différence entre les deux niveaux les plus lumineux des nuances. Si vous avez fait cela, pressez OK."
 
+msgid "Nse"
+msgstr "Nse"
+
 msgid "Number"
 msgstr "Nombre"
 
@@ -6142,6 +6185,9 @@ msgstr "Nombre de lignes à afficher"
 
 msgid "Number:"
 msgstr "Nombre:"
+
+msgid "Nw"
+msgstr "No"
 
 msgid "OE Changes"
 msgstr "Changement dans OE"
@@ -6248,11 +6294,20 @@ msgstr "Ouvrir AutoTimer"
 msgid "Open EtPortal..."
 msgstr "Ouvrir EtPortal…"
 
+msgid "Open IMDB..."
+msgstr "Ouvrir IMDb…"
+
 msgid "Open MediaPortal..."
 msgstr "Ouvrir MediaPortal…"
 
+msgid "Open Timerlist..."
+msgstr "Ouvrie la liste des programmations…"
+
 msgid "Open WWW Plugin..."
 msgstr "Ouvrir WWW Plugin..."
+
+msgid "Open Weather..."
+msgstr "Ouvrir Météo…"
 
 msgid "Open satellites list"
 msgstr "Ouvrir la liste des satellites"
@@ -7331,6 +7386,15 @@ msgstr "Des enregistrement(s) sont en cours ou se terminent dans quelques second
 msgid "Recordings"
 msgstr "Enregistrements"
 
+msgid "Recordings abort PIP"
+msgstr "Enregistrements annule le PiP"
+
+msgid "Recordings abort pseudo recordings"
+msgstr "Enregistrements annulent les pseudos enregistrements"
+
+msgid "Recordings abort streaming"
+msgstr "Enregistrements annulent le streaming"
+
 msgid "Recordings always have priority"
 msgstr "Enregistrements toujours prioritaires"
 
@@ -7663,6 +7727,9 @@ msgstr "En cours"
 msgid "Russian"
 msgstr "Russe"
 
+msgid "S"
+msgstr "S"
+
 msgid "S-Video"
 msgstr "S-Vidéo"
 
@@ -7848,6 +7915,9 @@ msgstr "Vitesse du défilement (rendu logiciel)"
 
 msgid "Scrolling delay (software render)"
 msgstr "Délai du défilement (rendu logiciel)"
+
+msgid "Se"
+msgstr "Se"
 
 msgid "Search"
 msgstr "Recherche"
@@ -8694,6 +8764,9 @@ msgstr "Afficher les paquets des pilotes"
 msgid "Show encryption info in the infobar (when supported by the skin)."
 msgstr "Les informations d’encryption seront affichés dans la barre d’information (lorsqu’elle est soutenue par le skin)."
 
+msgid "Show epg"
+msgstr "Afficher EPG"
+
 msgid "Show event details"
 msgstr "Afficher détails de l'événement"
 
@@ -8799,6 +8872,9 @@ msgstr "Afficher les touches appuyées en mode débug telnet"
 msgid "Show record indicator"
 msgstr "Afficher l’indicateur d’enregistrement"
 
+msgid "Show recording symbol depending on recording type"
+msgstr "Afficher le symbole d’enregistrement en fonction du type d’enregistrement"
+
 msgid "Show screensaver"
 msgstr "Afficher l’économiseur d’écran"
 
@@ -8885,6 +8961,9 @@ msgstr "Afficher le temps restant/écoulé du transpondeur comme"
 
 msgid "Show vix packages"
 msgstr "Afficher les paquets ViX"
+
+msgid "Show warning before box restart based on recording type"
+msgstr "Afficher un avertissement avant de redémarrer le récepteur en fonction du type d’enregistrement"
 
 msgid "Show warning when timeshift is stopped"
 msgstr "Afficher un avertissement lorsqu'un PauseDirect est arrêté"
@@ -9061,6 +9140,9 @@ msgstr "Configure softcam"
 msgid "Softcam settings"
 msgstr "Configure softcam"
 
+msgid "Softcam-Panel"
+msgstr "Softcam-Panel"
+
 msgid "Softcam-Panel..."
 msgstr "Panneau-Softcam…"
 
@@ -9191,6 +9273,12 @@ msgstr "Sports"
 
 msgid "Src"
 msgstr "Src"
+
+msgid "Sse"
+msgstr "Sse"
+
+msgid "Ssw"
+msgstr "Sso"
 
 msgid "Standard"
 msgstr "Standard"
@@ -9428,6 +9516,9 @@ msgstr "Dimanche"
 
 msgid "Support at"
 msgstr "Support à"
+
+msgid "Sw"
+msgstr "So"
 
 msgid "Swap File not found. You have to create the file before to activate."
 msgstr "Fichier swap pas trouvé. Vous devez créer le fichier avant de l’activer."
@@ -9761,6 +9852,13 @@ msgid ""
 msgstr ""
 "La clé USB à été préparé pour être bootable.\n"
 "Maintenant vous pouvez télécharger un fichier image NFI!"
+
+msgid ""
+"The Weather plugin is not installed!\n"
+"Please install it."
+msgstr ""
+"Le plugin Weather (météo) n’est pas installé!\n"
+"Merci de l’installer."
 
 msgid ""
 "The Zap-History Browser plugin is not installed!\n"
@@ -11012,6 +11110,12 @@ msgstr "Vertical"
 msgid "Vertical turning speed"
 msgstr "Vitesse de rotation verticale"
 
+msgid "Very short filenames"
+msgstr "Noms de fichiers très courts"
+
+msgid "Very very short filenames - Warning"
+msgstr "Nom des fichiers très très courts - Avertissement"
+
 msgid "ViX"
 msgstr "ViX"
 
@@ -11248,6 +11352,9 @@ msgstr "Lire les films…"
 msgid "Watch recordings..."
 msgstr "Lire les enregistrements…"
 
+msgid "Weather Details"
+msgstr "Détails de la météo"
+
 msgid "Web Interface"
 msgstr "Interface web"
 
@@ -11358,6 +11465,15 @@ msgstr "Lorsqu’il est activé, un message apparaitra lorsqu’un film est term
 
 msgid "When enabled, a popup message will be shown when a recording starts."
 msgstr "Lorsqu’il est activé, un message apparaitra lorsqu’un enregistrement démarre."
+
+msgid "When enabled, a recording is allowed to abort picture-in-picture mode, when there are no free tuners."
+msgstr "Lorsqu’il est activé, un enregistrement est autorisé à interrompre un image dans image (PiP), lorsqu’aucun tuner n’est libre."
+
+msgid "When enabled, a recording is allowed to abort pseudo recordings, when there are no free tuners."
+msgstr "Lorsqu’il est activé, un enregistrement est autorisé à interrompre un pseudo-enregistrement, lorsqu’aucun tuner n’est libre."
+
+msgid "When enabled, a recording is allowed to abort streaming, when there are no free tuners."
+msgstr "Lorsqu’il est activé, un enregistrement est autorisé à interrompre le streaming, lorsqu’aucun tuner n’est libre."
 
 msgid "When enabled, a recording is allowed to interrupt live tv, when there are no free tuners."
 msgstr "Lorsqu’il est activé, un enregistrement est autorisé à interromptre un programme TV en direct, lorsqu’il n’y a pas de tuner de libre."
@@ -11538,6 +11654,9 @@ msgstr "Avec cette option vous pouvez cacher Job Tasks du menu des extensions (a
 msgid "Without popup"
 msgstr "sans message"
 
+msgid "Wnw"
+msgstr "Ono"
+
 msgid "Write error while recording. Disk full?\n"
 msgstr "Erreur d'écriture lors de l'enregistrement. Disque plein?\n"
 
@@ -11551,6 +11670,9 @@ msgstr ""
 
 msgid "Write failed!"
 msgstr "Echec d'écriture!"
+
+msgid "Wsw"
+msgstr "Oso"
 
 msgid "XBox 360 support"
 msgstr "Support XBox 360"
@@ -12155,6 +12277,9 @@ msgstr "Compter les services alternatifs dans les bouquets"
 msgid "am"
 msgstr "am"
 
+msgid "any recordings"
+msgstr "n’importe quel enregistrements"
+
 msgid "are you sure to cancel all changes"
 msgstr "êtes vous certains d’annuler tous les changements"
 
@@ -12166,6 +12291,9 @@ msgstr "arts/magazine culturel"
 
 msgid "as plugin in extended bar"
 msgstr "comme plugin dans la barre étendue"
+
+msgid "ask user"
+msgstr "Demander à l’utilisateur"
 
 msgid "at beginning"
 msgstr "au début"
@@ -12624,6 +12752,12 @@ msgstr "se rendre vers le titre précédant"
 msgid "jump forward to the next title"
 msgstr "se rendre vers le titre suivant"
 
+msgid "just abort, no message"
+msgstr "simplement abandonner, pas de message"
+
+msgid "just abort, show message"
+msgstr "simplement abandonner, afficher un message"
+
 msgid "just boot"
 msgstr "juste démarrer"
 
@@ -12731,6 +12865,9 @@ msgstr "nature/animaux/environnement"
 
 msgid "never"
 msgstr "jamais"
+
+msgid "never abort"
+msgstr "ne jamais annuler"
 
 msgid "new media"
 msgstr "nouveau média"
@@ -12890,6 +13027,15 @@ msgstr "provid:"
 msgid "provider:"
 msgstr "provider:"
 
+msgid "real or pseudo recordings"
+msgstr "Enregistrements réels ou pseudos"
+
+msgid "real recordings"
+msgstr "Enregistrements réels"
+
+msgid "real recordings or streaming"
+msgstr "Enregistrements réels ou streaming"
+
 msgid "reboot system"
 msgstr "redémarrer le système"
 
@@ -12950,6 +13096,9 @@ msgstr "répéter liste lecture"
 msgid "repeated"
 msgstr "répété"
 
+msgid "resoring satellites.xml not posibel!"
+msgstr "impossible de restaurer satellites.xml!"
+
 msgid "restart GUI"
 msgstr "Relancer l’IGU"
 
@@ -12979,6 +13128,17 @@ msgstr "Exécuter le plugin sélectionné"
 
 msgid "running..."
 msgstr "Analyse en cours…"
+
+msgid ""
+"satellites.xml not found or corrupted!\n"
+"It is possible to watch TV,\n"
+"but it's not possible to search for new TV channels\n"
+"or to configure tuner settings"
+msgstr ""
+"satellites.xml non trouvé ou corrompu!\n"
+"Il est possible de regarder la TV,\n"
+"mais il n’est pas possible de rechercher les nouvelles chaînes\n"
+"ou configurer les paramètres du tuner."
 
 msgid "save"
 msgstr "sauvegarder"
@@ -13046,6 +13206,9 @@ msgstr "partage:"
 msgid "show DVD main menu"
 msgstr "afficher menu DVD principal"
 
+msgid "show EPG..."
+msgstr "Afficher EPG…"
+
 msgid "show all cards"
 msgstr "afficher toutes les cartes"
 
@@ -13090,6 +13253,9 @@ msgstr "afficher détails événement"
 
 msgid "show mediaplayer on mainmenu"
 msgstr "Afficher le lecteur de média dans le menu principal"
+
+msgid "show program information..."
+msgstr "Afficher les informations du programme…"
 
 msgid "show transponder info"
 msgstr "afficher info transpondeur"
