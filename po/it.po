@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-10-13 00:09+0100\n"
+"PO-Revision-Date: 2015-11-01 22:50+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: AndyBlacburn, j-ot&Trial\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgid "Start Timeshift"
 msgstr "Start Timeshift"
 
 msgid "Show Movies"
-msgstr "Mostra Films"
+msgstr "Mostra Film"
 
 msgid "Main Menu"
 msgstr "Menu principale"
@@ -41,7 +41,7 @@ msgid "Show Extension Selection"
 msgstr "Mostra le estensioni installate"
 
 msgid "Activate HbbTV (Redbutton)"
-msgstr "Attivare HbbTV (RedButton)"
+msgstr "Attivare HbbTV (Pulsante Rosso)"
 
 msgid "Show Event Info Plugins"
 msgstr "Mostra Evento Plugin"
@@ -74,10 +74,10 @@ msgid "History back"
 msgstr "Storia indietro"
 
 msgid "Show Subtitle Selection"
-msgstr "Mostra selezione dei sottotitoli"
+msgstr "Mostra sottotitoli"
 
 msgid "Show Single Service EPG"
-msgstr "Mostra Singolo Servizio EPG"
+msgstr "Mostra singolo Servizio EPG"
 
 msgid "Show Graphical Multi EPG"
 msgstr "Mostra Multi EPG Graffico"
@@ -155,16 +155,16 @@ msgid "Swap Picture In Picture"
 msgstr "Cambiare PIP"
 
 msgid "Move Picture In Picture"
-msgstr "Sposta PIP"
+msgstr "Spostare PIP"
 
 msgid "Toggle Picture In Picture Zap"
 msgstr "Cambiare PIP Zap"
 
 msgid "Toggle HDMI-In Full Screen"
-msgstr "Cambia HDMI a tutto schermo"
+msgstr "Cambiare HDMI a tutto schermo"
 
 msgid "Toggle HDMI-In Picture In Picture"
-msgstr "Cambia HDMI in PIP"
+msgstr "Cambiare HDMI in PIP"
 
 msgid "Zap to"
 msgstr "Passa a ..."
@@ -227,8 +227,8 @@ msgid ""
 "Configure the hard disk drive to go to standby after the specified idle time "
 "when the box is in standby."
 msgstr ""
-"Configurare il disco rigido di andare in standby dopo il tempo di inattività "
-"specificato quando il Box è in standby."
+"Configurare il disco rigido per andare in standby dopo il tempo di "
+"inattività specificato quando il Box è in standby."
 
 msgid "Subtitles Settings"
 msgstr "Impostazioni sottotitoli"
@@ -260,7 +260,7 @@ msgstr ""
 
 #, python-format
 msgid "After pressing OK, please wait!"
-msgstr "Dopo aver premuto OK, attendere!"
+msgstr "Dopo aver premuto OK, Attendere!"
 
 #, python-format
 msgid ""
@@ -269,8 +269,8 @@ msgid ""
 "the filesystem of your timeshift-device!"
 msgstr ""
 "\n"
-"Un Errore di uscita/Ingresso di solito indica un filesystem corrotto! "
-"Controllare il file di sistema del timeshift dispositivo!"
+"Un Errore di ingresso/uscita di solito indica un filesystem corrotto! "
+"Controllare il file di sistema del timeshift!"
 
 #, python-format
 msgid ""
@@ -285,7 +285,7 @@ msgid ""
 "Edit the upgrade source address."
 msgstr ""
 "\n"
-"Modificare indirizzo sorgenti aggiornamento."
+"Modificare indirizzo sorgenti Aggiornamento."
 
 #, python-format
 msgid ""
@@ -315,7 +315,7 @@ msgid ""
 "Flash on the fly your %s %s."
 msgstr ""
 "\n"
-"Flash online/local tuo %s %s."
+"Flash online/locale tuo %s %s."
 
 msgid "Online = Download a image and flash it"
 msgstr "Online = Scarica l'immagine e fai un Reflash."
@@ -346,7 +346,7 @@ msgstr ""
 
 msgid "The image is downloaded. Do you want to flash now?"
 msgstr ""
-"L'immagine è scaricata,\n"
+"L'immagine è scaricata\n"
 "Ora vuoi fare un Reflash?"
 
 msgid "Please select medium"
@@ -368,7 +368,7 @@ msgstr ""
 "Non c'è abbastanza spazio libero sul/hdd!\n"
 "Avete bisogno di almeno 300 MB di spazio libero.\n"
 "\n"
-"Chiudi plugin."
+"Uscire dai plugin."
 
 msgid ""
 "ofgwrite not found !!\n"
@@ -377,9 +377,9 @@ msgid ""
 "Exit plugin."
 msgstr ""
 "ofgwrite non trovato !!\n"
-"Si prega di installare ofgwrite a/usr/bin/ofgwrite.\n"
+"Si prega di installare ofgwrite in /usr/bin/ofgwrite.\n"
 "\n"
-"Chiudi plugin."
+"Uscire dai plugin."
 
 #, python-format
 msgid ""
@@ -387,7 +387,7 @@ msgid ""
 "Restore your %s %s settings."
 msgstr ""
 "\n"
-"Ripristina impostazioni del tuo %s %s"
+"Ripristina impostazioni del %s %s"
 
 #, python-format
 msgid ""
@@ -8691,8 +8691,8 @@ msgstr "Potenza Segnale:"
 msgid "Signal:"
 msgstr "Segnale:"
 
-msgid "Similar"
-msgstr "Simile"
+msgid "shows EPG"
+msgstr "Mostra EPG"
 
 msgid "Similar broadcasts:"
 msgstr "Programmi simili:"
