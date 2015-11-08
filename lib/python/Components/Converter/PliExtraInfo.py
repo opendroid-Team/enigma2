@@ -759,16 +759,16 @@ class PliExtraInfo(Poll, Converter, object):
 				+ addspace(self.createCryptoBar(info)) + self.current_source + "\n" \
 				+ addspace(self.createCryptoSpecial(info)) + addspace(self.createVideoCodec(info)) + self.createResolution(info)
 
-		if self.type == "ServiceInfo":
-			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata)) \
-			+ addspace(self.createSymbolRate(fedata, feraw)) + addspace(self.createFEC(fedata, feraw)) + addspace(self.createModulation(fedata)) + addspace(self.createOrbPos(feraw)) + addspace(self.createTransponderName(feraw))\
-			+ addspace(self.createVideoCodec(info)) + self.createResolution(info)
-
 		if self.type == "PIDInfo":
 			return self.createPIDInfo(info)
 
 		if not feraw:
 			return ""
+
+		if self.type == "ServiceInfo":
+			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata)) \
+			+ addspace(self.createSymbolRate(fedata, feraw)) + addspace(self.createFEC(fedata, feraw)) + addspace(self.createModulation(fedata)) + addspace(self.createOrbPos(feraw)) + addspace(self.createTransponderName(feraw))\
+			+ addspace(self.createVideoCodec(info)) + self.createResolution(info)
 
 		if self.type == "TransponderInfo2line":
 			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createTransponderName(feraw)) + '\n'\
@@ -780,6 +780,11 @@ class PliExtraInfo(Poll, Converter, object):
 
 		if self.type == "TransponderFrequency":
 			return self.createFrequency(feraw)
+                if self.type == 'ProviderName':
+
+                        return self.createProviderName(info)
+                if self.type == 'TransponderName':
+                       return self.createTransponderName(feraw)
 
 		if self.type == "TransponderSymbolRate":
 			return self.createSymbolRate(fedata, feraw)
