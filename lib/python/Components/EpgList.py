@@ -218,6 +218,10 @@ class EPGList(HTMLComponent, GUIComponent):
 					font = parseFont(value, ((1,1),(1,1)) )
 					self.eventFontNameSingle = font.family
 					self.eventFontSizeSingle = font.pointSize
+				elif attrib == "EventFontMulti":
+					font = parseFont(value, ((1,1),(1,1)) )
+					self.eventFontNameMulti = font.family
+					self.eventFontSizeMulti = font.pointSize
 				elif attrib == "EntryFontAlignment":
 					self.eventNameAlign = value
 				elif attrib == "EntryFontWrap":
