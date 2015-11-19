@@ -5,9 +5,9 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-11-08 23:59+0100\n"
+"PO-Revision-Date: 2015-11-19 11:51+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
-"Language-Team: AndyBlacburn, j-ot&Trial\n"
+"Language-Team: Gimsy\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2983,16 +2983,16 @@ msgstr ""
 "Controllo della posizione come timer finito sono mostrati nell'Elenco Timer."
 
 msgid "Convert ext3 filesystem to ext4"
-msgstr "Conv. file system ext3 a ext4"
+msgstr "Convert. file system da ext3 a ext4"
 
 msgid "Convert ext3 to ext4"
-msgstr "Convertire ext3 a ext4"
+msgstr "Convertire da ext3 a ext4"
 
 msgid "Convert filesystem ext3 to ext4"
-msgstr "Conv. file system ext3 a ext4"
+msgstr "Convert. file system da ext3 a ext4"
 
 msgid "Converting ext3 to ext4..."
-msgstr "Conversione ext3 a ext4 ..."
+msgstr "Convertire da ext3 a ext4 ..."
 
 msgid "Cool TV Guide"
 msgstr "Cool TV Guide"
@@ -4980,10 +4980,10 @@ msgid "If enabled, AIT data is included in recordings."
 msgstr "Se abilitato, i dati AIT sono inclusi nelle registrazioni."
 
 msgid "Include ECM in http streams"
-msgstr "Includi ECM in flussi http"
+msgstr "Includi ECM nei flussi http"
 
 msgid "Include EIT in http streams"
-msgstr "Includi EIT in flussi HTTP"
+msgstr "Includi EIT nei flussi HTTP"
 
 msgid "Increase time scale"
 msgstr "Aumentare la scala di tempo"
@@ -8692,7 +8692,7 @@ msgid "Signal:"
 msgstr "Segnale:"
 
 msgid "Similar"
-msgstr "Mostra EPG"
+msgstr "SimilEPG"
 
 msgid "Similar broadcasts:"
 msgstr "Programmi simili:"
@@ -9225,7 +9225,7 @@ msgid "Sunday"
 msgstr "Domenica"
 
 msgid "Support at"
-msgstr "Supporto a"
+msgstr "Supporto"
 
 msgid "Swap PiP and main picture"
 msgstr "Scambiare PiP e schermo principale"
@@ -9320,7 +9320,7 @@ msgstr ""
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 16 Giugno 2015"
+"aggiornamento: 19 Novembre 2015"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -10941,8 +10941,8 @@ msgid ""
 msgstr ""
 "Benvenuto.\n"
 "\n"
-"Questa configurazione guidata fornirà supporto di base per la configurazione "
-"di rete del %s %s e la sua connessione a Internet.\n"
+"Se si desidera collegare il %s %s a Internet, questa procedura guidata vi "
+"guiderànella configurazione di rete di base del tuo %s %s.\n"
 "\n"
 "Premere OK per iniziare la configurazione della rete."
 
@@ -12501,25 +12501,25 @@ msgid "on"
 msgstr "On"
 
 msgid "on READ ONLY medium."
-msgstr "su supporto di sola lettura."
+msgstr "Su supporto di sola lettura."
 
 msgid "once"
 msgstr "Una volta"
 
 msgid "open bouquetlist"
-msgstr "apri lista bouquet"
+msgstr "Apri lista bouquet"
 
 msgid "open nameserver configuration"
 msgstr "Configurazione nameserver"
 
 msgid "original"
-msgstr "originale"
+msgstr "Originale"
 
 msgid "original language"
-msgstr "lingua originale"
+msgstr "Lingua originale"
 
 msgid "packages selected."
-msgstr "pacchetti selezionati"
+msgstr "Pacchetti selezionati"
 
 msgid "page left"
 msgstr "Pagina sinistra"
@@ -12528,7 +12528,7 @@ msgid "pass"
 msgstr "Pass"
 
 msgid "performing arts"
-msgstr "arti dello spettacolo"
+msgstr "Arte dello spettacolo"
 
 msgid "pid:"
 msgstr "PID:"
