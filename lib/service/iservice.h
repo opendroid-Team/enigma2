@@ -984,6 +984,7 @@ public:
 		evRecordWriteError,
 		evNewEventInfo,
 		evRecordAborted,
+		evGstRecordEnded,
 	};
 	enum {
 		NoError=0,
