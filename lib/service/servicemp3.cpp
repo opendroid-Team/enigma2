@@ -403,6 +403,7 @@ eServiceMP3::eServiceMP3(eServiceReference ref):
 	m_subtitle_sync_timer = eTimer::create(eApp);
 	m_streamingsrc_timeout = 0;
 	m_stream_tags = 0;
+	m_bitrate = 0;
 	m_currentAudioStream = -1;
 	m_currentSubtitleStream = -1;
 	m_cachedSubtitleStream = 0; /* report the first subtitle stream to be 'cached'. TODO: use an actual cache. */
@@ -539,7 +540,7 @@ eServiceMP3::eServiceMP3(eServiceReference ref):
 	}
 	else if ( m_sourceinfo.containertype == ctCDA )
 	{
-		int i_track = atoi(filename+18);
+		int i_track = atoi(filename+(strlen(filename) - 6));
 		uri = g_strdup_printf ("cdda://%i", i_track);
 	}
 	else if ( m_sourceinfo.containertype == ctVCD )
@@ -766,6 +767,7 @@ RESULT eServiceMP3::start()
 void eServiceMP3::sourceTimeout()
 {
 	eDebug("[eServiceMP3] http source timeout! issuing eof...");
+	stop();
 	m_event((iPlayableService*)this, evEOF);
 }
 
@@ -923,6 +925,62 @@ RESULT eServiceMP3::trickSeek(gdouble ratio)
 		return 0;
 	}
 
+#if GST_VERSION_MAJOR >= 1
+	bool unpause = (m_currentTrickRatio == 1.0 && ratio == 1.0);
+	if (unpause)
+	{
+		GstElement *source = NULL;
+		GstElementFactory *factory = NULL;
+		const gchar *name = NULL;
+		g_object_get (G_OBJECT (m_gst_playbin), "source", &source, NULL);
+		if (!source)
+		{
+			eDebug("[eServiceMP3] trickSeek - cannot get source");
+			goto seek_unpause;
+		}
+		factory = gst_element_get_factory(source);
+		g_object_unref(source);
+		if (!factory)
+		{
+			eDebug("[eServiceMP3] trickSeek - cannot get source factory");
+			goto seek_unpause;
+		}
+		name = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory));
+		if (!name)
+		{
+			eDebug("[eServiceMP3] trickSeek - cannot get source name");
+			goto seek_unpause;
+		}
+		/*
+		 * We know that filesrc and souphttpsrc will not timeout after long pause
+		 * If there are other sources which will not timeout, add them here
+		*/
+		if (!strcmp(name, "filesrc") || !strcmp(name, "souphttpsrc"))
+		{
+			GstStateChangeReturn ret;
+			GstState state, pending;
+			/* make sure that last state change was successfull */
+			ret = gst_element_get_state(m_gst_playbin, &state, &pending, 0);
+			if (ret == GST_STATE_CHANGE_SUCCESS)
+			{
+				gst_element_set_state(m_gst_playbin, GST_STATE_PLAYING);
+				ret = gst_element_get_state(m_gst_playbin, &state, &pending, 0);
+				if (ret == GST_STATE_CHANGE_SUCCESS)
+					return 0;
+			}
+			eDebug("[eServiceMP3] trickSeek - invalid state, state:%s pending:%s ret:%s",
+				gst_element_state_get_name(state),
+				gst_element_state_get_name(pending),
+				gst_element_state_change_return_get_name(ret));
+		}
+		else
+		{
+			eDebug("[eServiceMP3] trickSeek - source '%s' is not supported", name);
+		}
+seek_unpause:
+		eDebug(", doing seeking unpause\n");
+	}
+#endif
 	m_currentTrickRatio = ratio;
 
 	bool validposition = false;
@@ -1807,6 +1865,22 @@ void eServiceMP3::gstBusCall(GstMessage *msg)
 				if (m_stream_tags)
 					gst_tag_list_free(m_stream_tags);
 				m_stream_tags = result;
+
+				/* send evUpdatedInfo only when bitrate changes from 0 in order to reduce events */
+				guint value;
+				if(gst_tag_list_get_uint(m_stream_tags, GST_TAG_BITRATE, &value))
+				{
+					if(!m_bitrate && value)
+					{
+						m_bitrate = value;
+					}
+					else
+					{
+						m_bitrate = value;
+						gst_tag_list_free(tags);
+						break;
+					}
+				}
 			}
 
 			const GValue *gv_image = gst_tag_list_get_value_index(tags, GST_TAG_IMAGE, 0);
