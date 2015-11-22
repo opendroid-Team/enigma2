@@ -970,7 +970,7 @@ RESULT eServiceMP3::trickSeek(gdouble ratio)
 			eDebugNoNewLineStart("[eServiceMP3] trickSeek - invalid state, state:%s pending:%s ret:%s",
 				gst_element_state_get_name(state),
 				gst_element_state_get_name(pending),
-				gst_element_state_change_return_get_name(ret));
+				gst_element_state_change_return_get_name(ret);
 		}
 		else
 		{
