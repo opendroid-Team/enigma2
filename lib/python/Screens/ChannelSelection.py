@@ -2148,6 +2148,12 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		if self.dopipzap:
 			# This unfortunately won't work with subservices
 			self.setCurrentSelection(self.session.pip.getCurrentService())
+		else:
+			lastservice = eServiceReference(self.lastservice.value)
+			if lastservice.valid() and self.getCurrentSelection() == lastservice:
+				pass	# keep current selection
+			else:
+				self.setCurrentSelection(currentPlayedRef)
 
 	def setStartRoot(self, root):
 		if root:
