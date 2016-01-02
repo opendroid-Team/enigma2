@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2015-11-19 12:25+0100\n"
+"PO-Revision-Date: 2016-01-02 12:03+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy\n"
 "Language: it\n"
@@ -3410,7 +3410,7 @@ msgid "Disk space to reserve for recordings (in GB)"
 msgstr "Spazio su disco da riservare per le registrazioni (in GB)"
 
 msgid "Display"
-msgstr "Display (VFD/LCD)"
+msgstr "Display (VFD/LCD/CLOCK)"
 
 #, python-format
 msgid "Power LED State in Deep-Standby and Standby"
