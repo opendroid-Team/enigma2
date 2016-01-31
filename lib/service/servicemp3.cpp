@@ -415,10 +415,11 @@ eServiceMP3::eServiceMP3(eServiceReference ref):
 	m_use_prefillbuffer = false;
 	m_paused = false;
 	m_seek_paused = false;
-	m_cuesheet_loaded = false; /* cuesheet */
+	m_cuesheet_loaded = false; /* cuesheet CVR */
 #if GST_VERSION_MAJOR >= 1
-	m_use_chapter_entries = false; /* TOC chapter support */
-	m_last_seek_pos = 0; /* last seek position */
+	m_use_chapter_entries = false; /* TOC chapter support CVR */
+	m_user_paused = false; /* CVR */
+	m_last_seek_pos = 0; /* CVR last seek position */
 #endif
 	m_extra_headers = "";
 	m_download_buffer_path = "";
