@@ -30,7 +30,7 @@ class eDVBDB: public iDVBChannelList
 
 	std::map<std::string, eBouquet> m_bouquets;
 
-	bool m_numbering_mode, m_load_unlinked_userbouquets;
+	bool m_numbering_mode;
 #ifdef SWIG
 	eDVBDB();
 	~eDVBDB();
@@ -40,7 +40,6 @@ public:
 	RESULT removeFlags(unsigned int flagmask, int dvb_namespace=-1, int tsid=-1, int onid=-1, unsigned int orb_pos=0xFFFFFFFF);
 	RESULT removeServices(int dvb_namespace=-1, int tsid=-1, int onid=-1, unsigned int orb_pos=0xFFFFFFFF);
 	RESULT removeService(const eServiceReference &service);
-	PyObject *getFlag(const eServiceReference &service);
 	RESULT addFlag(const eServiceReference &service, unsigned int flagmask);
 	RESULT removeFlag(const eServiceReference &service, unsigned int flagmask);
 	PyObject *readSatellites(SWIG_PYOBJECT(ePyObject) sat_list, SWIG_PYOBJECT(ePyObject) sat_dict, SWIG_PYOBJECT(ePyObject) tp_dict);
@@ -72,7 +71,6 @@ public:
 	int renumberBouquet(eBouquet &bouquet, int startChannelNum = 1);
 #endif
 	void setNumberingMode(bool numberingMode);
-	void setLoadUnlinkedUserbouquets(bool value) { m_load_unlinked_userbouquets=value; }
 	void renumberBouquet();
 	void loadServicelist(const char *filename);
 	static eDVBDB *getInstance() { return instance; }
