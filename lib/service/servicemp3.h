@@ -298,7 +298,6 @@ private:
 	int m_buffer_size;
 	int m_ignore_buffering_messages;
 	bool m_is_live;
-	bool m_subtitles_paused;
 	bool m_use_prefillbuffer;
 	bool m_paused;
 	bool m_seek_paused;
@@ -307,8 +306,8 @@ private:
 	/* servicemMP3 chapter TOC support CVR */
 #if GST_VERSION_MAJOR >= 1
 	bool m_use_chapter_entries;
-	/* CVR needed for user requested media pause */
-	bool m_user_paused;
+	/* last used seek position gst-1 only */
+	gint64 m_last_seek_pos;
 #endif
 	bufferInfo m_bufferInfo;
 	errorInfo m_errorInfo;
