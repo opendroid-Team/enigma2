@@ -136,10 +136,8 @@ SWIG_IGNORE(iCryptoInfo);
 class iCryptoInfo : public iObject
 {
 #ifdef SWIG
-public:
 	iCryptoInfo();
 	~iCryptoInfo();
-private:
 #endif
 public:
 	PSignal1<void, const char*> clientname;
