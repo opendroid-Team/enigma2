@@ -53,9 +53,9 @@ eHdmiCEC::eHdmiCEC()
 	logicalAddress = 1;
 	deviceType = 1; /* default: recorder */
 #ifdef DREAMBOX
-	hdmiFd = ::open("/dev/misc/hdmi_cec0", O_RDWR | O_NONBLOCK);
+	hdmiFd = ::open("/dev/misc/hdmi_cec0", O_RDWR | O_NONBLOCK | O_CLOEXEC);
 #else
-	hdmiFd = ::open("/dev/hdmi_cec", O_RDWR | O_NONBLOCK);
+	hdmiFd = ::open("/dev/hdmi_cec", O_RDWR | O_NONBLOCK | O_CLOEXEC);
 #endif
 	if (hdmiFd >= 0)
 	{
@@ -236,12 +236,12 @@ void eHdmiCEC::hdmiEvent(int what)
 			bool keypressed = false;
 			static unsigned char pressedkey = 0;
 
-			eDebugNoNewLine("eHdmiCEC: received message");
+			eDebugNoNewLineStart("eHdmiCEC: received message");
 			for (int i = 0; i < rxmessage.length; i++)
 			{
 				eDebugNoNewLine(" %02X", rxmessage.data[i]);
 			}
-			eDebug(" ");
+			eDebugNoNewLineEnd(" ");
 			bool hdmicec_report_active_menu = eConfigManager::getConfigBoolValue("config.hdmicec.report_active_menu", false);
 			if (hdmicec_report_active_menu)
 			{
@@ -389,12 +389,12 @@ void eHdmiCEC::sendMessage(struct cec_message &message)
 {
 	if (hdmiFd >= 0)
 	{
-		eDebugNoNewLine("eHdmiCEC: send message");
+		eDebugNoNewLineStart("eHdmiCEC: send message");
 		for (int i = 0; i < message.length; i++)
 		{
 			eDebugNoNewLine(" %02X", message.data[i]);
 		}
-		eDebug(" ");
+		eDebugNoNewLineEnd(" ");
 #ifdef DREAMBOX
 		message.flag = 1;
 		::ioctl(hdmiFd, 3, &message);
