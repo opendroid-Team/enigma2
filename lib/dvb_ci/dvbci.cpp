@@ -724,16 +724,10 @@ void eDVBCIInterfaces::recheckPMTHandlers()
 						data_source tuner_source = TUNER_A;
 						switch (tunernum)
 						{
-#ifdef TUNER_VUSOLO4K
-							case 0 ... 10:
-								tuner_source = (data_source)tunernum;
-								break;
-#else
 							case 0: tuner_source = TUNER_A; break;
 							case 1: tuner_source = TUNER_B; break;
 							case 2: tuner_source = TUNER_C; break;
 							case 3: tuner_source = TUNER_D; break;
-#endif
 							default:
 								eDebug("try to get source for tuner %d!!\n", tunernum);
 								break;
@@ -881,66 +875,6 @@ int eDVBCIInterfaces::getMMIState(int slotid)
 	return slot->getMMIState();
 }
 
-#ifdef TUNER_DM7080
-static char* readInputCI(const char *filename, int NimNumber)
-{
-	char id1[] = "NIM Socket";
-	char id2[] = "Input_Name";
-	char keys1[] = "1234567890";
-	char keys2[] = "12ABCDabcd";
-	char *inputName = 0;
-	char buf[256];
-	FILE *f;
-
-	f = fopen(filename, "rt");
-	if (f) 
-	{
-		while (fgets(buf, sizeof(buf), f))
-		{
-			char *p = strcasestr(buf, id1);
-			if (!p)
-				continue;
-
-			p += strlen(id1);
-			p += strcspn(p, keys1);
-			if (*p && strtol(p, 0, 0) == NimNumber)
-				break;
-		}
-
-		while (fgets(buf, sizeof(buf), f))
-		{
-			if (strcasestr(buf, id1))
-				break;
-
-			char *p = strcasestr(buf, id2);
-			if (!p)
-				continue;
-
-			p = strchr(p + strlen(id2), ':');
-			if (!p)
-				continue;
-
-			p++;
-			p += strcspn(p, keys2);
-			size_t len = strspn(p, keys2);
-			if (len > 0)
-			{
-				inputName = strndup(p, len);
-				break;
-			}
-		}
-
-		fclose(f);
-	}
-
-	return inputName;
-}
-#endif
-
-#ifdef TUNER_VUSOLO4K
-static const char *tuner_source[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "CI0", "CI1", "CI2", "CI3"};
-#endif
-
 int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 {
 //	eDebug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -949,7 +883,6 @@ int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 	{
 		char buf[64];
 		snprintf(buf, 64, "/proc/stb/tsmux/input%d", tuner_no);
-		char *srcCI = NULL;
 
 		FILE *input=0;
 		if((input = fopen(buf, "wb")) == NULL) {
@@ -962,11 +895,6 @@ int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 
 		switch(source)
 		{
-#ifdef TUNER_VUSOLO4K
-			case TUNER_A ... CI_D:
-				fprintf(input, tuner_source[(int)source]);
- 				break;
-#else
 			case CI_A:
 				fprintf(input, "CI0");
 				break;
@@ -979,17 +907,18 @@ int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 			case CI_D:
 				fprintf(input, "CI3");
 				break;
-#ifdef TUNER_DM7080
+#if TUNER_DM7080
 			case TUNER_A:
+				fprintf(input, "A1");
+				break;
 			case TUNER_B:
+				fprintf(input, "A2");
+				break;
 			case TUNER_C:
+				fprintf(input, "B");
+				break;
 			case TUNER_D:
-				srcCI = readInputCI("/proc/bus/nim_sockets", source);
-				if (srcCI)
-				{
-					fprintf(input, srcCI);
-					free(srcCI);
-				}
+				fprintf(input, "C");
 				break;
 #else
 			case TUNER_A:
@@ -1004,7 +933,6 @@ int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 			case TUNER_D:
 				fprintf(input, "D");
 				break;
-#endif
 #endif
 			default:
 				eDebug("setInputSource for input %d failed!!!\n", (int)source);
@@ -1532,7 +1460,7 @@ eDVBCISlot::eDVBCISlot(eMainloop *context, int nr)
 //	possible_providers.insert(providerPair("PREMIERE", 0xC00000));
 //	possible_services.insert(eServiceReference("1:0:1:2A:4:85:C00000:0:0:0:"));
 
-	fd = ::open(filename, O_RDWR | O_NONBLOCK | O_CLOEXEC);
+	fd = ::open(filename, O_RDWR | O_NONBLOCK);
 
 	eDebugCI("CI Slot %d has fd %d", getSlotID(), fd);
 	state = stateInvalid;
@@ -1792,14 +1720,8 @@ int eDVBCISlot::setSource(data_source source)
 		char buf[64];
 		snprintf(buf, 64, "/proc/stb/tsmux/ci%d_input", slotid);
 		FILE *ci = fopen(buf, "wb");
-		char *srcCI = NULL;
 		switch(source)
 		{
-#ifdef TUNER_VUSOLO4K
-			case TUNER_A ... CI_D:
-				fprintf(ci, tuner_source[(int)source]);
-				break;
-#else
 			case CI_A:
 				fprintf(ci, "CI0");
 				break;
@@ -1812,17 +1734,18 @@ int eDVBCISlot::setSource(data_source source)
 			case CI_D:
 				fprintf(ci, "CI3");
 				break;
-#ifdef TUNER_DM7080
+#if TUNER_DM7080
 			case TUNER_A:
+				fprintf(ci, "A1");
+				break;
 			case TUNER_B:
+				fprintf(ci, "A2");
+				break;
 			case TUNER_C:
+				fprintf(ci, "B");
+				break;
 			case TUNER_D:
-				srcCI = readInputCI("/proc/bus/nim_sockets", source);
-				if (srcCI)
-				{
-					fprintf(ci, srcCI);
-					free(srcCI);
-				}
+				fprintf(ci, "C");
 				break;
 #else
 			case TUNER_A:
@@ -1837,7 +1760,6 @@ int eDVBCISlot::setSource(data_source source)
 			case TUNER_D:
 				fprintf(ci, "D");
 				break;
-#endif
 #endif
 			default:
 				eDebug("CI Slot %d: setSource %d failed!!!\n", getSlotID(), (int)source);
