@@ -44,7 +44,7 @@ public:
 		isMarker=64,			// Marker
 		isGroup=128,			// is a group of services
 		isNumberedMarker=256, //use together with isMarker, to force the marker to be numbered
-		isInvisible=512 // use together with isMarker and isNumberedMarker, to force an empty number
+		isInvisible=512 // use to make services or markers in a list invisable
 	};
 	int flags; // flags will NOT be compared.
 
@@ -388,7 +388,6 @@ public:
 		sHBBTVUrl,
 		sLiveStreamDemuxId,
 		sBuffer,
-		sIsDedicated3D,
 
 		sUser = 0x100
 	};
@@ -728,7 +727,7 @@ public:
 		/* adds a service to a list */
 	virtual RESULT addService(eServiceReference &ref, eServiceReference before=eServiceReference())=0;
 		/* removes a service from a list */
-	virtual RESULT removeService(eServiceReference &ref, bool renameBouquet=true)=0;
+	virtual RESULT removeService(eServiceReference &ref)=0;
 		/* moves a service in a list, only if list suppports a specific sort method. */
 		/* pos is the new, absolute position from 0..size-1 */
 	virtual RESULT moveService(eServiceReference &ref, int pos)=0;
@@ -1018,7 +1017,6 @@ public:
 	virtual SWIG_VOID(RESULT) frontendInfo(ePtr<iFrontendInformation> &SWIG_OUTPUT)=0;
 	virtual SWIG_VOID(RESULT) stream(ePtr<iStreamableService> &SWIG_OUTPUT)=0;
 	virtual SWIG_VOID(RESULT) subServices(ePtr<iSubserviceList> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) getFilenameExtension(std::string &SWIG_OUTPUT)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iRecordableService>, iRecordableServicePtr);
 
