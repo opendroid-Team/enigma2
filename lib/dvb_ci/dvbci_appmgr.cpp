@@ -17,7 +17,7 @@ eDVBCIApplicationManagerSession::~eDVBCIApplicationManagerSession()
 
 int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const void *data, int len)
 {
-	eDebugNoNewLine("SESSION(%d)/APP %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
+	eDebugNoNewLineStart("SESSION(%d)/APP %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
 	eDebug("");
@@ -34,7 +34,7 @@ int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const
 			eDebug("  application_type: %d", ((unsigned char*)data)[0]);
 			eDebug("  application_manufacturer: %02x %02x", ((unsigned char*)data)[2], ((unsigned char*)data)[1]);
 			eDebug("  manufacturer_code: %02x %02x", ((unsigned char*)data)[4],((unsigned char*)data)[3]);
-			eDebugNoNewLine("  menu string: ");
+			eDebugNoNewLineStart("  menu string: ");
 			dl=((unsigned char*)data)[5];
 			if ((dl + 6) > len)
 			{

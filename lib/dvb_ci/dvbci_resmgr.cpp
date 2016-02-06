@@ -7,9 +7,9 @@ int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const vo
 {
 #ifdef __sh__
 	eDebug("eDVBCIResourceManagerSession::%s >", __func__);
-	eDebugNoNewLine("SESSION(%d) %02x %02x %02x (len = %d): ", session_nb, tag[0], tag[1], tag[2], len);
+	eDebugNoNewLineStart("SESSION(%d) %02x %02x %02x (len = %d): ", session_nb, tag[0], tag[1], tag[2], len);
 #else
-	eDebugNoNewLine("SESSION(%d) %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
+	eDebugNoNewLineStart("SESSION(%d) %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
 #endif
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
@@ -24,7 +24,7 @@ int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const vo
 			return 1;
 			break;
 		case 0x11: // Tprofile
-			eDebugNoNewLine("mein cam kann: ");
+			eDebugNoNewLineStart("mein cam kann: ");
 			if (!len)
 				eDebug("nichts");
 			else
