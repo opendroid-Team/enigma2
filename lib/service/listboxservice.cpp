@@ -113,37 +113,6 @@ void eListboxServiceContent::getCurrent(eServiceReference &ref)
 		ref = eServiceReference();
 }
 
-void eListboxServiceContent::getPrev(eServiceReference &ref)
-{
-	if (cursorValid())
-	{
-		list::iterator cursor(m_cursor);
-		if (cursor == m_list.begin())
-		{
-			cursor = m_list.end();
-		}
-		ref = *(--cursor);
-	}
-	else
-		ref = eServiceReference();
-}
-
-void eListboxServiceContent::getNext(eServiceReference &ref)
-{
-	if (cursorValid())
-	{
-		list::iterator cursor(m_cursor);
-		cursor++;
-		if (cursor == m_list.end())
-		{
-			cursor = m_list.begin();
-		}
- 		ref = *(cursor);
-	}
-	else
-		ref = eServiceReference();
-}
-
 int eListboxServiceContent::getNextBeginningWithChar(char c)
 {
 //	printf("Char: %c\n", c);
@@ -312,7 +281,7 @@ void eListboxServiceContent::sort()
 DEFINE_REF(eListboxServiceContent);
 
 eListboxServiceContent::eListboxServiceContent()
-	:m_visual_mode(visModeSimple), m_size(0), m_current_marked(false), m_itemheight(25), m_service_picon_downsize(0), m_servicetype_icon_mode(0), m_crypto_icon_mode(0), m_column_width(0), m_progressbar_height(6), m_progressbar_border_width(2), m_record_indicator_mode(0), m_nonplayable_margins(10), m_items_distances(8)
+	:m_visual_mode(visModeSimple), m_size(0), m_current_marked(false), m_itemheight(25), m_servicetype_icon_mode(0), m_crypto_icon_mode(0), m_column_width(0), m_progressbar_height(6), m_progressbar_border_width(2), m_record_indicator_mode(0), m_nonplayable_margins(10), m_items_distances(8)
 {
 	memset(m_color_set, 0, sizeof(m_color_set));
 	cursorHome();
@@ -416,11 +385,11 @@ int eListboxServiceContent::setCurrentMarked(bool state)
 					else
 					{
 						int pos = cursorGet();
-						eDebugNoNewLineStart("move %s to %d ", ref.toString().c_str(), pos);
+						eDebugNoNewLine("move %s to %d ", ref.toString().c_str(), pos);
 						if (list->moveService(ref, cursorGet()))
-							eDebugNoNewLineEnd("failed");
+							eDebug("failed");
 						else
-							eDebugNoNewLineEnd("ok");
+							eDebug("ok");
 					}
 				}
 			}
@@ -870,9 +839,9 @@ void eListboxServiceContent::paint(gPainter &painter, eWindowStyle &style, const
 					eRect bbox = para->getBoundBox();
 
 					int servicenameWidth = ((!isPlayable || m_column_width == -1 || (!piconPixmap && !m_column_width)) ? bbox.width() : m_column_width);
-					m_element_position[celServiceInfo].setLeft(area.left() + servicenameWidth + m_items_distances + xoffs);
+					m_element_position[celServiceInfo].setLeft(area.left() + servicenameWidth + 8 + xoffs);
 					m_element_position[celServiceInfo].setTop(area.top());
-					m_element_position[celServiceInfo].setWidth(area.width() - (servicenameWidth + m_items_distances + xoffs));
+					m_element_position[celServiceInfo].setWidth(area.width() - (servicenameWidth + 8 + xoffs));
 					m_element_position[celServiceInfo].setHeight(area.height());
 
 					if (isPlayable)
@@ -885,7 +854,7 @@ void eListboxServiceContent::paint(gPainter &painter, eWindowStyle &style, const
 							 * bit wider in case the icons are diffently
 							 * shaped, and to add a bit of margin between
 							 * icon and text. */
-							const int iconWidth = (area.height() + m_service_picon_downsize * 2) * 1.67 + m_items_distances;
+							const int iconWidth = area.height() * 9 / 5;
 							m_element_position[celServiceInfo].setLeft(area.left() + iconWidth);
 							m_element_position[celServiceInfo].setWidth(area.width() - iconWidth);
 							area = m_element_position[celServiceName];
@@ -895,7 +864,7 @@ void eListboxServiceContent::paint(gPainter &painter, eWindowStyle &style, const
 								area.moveBy(offset);
 								painter.clip(area);
 								painter.blitScale(piconPixmap,
-									eRect(area.left(), area.top() - m_service_picon_downsize, iconWidth, area.height() + m_service_picon_downsize * 2),
+									eRect(area.left(), area.top(), iconWidth, area.height()),
 									area,
 									gPainter::BT_ALPHABLEND | gPainter::BT_KEEP_ASPECT_RATIO);
 								painter.clippop();

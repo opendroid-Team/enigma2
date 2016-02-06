@@ -298,7 +298,6 @@ private:
 	int m_buffer_size;
 	int m_ignore_buffering_messages;
 	bool m_is_live;
-	bool m_subtitles_paused;
 	bool m_use_prefillbuffer;
 	bool m_paused;
 	bool m_seek_paused;
@@ -307,6 +306,8 @@ private:
 	/* servicemMP3 chapter TOC support CVR */
 #if GST_VERSION_MAJOR >= 1
 	bool m_use_chapter_entries;
+	/* CVR needed for user requested media pause */
+	bool m_user_paused;
 	/* last used seek position gst-1 only */
 	gint64 m_last_seek_pos;
 #endif
@@ -322,6 +323,7 @@ private:
 	int m_state;
 	GstElement *m_gst_playbin, *audioSink, *videoSink;
 	GstTagList *m_stream_tags;
+	guint m_bitrate;
 
 	eFixedMessagePump<ePtr<GstMessageContainer> > m_pump;
 
@@ -361,6 +363,7 @@ private:
 	subtitle_pages_map_t m_subtitle_pages;
 	ePtr<eTimer> m_subtitle_sync_timer;
 
+	ePtr<eTimer> m_streamingsrc_timeout;
 	pts_t m_prev_decoder_time;
 	int m_decoder_time_valid_state;
 

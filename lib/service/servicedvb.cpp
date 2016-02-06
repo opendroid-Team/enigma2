@@ -286,7 +286,7 @@ int eStaticServiceDVBBouquetInformation::isPlayable(const eServiceReference &ref
 		}
 		if (cur)
 		{
-			return !!cur;
+			return cur;
 		}
 		/* fallback to stream (or pvr) service alternative */
 		if (streamable_service)
@@ -884,11 +884,11 @@ RESULT eDVBServiceList::addService(eServiceReference &ref, eServiceReference bef
 	return m_bouquet->addService(ref, before);
 }
 
-RESULT eDVBServiceList::removeService(eServiceReference &ref, bool renameBouquet)
+RESULT eDVBServiceList::removeService(eServiceReference &ref)
 {
 	if (!m_bouquet)
 		return -1;
-	return m_bouquet->removeService(ref, renameBouquet);
+	return m_bouquet->removeService(ref);
 }
 
 RESULT eDVBServiceList::moveService(eServiceReference &ref, int pos)
@@ -1560,17 +1560,7 @@ RESULT eDVBServicePlay::setFastForward_internal(int ratio, bool final_seek)
 	{
 		eDebug("setting cue skipmode to %d", skipmode);
 		if (m_cue)
-		{
-			long long _skipmode = skipmode;
-			if (!m_timeshift_active && (m_current_video_pid_type == eDVBServicePMTHandler::videoStream::vtH265_HEVC))
-			{
-				if (ratio < 0)
-					_skipmode = skipmode * 3;
-				else
-					_skipmode = skipmode * 4;
-			}
-			m_cue->setSkipmode(_skipmode * 90000); /* convert to 90000 per second */
-		}
+			m_cue->setSkipmode(skipmode * 90000); /* convert to 90000 per second */
 	}
 
 	m_skipmode = skipmode;
@@ -1966,8 +1956,7 @@ int eDVBServicePlay::getInfo(int w)
 			return aspect;
 		break;
 	}
-	case sIsCrypted: if (no_program_info) return false; return program.isCrypted();
-	case sIsDedicated3D: if (m_dvb_service) return m_dvb_service->isDedicated3D(); return false;
+	case sIsCrypted: if (no_program_info) return -1; return program.isCrypted();
 	case sVideoPID:
 		if (m_dvb_service)
 		{
@@ -2176,22 +2165,6 @@ int eDVBServicePlay::selectAudioStream(int i)
 
 	m_current_audio_pid = apid;
 
-	pts_t a_pts, v_pts;
-	a_pts = v_pts = 0;
-	m_decoder->getPTS(2, a_pts);
-	m_decoder->getPTS(1, v_pts);
-	eDebug("a: %lld   v: %lld  %lld",a_pts, v_pts, a_pts-v_pts);
-	bool radio_workaround = false;
-	if(v_pts && a_pts && (abs(a_pts-v_pts) > 2* 90000))
-		radio_workaround = true;
-
-	if(radio_workaround)
-		if (m_decoder->setAudioPID(-1, 0))
-		{
-			eDebug("set audio pid failed");
-			return -4;
-		}
-
 	if (m_decoder->setAudioPID(apid, apidtype))
 	{
 		eDebug("set audio pid failed");
@@ -2221,9 +2194,6 @@ int eDVBServicePlay::selectAudioStream(int i)
 			}
 		}
 	}
-
-	if(radio_workaround)
-		m_decoder->setSyncPCR(-1);
 
 			/* store new pid as default only when:
 				a.) we have an entry in the service db for the current service,
@@ -2801,7 +2771,7 @@ void eDVBServicePlay::updateDecoder(bool sendSeekableStateChanged)
 		eDebug("getting program info failed.");
 	else
 	{
-		eDebugNoNewLineStart("have %zd video stream(s)", program.videoStreams.size());
+		eDebugNoNewLine("have %zd video stream(s)", program.videoStreams.size());
 		if (!program.videoStreams.empty())
 		{
 			eDebugNoNewLine(" (");
@@ -2834,10 +2804,10 @@ void eDVBServicePlay::updateDecoder(bool sendSeekableStateChanged)
 			}
 			eDebugNoNewLine(")");
 		}
+		eDebugNoNewLine(", and the pcr pid is %04x", program.pcrPid);
 		pcrpid = program.pcrPid;
-		eDebugNoNewLine(", and the pcr pid is %04x", pcrpid);
+		eDebug(", and the text pid is %04x", program.textPid);
 		tpid = program.textPid;
-		eDebugNoNewLineEnd(", and the text pid is %04x", tpid);
 	}
 
 	m_have_video_pid = 0;
@@ -2897,15 +2867,14 @@ void eDVBServicePlay::updateDecoder(bool sendSeekableStateChanged)
 		setPCMDelay(pcm_delay == -1 ? 0 : pcm_delay);
 
 		m_decoder->setVideoPID(vpid, vpidtype);
-		m_current_video_pid_type = vpidtype;
 		m_have_video_pid = (vpid > 0 && vpid < 0x2000);
 
-		if (!(m_is_pvr || m_is_stream || m_timeshift_active || (pcrpid == 0x1FFF)))
+		selectAudioStream();
+
+		if (!(m_is_pvr || m_is_stream || m_timeshift_active))
 			m_decoder->setSyncPCR(pcrpid);
 		else
 			m_decoder->setSyncPCR(-1);
-
-		selectAudioStream();
 
 		if (m_decoder_index == 0)
 		{
