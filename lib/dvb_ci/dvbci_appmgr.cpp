@@ -20,7 +20,7 @@ int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const
 	eDebugNoNewLineStart("SESSION(%d)/APP %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
-	eDebug("");
+	eDebugNoNewLineEnd("");
 
 	if ((tag[0]==0x9f) && (tag[1]==0x80))
 	{
@@ -38,7 +38,7 @@ int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const
 			dl=((unsigned char*)data)[5];
 			if ((dl + 6) > len)
 			{
-				eDebug("warning, invalid length (%d vs %d)", dl+6, len);
+				eDebugNoNewLineEnd("warning, invalid length (%d vs %d)", dl+6, len);
 				dl=len-6;
 			}
 			char str[dl + 1];
@@ -46,7 +46,7 @@ int eDVBCIApplicationManagerSession::receivedAPDU(const unsigned char *tag,const
 			str[dl] = '\0';
 			for (int i = 0; i < dl; ++i)
 				eDebugNoNewLine("%c", ((unsigned char*)data)[i+6]);
-			eDebug("");
+			eDebugNoNewLineEnd("");
 
 			eDVBCI_UI::getInstance()->setAppName(slot->getSlotID(), str);
 

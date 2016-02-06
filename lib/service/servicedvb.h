@@ -49,7 +49,7 @@ public:
 	RESULT startEdit(ePtr<iMutableServiceList> &);
 	RESULT flushChanges();
 	RESULT addService(eServiceReference &ref, eServiceReference before);
-	RESULT removeService(eServiceReference &ref);
+	RESULT removeService(eServiceReference &ref, bool renameBouquet=true);
 	RESULT moveService(eServiceReference &ref, int pos);
 	RESULT setListName(const std::string &name);
 private:
@@ -209,6 +209,7 @@ protected:
 	eDVBServicePMTHandler m_service_handler_timeshift;
 	eDVBServiceEITHandler m_event_handler;
 	int m_current_audio_pid;
+	int m_current_video_pid_type;
 
 	eDVBServicePlay(const eServiceReference &ref, eDVBService *service);
 

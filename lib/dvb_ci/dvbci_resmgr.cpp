@@ -13,7 +13,7 @@ int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const vo
 #endif
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
-	eDebug("");
+	eDebugNoNewLineEnd("");
 	if ((tag[0]==0x9f) && (tag[1]==0x80))
 	{
 		switch (tag[2])
@@ -26,11 +26,13 @@ int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const vo
 		case 0x11: // Tprofile
 			eDebugNoNewLineStart("mein cam kann: ");
 			if (!len)
-				eDebug("nichts");
+				eDebugNoNewLineEnd("nichts");
 			else
+			{
 				for (int i=0; i<len; i++)
 					eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
-
+				eDebugNoNewLineEnd("");
+			}
 			if (state == stateFirstProfileEnquiry)
 			{
 				// profile change
