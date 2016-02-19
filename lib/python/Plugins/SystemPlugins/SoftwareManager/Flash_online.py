@@ -17,22 +17,16 @@ import urllib2
 import os
 import shutil
 import math
-from boxbranding import getBoxType,  getImageDistro, getMachineName, getMachineBrand, getBrandOEM
-
-distro =  getImageDistro()
+from boxbranding import getBoxType, getMachineName, getMachineBrand
 
 #############################################################################################################
-image = 0 # 0=openATV / 1=openMips 2=opendroid
-if distro.lower() == "openmips":
-	image = 1
-elif distro.lower() == "openatv":
-	image = 0
-elif distro.lower() == "opendroid":
-	image = 2
-feedurl_atv = 'http://images.mynonpublic.com/openatv/nightly'
-feedurl_om = 'http://image.openmips.com/2.0'
-feedurl_opendroid = 'http://www.droidsat.org/image'
-feedurl_opendroid = 'http://www.droidsat.org/image/opendroid'
+# Create a List of imagetypes
+# 0 = Name Of Image, 1 = link to file
+images = []
+global imagesCounter
+imagesCounter = 0
+images.append(["openDroid 5.3", "http://images.opendroid.org/5.3"])
+
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
 flashTmp = '/media/hdd/images/tmp'
@@ -56,7 +50,7 @@ class FlashOnline(Screen):
 		<widget name="key_green" position="140,360" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		<widget name="key_yellow" position="280,360" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		<widget name="key_blue" position="420,360" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
-		<widget name="info-online" position="10,30" zPosition="1" size="450,100" font="Regular;20" halign="left" valign="top" transparent="1" />
+		<widget name="info-online" position="10,80" zPosition="1" size="450,100" font="Regular;20" halign="left" valign="top" transparent="1" />
 		<widget name="info-local" position="10,150" zPosition="1" size="450,200" font="Regular;20" halign="left" valign="top" transparent="1" />
 	</screen>"""
 
@@ -150,16 +144,13 @@ class doFlashImage(Screen):
 		self["key_red"] = Button(_("Exit"))
 		self["key_blue"] = Button("")
 		self["key_yellow"] = Button("")
+		self.imagesCounter = imagesCounter
 		self.filename = None
 		self.imagelist = []
 		self.simulate = False
 		self.Online = online
 		self.imagePath = imagePath
-		self.feedurl = feedurl_opendroid
-		if image == 0:
-			self.feed = "atv"
-		else:
-			self.feed = "opendroid"
+		self.feedurl = images[self.imagesCounter][1]
 		self["imageList"] = MenuList(self.imagelist)
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
@@ -178,12 +169,13 @@ class doFlashImage(Screen):
 
 	def blue(self):
 		if self.Online:
-			if image == 2:
-				if self.feed == "opendroid":
-					self.feed = "opendroid"
-				else:
-					self.feed = "opendroid"
-				self.layoutFinished()
+
+			if self.imagesCounter <= len(images) - 2:
+				self.imagesCounter = self.imagesCounter + 1
+			else:
+				self.imagesCounter = 0
+			self.feed = images[self.imagesCounter][0]
+			self.layoutFinished()
 			return
 		sel = self["imageList"].l.getCurrentSelection()
 		if sel == None:
@@ -204,11 +196,11 @@ class doFlashImage(Screen):
 		machinename = getMachineName()
 		if box in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3'):
 			box = "ventonhdx"
-		elif box == 'odinm6':
+		elif box == "odinm6":
 			box = getMachineName().lower()
-		elif box == "inihde" and machinename.lower() == "xpeedlx":
-			box = "xpeedlx"
-		elif box in ('xpeedlx1', 'xpeedlx2'):
+		elif box == "xpeedlx3":
+			box = "xpeedlx3"
+		elif box == "xpeedlx1" or box == "xpeedlx2":
 			box = "xpeedlx"
 		elif box == "inihde" and machinename.lower() == "hd-1000":
 			box = "sezam-1000hd"
@@ -218,9 +210,9 @@ class doFlashImage(Screen):
 			box = "miraclebox-twin"
 		elif box == "xp1000" and machinename.lower() == "sf8 hd":
 			box = "sf8"
-		elif box.startswith('et') and not box in ('et8000', 'et8500', 'et8500s', 'et10000'):
+		elif box.startswith('et') and not box in ('et8000', 'et8500', 'et10000'):
 			box = box[0:3] + 'x00'
-		elif box == 'odinm9' and self.feed == "opendroid":
+		elif box == "odinm9":
 			box = 'maram9'
 		return box
 
@@ -232,13 +224,14 @@ class doFlashImage(Screen):
 		file_name = self.imagePath + "/" + sel
 		self.filename = file_name
 		box = self.box()
+		brand = getMachineBrand()
 		self.hide()
 		if self.Online:
-			if self.feed == "opendroid":
-				url = self.feedurl + "/" + sel
+			if self.imagesCounter == 0:
+				url = self.feedurl + "/" + brand + "/" + box + "/" + sel
 			else:
-				url = self.feedurl + "/" + box + "/" + sel
-			#print url
+				url = self.feedurl + "/" + brand + "/" + box + "/" + sel
+			print "URL:", url
 			u = urllib2.urlopen(url)
 			f = open(file_name, 'wb')
 			meta = u.info()
@@ -274,8 +267,13 @@ class doFlashImage(Screen):
 			self.show()
 
 	def unzip_image(self, filename, path):
-		print "Unzip %s to %s" %(filename,path)
-		self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
+		if getBoxType() in "dm7080" "dm820":
+			print "Untaring %s to %s" %(filename,path)
+			os.system('mkdir /dbackup.new')
+			self.session.openWithCallback(self.cmdFinished, Console, title = _("Untaring files, Please wait ..."), cmdlist = ['tar -xJf ' + filename + ' -C ' + '/dbackup.new', "sleep 3"], closeOnSuccess = True)
+		else:
+			print "Unzip %s to %s" %(filename,path)
+			self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
 
 	def cmdFinished(self):
 		self.prepair_flashtmp(flashPath)
@@ -283,27 +281,30 @@ class doFlashImage(Screen):
 
 	def Start_Flashing(self):
 		print "Start Flashing"
-		if os.path.exists(ofgwritePath):
-			text = _("Flashing: ")
-			if self.simulate:
-				text += _("Simulate (no write)")
-				cmd = "%s -n -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp)
-				self.close()
-				message = "echo -e '\n"
-				message += _('Show only found image and mtd partitions.\n')
-				message += "'"
-			else:
-				text += _("root and kernel")
-				cmd = "%s -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp)
-				message = "echo -e '\n"
-				message += _('ofgwrite will stop enigma2 now to run the flash.\n')
-				message += _('Your %s %s will freeze during the flashing process.\n') % (getMachineBrand(), getMachineName())
-				message += _('Please: DO NOT reboot your %s %s and turn off the power.\n') % (getMachineBrand(), getMachineName())
-				message += _('The image or kernel will be flashing and auto booted in few minutes.\n')
-				if self.box() == 'gb800solo':
-					message += _('GB800SOLO takes about 20 mins !!\n')
-				message += "'"
-			self.session.open(Console, text,[message, cmd])
+		if getBoxType() in "dm7080" "dm820":
+			os.system('/usr/lib/enigma2/python/Plugins/Extensions/dBackup/bin/swaproot 0')
+		else:
+			if os.path.exists(ofgwritePath):
+				text = _("Flashing: ")
+				if self.simulate:
+					text += _("Simulate (no write)")
+					cmd = "%s -n -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp)
+					self.close()
+					message = "echo -e '\n"
+					message += _('Show only found image and mtd partitions.\n')
+					message += "'"
+				else:
+					text += _("root and kernel")
+					cmd = "%s -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp)
+					message = "echo -e '\n"
+					message += _('ofgwrite will stop enigma2 now to run the flash.\n')
+					message += _('Your %s %s will freeze during the flashing process.\n') % (getMachineBrand(), getMachineName())
+					message += _('Please: DO NOT reboot your %s %s and turn off the power.\n') % (getMachineBrand(), getMachineName())
+					message += _('The image or kernel will be flashing and auto booted in few minutes.\n')
+					if self.box() == 'gb800solo':
+						message += _('GB800SOLO takes about 20 mins !!\n')
+					message += "'"
+				self.session.open(Console, text,[message, cmd])
 
 	def prepair_flashtmp(self, tmpPath):
 		if os.path.exists(flashTmp):
@@ -314,7 +315,7 @@ class doFlashImage(Screen):
 			os.mkdir(flashTmp)
 		kernel = True
 		rootfs = True
-		
+
 		for path, subdirs, files in os.walk(tmpPath):
 			for name in files:
 				if name.find('kernel') > -1 and name.endswith('.bin') and kernel:
@@ -362,29 +363,23 @@ class doFlashImage(Screen):
 				self.unzip_image(strPath + '/' + filename, flashPath)
 			else:
 				self.layoutFinished()
-	
+
 		else:
 			self.imagePath = imagePath
 
 	def layoutFinished(self):
 		box = self.box()
+		brand = getMachineBrand()
 		self.imagelist = []
 		if self.Online:
 			self["key_yellow"].setText("")
-			if image == 2:
-				if self.feed == "opendroid":
-					self.feedurl = feedurl_opendroid
-					self["key_blue"].setText("opendroidimages")
-				else:
-					self.feedurl = feedurl_opendroid
-					self["key_blue"].setText("opendroid 5.0")
+			self.feedurl = images[self.imagesCounter][1]
+			self["key_blue"].setText(images[self.imagesCounter][0])
+			if self.imagesCounter == 0:
+				url = '%s/%s/%s/' % (self.feedurl,brand,box)
 			else:
-				self.feedurl = feedurl_atv
-				self["key_blue"].setText("")
-			if self.feedurl == feedurl_opendroid:
-				url = '%s' % (self.feedurl)
-			else:
-				url = '%s/%s' % (self.feedurl,box)
+				url = '%s/%s/%s/' % (self.feedurl,brand,box)
+			print "URL:", url
 			req = urllib2.Request(url)
 			try:
 				response = urllib2.urlopen(req)
@@ -401,30 +396,24 @@ class doFlashImage(Screen):
 
 			lines = the_page.split('\n')
 			tt = len(box)
+			b = len(brand)
 			for line in lines:
-				if line.find("<a href='%s/" % box) > -1:
-					t = line.find("<a href='%s/" % box)
-					if self.feed == "atv":
-						self.imagelist.append(line[t+tt+10:t+tt+tt+39])
-					else:
-						self.imagelist.append(line[t+tt+10:t+tt+tt+40])
-				if self.feedurl == feedurl_opendroid:
-					if line.find('%s' % box) > -1:
-						t = line.find('<a href="')
+				if line.find("-") > -1:
+					t = line.find('<a href="')
+					if line.find('zip"') > -1:
 						e = line.find('zip"')
 						self.imagelist.append(line[t+9:e+3])
-				else:
-					if line.find('<a href="o') > -1:
-						t = line.find('<a href="o')
-						e = line.find('zip"')
-						self.imagelist.append(line[t+9:e+3])
-
+					if line.find('.xz"') > -1:
+						e = line.find('xz"')
+						self.imagelist.append(line[t+9:e+2])
 		else:
 			self["key_blue"].setText(_("Delete"))
 			self["key_yellow"].setText(_("Devices"))
 			for name in os.listdir(self.imagePath):
-				if name.endswith(".zip"): # and name.find(box) > 1:
+				if name.endswith(".zip") or name.endswith(".xz"): # and name.find(box) > 1:
 					self.imagelist.append(name)
+#				if name.find(box):
+#					self.imagelist.append(name)
 			self.imagelist.sort()
 			if os.path.exists(flashTmp):
 				for file in os.listdir(flashTmp):
@@ -473,7 +462,7 @@ class ImageDownloadTask(Task):
 		self.aborted = True
 
 	def download_progress(self, recvbytes, totalbytes):
-		if ( recvbytes - self.last_recvbytes  ) > 100000: # anti-flicker
+		if ( recvbytes - self.last_recvbytes  ) > 10000: # anti-flicker
 			self.progress = int(100*(float(recvbytes)/float(totalbytes)))
 			self.name = _("Downloading") + ' ' + "%d of %d kBytes" % (recvbytes/1024, totalbytes/1024)
 			self.last_recvbytes = recvbytes
