@@ -577,7 +577,6 @@ lib/python/Components/Converter/Makefile
 lib/python/Components/Renderer/Makefile
 lib/python/Components/Sources/Makefile
 lib/python/Screens/Makefile
-lib/python/Plugins/PLi/Makefile
 lib/python/Plugins/Makefile
 lib/python/Plugins/Extensions/2IB/Makefile
 lib/python/Plugins/Extensions/MenuSort/Makefile
