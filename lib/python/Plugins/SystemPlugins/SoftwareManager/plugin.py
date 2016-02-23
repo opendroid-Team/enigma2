@@ -56,6 +56,12 @@ if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/dFlash"):
 else:
 	DFLASH = False
 
+if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/dBackup"):
+	from Plugins.Extensions.dBackup.plugin import dBackup
+	DBACKUP = True
+else:
+	DBACKUP = False
+
 config.plugins.configurationbackup = ConfigSubsection()
 if boxtype == "odinm9" or boxtype == "maram9":
 	config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/backup/', visible_width = 50, fixed_size = False)
@@ -307,6 +313,8 @@ class UpdatePluginMenu(Screen):
 				elif (currentEntry == "backup-image"):
 					if DFLASH == True:
 						self.session.open(dFlash)
+					elif DBACKUP == True:
+						self.session.open(dBackup)
 					else:
 						self.session.open(ImageBackup)
 				elif (currentEntry == "system-backup"):
