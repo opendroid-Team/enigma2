@@ -6,6 +6,7 @@ from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
 from Screens.HelpMenu import HelpableScreen
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarShowHide, InfoBarNotifications, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarSimpleEventView
+from Screens import DVD
 from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
@@ -777,13 +778,10 @@ from Plugins.Plugin import PluginDescriptor
 def filescan_open(list, session, **kwargs):
 	if len(list) == 1 and list[0].mimetype == "video/x-dvd":
 		splitted = list[0].path.split('/')
-		print "splitted", splitted
 		if len(splitted) > 2:
-			if splitted[1] == 'autofs':
-				session.open(DVDPlayer, dvd_device="/dev/%s" %(splitted[2]))
+			if splitted[1] == 'media' and (splitted[2].startswith('sr') or splitted[2] == 'dvd'):
+				session.open(DVD.DVDPlayer, dvd_device="/dev/%s" %(splitted[2]))
 				return
-			else:
-				print "splitted[0]", splitted[1]
 	else:
 		dvd_filelist = []
 		for x in list:

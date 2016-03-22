@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # CCcam Info by AliAbdul
 from base64 import encodestring
-from os import listdir, remove, rename, system, path
+from os import listdir, remove, rename, system, popen, path
 
 from enigma import eListboxPythonMultiContent, eTimer, gFont, loadPNG, RT_HALIGN_RIGHT, getDesktop
 
@@ -29,9 +29,18 @@ from urlparse import urlparse, urlunparse
 
 VERSION = "v2"
 DATE = "21.11.2014"
-CFG = "/etc/CCcam.cfg"
 
 #############################################################
+
+def confPath():
+	search_dirs = [ "/usr", "/var", "/etc" ]
+	sdirs = " ".join(search_dirs)
+	cmd = 'find %s -name "CCcam.cfg" | head -n 1' % sdirs
+	res = popen(cmd).read()
+	if res == "":
+		return None
+	else:
+		return res.replace("\n", "")
 
 def _parse(url):
 	url = url.strip()
@@ -78,6 +87,13 @@ def getPage(url, contextFactory=None, *args, **kwargs):
 	reactor.connectTCP(host, port, factory)
 
 	return factory.deferred
+
+def searchConfig():
+	global CFG, CFG_path
+	CFG = confPath()
+	CFG_path = '/var/etc'
+	if CFG:
+		CFG_path =  path.dirname(CFG)
 
 #############################################################
 
@@ -204,7 +220,7 @@ def getConfigNameAndContent(fileName):
 		idx = name.index("\n")
 		name = name[:idx]
 	else:
-		name = fileName.replace("/var/etc/", "")
+		name = fileName.replace(CFG_path + "/", "")
 
 	return name, content
 
@@ -215,28 +231,28 @@ class CCcamList(MenuList):
 		MenuList.__init__(self, list, False, eListboxPythonMultiContent)
 		self.l.setItemHeight(25)
 		self.l.setFont(0, gFont("Regular", 20))
-		self.l.setFont(1, gFont("Regular", 28))
+		self.l.setFont(1, gFont("Regular", 32))
 
 class CCcamShareList(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, False, eListboxPythonMultiContent)
 		self.l.setItemHeight(60)
 		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setFont(1, gFont("Regular", 28))
+		self.l.setFont(1, gFont("Regular", 32))
 
 class CCcamConfigList(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, False, eListboxPythonMultiContent)
 		self.l.setItemHeight(30)
 		self.l.setFont(0, gFont("Regular", 20))
-		self.l.setFont(1, gFont("Regular", 28))
+		self.l.setFont(1, gFont("Regular", 32))
 
 class CCcamShareViewList(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, False, eListboxPythonMultiContent)
 		self.l.setItemHeight(20)
 		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setFont(1, gFont("Regular", 28))
+		self.l.setFont(1, gFont("Regular", 32))
 
 def CCcamListEntry(name, idx):
 	screenwidth = getDesktop(0).size().width()
@@ -259,12 +275,12 @@ def CCcamListEntry(name, idx):
 		png = "/usr/share/enigma2/skin_default/buttons/key_%s.png" % str(idx)
 	if screenwidth and screenwidth == 1920:
 		if fileExists(png):
-			res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(53, 38), png=loadPNG(png)))
-		res.append(MultiContentEntryText(pos=(85, 7), size=(900, 35), font=1, text=name))
+			res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(67, 48), png=loadPNG(png)))
+		res.append(MultiContentEntryText(pos=(90, 7), size=(900, 50), font=1, text=name))
 	else:
 		if fileExists(png):
 			res.append(MultiContentEntryPixmapAlphaBlend(pos=(0, 0), size=(35, 25), png=loadPNG(png)))
-		res.append(MultiContentEntryText(pos=(40, 3), size=(500, 25), font=0, text=name))			
+		res.append(MultiContentEntryText(pos=(40, 3), size=(500, 25), font=0, text=name))
 	return res
 
 def CCcamServerListEntry(name, color):
@@ -276,8 +292,8 @@ def CCcamServerListEntry(name, color):
 		png = "/usr/share/enigma2/skin_default/buttons/key_%s.png" % color
 	if screenwidth and screenwidth == 1920:
 		if fileExists(png):
-			res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(53, 38), png=loadPNG(png)))
-		res.append(MultiContentEntryText(pos=(85, 7), size=(900, 35), font=1, text=name))
+			res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(67, 48), png=loadPNG(png)))
+		res.append(MultiContentEntryText(pos=(90, 7), size=(900, 50), font=1, text=name))
 	else:
 		if fileExists(png):
 			res.append(MultiContentEntryPixmapAlphaBlend(pos=(0, 0), size=(35, 25), png=loadPNG(png)))
@@ -338,7 +354,7 @@ def CCcamConfigListEntry(file):
 	else:
 		png = lock_off
 	if screenwidth and screenwidth == 1920:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(5, 5), size=(35, 35), png=png))
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(5, 5), size=(50, 50), png=png))
 		res.append(MultiContentEntryText(pos=(85, 5), size=(800, 35), font=1, text=name))
 	else:
 		res.append(MultiContentEntryPixmapAlphaBlend(pos=(2, 2), size=(25, 25), png=png))
@@ -355,7 +371,7 @@ def CCcamMenuConfigListEntry(name, blacklisted):
 	else:
 		png = lock_on
 	if screenwidth and screenwidth == 1920:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(5, 5), size=(35, 35), png=png))
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(5, 5), size=(50, 50), png=png))
 		res.append(MultiContentEntryText(pos=(85, 5), size=(800, 35), font=1, text=name))
 	else:
 		res.append(MultiContentEntryPixmapAlphaBlend(pos=(2, 2), size=(25, 25), png=png))
@@ -375,6 +391,7 @@ class CCcamInfoMain(Screen):
 
 		self.working = False
 		self.Console = Console()
+		searchConfig()
 
 		if config.cccaminfo.profile.value == "":
 			self.readConfig()
@@ -1556,13 +1573,13 @@ class CCcamInfoConfigSwitcher(Screen):
 		list = []
 
 		try:
-			files = listdir("/var/etc")
+			files = listdir(CFG_path)
 		except:
 			files = []
 
 		for file in files:
 			if file.startswith("CCcam_") and file.endswith(".cfg"):
-				list.append(CCcamConfigListEntry("/var/etc/"+file))
+				list.append(CCcamConfigListEntry(CFG_path + "/"+file))
 
 		self["list"].setList(list)
 

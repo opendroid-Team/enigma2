@@ -26,8 +26,8 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarSubserviceSelection, InfoBarShowMovies, \
 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, InfoBarBuffer, \
 	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, \
-	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarQuickMenu, InfoBarZoom, InfoBarHdmi, \
-	setResumePoint, delResumePoint
+	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper, \
+	InfoBarHdmi, setResumePoint, delResumePoint
 from Screens.Hotkey import InfoBarHotkey
 
 profile("LOAD:InitBar_Components")
@@ -43,10 +43,10 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
 	InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarINFOpanel, InfoBarResolutionSelection, InfoBarAspectSelection, InfoBarVmodeButton,
 	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey, InfoBarLongKeyDetection,
-	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek, InfoBarCueSheetSupport,
+	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek, InfoBarCueSheetSupport, InfoBarBuffer,
 	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions,
-	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarQuickMenu, InfoBarZoom, InfoBarHdmi,
-	Screen, InfoBarHotkey):
+	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper,
+	InfoBarHdmi, Screen, InfoBarHotkey):
 
 	ALLOW_SUSPEND = True
 	instance = None
@@ -59,18 +59,25 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self["actions"] = HelpableActionMap(self, "InfobarActions",
 			{
 				"showMovies": (self.showMovies, _("Play recorded movies...")),
-				"showRadio": (self.showRadio, _("Show the radio player...")),
-				"showTv": (self.TvRadioToggle, _("Show the tv player...")),
+				"showRadio": (self.showRadioButton, _("Show the radio player...")),
+				"showTv": (self.showTvButton, _("Show the tv player...")),
+				"toogleTvRadio": (self.toogleTvRadio, _("Toggels between tv and radio...")),
+				"openBouquetList": (self.openBouquetList, _("Open bouquetlist...")),
 				"showMediaPlayer": (self.showMediaPlayer, _("Show the media player...")),
 				"openBouquetList": (self.openBouquetList, _("open bouquetlist")),
 				"openWeather": (self.openWeather, _("Open Weather...")),
 				"openTimerList": (self.openTimerList, _("Open Timerlist...")),
+				"openAutoTimerList": (self.openAutoTimerList, _("Open AutoTimerlist...")),
+				"openEPGSearch": (self.openEPGSearch, _("Open EPGSearch...")),
 				"openIMDB": (self.openIMDB, _("Open IMDB...")),
+				"showMC": (self.showMediaCenter, _("Show the media center...")),
 				"openSleepTimer": (self.openPowerTimerList, _("Show the Sleep Timer...")),
-				"showEMC": (self.showEMC, _("Show the media center...")),
-				"showETPORTAL": (self.showETPORTAL, _("Open EtPortal...")),
-				"showMEDIAPORTAL": (self.showMEDIAPORTAL, _("Open MediaPortal...")),
-				"showWWW": (self.showWWW, _("Open WWW Plugin...")),
+				'ZoomInOut': (self.ZoomInOut, _('Zoom In/Out TV...')),
+				'ZoomOff': (self.ZoomOff, _('Zoom Off...')),
+				'HarddiskSetup': (self.HarddiskSetup, _('Select HDD')),	
+				"showWWW": (self.showPORTAL, _("Open MediaPortal...")),
+				"showSetup": (self.showSetup, _("Show setup...")),
+				"showFormat": (self.showFormat, _("Show Format Setup...")),
 				"showPluginBrowser": (self.showPluginBrowser, _("Show the plugins...")),
 				"showBoxPortal": (self.showBoxPortal, _("Show Box Portal...")),
 			}, prio=2)
@@ -87,10 +94,10 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				InfoBarBase, InfoBarShowHide, \
 				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
 				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarUnhandledKey, InfoBarLongKeyDetection, InfoBarINFOpanel, InfoBarResolutionSelection, InfoBarVmodeButton, \
-				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, InfoBarAspectSelection, \
+				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, InfoBarAspectSelection, InfoBarBuffer, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarCueSheetSupport, InfoBarSummarySupport, InfoBarTimeshiftState, \
-				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, InfoBarQuickMenu, InfoBarZoom, InfoBarHdmi, \
-				InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarHotkey:
+				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper, \
+				InfoBarHdmi, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarHotkey:
 			x.__init__(self)
 
 		self.helpList.append((self["actions"], "InfobarActions", [("showMovies", _("Watch recordings..."))]))
@@ -104,11 +111,12 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self.current_begin_time=0
 		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
 		InfoBar.instance = self
-		self.zoomrate = 0
-		self.zoomin = 1
 
 		if config.misc.initialchannelselection.value:
 			self.onShown.append(self.showMenu)
+
+		self.zoomrate = 0
+		self.zoomin = 1
 
 		self.onShow.append(self.doButtonsCheck)
 
@@ -172,102 +180,13 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		elif config.usage.tvradiobutton_mode.value == "BouquetList":
 			self.showTvChannelList(True)
 			self.servicelist.showFavourites()
-
-	def showMediaPlayer(self):
-		try:
-			from Plugins.Extensions.MediaPlayer.plugin import MediaPlayer
-			self.session.open(MediaPlayer)
-			no_plugin = False
-		except Exception, e:
-			self.session.open(MessageBox, _("The MediaPlayer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-			
-	def showEMC(self):
-		try:
-			from Plugins.Extensions.EnhancedMovieCenter.plugin import *
-			from Components.PluginComponent import plugins
-			showMoviesNew()
-		except Exception, e:
-			self.session.open(MessageBox, _("The Enhanced Movie Center plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-
-	def showETPORTAL(self):
-		try:
-			from Plugins.Extensions.EtPortal.plugin import *
-			from Components.PluginComponent import plugins
-			self.session.open(EtPortalScreen)
-		except Exception, e:
-			self.session.open(MessageBox, _("The EtPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-
-	def showMEDIAPORTAL(self):
-		try:
-			if config.mediaportal.ansicht.value == 'liste':
-				from Plugins.Extensions.MediaPortal.plugin import MPList
-				self.session.open(MPList)
-			elif config.mediaportal.ansicht.value == 'wall':
-				from Plugins.Extensions.MediaPortal.plugin import MPWall
-				self.session.open(MPWall, config.mediaportal.filter.value)
-			elif config.mediaportal.ansicht.value == 'wall2':
-				from Plugins.Extensions.MediaPortal.plugin import MPWall2
-				self.session.open(MPWall2, config.mediaportal.filter.value)
-			else:
-				from Plugins.Extensions.MediaPortal.plugin import MPList
-				self.session.open(MPList)
-			no_plugin = False
-		except Exception, e:
-			self.session.open(MessageBox, _("The MediaPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-
-	def showWWW(self):
-		try:
-			from Plugins.Extensions.EtPortal.plugin import *
-			from Components.PluginComponent import plugins
-			self.session.open(EtPortalScreen)
-		except Exception, e:
-			self.session.open(MessageBox, _("The EtPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-
-	def BackZap(self):
-		if config.OpenWebif.enabled.value:
-			try:
-				os.system("wget -q -O /tmp/.message.txt 'http://127.0.0.1/web/remotecontrol?command=11' &  > /dev/null 2>&1")
-			except Exception, e:
-				self.session.open(MessageBox, _("The OpenWebinterface plugin is not installed or activated!\nPlease install or activate it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-		else:
-			self.session.open(MessageBox, _("The OpenWebinterface plugin is not installed or activated!\nPlease install or activate it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-
-	def openSleepTimer(self):
-		from Screens.SleepTimerEdit import SleepTimerEdit
-		self.session.open(SleepTimerEdit)
-
-	def openPowerTimerList(self):
-		from Screens.PowerTimerEdit import PowerTimerEditList
-		self.session.open(PowerTimerEditList)
-
-	def showPluginBrowser(self):
-		from Screens.PluginBrowser import PluginBrowser
-		self.session.open(PluginBrowser)
-		
-	def showBoxPortal(self):
-		if getMachineBrand() == 'GI' or boxtype.startswith('azbox') or boxtype.startswith('ini') or boxtype.startswith('venton'):
-			try:
-				from Plugins.Extensions.EtPortal.plugin import *
-				from Components.PluginComponent import plugins
-				self.session.open(EtPortalScreen)
-			except Exception, e:
-				self.session.open(MessageBox, _("The EtPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-		else:
-			self.showMovies()
-
-	def TvRadioToggle(self):
-		if getBoxType().startswith('gb') or boxtype == 'odinm7':
+	def showTvButton(self):
+		if boxtype.startswith('gb') or boxtype in ('classm', 'genius', 'evo', 'galaxym6'):
 			self.toogleTvRadio()
+		elif boxtype in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin'):
+			self.showMovies()
 		else:
 			self.showTv()
-
-	def toogleTvRadio(self):
-		if self.radioTV == 1:
-			self.radioTV = 0
-			self.showTv()
-		else:
-			self.radioTV = 1
-			self.showRadio()
 
 	def showTv(self):
 		if config.usage.tvradiobutton_mode.value == "MovieList":
@@ -279,6 +198,12 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				self.servicelist.showFavourites()
 		else:
 			self.showTvChannelList(True)
+
+	def showRadioButton(self):
+		if boxtype.startswith('gb') or boxtype.startswith('azbox') or boxtype in ('classm', 'genius', 'evo', 'galaxym6', 'uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'beyonwizt3'):
+			self.toogleTvRadio()
+		else:
+			self.showRadio()
 
 	def showRadio(self):
 		if config.usage.e1like_radio_mode.value:
@@ -292,15 +217,29 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self.rds_display.hide() # in InfoBarRdsDecoder
 			from Screens.ChannelSelection import ChannelSelectionRadio
 			self.session.openWithCallback(self.ChannelSelectionRadioClosed, ChannelSelectionRadio, self)
+	
+	def toogleTvRadio(self): 
+		if self.radioTV == 1:
+			self.radioTV = 0
+			self.showTv() 
+		else: 
+			self.radioTV = 1
+			self.showRadio() 
 
 	def ChannelSelectionRadioClosed(self, *arg):
 		self.rds_display.show()  # in InfoBarRdsDecoder
+		self.radioTV = 0
+		self.doShow()
 
 	def showMovies(self, defaultRef=None):
-		self.lastservice = self.session.nav.getCurrentlyPlayingServiceOrGroup()
-		if self.lastservice and ':0:/' in self.lastservice.toString():
-			self.lastservice = enigma.eServiceReference(config.movielist.curentlyplayingservice.value)
-		self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled = self.timeshiftEnabled())
+		if getMachineBrand() == 'GI' or boxtype.startswith('azbox') or boxtype.startswith('ini') or boxtype.startswith('venton'):
+			from Screens.BoxPortal import BoxPortal
+			self.session.open(BoxPortal)
+		else:
+			self.lastservice = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+			if self.lastservice and ':0:/' in self.lastservice.toString():
+				self.lastservice = enigma.eServiceReference(config.movielist.curentlyplayingservice.value)
+			self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled = self.timeshiftEnabled())
 
 	def movieSelected(self, service):
 		ref = self.lastservice
@@ -311,6 +250,42 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		else:
 			self.session.open(MoviePlayer, service, slist = self.servicelist, lastservice = ref)
 
+	def showMediaPlayer(self):
+		try:
+			from Plugins.Extensions.MediaPlayer.plugin import MediaPlayer
+			self.session.open(MediaPlayer)
+			no_plugin = False
+		except Exception, e:
+			self.session.open(MessageBox, _("The MediaPlayer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			
+	def showMediaCenter(self):
+		try:
+			from Plugins.Extensions.BMediaCenter.plugin import DMC_MainMenu
+			self.session.open(DMC_MainMenu)
+			no_plugin = False
+		except Exception, e:
+			self.session.open(MessageBox, _("The MediaCenter plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			
+	def openSleepTimer(self):
+		from Screens.SleepTimerEdit import SleepTimerEdit
+		self.session.open(SleepTimerEdit)
+			
+	def openTimerList(self):
+		from Screens.TimerEdit import TimerEditList
+		self.session.open(TimerEditList)
+
+	def openPowerTimerList(self):
+		from Screens.PowerTimerEdit import PowerTimerEditList
+		self.session.open(PowerTimerEditList)
+
+	def openAutoTimerList(self):
+		try:
+			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
+				if plugin.name == _("AutoTimer"):
+					self.runPlugin(plugin)
+					break
+		except Exception, e:
+			self.session.open(MessageBox, _("The AutoTimer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
 	def openWeather(self):
 		try:
 			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
@@ -319,6 +294,15 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					break
 		except Exception, e:
 			self.session.open(MessageBox, _("The Weather plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+	def openEPGSearch(self):
+		try:
+			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
+				if plugin.name == _("EPGSearch") or plugin.name == _("search EPG...") or plugin.name == "Durchsuche EPG...":
+					self.runPlugin(plugin)
+					break
+		except Exception, e:
+			self.session.open(MessageBox, _("The EPGSearch plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+
 	def openIMDB(self):
 		try:
 			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
@@ -327,6 +311,72 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					break
 		except Exception, e:
 			self.session.open(MessageBox, _("The IMDb plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+
+	def ZoomInOut(self):
+		zoomval = 0
+		if self.zoomrate > 3:
+			self.zoomin = 0
+		elif self.zoomrate < -9:
+			self.zoomin = 1
+		if self.zoomin == 1:
+			self.zoomrate += 1
+		else:
+			self.zoomrate -= 1
+		if self.zoomrate < 0:
+			zoomval = abs(self.zoomrate) + 10
+		else:
+			zoomval = self.zoomrate
+		print 'zoomRate:', self.zoomrate
+		print 'zoomval:', zoomval
+		if fileExists("/proc/stb/vmpeg/0/zoomrate"):
+			file = open('/proc/stb/vmpeg/0/zoomrate', 'w')
+			file.write('%d' % int(zoomval))
+			file.close()
+
+	def ZoomOff(self):
+		self.zoomrate = 0
+		self.zoomin = 1
+		if fileExists("/proc/stb/vmpeg/0/zoomrate"):
+			file = open('/proc/stb/vmpeg/0/zoomrate', 'w')
+			file.write(str(0))
+			file.close()
+
+	def HarddiskSetup(self):
+		from Screens.HarddiskSetup import HarddiskSelection
+		self.session.open(HarddiskSelection)
+		
+	def showPORTAL(self):
+		try:
+			from Plugins.Extensions.MediaPortal.plugin import MPmain as MediaPortal
+			MediaPortal(self.session)
+			no_plugin = False
+		except Exception, e:
+			self.session.open(MessageBox, _("The MediaPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			
+	def showSetup(self):
+		from Screens.Menu import MainMenu, mdom
+		root = mdom.getroot()
+		for x in root.findall("menu"):
+			y = x.find("id")
+			if y is not None:
+				id = y.get("val")
+				if id and id == "setup":
+					self.session.infobar = self
+					self.session.open(MainMenu, x)
+					return
+
+	def showFormat(self):
+		try:
+			from Plugins.SystemPlugins.Videomode.plugin import videoSetupMain
+			self.session.instantiateDialog(videoSetupMain)
+			no_plugin = False
+		except Exception, e:
+			self.session.open(MessageBox, _("The VideoMode plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			
+	def showPluginBrowser(self):
+		from Screens.PluginBrowser import PluginBrowser
+		self.session.open(PluginBrowser)
+		
 	def showBoxPortal(self):
 		if getMachineBrand() == 'GI' or boxtype.startswith('azbox') or boxtype.startswith('ini') or boxtype.startswith('venton'):
 			from Screens.BoxPortal import BoxPortal
@@ -343,7 +393,7 @@ def setAudioTrack(service):
 		idx = 0
 		trackList = []
 		for i in xrange(nTracks):
-		        audioInfo = tracks.getTrackInfo(i)
+			audioInfo = tracks.getTrackInfo(i)
 			lang = audioInfo.getLanguage()
 			if langC.has_key(lang):
 				lang = langC[lang][0]
@@ -398,7 +448,7 @@ def tryAudioTrack(tracks, audiolang, caudiolang, trackList, seltrack, useAc3):
 					return True
 			elif entry == x[1] and seltrack != x[0]:
 				if useAc3:
-				        if x[2].startswith('AC'):
+					if x[2].startswith('AC'):
 						print("[MoviePlayer] audio track match: " + str(x))
 						tracks.selectTrack(x[0])
 						return True
@@ -408,11 +458,11 @@ def tryAudioTrack(tracks, audiolang, caudiolang, trackList, seltrack, useAc3):
 					return True
 	return False
 
-class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG, \
+class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG, \
 		InfoBarSeek, InfoBarShowMovies, InfoBarInstantRecord, InfoBarAudioSelection, HelpableScreen, InfoBarNotifications,
-		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView,
-		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin, InfoBarAspectSelection,
-		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarPiP, InfoBarResolutionSelection, InfoBarZoom, InfoBarHotkey):
+		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport,
+		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin,
+		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarHdmi, InfoBarHotkey):
 
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
@@ -742,7 +792,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBar
 					del self.session.pip
 			else:
 				self.session.open(MessageBox, _("Your %s %s does not support PiP HD") % (getMachineBrand(), getMachineName()), type = MessageBox.TYPE_INFO,timeout = 5 )
-
+				
 	def movePiP(self):
 		if self.session.pipshown:
 			InfoBarPiP.movePiP(self)
@@ -775,7 +825,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBar
 				if ref and not self.session.nav.getCurrentlyPlayingServiceOrGroup():
 					self.session.nav.playService(ref)
 			except:
-				pass
+				pass		
 
 	def getPlaylistServiceInfo(self, service):
 		from MovieSelection import playlist

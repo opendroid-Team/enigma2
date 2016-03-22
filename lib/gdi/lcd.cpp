@@ -229,7 +229,7 @@ int eDBoxLCD::setLCDContrast(int contrast)
 int eDBoxLCD::setLCDBrightness(int brightness)
 {
 #ifndef NO_LCD
-	eDebug("setLCDBrightness %d", brightness);
+//	eDebug("setLCDBrightness %d", brightness);
 	FILE *f=fopen("/proc/stb/lcd/oled_brightness", "w");
 	if (!f)
 		f = fopen("/proc/stb/fp/oled_brightness", "w");
@@ -278,6 +278,7 @@ int eDBoxLCD::setLED(int value, int option)
 				eDebug("[LED] can't set led blinking time");
 			break;
 	}
+	return(0);
 }
 
 eDBoxLCD::~eDBoxLCD()
@@ -348,16 +349,40 @@ void eDBoxLCD::update()
 			}
 			else
 			{
-				if (FILE * file = fopen("/proc/stb/info/gbmodel", "r"))
+				FILE *file;
+				FILE *boxtype_file;
+				char boxtype_name[20];
+				if((boxtype_file = fopen("/proc/stb/info/boxtype", "r")) != NULL)
 				{
+					fgets(boxtype_name, sizeof(boxtype_name), boxtype_file);
+					fclose(boxtype_file);
+				}
+				if (((file = fopen("/proc/stb/info/gbmodel", "r")) != NULL ) || (strcmp(boxtype_name, "7100S\n") == 0))
+				{
+					//gggrrrrrbbbbbggg bit order from memory
+					//gggbbbbbrrrrrggg bit order to LCD
 					unsigned char gb_buffer[_stride * res.height()];
-					for (int offset = 0; offset < _stride * res.height(); offset += 2)
-					{
-						gb_buffer[offset] = (_buffer[offset] & 0x1F) | ((_buffer[offset + 1] << 3) & 0xE0);
-						gb_buffer[offset + 1] = ((_buffer[offset + 1] >> 5) & 0x03) | ((_buffer[offset] >> 3) & 0x1C) | ((_buffer[offset + 1] << 5) & 0x60);
+					if(! (0x03 & (_stride * res.height())))
+					{//fast
+						for (int offset = 0; offset < ((_stride * res.height())>>2); offset ++)
+						{
+							unsigned int src = ((unsigned int*)_buffer)[offset];
+							((unsigned int*)gb_buffer)[offset] = src & 0xE007E007 | (src & 0x1F001F00) >>5 | (src & 0x00F800F8) << 5;
+						}
+					}
+					else
+					{//slow
+						for (int offset = 0; offset < _stride * res.height(); offset += 2)
+						{
+							gb_buffer[offset] = (_buffer[offset] & 0x07) | ((_buffer[offset + 1] << 3) & 0xE8);
+							gb_buffer[offset + 1] = (_buffer[offset + 1] & 0xE0)| ((_buffer[offset] >> 3) & 0x1F);
+						}
 					}
 					write(lcdfd, gb_buffer, _stride * res.height());
-					fclose(file);
+					if (file != NULL)
+					{
+						fclose(file);
+					}
 				}
 				else
 				{

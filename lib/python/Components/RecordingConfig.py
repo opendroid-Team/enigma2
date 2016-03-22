@@ -23,8 +23,10 @@ def InitRecordingConfig():
 	config.recording.ask_to_abort_pseudo_rec       = ConfigSelection(choices = [("ask", _("ask user")), ("abort_no_msg", _("just abort, no message")), ("abort_msg", _("just abort, show message")), ("never_abort", _("never abort"))], default = "never_abort")
 	config.recording.ask_to_abort_streaming        = ConfigSelection(choices = [("ask", _("ask user")), ("abort_no_msg", _("just abort, no message")), ("abort_msg", _("just abort, show message")), ("never_abort", _("never abort"))], default = "never_abort")
 	config.recording.ask_to_abort_pip              = ConfigSelection(choices = [("ask", _("ask user")), ("abort_no_msg", _("just abort, no message")), ("abort_msg", _("just abort, show message")), ("never_abort", _("never abort"))], default = "never_abort")
+
 def recType(configString):
 	if   (configString == "any"):            return pNavigation.isAnyRecording
 	elif (configString == "real"):           return pNavigation.isRealRecording
 	elif (configString == "real_streaming"): return pNavigation.isRealRecording|pNavigation.isStreaming
 	elif (configString == "real_pseudo"):    return pNavigation.isRealRecording|pNavigation.isPseudoRecording
+

@@ -11,21 +11,16 @@ from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Components.Pixmap import Pixmap, MovingPixmap, MultiPixmap
 from os import popen, path, makedirs, listdir, access, stat, rename, remove, W_OK, R_OK
 from enigma import eEnv
-from boxbranding import getBoxType
+from boxbranding import getBoxType, getImageDistro
+from BackupRestore import InitConfig as BackupRestore_InitConfig
 
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigBoolean
 from Components.Harddisk import harddiskmanager
 
 boxtype = getBoxType()
+distro = getImageDistro()
 
-config.misc.firstrun = ConfigBoolean(default = True)
-config.plugins.configurationbackup = ConfigSubsection()
-if boxtype in ('maram9', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo', 'galaxym6'):
-	config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/backup/', visible_width = 50, fixed_size = False)
-else:
-	config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/hdd/', visible_width = 50, fixed_size = False)
-config.plugins.configurationbackup.backupdirs = ConfigLocations(default=[eEnv.resolve('${sysconfdir}/enigma2/'), '/etc/CCcam.cfg', '/usr/keys/', '/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/default_gw', '/etc/hostname', eEnv.resolve("${datadir}/enigma2/keymap.usr")])
-
+config.plugins.configurationbackup = BackupRestore_InitConfig()
 
 backupfile = "enigma2settingsbackup.tar.gz"
 
@@ -39,7 +34,7 @@ def checkConfigBackup():
 	if len(parts):
 		for x in parts:
 			if x[1].endswith('/'):
-				fullbackupfile =  x[1] + 'backup_' + boxtype + '/' + backupfile
+				fullbackupfile =  x[1] + 'backup_' + distro + '_' +  boxtype + '/' + backupfile
 				if fileExists(fullbackupfile):
 					config.plugins.configurationbackup.backuplocation.setValue(str(x[1]))
 					config.plugins.configurationbackup.backuplocation.save()
@@ -52,7 +47,7 @@ def checkConfigBackup():
 					config.plugins.configurationbackup.save()
 					return x
 			else:
-				fullbackupfile =  x[1] + '/backup_' + boxtype + '/' + backupfile
+				fullbackupfile =  x[1] + '/backup_' + distro + '_' +   boxtype + '/' + backupfile
 				if fileExists(fullbackupfile):
 					config.plugins.configurationbackup.backuplocation.setValue(str(x[1]))
 					config.plugins.configurationbackup.backuplocation.save()
@@ -64,12 +59,12 @@ def checkConfigBackup():
 					config.plugins.configurationbackup.backuplocation.save()
 					config.plugins.configurationbackup.save()
 					return x
-		return None		
+		return None
 
 def checkBackupFile():
 	backuplocation = config.plugins.configurationbackup.backuplocation.value
 	if backuplocation.endswith('/'):
-		fullbackupfile =  backuplocation + 'backup_' + boxtype + '/' + backupfile
+		fullbackupfile =  backuplocation + 'backup_' + distro + '_' + boxtype + '/' + backupfile
 		if fileExists(fullbackupfile):
 			return True
 		else:
@@ -79,7 +74,7 @@ def checkBackupFile():
 			else:
 				return False
 	else:
-		fullbackupfile =  backuplocation + '/backup_' + boxtype + '/' + backupfile
+		fullbackupfile =  backuplocation + '/backup_' + distro + '_' + boxtype + '/' + backupfile
 		if fileExists(fullbackupfile):
 			return True
 		else:
@@ -117,9 +112,10 @@ class ImageWizard(WizardLanguage, Rc):
 		Rc.__init__(self)
 		self.session = session
 		self["wizard"] = Pixmap()
-		Screen.setTitle(self, _("Welcome..."))
+		#Screen.setTitle(self, _("Welcome..."))
+		Screen.setTitle(self, _("ImageWizard"))
 		self.selectedDevice = None
-		
+
 	def markDone(self):
 		pass
 
@@ -131,22 +127,22 @@ class ImageWizard(WizardLanguage, Rc):
 				list.remove(x)
 		for x in list:
 			if x[1].startswith('/autofs/'):
-				list.remove(x)	
+				list.remove(x)
 		return list
 
 	def deviceSelectionMade(self, index):
 		self.deviceSelect(index)
-		
+
 	def deviceSelectionMoved(self):
 		self.deviceSelect(self.selection)
-		
+
 	def deviceSelect(self, device):
 		self.selectedDevice = device
 		config.plugins.configurationbackup.backuplocation.setValue(self.selectedDevice)
 		config.plugins.configurationbackup.backuplocation.save()
 		config.plugins.configurationbackup.save()
 
-	
+
 if config.misc.firstrun.value:
 	wizardManager.registerWizard(ImageWizard, backupAvailable, priority = 10)
 

@@ -1,23 +1,25 @@
+from boxbranding import getImageVersion, getImageBuild, getImageDistro, getMachineBrand, getMachineName, getMachineBuild
+from os import rename, path, remove
+from gettext import dgettext
+import urllib
+
+from enigma import eTimer, eDVBDB
+
 import Components.Task
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
-from Components.About import about
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
 from Components.Console import Console
 from Components.Ipkg import IpkgComponent
+from Components.Pixmap import Pixmap
+from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
 from Components.Sources.StaticText import StaticText
 from Components.Slider import Slider
-from enigma import eTimer, eDVBDB
-from boxbranding import getImageVersion, getImageBuild, getMachineBrand, getMachineName, getBoxType
-
-from os import rename, path, remove
-from gettext import dgettext
-import urllib
 
 ocram = ''
 
@@ -35,7 +37,7 @@ class SoftwareUpdateChanges(Screen):
 		self['text_summary'] = StaticText()
 		self["key_red"] = Button(_("Close"))
 		self["key_green"] = Button(_("Update"))
-		self["key_yellow"] = Button(_("Show Opendroid Log"))
+		self["key_yellow"] = Button(_("Show E2 Log"))
 		self["myactions"] = ActionMap(['ColorActions', 'OkCancelActions', 'DirectionActions'],
 		{
 			'cancel': self.closeRecursive,
@@ -69,7 +71,7 @@ class SoftwareUpdateChanges(Screen):
 	def getlog(self):
 		global ocram
 		try:
-			sourcefile = 'http://enigma2.world-of-satellite.com/feeds/' + getImageVersion() + '/' + getBoxType() + '/'  + self.logtype + '-git.log'
+			sourcefile = 'http://www.openvix.co.uk/feeds/%s/%s/%s-git.log' % (getImageDistro(), getImageVersion(), self.logtype)
 			sourcefile,headers = urllib.urlretrieve(sourcefile)
 			rename(sourcefile,'/tmp/' + self.logtype + '-git.log')
 			fd = open('/tmp/' + self.logtype + '-git.log', 'r')
@@ -78,11 +80,12 @@ class SoftwareUpdateChanges(Screen):
 		except:
 			releasenotes = '404 Not Found'
 		if '404 Not Found' not in releasenotes:
+			releasenotes = releasenotes.replace('[openvix] Zeus Release.', 'openvix: build 000')
 			releasenotes = releasenotes.replace('\nopenvix: build',"\n\nopenvix: build")
 			releasenotes = releasenotes.split('\n\n')
 			ver = -1
 			releasever = ""
-			viewrelease=""
+			viewrelease = ""
 			while not releasever.isdigit():
 				ver += 1
 				releasever = releasenotes[int(ver)].split('\n')
@@ -92,9 +95,12 @@ class SoftwareUpdateChanges(Screen):
 				else:
 					releasever = releasever[0].replace(':',"")
 			if self.logtype == 'oe':
-				imagever = getImageBuild()
+				if int(getImageBuild()) == 1:
+					imagever = int(getImageBuild())-1
+				else:
+					imagever = int(getImageBuild())
 			else:
-				imagever = int(getImageBuild())+865
+				imagever = int(getImageBuild())+905
 			while int(releasever) > int(imagever):
 				if ocram:
 					viewrelease += releasenotes[int(ver)]+'\n'+ocram+'\n'
@@ -135,6 +141,7 @@ class UpdatePlugin(Screen):
 		self.sliderPackages = { "dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3 }
 
 		self.setTitle(_("Software update"))
+		
 		self.slider = Slider(0, 4)
 		self["slider"] = self.slider
 		self.activityslider = Slider(0, 100)
@@ -145,6 +152,14 @@ class UpdatePlugin(Screen):
 		self["package"] = self.package
 		self.oktext = _("Press OK on your remote control to continue.")
 
+		status_msgs = {'stable': _('Feeds status:   Stable'), 'unstable': _('Feeds status:   Unstable'), 'updating': _('Feeds status:   Updating'), 'unknown': _('No connection')}
+		self['tl_off'] = Pixmap()
+		self['tl_red'] = Pixmap()
+		self['tl_yellow'] = Pixmap()
+		self['tl_green'] = Pixmap()
+		self.feedsStatus()
+		self['feedStatusMSG'] = Label(status_msgs[self.trafficLight])
+		
 		self.channellist_only = 0
 		self.channellist_name = ''
 		self.SettingsBackupDone = False
@@ -157,6 +172,34 @@ class UpdatePlugin(Screen):
 		self.total_packages = None
 		self.checkNetworkState()
 
+	def feedsStatus(self):
+		from urllib import urlopen
+		import socket
+		self['tl_red'].hide()
+		self['tl_yellow'].hide()
+		self['tl_green'].hide()
+		currentTimeoutDefault = socket.getdefaulttimeout()
+		socket.setdefaulttimeout(3)
+		try:
+			d = urlopen("http://openvix.co.uk/TrafficLightState.php")
+			self.trafficLight = d.read()
+			if self.trafficLight == 'unstable':
+				self['tl_off'].hide()
+				self['tl_red'].show()
+			elif self.trafficLight == 'updating':
+				self['tl_off'].hide()
+				self['tl_yellow'].show()
+			elif self.trafficLight == 'stable':
+				self['tl_off'].hide()
+				self['tl_green'].show()
+			else:
+				self.trafficLight = 'unknown'
+				self['tl_off'].show()
+		except:
+			self.trafficLight = 'unknown'
+			self['tl_off'].show()
+		socket.setdefaulttimeout(currentTimeoutDefault)
+		
 	def checkNetworkState(self):
 		cmd1 = "opkg update"
 		self.CheckConsole = Console()
@@ -166,7 +209,7 @@ class UpdatePlugin(Screen):
 		if 'bad address' in result:
 			self.session.openWithCallback(self.close, MessageBox, _("Your %s %s is not connected to the internet, please check your network settings and try again.") % (getMachineBrand(), getMachineName()), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		elif ('wget returned 1' or 'wget returned 255' or '404 Not Found') in result:
-			self.session.openWithCallback(self.close, MessageBox, _("Sorry feeds are down for maintenance, please try again later."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+			self.session.openWithCallback(self.close, MessageBox, _("Sorry feeds are down for maintenance, please try again later. If this issue persists please check openvix.co.uk or world-of-satellite.com."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		elif 'Collected errors' in result:
 			self.session.openWithCallback(self.close, MessageBox, _("A background update check is in progress, please wait a few minutes and try again."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		else:
@@ -277,7 +320,7 @@ class UpdatePlugin(Screen):
 							choices.append((_("Perform a full image backup"), "imagebackup"))
 					choices.append((_("Update channel list only"), "channels"))
 					choices.append((_("Cancel"), ""))
-					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices")
+					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
 					upgrademessage.setTitle(_('Software update'))
 				else:
 					upgrademessage = self.session.openWithCallback(self.close, MessageBox, _("Nothing to upgrade"), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
@@ -340,7 +383,7 @@ class UpdatePlugin(Screen):
 				choices.append((_("Perform a full image backup"), "imagebackup"))
 			choices.append((_("Update channel list only"), "channels"))
 			choices.append((_("Cancel"), ""))
-			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices")
+			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
 			upgrademessage.setTitle(_('Software update'))
 		elif answer[1] == "changes":
 			self.session.openWithCallback(self.startActualUpgrade,SoftwareUpdateChanges)

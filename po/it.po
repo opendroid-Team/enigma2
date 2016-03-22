@@ -1,4 +1,4 @@
-# Italian translations for Enigma2.
+# Italian translations for opendroid.
 #
 msgid ""
 msgstr ""

@@ -1,5 +1,5 @@
+SUBDIRS = Dream
+
 installdir = $(pkgdatadir)/defaults
 
-dist_install_DATA = \
-	interfaces \
-	settings 
+dist_install_DATA = interfaces

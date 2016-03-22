@@ -35,13 +35,13 @@ RESULT eBouquet::addService(const eServiceReference &ref, eServiceReference befo
 	return 0;
 }
 
-RESULT eBouquet::removeService(const eServiceReference &ref)
+RESULT eBouquet::removeService(const eServiceReference &ref, bool renameBouquet)
 {
 	list::iterator it =
 		std::find(m_services.begin(), m_services.end(), ref);
 	if ( it == m_services.end() )
 		return -1;
-	if (ref.flags & eServiceReference::canDescent)
+	if (renameBouquet && (ref.flags & eServiceReference::canDescent))
 	{
 		std::string filename = ref.toString();
 		size_t pos = filename.find("FROM BOUQUET ");
@@ -211,8 +211,41 @@ int eDVBService::isPlayable(const eServiceReference &ref, const eServiceReferenc
 		((const eServiceReferenceDVB&)ignore).getChannelID(chid_ignore);
 
 		if (res_mgr->canAllocateChannel(chid, chid_ignore, system, simulate))
+		{
+			std::string python_config_str;
+			bool use_ci_assignment = eConfigManager::getConfigBoolValue("config.misc.use_ci_assignment", false);
+			if (use_ci_assignment)
+			{
+				int is_ci_playable = 1;
+				PyObject *pName, *pModule, *pFunc;
+				PyObject *pArgs, *pArg, *pResult;
+				Py_Initialize();
+				pName = PyString_FromString("Tools.CIHelper");
+				pModule = PyImport_Import(pName);
+				Py_DECREF(pName);
+				if (pModule != NULL)
+				{
+					pFunc = PyObject_GetAttrString(pModule, "isPlayable");
+					if (pFunc) 
+					{
+						pArgs = PyTuple_New(1);
+						pArg = PyString_FromString(ref.toString().c_str());
+						PyTuple_SetItem(pArgs, 0, pArg);
+						pResult = PyObject_CallObject(pFunc, pArgs);
+						Py_DECREF(pArgs);
+						if (pResult != NULL)
+						{
+							is_ci_playable = PyInt_AsLong(pResult);
+							Py_DECREF(pResult);
+							return is_ci_playable;
+						}
+					}
+				}
+				eDebug("isPlayble... error in python code");
+				PyErr_Print();
+			}
 			return 1;
-
+		}
 		if (remote_fallback_enabled)
 			return 2;
 	}
@@ -822,7 +855,10 @@ void eDVBDB::loadBouquet(const char *path)
 				bouquet.flushChanges();
 			}
 			else
-				file_path = "";
+			{
+				eDebug("can't load bouquet %s",path);
+				return;
+			}
 		}
 	}
 
@@ -909,19 +945,30 @@ void eDVBDB::loadBouquet(const char *path)
 	{
 		for(unsigned int i=0; i<userbouquetsfiles.size(); ++i)
 		{
-			eDebug("Adding additional userbouquet %s", userbouquetsfiles[i].c_str());
-			char buf[256];
-			if (!strcmp(path, "bouquets.tv"))
-				snprintf(buf, sizeof(buf), "1:7:1:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet", userbouquetsfiles[i].c_str());
+			if (m_load_unlinked_userbouquets)
+			{
+				eDebug("Adding additional userbouquet %s", userbouquetsfiles[i].c_str());
+				char buf[256];
+				if (!strcmp(path, "bouquets.tv"))
+					snprintf(buf, sizeof(buf), "1:7:1:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet", userbouquetsfiles[i].c_str());
+				else
+					snprintf(buf, sizeof(buf), "1:7:2:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet", userbouquetsfiles[i].c_str());
+				eServiceReference tmp(buf);
+				loadBouquet(userbouquetsfiles[i].c_str());
+				if (!strcmp(userbouquetsfiles[i].c_str(), "userbouquet.LastScanned.tv"))
+					list.push_back(tmp);
+				else
+					list.push_front(tmp);
+				++entries;
+			}
 			else
-				snprintf(buf, sizeof(buf), "1:7:2:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet", userbouquetsfiles[i].c_str());
-			eServiceReference tmp(buf);
-			loadBouquet(userbouquetsfiles[i].c_str());
-			if (!strcmp(userbouquetsfiles[i].c_str(), "userbouquet.LastScanned.tv"))
-				list.push_back(tmp);
-			else
-				list.push_front(tmp);
-			++entries;
+			{
+				std::string filename = eEnv::resolve("${sysconfdir}/enigma2/" + userbouquetsfiles[i]);
+				std::string newfilename(filename);
+				newfilename.append(".del");
+				eDebug("Rename unlinked bouquet file %s to %s", filename.c_str(), newfilename.c_str());
+				rename(filename.c_str(), newfilename.c_str());
+			}
 		}
 		bouquet.flushChanges();
 	}
@@ -1022,7 +1069,7 @@ eDVBDB *eDVBDB::instance;
 using namespace xmlcc;
 
 eDVBDB::eDVBDB()
-	: m_numbering_mode(false)
+	: m_numbering_mode(false), m_load_unlinked_userbouquets(true)
 {
 	instance = this;
 	reloadServicelist();
@@ -1033,35 +1080,44 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 	if (!PyDict_Check(tp_dict)) {
 		PyErr_SetString(PyExc_StandardError,
 			"type error");
-			eDebug("arg 2 is not a python dict");
-		return NULL;
+			eDebug("arg 2 (tp_dict) is not a python dict");
+		Py_INCREF(Py_False);
+		return Py_False;
 	}
 	else if (!PyDict_Check(sat_dict))
 	{
 		PyErr_SetString(PyExc_StandardError,
 			"type error");
-			eDebug("arg 1 is not a python dict");
-		return NULL;
+			eDebug("arg 1 (sat_dict) is not a python dict");
+		Py_INCREF(Py_False);
+		return Py_False;
 	}
 	else if (!PyList_Check(sat_list))
 	{
 		PyErr_SetString(PyExc_StandardError,
 			"type error");
-			eDebug("arg 0 is not a python list");
-		return NULL;
+			eDebug("arg 0 (sat_list) is not a python list");
+		Py_INCREF(Py_False);
+		return Py_False;
 	}
 	XMLTree tree;
-	const char* satellitesFilename = "/etc/enigma2/satellites.xml";
-	if (::access(satellitesFilename, R_OK) < 0)
+	std::string satellitesFilename = eEnv::resolve("${sysconfdir}/enigma2/satellites.xml");
+	if (::access(satellitesFilename.c_str(), R_OK) < 0)
 	{
-		satellitesFilename = "/etc/tuxbox/satellites.xml";
+		satellitesFilename = eEnv::resolve("${sysconfdir}/tuxbox/satellites.xml");
+		if (::access(satellitesFilename.c_str(), R_OK) < 0)
+		{
+			eDebug("satellites.xml not found");
+			Py_INCREF(Py_False);
+			return Py_False;
+		}
 	}
 	tree.setFilename(satellitesFilename);
 	tree.read();
 	Element *root = tree.getRoot();
 	if (!root)
 	{
-		eDebug("couldn't open /etc/tuxbox/satellites.xml!!");
+		eDebug("satellites.xml is maybe corrupted");
 		Py_INCREF(Py_False);
 		return Py_False;
 	}
@@ -1591,6 +1647,18 @@ RESULT eDVBDB::removeServices(iDVBFrontendParameters *feparm)
 	return ret;
 }
 
+PyObject *eDVBDB::getFlag(const eServiceReference &ref)
+{
+	if (ref.type == eServiceReference::idDVB)
+	{
+		eServiceReferenceDVB &service = (eServiceReferenceDVB&)ref;
+		std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator it(m_services.find(service));
+		if (it != m_services.end())
+			return PyInt_FromLong(it->second->m_flags);
+	}
+	return PyInt_FromLong(0);
+}
+
 RESULT eDVBDB::addFlag(const eServiceReference &ref, unsigned int flagmask)
 {
 	if (ref.type == eServiceReference::idDVB)
@@ -1598,7 +1666,7 @@ RESULT eDVBDB::addFlag(const eServiceReference &ref, unsigned int flagmask)
 		eServiceReferenceDVB &service = (eServiceReferenceDVB&)ref;
 		std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator it(m_services.find(service));
 		if (it != m_services.end())
-			it->second->m_flags |= ~flagmask;
+			it->second->m_flags |= flagmask;
 		return 0;
 	}
 	return -1;

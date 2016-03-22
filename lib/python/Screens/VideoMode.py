@@ -1,8 +1,9 @@
 from os import path
 
-from enigma import iPlayableService, iServiceInformation, eTimer
+from enigma import iPlayableService, iServiceInformation, eTimer, eServiceCenter, eServiceReference, eDVBDB
 
 from Screens.Screen import Screen
+from Screens.ChannelSelection import FLAG_IS_DEDICATED_3D
 from Components.About import about
 from Components.SystemInfo import SystemInfo
 from Components.ConfigList import ConfigListScreen
@@ -40,7 +41,7 @@ class VideoSetup(Screen, ConfigListScreen):
 		ConfigListScreen.__init__(self, self.list, session = session, on_change = self.changedEntry)
 
 		from Components.ActionMap import ActionMap
-		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
+		self["actions"] = ActionMap(["SetupActions", "MenuActions", "ColorActions"],
 			{
 				"cancel": self.keyCancel,
 				"save": self.apply,
@@ -104,7 +105,7 @@ class VideoSetup(Screen, ConfigListScreen):
 		force_wide = self.hw.isWidescreenMode(port, mode)
 
 		if not force_wide:
-			self.list.append(getConfigListEntry(_("Aspect ratio"), config.av.aspect, _("Configure the aspect ratio of the screen.")))
+		 	self.list.append(getConfigListEntry(_("Aspect ratio"), config.av.aspect, _("Configure the aspect ratio of the screen.")))
 
 		if force_wide or config.av.aspect.value in ("16:9", "16:10"):
 			self.list.extend((
@@ -114,6 +115,8 @@ class VideoSetup(Screen, ConfigListScreen):
 		elif config.av.aspect.value == "4:3":
 			self.list.append(getConfigListEntry(_("Display 16:9 content as"), config.av.policy_169, _("When the content has an aspect ratio of 16:9, choose whether to scale/stretch the picture.")))
 
+#		if config.av.videoport.value == "HDMI":
+#			self.list.append(getConfigListEntry(_("Allow unsupported modes"), config.av.edid_override))
 		if config.av.videoport.value == "Scart":
 			self.list.append(getConfigListEntry(_("Color format"), config.av.colorformat, _("Configure which color format should be used on the SCART output.")))
 			if level >= 1:
@@ -342,11 +345,37 @@ class AutoVideoModeLabel(Screen):
 			idx += 4
 			self.hideTimer.start(idx*1000, True)
 
+previous = None
+isDedicated3D = False
+
+def applySettings(mode=config.osd.threeDmode.value, znorm=int(config.osd.threeDznorm.value)):
+	global previous, isDedicated3D
+	mode = isDedicated3D and mode == "auto" and "sidebyside" or mode
+	if previous != (mode, znorm):
+		try:
+			previous = (mode, znorm)
+			if SystemInfo["CanUse3DModeChoices"]:
+				f = open("/proc/stb/fb/3dmode_choices", "r")
+				choices = f.readlines()[0].split()
+				f.close()
+				if mode not in choices:
+					if mode == "sidebyside":
+						mode = "sbs"
+					elif mode == "topandbottom":
+						mode = "tab"
+					elif mode == "auto":
+						mode = "off"
+			open(SystemInfo["3DMode"], "w").write(mode)
+			open(SystemInfo["3DZNorm"], "w").write('%d' % znorm)
+		except:
+			return
+			
 class AutoVideoMode(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
+				iPlayableService.evStart: self.__evStart,
 				iPlayableService.evVideoSizeChanged: self.VideoChanged,
 				iPlayableService.evVideoProgressiveChanged: self.VideoChanged,
 				iPlayableService.evVideoFramerateChanged: self.VideoChanged,
@@ -359,6 +388,28 @@ class AutoVideoMode(Screen):
 		self.detecttimer = eTimer()
 		self.detecttimer.callback.append(self.VideoChangeDetect)
 
+	def checkIfDedicated3D(self):
+			service = self.session.nav.getCurrentlyPlayingServiceReference()
+			servicepath = service and service.getPath()
+			if servicepath and servicepath.startswith("/"):
+					if service.toString().startswith("1:"):
+						info = eServiceCenter.getInstance().info(service)
+						service = info and info.getInfoString(service, iServiceInformation.sServiceref)
+						return service and eDVBDB.getInstance().getFlag(eServiceReference(service)) & FLAG_IS_DEDICATED_3D == FLAG_IS_DEDICATED_3D and "sidebyside"
+					else:
+						return ".3d." in servicepath.lower() and "sidebyside" or ".tab." in servicepath.lower() and "topandbottom"
+			service = self.session.nav.getCurrentService()
+			info = service and service.info()
+			return info and info.getInfo(iServiceInformation.sIsDedicated3D) == 1 and "sidebyside"
+
+	def __evStart(self):
+		if config.osd.threeDmode.value == "auto":
+			global isDedicated3D
+			isDedicated3D = self.checkIfDedicated3D()
+			if isDedicated3D:
+				applySettings(isDedicated3D)
+			else:
+				applySettings()
 	def BufferInfo(self):
 		bufferInfo = self.session.nav.getCurrentService().streamed().getBufferCharge()
 		if bufferInfo[0] > 98:
@@ -539,7 +590,7 @@ class AutoVideoMode(Screen):
 					else:
 						write_mode = config_mode+new_rate
 
-			# workaround for bug, see http://www.opena.tv/forum/showthread.php?1642-Autoresolution-Plugin&p=38836&viewfull=1#post38836
+			# workaround for bug, see http://www.droidsat.org/forum/showthread.php?1642-Autoresolution-Plugin&p=38836&viewfull=1#post38836
 			# always use a fixed resolution and frame rate   (e.g. 1080p50 if supported) for TV or .ts files
 			# always use a fixed resolution and correct rate (e.g. 1080p24/p50/p60 for all other videos
 			if config.av.smart1080p.value != 'false':
@@ -551,21 +602,20 @@ class AutoVideoMode(Screen):
 						mypath = ''
 				else:
 					mypath = ''
-				if new_rate == 'multi':
-					# no frame rate information available, check if filename (or directory name) contains a hint
-					# (allow user to force a frame rate this way):
-					if   (mypath.find('p24.') >= 0) or (mypath.find('24p.') >= 0):
-						new_rate = '24'
-					elif (mypath.find('p25.') >= 0) or (mypath.find('25p.') >= 0):
-						new_rate = '25'
-					elif (mypath.find('p30.') >= 0) or (mypath.find('30p.') >= 0):
-						new_rate = '30'
-					elif (mypath.find('p50.') >= 0) or (mypath.find('50p.') >= 0):
-						new_rate = '50'
-					elif (mypath.find('p60.') >= 0) or (mypath.find('60p.') >= 0):
-						new_rate = '60'
-					else:
-						new_rate = '' # omit frame rate specifier, e.g. '1080p' instead of '1080p50' if there is no clue
+				# no frame rate information available, check if filename (or directory name) contains a hint
+				# (allow user to force a frame rate this way):
+				if   (mypath.find('p24.') >= 0) or (mypath.find('24p.') >= 0):
+					new_rate = '24'
+				elif (mypath.find('p25.') >= 0) or (mypath.find('25p.') >= 0):
+					new_rate = '25'
+				elif (mypath.find('p30.') >= 0) or (mypath.find('30p.') >= 0):
+					new_rate = '30'
+				elif (mypath.find('p50.') >= 0) or (mypath.find('50p.') >= 0):
+					new_rate = '50'
+				elif (mypath.find('p60.') >= 0) or (mypath.find('60p.') >= 0):
+					new_rate = '60'
+				elif new_rate == 'multi':
+					new_rate = '' # omit frame rate specifier, e.g. '1080p' instead of '1080p50' if there is no clue
 				if mypath != '':
 					if mypath.endswith('.ts'):
 						print "DEBUG VIDEOMODE/ playing .ts file"
@@ -631,6 +681,22 @@ class AutoVideoMode(Screen):
 								if not changeResolution:
 									print "[VideoMode] setMode - port: %s, mode: 1080p is also not available" % config_port
 									resolutionlabel["restxt"].setText(_("Video mode: 1080p also not available"))
+								else:
+									print "[VideoMode] setMode - port: %s, mode: %s" % (config_port, x)
+									resolutionlabel["restxt"].setText(_("Video mode: %s") % x)
+							if (write_mode == "2160p24") or (write_mode == "2160p30") or (write_mode == "2160p60"):
+								for x in values:
+									if x == "2160p":
+										try:
+											f = open("/proc/stb/video/videomode", "w")
+											f.write(x)
+											f.close()
+											changeResolution = True
+										except Exception, e:
+											print("[VideoMode] write_mode exception:" + str(e))
+								if not changeResolution:
+									print "[VideoMode] setMode - port: %s, mode: 2160p is also not available" % config_port
+									resolutionlabel["restxt"].setText(_("Video mode: 2160p also not available"))
 								else:
 									print "[VideoMode] setMode - port: %s, mode: %s" % (config_port, x)
 									resolutionlabel["restxt"].setText(_("Video mode: %s") % x)
