@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-01-14 00:03+0100\n"
+"PO-Revision-Date: 2016-03-23 01:16+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
 
 msgid "Switch to Radio Mode"
@@ -103,6 +103,9 @@ msgstr "Mostra servizio Multiplo EPG"
 msgid "Show Event View"
 msgstr "Mostra Eventi nel Display"
 
+msgid "Front Panel Display"
+msgstr "Display del pannello frontale"
+
 msgid "Show Event Info"
 msgstr "Mostra Informazioni Eventi"
 
@@ -181,8 +184,8 @@ msgstr "Sintonia"
 msgid "Tuner Configuration"
 msgstr "Configurazione Tuner"
 
-msgid "Setup"
-msgstr "Impostazioni"
+msgid "Setup openDroid"
+msgstr "Impostazioni openDroid"
 
 msgid "Network Menu"
 msgstr "Menu Rete"
@@ -251,6 +254,9 @@ msgstr "Modalità video: 1080p non disponibile"
 msgid "Video mode: %s"
 msgstr "Modalità video: %s"
 
+msgid "Eventname only"
+msgstr "Nome evento unico"
+
 msgid ""
 "\n"
 "Advanced options and settings."
@@ -258,7 +264,14 @@ msgstr ""
 "\n"
 "Opzioni e configurazione avanzate."
 
-#, python-format
+#
+msgid ""
+"\n"
+"After pressing OK, please wait!"
+msgstr ""
+"\n"
+"Dopo aver premuto OK, Attendere!"
+
 msgid "After pressing OK, please wait!"
 msgstr "Dopo aver premuto OK, Attendere!"
 
@@ -420,6 +433,15 @@ msgstr ""
 "Selezionare il supporto per il backup.\n"
 "Supporto corrente: "
 
+#
+msgid ""
+"\n"
+"System will restart after the restore!"
+msgstr ""
+"\n"
+"Il Sistema verrà riavviato dopo il ripristino!"
+
+#
 msgid ""
 "\n"
 "View, install and remove available or installed packages."
@@ -736,6 +758,11 @@ msgstr "mostra solo lettore:"
 msgid "(ZAP)"
 msgstr "(ZAP)"
 
+#
+msgid "ZAP"
+msgstr "ZAP"
+
+#
 msgid "(empty)"
 msgstr "(vuoto)"
 
@@ -1032,6 +1059,9 @@ msgstr "Un timer a ripetizione o solo una volta?"
 msgid "Recordings abort PIP"
 msgstr "Fine Registrazione PIP"
 
+msgid "Recordings & Timeshift"
+msgstr "Registrazioni e TimeShift"
+
 msgid ""
 "When enabled, a recording is allowed to abort picture-in-picture mode, when "
 "there are no free tuners."
@@ -1118,10 +1148,10 @@ msgid "A/V settings"
 msgstr "Settaggi A/V"
 
 msgid "Audio settings"
-msgstr "Settaggi Audio"
+msgstr "impostazioni Audio"
 
 msgid "Video settings"
-msgstr "Settaggi Video"
+msgstr "Impostazioni video"
 
 msgid "AA"
 msgstr "AA"
@@ -1921,7 +1951,7 @@ msgstr "Bus:"
 msgid "Button"
 msgstr "Pulsante"
 
-msgid "Button setup"
+msgid "Button Setup"
 msgstr "Impostazione Pulsanti"
 
 msgid "By Team Opendroid"
@@ -2092,6 +2122,9 @@ msgstr "Cambio di bouquet nello zapping veloce"
 
 msgid "Extended NumberZap"
 msgstr "NumberZap estesa"
+
+msgid "Extended settings"
+msgstr "Impostazioni avanzate"
 
 msgid "enable extended number zap"
 msgstr "Abilita NumberZap estesa"
@@ -3448,6 +3481,9 @@ msgstr ""
 msgid "Select skin:"
 msgstr "Selezionare skin:"
 
+msgid "VFD Skin Selector"
+msgstr "Selettore del VFD Skin"
+
 msgid "LED Manager..."
 msgstr "Giga LED Manager"
 
@@ -3898,6 +3934,9 @@ msgstr "Inglese"
 msgid "Enigma2 skin selector"
 msgstr "Enigma2 selettore skin"
 
+msgid "Choose your Skin"
+msgstr "Cambiare Skin"
+
 msgid "Enimga2 Changes"
 msgstr "Enimga2 Changes"
 
@@ -4032,6 +4071,9 @@ msgstr "Configurazione avanzata..."
 
 msgid "Extended Shares"
 msgstr "Azioni estese"
+
+msgid "Extended GUI"
+msgstr "GUI estesa"
 
 msgid "Extended Software"
 msgstr "Software esteso"
@@ -4827,10 +4869,13 @@ msgid "picons"
 msgstr "Picons"
 
 msgid "security"
-msgstr "Security"
+msgstr "Sicurezza"
 
 msgid "settings"
-msgstr "Settings"
+msgstr "impostazioni"
+
+msgid "Basic settings"
+msgstr "Impostazioni di base"
 
 msgid "skins"
 msgstr "Skins"
@@ -5880,6 +5925,9 @@ msgstr "Configurazione rete"
 
 msgid "Network Test"
 msgstr "Test della rete"
+
+msgid "Testscreens"
+msgstr "Test Schermo"
 
 msgid "Network mounts"
 msgstr "Mounts la Rete"
@@ -12823,6 +12871,9 @@ msgstr "Ordinamento delle playlist"
 
 msgid "special characters"
 msgstr "Caratteri speciali"
+
+msgid "Special Features"
+msgstr "Caratteristiche speciali"
 
 msgid "special events"
 msgstr "Eventi speciali"
