@@ -114,6 +114,17 @@ if not name or not res:
 addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
+
+# Only one of these is present, compliments of AM_CONDITIONAL
+if getBoxType() in ('vuultimo', 'vuduo2', 'twinboxlcd', 'gbquad', 'gbquadplus', 'gbultraue', 'gb800ue', 'gb800ueplus', 'gb800ue', 'gb800ueplus', 'xpeedlx3', 'atemionemesis', 'et10000', 'et8500', 'et9x00'):
+	config.skin.display_skin = ConfigText(default = "skin_display.xml")
+
+if getBoxType() == "inihde":
+	config.skin.display_skin = ConfigText(default = "skin_display_text.xml")
+
+#else:
+#	config.skin.display_skin = ConfigNothing()
+
 display_skin_id = 1
 if getBoxType().startswith('dm'):
 	display_skin_id = 2
