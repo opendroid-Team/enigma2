@@ -126,8 +126,31 @@ if getBoxType() == "inihde":
 #	config.skin.display_skin = ConfigNothing()
 
 display_skin_id = 1
-if getBoxType().startswith('dm'):
+if SystemInfo["OledDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+if SystemInfo["FBLCDDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+
+if addSkin('skin_display.xml'):
+	# Color OLED DM800 / DM800SE
 	display_skin_id = 2
+if addSkin('skin_display96.xml'):
+	# Color OLED
+	display_skin_id = 2
+
+if addSkin('skin_display128.xml'):
+	# Color OLED DM7020HD / DM8000
+	display_skin_id = 2
+
+# Add Skin for Display
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "display skin not found"
