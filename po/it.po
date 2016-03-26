@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-03-24 23:40+0100\n"
+"PO-Revision-Date: 2016-03-26 01:16+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -104,7 +104,7 @@ msgid "Show Event View"
 msgstr "Mostra Eventi nel Display"
 
 msgid "Front Panel Display"
-msgstr "Display del pannello frontale"
+msgstr "Configurazione Display"
 
 msgid "Show Event Info"
 msgstr "Mostra Informazioni Eventi"
@@ -1150,10 +1150,10 @@ msgstr ""
 msgid "A/V settings"
 msgstr "Settaggi A/V"
 
-msgid "Audio settings"
+msgid "Audio Settings"
 msgstr "impostazioni Audio"
 
-msgid "Video settings"
+msgid "Video Settings"
 msgstr "Impostazioni video"
 
 msgid "AA"
@@ -2063,6 +2063,12 @@ msgstr "Calcolo completato"
 msgid "Calibrate"
 msgstr "Calibrare"
 
+msgid "External subtitle switch fonts"
+msgstr "Font di commutazione dei sottotitoli esterni"
+
+msgid "External subtitle dialog colorisation"
+msgstr "Dialogo colorisation sottotitoli esterni"
+
 msgid "Can be used for different fps between external subtitles and video."
 msgstr "Può essere usato per diversi fps tra i sottotitoli e il video esterne."
 
@@ -2326,6 +2332,9 @@ msgstr "Configurazione Tuner"
 
 msgid "Reception Settings"
 msgstr "Impostazioni Tuner"
+
+msgid "Reception lists"
+msgstr "Ricevi liste"
 
 msgid "Chose between record and ZAP."
 msgstr "Ha scelto tra registrazione e ZAP."
@@ -3306,13 +3315,16 @@ msgid "Select skin:"
 msgstr "Selezionare skin:"
 
 msgid "VFD Skin Selector"
-msgstr "Selettore del VFD Skin"
+msgstr "Selezionare VFD Skin"
 
 msgid "LED Manager..."
 msgstr "Giga LED Manager"
 
 msgid "Giga LED Setup"
 msgstr "Impostare Giga LED"
+
+msgid "LED"
+msgstr "Impostazione LED"
 
 msgid "Display 16:9 content as"
 msgstr "Mostrare contenuti in 16:9 come"
@@ -3875,6 +3887,9 @@ msgstr "Esperto"
 
 msgid "Extended Networksetup Plugin..."
 msgstr "Plugin di configurazione avanzata rete..."
+
+msgid "Extended"
+msgstr "Estendere"
 
 msgid "Extended Setup..."
 msgstr "Configurazione avanzata..."
@@ -6778,10 +6793,13 @@ msgid "Properties of current title"
 msgstr "Proprietà titolo corrente"
 
 msgid "Protect services"
-msgstr "Proteggere canali"
+msgstr "Proteggere Canali"
 
 msgid "Protect setup"
-msgstr "Proteggere configurazione"
+msgstr "Proteggere Configurazione"
+
+msgid "Protect Screens"
+msgstr "Proteggere Schermo"
 
 msgid "Protocol"
 msgstr "protocollo"
@@ -7256,6 +7274,9 @@ msgstr "Velocità REW"
 
 msgid "Rewrap teletext subtitles"
 msgstr "Riavvolgere i sottotitoli del televideo"
+
+msgid "Rewrap subtitles"
+msgstr "Riavvolgere sottotitoli"
 
 msgid "Right"
 msgstr "Destro"
@@ -8348,7 +8369,7 @@ msgstr "Dimensione"
 msgid "Skin Setting"
 msgstr "Impostazione Skin"
 
-msgid "Skin setup"
+msgid "Skin Setup"
 msgstr "Selezionare Skin"
 
 msgid "Skins"
@@ -9764,11 +9785,14 @@ msgstr "Due"
 msgid "Two lines"
 msgstr "Due Linee"
 
+msgid "Region"
+msgstr "Regione"
+
 msgid "Type"
 msgstr "Tipo"
 
 msgid "Type of scan"
-msgstr "Tipo ricerca"
+msgstr "Tipo di ricerca"
 
 msgid "Type: "
 msgstr "Tipo"
