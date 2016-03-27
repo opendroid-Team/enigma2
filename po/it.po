@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-03-26 01:16+0100\n"
+"PO-Revision-Date: 2016-03-27 22:14+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -567,6 +567,10 @@ msgstr "e"
 msgid "%-H:%M"
 msgstr "%-H:%M"
 
+#, python-format
+msgid "%02d.%02d - %02d.%02d (%s%d min)"
+msgstr "%02d.%02d - %02d.%02d (%s%d min)"
+
 #. TRANSLATORS: short time representation hour:minute
 #, python-format
 msgid "%2d:%02d"
@@ -784,6 +788,24 @@ msgstr "1.1"
 msgid "1.2"
 msgstr "1.2"
 
+msgid "1080i"
+msgstr "1080i"
+
+msgid "1080p 24Hz"
+msgstr "1080p 24Hz"
+
+msgid "1080p 25Hz"
+msgstr "1080p 25Hz"
+
+msgid "1080p 30Hz"
+msgstr "1080p 30Hz"
+
+msgid "1080p 50Hz"
+msgstr "1080p 50Hz"
+
+msgid "1080p 60Hz"
+msgstr "1080p 60Hz"
+
 msgid "12V output"
 msgstr "uscita 12V"
 
@@ -877,6 +899,12 @@ msgstr "4:3 PanScan"
 msgid "4X"
 msgstr "4X"
 
+msgid "720p"
+msgstr "720p"
+
+msgid "720p 24Hz"
+msgstr "720p 24Hz"
+
 msgid "<Current movielist location>"
 msgstr "<Percorso corrente>"
 
@@ -916,7 +944,7 @@ msgstr ""
 
 #, python-format
 msgid "Powertimer Message Popup counter (in seconds)"
-msgstr "Contatore Powertimer messaggio pop-up (in secondi))"
+msgstr "Contatore Powertimer messaggio pop-up (in secondi)"
 
 #, python-format
 msgid "Configure how long the powertimer message is displayed."

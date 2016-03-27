@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: enigma2 3.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2014-05-01 22:06+0100\n"
+"PO-Revision-Date: 2016-03-27 22:13+0200\n"
 "Last-Translator: mike99 <mike99@gmx.net>\n"
 "Language-Team: ViX\n"
 "Language: en_GB\n"
@@ -17,7 +17,258 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.8.4\n"
+
+msgid "Switch to Radio Mode"
+msgstr "Switch to Radio Mod"
+
+msgid "Start Timeshift"
+msgstr "Start Timeshift"
+
+msgid "Show Movies"
+msgstr "Show Movies"
+
+msgid "Main Menu"
+msgstr "Main Menu"
+
+msgid "Stop Timeshift"
+msgstr "Stop Timeshift"
+
+msgid "Show Infobar EPG"
+msgstr "Show Infobar EPG"
+
+msgid "Zap up"
+msgstr "Zap up"
+
+msgid "Show Extension Selection"
+msgstr "Show Extension Selection"
+
+msgid "Activate HbbTV (Redbutton)"
+msgstr "Activate HbbTV (Redbutton)"
+
+msgid "Show Event Info Plugins"
+msgstr "Show Event Info Plugins"
+
+msgid "Switch Channel up in Infobar"
+msgstr "Switch Channel up in Infobar"
+
+msgid "Switch Channel down in Infobar"
+msgstr "Switch Channel down in Infobar"
+
+msgid "Show Plugin Selection"
+msgstr "Show Plugin Selection"
+
+msgid "Start instant recording"
+msgstr "Start instant recording"
+
+msgid "Hotkey Setup"
+msgstr "Hotkey Setup"
+
+msgid "History next"
+msgstr "History next"
+
+msgid "History Zap Menu +"
+msgstr "History Zap Menu +"
+
+msgid "History Zap Menu -"
+msgstr "History Zap Menu -"
+
+msgid "History back"
+msgstr "History back"
+
+msgid "Show Subtitle Selection"
+msgstr "Show Subtitle Selection"
+
+msgid "Show Single Service EPG"
+msgstr "Show Single Service EPG"
+
+msgid "Show Graphical Multi EPG"
+msgstr "Show Graphical Multi EPG"
+
+msgid "Switch to TV Mode"
+msgstr "Switch to TV Mode"
+
+msgid "Zap down"
+msgstr "Zap down"
+
+msgid "Start Teletext"
+msgstr "Start Teletext"
+
+msgid "Show Subservice Selection"
+msgstr "Show Subservice Selection"
+
+msgid "Show Audioselection"
+msgstr "Show Audioselection"
+
+msgid "Show Multi Service EPG"
+msgstr "Show Multi Service EPG"
+
+msgid "Show Event View"
+msgstr "Show Event View"
+
+msgid "Front Panel Display"
+msgstr "Front Panel Display"
+
+msgid "Show Event Info"
+msgstr "Show Event Info"
+
+msgid "Show Help"
+msgstr "Show Help"
+
+msgid "Toggle Infobar/SecondInfobar"
+msgstr "Toggle Infobar/SecondInfobar"
+
+msgid "Show First Infobar"
+msgstr "Show First Infobar"
+
+msgid "Show Second Infobar"
+msgstr "Show Second Infobar"
+
+msgid "BackZap [0]"
+msgstr "BackZap [0]"
+
+msgid "Volume down"
+msgstr "Volume down"
+
+msgid "Volume up"
+msgstr "Volume up"
+
+msgid "Show Service List"
+msgstr "Show Service List"
+
+msgid "History Zap Menu"
+msgstr "History Zap Menu"
+
+msgid "Show Favourites List"
+msgstr "Show Favourites List"
+
+msgid "Show Satellites List"
+msgstr "Show Satellites List"
+
+msgid "Instant Record"
+msgstr "Instant Record"
+
+msgid "ZoomInOut"
+msgstr "ZoomInOut"
+
+msgid "ZoomOff"
+msgstr "ZoomOff"
+
+msgid "Show Picture In Picture"
+msgstr "Show Picture In Picture"
+
+msgid "Swap Picture In Picture"
+msgstr "Swap Picture In Picture"
+
+msgid "Move Picture In Picture"
+msgstr "Move Picture In Picture"
+
+msgid "Toggle Picture In Picture Zap"
+msgstr "Toggle Picture In Picture Zap"
+
+msgid "Toggle HDMI-In Full Screen"
+msgstr "Toggle HDMI-In Full Screen"
+
+msgid "Toggle HDMI-In Picture In Picture"
+msgstr "Toggle HDMI-In Picture In Picture"
+
+msgid "Zap to"
+msgstr "Zap to"
+
+msgid "Panic to"
+msgstr "Panic to"
+
+msgid "Restart Enigma"
+msgstr "Restart Enigma"
+
+msgid "Scanning"
+msgstr "Scanning"
+
+msgid "Tuner Configuration"
+msgstr "Tuner Configuration"
+
+#, fuzzy
+msgid "Setup"
+msgstr ""
+"#-#-#-#-#  0catalog.po (enigma2 3.0.0)  #-#-#-#-#\n"
+"openDroid Setup\n"
+"#-#-#-#-#  0catalog.po (enigma2 3.0.0)  #-#-#-#-#\n"
+"Setup"
+
+msgid "Network Menu"
+msgstr "Network Menu"
+
+msgid "Network Adapter"
+msgstr "Network Adapter"
+
+msgid "Plugin Browser"
+msgstr "Plugin Browser"
+
+msgid "Open AutoTimer"
+msgstr "Open AutoTimer"
+
+msgid "Memory Info"
+msgstr "Memory Info"
+
+msgid "Usage Setup"
+msgstr "Usage Setup"
+
+msgid "User Interface"
+msgstr "User Interface"
+
+msgid "Recording Setup"
+msgstr "Recording Setup"
+
+msgid "Harddisk Setup"
+msgstr "Harddisk Setup"
+
+msgid "Select HDD"
+msgstr "Select HDD"
+
+msgid "Same as in active"
+msgstr "Same as in active"
+
+msgid "Hard disk standby in box standby after"
+msgstr "Hard disk standby in box standby after"
+
+msgid "Use Harddisk Hardware Standby Timer"
+msgstr "Use Harddisk Hardware Standby Timer"
+
+msgid "Option to enable the Hardware Standby Timer"
+msgstr "Option to enable the Hardware Standby Timer"
+
+msgid ""
+"Configure the hard disk drive to go to standby after the specified idle time "
+"when the box is in standby."
+msgstr ""
+"Configure the hard disk drive to go to standby after the specified idle time "
+"when the box is in standby."
+
+msgid "Subtitles Settings"
+msgstr "Subtitles Settings"
+
+msgid "Question"
+msgstr "Question"
+
+msgid "Warning"
+msgstr "Warning"
+
+#, python-format
+msgid "Video content: %ix%i%s %iHz"
+msgstr "Video content: %ix%i%s %iHz"
+
+msgid "Video mode: %s not available"
+msgstr "Video mode: %s not available"
+
+msgid "Video mode: 1080p also not available"
+msgstr "Video mode: 1080p also not available"
+
+#, python-format
+msgid "Video mode: %s"
+msgstr "Video mode: %s"
+
+msgid "Eventname only"
+msgstr "Eventname only"
 
 msgid ""
 "\n"
@@ -32,6 +283,19 @@ msgid ""
 msgstr ""
 "\n"
 "After pressing OK, please wait!"
+
+msgid "After pressing OK, please wait!"
+msgstr "After pressing OK, please wait!"
+
+#, python-format
+msgid ""
+"\n"
+"An Input/output error usually indicates a corrupted filesystem! Please check "
+"the filesystem of your timeshift-device!"
+msgstr ""
+"\n"
+"An Input/output error usually indicates a corrupted filesystem! Please check "
+"the filesystem of your timeshift-device!"
 
 #, python-format
 msgid ""
@@ -70,6 +334,75 @@ msgid ""
 msgstr ""
 "\n"
 "Press OK on your remote control to continue."
+
+msgid ""
+"\n"
+"Flash on the fly your %s %s."
+msgstr ""
+"\n"
+"Flash on the fly your %s %s."
+
+msgid "Online = Download a image and flash it"
+msgstr "Online = Download a image and flash it"
+
+msgid "Local = Flash a image from local path /hdd/images"
+msgstr "Local = Flash a image from local path /hdd/images"
+
+msgid "Flash On the fly (select a image)"
+msgstr "Flash On the fly (select a image)"
+
+msgid "Flash On the Fly"
+msgstr "Flash On the Fly"
+
+msgid "Unzipping files, Please wait ..."
+msgstr "Unzipping files, Please wait ..."
+
+msgid "(disabled)"
+msgstr "(disabled)"
+
+msgid "(higher than any auto)"
+msgstr "(higher than any auto)"
+
+msgid "(higher than rotor any auto)"
+msgstr "(higher than rotor any auto)"
+
+msgid "(lower than any auto)"
+msgstr "(lower than any auto)"
+
+msgid "The image is downloaded. Do you want to flash now?"
+msgstr "The image is downloaded. Do you want to flash now?"
+
+msgid "Please select medium"
+msgstr "Seleziona l'immagine"
+
+msgid ""
+"Do you really want to delete\n"
+"%s ?"
+msgstr ""
+"Vuoi %s\n"
+"Davvero eliminare?"
+
+msgid ""
+"Not enough free space on /hdd !!\n"
+"You need at least 300Mb free space.\n"
+"\n"
+"Exit plugin."
+msgstr ""
+"Non c'è abbastanza spazio libero sul/hdd!\n"
+"Avete bisogno di almeno 300 MB di spazio libero.\n"
+"\n"
+"Uscire dai plugin."
+
+msgid ""
+"ofgwrite not found !!\n"
+"Please make sure you have ofgwrite installed in /usr/bin/ofgwrite.\n"
+"\n"
+"Exit plugin."
+msgstr ""
+"ofgwrite non trovato !!\n"
+"Si prega di installare ofgwrite in /usr/bin/ofgwrite.\n"
+"\n"
+"Uscire dai plugin."
 
 #, python-format
 msgid ""
@@ -110,15 +443,130 @@ msgstr ""
 "Select your backup device.\n"
 "Current device: "
 
+#
+msgid ""
+"\n"
+"System will restart after the restore!"
+msgstr ""
+"\n"
+"System will restart after the restore!"
+
+#
 msgid ""
 "\n"
 "View, install and remove available or installed packages."
 msgstr ""
 "\n"
 "View, install and remove available or installed packages."
+
+#, python-format
+msgid "Show"
+msgstr "Show"
+
+#, python-format
+msgid "Show WerbeZapper"
+msgstr "Show WerbeZapper"
+
+#, python-format
+msgid "Show OscamInfo"
+msgstr "Show OscamInfo"
+
+#, python-format
+msgid "Show OscamStatusView"
+msgstr "Show OscamStatusView"
+
+#, python-format
+msgid "Show CoolTVGuide"
+msgstr "Show CoolTVGuide"
+
+#, python-format
+msgid "Show DreamPlex"
+msgstr "Show DreamPlex"
+
+#, python-format
+msgid "Show Graphical EPG"
+msgstr "Show Graphical EPG"
+
+#, python-format
+msgid "Show Single EPG"
+msgstr "Show Single EPG"
+
+#, python-format
+msgid "Show Multi EPG"
+msgstr "Show Multi EPG"
+
+#, python-format
+msgid "Show Eventview"
+msgstr "Show Eventview"
+
+#, python-format
+msgid "Show CoolSingleGuide"
+msgstr "Show CoolSingleGuide"
+
+#, python-format
+msgid "Show CoolInfoGuide"
+msgstr "Show CoolInfoGuide"
+
+#, python-format
+msgid "Show EtPortal"
+msgstr "Show EtPortal"
+
+#, python-format
+msgid "Show EPG"
+msgstr "Show EPG"
+
+#, python-format
+msgid "Show Media Portal"
+msgstr "Show Media Portal"
+
+#, python-format
+msgid "Show Enhanced Movie Center"
+msgstr "Show Enhanced Movie Center"
+
+#, python-format
+msgid "Show Zap-History Browser"
+msgstr "Show Zap-History Browser"
+
+#, python-format
+msgid "Show EMC"
+msgstr "Show EMC"
+
+#, python-format
+msgid "Show Movielist"
+msgstr "Show Movielist"
+
+#, python-format
+msgid "Show Simple Movie List"
+msgstr "Show Simple Movie List"
+
+#, python-format
+msgid "Bookmark button mode"
+msgstr "Bookmark button mode"
+
+#, python-format
+msgid "Use function assigned to bookmark button"
+msgstr "Use function assigned to bookmark button"
 
 msgid " (PiP)"
 msgstr " (PiP)"
+
+msgid "Close PiP on exit"
+msgstr "Close PiP on exit"
+
+msgid "Show PIP in the Front Display"
+msgstr "Show PIP in the Front Display"
+
+msgid "PIP"
+msgstr "PIP"
+
+msgid "PIP with OSD"
+msgstr "PIP with OSD"
+
+msgid "With popup"
+msgstr "With popup"
+
+msgid "Without popup"
+msgstr "Without popup"
 
 msgid " (Radio)"
 msgstr " (Radio)"
@@ -145,6 +593,9 @@ msgstr "%2d:%02d"
 #, python-format
 msgid "%2d:%02d:%02d"
 msgstr "%2d:%02d:%02d"
+
+msgid "%A %d %B"
+msgstr "%A %d %B"
 
 #. TRANSLATORS: long date representations dayname daynum monthname in strftime() format! See 'man strftime'
 msgid "%A %e %B"
@@ -247,6 +698,9 @@ msgid_plural "%d wireless networks found!"
 msgstr[0] "%d wireless network found!"
 msgstr[1] "%d wireless networks found!"
 
+msgid "%d-%m"
+msgstr "%d-%m"
+
 msgid "%d.%B %Y"
 msgstr "%d.%B %Y"
 
@@ -318,6 +772,11 @@ msgstr "(Show only reader:"
 msgid "(ZAP)"
 msgstr "(ZAP)"
 
+#
+msgid "ZAP"
+msgstr "ZAP"
+
+#
 msgid "(empty)"
 msgstr "(empty)"
 
@@ -395,6 +854,18 @@ msgstr "1X"
 
 msgid "1st Infobar timeout"
 msgstr "1st Infobar timeout"
+
+msgid "2nd Infobar"
+msgstr "2nd Infobar"
+
+msgid "2nd Infobar timeout"
+msgstr "2nd Infobar timeout"
+
+msgid "Show InfoBar"
+msgstr "Show InfoBar"
+
+msgid "Show Channel List"
+msgstr "Show Channel List"
 
 msgid "23.976"
 msgstr "23.976"
@@ -489,6 +960,14 @@ msgstr ""
 "Do you want to keep your version?"
 
 #, python-format
+msgid "Powertimer Message Popup counter (in seconds)"
+msgstr "Powertimer Message Popup counter (in seconds)"
+
+#, python-format
+msgid "Configure how long the powertimer message is displayed."
+msgstr "Configure how long the powertimer message is displayed."
+
+#, python-format
 msgid ""
 "A finished power timer wants to shut down\n"
 "your %s %s. Shutdown now?"
@@ -535,6 +1014,20 @@ msgstr ""
 "A finished record timer wants to set your\n"
 "%s %s to standby. Do that now?"
 
+msgid "No tuner is available for recording a timer!\n"
+msgstr "No tuner is available for recording a timer!\n"
+
+msgid ""
+"No tuner is available for recording a timer!\n"
+"\n"
+"The following methods of freeing a tuner were tried without success:\n"
+"\n"
+msgstr ""
+"No tuner is available for recording a timer!\n"
+"\n"
+"The following methods of freeing a tuner were tried without success:\n"
+"\n"
+
 #, python-format
 msgid ""
 "A finished record timer wants to shut down\n"
@@ -542,6 +1035,9 @@ msgid ""
 msgstr ""
 "A finished record timer wants to shut down\n"
 "your %s %s. Shutdown now?"
+
+msgid "A graphical EPG for all services of an specific bouquet"
+msgstr "A graphical EPG for all services of an specific bouquet"
 
 #, python-format
 msgid ""
@@ -1680,9 +2176,6 @@ msgstr "Clients"
 
 msgid "Close"
 msgstr "Close"
-
-msgid "Close PiP on exit"
-msgstr "Close PiP on exit"
 
 msgid "Close bouquet list."
 msgstr "Close bouquet list."
@@ -5351,9 +5844,6 @@ msgstr "Please wait..."
 msgid "Please wait... Loading list..."
 msgstr "Please wait... Loading list..."
 
-msgid "Plugin Browser"
-msgstr "Plugin Browser"
-
 msgid "Plugin details"
 msgstr "Plugin details"
 
@@ -6566,9 +7056,6 @@ msgstr "Settings"
 
 msgid "Settings..."
 msgstr "Settings..."
-
-msgid "Setup"
-msgstr "Setup"
 
 msgid "Setup how to control the channel changing."
 msgstr "Setup how to control the channel changing."
@@ -8622,10 +9109,6 @@ msgstr "Video Enhancement Settings"
 msgid "Video PID"
 msgstr "Video PID"
 
-#, python-format
-msgid "Video content: %ix%i%s %iHz"
-msgstr "Video content: %ix%i%s %iHz"
-
 msgid "Video enhancement preview"
 msgstr "Video enhancement preview"
 
@@ -8655,10 +9138,6 @@ msgstr ""
 
 msgid "Video mode selection."
 msgstr "Video mode selection."
-
-#, python-format
-msgid "Video mode: %s"
-msgstr "Video mode: %s"
 
 msgid "Video output"
 msgstr "Video output"
@@ -9210,9 +9689,6 @@ msgstr "Wireless network connection setup."
 msgid "Wireless network state"
 msgstr "Wireless network state"
 
-msgid "With popup"
-msgstr "With popup"
-
 msgid ""
 "With this option set to 'yes' the channel list will always show you the list "
 "of bouquets. If set to 'no' the current bouquet will be opened."
@@ -9226,9 +9702,6 @@ msgid ""
 msgstr ""
 "With this option you can hide Job Tasks from the extension screen (short "
 "blue button press)."
-
-msgid "Without popup"
-msgstr "Without popup"
 
 msgid "Write error while recording. Disk full?\n"
 msgstr "Write error while recording. Disk full?\n"
