@@ -779,8 +779,9 @@ def InitUsageConfig():
 
 	config.plisettings = ConfigSubsection()
 	config.plisettings.Subservice = ConfigYesNo(default = True)
-	config.plisettings.ColouredButtons = ConfigYesNo(default = False)
-	config.plisettings.InfoBarEpg_mode = ConfigSelection(default="3", choices = [
+	config.plisettings.ShowPressedButtons = ConfigYesNo(default = False)
+	config.plisettings.ColouredButtons = ConfigYesNo(default = True)
+	config.plisettings.InfoBarEpg_mode = ConfigSelection(default="0", choices = [
 					("0", _("as plugin in extended bar")),
 					("1", _("with long OK press")),
 					("2", _("with exit button")),
