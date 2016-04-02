@@ -1,8 +1,8 @@
 #################################################################################
-# FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 3.2     			#
-#	                         						                            #
-#					MAKES A FULLBACK-UP READY FOR FLASHING.						#
-#																				#
+# FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 3.3     	        #
+#	                         						#
+#					MAKES A FULLBACK-UP READY FOR FLASHING. #
+#										#
 #################################################################################
 from enigma import getEnigmaVersionString
 from Screens.Screen import Screen
@@ -378,7 +378,7 @@ class ImageBackup(Screen):
 
 	def imageInfo(self):
 		AboutText = _("Full Image Backup ")
-		AboutText += _("By opendroid Image Team") + "\n"
+		AboutText += _("By openDroid Image Team") + "\n"
 		AboutText += _("Support at") + " www.droidsat.org\n\n"
 		AboutText += _("[Image Info]\n")
 		AboutText += _("Model: %s %s\n") % (getMachineBrand(), getMachineName())
