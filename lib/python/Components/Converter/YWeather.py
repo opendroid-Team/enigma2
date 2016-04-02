@@ -63,9 +63,9 @@ class YWeather(Poll, Converter, object):
             if fileExists("/tmp/yweather.xml"):
                 if int((time.time() - os.stat("/tmp/yweather.xml").st_mtime)/60) >= time_update:
                     os.system("rm /tmp/yweather.xml")
-                    os.system("wget -P /tmp -T2 'http://weather.yahooapis.com/forecastrss?w=%s&u=c' -O /tmp/yweather.xml" % weather_city)
+                    os.system("wget -P /tmp -T2 'http://xml.weather.yahoo.com/forecastrss?w=%s&u=c' -O /tmp/yweather.xml" % weather_city)
             else:
-                os.system("wget -P /tmp -T2 'http://weather.yahooapis.com/forecastrss?w=%s&u=c' -O /tmp/yweather.xml" % weather_city)
+                os.system("wget -P /tmp -T2 'http://xml.weather.yahoo.com/forecastrss?w=%s&u=c' -O /tmp/yweather.xml" % weather_city)
         except:
 		pass
         if not fileExists("/tmp/yweather.xml"):
