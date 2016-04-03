@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: enigma2 3.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2016-03-27 22:13+0200\n"
+"PO-Revision-Date: 2016-04-03 12:25+0200\n"
 "Last-Translator: mike99 <mike99@gmx.net>\n"
 "Language-Team: ViX\n"
 "Language: en_GB\n"
@@ -3291,9 +3291,6 @@ msgstr "ECM last"
 
 msgid "ECM-Time"
 msgstr "ECM-Time"
-
-msgid "EPG"
-msgstr "EPG"
 
 msgid "EPG Cache Check"
 msgstr "EPG Cache Check"
@@ -6634,7 +6631,7 @@ msgid "Scrolling delay (software render)"
 msgstr "Scrolling delay (software render)"
 
 msgid "Search"
-msgstr "Search"
+msgstr "EPG Search"
 
 msgid "Search IMDb for information about current event."
 msgstr "Search IMDb for information about current event."
@@ -7718,7 +7715,7 @@ msgid "Subservice mode"
 msgstr "Subservice mode"
 
 msgid "Subservices"
-msgstr "Subservices"
+msgstr "Plugins"
 
 msgid "Subtitle Quickmenu"
 msgstr "Subtitle Quickmenu"
