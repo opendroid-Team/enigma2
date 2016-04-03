@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-04-03 12:13+0200\n"
+"PO-Revision-Date: 2016-04-03 13:21+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -185,7 +185,7 @@ msgid "Tuner Configuration"
 msgstr "Configurazione Tuner"
 
 msgid "Setup"
-msgstr "Impostazioni openDroid"
+msgstr "Configurazioni"
 
 msgid "Network Menu"
 msgstr "Menu Rete"
@@ -1179,10 +1179,10 @@ msgid "A/V settings"
 msgstr "Settaggi A/V"
 
 msgid "Audio Settings"
-msgstr "impostazioni Audio"
+msgstr "Settaggi Audio "
 
 msgid "Video Settings"
-msgstr "Impostazioni video"
+msgstr "Configurazioni video"
 
 msgid "AA"
 msgstr "AA"
@@ -6619,7 +6619,7 @@ msgid "Plugin manager help"
 msgstr "Aiuto gestore plugin..."
 
 msgid "Plugins"
-msgstr "Selezionare Plugins"
+msgstr "Plugins"
 
 msgid "Polarisation"
 msgstr "Polarizzazione"
@@ -7529,7 +7529,7 @@ msgid "slow"
 msgstr "Lento"
 
 msgid "Search"
-msgstr "EPG"
+msgstr "Ricerca EPG"
 
 msgid "Search IMDb for information about current event."
 msgstr "Cerca IMDb informazioni su eventi attuali."
@@ -7813,7 +7813,7 @@ msgid "Service scan"
 msgstr "Ricerca canali"
 
 msgid "Service searching"
-msgstr "Impostazioni Tuner"
+msgstr "Tuner"
 
 msgid "Service title mode"
 msgstr "Modalità titolo di servizio"
@@ -9575,7 +9575,7 @@ msgid "Timer type"
 msgstr "Tipo timer"
 
 msgid "Timers"
-msgstr "Impostazioni Timer"
+msgstr "Timer"
 
 msgid "Timeshift"
 msgstr "TimeShift"
