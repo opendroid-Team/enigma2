@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-04-03 13:21+0200\n"
+"PO-Revision-Date: 2016-04-05 00:03+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -1181,7 +1181,7 @@ msgstr "Settaggi A/V"
 msgid "Audio Settings"
 msgstr "Settaggi Audio "
 
-msgid "Video Settings"
+msgid "Video settings"
 msgstr "Configurazioni video"
 
 msgid "AA"
@@ -1747,7 +1747,7 @@ msgid "Auto focus commencing ..."
 msgstr "Avvio puntamento automatico..."
 
 msgid "Auto language selection"
-msgstr "Selezione lingua Auto"
+msgstr "Sel. automatica della lingua"
 
 msgid "Auto scart switching"
 msgstr "Scambio automatico scart"
@@ -7058,7 +7058,7 @@ msgstr "Ricordare il PIN canale"
 
 #, python-format
 msgid "Blind scan"
-msgstr "Blind-Scan"
+msgstr "BlindScan"
 
 #, python-format
 msgid "Blindscan was canceled by the user."
@@ -7529,7 +7529,7 @@ msgid "slow"
 msgstr "Lento"
 
 msgid "Search"
-msgstr "Ricerca EPG"
+msgstr "cerca EPG"
 
 msgid "Search IMDb for information about current event."
 msgstr "Cerca IMDb informazioni su eventi attuali."
@@ -8354,9 +8354,6 @@ msgstr "Potenza Segnale:"
 
 msgid "Signal:"
 msgstr "Segnale:"
-
-msgid "Similar"
-msgstr "SimilEPG"
 
 msgid "Similar broadcasts:"
 msgstr "Programmi simili:"
@@ -11920,6 +11917,12 @@ msgstr "In uscita, salvare la playlist"
 
 msgid "scan state"
 msgstr "Stato ricerca"
+
+msgid "Scan start frequency"
+msgstr "Avvia Scansione frequenza"
+
+msgid "Scan stop frequency"
+msgstr "Ferma Scansione frequenza"
 
 msgid "science fiction/fantasy/horror"
 msgstr "Scienza/fantasia/horror"
