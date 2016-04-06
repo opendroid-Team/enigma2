@@ -131,7 +131,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self["key_yellow"].setText(_("Search"))
 
 			if config.usage.defaultEPGType.value == "Graphical EPG..." or config.usage.defaultEPGType.value == "None":
-				self["key_red"].setText(_("Single EPG"))
+				self["key_red"] = Label()
 			else:
 				self["key_red"].setText(_("ViX EPG"))
 
