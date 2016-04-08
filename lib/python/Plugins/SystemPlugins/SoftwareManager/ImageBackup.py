@@ -1,5 +1,5 @@
 #################################################################################
-# FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 3.3     	        #
+# FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 3.4     	        #
 #	                         						#
 #					MAKES A FULLBACK-UP READY FOR FLASHING. #
 #										#
@@ -18,7 +18,7 @@ import commands
 import datetime
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDate, getImageVersion, getImageBuild, getBrandOEM, getMachineBuild, getImageFolder, getMachineUBINIZE, getMachineMKUBIFS, getMachineMtdKernel, getMachineKernelFile, getMachineRootFile, getImageFileSystem
 
-VERSION = "Version 5.4 opendroid"
+VERSION = "Version 5.5 opendroid"
 
 HaveGZkernel = True
 if getBrandOEM() in ("fulan") or getBoxType() in ("vusolo4k"):
