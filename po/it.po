@@ -1261,7 +1261,7 @@ msgid "Adapter settings"
 msgstr "Conf. interfaccia"
 
 msgid "Add"
-msgstr "Plugins"
+msgstr "Aggiungere"
 
 msgid "Add AutoTimer"
 msgstr "Aggiungere AutoTimer"
