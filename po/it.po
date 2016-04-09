@@ -11722,6 +11722,9 @@ msgstr "no scheda inserita o sconosciuta"
 msgid "no storage devices found"
 msgstr "dispositivi di archiviazione non trovati"
 
+msgid "Storage devices"
+msgstr "Dispositivo di archiviazione"
+
 msgid "none"
 msgstr "Nessuno"
 
