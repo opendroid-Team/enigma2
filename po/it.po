@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-04-10 01:00+0200\n"
+"PO-Revision-Date: 2016-04-11 17:41+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -337,10 +337,10 @@ msgid "Flash On the fly (select a image)"
 msgstr "Flash On Line (Selezionare Immagine)"
 
 msgid "Flash On the Fly"
-msgstr "Flashare Online/Locale"
+msgstr "Flash Online/Locale"
 
 msgid "Unzipping files, Please wait ..."
-msgstr "Decomprimo file,attendere prego ..."
+msgstr "Decomprimo file, attendere prego ..."
 
 msgid " (disabled)"
 msgstr "(disabilitato)"
@@ -7529,7 +7529,7 @@ msgid "slow"
 msgstr "Lento"
 
 msgid "Search"
-msgstr "cerca EPG"
+msgstr "Cerca EPG"
 
 msgid "Search IMDb for information about current event."
 msgstr "Cerca IMDb informazioni su eventi attuali."
@@ -10863,26 +10863,26 @@ msgstr ""
 
 #, python-format
 msgid "Your %s %s is rebooting"
-msgstr "Il tuo Ricevitore %s %s sta effettuando un Riavvio Completo Attendere...."
+msgstr "Il ricevitore %s %s sta effettuando un Riavvio Completo Attendere...."
 
 #, python-format
 msgid "Your %s %s is shutting down"
-msgstr "Il tuo %s %s è in fase di spegnimento"
+msgstr "Il ricevitore %s %s è in fase di spegnimento"
 
 #, python-format
 msgid "Your %s %s is shutting down. Please wait..."
-msgstr "Il %s %s si sta arrestando. Attendere..."
+msgstr "Il ricevitore %s %s si sta arrestando. Attendere..."
 
 #, python-format
 msgid "Your %s %s might be unusable now. Please consult the manual for further assistance before rebooting your %s %s."
-msgstr "Il tuo %s %s potrebbe risultare inutilizzabile ora. Si prega di consultare il manuale per ulteriori informazioni prima di riavviare il vostro %s %s."
+msgstr "Il ricevitore %s %s potrebbe risultare inutilizzabile ora. Si prega di consultare il manuale per ulteriori informazioni prima di riavviare il vostro %s %s."
 
 #, python-format
 msgid ""
 "Your %s %s wants to reboot your STB_BOX.\n"
 "Do that now?"
 msgstr ""
-"Il %s %s Sta per essere riavviato..\n"
+"Il ricevitore %s %s Sta per essere riavviato..\n"
 "Riavviare ora?"
 
 #, python-format
@@ -10890,7 +10890,7 @@ msgid ""
 "Your %s %s wants to restart the user interface.\n"
 "Do that now?"
 msgstr ""
-"Il tuo %s %s vuole riavviare l'interfaccia utente.\n"
+"Il ricevitore %s %s vuole riavviare l'interfaccia utente.\n"
 "\n"
 "Riavviare ora?"
 
@@ -10899,7 +10899,7 @@ msgid ""
 "Your %s %s wants to set your STB_BOX to standby.\n"
 "Do that now?"
 msgstr ""
-"Il %s %s Sta per passare alla modalita standby.\n"
+"Il ricevitore %s %s Sta per passare alla modalita standby.\n"
 "Farlo ora?"
 
 #, python-format
@@ -10915,7 +10915,7 @@ msgid ""
 "Your %s %s will be restarted after the installation of service\n"
 "Ready to install \"%s\" ?"
 msgstr ""
-"Verra riavviato il tuo %s %s dopo l'installazione del servizio\n"
+"Verra riavviato il ricevitore %s %s dopo l'installazione del servizio\n"
 "Pronto per l'installazione del \"%s\" ?"
 
 #, python-format
@@ -10924,7 +10924,7 @@ msgid ""
 "\n"
 "Do you want to install now ?"
 msgstr ""
-"Il tuo %s %s verrà riavviato dopo l'installazione del servizio.\n"
+"Il ricevitore %s %s verrà riavviato dopo l'installazione del servizio.\n"
 "\n"
 "Vuoi installare adesso?"
 
@@ -10932,7 +10932,7 @@ msgid ""
 "Your %s %s will be restarted after the installation of service\n"
 "Ready to install %s ?"
 msgstr ""
-"Il tuo %s %s verrà riavviato dopo l'installazione del servizio.\n"
+"Il ricevitore %s %s verrà riavviato dopo l'installazione del servizio.\n"
 "Pronto per l'installazione del \"%s\" ?"
 
 #, python-format
@@ -10940,14 +10940,14 @@ msgid ""
 "Your %s %s will be restarted after the removal of service\n"
 "Do you want to remove now ?"
 msgstr ""
-"Il tuo %s %s Verrà riavviato dopo la rimozione del servizio\n"
+"Il ricevitore %s %s Verrà riavviato dopo la rimozione del servizio\n"
 "Vuoi rimuovere adesso?"
 
 msgid "Your backup succeeded. We will now continue to explain the further upgrade process."
 msgstr "Backup eseguito correttamente! Ora proseguirà il processo di aggiornamento."
 
 msgid "Your collection exceeds the size of a single layer medium, you will need a blank dual layer DVD!"
-msgstr "La Collezione supera la capacità di un disco singolo strato. Sarà necessario utilizzare un DVD vergine doppio strato!"
+msgstr "La Collezione supera la capacità di un disco a singolo strato. Sarà necessario utilizzare un DVD vergine doppio strato!"
 
 #, python-format
 msgid ""
