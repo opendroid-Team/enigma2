@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < argc; i++)
 	{
-		if (!(strcmp(argv[i], "--debug-no-color")) or !(strcmp(argv[i], "--nc")))
+		if (!(strcmp(argv[i], "--debug-no-color")))
 		{
 			logOutputColors = 0;
 		}
