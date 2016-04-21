@@ -25,8 +25,9 @@ from boxbranding import getBoxType, getMachineName, getMachineBrand
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 5.4", "http://images.opendroid.org/5.5"])
-images.append(["OPD 5.5", "http://images.opendroid.org/5.4"])
+images.append(["OPD 5.3", "http://images.opendroid.org/5.3"])
+images.append(["OPD 5.4", "http://images.opendroid.org/5.4"])
+images.append(["OPD 5.5", "http://images.opendroid.org/5.5"])
 
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
