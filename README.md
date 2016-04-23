@@ -2,11 +2,11 @@
 
 > Ubuntu 15.10 
 
-## openDroid 5.4 is build using oe-alliance build-environment and several git repositories: ##
+## openDroid 5.5 is build using oe-alliance build-environment and several git repositories: ##
 
 > [https://github.com/oe-alliance/oe-alliance-core]
 > 
-> [https://github.com/opendroid-Team/enigma2](https://github.com/opendroid-Team/enigma2 "openDroid Enigma2")
+> [https://github.com/opendroid-Team/enigma2]  (https://github.com/opendroid-Team/enigma2 "openDroid Enigma2")
 > 
 
 > and a lot more...
@@ -55,7 +55,7 @@
 ----------
 8 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b 3.3
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 3.4
 
 ----------
 9 - Switch to folder build-enviroment
