@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2016-05-05 13:58+0200\n"
+"PO-Revision-Date: 2016-05-14 14:53+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -13107,3 +13107,16 @@ msgstr "Proteggere menu Timer"
 
 msgid "SCPC optimized search range"
 msgstr "SCPC area di ricerca ottimizzata"
+
+#: OPDpanel
+msgid "Restart E2"
+msgstr "Riavviare E2"
+
+msgid "Plugin"
+msgstr "Plugins"
+
+msgid "Setting"
+msgstr "Settings"
+
+msgid "BootLogo"
+msgstr "Bootlogo"
