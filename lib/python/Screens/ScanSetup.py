@@ -870,7 +870,6 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 			(eDVBFrontendParametersSatellite.FEC_7_8, "7/8"),
 			(eDVBFrontendParametersSatellite.FEC_None, _("None"))])
 		self.scan_sat.fec_s2 = ConfigSelection(default = defaultSat["fec_s2"], choices = [
-			(eDVBFrontendParametersSatellite.FEC_Auto, _("Auto")),
 			(eDVBFrontendParametersSatellite.FEC_1_2, "1/2"),
 			(eDVBFrontendParametersSatellite.FEC_2_3, "2/3"),
 			(eDVBFrontendParametersSatellite.FEC_3_4, "3/4"),
@@ -1254,6 +1253,16 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		else:
 			self.startScan(self.tlist, self.flags, self.feid)
 
+	def setTerrestrialTransponderSearchResult(self, tlist):
+		if tlist is not None:
+			self.tlist.extend(tlist)
+
+	def terrestrialTransponderSearchFinished(self):
+		if self.tlist is None:
+			self.tlist = []
+		else:
+			self.startScan(self.tlist, self.flags, self.feid)
+
 	def predefinedTranspondersList(self, orbpos):
 		default = None
 		if orbpos is not None:
@@ -1342,8 +1351,8 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		return default
 
 	def humanReadableCabTransponder(self, tp):
-		if tp[3] in range (6) and (tp[4] in range (10) or tp[4] == 15):
-			mod_list = ['Auto', '16-QAM','32-QAM','64-QAM','128-QAM', '256-QAM']
+		if tp[3] in range (7) and (tp[4] in range (10) or tp[4] == 15):
+			mod_list = ['Auto', '16-QAM','32-QAM','64-QAM','128-QAM', '256-QAM', 'Auto']
 			fec_list = {0:"Auto", 1:'1/2', 2:'2/3', 3:'3/4', 4:'5/6', 5:'7/8', 6:'8/9', 7:'3/5', 8:'4/5', 9:'9/10', 15:'None'}
 			print str(tp[1]/1000) + " MHz " + fec_list[tp[4]] + " " + str(tp[2]/1000) + " " + mod_list[tp[3]]
 			return str(tp[1]/1000) + " MHz " + fec_list[tp[4]] + " " + str(tp[2]/1000) + " " + mod_list[tp[3]]
@@ -1385,8 +1394,6 @@ class ScanSimple(ConfigListScreen, Screen, CableTransponderSearchSupport, Terres
 	def getNetworksForNim(self, nim):
 		if nim.isCompatible("DVB-S"):
 			networks = nimmanager.getSatListForNim(nim.slot)
-		elif nim.isCompatible("DVB-C"):
-			networks = nimmanager.getTranspondersCable(nim.slot)
 		elif nim.isCompatible("DVB-T"):
 			networks = nimmanager.getTerrestrialDescription(nim.slot)
 		elif not nim.empty:

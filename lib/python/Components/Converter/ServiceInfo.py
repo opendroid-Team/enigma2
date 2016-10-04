@@ -4,7 +4,7 @@ from Components.Element import cached
 
 from os import path
 
-WIDESCREEN = [3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
+WIDESCREEN = [1, 3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
 
 class ServiceInfo(Converter, object):
 	HAS_TELETEXT = 1
@@ -92,13 +92,25 @@ class ServiceInfo(Converter, object):
 
 		video_height = None
 		video_aspect = None
-		try:
+		if path.exists("/proc/stb/vmpeg/0/yres"):
 			f = open("/proc/stb/vmpeg/0/yres", "r")
-			video_height = int(f.read(),16)
+			try:
+				video_height = int(f.read(),16)
+			except:
+				pass
 			f.close()
-		except:
+
+		if path.exists("/proc/stb/vmpeg/0/aspect"):
+			f = open("/proc/stb/vmpeg/0/aspect", "r")
+			try:
+				video_aspect = int(f.read())
+			except:
+				pass
+			f.close()
+		if not video_height:
 			video_height = int(info.getInfo(iServiceInformation.sVideoHeight))
-		video_aspect = info.getInfo(iServiceInformation.sAspect)
+		if not video_aspect:
+			video_aspect = info.getInfo(iServiceInformation.sAspect)
 
 		if self.type == self.HAS_TELETEXT:
 			tpid = info.getInfo(iServiceInformation.sTXTPID)
@@ -176,19 +188,31 @@ class ServiceInfo(Converter, object):
 			video_width = None
 			if path.exists("/proc/stb/vmpeg/0/xres"):
 				f = open("/proc/stb/vmpeg/0/xres", "r")
-				video_width = int(f.read(),16)
+				try:
+					video_width = int(f.read(),16)
+				except:
+					pass
 				f.close()
 			if not video_width:
-				video_width = int(self.getServiceInfoString(info, iServiceInformation.sVideoWidth))
+				try:
+					video_width = int(self.getServiceInfoString(info, iServiceInformation.sVideoWidth))
+				except:
+					return ""
 			return "%d" % video_width
 		elif self.type == self.YRES:
 			video_height = None
 			if path.exists("/proc/stb/vmpeg/0/yres"):
 				f = open("/proc/stb/vmpeg/0/yres", "r")
-				video_height = int(f.read(),16)
+				try:
+					video_height = int(f.read(),16)
+				except:
+					pass
 				f.close()
 			if not video_height:
-				video_height = int(self.getServiceInfoString(info, iServiceInformation.sVideoHeight))
+				try:
+					video_height = int(self.getServiceInfoString(info, iServiceInformation.sVideoHeight))
+				except:
+					return ""
 			return "%d" % video_height
 		elif self.type == self.APID:
 			return self.getServiceInfoString(info, iServiceInformation.sAudioPID)
@@ -207,7 +231,17 @@ class ServiceInfo(Converter, object):
 		elif self.type == self.SID:
 			return self.getServiceInfoString(info, iServiceInformation.sSID)
 		elif self.type == self.FRAMERATE:
-			return self.getServiceInfoString(info, iServiceInformation.sFrameRate, lambda x: "%d fps" % ((x+500)/1000))
+			video_rate = None
+			if path.exists("/proc/stb/vmpeg/0/framerate"):
+				f = open("/proc/stb/vmpeg/0/framerate", "r")
+				try:
+					video_rate = int(f.read())
+				except:
+					pass
+				f.close()
+			if not video_rate:
+				video_rate = int(self.getServiceInfoString(info, iServiceInformation.sFrameRate))
+			return video_rate, lambda x: "%d fps" % ((x+500)/1000)
 		elif self.type == self.TRANSFERBPS:
 			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x/1024))
 		elif self.type == self.HAS_HBBTV:
@@ -224,11 +258,41 @@ class ServiceInfo(Converter, object):
 			return -1
 
 		if self.type == self.XRES:
-			return info.getInfo(iServiceInformation.sVideoWidth)
-		if self.type == self.YRES:
-			return info.getInfo(iServiceInformation.sVideoHeight)
-		if self.type == self.FRAMERATE:
-			return info.getInfo(iServiceInformation.sFrameRate)
+			video_width = None
+			if path.exists("/proc/stb/vmpeg/0/xres"):
+				f = open("/proc/stb/vmpeg/0/xres", "r")
+				try:
+					video_width = int(f.read(),16)
+				except:
+					video_width = None
+				f.close()
+			if not video_width:
+				video_width = info.getInfo(iServiceInformation.sVideoWidth)
+			return str(video_width)
+		elif self.type == self.YRES:
+			video_height = None
+			if path.exists("/proc/stb/vmpeg/0/yres"):
+				f = open("/proc/stb/vmpeg/0/yres", "r")
+				try:
+					video_height = int(f.read(),16)
+				except:
+					video_height = None
+				f.close()
+			if not video_height:
+				video_height = info.getInfo(iServiceInformation.sVideoHeight)
+			return str(video_height)
+		elif self.type == self.FRAMERATE:
+			video_rate = None
+			if path.exists("/proc/stb/vmpeg/0/framerate"):
+				f = open("/proc/stb/vmpeg/0/framerate", "r")
+				try:
+					video_rate = f.read()
+				except:
+					pass
+				f.close()
+			if not video_rate:
+				video_rate = info.getInfo(iServiceInformation.sFrameRate)
+			return str(video_rate)
 
 		return -1
 

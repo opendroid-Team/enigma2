@@ -9,6 +9,7 @@
 #include <set>
 
 class eNavigation;
+
 /* a subset of eNavigation */
 class pNavigation: public iObject, public Object
 {
@@ -25,13 +26,17 @@ public:
 	    isFromSpecialJumpFastZap =  0x80,
 	    isAnyRecording           =  0xFF
 	};
+
     PSignal1<void, int> m_event;
     PSignal2<void, ePtr<iRecordableService>&, int> m_record_event;
+
     pNavigation(int decoder = 0);
+
     RESULT playService(const eServiceReference &service);
     RESULT stopService();
     RESULT pause(int p);
     SWIG_VOID(RESULT) getCurrentService(ePtr<iPlayableService> &SWIG_OUTPUT);
+
     SWIG_VOID(RESULT) recordService(const eServiceReference &ref, ePtr<iRecordableService> &SWIG_OUTPUT, bool simulate=false, RecordType type=isUnknownRecording);
     RESULT stopRecordService(ePtr<iRecordableService> &service);
     void getRecordings(std::vector<ePtr<iRecordableService> > &recordings, bool simulate=false, RecordType type=isAnyRecording);
@@ -39,11 +44,14 @@ public:
     void getRecordingsTypesOnly(std::vector<pNavigation::RecordType> &services, pNavigation::RecordType type=isAnyRecording);
     std::map<ePtr<iRecordableService>, eServiceReference, std::less<iRecordableService*> > getRecordingsServices(RecordType type=isAnyRecording);
     void navEvent(int event);
+
 private:
     ePtr<eNavigation> m_core;
     ePtr<eConnection> m_nav_event_connection, m_nav_record_event_connection;
     void navRecordEvent(ePtr<iRecordableService>, int event);
 };
+
+
 class eNavigation: public iObject, public Object
 {
     static eNavigation *instance;
@@ -84,5 +92,4 @@ public:
     static eNavigation *getInstance() { return instance; }
     virtual ~eNavigation();
 };
-
 #endif

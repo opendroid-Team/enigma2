@@ -21,6 +21,8 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <sys/stat.h>
 
+#include <time.h>
+
 #define HTTP_TIMEOUT 30
 
 /*
@@ -575,6 +577,7 @@ eServiceMP3::eServiceMP3(eServiceReference ref):
 		 */
 		guint flags = GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_VIDEO | \
 				GST_PLAY_FLAG_TEXT | GST_PLAY_FLAG_NATIVE_VIDEO;
+
 		if ( m_sourceinfo.is_streaming )
 		{
 			g_signal_connect (G_OBJECT (m_gst_playbin), "notify::source", G_CALLBACK (playbinNotifySource), this);
@@ -948,20 +951,20 @@ RESULT eServiceMP3::trickSeek(gdouble ratio)
 		g_object_get (G_OBJECT (m_gst_playbin), "source", &source, NULL);
 		if (!source)
 		{
-			eDebug("[eServiceMP3] trickSeek - cannot get source");
+			eDebugNoNewLineStart("[eServiceMP3] trickSeek - cannot get source");
 			goto seek_unpause;
 		}
 		factory = gst_element_get_factory(source);
 		g_object_unref(source);
 		if (!factory)
 		{
-			eDebug("[eServiceMP3] trickSeek - cannot get source factory");
+			eDebugNoNewLineStart("[eServiceMP3] trickSeek - cannot get source factory");
 			goto seek_unpause;
 		}
 		name = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory));
 		if (!name)
 		{
-			eDebug("[eServiceMP3] trickSeek - cannot get source name");
+			eDebugNoNewLineStart("[eServiceMP3] trickSeek - cannot get source name");
 			goto seek_unpause;
 		}
 		/*
@@ -981,17 +984,17 @@ RESULT eServiceMP3::trickSeek(gdouble ratio)
 				if (ret == GST_STATE_CHANGE_SUCCESS)
 					return 0;
 			}
-			eDebug("[eServiceMP3] trickSeek - invalid state, state:%s pending:%s ret:%s",
+			eDebugNoNewLineStart("[eServiceMP3] trickSeek - invalid state, state:%s pending:%s ret:%s",
 				gst_element_state_get_name(state),
 				gst_element_state_get_name(pending),
 				gst_element_state_change_return_get_name(ret));
 		}
 		else
 		{
-			eDebug("[eServiceMP3] trickSeek - source '%s' is not supported", name);
+			eDebugNoNewLineStart("[eServiceMP3] trickSeek - source '%s' is not supported", name);
 		}
 seek_unpause:
-		eDebug(", doing seeking unpause\n");
+		eDebugNoNewLine(", doing seeking unpause\n");
 	}
 #endif
 	m_currentTrickRatio = ratio;
@@ -1539,26 +1542,12 @@ RESULT eServiceMP3::selectChannel(int i)
 RESULT eServiceMP3::getTrackInfo(struct iAudioTrackInfo &info, unsigned int i)
 {
 	if (i >= m_audioStreams.size())
+	{
 		return -2;
-		info.m_description = m_audioStreams[i].codec;
-/*	if (m_audioStreams[i].type == atMPEG)
-		info.m_description = "MPEG";
-	else if (m_audioStreams[i].type == atMP3)
-		info.m_description = "MP3";
-	else if (m_audioStreams[i].type == atAC3)
-		info.m_description = "AC3";
-	else if (m_audioStreams[i].type == atAAC)
-		info.m_description = "AAC";
-	else if (m_audioStreams[i].type == atDTS)
-		info.m_description = "DTS";
-	else if (m_audioStreams[i].type == atPCM)
-		info.m_description = "PCM";
-	else if (m_audioStreams[i].type == atOGG)
-		info.m_description = "OGG";
-	else if (m_audioStreams[i].type == atFLAC)
-		info.m_description = "FLAC";
-	else
-		info.m_description = "???";*/
+	}
+
+	info.m_description = m_audioStreams[i].codec;
+
 	if (info.m_language.empty())
 	{
 		info.m_language = m_audioStreams[i].language_code;
@@ -1954,6 +1943,7 @@ void eServiceMP3::gstBusCall(GstMessage *msg)
 #else
 				GstCaps* caps = gst_pad_get_current_caps(pad);
 #endif
+				gst_object_unref(pad);
 				if (!caps)
 					continue;
 				GstStructure* str = gst_caps_get_structure(caps, 0);
@@ -2018,6 +2008,7 @@ void eServiceMP3::gstBusCall(GstMessage *msg)
 					g_signal_connect (G_OBJECT (pad), "notify::caps", G_CALLBACK (gstTextpadHasCAPS), this);
 
 				subs.type = getSubtitleType(pad, g_codec);
+				gst_object_unref(pad);
 				g_free(g_codec);
 				m_subtitleStreams.push_back(subs);
 			}
@@ -2496,6 +2487,7 @@ void eServiceMP3::gstTextpadHasCAPS_synced(GstPad *pad)
 					subs.language_code = std::string(g_lang);
 					g_free(g_lang);
 				}
+				gst_tag_list_free(tags);
 			}
 
 			if (m_currentSubtitleStream >= 0 && m_currentSubtitleStream < (int)m_subtitleStreams.size())

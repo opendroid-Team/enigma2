@@ -4,15 +4,9 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 datarootdir=@datarootdir@
 
-if [ -x @bindir@/showiframe ]; then
-	killall -9 showiframe; sleep 1
-	if [ -f @sysconfdir@/enigma2/bootlogo.mvi ]; then
-		echo found @sysconfdir@/enigma2/bootlogo.mvi
-		@bindir@/showiframe @sysconfdir@/enigma2/bootlogo.mvi
-	elif [ -f @datadir@/bootlogo.mvi ]; then
-		echo found @datadir@/bootlogo.mvi
-		@bindir@/showiframe @datadir@/bootlogo.mvi
-	fi
+#check for /etc/enigma2 folder
+if [ ! -d /etc/enigma2 ] ; then
+	mkdir -p /etc/enigma2
 fi
 
 # workaround for corrupt ssl files
@@ -23,59 +17,39 @@ fi
 
 # update NTP time if NTP Time Enabled
 if [ "$(grep config.misc.SyncTimeUsing /etc/enigma2/settings)" == "config.misc.SyncTimeUsing=1" ]; then
-	/usr/bin/ntpdate -s -u pool.ntp.org &
+	/usr/sbin/ntpdate -s -u pool.ntp.org &
 fi
 
-# check multiquickbutton keymap
-FILE=/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/keymap.xml
+if [ -x @bindir@/showiframe ]; then
+	if [ -f @sysconfdir@/enigma2/backdrop.mvi ]; then
+		@bindir@/showiframe @sysconfdir@/enigma2/backdrop.mvi
+	elif [ -f @datadir@/backdrop.mvi ]; then
+		@bindir@/showiframe @datadir@/backdrop.mvi
+	fi
+fi
 
 # hook to execute scripts always before enigma2 start
 if [ -x @bindir@/enigma2_pre_start.sh ]; then
 	@bindir@/enigma2_pre_start.sh
 fi
 
-if [ -f /usr/lib/libssl.so.0.9.8 ]; then
-	echo "libssl symlink found"
-else
-	ln -s /usr/lib/libssl.so.1.0.0 /usr/lib/libssl.so.0.9.8
-fi
-	
-if [ -f /lib/libcrypto.so.0.9.8 ]; then
-	echo "libcrypto symlink found"
-else
-	ln -s /lib/libcrypto.so.1.0.0 /lib/libcrypto.so.0.9.8
+if [ -e /proc/stb/info/hwmodel ]; then
+   stbcheck=`cat /proc/stb/info/hwmodel | cut -c1-8`
+   if [ $stbcheck == "optimuss" ]; then
+      string=`mount | grep 'sda1' | cut -d " " -f3`
+      if [ -e $string/sat-soft/settings.sh ]; then
+         chmod 755 $string/sat-soft/settings.sh
+         $string/sat-soft/settings.sh
+      fi
+   fi
 fi
 
 if [ -d /home/root ]; then
 	cd /home/root
+	export HOME=/home/root
 fi
 
-if [ -e /proc/stb/info/hwmodel ]; then
-    stbcheck=`cat /proc/stb/info/hwmodel | cut -c1-8`
-    if [ $stbcheck == "optimuss" ]; then
-        string=`mount | grep 'sda1' | cut -d " " -f3`
-        if [ -e $string/sat-soft/settings.sh ]; then
-            chmod 755 $string/sat-soft/settings.sh
-            $string/sat-soft/settings.sh
-        fi
-    fi
-fi
-
-# check if media/net directory exists
-if [ -d /media/net ]; then
-	echo "/media/net found"
-else
-	mkdir /media/net
-fi
-
-# check for settings files
-if [ -f @sysconfdir@/enigma2/settings ]; then
-	echo "@sysconfdir@/enigma2/settings found"
-else
-	cp @datadir@/enigma2/defaults/* @sysconfdir@/enigma2/
-fi
-
-# check for sundtek tuner helper lib
+#check for sundtek tuner helper lib
 if [ -e /opt/lib/libmediaclient.so ]; then
 	LIBS="/opt/lib/libmediaclient.so /usr/lib/libopen.so.0.0.0"
 else
@@ -96,7 +70,22 @@ if [ ! -e /etc/enigma2/settings ]; then
 	touch /etc/enigma2/settings
 fi
 
+#check for default sat settings
+stbcheck=00
+if [ -e /proc/stb/info/subtype ]; then
+   stbcheck=`cat /proc/stb/info/subtype`
+fi
+if [ -e /etc/defaultsat.tar.gz ] && [ ! -e /etc/enigma2/lamedb ] && [ ! $stbcheck == "01" ] && [ ! $stbcheck == "1" ]; then
+	tar -xzf /etc/defaultsat.tar.gz -C /etc/enigma2
+fi
+
 sync
+
+# in case sysctl.conf is not properly loaded - load sysctl.conf here again...
+sysctl -p
+
+(sleep 2; echo "enigma2 is the main pvr application... adjust oom score!"; PID=$(pidof enigma2); \
+        [ -e /proc/$PID/oom_score_adj ] && echo "-999" > /proc/$PID/oom_score_adj || echo "-17" > /proc/$PID/oom_adj;) &
 
 if [ "$(grep config.crash.enabledebug /etc/enigma2/settings)" == "config.crash.enabledebug=true" ]; then
 	RANDOMIZE1970=''
@@ -105,12 +94,17 @@ if [ "$(grep config.crash.enabledebug /etc/enigma2/settings)" == "config.crash.e
 		RANDOMIZE1970="$(strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 5 | tr -d '\n')"
 	fi
 	if [ "$(grep config.crash.debug_path= /etc/enigma2/settings | sed 's/config.crash.debug_path=//g')" != "" -a -d "$(grep config.crash.debug_path= /etc/enigma2/settings | sed 's/config.crash.debug_path=//g')" ]; then
-		LD_PRELOAD=$LIBS @bindir@/enigma2 &> $(grep config.crash.debug_path= /etc/enigma2/settings | sed 's/config.crash.debug_path=//g')Enigma2-debug-$(date +%Y%m%d_%H-%M-%S)$RANDOMIZE1970.log
+		LD_PRELOAD=$LIBS @bindir@/enigma2 --debug-no-color &> $(grep config.crash.debug_path= /etc/enigma2/settings | sed 's/config.crash.debug_path=//g')Enigma2-debug-$(date +%Y%m%d_%H-%M-%S)$RANDOMIZE1970.log
 	else
-		LD_PRELOAD=$LIBS @bindir@/enigma2 &> /home/root/logs/Enigma2-debug-$(date +%Y%m%d_%H-%M-%S)$RANDOMIZE1970.log
+		LD_PRELOAD=$LIBS @bindir@/enigma2 --debug-no-color &> /home/root/logs/Enigma2-debug-$(date +%Y%m%d_%H-%M-%S)$RANDOMIZE1970.log
 	fi
 else
-	LD_PRELOAD=$LIBS @bindir@/enigma2
+	# in case $TERM is "linux" the serial output is activated - discard debug output
+	if [ "$TERM" = linux ]; then
+		LD_PRELOAD=$LIBS @bindir@/enigma2 2> /dev/null
+	else
+		LD_PRELOAD=$LIBS @bindir@/enigma2
+	fi
 fi
 
 # enigma2 exit codes:
@@ -146,7 +140,7 @@ case $ret in
 		;;
 	43)
 		init 1
-		;;		
+		;;
 	44)
 		# little hack but it will be fixed soon in drivers
 		/usr/lib/enigma2/python/Plugins/SystemPlugins/MICOMUpgrade/bin/fbclear
@@ -159,7 +153,7 @@ case $ret in
 	45)
 		echo "    " > /dev/lcd0
 		/usr/bin/gigablue_wol
-		;;		
+		;;
 	*)
 		rm -f /tmp/.listen.camd.socket.ignore
 		;;

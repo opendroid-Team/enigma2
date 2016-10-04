@@ -115,6 +115,7 @@ static inline void added_pixmap(int size) {}
 static inline void removed_pixmap(int size) {}
 #endif
 
+#if not defined(__sh__)
 static bool is_a_candidate_for_accel(const gUnmanagedSurface* surface)
 {
 	if (surface->stride < 48)
@@ -129,12 +130,17 @@ static bool is_a_candidate_for_accel(const gUnmanagedSurface* surface)
 			return false;
 	}
 }
+#endif
 
 gSurface::gSurface(int width, int height, int _bpp, int accel):
 	gUnmanagedSurface(width, height, _bpp)
 {
+#if defined(__sh__)
+	if (accel)
+#else
 	if ((accel > gPixmap::accelAuto) ||
 		((accel == gPixmap::accelAuto) && (is_a_candidate_for_accel(this))))
+#endif
 	{
 		if (gAccel::getInstance()->accelAlloc(this) != 0)
 				eDebug("ERROR: accelAlloc failed");
@@ -200,9 +206,6 @@ void gPixmap::fill(const gRegion &region, const gColor &color)
 			if (surface->clut.data && color < surface->clut.colors)
 				col = surface->clut.data[color].argb();
 			else
-#if defined(__sh__)
-if ((col&0xFF000000) == 0xFF000000) col = 0xFF000000;
-#endif
 				col = 0x10101 * color;
 
 			col^=0xFF000000;
@@ -237,9 +240,6 @@ void gPixmap::fill(const gRegion &region, const gRGB &color)
 			uint32_t col;
 
 			col = color.argb();
-#if defined(__sh__)
-if ((col&0xFF000000) == 0xFF000000) col = 0xFF000000;
-#endif
 			col^=0xFF000000;
 
 #ifdef GPIXMAP_DEBUG
@@ -737,11 +737,8 @@ void gPixmap::blit(const gPixmap &src, const eRect &_pos, const gRegion &clip, i
 			uint8_t *srcptr=(uint8_t*)src.surface->data;
 			uint8_t *dstptr=(uint8_t*)surface->data;
 
-			srcptr+=srcarea.left()+srcarea.top()*src.surface->stride;
-			dstptr+=area.left()+area.top()*surface->stride;
-
-			if (flag & blitAlphaBlend)
-				eWarning("ignore unsupported 32bpp -> 16bpp alphablend!");
+			srcptr+=srcarea.left()*src.surface->bypp+srcarea.top()*src.surface->stride;
+			dstptr+=area.left()*surface->bypp+area.top()*surface->stride;
 
 			for (int y=0; y<area.height(); y++)
 			{
@@ -749,7 +746,44 @@ void gPixmap::blit(const gPixmap &src, const eRect &_pos, const gRegion &clip, i
 				uint32_t *srcp=(uint32_t*)srcptr;
 				uint16_t *dstp=(uint16_t*)dstptr;
 
-				if (flag & blitAlphaTest)
+				if (flag & blitAlphaBlend)
+				{
+					while (width--)
+					{
+						if (!((*srcp)&0xFF000000))
+						{
+							srcp++;
+							dstp++;
+						} else
+						{
+							gRGB icol = *srcp++;
+#if BYTE_ORDER == LITTLE_ENDIAN
+							uint32_t jcol = bswap_16(*dstp);
+#else
+							uint32_t jcol = *dstp;
+#endif
+							int bg_b = (jcol >> 8) & 0xF8;
+							int bg_g = (jcol >> 3) & 0xFC;
+							int bg_r = (jcol << 3) & 0xF8;
+
+							int a = icol.a;
+							int r = icol.r;
+							int g = icol.g;
+							int b = icol.b;
+
+							r = ((r-bg_r)*a)/255 + bg_r;
+							g = ((g-bg_g)*a)/255 + bg_g;
+							b = ((b-bg_b)*a)/255 + bg_b;
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+							*dstp++ = bswap_16( (b >> 3) << 11 | (g >> 2) << 5 | r  >> 3 );
+#else
+							*dstp++ = (b >> 3) << 11 | (g >> 2) << 5 | r  >> 3 ;
+#endif
+						}
+					}
+				}
+				else if (flag & blitAlphaTest)
 				{
 					while (width--)
 					{
@@ -1011,31 +1045,16 @@ DEFINE_REF(gPixmap);
 
 gPixmap::~gPixmap()
 {
-	if (on_dispose)
-		on_dispose(this);
-	if (surface)
+	if (must_delete_surface)
 		delete (gSurface*)surface;
 }
 
-static void donot_delete_surface(gPixmap *pixmap)
-{
-	pixmap->surface = NULL;
-}
-
-gPixmap::gPixmap(gUnmanagedSurface *surface):
-	surface(surface),
-	on_dispose(donot_delete_surface)
+gPixmap::gPixmap(gUnmanagedSurface *surface)
+	:surface(surface), must_delete_surface(false)
 {
 }
 
-gPixmap::gPixmap(eSize size, int bpp, int accel):
-	surface(new gSurface(size.width(), size.height(), bpp, accel)),
-	on_dispose(NULL)
-{
-}
-
-gPixmap::gPixmap(int width, int height, int bpp, gPixmapDisposeCallback call_on_dispose, int accel):
-	surface(new gSurface(width, height, bpp, accel)),
-	on_dispose(call_on_dispose)
+gPixmap::gPixmap(eSize size, int bpp, int accel)
+	:surface(new gSurface(size.width(), size.height(), bpp, accel)), must_delete_surface(true)
 {
 }

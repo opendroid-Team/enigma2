@@ -12,8 +12,6 @@ from Components.Sources.Boolean import Boolean
 from Components.Sources.StaticText import StaticText
 from Components.SystemInfo import SystemInfo
 
-from enigma import eEnv
-import xml.etree.cElementTree
 
 class SetupSummary(Screen):
 	def __init__(self, session, parent):
@@ -141,7 +139,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 				configele.value = configele.last_value
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%dir,
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%dir,
 					type = MessageBox.TYPE_ERROR
 					)
 				return False
@@ -150,7 +148,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 			configele.value = configele.last_value
 			self.session.open(
 				MessageBox,
-				_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%dir,
+				_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%dir,
 				type = MessageBox.TYPE_ERROR
 				)
 			return False
@@ -240,13 +238,13 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 				else:
 					self.session.open(
 						MessageBox,
-						_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%res,
+						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%res,
 						type = MessageBox.TYPE_ERROR
 						)
 			else:
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%res,
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%res,
 					type = MessageBox.TYPE_ERROR
 					)
 
@@ -279,7 +277,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 				if int(config.timeshift.startdelay.value) > 0:
 					self.session.open(
 						MessageBox,
-						_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
+						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
 						type = MessageBox.TYPE_ERROR
 						)
 				else:
@@ -290,7 +288,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 			if int(config.timeshift.startdelay.value) > 0:
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4 or NFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
 					type = MessageBox.TYPE_ERROR
 					)
 			else:

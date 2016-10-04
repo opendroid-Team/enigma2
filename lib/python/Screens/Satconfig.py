@@ -15,10 +15,26 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.ServiceStopScreen import ServiceStopScreen
 from Screens.AutoDiseqc import AutoDiseqc
 from Tools.BoundFunction import boundFunction
+from boxbranding import getBoxType
 
 from time import mktime, localtime
 from datetime import datetime
 from os import path
+
+def isFBCTuner(nim):
+	if nim.description.find("FBC") == -1:
+		return False
+	return True
+
+def isFBCRoot(nim):
+	if nim.slot %8 < 2:
+		return True
+	return False
+
+def isFBCLink(nim):
+	if isFBCTuner(nim) and not isFBCRoot(nim):
+		return True
+	return False
 
 class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 	def createSimpleSetup(self, list, mode):
@@ -88,6 +104,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				choices["satposdepends"] = _("Second cable of motorized LNB")
 			if len(nimmanager.canConnectTo(self.slotid)) > 0:
 				choices["loopthrough"] = _("Loop through to")
+			if isFBCLink(self.nim):
+				choices = { "nothing": _("not configured"),
+						"advanced": _("advanced")}
 			self.nimConfig.configMode.setChoices(choices, default = "simple")
 
 	def createSetup(self):
@@ -231,7 +250,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.have_advanced = False
 			if self.nimConfig.configMode.value == "enabled":
 				self.list.append(getConfigListEntry(_("Terrestrial provider"), self.nimConfig.terrestrial))
-				self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.terrestrial_5V))
+				if not getBoxType() in ('spycat'):
+					self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.terrestrial_5V))
 		else:
 			self.have_advanced = False
 		self["config"].list = self.list
@@ -246,8 +266,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					 self.toneburst, self.committedDiseqcCommand, self.uncommittedDiseqcCommand, self.singleSatEntry,
 					 self.commandOrder, self.showAdditionalMotorOptions, self.cableScanType, self.multiType)
 		if self["config"].getCurrent() == self.multiType:
+			update_slots = [self.slotid]
 			from Components.NimManager import InitNimManager
-			InitNimManager(nimmanager)
+			InitNimManager(nimmanager, update_slots)
 			self.nim = nimmanager.nim_slots[self.slotid]
 			self.nimConfig = self.nim.config
 
@@ -307,6 +328,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.list.append(self.advancedLnbsEntry)
 
 		if currLnb:
+			if isFBCLink(self.nim):
+				if currLnb.lof.value != "unicable":
+					currLnb.lof.value = "unicable"
 			self.list.append(getConfigListEntry(_("Priority"), currLnb.prio))
 			self.advancedLof = getConfigListEntry("LOF", currLnb.lof)
 			self.list.append(self.advancedLof)
@@ -367,6 +391,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				for id in connectable:
 					choices.append((str(id), nimmanager.getNimDescription(id)))
 				if len(choices):
+					if isFBCLink(self.nim):
+						if self.nimConfig.advanced.unicableconnected.value != True:
+							self.nimConfig.advanced.unicableconnected.value = True
 					self.advancedConnected = getConfigListEntry(_("connected"), self.nimConfig.advanced.unicableconnected)
 					self.list.append(self.advancedConnected)
 					if self.nimConfig.advanced.unicableconnected.value:
@@ -458,6 +485,43 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.fillListWithAdvancedSatEntrys(Sat)
 		self["config"].list = self.list
 
+	def unicableconnection(self):
+		if self.nimConfig.configMode.value == "advanced":
+			connect_count = 0
+			dvbs_slots = nimmanager.getNimListOfType('DVB-S')
+			dvbs_slots_len = len(dvbs_slots)
+
+			for x in dvbs_slots:
+				try:
+					nim_slot = nimmanager.nim_slots[x]
+					if nim_slot == self.nimConfig:
+						self_idx = x
+					if nim_slot.config.configMode.value == "advanced":
+						if nim_slot.config.advanced.unicableconnected.value == True:
+							connect_count += 1
+				except: pass
+			print "adenin conections %d %d" %(connect_count, dvbs_slots_len)
+			if connect_count >= dvbs_slots_len:
+				return False
+
+		self.slot_dest_list = []
+		def checkRecursiveConnect(slot_id):
+			if slot_id in self.slot_dest_list:
+				print slot_id
+				return False
+			self.slot_dest_list.append(slot_id)
+			slot_config = nimmanager.nim_slots[slot_id].config
+			if slot_config.configMode.value == "advanced":
+				try:
+					connected = slot_config.advanced.unicableconnected.value
+				except:
+					connected = False
+				if connected == True:
+					return checkRecursiveConnect(int(slot_config.advanced.unicableconnectedTo.value))
+			return True
+
+		return checkRecursiveConnect(self.slotid)
+
 	def checkLoopthrough(self):
 		if self.nimConfig.configMode.value == "loopthrough":
 			loopthrough_count = 0
@@ -503,6 +567,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			conf.save()
 
 	def keySave(self):
+		if not self.unicableconnection():
+			self.session.open(MessageBox, _("The unicable connection setting is wrong.\n Maybe recursive connection of tuners."),MessageBox.TYPE_ERROR,timeout=10)
+			return
 		if not self.checkLoopthrough():
 			self.session.open(MessageBox, _("The loopthrough setting is wrong."),MessageBox.TYPE_ERROR,timeout=10)
 			return
@@ -584,6 +651,11 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.setTitle(_("Reception Settings"))
 
 	def keyLeft(self):
+		if isFBCLink(self.nim):
+			checkList = (self.advancedLof, self.advancedConnected)
+			curEntry = self["config"].getCurrent()
+			if curEntry in checkList:
+				return
 		ConfigListScreen.keyLeft(self)
 		if self["config"].getCurrent() in (self.advancedSelectSatsEntry, self.selectSatsEntry):
 			self.keyOk()
@@ -596,6 +668,11 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self["key_blue"].setText(_("Set default"))
 
 	def keyRight(self):
+		if isFBCLink(self.nim):
+			checkList = (self.advancedLof, self.advancedConnected)
+			curEntry = self["config"].getCurrent()
+			if curEntry in checkList:
+				return
 		ConfigListScreen.keyRight(self)
 		if self["config"].getCurrent() in (self.advancedSelectSatsEntry, self.selectSatsEntry):
 			self.keyOk()
@@ -658,6 +735,7 @@ class NimSelection(Screen):
 
 		self.list = [None] * nimmanager.getSlotCount()
 		self["nimlist"] = List(self.list)
+		self.loadFBCLinks()
 		self.updateList()
 
 		self.setResultClass()
@@ -665,14 +743,35 @@ class NimSelection(Screen):
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Select"))
 
-		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
+		self["actions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions"],
 		{
 			"ok": self.okbuttonClick,
 			"cancel": self.close,
 			"red": self.close,
 			"green": self.okbuttonClick,
+			"menu": self.exit,
 		}, -2)
 		self.setTitle(_("Choose Tuner"))
+
+	def loadFBCLinks(self):
+		for x in nimmanager.nim_slots:
+			slotid = x.slot
+			nimConfig = nimmanager.getNimConfig(x.slot)
+			configMode = nimConfig.configMode.value
+			if self.showNim(x):
+				if x.isCompatible("DVB-S"):
+					if isFBCLink(x) and configMode != "advanced":
+						from enigma import getLinkedSlotID
+						link = getLinkedSlotID(x.slot)
+
+						if link == -1:
+							nimConfig.configMode.value = "nothing"
+						else:
+							nimConfig.configMode.value = "loopthrough"
+							nimConfig.connectedTo.value = str(link)
+
+	def exit(self):
+		self.close(True)
 
 	def setResultClass(self):
 		self.resultclass = NimSetup
@@ -680,13 +779,22 @@ class NimSelection(Screen):
 	def okbuttonClick(self):
 		nim = self["nimlist"].getCurrent()
 		nim = nim and nim[3]
+
+		nimConfig = nimmanager.getNimConfig(nim.slot)
+		if isFBCLink(nim) and nimConfig.configMode.value == "loopthrough":
+			return
+
 		if nim is not None and not nim.empty and nim.isSupported():
-			self.session.openWithCallback(self.updateList, self.resultclass, nim.slot)
+			self.session.openWithCallback(boundFunction(self.NimSetupCB, self["nimlist"].getIndex()), self.resultclass, nim.slot)
+
+	def NimSetupCB(self, index=None):
+		self.loadFBCLinks()
+		self.updateList()
 
 	def showNim(self, nim):
 		return True
 
-	def updateList(self):
+	def updateList(self, index=None):
 		self.list = [ ]
 		for x in nimmanager.nim_slots:
 			slotid = x.slot
@@ -701,7 +809,7 @@ class NimSelection(Screen):
 						if len(x.input_name) > 1:
 							text += " " + _("Tuner") + " " + ["A1", "A2", "B", "C"][int(nimConfig.connectedTo.value)]
 						else:
-							text += " " + _("Tuner") + " " + ["A", "B", "C", "D"][int(nimConfig.connectedTo.value)]
+							text += " " + _("Tuner") + " " + chr(ord('A')+int(nimConfig.connectedTo.value))
 					elif nimConfig.configMode.value == "nothing":
 						text = _("not configured")
 					elif nimConfig.configMode.value == "simple":
@@ -736,6 +844,8 @@ class NimSelection(Screen):
 							text = _("Simple")
 					elif nimConfig.configMode.value == "advanced":
 						text = _("Advanced")
+					if isFBCLink(x) and nimConfig.configMode.value != "advanced":
+						text += _("\n<This tuner is configured automatically>")
 				elif x.isCompatible("DVB-T") or x.isCompatible("DVB-C"):
 					if nimConfig.configMode.value == "nothing":
 						text = _("nothing connected")
@@ -749,6 +859,8 @@ class NimSelection(Screen):
 				self.list.append((slotid, x.friendly_full_description, text, x))
 		self["nimlist"].setList(self.list)
 		self["nimlist"].updateList(self.list)
+		if index is not None:
+			self["nimlist"].setIndex(index)
 
 class SelectSatsEntryScreen(Screen):
 	skin = """
@@ -802,7 +914,7 @@ class SelectSatsEntryScreen(Screen):
 	def sortBy(self):
 		lst = self["list"].list
 		if len(lst) > 1:
-			menu = [(_("Reverse list"), "2"), (_("Standart list"), "1")]
+			menu = [(_("Reverse list"), "2"), (_("Standard list"), "1")]
 			connected_sat = [x[0][1] for x in lst if x[0][3]]
 			if len(connected_sat) > 0:
 				menu.insert(0,(_("Connected satellites"), "3"))

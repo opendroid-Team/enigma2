@@ -8,6 +8,7 @@ from enigma import eSize, ePoint, eRect, gFont, eWindow, eLabel, ePixmap, eWindo
 from Components.config import ConfigSubsection, ConfigText, config, ConfigYesNo, ConfigSelection, ConfigNothing
 from Components.Converter.Converter import Converter
 from Components.Sources.Source import Source, ObsoleteSource
+from Components.SystemInfo import SystemInfo
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_ACTIVE_SKIN, SCOPE_ACTIVE_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
@@ -26,6 +27,8 @@ fonts = {
 	"Body": ("Regular", 18, 22, 16),
 	"ChoiceList": ("Regular", 20, 24, 18),
 }
+
+parameters = {}
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -51,13 +54,20 @@ dom_skins = [ ]
 
 def addSkin(name, scope = SCOPE_SKIN):
 	# read the skin
+	if name is None or not len(name):
+		print "[SKIN ERROR] attempt to add a skin without filename"
+		return False
 	filename = resolveFilename(scope, name)
 	if fileExists(filename):
 		mpath = os.path.dirname(filename) + "/"
-		file = open(filename, 'r')
-		dom_skins.append((mpath, xml.etree.cElementTree.parse(file).getroot()))
-		file.close()
-		return True
+		try:
+			file = open(filename, 'r')
+			dom_skins.append((mpath, xml.etree.cElementTree.parse(file).getroot()))
+		except:
+			print "[SKIN ERROR] error in %s" % filename
+			return False
+		else:
+			return True
 	return False
 
 # get own skin_user_skinname.xml file, if exist
@@ -83,6 +93,9 @@ config.skin = ConfigSubsection()
 DEFAULT_SKIN = "oDreamy/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
 	DEFAULT_SKIN = "skin.xml"
+if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
+	# in that case, fallback to Magic (which is an SD skin)
+	DEFAULT_SKIN = "skin.xml"
 config.skin.primary_skin = ConfigText(default=DEFAULT_SKIN)
 
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
@@ -90,21 +103,20 @@ DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 config.skin.display_skin = ConfigSelection(default = "skin_display.xml", choices = [("skin_display.xml", _("Channel Name")),("skin_text_clock.xml", _("Clock"))])
 
 profile("LoadSkin")
-try:
-	name = skin_user_skinname()
-	if name is not None:
-		addSkin(name, SCOPE_CONFIG)
-	else:
-		addSkin('skin_user.xml', SCOPE_CONFIG)
-except (SkinError, IOError, AssertionError), err:
-	print "not loading user skin: ", err
+res = None
+name = skin_user_skinname()
+if name:
+	res = addSkin(name, SCOPE_CONFIG)
+if not name or not res:
+	addSkin('skin_user.xml', SCOPE_CONFIG)
 
 # some boxes lie about their dimensions
 addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 
-if getBoxType() in ('vuultimo', 'vuduo2', 'gb800ue', 'gb800ueplus', 'gbultraue', 'gbquad', 'gbquadplus', 'xpeedlx3', 'et10000', 'et8500', 'et9x00', 'vuuno', 'atemionemesis'):
+# Only one of these is present, compliments of AM_CONDITIONAL
+if getBoxType() in ('vuultimo', 'vuduo2', 'twinboxlcd', 'twinboxlcdci', 'singleboxlcd', 'gbquad', 'gbquadplus', 'gbultraue', 'gb800ue', 'gb800ueplus', 'gb800ue', 'gb800ueplus', 'xpeedlx3', 'atemionemesis', 'et10000', 'et8500', 'et9x00'):
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 
 if getBoxType() == "inihde":
@@ -114,14 +126,12 @@ if getBoxType() == "inihde":
 #	config.skin.display_skin = ConfigNothing()
 
 display_skin_id = 1
-from Components.SystemInfo import SystemInfo
 if SystemInfo["OledDisplay"]:
 	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
 		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
 			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
 		else:	
 			addSkin('display/' + config.skin.display_skin.value)
-
 if SystemInfo["FBLCDDisplay"]:
 	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
 		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
@@ -129,8 +139,18 @@ if SystemInfo["FBLCDDisplay"]:
 		else:	
 			addSkin('display/' + config.skin.display_skin.value)
 
-if getBoxType().startswith('dm'):
+if addSkin('skin_display.xml'):
+	# Color OLED DM800 / DM800SE
 	display_skin_id = 2
+if addSkin('skin_display96.xml'):
+	# Color OLED
+	display_skin_id = 2
+
+if addSkin('skin_display128.xml'):
+	# Color OLED DM7020HD / DM8000
+	display_skin_id = 2
+
+# Add Skin for Display
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "display skin not found"
@@ -291,7 +311,7 @@ def collectAttributes(skinAttributes, node, context, skin_path_prefix=None, igno
 
 def morphRcImagePath(value):
 	if rc_model.rcIsDefault() is False:
-		if value.find('rc.png') != -1 or value.find('oldrc.png') != -1:
+		if value == '/usr/share/enigma2/skin_default/rc.png' or value == '/usr/share/enigma2/skin_default/rcold.png':
 			value = rc_model.getRcLocation() + 'rc.png'
 		elif value == '/usr/share/enigma2/skin_default/rc0.png' or value == '/usr/share/enigma2/skin_default/rc1.png' or value == '/usr/share/enigma2/skin_default/rc2.png':
 			value = rc_model.getRcLocation() + 'rc.png'
@@ -315,9 +335,9 @@ class AttributeParser:
 		try:
 			getattr(self, attrib)(value)
 		except AttributeError:
-			print "[Skin] Attribute not implemented:", attrib, "value:", value
+			print "[SKIN] Attribute not implemented:", attrib, "value:", value
 		except SkinError, ex:
-			print "[Skin] Error:", ex
+			print "[SKIN] Error:", ex
 	def applyAll(self, attrs):
 		for attrib, value in attrs:
 			try:
@@ -583,6 +603,15 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			except Exception, ex:
 				print "[SKIN] bad font alias", ex
 
+	for c in skin.findall("parameters"):
+		for parameter in c.findall("parameter"):
+			get = parameter.attrib.get
+			try:
+				name = get("name")
+				value = get("value")
+				parameters[name] = map(int, value.split(","))
+			except Exception, ex:
+				print "[SKIN] bad parameter", ex
 
 	for c in skin.findall("subtitles"):
 		from enigma import eSubtitleWidget
@@ -1001,7 +1030,7 @@ def readSkin(screen, skin, names, desktop):
 			try:
 				p(w, context)
 			except SkinError, e:
-				print "[Skin] SKIN ERROR in screen '%s' widget '%s':" % (name, w.tag), e
+				print "[SKIN] SKIN ERROR in screen '%s' widget '%s':" % (name, w.tag), e
 
 	def process_panel(widget, context):
 		n = widget.attrib.get('name')
@@ -1033,11 +1062,12 @@ def readSkin(screen, skin, names, desktop):
 	}
 
 	try:
+		print "[SKIN] processing screen %s:" % name
 		context.x = 0 # reset offsets, all components are relative to screen
 		context.y = 0 # coordinates.
 		process_screen(myscreen, context)
 	except Exception, e:
-		print "[Skin] SKIN ERROR in %s:" % name, e
+		print "[SKIN] SKIN ERROR in %s:" % name, e
 
 	from Components.GUIComponent import GUIComponent
 	nonvisited_components = [x for x in set(screen.keys()) - visited_components if isinstance(x, GUIComponent)]

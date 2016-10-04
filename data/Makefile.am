@@ -1,25 +1,23 @@
-SUBDIRS = fonts extensions keymaps defaults
+SUBDIRS = fonts keymaps
 
 dist_pkgdata_DATA = \
 	encoding.conf \
 	keymap.xml \
 	keymap.ntr \
 	keymap.u80 \
-	keymap.xpe \
 	menu.xml \
 	black.mvi \
 	rcpositions.xml \
 	setup.xml \
 	skin_subtitles.xml \
 	startwizard.xml \
-	videowizard.xml \
 	userinterfacepositionerwizard.xml \
+	videowizard.xml \
 	freesat.t1 \
 	freesat.t2 \
 	unicable.xml \
 	hd-testcard.mvi \
-	distro-logo.png \
-	distro-lcd-logo.png
+	distro-logo.png
 
 if HAVE_TEXTLCD
 if SPARK
@@ -29,15 +27,15 @@ SUBDIRS += displaytext
 endif
 endif
 
+if HAVE_COLORLCD3
+SUBDIRS += display128dm
+endif
+
 if HAVE_COLORLCD2
 SUBDIRS += display96
 endif
 
 if HAVE_COLORLCD1
-SUBDIRS += display128
-endif
-
-if HAVE_BWLCD128
 SUBDIRS += display128
 endif
 
@@ -49,14 +47,30 @@ if HAVE_COLORLCD400
 SUBDIRS += display400
 endif
 
+if HAVE_COLORLCD480
+SUBDIRS += display480
+endif
+
 if HAVE_COLORLCD720
 SUBDIRS += display720
 endif
 
 if HAVE_BWLCD255
-SUBDIRS += display255
+SUBDIRS += vfd255
 endif
 
 if HAVE_BWLCD140
-SUBDIRS += display140
+SUBDIRS += vfd140
+endif
+
+if HAVE_BWLCD128
+SUBDIRS += vfd128
+endif
+
+if HAVE_GRAUTEC8000
+SUBDIRS += grautec8000
+endif
+
+if HAVE_GRAUTEC70X0
+SUBDIRS += grautec70x0
 endif

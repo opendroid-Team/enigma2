@@ -81,7 +81,7 @@ class VersionCheck:
 
 	def getStableUpdateAvailable(self):
 		if config.softwareupdate.updatefound.value and config.softwareupdate.check.value:
-			if config.softwareupdate.updateisunstable.value == '0':
+			if config.softwareupdate.updateisunstable.value == '1':
 # 				print '[OnlineVersionCheck] New Release updates found'
 				return True
 			else:

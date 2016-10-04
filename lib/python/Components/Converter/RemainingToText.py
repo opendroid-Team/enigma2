@@ -5,11 +5,11 @@ from Components.config import config
 
 class RemainingToText(Poll, Converter, object):
 	DEFAULT = 0
-	WITH_SECONDS = 1
+	WITH_SECONDS = 2
 	NO_SECONDS = 2
 	IN_SECONDS = 3
 	PERCENTAGE = 4
-	ONLY_MINUTE_NUMBER = 5
+	ONLY_MINUTE = 5
 	VFD = 6
 	VFD_WITH_SECONDS = 7
 	VFD_NO_SECONDS = 8
@@ -53,8 +53,8 @@ class RemainingToText(Poll, Converter, object):
 			self.type = self.VFD_PERCENTAGE
 			self.poll_interval = 60*1000
 			self.poll_enabled = True
-		elif type == "OnlyMinuteNumber":
-			self.type = self.ONLY_MINUTE_NUMBER
+		elif type == "OnlyMinute":
+			self.type = self.ONLY_MINUTE
 		else:
 			self.type = self.DEFAULT
 
@@ -196,7 +196,7 @@ class RemainingToText(Poll, Converter, object):
 							return sign_r + ngettext(_("%d Min"), _("%d Mins"), (r/60)) % (r/60)
 					else:
 						return ngettext(_("%d Min"), _("%d Mins"), (l/60)) % (l/60)
-				elif self.type == self.ONLY_MINUTE_NUMBER:
+				elif self.type == self.ONLY_MINUTE:
 					if remaining is not None:
 						return ngettext(_("%d"), _("%d"), (r/60)) % (r/60)
 				elif self.type == self.WITH_SECONDS:

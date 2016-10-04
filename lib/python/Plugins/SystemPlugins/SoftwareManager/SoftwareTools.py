@@ -11,7 +11,7 @@ from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_MET
 from Tools.HardwareInfo import HardwareInfo
 from time import time
 
-from boxbranding import getBoxType, getImageVersion
+from boxbranding import getImageVersion
 
 class SoftwareTools(PackageInfoHandler):
 	lastDownloadDate = None
@@ -272,7 +272,7 @@ class SoftwareTools(PackageInfoHandler):
 		if prerequisites.has_key("hardware"):
 			hardware_found = False
 			for hardware in prerequisites["hardware"]:
-				if hardware == getBoxType():
+				if hardware == self.hardware_info.device_name:
 					hardware_found = True
 			if not hardware_found:
 				return False

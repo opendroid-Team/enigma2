@@ -1,10 +1,13 @@
 installdir = $(pkglibdir)/python/Plugins/Extensions
 
-SUBDIRS = 2IB TuxboxPlugins CutListEditor MenuSort PluginHider MediaScanner MediaPlayer SocketMMI DVDBurn Modem VirtualZap GraphMultiEPG Volume_adjust
+SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer SocketMMI DVDBurn Volume_adjust 
 
 if HAVE_LIBDDVD
 SUBDIRS += DVDPlayer
 endif
 
-install_PYTHON =	\
-	__init__.py
+if VUSOLO4K
+SUBDIRS += MiniTV
+endif
+
+install_PYTHON = __init__.py

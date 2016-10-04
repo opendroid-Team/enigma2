@@ -1,10 +1,9 @@
 from Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
-
-from Screens.WizardUserInterfacePositioner import UserInterfacePositionerWizard
 from Screens.VideoWizard import VideoWizard
 from Screens.Rc import Rc
 from Screens.Screen import Screen
+
 from boxbranding import getBoxType
 
 from Components.Pixmap import Pixmap
@@ -22,7 +21,8 @@ class StartWizard(WizardLanguage, Rc):
 		WizardLanguage.__init__(self, session, showSteps = False)
 		Rc.__init__(self)
 		self["wizard"] = Pixmap()
-		Screen.setTitle(self, _("Welcome..."))
+		#Screen.setTitle(self, _("Welcome..."))
+		Screen.setTitle(self, _("StartWizard"))
 
 	def markDone(self):
 		# setup remote control, all stb have same settings except dm8000 which uses a different settings
@@ -36,7 +36,6 @@ class StartWizard(WizardLanguage, Rc):
 		config.misc.firstrun.save()
 		configfile.save()
 
-wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority = 0)
-wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority = 1)
-wizardManager.registerWizard(UserInterfacePositionerWizard, config.misc.firstrun.value, priority = 2)
+wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority = 0)
+wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority = 2)
 wizardManager.registerWizard(StartWizard, config.misc.firstrun.value, priority = 20)

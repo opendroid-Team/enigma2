@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_CENTER, RT_VALIGN_CENTER, getPrevAsciiCode, getDesktop
+from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_CENTER, RT_VALIGN_CENTER, getPrevAsciiCode
 from Screens.Screen import Screen
 from Components.Language import language
 from Components.ActionMap import NumberActionMap
@@ -11,13 +11,14 @@ from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixm
 from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
+import skin
 
 class VirtualKeyBoardList(MenuList):
 	def __init__(self, list, enableWrapAround=False):
 		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		self.l.setFont(0, gFont("Regular", 28))
-		self.l.setFont(1, gFont("Regular", 34))
-		self.l.setItemHeight(45)
+		font = skin.fonts.get("VirtualKeyboard", ("Regular", 28, 45))
+		self.l.setFont(0, gFont(font[0], font[1]))
+		self.l.setItemHeight(font[2])
 
 class VirtualKeyBoardEntryComponent:
 	def __init__(self):
@@ -79,6 +80,7 @@ class VirtualKeyBoard(Screen):
 			{
 				"gotAsciiCode": self.keyGotAscii,
 				"ok": self.okClicked,
+				"OKLong": self.okLongClicked,
 				"cancel": self.exit,
 				"left": self.left,
 				"right": self.right,
@@ -160,6 +162,20 @@ class VirtualKeyBoard(Screen):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"Ö", u"Ä", u"'"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"?", u"\\", u"Ĺ", u"OK", u"LEFT", u"RIGHT"]]
+			self.nextLang = 'lv_LV'
+		elif self.lang == 'lv_LV':
+			self.keys_list = [
+				[u"EXIT", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"0", u"BACKSPACE"],
+				[u"q", u"w", u"e", u"r", u"t", u"y", u"u", u"i", u"o", u"p", u"-", u"š"],
+				[u"a", u"s", u"d", u"f", u"g", u"h", u"j", u"k", u"l", u";", u"'", u"ū"],
+				[u"<", u"z", u"x", u"c", u"v", u"b", u"n", u"m", u",", u".", u"ž", u"ALL"],
+				[u"SHIFT", u"SPACE", u"ā", u"č", u"ē", u"ģ", u"ī", u"ķ", u"ļ", u"ņ", u"LEFT", u"RIGHT"]]
+			self.shiftkeys_list = [
+				[u"EXIT", u"!", u"@", u"$", u"*", u"(", u")", u"_", u"=", u"/", u"\\", u"BACKSPACE"],
+				[u"Q", u"W", u"E", u"R", u"T", u"Y", u"U", u"I", u"O", u"P", u"+", u"Š"],
+				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u":", u'"', u"Ū"],
+				[u">", u"Z", u"X", u"C", u"V", u"B", u"N", u"M", u"#", u"?", u"Ž", u"CLEAR"],
+				[u"SHIFT", u"SPACE", u"Ā", u"Č", u"Ē", u"Ģ", u"Ī", u"Ķ", u"Ļ", u"Ņ", u"LEFT", u"RIGHT"]]
 			self.nextLang = 'ru_RU'
 		elif self.lang == 'ru_RU':
 			self.keys_list = [
@@ -245,6 +261,18 @@ class VirtualKeyBoard(Screen):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"?", u'"', u"|"],
 				[u">", u"Z", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"Ą", u"Ć", u"Ę", u"Ł", u"Ń", u"Ó", u"Ś", u"Ź", u"Ż", u"OK"]]
+			self.nextLang = 'th_TH'
+		elif self.lang == 'th_TH':
+			self.keys_list = [[u'EXIT', '\xe0\xb9\x85', '\xe0\xb8\xa0', '\xe0\xb8\x96', '\xe0\xb8\xb8', '\xe0\xb8\xb6', '\xe0\xb8\x84', '\xe0\xb8\x95', '\xe0\xb8\x88', '\xe0\xb8\x82', '\xe0\xb8\x8a', u'BACKSPACE'],
+				['\xe0\xb9\x86', '\xe0\xb9\x84', '\xe0\xb8\xb3', '\xe0\xb8\x9e', '\xe0\xb8\xb0', '\xe0\xb8\xb1', '\xe0\xb8\xb5', '\xe0\xb8\xa3', '\xe0\xb8\x99', '\xe0\xb8\xa2', '\xe0\xb8\x9a', '\xe0\xb8\xa5'],
+				['\xe0\xb8\x9f', '\xe0\xb8\xab', '\xe0\xb8\x81', '\xe0\xb8\x94', '\xe0\xb9\x80', '\xe0\xb9\x89', '\xe0\xb9\x88', '\xe0\xb8\xb2', '\xe0\xb8\xaa', '\xe0\xb8\xa7', '\xe0\xb8\x87'],
+				['\xe0\xb8\x9c', '\xe0\xb8\x9b', '\xe0\xb9\x81', '\xe0\xb8\xad', '\xe0\xb8\xb4', '\xe0\xb8\xb7', '\xe0\xb8\x97', '\xe0\xb8\xa1', '\xe0\xb9\x83', '\xe0\xb8\x9d'],
+				[u'SHIFT', u'SPACE', u'OK']]
+			self.shiftkeys_list = [['EXIT', '\xe0\xb9\x91', '\xe0\xb9\x92', '\xe0\xb9\x93', '\xe0\xb9\x94', '\xe0\xb8\xb9', '\xe0\xb8\xbf', '\xe0\xb9\x95', '\xe0\xb9\x96', '\xe0\xb9\x97', '\xe0\xb9\x98', '\xe0\xb9\x99', u'BACKSPACE'],
+				['\xe0\xb9\x90', '', '\xe0\xb8\x8e', '\xe0\xb8\x91', '\xe0\xb8\x98', '\xe0\xb9\x8d', '\xe0\xb9\x8a', '\xe0\xb8\x93', '\xe0\xb8\xaf', '\xe0\xb8\x8d', '\xe0\xb8\x90'],
+				['\xe0\xb8\xa4', '\xe0\xb8\x86', '\xe0\xb8\x8f', '\xe0\xb9\x82', '\xe0\xb8\x8c', '\xe0\xb9\x87', '\xe0\xb9\x8b', '\xe0\xb8\xa9', '\xe0\xb8\xa8', '\xe0\xb8\x8b'],
+				['', '', '\xe0\xb8\x89', '\xe0\xb8\xae', '\xe0\xb8\xba', '\xe0\xb9\x8c', '', '\xe0\xb8\x92', '\xe0\xb8\xac', '\xe0\xb8\xa6', u'CLEAR'],
+				[u'SHIFT', u'SPACE', u'OK']]
 			self.nextLang = 'en_EN'
 		else:
 			self.keys_list = [
@@ -265,8 +293,8 @@ class VirtualKeyBoard(Screen):
 		self.max_key=47+len(self.keys_list[4])
 
 	def virtualKeyBoardEntryComponent(self, keys):
-		screenwidth = getDesktop(0).size().width()
-		key_bg_width = self.key_bg and self.key_bg.size().width() or 45
+		w, h = skin.parameters.get("VirtualKeyboard",(45, 45))
+		key_bg_width = self.key_bg and self.key_bg.size().width() or w
 		key_images = self.shiftMode and self.keyImagesShift or self.keyImages
 		res = [keys]
 		text = []
@@ -275,18 +303,11 @@ class VirtualKeyBoard(Screen):
 			png = key_images.get(key, None)
 			if png:
 				width = png.size().width()
-				if screenwidth and screenwidth == 1920:
-					res.append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 68), png=png))
-				else:
-					res.append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 45), png=png))
+				res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, h), png=png))
 			else:
 				width = key_bg_width
-				if screenwidth and screenwidth == 1920:
-					res.append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 68), png=self.key_bg))
-					text.append(MultiContentEntryText(pos=(x, 0), size=(width, 68), font=1, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER))
-				else:
-					res.append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 45), png=self.key_bg))
-					text.append(MultiContentEntryText(pos=(x, 0), size=(width, 45), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER))
+				res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, h), png=self.key_bg))
+				text.append(MultiContentEntryText(pos=(x, 0), size=(width, h), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER))
 			x += width
 		return res + text
 
@@ -298,15 +319,12 @@ class VirtualKeyBoard(Screen):
 		self.markSelectedKey()
 
 	def markSelectedKey(self):
-		screenwidth = getDesktop(0).size().width()
+		w, h = skin.parameters.get("VirtualKeyboard",(45, 45))
 		if self.previousSelectedKey is not None:
 			self.list[self.previousSelectedKey /12] = self.list[self.previousSelectedKey /12][:-1]
 		width = self.key_sel.size().width()
 		x = self.list[self.selectedKey/12][self.selectedKey % 12 + 1][1]
-		if screenwidth and screenwidth == 1920:
-			self.list[self.selectedKey / 12].append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 68), png=self.key_sel))
-		else:
-			self.list[self.selectedKey / 12].append(MultiContentEntryPixmapAlphaBlend(pos=(x, 0), size=(width, 45), png=self.key_sel))
+		self.list[self.selectedKey / 12].append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, h), png=self.key_sel))
 		self.previousSelectedKey = self.selectedKey
 		self["list"].setList(self.list)
 
@@ -345,7 +363,7 @@ class VirtualKeyBoard(Screen):
 			self["text"].char(" ".encode("UTF-8"))
 
 		elif text == "OK":
-			self.close(self["text"].getText().encode("UTF-8"))
+			self.close(self["text"].getText())
 
 		elif text == "LEFT":
 			self["text"].left()
@@ -356,8 +374,16 @@ class VirtualKeyBoard(Screen):
 		else:
 			self["text"].char(text)
 
+	def okLongClicked(self):
+		self.smsChar = None
+		text = (self.shiftMode and self.shiftkeys_list or self.keys_list)[self.selectedKey / 12][self.selectedKey % 12].encode("UTF-8")
+
+		if text == "BACKSPACE":
+			self["text"].deleteAllChars()
+			self["text"].update()
+
 	def ok(self):
-		self.close(self["text"].getText().encode("UTF-8"))
+		self.close(self["text"].getText())
 
 	def exit(self):
 		self.close(None)

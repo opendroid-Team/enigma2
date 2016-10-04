@@ -4,8 +4,8 @@ from enigma import ePixmap, ePicLoad
 from Tools.Alternatives import GetWithAlternative
 from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_ACTIVE_SKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
-from Components.config import config, ConfigBoolean
 from ServiceReference import ServiceReference
+from Components.config import config, ConfigBoolean
 
 searchPaths = []
 lastPiconPath = None
@@ -60,7 +60,7 @@ def findPicon(serviceName):
 		global searchPaths
 		pngname = ""
 		for path in searchPaths:
-			if pathExists(path) and not path.startswith('/media/net') and not path.startswith('/media/autofs'):
+			if pathExists(path) and not path.startswith('/media/net'):
 				pngname = path + serviceName + ".png"
 				if pathExists(pngname):
 					lastPiconPath = path
