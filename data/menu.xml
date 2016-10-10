@@ -17,8 +17,12 @@
 <!-- Menu -->
 <menu text="Mainmenu" title="Main menu">
 	<id val="mainmenu" />
-
-<!-- Menu / Settings -->
+		<item weight="0" level="1" text="Blue Panel" entryID="Blue Panel">
+<code>
+from OPENDROID.BluePanel import BluePanel
+self.session.open(BluePanel)
+</code>  
+		</item>
 	<menu weight="1" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" >
 		<id val="setup" />
 
@@ -65,7 +69,7 @@
 			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
 				<item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item>
-				<item weight="20" level="2" text="Hotkey Setup" entryID="hotkey_setup"><screen module="Hotkey" screen="HotkeySetup"/></item>
+				<item weight="20" level="2" text="Hotkey Setup" entryID="buttonsetup_setup"><screen module="ButtonSetup" screen="ButtonSetup"/></item>
 				<item weight="30" level="1" text="Input devices" entryID="input_device_setup"><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
 				<item weight="40" level="1" text="Keyboard" entryID="keyboard"><setup id="keyboard" /></item>
 				<item weight="50" level="0" text="Language" entryID="language_setup"><screen module="LanguageSelection" /></item>	
@@ -219,7 +223,7 @@ self.session.open(HdmiCECSetupScreen)
 	<item weight="20" level="1" text="VCR scart" entryID="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 	<item weight="10" level="1" text="Plugins" entryID="plugin_selection"><screen module="PluginBrowser" screen="PluginBrowser" /></item>
 	<!-- Menu / Standby Restart -->
-	<menu weight="99" level="0" text="Standby / Restart" entryID="standby_restart_list">
+	<menu weight="99" level="0" text="Opendroid ShutDown" entryID="standby_restart_list">
 		<id val="shutdown" />
 		<item weight="0" level="0" text="Deep Standby" requires="DeepstandbySupport" entryID="deep_standby">
 			<code>
