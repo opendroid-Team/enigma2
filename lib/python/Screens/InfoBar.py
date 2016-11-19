@@ -21,14 +21,14 @@ boxtype = getBoxType()
 profile("LOAD:InfoBarGenerics")
 from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarRdsDecoder, InfoBarRedButton, InfoBarTimerButton, InfoBarVmodeButton, \
-	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, InfoBarINFOpanel, InfoBarResolutionSelection, InfoBarAspectSelection, \
+	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, InfoBarResolutionSelection, InfoBarAspectSelection, \
 	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey, InfoBarLongKeyDetection, \
 	InfoBarSubserviceSelection, InfoBarShowMovies, \
 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, InfoBarBuffer, \
 	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, \
 	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper, \
 	InfoBarHdmi, setResumePoint, delResumePoint
-from Screens.Hotkey import InfoBarHotkey
+from Screens.ButtonSetup import InfoBarButtonSetup
 
 profile("LOAD:InitBar_Components")
 from Components.ActionMap import HelpableActionMap
@@ -41,12 +41,12 @@ from Screens.HelpMenu import HelpableScreen
 
 class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
-	InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarINFOpanel, InfoBarResolutionSelection, InfoBarAspectSelection, InfoBarVmodeButton,
+	InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarResolutionSelection, InfoBarAspectSelection, InfoBarVmodeButton,
 	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey, InfoBarLongKeyDetection,
 	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek, InfoBarCueSheetSupport, InfoBarBuffer,
 	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions,
 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper,
-	InfoBarHdmi, Screen, InfoBarHotkey):
+	InfoBarHdmi, Screen, InfoBarButtonSetup):
 
 	ALLOW_SUSPEND = True
 	instance = None
@@ -93,11 +93,11 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		for x in HelpableScreen, \
 				InfoBarBase, InfoBarShowHide, \
 				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
-				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarUnhandledKey, InfoBarLongKeyDetection, InfoBarINFOpanel, InfoBarResolutionSelection, InfoBarVmodeButton, \
+				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarRedButton, InfoBarTimerButton, InfoBarUnhandledKey, InfoBarLongKeyDetection, InfoBarResolutionSelection, InfoBarVmodeButton, \
 				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, InfoBarAspectSelection, InfoBarBuffer, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarCueSheetSupport, InfoBarSummarySupport, InfoBarTimeshiftState, \
 				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper, \
-				InfoBarHdmi, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarHotkey:
+				InfoBarHdmi, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarButtonSetup:
 			x.__init__(self)
 
 		self.helpList.append((self["actions"], "InfobarActions", [("showMovies", _("Watch recordings..."))]))
@@ -128,18 +128,18 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 
 	def doButtonsCheck(self):
 		if config.plisettings.ColouredButtons.value:
-			self["key_yellow"].setText(_("Search"))
+			self["key_yellow"].setText(_("Extensions"))
 
 			if config.usage.defaultEPGType.value == "Graphical EPG..." or config.usage.defaultEPGType.value == "None":
-				self["key_red"] = Label()
+				self["key_red"].setText(_("Single EPG"))
 			else:
 				self["key_red"].setText(_("ViX EPG"))
 
 			if not config.plisettings.Subservice.value:
 				self["key_green"].setText(_("Timers"))
 			else:
-				self["key_green"].setText(_("Subservices"))
-		self["key_blue"].setText(_("Extensions"))
+				self["key_green"].setText(_("Green Panel"))
+		self["key_blue"].setText(_("Blue Panel"))
 
 	def __onClose(self):
 		InfoBar.instance = None
@@ -374,8 +374,8 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self.session.open(MessageBox, _("The VideoMode plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
 			
 	def showPluginBrowser(self):
-		from Screens.PluginBrowser import PluginBrowser
-		self.session.open(PluginBrowser)
+		from OPENDROID.GreenPanel import GreenPanel
+		self.session.open(GreenPanel)
 		
 	def showBoxPortal(self):
 		if getMachineBrand() == 'GI' or boxtype.startswith('azbox') or boxtype.startswith('ini') or boxtype.startswith('venton'):
@@ -462,7 +462,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 		InfoBarSeek, InfoBarShowMovies, InfoBarInstantRecord, InfoBarAudioSelection, HelpableScreen, InfoBarNotifications,
 		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport,
 		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin,
-		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarHdmi, InfoBarHotkey):
+		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarHdmi, InfoBarButtonSetup):
 
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
@@ -499,7 +499,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 				InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, \
 				InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, \
 				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, \
-				InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarHotkey:
+				InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarButtonSetup:
 			x.__init__(self)
 
 		self.onChangedEntry = [ ]
@@ -542,9 +542,9 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 
 	def doButtonsCheck(self):
 		if config.plisettings.ColouredButtons.value:
-			self["key_yellow"].setText(_("Search"))
-			self["key_green"].setText(_("Timers"))
-		self["key_blue"].setText(_("Extensions"))
+			self["key_yellow"].setText(_("Extensions"))
+			self["key_green"].setText(_("Green Panel"))
+		self["key_blue"].setText(_("Blue Panel"))
 
 	def __onClose(self):
 		MoviePlayer.instance = None

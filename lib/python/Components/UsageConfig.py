@@ -17,7 +17,7 @@ def InitUsageConfig():
 	config.misc.remotecontrol_text_support = ConfigYesNo(default = True)
 
 	config.workaround = ConfigSubsection()
-	config.workaround.blueswitch = ConfigSelection(default = "0", choices = [("0", _("QuickMenu/Extensions")), ("1", _("Extensions/QuickMenu"))])
+	config.workaround.blueswitch = ConfigSelection(default = "0", choices = [("0", _("BluePanel/OPENDROID")), ("1", _("OPENDROID/BluePanel"))])
 	config.workaround.deeprecord = ConfigYesNo(default = False)
 	config.workaround.wakeuptimeoffset = ConfigSelection(default = "standard", choices = [("-300", _("-5")), ("-240", _("-4")), ("-180", _("-3")), ("-120", _("-2")), ("-60", _("-1")), ("standard", _("Standard")), ("0", _("0")), ("60", _("1")), ("120", _("2")), ("180", _("3")), ("240", _("4")), ("300", _("5"))])
 
@@ -265,28 +265,36 @@ def InitUsageConfig():
 	config.misc.disable_background_scan = ConfigYesNo(default = False)
 
 	config.usage.jobtaksextensions = ConfigYesNo(default = True)
-
+        config.usage.servicenum_fontsize = ConfigSelectionNumber(default=2, stepwidth=1, min=-8, max=10, wraparound=True)
 	config.usage.servicenum_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.servicename_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceitems_per_page = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 8, max = 40, wraparound = True)
 	config.usage.show_servicelist = ConfigYesNo(default = True)
-	config.usage.servicelist_mode = ConfigSelection(default = "standard", choices = [
-		("standard", _("Standard")),
-		("simple", _("Simple")) ] )
-	config.usage.servicelistpreview_mode = ConfigYesNo(default = False)
-	config.usage.tvradiobutton_mode = ConfigSelection(default="BouquetList", choices = [
-					("ChannelList", _("Channel List")),
-					("BouquetList", _("Bouquet List")),
-					("MovieList", _("Movie List"))])
-	config.usage.channelbutton_mode = ConfigSelection(default="0", choices = [
-					("0", _("Just change channels")),
-					("1", _("Channel List")),
-					("2", _("Bouquet List")),
-					("3", _("Just change Bouquet"))])
-	config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
-					("0", _("Just change channels")),
-					("1", _("Channel List"))])
+        config.usage.servicelist_mode = ConfigSelection(default='standard', choices=[('standard', _('Standard')), ('simple', _('Simple'))])
+        config.usage.servicelistpreview_mode = ConfigYesNo(default=False)
+        config.usage.tvradiobutton_mode = ConfigSelection(default='BouquetList', choices=[('ChannelList', _('Channel List')), ('BouquetList', _('Bouquet List')), ('MovieList', _('Movie List'))])
+        config.usage.channelbutton_mode = ConfigSelection(default='0', choices=[('0', _('Just change channels')), ('1', _('Channel List')), ('2', _('Bouquet List'))])
+        config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
+                   ("standard", _("Standard")),
+                   ("simple", _("Simple")) ] )
+        config.usage.arrowupdownbutton_mode = ConfigSelection(default='1', choices=[('0', _('Open Service List for PiP')), ('1', _('Open Bouqet List'))])
+        config.usage.scroll_label_delay = ConfigSelection(default='3000', choices=[('1000', '1 ' + _('seconds')),
+         ('2000', '2 ' + _('seconds')),
+         ('3000', '3 ' + _('seconds')),
+         ('4000', '4 ' + _('seconds')),
+         ('5000', '5 ' + _('seconds')),
+         ('6000', '6 ' + _('seconds')),
+         ('7000', '7 ' + _('seconds')),
+         ('8000', '8 ' + _('seconds')),
+         ('9000', '9 ' + _('seconds')),
+         ('10000', '10 ' + _('seconds')),
+         ('noscrolling', _('off'))])
+        config.usage.scroll_label_speed = ConfigSelection(default='300', choices=[('500', _('slow')),
+         ('300', _('normal')),
+         ('200', _('medium')),
+         ('100', _('fast')),
+         ('50', _('very fast'))])
 	if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/CoolTVGuide/plugin.pyo"):
 		config.usage.okbutton_mode = ConfigSelection(default="0", choices = [
 						("0", _("InfoBar")),

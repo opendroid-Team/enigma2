@@ -95,6 +95,8 @@
 		<item level="1" text="Number of rows" description="This allows you change the number of rows shown.">config.usage.serviceitems_per_page</item>
 		<item level="1" text="Service number font size" description="This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size">config.usage.servicenum_fontsize</item>
 		<item level="1" text="Service name font size" description="This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size">config.usage.servicename_fontsize</item>
+		<item level="1" text="Text scrolling speed (software render)*" description="Set the scrolling speed of text on the menus, this uses a software render in some skins.">config.usage.scroll_label_speed</item>
+		<item level="1" text="Text scrolling delay (software render)*" description="Set the delay time between repeated loops, this uses a software render in some skins.">config.usage.scroll_label_delay</item>
 		<item level="1" text="Service info font size" description="This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size">config.usage.serviceinfo_fontsize</item>
 		<item level="1" text="Zap mode" requires="ZapMode" description="Setup how to control the channel changing.">config.misc.zapmode</item>
 		<item level="2" text="Channel zap delay mode" description="Setup delay mode to zap to channels.">config.usage.numzaptimeoutmode</item>
@@ -300,6 +302,8 @@
 		<item level="1" text="History buttons mode" description="Configure the function of the &lt;  &gt; buttons.">config.usage.historymode</item>
 		<item level="0" text="Channel +/- button mode" description="Select what you want the Channel +/- button to activate:">config.usage.channelbutton_mode</item>
 		<item level="0" text="Up/Down button mode" description="Select what you want the Up/Down button to activate:">config.usage.updownbutton_mode</item>
+		<item level="0" text="OPENDROID Green button mode" description="Select what you want the Green button to activate:">config.usage.greenbutton_mode</item>
+		<item level="0" text="OPENDROID Blue button mode" description="Select what you want the Blue button to activate:">config.usage.bluebutton_mode</item>
 		</setup>
 	<setup level="2" key="softcamsetup" title="Softcam settings">
 		<item level="2" text="Show CCcam in extensions ?" description="Allows you to show/hide CCcam in extensions (blue button).">config.cccaminfo.showInExtensions</item>

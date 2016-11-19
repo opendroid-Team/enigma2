@@ -30,8 +30,8 @@ class SleepTimerEdit(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 		self.title = _("Sleep Timer")
 
-		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("Save"))
+		self["key_red"] = Label(_("Cancel"))
+		self["key_green"] = Label(_("Save"))
 		self["description"] = Label("")
 
 		self.list = []
