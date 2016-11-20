@@ -60,7 +60,9 @@ def getAboutText():
 	AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
 	AboutText += _("Python:\t%s") % about.getPythonVersionString() + "\n"
 
+	if getMachineBuild() not in ('vusolo4k','vuuno4k','vuultimo4k','dm820','dm7080'):
 	AboutText += _("Installed:\t%s") % about.getFlashDateString() + "\n"
+
 	AboutText += _("Last update:\t%s") % getEnigmaVersionString() + "\n"
 
 	fp_version = getFPVersion()
