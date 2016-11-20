@@ -21,7 +21,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 VERSION = "Version 5.5 opendroid"
 
 HaveGZkernel = True
-if getBrandOEM() in ("fulan") or getBoxType() in ("vuuno4k", "vuultimo4k", "vusolo4k"):
+if getBrandOEM() in ("fulan") or getBoxType() in ("vusolo4k"):
 	HaveGZkernel = False
 
 def Freespace(dev):
@@ -280,7 +280,7 @@ class ImageBackup(Screen):
 			system('mv %s/kernel_auto.bin %s/kernel_auto.bin' %(self.WORKDIR, self.MAINDEST))
 		else:
 			system('mv %s/vmlinux.gz %s/%s' %(self.WORKDIR, self.MAINDEST, self.KERNELBIN))
-		if self.MODEL in ("vuuno4k", "vuultimo4k", "vusolo4k", "vuduo2", "vusolo2", "vusolo", "vuduo", "vuultimo", "vuuno"):
+		if self.MODEL in ("vusolo4k", "vuduo2", "vusolo2", "vusolo", "vuduo", "vuultimo", "vuuno"):
 			cmdlist.append('echo "This file forces a reboot after the update." > %s/reboot.update' %self.MAINDEST)
 		elif self.MODEL in ("vuzero" , "vusolose"):
 			cmdlist.append('echo "This file forces the update." > %s/force.update' %self.MAINDEST)

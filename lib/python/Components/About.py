@@ -53,8 +53,6 @@ def getChipSetString():
 def getCPUSpeedString():
 	if getBoxType() in ('vusolo4k'):
 		return "1,5 GHz"
-	elif getMachineBuild() in ('vuuno4k','vuultimo4k'):
-		return "1,7 GHz"
 	else:
 		try:
 			file = open('/proc/cpuinfo', 'r')
@@ -75,7 +73,7 @@ def getCPUSpeedString():
 			return "unavailable"
 
 def getCPUString():
-	if getBoxType() in ('vuuno4k', 'vuultimo4k', 'xc7362', 'vusolo4k'):
+	if getBoxType() in ('xc7362', 'vusolo4k'):
 		return "Broadcom"
 	else:
 		try:
