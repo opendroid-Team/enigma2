@@ -35,7 +35,7 @@ SCOPE_ACTIVE_SKIN = 19
 SCOPE_LCDSKIN = 20
 SCOPE_ACTIVE_LCDSKIN = 21
 SCOPE_AUTORECORD = 22
-
+SCOPE_VOD = 23
 PATH_CREATE = 0
 PATH_DONTCREATE = 1
 PATH_FALLBACK = 2
@@ -53,6 +53,7 @@ defaultPaths = {
 		SCOPE_SKIN_IMAGE: (eEnv.resolve("${datadir}/enigma2/"), PATH_DONTCREATE),
 		SCOPE_HDD: ("/media/hdd/movie/", PATH_DONTCREATE),
 		SCOPE_TIMESHIFT: ("/media/hdd/timeshift/", PATH_DONTCREATE),
+		SCOPE_VOD: ('/media/hdd/vod/', PATH_DONTCREATE),
 		SCOPE_AUTORECORD: ("/media/hdd/movie/", PATH_DONTCREATE),
 		SCOPE_MEDIA: ("/media/", PATH_DONTCREATE),
 		SCOPE_PLAYLIST: (eEnv.resolve("${sysconfdir}/enigma2/playlist/"), PATH_CREATE),
@@ -71,6 +72,7 @@ fallbackPaths = {
 					   (eEnv.resolve("${datadir}/enigma2/defaults/"), FILE_COPY)],
 		SCOPE_HDD: [("/media/hdd/movie", PATH_MOVE)],
 		SCOPE_TIMESHIFT: [("/media/hdd/timeshift", PATH_MOVE)],
+		SCOPE_VOD: [('/media/hdd/vod', PATH_MOVE)],
 		SCOPE_AUTORECORD: [("/media/hdd/movie", PATH_MOVE)]
 	}
 
