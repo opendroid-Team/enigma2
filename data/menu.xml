@@ -1,19 +1,4 @@
 <!--suppress XmlUnboundNsPrefix -->
-
-<!-- the following types are allowed:
-	<screen [module="mod"] [screen="classname"]>[arguments]</screen>
-		executes Screen called "classname" from module "Screen.mod"
-		if no module is given, Screen must be globally available.
-		if no screen is given, module is used as screen class name.
-		arguments must be comma seperated (will be fed to eval), and can
-			use stuff from module
-		(of course you must specify at least one of module, screen.)
-	<setup id="id" />
-		opens a setup with specified id
-	<code> .. code .. </code>
-		"exec"s code
--->
-
 <!-- Menu -->
 <menu text="Mainmenu" title="Main menu">
 	<id val="mainmenu" />
@@ -90,6 +75,7 @@ self.session.open(RemoteControlCode)
 			<id val="rec" />
 			<item weight="10" level="0" text="Timeshift settings" entryID="timshift_setup"><screen module="Timershift" screen="TimeshiftSettings" /></item>
 			<item weight="15" level="0" text="Recording settings" entryID="recording_setup"><screen module="Recordings" screen="RecordingSettings" /></item>
+			<item weight="16" level="0" text="VOD settings" entryID="vod_setup"><setup id="vodsetup"/></item>
 		</menu>		
 		
 		<!-- Menu / Settings / EPG -->
