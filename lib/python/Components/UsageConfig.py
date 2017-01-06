@@ -4,8 +4,8 @@ from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTun
 
 from Components.About import about
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber
-from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigDictionarySet, ConfigFloat
+from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
 from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
 from SystemInfo import SystemInfo
@@ -382,8 +382,26 @@ def InitUsageConfig():
 	def PreferredTunerChanged(configElement):
 		setPreferredTuner(int(configElement.value))
 	config.usage.frontend_priority.addNotifier(PreferredTunerChanged)
-
+	if not os.path.exists(resolveFilename(SCOPE_VOD)):
+	 try:
+	  os.mkdir(resolveFilename(SCOPE_VOD), 493)
+	 except:
+	  pass
+	config.usage.vod_path = ConfigText(default = resolveFilename(SCOPE_VOD))
+	if not config.usage.default_path.value.endswith('/'):
+	  tmpvalue = config.usage.vod_path.value
+	  config.usage.vod_path.setValue(tmpvalue + '/')
+	  config.usage.vod_path.save()
+	def vodpathChanged(configElement):
+	 if not config.usage.vod_path.value.endswith('/'):
+	   tmpvalue = config.usage.vod_path.value
+	   config.usage.vod_path.setValue(tmpvalue + '/')
+	   config.usage.vod_path.save()
+	config.usage.vod_path.addNotifier(vodpathChanged, immediate_feedback = False)
+	config.usage.allowed_vod_paths = ConfigLocations(default = [
+	  resolveFilename(SCOPE_VOD)])
 	config.usage.hide_zap_errors = ConfigYesNo(default = True)
+	config.usage.enableVodMode = ConfigYesNo(default = True)
 	config.misc.use_ci_assignment = ConfigYesNo(default = True)
 	config.usage.hide_ci_messages = ConfigYesNo(default = False)
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
