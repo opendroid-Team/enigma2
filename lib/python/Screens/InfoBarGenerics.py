@@ -41,7 +41,7 @@ from Screens.UnhandledKey import UnhandledKey
 from ServiceReference import ServiceReference, isPlayableForCur
 from RecordTimer import RecordTimer, RecordTimerEntry, parseEvent, AFTEREVENT, findSafeRecordPath
 from Screens.TimerEntry import TimerEntry as TimerEntry
-
+from Tools.Directories import SCOPE_VOD
 from Tools import Directories, Notifications
 from Tools.Directories import pathExists, fileExists, getRecordingFilename, copyfile, moveFiles, resolveFilename, SCOPE_TIMESHIFT, SCOPE_CURRENT_SKIN
 from Tools.KeyBindings import getKeyDescription
@@ -2185,625 +2185,636 @@ class Seekbar(Screen):
 		else:
 			ConfigListScreen.keyNumberGlobal(self, number)
 
-class InfoBarSeek:
-	"""handles actions like seeking, pause"""
-
-	SEEK_STATE_PLAY = (0, 0, 0, ">")
-	SEEK_STATE_PAUSE = (1, 0, 0, "||")
-	SEEK_STATE_EOF = (1, 0, 0, "END")
-
-	def __init__(self, actionmap = "InfobarSeekActions"):
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
-				iPlayableService.evSeekableStatusChanged: self.__seekableStatusChanged,
-				iPlayableService.evStart: self.__serviceStarted,
-				iPlayableService.evEOF: self.__evEOF,
-				iPlayableService.evSOF: self.__evSOF,
-			})
-		self.fast_winding_hint_message_showed = False
-
-		class InfoBarSeekActionMap(HelpableActionMap):
-			def __init__(self, screen, *args, **kwargs):
-				HelpableActionMap.__init__(self, screen, *args, **kwargs)
-				self.screen = screen
-
-			def action(self, contexts, action):
-				# print "action:", action
-				if action[:5] == "seek:":
-					time = int(action[5:])
-					self.screen.doSeekRelative(time * 90000)
-					return 1
-				elif action[:8] == "seekdef:":
-					key = int(action[8:])
-					time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
-						-config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
-						-config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key-1]
-					self.screen.doSeekRelative(time * 90000)
-					return 1
-				else:
-					return HelpableActionMap.action(self, contexts, action)
-
-		self["SeekActions"] = InfoBarSeekActionMap(self, actionmap,
-			{
-				"playpauseService": (self.playpauseService, _("Pauze/Continue playback")),
-				"pauseService": (self.pauseService, _("Pause playback")),
-				"pauseServiceYellow": (self.pauseServiceYellow, _("Pause playback")),
-				"unPauseService": (self.unPauseService, _("Continue playback")),
-				"okButton": (self.okButton, _("Continue playback")),
-
-				"seekFwd": (self.seekFwd, _("Seek forward")),
-				"seekFwdManual": (self.seekFwdManual, _("Seek forward (enter time)")),
-				"seekBack": (self.seekBack, _("Seek backward")),
-				"seekBackManual": (self.seekBackManual, _("Seek backward (enter time)")),
-
-				"SeekbarFwd": self.seekFwdSeekbar,
-				"SeekbarBack": self.seekBackSeekbar
-			}, prio=-1) # give them a little more priority to win over color buttons
-		self["SeekActions"].setEnabled(False)
-
-		self["SeekActionsPTS"] = InfoBarSeekActionMap(self, "InfobarSeekActionsPTS",
-			{
-				"playpauseService": self.playpauseService,
-				"pauseService": (self.pauseService, _("Pause playback")),
-				"pauseServiceYellow": (self.pauseServiceYellow, _("Pause playback")),
-				"unPauseService": (self.unPauseService, _("Continue playback")),
-
-				"seekFwd": (self.seekFwd, _("skip forward")),
-				"seekFwdManual": (self.seekFwdManual, _("skip forward (enter time)")),
-				"seekBack": (self.seekBack, _("skip backward")),
-				"seekBackManual": (self.seekBackManual, _("skip backward (enter time)")),
-			}, prio=-1) # give them a little more priority to win over color buttons
-		self["SeekActionsPTS"].setEnabled(False)
-
-		self.activity = 0
-		self.activityTimer = eTimer()
-		self.activityTimer.callback.append(self.doActivityTimer)
-		self.seekstate = self.SEEK_STATE_PLAY
-		self.lastseekstate = self.SEEK_STATE_PLAY
-		self.seekAction = 0
-		self.LastseekAction = False
-
-		self.onPlayStateChanged = [ ]
-
-		self.lockedBecauseOfSkipping = False
-
-		self.__seekableStatusChanged()
-
-	def makeStateForward(self, n):
-		return 0, n, 0, ">> %dx" % n
-
-	def makeStateBackward(self, n):
-		return 0, -n, 0, "<< %dx" % n
-
-	def makeStateSlowMotion(self, n):
-		return 0, 0, n, "/%d" % n
-
-	def isStateForward(self, state):
-		return state[1] > 1
-
-	def isStateBackward(self, state):
-		return state[1] < 0
-
-	def isStateSlowMotion(self, state):
-		return state[1] == 0 and state[2] > 1
-
-	def getHigher(self, n, lst):
-		for x in lst:
-			if x > n:
-				return x
-		return False
-
-	def getLower(self, n, lst):
-		lst = lst[:]
-		lst.reverse()
-		for x in lst:
-			if x < n:
-				return x
-		return False
-
-	def showAfterSeek(self):
-		if isinstance(self, InfoBarShowHide):
-			self.doShow()
-
-	def up(self):
-		pass
-
-	def down(self):
-		pass
-
-	def getSeek(self):
-		service = self.session.nav.getCurrentService()
-		if service is None:
-			return None
-
-		seek = service.seek()
-
-		if seek is None or not seek.isCurrentlySeekable():
-			return None
-
-		return seek
-
-	def isSeekable(self):
-		if self.getSeek() is None or (isStandardInfoBar(self) and not self.timeshiftEnabled()):
-			return False
-		return True
-
-	def __seekableStatusChanged(self):
-		if isStandardInfoBar(self) and self.timeshiftEnabled():
-			pass
-		elif not self.isSeekable():
-			SystemInfo["SeekStatePlay"] = False
-			if os.path.exists("/proc/stb/lcd/symbol_hdd"):
-				f = open("/proc/stb/lcd/symbol_hdd", "w")
-				f.write("0")
-				f.close()        
-			if os.path.exists("/proc/stb/lcd/symbol_hddprogress"):  
-				f = open("/proc/stb/lcd/symbol_hddprogress", "w")
-				f.write("0")
-				f.close()
-#			print "not seekable, return to play"
-			self["SeekActions"].setEnabled(False)
-			self.setSeekState(self.SEEK_STATE_PLAY)
-		else:
-#			print "seekable"
-			self["SeekActions"].setEnabled(True)
-			self.activityTimer.start(int(config.seek.withjumps_repeat_ms.getValue()), False)
-			for c in self.onPlayStateChanged:
-				c(self.seekstate)
-
-		global seek_withjumps_muted
-		if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
-			print "STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute"
-			seek_withjumps_muted = False
-			eDVBVolumecontrol.getInstance().volumeUnMute()
-
-	def doActivityTimer(self):
-		if self.isSeekable():
-			self.activity += 16
-			hdd = 1
-			if self.activity >= 100:
-				self.activity = 0
-			if SystemInfo["FrontpanelDisplay"] and SystemInfo["Display"]:
-				if os.path.exists("/proc/stb/lcd/symbol_hdd"):
-					if config.lcd.hdd.value == "1":
-						file = open("/proc/stb/lcd/symbol_hdd", "w")
-						file.write('%d' % int(hdd))
-						file.close()
-				if os.path.exists("/proc/stb/lcd/symbol_hddprogress"):
-					if config.lcd.hdd.value == "1":
-						file = open("/proc/stb/lcd/symbol_hddprogress", "w")
-						file.write('%d' % int(self.activity))
-						file.close() 
-		else:
-			self.activityTimer.stop()
-			self.activity = 0
-			hdd = 0
-			self.seekAction = 0
-
-		if os.path.exists("/proc/stb/lcd/symbol_hdd"):
-			if config.lcd.hdd.value == "1":
-				file = open("/proc/stb/lcd/symbol_hdd", "w")
-				file.write('%d' % int(hdd))
-				file.close()
-		if os.path.exists("/proc/stb/lcd/symbol_hddprogress"):
-			if config.lcd.hdd.value == "1":
-				file = open("/proc/stb/lcd/symbol_hddprogress", "w")
-				file.write('%d' % int(self.activity))
-				file.close()
-		if self.LastseekAction:
-			self.DoSeekAction()
-
-	def __serviceStarted(self):
-		self.fast_winding_hint_message_showed = False
-		self.setSeekState(self.SEEK_STATE_PLAY)
-		self.__seekableStatusChanged()
-
-	def setSeekState(self, state):
-		service = self.session.nav.getCurrentService()
-
-		if service is None:
-			return False
-
-		if not self.isSeekable():
-			if state not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
-				state = self.SEEK_STATE_PLAY
-
-		pauseable = service.pause()
-
-		if pauseable is None:
-#			print "not pauseable."
-			state = self.SEEK_STATE_PLAY
-
-		self.seekstate = state
-
-		if pauseable is not None:
-			if self.seekstate[0] and self.seekstate[3] == '||':
-#				print "resolved to PAUSE"
-				self.activityTimer.stop()
-				pauseable.pause()
-			elif self.seekstate[0] and self.seekstate[3] == 'END':
-#				print "resolved to STOP"
-				self.activityTimer.stop()
-			elif self.seekstate[1]:
-				if not pauseable.setFastForward(self.seekstate[1]):
-					pass
-					# print "resolved to FAST FORWARD"
-				else:
-					self.seekstate = self.SEEK_STATE_PLAY
-					# print "FAST FORWARD not possible: resolved to PLAY"
-			elif self.seekstate[2]:
-				if not pauseable.setSlowMotion(self.seekstate[2]):
-					pass
-					# print "resolved to SLOW MOTION"
-				else:
-					self.seekstate = self.SEEK_STATE_PAUSE
-					# print "SLOW MOTION not possible: resolved to PAUSE"
-			else:
-#				print "resolved to PLAY"
-				self.activityTimer.start(int(config.seek.withjumps_repeat_ms.getValue()), False)
-				pauseable.unpause()
-
-		for c in self.onPlayStateChanged:
-			c(self.seekstate)
-
-		self.checkSkipShowHideLock()
-
-		if hasattr(self, "ScreenSaverTimerStart"):
-			self.ScreenSaverTimerStart()
-
-		return True
-
-	def okButton(self):
-		if self.seekstate == self.SEEK_STATE_PLAY:
-			return 0
-		elif self.seekstate == self.SEEK_STATE_PAUSE:
-			self.pauseService()
-		else:
-			self.unPauseService()
-
-	def playpauseService(self):
-		if self.seekAction <> 0:
-			self.seekAction = 0
-			self.doPause(False)
-			global seek_withjumps_muted
-			seek_withjumps_muted = False
-			return
-		if self.seekstate == self.SEEK_STATE_PLAY:
-			self.pauseService()
-		else:
-			if self.seekstate == self.SEEK_STATE_PAUSE:
-				if config.seek.on_pause.value == "play":
-					self.unPauseService()
-				elif config.seek.on_pause.value == "step":
-					self.doSeekRelative(1)
-				elif config.seek.on_pause.value == "last":
-					self.setSeekState(self.lastseekstate)
-					self.lastseekstate = self.SEEK_STATE_PLAY
-			else:
-				self.unPauseService()
-
-	def pauseService(self):
-		if self.seekstate != self.SEEK_STATE_EOF:
-			self.lastseekstate = self.seekstate
-		self.setSeekState(self.SEEK_STATE_PAUSE)
-
-	def pauseServiceYellow(self):
-		if self.seekstate != self.SEEK_STATE_EOF:
-			self.lastseekstate = self.seekstate
-			self.setSeekState(self.SEEK_STATE_PAUSE) 
-
-	def unPauseService(self):
-		if self.seekstate == self.SEEK_STATE_PLAY:
-			#return 0 # if 'return 0', plays timeshift again from the beginning
-			return
-		self.setSeekState(self.SEEK_STATE_PLAY)
-
-	def doPause(self, pause):
-		if pause:
-			if not eDVBVolumecontrol.getInstance().isMuted():
-				eDVBVolumecontrol.getInstance().volumeMute()
-		else:
-			if eDVBVolumecontrol.getInstance().isMuted():
-				eDVBVolumecontrol.getInstance().volumeUnMute()
-
-	def doSeek(self, pts):
-		seekable = self.getSeek()
-		if seekable is None:
-			return
-		seekable.seekTo(pts)
-
-	def doSeekRelativeAvoidStall(self, pts):
-		global jump_pts_adder
-		global jump_last_pts
-		global jump_last_pos
-		seekable = self.getSeek()
-		#when config.seek.withjumps, avoid that jumps smaller than the time between I-frames result in hanging, by increasing pts when stalled
-		if seekable and config.seek.withjumps_avoid_zero.getValue():
-			position = seekable.getPlayPosition()
-			if jump_last_pos and jump_last_pts:
-				if (abs(position[1] - jump_last_pos[1]) < 100*90) and (pts == jump_last_pts): # stalled?
-					jump_pts_adder += pts
-					jump_last_pts = pts
-					pts += jump_pts_adder
-				else:
-					jump_pts_adder = 0
-					jump_last_pts = pts
-			else:
-				jump_last_pts = pts
-			jump_last_pos = position
-		self.doSeekRelative(pts)
-
-	def doSeekRelative(self, pts):
-		try:
-			if "<class 'Screens.InfoBar.InfoBar'>" in `self`:
-				if InfoBarTimeshift.timeshiftEnabled(self):
-					length = InfoBarTimeshift.ptsGetLength(self)
-					position = InfoBarTimeshift.ptsGetPosition(self)
-					if length is None or position is None:
-						return
-					if position + pts >= length:
-						InfoBarTimeshift.evEOF(self, position + pts - length)
-						return
-					elif position + pts < 0:
-						InfoBarTimeshift.evSOF(self, position + pts)
-						self.showAfterSeek()
-						return
-		except:
-			from sys import exc_info
-			print "[InfoBarGeneretics] error in 'def doSeekRelative'", exc_info()[:2]
-
-		seekable = self.getSeek()
-		if seekable is None or int(seekable.getLength()[1]) < 1:
-			return
-		prevstate = self.seekstate
-
-		if self.seekstate == self.SEEK_STATE_EOF:
-			if prevstate == self.SEEK_STATE_PAUSE:
-				self.setSeekState(self.SEEK_STATE_PAUSE)
-			else:
-				self.setSeekState(self.SEEK_STATE_PLAY)
-		seekable.seekRelative(pts<0 and -1 or 1, abs(pts))
-		if abs(pts) > 100 and config.usage.show_infobar_on_skip.value:
-			self.showAfterSeek()
-
-	def DoSeekAction(self):
-		if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
-			self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_forwards_ms.getValue()) * 90)
-		elif self.seekAction < 0:
-			self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_backwards_ms.getValue()) * 90)
-
-		for c in self.onPlayStateChanged:
-			if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()): # Forward
-				c((0, self.seekAction, 0, ">> %dx" % self.seekAction))
-			elif self.seekAction < 0: # Backward
-				c((0, self.seekAction, 0, "<< %dx" % abs(self.seekAction)))
-
-		if self.seekAction == 0:
-			self.LastseekAction = False
-			self.doPause(False)
-			global seek_withjumps_muted
-			seek_withjumps_muted = False
-			self.setSeekState(self.SEEK_STATE_PLAY)
-
-	def isServiceTypeTS(self):
-		ref = self.session.nav.getCurrentlyPlayingServiceReference()
-		isTS = False
-		if ref is not None:
-			servincetype = ServiceReference(ref).getType()
-			if servincetype == 1:
-				isTS = True
-		return isTS
-
-	def seekFwd(self):
-		if config.seek.withjumps.value and not self.isServiceTypeTS():
-			self.seekFwd_new()
-		else:
-			self.seekFwd_old()
-
-	def seekBack(self):
-		if config.seek.withjumps.value and not self.isServiceTypeTS():
-			self.seekBack_new()
-		else:
-			self.seekBack_old()
-
-	def seekFwd_new(self):
-		self.LastseekAction = True
-		self.doPause(True)
-		global seek_withjumps_muted
-		seek_withjumps_muted = True
-		if self.seekAction >= 0:
-			self.seekAction = self.getHigher(abs(self.seekAction), config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
-		else:
-			self.seekAction = -self.getLower(abs(self.seekAction), config.seek.speeds_backward.value)
-		if (self.seekAction > 1) and (self.seekAction <= int(config.seek.withjumps_after_ff_speed.getValue())): # use fastforward for the configured speeds
-			self.setSeekState(self.makeStateForward(self.seekAction))
-		elif self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()): # we first need to go the play state, to stop fastforward
-			self.setSeekState(self.SEEK_STATE_PLAY)
-
-	def seekBack_new(self):
-		self.LastseekAction = True
-		self.doPause(True)
-		global seek_withjumps_muted
-		seek_withjumps_muted = True
-		if self.seekAction <= 0:
-			self.seekAction = -self.getHigher(abs(self.seekAction), config.seek.speeds_backward.value) or -config.seek.speeds_backward.value[-1]
-		else:
-			self.seekAction = self.getLower(abs(self.seekAction), config.seek.speeds_forward.value)
-		if (self.seekAction > 1) and (self.seekAction <= int(config.seek.withjumps_after_ff_speed.getValue())): # use fastforward for the configured forwards speeds
-			self.setSeekState(self.makeStateForward(self.seekAction))
-
-	def seekFwd_old(self):
-		seek = self.getSeek()
-		if seek and not (seek.isCurrentlySeekable() & 2):
-			if not self.fast_winding_hint_message_showed and (seek.isCurrentlySeekable() & 1):
-				self.session.open(MessageBox, _("No fast winding possible yet.. but you can use the number buttons to skip forward/backward!"), MessageBox.TYPE_INFO, timeout=10)
-				self.fast_winding_hint_message_showed = True
-				return
-			return 0 # trade as unhandled action
-		if self.seekstate == self.SEEK_STATE_PLAY:
-			self.setSeekState(self.makeStateForward(int(config.seek.enter_forward.value)))
-		elif self.seekstate == self.SEEK_STATE_PAUSE:
-			if len(config.seek.speeds_slowmotion.value):
-				self.setSeekState(self.makeStateSlowMotion(config.seek.speeds_slowmotion.value[-1]))
-			else:
-				self.setSeekState(self.makeStateForward(int(config.seek.enter_forward.value)))
-		elif self.seekstate == self.SEEK_STATE_EOF:
-			pass
-		elif self.isStateForward(self.seekstate):
-			speed = self.seekstate[1]
-			if self.seekstate[2]:
-				speed /= self.seekstate[2]
-			speed = self.getHigher(speed, config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
-			self.setSeekState(self.makeStateForward(speed))
-		elif self.isStateBackward(self.seekstate):
-			speed = -self.seekstate[1]
-			if self.seekstate[2]:
-				speed /= self.seekstate[2]
-			speed = self.getLower(speed, config.seek.speeds_backward.value)
-			if speed:
-				self.setSeekState(self.makeStateBackward(speed))
-			else:
-				self.setSeekState(self.SEEK_STATE_PLAY)
-		elif self.isStateSlowMotion(self.seekstate):
-			speed = self.getLower(self.seekstate[2], config.seek.speeds_slowmotion.value) or config.seek.speeds_slowmotion.value[0]
-			self.setSeekState(self.makeStateSlowMotion(speed))
-
-	def seekBack_old(self):
-		seek = self.getSeek()
-		if seek and not (seek.isCurrentlySeekable() & 2):
-			if not self.fast_winding_hint_message_showed and (seek.isCurrentlySeekable() & 1):
-				self.session.open(MessageBox, _("No fast winding possible yet.. but you can use the number buttons to skip forward/backward!"), MessageBox.TYPE_INFO, timeout=10)
-				self.fast_winding_hint_message_showed = True
-				return
-			return 0 # trade as unhandled action
-		seekstate = self.seekstate
-		if seekstate == self.SEEK_STATE_PLAY:
-			self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
-		elif seekstate == self.SEEK_STATE_EOF:
-			self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
-			self.doSeekRelative(-6)
-		elif seekstate == self.SEEK_STATE_PAUSE:
-			self.doSeekRelative(-1)
-		elif self.isStateForward(seekstate):
-			speed = seekstate[1]
-			if seekstate[2]:
-				speed /= seekstate[2]
-			speed = self.getLower(speed, config.seek.speeds_forward.value)
-			if speed:
-				self.setSeekState(self.makeStateForward(speed))
-			else:
-				self.setSeekState(self.SEEK_STATE_PLAY)
-		elif self.isStateBackward(seekstate):
-			speed = -seekstate[1]
-			if seekstate[2]:
-				speed /= seekstate[2]
-			speed = self.getHigher(speed, config.seek.speeds_backward.value) or config.seek.speeds_backward.value[-1]
-			self.setSeekState(self.makeStateBackward(speed))
-		elif self.isStateSlowMotion(seekstate):
-			speed = self.getHigher(seekstate[2], config.seek.speeds_slowmotion.value)
-			if speed:
-				self.setSeekState(self.makeStateSlowMotion(speed))
-			else:
-				self.setSeekState(self.SEEK_STATE_PAUSE)
-		self.pts_lastseekspeed = self.seekstate[1]
-
-	def seekFwdManual(self, fwd=True):
-		if config.seek.baractivation.value == "leftright":
-			self.session.open(Seekbar, fwd)
-		else:
-			self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
-
-	def seekBackManual(self, fwd=False):
-		if config.seek.baractivation.value == "leftright":
-			self.session.open(Seekbar, fwd)
-		else:
-			self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
-
-	def seekFwdSeekbar(self, fwd=True):
-		if not config.seek.baractivation.value == "leftright":
-			self.session.open(Seekbar, fwd)
-		else:
-			self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
-
-	def fwdSeekTo(self, minutes):
-		self.doSeekRelative(minutes * 60 * 90000)
-
-	def seekBackSeekbar(self, fwd=False):
-		if not config.seek.baractivation.value == "leftright":
-			self.session.open(Seekbar, fwd)
-		else:
-			self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
-
-	def rwdSeekTo(self, minutes):
-#		print "rwdSeekTo"
-		self.doSeekRelative(-minutes * 60 * 90000)
-
-	def checkSkipShowHideLock(self):
-		if self.seekstate == self.SEEK_STATE_PLAY or self.seekstate == self.SEEK_STATE_EOF:
-			self.lockedBecauseOfSkipping = False
-			self.unlockShow()
-		else:
-			wantlock = self.seekstate != self.SEEK_STATE_PLAY
-			if config.usage.show_infobar_on_skip.value:
-				if self.lockedBecauseOfSkipping and not wantlock:
-					self.unlockShow()
-					self.lockedBecauseOfSkipping = False
-
-				if wantlock and not self.lockedBecauseOfSkipping:
-					self.lockShow()
-					self.lockedBecauseOfSkipping = True
-
-	def calcRemainingTime(self):
-		seekable = self.getSeek()
-		if seekable is not None:
-			len = seekable.getLength()
-			try:
-				tmp = self.cueGetEndCutPosition()
-				if tmp:
-					len = (False, tmp)
-			except:
-				pass
-			pos = seekable.getPlayPosition()
-			speednom = self.seekstate[1] or 1
-			speedden = self.seekstate[2] or 1
-			if not len[0] and not pos[0]:
-				if len[1] <= pos[1]:
-					return 0
-				time = (len[1] - pos[1])*speedden/(90*speednom)
-				return time
-		return False
-
-	def __evEOF(self):
-		if self.seekstate == self.SEEK_STATE_EOF:
-			return
-
-		global seek_withjumps_muted
-		if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
-			print "STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute"
-			seek_withjumps_muted = False
-			eDVBVolumecontrol.getInstance().volumeUnMute()
-
-		# if we are seeking forward, we try to end up ~1s before the end, and pause there.
-		seekstate = self.seekstate
-		if self.seekstate != self.SEEK_STATE_PAUSE:
-			self.setSeekState(self.SEEK_STATE_EOF)
-
-		if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE): # if we are seeking
-			seekable = self.getSeek()
-			if seekable is not None:
-				seekable.seekTo(-1)
-				self.doEofInternal(True)
-		if seekstate == self.SEEK_STATE_PLAY: # regular EOF
-			self.doEofInternal(True)
-		else:
-			self.doEofInternal(False)
-
-	def doEofInternal(self, playing):
-		pass		# Defined in subclasses
-
-	def __evSOF(self):
-		self.setSeekState(self.SEEK_STATE_PLAY)
-		self.doSeek(0)
+class InfoBarSeek():
+    SEEK_STATE_PLAY = (0, 0, 0, '>')
+    SEEK_STATE_PAUSE = (1, 0, 0, '||')
+    SEEK_STATE_EOF = (1, 0, 0, 'END')
+
+    def __init__(self, actionmap = 'InfobarSeekActions'):
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evSeekableStatusChanged: self.__seekableStatusChanged,
+         iPlayableService.evStart: self.__serviceStarted,
+         iPlayableService.evEOF: self.__evEOF,
+         iPlayableService.evSOF: self.__evSOF})
+        self.fast_winding_hint_message_showed = False
+
+        class InfoBarSeekActionMap(HelpableActionMap):
+
+            def __init__(self, screen, *args, **kwargs):
+                HelpableActionMap.__init__(self, screen, *args, **kwargs)
+                self.screen = screen
+
+            def action(self, contexts, action):
+                if action[:5] == 'seek:':
+                    time = int(action[5:])
+                    self.screen.doSeekRelative(time * 90000)
+                    return 1
+                elif action[:8] == 'seekdef:':
+                    key = int(action[8:])
+                    time = (-config.seek.selfdefined_13.value,
+                     False,
+                     config.seek.selfdefined_13.value,
+                     -config.seek.selfdefined_46.value,
+                     False,
+                     config.seek.selfdefined_46.value,
+                     -config.seek.selfdefined_79.value,
+                     False,
+                     config.seek.selfdefined_79.value)[key - 1]
+                    self.screen.doSeekRelative(time * 90000)
+                    return 1
+                else:
+                    return HelpableActionMap.action(self, contexts, action)
+
+        self['SeekActions'] = InfoBarSeekActionMap(self, actionmap, {'playpauseService': (self.playpauseService, _('Pause/Continue playback')),
+         'pauseService': (self.pauseService, _('Pause playback')),
+         'pauseServiceYellow': (self.pauseServiceYellow, _('Pause playback')),
+         'unPauseService': (self.unPauseService, _('Continue playback')),
+         'okButton': (self.okButton, _('Continue playback')),
+         'seekFwd': (self.seekFwd, _('Seek forward')),
+         'seekFwdManual': (self.seekFwdManual, _('Seek forward (enter time)')),
+         'seekBack': (self.seekBack, _('Seek backward')),
+         'seekBackManual': (self.seekBackManual, _('Seek backward (enter time)')),
+         'SeekbarFwd': self.seekFwdSeekbar,
+         'SeekbarBack': self.seekBackSeekbar}, prio=-1)
+        self['SeekActions'].setEnabled(False)
+        self['SeekActionsPTS'] = InfoBarSeekActionMap(self, 'InfobarSeekActionsPTS', {'playpauseService': self.playpauseService,
+         'pauseService': (self.pauseService, _('Pause playback')),
+         'pauseServiceYellow': (self.pauseServiceYellow, _('Pause playback')),
+         'unPauseService': (self.unPauseService, _('Continue playback')),
+         'seekFwd': (self.seekFwd, _('skip forward')),
+         'seekFwdManual': (self.seekFwdManual, _('skip forward (enter time)')),
+         'seekBack': (self.seekBack, _('skip backward')),
+         'seekBackManual': (self.seekBackManual, _('skip backward (enter time)'))}, prio=-1)
+        self['SeekActionsPTS'].setEnabled(False)
+        self.activity = 0
+        self.activityTimer = eTimer()
+        self.activityTimer.callback.append(self.doActivityTimer)
+        self.seekstate = self.SEEK_STATE_PLAY
+        self.lastseekstate = self.SEEK_STATE_PLAY
+        self.seekAction = 0
+        self.LastseekAction = False
+        self.onPlayStateChanged = []
+        self.lockedBecauseOfSkipping = False
+        self.__seekableStatusChanged()
+
+    def makeStateForward(self, n):
+        return (0,
+         n,
+         0,
+         '>> %dx' % n)
+
+    def makeStateBackward(self, n):
+        return (0,
+         -n,
+         0,
+         '<< %dx' % n)
+
+    def makeStateSlowMotion(self, n):
+        return (0,
+         0,
+         n,
+         '/%d' % n)
+
+    def isStateForward(self, state):
+        return state[1] > 1
+
+    def isStateBackward(self, state):
+        return state[1] < 0
+
+    def isStateSlowMotion(self, state):
+        return state[1] == 0 and state[2] > 1
+
+    def getHigher(self, n, lst):
+        for x in lst:
+            if x > n:
+                return x
+
+        return False
+
+    def getLower(self, n, lst):
+        lst = lst[:]
+        lst.reverse()
+        for x in lst:
+            if x < n:
+                return x
+
+        return False
+
+    def showAfterSeek(self):
+        if isinstance(self, InfoBarShowHide):
+            self.doShow()
+
+    def up(self):
+        pass
+
+    def down(self):
+        pass
+
+    def getSeek(self):
+        service = self.session.nav.getCurrentService()
+        if service is None:
+            return
+        else:
+            seek = service.seek()
+            if seek is None or not seek.isCurrentlySeekable():
+                return
+            return seek
+
+    def isSeekable(self):
+        if config.usage.enableVodMode.value:
+            name = None
+            if self.session.nav.getCurrentlyPlayingServiceReference():
+                url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
+                name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
+            ext = ['.3g2',
+             '.3gp',
+             '.asf',
+             '.asx',
+             '.avi',
+             '.flv',
+             '.m2ts',
+             '.mkv',
+             '.mov',
+             '.mp4',
+             '.mpg',
+             '.mpeg',
+             '.rm',
+             '.swf',
+             '.vob',
+             '.wmv']
+            if self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled() and name == False and str(url).endswith(tuple(ext)):
+                return False
+        elif self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled():
+            return False
+        return True
+
+    def __seekableStatusChanged(self):
+        global seek_withjumps_muted
+        if isStandardInfoBar(self) and self.timeshiftEnabled():
+            pass
+        elif not self.isSeekable():
+            SystemInfo['SeekStatePlay'] = False
+            if os.path.exists('/proc/stb/lcd/symbol_hdd'):
+                f = open('/proc/stb/lcd/symbol_hdd', 'w')
+                f.write('0')
+                f.close()
+            if os.path.exists('/proc/stb/lcd/symbol_hddprogress'):
+                f = open('/proc/stb/lcd/symbol_hddprogress', 'w')
+                f.write('0')
+                f.close()
+            self['SeekActions'].setEnabled(False)
+            self.setSeekState(self.SEEK_STATE_PLAY)
+        else:
+            self['SeekActions'].setEnabled(True)
+            self.activityTimer.start(int(config.seek.withjumps_repeat_ms.getValue()), False)
+            for c in self.onPlayStateChanged:
+                c(self.seekstate)
+
+        if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
+            print 'STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute'
+            seek_withjumps_muted = False
+            eDVBVolumecontrol.getInstance().volumeUnMute()
+
+    def doActivityTimer(self):
+        if self.isSeekable():
+            self.activity += 16
+            hdd = 1
+            if self.activity >= 100:
+                self.activity = 0
+            if SystemInfo['FrontpanelDisplay'] and SystemInfo['Display']:
+                if os.path.exists('/proc/stb/lcd/symbol_hdd'):
+                    if config.lcd.hdd.value == '1':
+                        file = open('/proc/stb/lcd/symbol_hdd', 'w')
+                        file.write('%d' % int(hdd))
+                        file.close()
+                if os.path.exists('/proc/stb/lcd/symbol_hddprogress'):
+                    if config.lcd.hdd.value == '1':
+                        file = open('/proc/stb/lcd/symbol_hddprogress', 'w')
+                        file.write('%d' % int(self.activity))
+                        file.close()
+        else:
+            self.activityTimer.stop()
+            self.activity = 0
+            hdd = 0
+            self.seekAction = 0
+        if os.path.exists('/proc/stb/lcd/symbol_hdd'):
+            if config.lcd.hdd.value == '1':
+                file = open('/proc/stb/lcd/symbol_hdd', 'w')
+                file.write('%d' % int(hdd))
+                file.close()
+        if os.path.exists('/proc/stb/lcd/symbol_hddprogress'):
+            if config.lcd.hdd.value == '1':
+                file = open('/proc/stb/lcd/symbol_hddprogress', 'w')
+                file.write('%d' % int(self.activity))
+                file.close()
+        if self.LastseekAction:
+            self.DoSeekAction()
+
+    def __serviceStarted(self):
+        self.fast_winding_hint_message_showed = False
+        self.setSeekState(self.SEEK_STATE_PLAY)
+        self.__seekableStatusChanged()
+
+    def setSeekState(self, state):
+        service = self.session.nav.getCurrentService()
+        if service is None:
+            return False
+        else:
+            if not self.isSeekable():
+                if state not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
+                    state = self.SEEK_STATE_PLAY
+            pauseable = service.pause()
+            if pauseable is None:
+                state = self.SEEK_STATE_PLAY
+            self.seekstate = state
+            if pauseable is not None:
+                if self.seekstate[0] and self.seekstate[3] == '||':
+                    self.activityTimer.stop()
+                    pauseable.pause()
+                elif self.seekstate[0] and self.seekstate[3] == 'END':
+                    self.activityTimer.stop()
+                elif self.seekstate[1]:
+                    if not pauseable.setFastForward(self.seekstate[1]):
+                        pass
+                    else:
+                        self.seekstate = self.SEEK_STATE_PLAY
+                elif self.seekstate[2]:
+                    if not pauseable.setSlowMotion(self.seekstate[2]):
+                        pass
+                    else:
+                        self.seekstate = self.SEEK_STATE_PAUSE
+                else:
+                    self.activityTimer.start(int(config.seek.withjumps_repeat_ms.getValue()), False)
+                    pauseable.unpause()
+            for c in self.onPlayStateChanged:
+                c(self.seekstate)
+
+            self.checkSkipShowHideLock()
+            if hasattr(self, 'ScreenSaverTimerStart'):
+                self.ScreenSaverTimerStart()
+            return True
+
+    def okButton(self):
+        if self.seekstate == self.SEEK_STATE_PLAY:
+            return 0
+        if self.seekstate == self.SEEK_STATE_PAUSE:
+            self.pauseService()
+        else:
+            self.unPauseService()
+
+    def playpauseService(self):
+        global seek_withjumps_muted
+        if self.seekAction != 0:
+            self.seekAction = 0
+            self.doPause(False)
+            seek_withjumps_muted = False
+            return
+        if self.seekstate == self.SEEK_STATE_PLAY:
+            self.pauseService()
+        elif self.seekstate == self.SEEK_STATE_PAUSE:
+            if config.seek.on_pause.value == 'play':
+                self.unPauseService()
+            elif config.seek.on_pause.value == 'step':
+                self.doSeekRelative(1)
+            elif config.seek.on_pause.value == 'last':
+                self.setSeekState(self.lastseekstate)
+                self.lastseekstate = self.SEEK_STATE_PLAY
+        else:
+            self.unPauseService()
+
+    def pauseService(self):
+        if self.seekstate != self.SEEK_STATE_EOF:
+            self.lastseekstate = self.seekstate
+        self.setSeekState(self.SEEK_STATE_PAUSE)
+
+    def pauseServiceYellow(self):
+        if self.seekstate != self.SEEK_STATE_EOF:
+            self.lastseekstate = self.seekstate
+            self.setSeekState(self.SEEK_STATE_PAUSE)
+
+    def unPauseService(self):
+        if self.seekstate == self.SEEK_STATE_PLAY:
+            if self.seekAction != 0:
+                self.playpauseService()
+            return
+        self.doPause(False)
+        self.setSeekState(self.SEEK_STATE_PLAY)
+
+    def doPause(self, pause):
+        if pause:
+            if not eDVBVolumecontrol.getInstance().isMuted():
+                eDVBVolumecontrol.getInstance().volumeMute()
+        elif eDVBVolumecontrol.getInstance().isMuted():
+            eDVBVolumecontrol.getInstance().volumeUnMute()
+
+    def doSeek(self, pts):
+        seekable = self.getSeek()
+        if seekable is None:
+            return
+        else:
+            seekable.seekTo(pts)
+            return
+
+    def doSeekRelativeAvoidStall(self, pts):
+        global jump_pts_adder
+        global jump_last_pos
+        global jump_last_pts
+        seekable = self.getSeek()
+        if seekable and config.seek.withjumps_avoid_zero.getValue():
+            position = seekable.getPlayPosition()
+            if jump_last_pos and jump_last_pts:
+                if abs(position[1] - jump_last_pos[1]) < 9000 and pts == jump_last_pts:
+                    jump_pts_adder += pts
+                    jump_last_pts = pts
+                    pts += jump_pts_adder
+                else:
+                    jump_pts_adder = 0
+                    jump_last_pts = pts
+            else:
+                jump_last_pts = pts
+            jump_last_pos = position
+        self.doSeekRelative(pts)
+
+    def doSeekRelative(self, pts):
+        try:
+            if "<class 'Screens.InfoBar.InfoBar'>" in `self`:
+                if InfoBarTimeshift.timeshiftEnabled(self):
+                    length = InfoBarTimeshift.ptsGetLength(self)
+                    position = InfoBarTimeshift.ptsGetPosition(self)
+                    if length is None or position is None:
+                        return
+                    if position + pts >= length:
+                        InfoBarTimeshift.evEOF(self, position + pts - length)
+                        return
+                    if position + pts < 0:
+                        InfoBarTimeshift.evSOF(self, position + pts)
+                        self.showAfterSeek()
+                        return
+        except:
+            from sys import exc_info
+            print "[InfoBarGenerics] error in 'def doSeekRelative'", exc_info()[:2]
+
+        seekable = self.getSeek()
+        if seekable is None or int(seekable.getLength()[1]) < 1:
+            return
+        else:
+            prevstate = self.seekstate
+            setpause = getMachineBuild() in ('hd51',) and 1
+            if self.seekstate == self.SEEK_STATE_EOF:
+                if prevstate == self.SEEK_STATE_PAUSE:
+                    self.setSeekState(self.SEEK_STATE_PAUSE)
+                else:
+                    self.setSeekState(self.SEEK_STATE_PLAY)
+            elif setpause and self.seekstate == self.SEEK_STATE_PAUSE:
+                print '[InfoBarGenerics] workaround jump in pause mode'
+                setpause = 2
+                self.setSeekState(self.SEEK_STATE_PLAY)
+            seekable.seekRelative(pts < 0 and -1 or 1, abs(pts))
+            if setpause == 2:
+                self.setSeekState(self.SEEK_STATE_PAUSE)
+            if abs(pts) > 100 and config.usage.show_infobar_on_skip.value:
+                self.showAfterSeek()
+            return
+
+    def DoSeekAction(self):
+        global seek_withjumps_muted
+        if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
+            self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_forwards_ms.getValue()) * 90)
+        elif self.seekAction < 0:
+            self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_backwards_ms.getValue()) * 90)
+        for c in self.onPlayStateChanged:
+            if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
+                c((0,
+                 self.seekAction,
+                 0,
+                 '>> %dx' % self.seekAction))
+            elif self.seekAction < 0:
+                c((0,
+                 self.seekAction,
+                 0,
+                 '<< %dx' % abs(self.seekAction)))
+
+        if self.seekAction == 0:
+            self.LastseekAction = False
+            self.doPause(False)
+            seek_withjumps_muted = False
+            self.setSeekState(self.SEEK_STATE_PLAY)
+
+    def isServiceTypeTS(self):
+        ref = self.session.nav.getCurrentlyPlayingServiceReference()
+        isTS = False
+        if ref is not None:
+            servincetype = ServiceReference(ref).getType()
+            if servincetype == 1:
+                isTS = True
+        return isTS
+
+    def seekFwd(self):
+        if config.seek.withjumps.value and not self.isServiceTypeTS():
+            self.seekFwd_new()
+        else:
+            self.seekFwd_old()
+
+    def seekBack(self):
+        if config.seek.withjumps.value and not self.isServiceTypeTS():
+            self.seekBack_new()
+        else:
+            self.seekBack_old()
+
+    def seekFwd_new(self):
+        global seek_withjumps_muted
+        self.LastseekAction = True
+        self.doPause(True)
+        seek_withjumps_muted = True
+        if self.seekAction >= 0:
+            self.seekAction = self.getHigher(abs(self.seekAction), config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
+        else:
+            self.seekAction = -self.getLower(abs(self.seekAction), config.seek.speeds_backward.value)
+        if self.seekAction > 1 and self.seekAction <= int(config.seek.withjumps_after_ff_speed.getValue()):
+            self.setSeekState(self.makeStateForward(self.seekAction))
+        elif self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
+            self.setSeekState(self.SEEK_STATE_PLAY)
+
+    def seekBack_new(self):
+        global seek_withjumps_muted
+        self.LastseekAction = True
+        self.doPause(True)
+        seek_withjumps_muted = True
+        if self.seekAction <= 0:
+            self.seekAction = -self.getHigher(abs(self.seekAction), config.seek.speeds_backward.value) or -config.seek.speeds_backward.value[-1]
+        else:
+            self.seekAction = self.getLower(abs(self.seekAction), config.seek.speeds_forward.value)
+        if self.seekAction > 1 and self.seekAction <= int(config.seek.withjumps_after_ff_speed.getValue()):
+            self.setSeekState(self.makeStateForward(self.seekAction))
+
+    def seekFwd_old(self):
+        seek = self.getSeek()
+        if seek and not seek.isCurrentlySeekable() & 2:
+            if not self.fast_winding_hint_message_showed and seek.isCurrentlySeekable() & 1:
+                self.session.open(MessageBox, _('No fast winding possible yet.. but you can use the number buttons to skip forward/backward!'), MessageBox.TYPE_INFO, timeout=10)
+                self.fast_winding_hint_message_showed = True
+                return
+            return 0
+        if self.seekstate == self.SEEK_STATE_PLAY:
+            self.setSeekState(self.makeStateForward(int(config.seek.enter_forward.value)))
+        elif self.seekstate == self.SEEK_STATE_PAUSE:
+            if len(config.seek.speeds_slowmotion.value):
+                self.setSeekState(self.makeStateSlowMotion(config.seek.speeds_slowmotion.value[-1]))
+            else:
+                self.setSeekState(self.makeStateForward(int(config.seek.enter_forward.value)))
+        elif self.seekstate == self.SEEK_STATE_EOF:
+            pass
+        elif self.isStateForward(self.seekstate):
+            speed = self.seekstate[1]
+            if self.seekstate[2]:
+                speed /= self.seekstate[2]
+            speed = self.getHigher(speed, config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
+            self.setSeekState(self.makeStateForward(speed))
+        elif self.isStateBackward(self.seekstate):
+            speed = -self.seekstate[1]
+            if self.seekstate[2]:
+                speed /= self.seekstate[2]
+            speed = self.getLower(speed, config.seek.speeds_backward.value)
+            if speed:
+                self.setSeekState(self.makeStateBackward(speed))
+            else:
+                self.setSeekState(self.SEEK_STATE_PLAY)
+        elif self.isStateSlowMotion(self.seekstate):
+            speed = self.getLower(self.seekstate[2], config.seek.speeds_slowmotion.value) or config.seek.speeds_slowmotion.value[0]
+            self.setSeekState(self.makeStateSlowMotion(speed))
+
+    def seekBack_old(self):
+        seek = self.getSeek()
+        if seek and not seek.isCurrentlySeekable() & 2:
+            if not self.fast_winding_hint_message_showed and seek.isCurrentlySeekable() & 1:
+                self.session.open(MessageBox, _('No fast winding possible yet.. but you can use the number buttons to skip forward/backward!'), MessageBox.TYPE_INFO, timeout=10)
+                self.fast_winding_hint_message_showed = True
+                return
+            return 0
+        seekstate = self.seekstate
+        if seekstate == self.SEEK_STATE_PLAY:
+            self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
+        elif seekstate == self.SEEK_STATE_EOF:
+            self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
+            self.doSeekRelative(-6)
+        elif seekstate == self.SEEK_STATE_PAUSE:
+            self.doSeekRelative(-1)
+        elif self.isStateForward(seekstate):
+            speed = seekstate[1]
+            if seekstate[2]:
+                speed /= seekstate[2]
+            speed = self.getLower(speed, config.seek.speeds_forward.value)
+            if speed:
+                self.setSeekState(self.makeStateForward(speed))
+            else:
+                self.setSeekState(self.SEEK_STATE_PLAY)
+        elif self.isStateBackward(seekstate):
+            speed = -seekstate[1]
+            if seekstate[2]:
+                speed /= seekstate[2]
+            speed = self.getHigher(speed, config.seek.speeds_backward.value) or config.seek.speeds_backward.value[-1]
+            self.setSeekState(self.makeStateBackward(speed))
+        elif self.isStateSlowMotion(seekstate):
+            speed = self.getHigher(seekstate[2], config.seek.speeds_slowmotion.value)
+            if speed:
+                self.setSeekState(self.makeStateSlowMotion(speed))
+            else:
+                self.setSeekState(self.SEEK_STATE_PAUSE)
+        self.pts_lastseekspeed = self.seekstate[1]
+
+    def seekFwdManual(self, fwd = True):
+        if config.seek.baractivation.value == 'leftright':
+            self.session.open(Seekbar, fwd)
+        else:
+            self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
+
+    def seekBackManual(self, fwd = False):
+        if config.seek.baractivation.value == 'leftright':
+            self.session.open(Seekbar, fwd)
+        else:
+            self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
+
+    def seekFwdSeekbar(self, fwd = True):
+        if not config.seek.baractivation.value == 'leftright':
+            self.session.open(Seekbar, fwd)
+        else:
+            self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
+
+    def fwdSeekTo(self, minutes):
+        self.doSeekRelative(minutes * 60 * 90000)
+
+    def seekBackSeekbar(self, fwd = False):
+        if not config.seek.baractivation.value == 'leftright':
+            self.session.open(Seekbar, fwd)
+        else:
+            self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
+
+    def rwdSeekTo(self, minutes):
+        self.doSeekRelative(-minutes * 60 * 90000)
+
+    def checkSkipShowHideLock(self):
+        if self.seekstate == self.SEEK_STATE_PLAY or self.seekstate == self.SEEK_STATE_EOF:
+            self.lockedBecauseOfSkipping = False
+            self.unlockShow()
+        else:
+            wantlock = self.seekstate != self.SEEK_STATE_PLAY
+            if config.usage.show_infobar_on_skip.value:
+                if self.lockedBecauseOfSkipping and not wantlock:
+                    self.unlockShow()
+                    self.lockedBecauseOfSkipping = False
+                if wantlock and not self.lockedBecauseOfSkipping:
+                    self.lockShow()
+                    self.lockedBecauseOfSkipping = True
+
+    def calcRemainingTime(self):
+        seekable = self.getSeek()
+        if seekable is not None:
+            len = seekable.getLength()
+            try:
+                tmp = self.cueGetEndCutPosition()
+                if tmp:
+                    len = (False, tmp)
+            except:
+                pass
+
+            pos = seekable.getPlayPosition()
+            speednom = self.seekstate[1] or 1
+            speedden = self.seekstate[2] or 1
+            if not len[0] and not pos[0]:
+                if len[1] <= pos[1]:
+                    return 0
+                time = (len[1] - pos[1]) * speedden / (90 * speednom)
+                return time
+        return False
+
+    def __evEOF(self):
+        global seek_withjumps_muted
+        if self.seekstate == self.SEEK_STATE_EOF:
+            return
+        else:
+            if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
+                print 'STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute'
+                seek_withjumps_muted = False
+                eDVBVolumecontrol.getInstance().volumeUnMute()
+            seekstate = self.seekstate
+            if self.seekstate != self.SEEK_STATE_PAUSE:
+                self.setSeekState(self.SEEK_STATE_EOF)
+            if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
+                seekable = self.getSeek()
+                if seekable is not None:
+                    seekable.seekTo(-1)
+                    self.doEofInternal(True)
+            if seekstate == self.SEEK_STATE_PLAY:
+                self.doEofInternal(True)
+            else:
+                self.doEofInternal(False)
+            return
+
+    def doEofInternal(self, playing):
+        pass
+
+    def __evSOF(self):
+        self.setSeekState(self.SEEK_STATE_PLAY)
+        self.doSeek(0)
 
 class InfoBarPVRState:
 	def __init__(self, screen=PVRState, force_show = False):
@@ -2898,33 +2909,88 @@ class InfoBarPVRState:
 			self._mayShow()
 
 class InfoBarTimeshiftState(InfoBarPVRState):
-	def __init__(self):
-		InfoBarPVRState.__init__(self, screen=TimeshiftState, force_show = True)
-		self.onPlayStateChanged.append(self.__timeshiftEventName)
-		self.onHide.append(self.__hideTimeshiftState)
 
-	def _mayShow(self):
-		if self.shown and self.timeshiftEnabled() and self.isSeekable():
-			InfoBarTimeshift.ptsSeekPointerSetCurrentPos(self)
-			if config.timeshift.showinfobar.value:
-				self["TimeshiftSeekPointerActions"].setEnabled(True)
-			self.pvrStateDialog.show()
-		if not self.isSeekable():
-			self.startHideTimer()
+    def __init__(self):
+        InfoBarPVRState.__init__(self, screen=TimeshiftState, force_show=True)
+        self.onPlayStateChanged.append(self.__timeshiftEventName)
+        self.onHide.append(self.__hideTimeshiftState)
 
-	def __hideTimeshiftState(self):
-		self["TimeshiftSeekPointerActions"].setEnabled(False)
-		self.pvrStateDialog.hide()
+    def _mayShow(self):
+        if config.usage.enableVodMode.value:
+            name = None
+            ext = ['.3g2',
+             '.3gp',
+             '.asf',
+             '.asx',
+             '.avi',
+             '.flv',
+             '.m2ts',
+             '.mkv',
+             '.mov',
+             '.mp4',
+             '.mpg',
+             '.mpeg',
+             '.rm',
+             '.swf',
+             '.vob',
+             '.wmv']
+            if self.session.nav.getCurrentlyPlayingServiceReference():
+                name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
+                url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
+        if self.shown and self.timeshiftEnabled() and self.isSeekable():
+            InfoBarTimeshift.ptsSeekPointerSetCurrentPos(self)
+            if config.timeshift.showinfobar.value:
+                self['TimeshiftSeekPointerActions'].setEnabled(True)
+            self.pvrStateDialog.show()
+        if config.usage.enableVodMode.value:
+            if name == True and self.isSeekable() and url.endswith(tuple(ext)):
+                InfoBarTimeshift.ptsSeekPointerSetCurrentPos(self)
+                if config.timeshift.showinfobar.value:
+                    self['TimeshiftSeekPointerActions'].setEnabled(True)
+                self.pvrStateDialog.show()
+        if not self.isSeekable():
+            self.startHideTimer()
+        return
 
-	def __timeshiftEventName(self,state):
-		if self.timeshiftEnabled() and os.path.exists("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value,self.pts_currplaying)):
-			readmetafile = open("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value,self.pts_currplaying), "r")
-			servicerefname = readmetafile.readline()[0:-1]
-			eventname = readmetafile.readline()[0:-1]
-			readmetafile.close()
-			self.pvrStateDialog["eventname"].setText(eventname)
-		else:
-			self.pvrStateDialog["eventname"].setText("")
+    def __hideTimeshiftState(self):
+        self['TimeshiftSeekPointerActions'].setEnabled(False)
+        self.pvrStateDialog.hide()
+
+    def __timeshiftEventName(self, state):
+        name = None
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            name = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
+            url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
+        if self.timeshiftEnabled() and os.path.exists('%spts_livebuffer_%s.meta' % (config.usage.timeshift_path.value, self.pts_currplaying)):
+            readmetafile = open('%spts_livebuffer_%s.meta' % (config.usage.timeshift_path.value, self.pts_currplaying), 'r')
+            servicerefname = readmetafile.readline()[0:-1]
+            eventname = readmetafile.readline()[0:-1]
+            readmetafile.close()
+            self.pvrStateDialog['eventname'].setText(eventname)
+        elif config.usage.enableVodMode.value:
+            ext = ['.3g2',
+             '.3gp',
+             '.asf',
+             '.asx',
+             '.avi',
+             '.flv',
+             '.m2ts',
+             '.mkv',
+             '.mov',
+             '.mp4',
+             '.mpg',
+             '.mpeg',
+             '.rm',
+             '.swf',
+             '.vob',
+             '.wmv']
+            if str(url).endswith(tuple(ext)):
+                self.pvrStateDialog['eventname'].setText(name)
+            else:
+                self.pvrStateDialog['eventname'].setText('')
+        else:
+            self.pvrStateDialog['eventname'].setText('')
+        return
 
 class InfoBarShowMovies:
 	# i don't really like this class.
@@ -3471,341 +3537,343 @@ class InfoBarPiP:
 		elif "stop" == use:
 			self.showPiP()
 
-class InfoBarInstantRecord:
-	"""Instant Record - handles the instantRecord action in order to
-	start/stop instant records"""
-	def __init__(self):
-		self["InstantRecordActions"] = HelpableActionMap(self, "InfobarInstantRecord",
-			{
-				"instantRecord": (self.instantRecord, _("Instant recording...")),
-			})
-		self.SelectedInstantServiceRef = None
-		if isStandardInfoBar(self):
-			self.recording = []
-		else:
-			from Screens.InfoBar import InfoBar
-			InfoBarInstance = InfoBar.instance
-			if InfoBarInstance:
-				self.recording = InfoBarInstance.recording
+class InfoBarInstantRecord():
 
-	def moveToTrash(self, entry):
-		print "[InfoBarGenerics] instantRecord stop and delete recording: ", entry.name
-		import Tools.Trashcan
-		trash = Tools.Trashcan.createTrashFolder(entry.Filename)
-		from MovieSelection import moveServiceFiles
-		moveServiceFiles(entry.Filename, trash, entry.name, allowCopy=False)
+    def __init__(self):
+        self['InstantRecordActions'] = HelpableActionMap(self, 'InfobarInstantRecord', {'instantRecord': (self.instantRecord, _('Instant recording...'))})
+        self.SelectedInstantServiceRef = None
+        if isStandardInfoBar(self):
+            self.recording = []
+        else:
+            from Screens.InfoBar import InfoBar
+            InfoBarInstance = InfoBar.instance
+            if InfoBarInstance:
+                self.recording = InfoBarInstance.recording
+        self.saveTimeshiftEventPopupActive = False
+        return
 
-	def stopCurrentRecording(self, entry = -1):
-		def confirm(answer=False):
-			if answer:
-				self.session.nav.RecordTimer.removeEntry(self.recording[entry])
-				if self.deleteRecording:
-					self.moveToTrash(self.recording[entry])
-				self.recording.remove(self.recording[entry])
-		if entry is not None and entry != -1:
-			msg =  _("Stop recording:")
-			if self.deleteRecording:
-				msg = _("Stop and delete recording:")
-			msg += "\n"
-			msg += " - " + self.recording[entry].name + "\n"
-			self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
+    def moveToTrash(self, entry):
+        print '[InfoBarGenerics] instantRecord stop and delete recording: ', entry.name
+        import Tools.Trashcan
+        trash = Tools.Trashcan.createTrashFolder(entry.Filename)
+        from MovieSelection import moveServiceFiles
+        moveServiceFiles(entry.Filename, trash, entry.name, allowCopy=False)
 
-	def stopAllCurrentRecordings(self, list):
-		def confirm(answer=False):
-			if answer:
-				for entry in list:
-					self.session.nav.RecordTimer.removeEntry(entry[0])
-					self.recording.remove(entry[0])
-					if self.deleteRecording:
-						self.moveToTrash(entry[0])
-		msg =  _("Stop recordings:")
-		if self.deleteRecording:
-			msg = _("Stop and delete recordings:")
-		msg += "\n"
-		for entry in list:
-			msg += " - " + entry[0].name + "\n"
-		self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
+    def stopCurrentRecording(self, entry = -1):
 
-	def getProgramInfoAndEvent(self, info, name):
-		info["serviceref"] = hasattr(self, "SelectedInstantServiceRef") and self.SelectedInstantServiceRef or self.session.nav.getCurrentlyPlayingServiceOrGroup()
+        def confirm(answer = False):
+            if answer:
+                self.session.nav.RecordTimer.removeEntry(self.recording[entry])
+                if self.deleteRecording:
+                    self.moveToTrash(self.recording[entry])
+                self.recording.remove(self.recording[entry])
 
-		# try to get event info
-		event = None
-		try:
-			epg = eEPGCache.getInstance()
-			event = epg.lookupEventTime(info["serviceref"], -1, 0)
-			if event is None:
-				if hasattr(self, "SelectedInstantServiceRef") and self.SelectedInstantServiceRef:
-					service_info = eServiceCenter.getInstance().info(self.SelectedInstantServiceRef)
-					event = service_info and service_info.getEvent(self.SelectedInstantServiceRef)
-				else:
-					service = self.session.nav.getCurrentService()
-					event = service and service.info().getEvent(0)
-		except:
-			pass
+        if entry is not None and entry != -1:
+            msg = _('Stop recording:')
+            if self.deleteRecording:
+                msg = _('Stop and delete recording:')
+            msg += '\n'
+            msg += ' - ' + self.recording[entry].name + '\n'
+            self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
+        return
 
-		info["event"] = event
-		info["name"]  = name
-		info["description"] = ""
-		info["eventid"] = None
+    def stopAllCurrentRecordings(self, list):
 
-		if event is not None:
-			curEvent = parseEvent(event)
-			info["name"] = curEvent[2]
-			info["description"] = curEvent[3]
-			info["eventid"] = curEvent[4]
-			info["end"] = curEvent[1]
+        def confirm(answer = False):
+            if answer:
+                for entry in list:
+                    self.session.nav.RecordTimer.removeEntry(entry[0])
+                    self.recording.remove(entry[0])
+                    if self.deleteRecording:
+                        self.moveToTrash(entry[0])
 
-	def startInstantRecording(self, limitEvent = False):
-		begin = int(time())
-		end = begin + 3600 # dummy
-		name = "instant record"
-		info = { }
+        msg = _('Stop recordings:')
+        if self.deleteRecording:
+            msg = _('Stop and delete recordings:')
+        msg += '\n'
+        for entry in list:
+            msg += ' - ' + entry[0].name + '\n'
 
-		self.getProgramInfoAndEvent(info, name)
-		serviceref = info["serviceref"]
-		event = info["event"]
+        self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
 
-		if event is not None:
-			if limitEvent:
-				end = info["end"]
-		else:
-			if limitEvent:
-				self.session.open(MessageBox, _("No event info found, recording indefinitely."), MessageBox.TYPE_INFO)
+    def getProgramInfoAndEvent(self, info, name):
+        info['serviceref'] = hasattr(self, 'SelectedInstantServiceRef') and self.SelectedInstantServiceRef or self.session.nav.getCurrentlyPlayingServiceOrGroup()
+        event = None
+        try:
+            epg = eEPGCache.getInstance()
+            event = epg.lookupEventTime(info['serviceref'], -1, 0)
+            if event is None:
+                if hasattr(self, 'SelectedInstantServiceRef') and self.SelectedInstantServiceRef:
+                    service_info = eServiceCenter.getInstance().info(self.SelectedInstantServiceRef)
+                    event = service_info and service_info.getEvent(self.SelectedInstantServiceRef)
+                else:
+                    service = self.session.nav.getCurrentService()
+                    event = service and service.info().getEvent(0)
+        except:
+            pass
 
-		if isinstance(serviceref, eServiceReference):
-			serviceref = ServiceReference(serviceref)
+        info['event'] = event
+        info['name'] = name
+        info['description'] = ''
+        info['eventid'] = None
+        if event is not None:
+            curEvent = parseEvent(event)
+            info['name'] = curEvent[2]
+            info['description'] = curEvent[3]
+            info['eventid'] = curEvent[4]
+            info['end'] = curEvent[1]
+        return
 
-		recording = RecordTimerEntry(serviceref, begin, end, info["name"], info["description"], info["eventid"], dirname = preferredInstantRecordPath())
-		recording.dontSave = True
+    def startInstantRecording(self, limitEvent = False):
+        begin = int(time())
+        end = begin + 3600
+        name = 'instant record'
+        info = {}
+        self.getProgramInfoAndEvent(info, name)
+        serviceref = info['serviceref']
+        event = info['event']
+        if event is not None:
+            if limitEvent:
+                end = info['end']
+        elif limitEvent:
+            self.session.open(MessageBox, _('No event info found, recording indefinitely.'), MessageBox.TYPE_INFO)
+        if isinstance(serviceref, eServiceReference):
+            serviceref = ServiceReference(serviceref)
+        recording = RecordTimerEntry(serviceref, begin, end, info['name'], info['description'], info['eventid'], afterEvent=AFTEREVENT.AUTO, justplay=False, always_zap=False, dirname=preferredInstantRecordPath())
+        recording.dontSave = True
+        if event is None or limitEvent == False:
+            recording.autoincrease = True
+            recording.setAutoincreaseEnd()
+        simulTimerList = self.session.nav.RecordTimer.record(recording)
+        if simulTimerList is None:
+            recording.autoincrease = False
+            self.recording.append(recording)
+        else:
+            if len(simulTimerList) > 1:
+                name = simulTimerList[1].name
+                name_date = ' '.join((name, strftime('%F %T', localtime(simulTimerList[1].begin))))
+                recording.autoincrease = True
+                if recording.setAutoincreaseEnd():
+                    self.session.nav.RecordTimer.record(recording)
+                    self.recording.append(recording)
+                    self.session.open(MessageBox, _('Record time limited due to conflicting timer %s') % name_date, MessageBox.TYPE_INFO)
+                else:
+                    self.session.open(MessageBox, _('Could not record due to a conflicting timer %s') % name, MessageBox.TYPE_INFO)
+            else:
+                self.session.open(MessageBox, _('Could not record due to an invalid service %s') % serviceref, MessageBox.TYPE_INFO)
+            recording.autoincrease = False
+        return
 
-		if event is None or limitEvent == False:
-			recording.autoincrease = True
-			recording.setAutoincreaseEnd()
+    def isInstantRecordRunning(self):
+        if self.recording:
+            for x in self.recording:
+                if x.isRunning():
+                    return True
 
-		simulTimerList = self.session.nav.RecordTimer.record(recording)
+        return False
 
-		if simulTimerList is None:	# no conflict
-			recording.autoincrease = False
-			self.recording.append(recording)
-		else:
-			if len(simulTimerList) > 1: # with other recording
-				name = simulTimerList[1].name
-				name_date = ' '.join((name, strftime('%F %T', localtime(simulTimerList[1].begin))))
-				# print "[TIMER] conflicts with", name_date
-				recording.autoincrease = True	# start with max available length, then increment
-				if recording.setAutoincreaseEnd():
-					self.session.nav.RecordTimer.record(recording)
-					self.recording.append(recording)
-					self.session.open(MessageBox, _("Record time limited due to conflicting timer %s") % name_date, MessageBox.TYPE_INFO)
-				else:
-					self.session.open(MessageBox, _("Could not record due to conflicting timer %s") % name, MessageBox.TYPE_INFO)
-			else:
-				self.session.open(MessageBox, _("Could not record due to invalid service %s") % serviceref, MessageBox.TYPE_INFO)
-			recording.autoincrease = False
+    def recordQuestionCallback(self, answer):
+        if answer is None or answer[1] == 'no':
+            self.saveTimeshiftEventPopupActive = False
+            return
+        else:
+            list = []
+            recording = self.recording[:]
+            for x in recording:
+                if x not in self.session.nav.RecordTimer.timer_list:
+                    self.recording.remove(x)
+                elif x.dontSave and x.isRunning():
+                    list.append((x, False))
 
-	def isInstantRecordRunning(self):
-#		print "self.recording:", self.recording
-		if self.recording:
-			for x in self.recording:
-				if x.isRunning():
-					return True
-		return False
+            self.deleteRecording = False
+            if answer[1] == 'changeduration':
+                if len(self.recording) == 1:
+                    self.changeDuration(0)
+                else:
+                    self.session.openWithCallback(self.changeDuration, TimerSelection, list)
+            elif answer[1] == 'addrecordingtime':
+                if len(self.recording) == 1:
+                    self.addRecordingTime(0)
+                else:
+                    self.session.openWithCallback(self.addRecordingTime, TimerSelection, list)
+            elif answer[1] == 'changeendtime':
+                if len(self.recording) == 1:
+                    self.setEndtime(0)
+                else:
+                    self.session.openWithCallback(self.setEndtime, TimerSelection, list)
+            elif answer[1] == 'timer':
+                import TimerEdit
+                self.session.open(TimerEdit.TimerEditList)
+            elif answer[1] == 'stop':
+                if len(self.recording) == 1:
+                    self.stopCurrentRecording(0)
+                else:
+                    self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
+            elif answer[1] == 'stopdelete':
+                self.deleteRecording = True
+                if len(self.recording) == 1:
+                    self.stopCurrentRecording(0)
+                else:
+                    self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
+            elif answer[1] == 'stopall':
+                self.stopAllCurrentRecordings(list)
+            elif answer[1] == 'stopdeleteall':
+                self.deleteRecording = True
+                self.stopAllCurrentRecordings(list)
+            elif answer[1] in ('indefinitely', 'manualduration', 'manualendtime', 'event'):
+                self.startInstantRecording(limitEvent=answer[1] in ('event', 'manualendtime') or False)
+                if answer[1] == 'manualduration':
+                    self.changeDuration(len(self.recording) - 1)
+                elif answer[1] == 'manualendtime':
+                    self.setEndtime(len(self.recording) - 1)
+            elif answer[1] == 'savetimeshift':
+                if self.isSeekable() and self.pts_eventcount != self.pts_currplaying:
+                    InfoBarTimeshift.SaveTimeshift(self, timeshiftfile='pts_livebuffer_%s' % self.pts_currplaying)
+                else:
+                    Notifications.AddNotification(MessageBox, _('Timeshift will get saved at the end of an event!'), MessageBox.TYPE_INFO, timeout=5)
+                    self.save_current_timeshift = True
+                    config.timeshift.isRecording.value = True
+            elif answer[1] == 'savetimeshiftEvent':
+                InfoBarTimeshift.saveTimeshiftEventPopup(self)
+            elif answer[1].startswith('pts_livebuffer') is True:
+                InfoBarTimeshift.SaveTimeshift(self, timeshiftfile=answer[1])
+            elif answer[1] == 'downloadvod':
+                self.saveTimeshiftEventPopupActive = False
+                name = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
+                url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
+                if url:
+                    import urllib2
+                    from OPENDROID.OPD_panel import FileDownloadJob
+                    from Screens.TaskView import JobView
+                    try:
+                        u = urllib2.urlopen(url)
+                    except:
+                        self.session.open(MessageBox, _('The URL to this image is not correct !!'), type=MessageBox.TYPE_ERROR)
 
-	def recordQuestionCallback(self, answer):
-		# print 'recordQuestionCallback'
-#		print "pre:\n", self.recording
+                    file_name = config.usage.vod_path.value + '/' + name.replace(' ', '_') + '.mkv'
+                    f = open(file_name, 'wb')
+                    f.close()
+                    job = FileDownloadJob(url, file_name, name.replace(' ', '_'))
+                    job.afterEvent = 'close'
+                    job_manager.AddJob(job)
+                    job_manager.in_background = True
+                    self.session.open(MessageBox, _('Downloading starded - VOD: ' + name.replace('_', ' ')), MessageBox.TYPE_INFO, timeout=5)
+                else:
+                    self.session.open(MessageBox, _('Downloading filed, test another VOD title'), MessageBox.TYPE_INFO, timeout=5)
+            if answer[1] != 'savetimeshiftEvent':
+                self.saveTimeshiftEventPopupActive = False
+            return
 
-		# print 'test1'
-		if answer is None or answer[1] == "no":
-			# print 'test2'
-			return
-		list = []
-		recording = self.recording[:]
-		for x in recording:
-			if not x in self.session.nav.RecordTimer.timer_list:
-				self.recording.remove(x)
-			elif x.dontSave and x.isRunning():
-				list.append((x, False))
+    def setEndtime(self, entry):
+        if entry is not None and entry >= 0:
+            self.selectedEntry = entry
+            self.endtime = ConfigClock(default=self.recording[self.selectedEntry].end)
+            dlg = self.session.openWithCallback(self.TimeDateInputClosed, TimeDateInput, self.endtime)
+            dlg.setTitle(_('Please change the recording end time'))
+        return
 
-		self.deleteRecording = False
-		if answer[1] == "changeduration":
-			if len(self.recording) == 1:
-				self.changeDuration(0)
-			else:
-				self.session.openWithCallback(self.changeDuration, TimerSelection, list)
-		elif answer[1] == "addrecordingtime":
-			if len(self.recording) == 1:
-				self.addRecordingTime(0)
-			else:
-				self.session.openWithCallback(self.addRecordingTime, TimerSelection, list)
-		elif answer[1] == "changeendtime":
-			if len(self.recording) == 1:
-				self.setEndtime(0)
-			else:
-				self.session.openWithCallback(self.setEndtime, TimerSelection, list)
-		elif answer[1] == "timer":
-			import TimerEdit
-			self.session.open(TimerEdit.TimerEditList)
-		elif answer[1] == "stop":
-			if len(self.recording) == 1:
-				self.stopCurrentRecording(0)
-			else:
-				self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
-		elif answer[1] == "stopdelete":
-			self.deleteRecording = True
-			if len(self.recording) == 1:
-				self.stopCurrentRecording(0)
-			else:
-				self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
-		elif answer[1] == "stopall":
-			self.stopAllCurrentRecordings(list)
-		elif answer[1] == "stopdeleteall":
-			self.deleteRecording = True
-			self.stopAllCurrentRecordings(list)
-		elif answer[1] in ( "indefinitely" , "manualduration", "manualendtime", "event"):
-			self.startInstantRecording(limitEvent = answer[1] in ("event", "manualendtime") or False)
-			if answer[1] == "manualduration":
-				self.changeDuration(len(self.recording)-1)
-			elif answer[1] == "manualendtime":
-				self.setEndtime(len(self.recording)-1)
-		elif answer[1] == "savetimeshift":
-			# print 'test1'
-			if self.isSeekable() and self.pts_eventcount != self.pts_currplaying:
-				# print 'test2'
-				# noinspection PyCallByClass
-				InfoBarTimeshift.SaveTimeshift(self, timeshiftfile="pts_livebuffer_%s" % self.pts_currplaying)
-			else:
-				# print 'test3'
-				Notifications.AddNotification(MessageBox,_("Timeshift will get saved at the end of an event!"), MessageBox.TYPE_INFO, timeout=5)
-				self.save_current_timeshift = True
-				config.timeshift.isRecording.value = True
-		elif answer[1] == "savetimeshiftEvent":
-			# print 'test4'
-			# noinspection PyCallByClass
-			InfoBarTimeshift.saveTimeshiftEventPopup(self)
+    def TimeDateInputClosed(self, ret):
+        if len(ret) > 1:
+            if ret[0]:
+                if self.recording[self.selectedEntry].end != ret[1]:
+                    self.recording[self.selectedEntry].autoincrease = False
+                self.recording[self.selectedEntry].end = ret[1]
+                self.session.nav.RecordTimer.timeChanged(self.recording[self.selectedEntry])
 
-		elif answer[1].startswith("pts_livebuffer") is True:
-			# print 'test2'
-			# noinspection PyCallByClass
-			InfoBarTimeshift.SaveTimeshift(self, timeshiftfile=answer[1])
+    def changeDuration(self, entry):
+        if entry is not None and entry >= 0:
+            self.selectedEntry = entry
+            self.session.openWithCallback(self.inputCallback, InputBox, title=_('How many minutes do you want to record for?'), text='5  ', maxSize=True, type=Input.NUMBER)
+        return
 
-	def setEndtime(self, entry):
-		if entry is not None and entry >= 0:
-			self.selectedEntry = entry
-			self.endtime=ConfigClock(default = self.recording[self.selectedEntry].end)
-			dlg = self.session.openWithCallback(self.TimeDateInputClosed, TimeDateInput, self.endtime)
-			dlg.setTitle(_("Please change the recording end time"))
+    def addRecordingTime(self, entry):
+        if entry is not None and entry >= 0:
+            self.selectedEntry = entry
+            self.session.openWithCallback(self.inputAddRecordingTime, InputBox, title=_('How many minutes do you want add to the recording?'), text='5  ', maxSize=True, type=Input.NUMBER)
+        return
 
-	def TimeDateInputClosed(self, ret):
-		if len(ret) > 1:
-			if ret[0]:
-#				print "stopping recording at", strftime("%F %T", localtime(ret[1]))
-				if self.recording[self.selectedEntry].end != ret[1]:
-					self.recording[self.selectedEntry].autoincrease = False
-				self.recording[self.selectedEntry].end = ret[1]
-		else:
-			if self.recording[self.selectedEntry].end != int(time()):
-				self.recording[self.selectedEntry].autoincrease = False
-			self.recording[self.selectedEntry].end = int(time())
-		self.session.nav.RecordTimer.timeChanged(self.recording[self.selectedEntry])
+    def inputAddRecordingTime(self, value):
+        if value:
+            print '[InfoBarGenerics] added', int(value), 'minutes for recording.'
+            entry = self.recording[self.selectedEntry]
+            if int(value) != 0:
+                entry.autoincrease = False
+            entry.end += 60 * int(value)
+            self.session.nav.RecordTimer.timeChanged(entry)
 
-	def changeDuration(self, entry):
-		if entry is not None and entry >= 0:
-			self.selectedEntry = entry
-			self.session.openWithCallback(self.inputCallback, InputBox, title=_("How many minutes do you want to record for?"), text="5  ", maxSize=True, type=Input.NUMBER)
+    def inputCallback(self, value):
+        entry = self.recording[self.selectedEntry]
+        if value is not None:
+            print '[InfoBarGenerics] stopping recording after', int(value), 'minutes.'
+            if int(value) != 0:
+                entry.autoincrease = False
+            entry.end = int(time()) + 60 * int(value)
+            self.session.nav.RecordTimer.timeChanged(entry)
+        return
 
-	def addRecordingTime(self, entry):
-		if entry is not None and entry >= 0:
-			self.selectedEntry = entry
-			self.session.openWithCallback(self.inputAddRecordingTime, InputBox, title=_("How many minutes do you want add to the recording?"), text="5  ", maxSize=True, type=Input.NUMBER)
+    def isTimerRecordRunning(self):
+        identical = timers = 0
+        for timer in self.session.nav.RecordTimer.timer_list:
+            if timer.isRunning() and not timer.justplay:
+                timers += 1
+                if self.recording:
+                    for x in self.recording:
+                        if x.isRunning() and x == timer:
+                            identical += 1
 
-	def inputAddRecordingTime(self, value):
-		if value:
-			print "[InfoBarGenerics] added", int(value), "minutes for recording."
-			entry = self.recording[self.selectedEntry]
-			if int(value) != 0:
-				entry.autoincrease = False
-			entry.end += 60 * int(value)
-			self.session.nav.RecordTimer.timeChanged(entry)
+        return timers > identical
 
-	def inputCallback(self, value):
-		entry = self.recording[self.selectedEntry]
-		if value is not None:
-			print "[InfoBarGenerics] stopping recording after", int(value), "minutes."
-			if int(value) != 0:
-				entry.autoincrease = False
-			entry.end = int(time()) + 60 * int(value)
-		else:
-			if entry.end != int(time()):
-				entry.autoincrease = False
-			entry.end = int(time())
-		self.session.nav.RecordTimer.timeChanged(entry)
+    def instantRecord(self, serviceRef = None):
+        self.SelectedInstantServiceRef = serviceRef
+        pirr = preferredInstantRecordPath()
+        if not findSafeRecordPath(pirr) and not findSafeRecordPath(defaultMoviePath()):
+            if not pirr:
+                pirr = ''
+            self.session.open(MessageBox, _('Missing ') + '\n' + pirr + '\n' + _('No HDD found or HDD not initialized!'), MessageBox.TYPE_ERROR)
+            return
+        if isStandardInfoBar(self):
+            commonVOD = ((_('Download (remember to switch to a channel DVB-S2/T/T2/C)'), 'downloadvod'), (_('Add recording (stop after current event)'), 'event'))
+            common = ((_('Add recording (stop after current event)'), 'event'),
+             (_('Add recording (indefinitely)'), 'indefinitely'),
+             (_('Add recording (enter recording duration)'), 'manualduration'),
+             (_('Add recording (enter recording endtime)'), 'manualendtime'))
+            timeshiftcommon = ((_('Timeshift save recording (stop after current event)'), 'savetimeshift'), (_('Timeshift save recording (Select event)'), 'savetimeshiftEvent'))
+        else:
+            common = ()
+            commonVOD = ()
+            timeshiftcommon = ()
+        if self.isInstantRecordRunning():
+            title = _('A recording is currently in progress.\nWhat do you want to do?')
+            list = common + ((_('Change recording (duration)'), 'changeduration'), (_('Change recording (add time)'), 'addrecordingtime'), (_('Change recording (end time)'), 'changeendtime'))
+            list += ((_('Stop recording'), 'stop'),)
+            if config.usage.movielist_trashcan.value:
+                list += ((_('Stop and delete recording'), 'stopdelete'),)
+            if len(self.recording) > 1:
+                list += ((_('Stop all current recordings'), 'stopall'),)
+                if config.usage.movielist_trashcan.value:
+                    list += ((_('Stop and delete all current recordings'), 'stopdeleteall'),)
+            if self.isTimerRecordRunning():
+                list += ((_('Stop timer recording'), 'timer'),)
+        else:
+            if self.session.nav.getCurrentlyPlayingServiceReference():
+                name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
+            if name == True:
+                title = _('Start recording?')
+                list = commonVOD
+            else:
+                title = _('Start recording?')
+                list = common
+            if self.isTimerRecordRunning():
+                list += ((_('Stop timer recording'), 'timer'),)
+        if isStandardInfoBar(self) and self.timeshiftEnabled():
+            list = list + timeshiftcommon
+        if isStandardInfoBar(self):
+            list = list + ((_('Do not record'), 'no'),)
+        if list:
+            self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, title=title, list=list)
+        else:
+            return 0
 
-	def isTimerRecordRunning(self):
-		identical = timers = 0
-		for timer in self.session.nav.RecordTimer.timer_list:
-			if timer.isRunning() and not timer.justplay:
-				timers += 1
-				if self.recording:
-					for x in self.recording:
-						if x.isRunning() and x == timer:
-							identical += 1
-		return timers > identical
-
-	def instantRecord(self, serviceRef=None):
-		self.SelectedInstantServiceRef = serviceRef
-		pirr = preferredInstantRecordPath()
-		if not findSafeRecordPath(pirr) and not findSafeRecordPath(defaultMoviePath()):
-			if not pirr:
-				pirr = ""
-			self.session.open(MessageBox, _("Missing ") + "\n" + pirr +
-						 "\n" + _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
-			return
-
-		if isStandardInfoBar(self):
-			common = ((_("Add recording (stop after current event)"), "event"),
-				(_("Add recording (indefinitely)"), "indefinitely"),
-				(_("Add recording (enter recording duration)"), "manualduration"),
-				(_("Add recording (enter recording endtime)"), "manualendtime"),)
-
-			timeshiftcommon = ((_("Timeshift save recording (stop after current event)"), "savetimeshift"),
-				(_("Timeshift save recording (Select event)"), "savetimeshiftEvent"),)
-		else:
-			common = ()
-			timeshiftcommon = ()
-
-		if self.isInstantRecordRunning():
-			title =_("A recording is currently in progress.\nWhat do you want to do?")
-			list = common + \
-				((_("Change recording (duration)"), "changeduration"),
-				(_("Change recording (add time)"), "addrecordingtime"),
-				(_("Change recording (end time)"), "changeendtime"),)
-			list += ((_("Stop recording"), "stop"),)
-			if config.usage.movielist_trashcan.value:
-				list += ((_("Stop and delete recording"), "stopdelete"),)
-			if len(self.recording) > 1:
-				list += ((_("Stop all current recordings"), "stopall"),)
-				if config.usage.movielist_trashcan.value:
-					list += ((_("Stop and delete all current recordings"), "stopdeleteall"),)
-			if self.isTimerRecordRunning():
-				list += ((_("Stop timer recording"), "timer"),)
-		else:
-			title=_("Start recording?")
-			list = common
-
-			if self.isTimerRecordRunning():
-				list += ((_("Stop timer recording"), "timer"),)
-		if isStandardInfoBar(self) and self.timeshiftEnabled():
-			list = list + timeshiftcommon
-
-		if isStandardInfoBar(self):
-			list = list + ((_("Do not record"), "no"),)
-
-		if list:
-			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox,title=title,list=list)
-		else:
-			return 0
 
 class InfoBarAudioSelection:
 	def __init__(self):
