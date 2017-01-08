@@ -2902,12 +2902,16 @@ void eDVBServicePlay::updateDecoder(bool sendSeekableStateChanged)
 		m_current_video_pid_type = vpidtype;
 		m_have_video_pid = (vpid > 0 && vpid < 0x2000);
 
-		if (!(m_is_pvr || m_is_stream || m_timeshift_active || (pcrpid == 0x1FFF)))
-			m_decoder->setSyncPCR(pcrpid);
-		else
-			m_decoder->setSyncPCR(-1);
-
 		selectAudioStream();
+
+#if HAVE_AMLOGIC
+			m_decoder->setSyncPCR(pcrpid);
+#else
+			if (!(m_is_pvr || m_is_stream || m_timeshift_active))
+				m_decoder->setSyncPCR(pcrpid);
+			else
+				m_decoder->setSyncPCR(-1);
+#endif
 
 		if (m_decoder_index == 0)
 		{
