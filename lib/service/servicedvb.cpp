@@ -2178,22 +2178,6 @@ int eDVBServicePlay::selectAudioStream(int i)
 
 	m_current_audio_pid = apid;
 
-	pts_t a_pts, v_pts;
-	a_pts = v_pts = 0;
-	m_decoder->getPTS(2, a_pts);
-	m_decoder->getPTS(1, v_pts);
-	eDebug("a: %lld   v: %lld  %lld",a_pts, v_pts, a_pts-v_pts);
-	bool radio_workaround = false;
-	if(v_pts && a_pts && (abs(a_pts-v_pts) > 2* 90000))
-		radio_workaround = true;
-
-	if(radio_workaround)
-		if (m_decoder->setAudioPID(-1, 0))
-		{
-			eDebug("set audio pid failed");
-			return -4;
-		}
-
 	if (m_decoder->setAudioPID(apid, apidtype))
 	{
 		eDebug("set audio pid failed");
@@ -2223,9 +2207,6 @@ int eDVBServicePlay::selectAudioStream(int i)
 			}
 		}
 	}
-
-	if(radio_workaround)
-		m_decoder->setSyncPCR(-1);
 
 			/* store new pid as default only when:
 				a.) we have an entry in the service db for the current service,
@@ -2836,10 +2817,10 @@ void eDVBServicePlay::updateDecoder(bool sendSeekableStateChanged)
 			}
 			eDebugNoNewLine(")");
 		}
+		eDebugNoNewLine(", and the pcr pid is %04x", program.pcrPid);
 		pcrpid = program.pcrPid;
-		eDebugNoNewLine(", and the pcr pid is %04x", pcrpid);
+		eDebugNoNewLineEnd(", and the text pid is %04x", program.textPid);
 		tpid = program.textPid;
-		eDebugNoNewLineEnd(", and the text pid is %04x", tpid);
 	}
 
 	m_have_video_pid = 0;
@@ -3490,6 +3471,7 @@ void eDVBServicePlay::setAC3Delay(int delay)
 	if (m_decoder)
 	{
 		m_decoder->setAC3Delay(delay + eConfigManager::getConfigIntValue("config.av.generalAC3delay"));
+		eDebug("Setting audio delay: setAC3Delay, %d + %d", delay,eConfigManager::getConfigIntValue("config.av.generalAC3delay"));
 	}
 }
 
@@ -3500,6 +3482,7 @@ void eDVBServicePlay::setPCMDelay(int delay)
 	if (m_decoder)
 	{
 		m_decoder->setPCMDelay(delay + eConfigManager::getConfigIntValue("config.av.generalPCMdelay"));
+		eDebug("Setting audio delay: setPCMDelay, %d + %d", delay,eConfigManager::getConfigIntValue("config.av.generalPCMdelay"));
 	}
 }
 
