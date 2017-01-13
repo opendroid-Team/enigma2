@@ -288,7 +288,6 @@ RESULT eDVBFrontendParameters::calculateDifference(const iDVBFrontendParameters 
 			eDVBFrontendParametersSatellite osat;
 			if (parm->getDVBS(osat))
 				return -2;
-
 			if (sat.orbital_position != osat.orbital_position)
 				diff = 1<<29;
 			else if (sat.polarisation != osat.polarisation)
@@ -484,6 +483,8 @@ eDVBFrontend::eDVBFrontend(const char *devicenodename, int fe, int &ok, bool sim
 	for (int i=0; i<eDVBFrontend::NUM_DATA_ENTRIES; ++i)
 		m_data[i] = -1;
 
+	m_delsys.clear();
+
 	m_idleInputpower[0]=m_idleInputpower[1]=0;
 
 	char fileName[32] = {0};
@@ -529,6 +530,7 @@ int eDVBFrontend::openFrontend()
 			m_dvbversion = DVB_VERSION(3, 0);
 #if defined DTV_API_VERSION
 			struct dtv_property p;
+			memset(&p, 0, sizeof(p));
 			struct dtv_properties cmdseq;
 			cmdseq.props = &p;
 			cmdseq.num = 1;
@@ -551,6 +553,7 @@ int eDVBFrontend::openFrontend()
 			strncpy(m_description, fe_info.name, sizeof(m_description));
 #if defined DTV_ENUM_DELSYS
 			struct dtv_property p[1];
+			memset(p, 0, sizeof(p));
 			p[0].cmd = DTV_ENUM_DELSYS;
 			struct dtv_properties cmdseq;
 			cmdseq.num = 1;
@@ -740,6 +743,10 @@ void eDVBFrontend::feEvent(int w)
 {
 	eDVBFrontend *sec_fe = this;
 	long tmp = m_data[LINKED_PREV_PTR];
+#if HAVE_AMLOGIC
+			if (w < 0)
+				return;
+#endif
 	while (tmp != -1)
 	{
 		eDVBRegisteredFrontend *linked_fe = (eDVBRegisteredFrontend*)tmp;
@@ -751,6 +758,28 @@ void eDVBFrontend::feEvent(int w)
 		dvb_frontend_event event;
 		int res;
 		int state;
+#if HAVE_AMLOGIC
+		if((res = ::ioctl(m_fd, FE_READ_STATUS, &event.status)) != 0)
+		{
+			break;
+		}
+
+		else
+		{
+			if(event.status == 0)
+			{
+				break;
+			}
+		}
+		usleep(10000);
+		if (event.status & FE_HAS_LOCK)
+		{
+			state = stateLock;
+			/* FIXME: gg this because FE_READ_STATUS always returns */
+			if(m_state == state)
+				break; /* I do not see any other way out */
+		}
+#else
 		res = ::ioctl(m_fd, FE_GET_EVENT, &event);
 
 		if (res && (errno == EAGAIN))
@@ -764,6 +793,7 @@ void eDVBFrontend::feEvent(int w)
 		{
 			state = stateLock;
 		}
+#endif
 		else
 		{
 			if (m_tuning) {
@@ -993,6 +1023,8 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 		) // VU+
 	{
 		ret = (int)((((double(snr) / (65536.0 / 100.0)) * 0.1244) + 2.5079) * 100);
+		if (!strcmp(m_description, "Vuplus DVB-S NIM(AVL6222)"))
+			sat_max = 1490;
 	}
 	else if (!strcmp(m_description, "BCM7356 DVB-S2 NIM (internal)")) // VU+ Solo2
 	{
@@ -1067,6 +1099,10 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 			break;
 		}
 	}
+	else if (!strcmp(m_description, "BCM73625 (G3)")) // DM520
+	{
+		ret = snr * 100 / 256;
+	}
 	else if (!strcmp(m_description, "Broadcom BCM73XX")
 		|| !strcmp(m_description, "FTS-260 (Montage RS6000)")
 		|| !strcmp(m_description, "Panasonic MN88472")
@@ -1090,7 +1126,17 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 			default: break;
 		}
 	}
-	else if(!strcmp(m_description, "TBS-5925"))
+	else if (strstr(m_description, "Sundtek DVB-T (III)")) // Sundtek MediaTV Digital Home III...dvb-t/t2 mode
+	{
+		ret = (int)(snr / 75);
+		ter_max = 1700;
+	}
+	else if (strstr(m_description, "Sundtek DVB-S/S2 (IV)"))
+	{
+		ret = (int)(snr / 52);
+		sat_max = 1690;
+	}
+	else if(!strcmp(m_description, "TBS-5925") || !strcmp(m_description, "DVBS2BOX"))
 	{
 		ret = (snr * 2000) / 0xFFFF;
 		sat_max = 2000;
@@ -1161,6 +1207,7 @@ int eDVBFrontend::readFrontendData(int type)
 				if (m_dvbversion >= DVB_VERSION(5, 10))
 				{
 					dtv_property prop[1];
+					memset(prop, 0, sizeof(prop));
 					prop[0].cmd = DTV_STAT_CNR;
 					dtv_properties props;
 					props.props = prop;
@@ -1183,7 +1230,7 @@ int eDVBFrontend::readFrontendData(int type)
 				}
 #endif
 				// fallback to old DVB API
-				if(!signalquality && !signalqualitydb)
+				if(!signalquality && !signalqualitydb || strstr(m_description, "Sundtek"))
 				{
 					int snr = readFrontendData(iFrontendInformation_ENUMS::snrValue);
 					calculateSignalQuality(snr, signalquality, signalqualitydb);
@@ -1209,6 +1256,7 @@ int eDVBFrontend::readFrontendData(int type)
 					if (m_dvbversion >= DVB_VERSION(5, 10))
 					{
 						dtv_property prop[1];
+						memset(prop, 0, sizeof(prop));
 						prop[0].cmd = DTV_STAT_SIGNAL_STRENGTH;
 						dtv_properties props;
 						props.props = prop;
@@ -1255,6 +1303,7 @@ int eDVBFrontend::readFrontendData(int type)
 		case iFrontendInformation_ENUMS::frequency:
 		{
 			struct dtv_property p;
+			memset(&p, 0, sizeof(p));
 			struct dtv_properties cmdseq;
 			oparm.getSystem(type);
 			cmdseq.props = &p;
@@ -1280,6 +1329,7 @@ void eDVBFrontend::getTransponderData(ePtr<iDVBTransponderData> &dest, bool orig
 {
 	int type = -1;
 	struct dtv_property p[16];
+	memset(p, 0, sizeof(p));
 	struct dtv_properties cmdseq;
 	oparm.getSystem(type);
 	cmdseq.props = p;
@@ -1980,6 +2030,7 @@ void eDVBFrontend::setFrontend(bool recvEvents)
 			m_sn->start();
 		feEvent(-1); // flush events
 		struct dtv_property p[16];
+		memset(p, 0, sizeof(p));
 		struct dtv_properties cmdseq;
 		cmdseq.props = p;
 		cmdseq.num = 0;
@@ -2347,6 +2398,7 @@ RESULT eDVBFrontend::prepare_cable(const eDVBFrontendParametersCable &feparm)
 		eWarning("no SEC module active!");
 		return -ENOENT;
 	}
+	m_data[FREQ_OFFSET] = 0;
 	eDebugNoSimulate("frontend %d tuning dvb-c to %d khz, sr %d, fec %d, modulation %d, inversion %d",
 		m_dvbid,
 		feparm.frequency,
@@ -2365,6 +2417,7 @@ RESULT eDVBFrontend::prepare_terrestrial(const eDVBFrontendParametersTerrestrial
 		eWarning("no SEC module active!");
 		return -ENOENT;
 	}
+	m_data[FREQ_OFFSET] = 0;
 	eDebugNoSimulate("frontend %d tuning dvb-t to %d khz, bandwidth %d, modulation %d, inversion %d",
 	m_dvbid,
 	feparm.frequency,
@@ -2390,6 +2443,7 @@ RESULT eDVBFrontend::prepare_atsc(const eDVBFrontendParametersATSC &feparm)
 		eWarning("no SEC module active!");
 		return -ENOENT;
 	}
+	m_data[FREQ_OFFSET] = 0;
 	eDebugNoSimulate("frontend %d tuning atsc to %d khz, modulation %d, inversion %d",
 	m_dvbid,
 	feparm.frequency,
@@ -2817,6 +2871,7 @@ bool eDVBFrontend::changeType(int type)
 {
 #if DVB_API_VERSION >= 5
 	struct dtv_property p[2];
+	memset(p, 0, sizeof(p));
 	struct dtv_properties cmdseq;
 	cmdseq.props = p;
 	cmdseq.num = 2;

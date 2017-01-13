@@ -294,7 +294,7 @@ class SecondInfoBar(Screen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		if config.usage.show_second_infobar.value == "3" and (config.skin.primary_skin.value == "oDreamy/skin.xml" or config.skin.primary_skin.value.startswith('oDreamy-FHD/skin.xml')):
+		if config.usage.show_second_infobar.value == "3" and (config.skin.primary_skin.value == "oDreamy-FHD/skin.xml" or config.skin.primary_skin.value.startswith('oDreamy-FHD/skin.xml')):
 			self.skinName = "SecondInfoBar/oDreamy-FHD/skin.xml"
 		else:
 			self.skinName = "SecondInfoBar"

@@ -46,6 +46,10 @@ private:
 	friend class eDVBTSRecorder;
 	friend class eDVBCAService;
 	friend class eTSMPEGDecoder;
+#ifdef HAVE_AMLOGIC
+	int m_pvr_fd;
+	friend class eAMLTSMPEGDecoder;
+#endif
 	Signal1<void, int> m_event;
 
 	int openDemux(void);
@@ -132,10 +136,8 @@ protected:
 class eDVBRecordStreamThread: public eDVBRecordFileThread
 {
 public:
-	eDVBRecordStreamThread(int packetsize):
-		eDVBRecordFileThread(packetsize, /*bufferCount*/ 4)
-	{
-	}
+	eDVBRecordStreamThread(int packetsize);
+
 protected:
 	int writeData(int len);
 	void flush();
