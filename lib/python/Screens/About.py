@@ -26,8 +26,19 @@ def getAboutText():
 		AboutText += _("Chipset:\t%s") % about.getChipSetString() + "\n"
 
 	cpuMHz = ""
-	if getBoxType() in ('vusolo4k'):
+	if getMachineBuild() in ('vusolo4k'):
 		cpuMHz = "   (1,5 GHz)"
+	elif getMachineBuild() in ('vuuno4k','vuultimo4k','dm900'):
+		cpuMHz = "   (1,7 GHz)"
+	elif getMachineBuild() in ('hd52','hd51','sf4008'):
+		try:
+			import binascii
+			f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
+			clockfrequency = f.read()
+			f.close()
+			cpuMHz = "   (%s MHz)" % str(round(int(binascii.hexlify(clockfrequency), 16)/1000000,1))
+		except:
+			cpuMHz = "   (1,7 GHz)"
 	else:
 		if path.exists('/proc/cpuinfo'):
 			f = open('/proc/cpuinfo', 'r')
@@ -60,6 +71,7 @@ def getAboutText():
 	AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
 	AboutText += _("Python:\t%s") % about.getPythonVersionString() + "\n"
 
+	if getMachineBuild() not in ('hd51','hd52','vusolo4k','vuuno4k','vuultimo4k','sf4008','dm820','dm7080','dm900'):
 	AboutText += _("Installed:\t%s") % about.getFlashDateString() + "\n"
 	AboutText += _("Last update:\t%s") % getEnigmaVersionString() + "\n"
 
@@ -115,7 +127,7 @@ class About(Screen):
 
 	def populate(self):
 		self["lab1"] = StaticText(_("Opendroid"))
-		self["lab2"] = StaticText(_("By Opendroid Image Team"))
+		self["lab2"] = StaticText(_("By Opendroid-Team"))
 		model = None
 		self["lab3"] = StaticText(_("Support at") + " www.droidsat.org")
 
@@ -263,7 +275,7 @@ class SystemMemoryInfo(Screen):
 		Screen.setTitle(self, _("Memory Information"))
 		self.skinName = ["SystemMemoryInfo", "About"]
 		self["lab1"] = StaticText(_("Opendroid"))
-		self["lab2"] = StaticText(_("By Opendroid Image Team"))
+		self["lab2"] = StaticText(_("By Opendroid-Team"))
 		self["AboutScrollLabel"] = ScrollLabel()
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
