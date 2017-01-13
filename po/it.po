@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-01-13 22:12+0100\n"
+"PO-Revision-Date: 2017-01-13 23:43+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -26,7 +26,7 @@ msgid "Show Movies"
 msgstr "Mostra Film"
 
 msgid "Main Menu"
-msgstr "Menu principale"
+msgstr "Menù principale"
 
 msgid "Stop Timeshift"
 msgstr "Stop Timeshift"
@@ -62,7 +62,7 @@ msgid "Hotkey Setup"
 msgstr "Impostazioni Hotkey"
 
 msgid "History next"
-msgstr "Naturalmente Zap prima"
+msgstr "storia successiva"
 
 msgid "History Zap Menu +"
 msgstr "Storia Zap Menu +"
@@ -74,7 +74,7 @@ msgid "History back"
 msgstr "Storia indietro"
 
 msgid "Show Subtitle Selection"
-msgstr "Mostra sottotitoli"
+msgstr "Mostra selezione dei sottotitoli"
 
 msgid "Show Single Service EPG"
 msgstr "Mostra singolo Servizio EPG"
@@ -98,7 +98,7 @@ msgid "Show Audioselection"
 msgstr "Mostra Selezione Audio"
 
 msgid "Show Multi Service EPG"
-msgstr "Mostra servizio Multiplo EPG"
+msgstr "Mostra servizio EPG Multiplo"
 
 msgid "Show Event View"
 msgstr "Mostra Eventi nel Display"
@@ -224,7 +224,7 @@ msgid "Hard disk standby in box standby after"
 msgstr "Sospensione HDD quando il Box è in standby:"
 
 msgid "Use Harddisk Hardware Standby Timer"
-msgstr "Usa Harddisk Hardware in Standby Timer"
+msgstr "Usa Harddiskin Standby Timer"
 
 msgid "Option to enable the Hardware Standby Timer"
 msgstr "Opzione per la selezione del timer di standby interna del disco"
