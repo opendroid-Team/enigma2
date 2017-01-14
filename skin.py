@@ -29,10 +29,6 @@ fonts = {
 }
 
 parameters = {}
-constant_widgets = {}
-variables = {}
-DEFAULT_SKIN = 'oDreamy-FHD/skin.xml'
-DEFAULT_DISPLAY_SKIN = 'skin_display.xml'
 
 def dump(x, i=0):
 	print " " * i + str(x)
