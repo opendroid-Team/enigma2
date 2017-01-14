@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2017-01-13 22:09+0100\n"
+"PO-Revision-Date: 2017-01-14 21:27+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: openDroid-Team <opendroid2013@gmail.com>\n"
 "Language: en\n"
@@ -8281,6 +8281,9 @@ msgstr "Tuner status:"
 
 msgid "Tuner type"
 msgstr "Tuner type"
+
+msgid "Config"
+msgstr "Scan"
 
 msgid "Tuning step size"
 msgstr "Tuning step size"

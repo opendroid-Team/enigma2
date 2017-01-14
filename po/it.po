@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-01-13 23:43+0100\n"
+"PO-Revision-Date: 2017-01-14 21:28+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -7960,6 +7960,9 @@ msgstr "Ricerca fallita!"
 
 msgid "Scanning..."
 msgstr "Ricercare..."
+
+msgid "Config"
+msgstr "Scansiona"
 
 msgid ""
 "Scans default lamedbs sorted by satellite with a connected dish positioner"
