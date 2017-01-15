@@ -241,7 +241,7 @@ def InitUsageConfig():
 		choicelist.append(("%d" % i, m))
 	config.usage.screen_saver = ConfigSelection(default = "0", choices = choicelist)
 
-	config.usage.check_timeshift = ConfigYesNo(default = True)
+	config.usage.check_timeshift = ConfigYesNo(default = False)
 
 	config.usage.alternatives_priority = ConfigSelection(default = "0", choices = [
 		("0", "DVB-S/-C/-T"),
