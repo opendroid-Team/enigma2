@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-01-14 21:28+0100\n"
+"PO-Revision-Date: 2017-01-19 00:41+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -9772,9 +9772,8 @@ msgstr "File Timer (timers.xml) corrotto: non caricabile!"
 msgid "The timer file (timers.xml) is corrupt and could not be loaded."
 msgstr "File Timer (timers.xml) corrotto: non caricabile!"
 
-#, python-format
-msgid "The user interface of your %s %s is restarting"
-msgstr "Enigma2 Opendroid del %s %s si Sta riavviando Attendere......"
+msgid "Restarting System Opendroid Please Wait..."
+msgstr "Riavvio del sistema Opendroid Attendere prego..."
 
 #, python-format
 msgid ""
