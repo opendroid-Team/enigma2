@@ -2,12 +2,12 @@ from os import path
 
 from enigma import eDVBResourceManager, Misc_Options
 
-from Tools.Directories import fileExists, fileCheck, pathExists
+from Tools.Directories import fileExists, fileCheck
 from Tools.HardwareInfo import HardwareInfo
 
 from boxbranding import getBoxType, getMachineBuild
 
-SystemInfo = {}
+SystemInfo = { }
 
 #FIXMEE...
 def getNumVideoDecoders():
@@ -71,4 +71,3 @@ SystemInfo["CanUse3DModeChoices"] = fileExists('/proc/stb/fb/3dmode_choices') an
 SystemInfo["HaveTouchSensor"] = getBoxType() in ('dm520', 'dm525', 'dm900')
 SystemInfo["DefaultDisplayBrightness"] = getBoxType() == 'dm900' and 8 or 5
 SystemInfo["RecoveryMode"] = fileCheck("/proc/stb/fp/boot_mode")
-SystemInfo["HasoDreamy-FHDSkinSupport"] = HardwareInfo().getBoxType() not in ("et4000", "et5000", "sh1", "hd500c", "hd1100", "xp1000", "vusolo")
