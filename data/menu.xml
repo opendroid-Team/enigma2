@@ -209,7 +209,7 @@ self.session.open(HdmiCECSetupScreen)
 	<item weight="20" level="1" text="VCR scart" entryID="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 	<item weight="10" level="1" text="Plugins" entryID="plugin_selection"><screen module="PluginBrowser" screen="PluginBrowser" /></item>
 	<!-- Menu / Standby Restart -->
-	<menu weight="99" level="0" text="Opendroid ShutDown" entryID="standby_restart_list">
+	<menu weight="99" level="0" text="Standby / Restart" entryID="standby_restart_list">
 		<id val="shutdown" />
 		<item weight="0" level="0" text="Deep Standby" requires="DeepstandbySupport" entryID="deep_standby">
 			<code>
