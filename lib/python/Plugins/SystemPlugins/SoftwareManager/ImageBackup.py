@@ -21,7 +21,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 VERSION = "Version 5.5 opendroid"
 
 HaveGZkernel = True
-if getBrandOEM() in ("fulan") or getBoxType() in ("vusolo4k"):
+if getMachineBuild() in ("vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500"):
 	HaveGZkernel = False
 
 def Freespace(dev):

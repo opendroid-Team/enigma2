@@ -2558,7 +2558,8 @@ class InfoBarSeek():
             return
         else:
             prevstate = self.seekstate
-            setpause = getMachineBuild() in ('hd51',) and 1
+
+		setpause = getMachineBuild() in ('hd51','vs1500') and 1 # 0/1 enable workaround for some boxes these in pause mode not seek to new position
             if self.seekstate == self.SEEK_STATE_EOF:
                 if prevstate == self.SEEK_STATE_PAUSE:
                     self.setSeekState(self.SEEK_STATE_PAUSE)
