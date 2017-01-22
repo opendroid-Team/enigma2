@@ -280,9 +280,9 @@ class ImageBackup(Screen):
 			system('mv %s/kernel_auto.bin %s/kernel_auto.bin' %(self.WORKDIR, self.MAINDEST))
 		else:
 			system('mv %s/vmlinux.gz %s/%s' %(self.WORKDIR, self.MAINDEST, self.KERNELBIN))
-		if self.MODEL in ("vusolo4k", "vuduo2", "vusolo2", "vusolo", "vuduo", "vuultimo", "vuuno"):
+		elif self.MODEL in ("vuultimo4k","vusolo4k", "vuduo2", "vusolo2", "vusolo", "vuduo", "vuultimo", "vuuno"):
 			cmdlist.append('echo "This file forces a reboot after the update." > %s/reboot.update' %self.MAINDEST)
-		elif self.MODEL in ("vuzero" , "vusolose"):
+		elif self.MODEL in ("vuzero" , "vusolose", "vuuno4k"):
 			cmdlist.append('echo "This file forces the update." > %s/force.update' %self.MAINDEST)
 		elif self.MODEL in ("zgemmai55"):
 			cmdlist.append('echo "This file forces the update." > %s/force' %self.MAINDEST)
