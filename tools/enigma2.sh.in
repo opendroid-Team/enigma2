@@ -121,6 +121,9 @@ case $ret in
 		/sbin/halt
 		;;
 	2)
+		if [ -f /proc/stb/fp/force_restart ]; then
+			echo 1 > /proc/stb/fp/force_restart
+		fi
 		/sbin/reboot
 		;;
 	3)
@@ -133,6 +136,10 @@ case $ret in
 		sleep 1;
 		/sbin/rmmod fp
 		/sbin/modprobe fp
+		/sbin/reboot
+		;;
+	16)
+		echo "rescue" > /proc/stb/fp/boot_mode
 		/sbin/reboot
 		;;
 	42)

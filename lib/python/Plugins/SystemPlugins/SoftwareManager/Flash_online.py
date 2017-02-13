@@ -25,9 +25,8 @@ from boxbranding import getBoxType, getMachineName, getMachineBrand
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 5.3", "http://images.opendroid.org/5.3"])
-images.append(["OPD 5.4", "http://images.opendroid.org/5.4"])
-images.append(["OPD 5.5", "http://images.opendroid.org/5.5"])
+images.append(["OPD 5.5", "http://images.opendroid.org/6.0"])
+images.append(["OPD 6.0", "http://images.opendroid.org/5.5"])
 
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
@@ -216,6 +215,8 @@ class doFlashImage(Screen):
 			box = box[0:3] + 'x00'
 		elif box == "odinm9":
 			box = 'maram9'
+		elif box == "dm525":
+			box = 'dm520'
 		return box
 
 	def green(self):
@@ -269,7 +270,7 @@ class doFlashImage(Screen):
 			self.show()
 
 	def unzip_image(self, filename, path):
-		if getBoxType() in "dm7080" "dm820":
+		if getBoxType() in "dm7080" "dm820" "dm520" "dm525":
 			print "Untaring %s to %s" %(filename,path)
 			os.system('mkdir /dbackup.new')
 			self.session.openWithCallback(self.cmdFinished, Console, title = _("Untaring files, Please wait ..."), cmdlist = ['tar -xJf ' + filename + ' -C ' + '/dbackup.new', "sleep 3"], closeOnSuccess = True)
@@ -282,10 +283,11 @@ class doFlashImage(Screen):
 		self.Start_Flashing()
 
 	def Start_Flashing(self):
-		print "Start Flashing"
-		if getBoxType() in "dm7080" "dm820":
+		if getBoxType() in "dm7080" "dm820" "dm520" "dm525":
 			os.system('/usr/lib/enigma2/python/Plugins/Extensions/dBackup/bin/swaproot 0')
 		else:
+			print "Start Flashing"
+			cmdlist = []
 			if os.path.exists(ofgwritePath):
 				text = _("Flashing: ")
 				if self.simulate:

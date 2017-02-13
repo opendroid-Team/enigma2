@@ -917,6 +917,10 @@
 		<key id="KEY_CHANNELUP" mapto="incUphop" flags="m"/>
 		<key id="KEY_CHANNELDOWN" mapto="decUphop" flags="m"/>
 	</map>
+	<map context="InfoBarOPENDROID">
+		<key id="KEY_RED" mapto="OPENDROID" flags="b" />
+		<key id="KEY_RED" mapto="Stopcam" flags="l" />
+	</map>
 
 	<map context="DVDPlayerActions">
 		<key id="KEY_MENU" mapto="dvdMenu" flags="m"/>

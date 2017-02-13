@@ -42,7 +42,7 @@ def DownloadMyUrlxml():
     MyName = CheckName()
     list = []	
     try:	
-      mdom = xml.etree.cElementTree.parse("/usr/share/enigma2/oDreamy-FHD/teamz.xml")
+      mdom = xml.etree.cElementTree.parse("/usr/share/enigma2/oDreamy-FHD/modules/skin_opendroid_screens.xml")
       for x in mdom.getroot():
         if x.tag == "ruleset" and str(x.get("name")) == "ColorKeys":
           root =  x
@@ -65,7 +65,7 @@ def DownloadMyUrlxmlPlug():
     MyName = CheckName()
     list = []	
     try:	
-      mdom = xml.etree.cElementTree.parse("/usr/share/enigma2/oDreamy-FHD/teamz.xml")
+      mdom = xml.etree.cElementTree.parse("/usr/share/enigma2/oDreamy-FHD/modules/skin_opendroid_screens.xml")
       for x in mdom.getroot():
         if x.tag == "ruleset" and str(x.get("name")) == "Plugins":
           root =  x

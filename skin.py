@@ -2,7 +2,7 @@ from Tools.Profile import profile
 profile("LOAD:ElementTree")
 import xml.etree.cElementTree
 import os
-
+from Components.SystemInfo import SystemInfo
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, eRect, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, addFont, gRGB, eWindowStyleSkinned, getDesktop
 from Components.config import ConfigSubsection, ConfigText, config, ConfigYesNo, ConfigSelection, ConfigNothing
@@ -29,6 +29,10 @@ fonts = {
 }
 
 parameters = {}
+constant_widgets = {}
+variables = {}
+DEFAULT_SKIN = 'oDreamy-FHD/skin.xml'
+DEFAULT_DISPLAY_SKIN = 'skin_display.xml'
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -90,9 +94,7 @@ def skin_user_skinname():
 
 # example: loadSkin("nemesis_greenline/skin.xml")
 config.skin = ConfigSubsection()
-DEFAULT_SKIN = "oDreamy-FHD/skin.xml"
-if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	DEFAULT_SKIN = "skin.xml"
+DEFAULT_SKIN = SystemInfo["HasoDreamy-FHDSkinSupport"] and "oDreamy-FHD/skin.xml" or "oDreamy-FHD/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
 	# in that case, fallback to Magic (which is an SD skin)
 	DEFAULT_SKIN = "skin.xml"

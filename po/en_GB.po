@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: enigma2 3.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-30 22:11+0100\n"
-"PO-Revision-Date: 2016-04-05 00:05+0200\n"
-"Last-Translator: mike99 <mike99@gmx.net>\n"
+"PO-Revision-Date: 2017-01-19 00:41+0100\n"
+"Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: ViX\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 1.5.4\n"
 
 msgid "Switch to Radio Mode"
 msgstr "Switch to Radio Mod"
@@ -186,6 +186,9 @@ msgstr "Scanning"
 
 msgid "Tuner Configuration"
 msgstr "Tuner Configuration"
+
+msgid "Config"
+msgstr "Scan"
 
 #, fuzzy
 msgid "Setup"
@@ -8079,9 +8082,8 @@ msgstr "The timer file (pm_timers.xml) is corrupt and could not be loaded."
 msgid "The timer file (timers.xml) is corrupt and could not be loaded."
 msgstr "The timer file (timers.xml) is corrupt and could not be loaded."
 
-#, python-format
-msgid "The user interface of your %s %s is restarting"
-msgstr "The user interface of your %s %s is restarting"
+msgid "Restarting System Opendroid Please Wait..."
+msgstr "Restarting System Opendroid Please Wait..."
 
 #, python-format
 msgid ""
@@ -11258,6 +11260,15 @@ msgstr "zap and record"
 
 msgid "zapped"
 msgstr "zapped"
+
+msgid "Recovery Mode"
+msgstr "Recovery Mode"
+
+msgid "Your %s %s is rebooting into Recovery Mode"
+msgstr "Your %s %s is rebooting into Recovery Mode"
+
+msgid "Really reboot into Recovery Mode?"
+msgstr "Really reboot into Recovery Mode?"
 
 msgid "Flash Online"
 msgstr "Flash Online/Local"
