@@ -64,7 +64,7 @@ class ODExtraInfo(Poll, Converter, object):
 	
 	def get_caName(self):
 		try:
-			f = open("/etc/CurrentCamname",'r')
+			f = open("/etc/emuname",'r')
  			name = f.readline().strip()
  			f.close()
 		except:
