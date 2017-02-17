@@ -35,9 +35,9 @@ try:
 except Exception, e:
 	print "[RecordTimer] import from 'Screens.InfoBar import InfoBar' failed:", e
 	InfoBar = False
-#
+#+++
 debug = False
-#
+#+++
 
 #reset wakeup state after ending timer
 def resetTimerWakeup():
@@ -212,7 +212,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 		s = os.statvfs(dirname)
 		if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
-			self.log(0, _("Not enough free space to record"))
+			self.log(0, "Not enough free space to record")
 			return False
 		else:
 			if debug:
@@ -230,8 +230,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 #
 		filename = begin_date + " - " + service_name
 		if self.name:
-			if config.recording.filename_composition.value == "event":
-				filename = self.name + ' - ' + begin_date + "_" + service_name
 			if config.recording.filename_composition.value == "veryveryshort":
 				filename = self.name
 			elif config.recording.filename_composition.value == "veryshort":
@@ -551,7 +549,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					#wakeup standby
 					Screens.Standby.inStandby.Power()
 				else:
-					self.log(11, _("zapping"))
+					self.log(11, "zapping")
 					found = False
 					notFound = False
 					NavigationInstance.instance.isMovieplayerActive()
@@ -612,7 +610,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 						NavigationInstance.instance.playService(self.service_ref.ref)
 				return True
 			else:
-				self.log(11, _("start recording"))
+				self.log(11, "start recording")
 				record_res = self.record_service.start()
 				self.setRecordingPreferredTuner(setdefault=True)
 				if record_res:
@@ -630,9 +628,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.state -= 1
 				return True
 			if self.justplay:
-				self.log(12, _("end zapping"))
+				self.log(12, "end zapping")
 			else:
-				self.log(12, _("stop recording"))
+				self.log(12, "stop recording")
 			if not self.justplay:
 				if self.record_service:
 					NavigationInstance.instance.stopRecordService(self.record_service)
@@ -640,8 +638,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 			NavigationInstance.instance.RecordTimer.saveTimer()
 			self.autostate = Screens.Standby.inStandby
+			minRT = self.end - self.begin > 3 # do not switch to standby/deepstandby, when timer ended and timer runtime is less than 3s (e.g. zap-timer without end time) -> currently obsolete (timer edit set AFTEREVENT.NONE if time difference < 1 mins)
 			isRecordTime = abs(NavigationInstance.instance.RecordTimer.getNextRecordingTime() - time()) <= 900 or NavigationInstance.instance.RecordTimer.getStillRecording()
-			if debug: print "[RECORDTIMER] self.autostate=%s" % self.autostate, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent
+			if debug: print "[RECORDTIMER] self.autostate=%s" % self.autostate, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent, "minRT=%s" % minRT
 
 			if self.afterEvent == AFTEREVENT.STANDBY or (self.afterEvent == AFTEREVENT.AUTO and self.wasInStandby and (not wasRecTimerWakeup or (wasRecTimerWakeup and isRecordTime))):
 				if not Screens.Standby.inStandby: # not already in standby
@@ -660,7 +659,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					print '[Timer] Recording or Recording due is next 15 mins, not return to deepstandby'
 				self.wasInStandby = False
 				return True
-			elif abs(NavigationInstance.instance.PowerTimer.getNextPowerManagerTime() - time()) <= 900 or NavigationInstance.instance.PowerTimer.isProcessing(exceptTimer = 0) or not NavigationInstance.instance.PowerTimer.isAutoDeepstandbyEnabled():
+			elif abs(NavigationInstance.instance.PowerTimer.getNextPowerManagerTime() - time()) <= 900 or NavigationInstance.instance.PowerTimer.isProcessing(exceptTimer = 0):
 				if self.afterEvent == AFTEREVENT.DEEPSTANDBY or (wasRecTimerWakeup and self.afterEvent == AFTEREVENT.AUTO and self.wasInStandby) or (self.afterEvent == AFTEREVENT.AUTO and wasRecTimerWakeup):
 					print '[Timer] PowerTimer due is next 15 mins or is actual currently active, not return to deepstandby'
 				self.wasInStandby = False
@@ -940,7 +939,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.backoff = 0
 
 		if int(old_prepare) > 60 and int(old_prepare) != int(self.start_prepare):
-			self.log(15, _("record time changed, start prepare is now: %s") % ctime(self.start_prepare))
+			self.log(15, "record time changed, start prepare is now: %s" % ctime(self.start_prepare))
 
 	def gotRecordEvent(self, record, event):
 		# TODO: this is not working (never true), please fix. (comparing two swig wrapped ePtrs)
@@ -1216,7 +1215,7 @@ class RecordTimer(timer.Timer):
 			save_act = -1, 0
 			for timer in self.timer_list:
 				next_act = timer.getNextActivation(getNextStbPowerOn)
-				if timer.justplay or next_act + 3 < now:
+				if timer.justplay or next_act < now:
 					continue
 				if debug: print "[recordtimer] next stb power up", strftime("%a, %Y/%m/%d %H:%M", localtime(next_act))
 				if save_act[0] == -1:
@@ -1228,7 +1227,7 @@ class RecordTimer(timer.Timer):
 		else:
 			for timer in self.timer_list:
 				next_act = timer.getNextActivation()
-				if timer.justplay or next_act + 3 < now or timer.end == next_act:
+				if timer.justplay or next_act < now:
 					continue
 				return next_act
 		return -1
@@ -1274,7 +1273,7 @@ class RecordTimer(timer.Timer):
 			else:
 				print "ignore timer conflict"
 		elif timersanitycheck.doubleCheck():
-			print "[RecordTimer] ignore double timer..."
+			print "ignore double timer"
 			return None
 		entry.timeChanged()
 		print "[Timer] Record " + str(entry)
