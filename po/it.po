@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-02-23 22:41+0100\n"
+"PO-Revision-Date: 2017-02-23 23:09+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -1257,7 +1257,7 @@ msgid "Abort"
 msgstr "Annullare"
 
 msgid "About"
-msgstr "Informaz. Opendroid"
+msgstr "Informazioni Opendroid"
 
 msgid "About..."
 msgstr "Informazioni..."
@@ -3859,7 +3859,7 @@ msgid "Download .NFI-files for USB-flasher"
 msgstr "Scaricare file .nfi per flasher USB"
 
 msgid "Download plugins"
-msgstr "Scaricare plugins"
+msgstr "Down. plugins"
 
 msgid "Downloading"
 msgstr "Scaricando Aggiornamenti Opendroid..."
@@ -3891,13 +3891,13 @@ msgid "ECM Time"
 msgstr "ECM Ora"
 
 msgid "ECM avg"
-msgstr "media ECM"
+msgstr "Media ECM"
 
 msgid ""
 "ECM data will be included in the stream. This enables a client receiver to "
 "decode it."
 msgstr ""
-"Dati ECM saranno inclusi nel flusso. Ciò consente un ricevitore client per "
+"Dati ECM saranno inclusi nel flusso. Ciò consente a un ricevitore cliente di "
 "decodificarlo."
 
 msgid "ECM last"
@@ -5171,7 +5171,7 @@ msgstr "Aumentare il voltaggio"
 msgid "Index allocated:"
 msgstr "Indice allocato:"
 
-msgid "Informazioni"
+msgid "Information"
 msgstr "Informazioni"
 
 msgid "Info button (long)"
@@ -5192,11 +5192,8 @@ msgstr "Infobar EPG"
 msgid "InfobarEPG settings"
 msgstr "Conf. interfaccia"
 
-msgid "Information"
-msgstr "Informazioni"
-
 msgid "Init"
-msgstr "Init"
+msgstr "Dentro"
 
 msgid "Initial fast forward speed"
 msgstr "Velocità di avanzamento veloce iniziale"
@@ -5211,7 +5208,7 @@ msgid "Initial signal quality"
 msgstr "Qualità del segnale iniziale"
 
 msgid "Initial signal quality:"
-msgstr "Qualità:"
+msgstr "Qualità del segnale iniziale:"
 
 msgid "Initialization"
 msgstr "Formattazione"
@@ -5222,17 +5219,17 @@ msgstr "Formattare"
 msgid "Initializing storage device..."
 msgstr "Inizializzazione periferica di archiviazione ..."
 
-msgid "Inotify Monitoring"
-msgstr "Monitoraggio Inotify"
+msgid "Notify Monitoring"
+msgstr "notifica di monitoraggio"
 
 msgid "Input"
-msgstr "Input"
+msgstr "Ingresso"
 
 msgid "Input device setup"
-msgstr "Configurazione dispositivo di input"
+msgstr "Configurazione dispositivo di Ingresso"
 
 msgid "Input devices"
-msgstr "Dispositivi di input"
+msgstr "Dispositivi di Ingresso"
 
 msgid "Install"
 msgstr "Installare"
@@ -5264,13 +5261,13 @@ msgid "Install picons on"
 msgstr "Installare picons su"
 
 msgid "Install plugins"
-msgstr "Installare il plugin"
+msgstr "Installare plugin"
 
 msgid "Installation finished."
 msgstr "Installazione terminata."
 
 msgid "Installing"
-msgstr "Inst. in corso"
+msgstr "Installazione in corso"
 
 msgid "Installing Service"
 msgstr "Installazione di Service"
@@ -7408,7 +7405,7 @@ msgid "Really upgrade your %s %s and reboot now?"
 msgstr "Vuoi aggiornare il tuo %s %s e riavviare ora?"
 
 msgid "Reboot"
-msgstr "Riavviare"
+msgstr "Riavvio completo"
 
 msgid "Record"
 msgstr "Registrare"
@@ -7595,7 +7592,7 @@ msgid "Remove items from trash can after (days)"
 msgstr "Rimuovi elementi dal cestino dopo (giorni)"
 
 msgid "Remove plugins"
-msgstr "Rimuovere plugins"
+msgstr "Canc. plugins"
 
 msgid "Remove timer"
 msgstr "Rim. timer"
