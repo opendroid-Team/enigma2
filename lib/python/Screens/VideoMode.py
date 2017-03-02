@@ -803,6 +803,7 @@ class AutoVideoMode(Screen):
 				new_rate = str(new_rate)
 
 				if new_mode[-1:] == 'p':
+<<<<<<< HEAD
 					new_rate = setProgressiveRate((video_rate + 500) / 1000, new_rate, new_mode[:-1], config_res, config_rate)
 
 				if new_mode+new_rate in iAVSwitch.modes_available:
@@ -860,6 +861,65 @@ class AutoVideoMode(Screen):
 						new_res = config_res
 					if new_pol == 'p':
 						new_rate = setProgressiveRate((video_rate + 500) / 1000, new_rate, new_res, config_res, config_rate)
+=======
+					new_rate = setProgressiveRate((video_rate + 500) / 1000 * (int(video_pol == 'i')+1), new_rate, new_mode[:-1], config_res, config_rate)
+
+				if new_mode+new_rate in iAVSwitch.modes_available:
+					write_mode = new_mode+new_rate
+				elif new_mode in iAVSwitch.modes_available:
+					write_mode = new_mode
+				else:
+					if config_rate != 'multi' and int(new_rate) > int(config_rate): new_rate = config_rate
+					if config_mode+new_rate in iAVSwitch.modes_available:
+						write_mode = config_mode+new_rate
+					else:
+						write_mode = config_mode
+
+			elif config.av.autores.value == 'native':
+				autorestyp = 'native'
+				new_rate = (video_rate + 500) / 1000
+				new_pol = video_pol
+				new_res = str(video_height)
+				if video_pol == 'i': new_rate *= 2
+
+				min_port, min_mode, min_res, min_pol, min_rate = getConfig_videomode(config.av.autores_mode_sd, config.av.autores_rate_sd)
+
+				if video_height <= int(min_res):
+					if new_pol == 'i' and min_pol == 'p': new_pol = min_pol
+					if min_rate != 'multi' and new_rate < int(min_rate): new_rate = min_rate
+					new_res = min_res
+				if video_height >= int(config_res) or int(new_res) >= int(config_res):
+					new_res = config_res
+					if video_pol == 'p' and config_pol == 'i': new_pol = config_pol
+					if config_rate != 'multi' and int(config_rate) < new_rate: new_rate = config_rate
+				new_rate = str(new_rate)
+
+				if new_pol == 'p':
+					new_rate = setProgressiveRate((video_rate + 500) / 1000 * (int(video_pol == 'i')+1), new_rate, new_res, config_res, config_rate)
+
+				if new_res+new_pol+new_rate in iAVSwitch.modes_available:
+					write_mode = new_res+new_pol+new_rate
+				elif new_res+new_pol in iAVSwitch.modes_available:
+					write_mode = new_res+new_pol
+				elif new_res+min_pol+new_rate in iAVSwitch.modes_available:
+					write_mode = new_res+min_pol+new_rate
+				elif new_res+min_pol in iAVSwitch.modes_available:
+					write_mode = new_res+min_pol
+				else:
+					if config.av.autores_unknownres.value == 'next':
+						if video_height <= 576 and int(config_res) >= 576:
+							new_res = '576'
+						elif video_height <= 720 and int(config_res) >= 720:
+							new_res = '720'
+						elif video_height <= 1080 and int(config_res) >= 1080:
+							new_res = '1080'
+						elif video_height <= 2160 and int(config_res) >= 2160:
+							new_res = '2160'
+					elif config.av.autores_unknownres.value == 'highest':
+						new_res = config_res
+					if new_pol == 'p':
+						new_rate = setProgressiveRate((video_rate + 500) / 1000 * (int(video_pol == 'i')+1), new_rate, new_res, config_res, config_rate)
+>>>>>>> refs/remotes/origin/master
 					if new_res+new_pol+new_rate in iAVSwitch.modes_available:
 						write_mode = new_res+new_pol+new_rate
 					elif new_res+new_pol in iAVSwitch.modes_available:
