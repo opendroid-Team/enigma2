@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-02-26 22:34+0100\n"
+"PO-Revision-Date: 2017-03-04 23:25+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -185,7 +185,7 @@ msgid "Tuner Configuration"
 msgstr "Configurazione Tuner"
 
 msgid "Setup"
-msgstr "Configurazioni"
+msgstr "Configurazioni generali"
 
 msgid "Network Menu"
 msgstr "Menu Rete"
@@ -333,6 +333,9 @@ msgstr ""
 "\n"
 "Flash online/locale del tuo %s %s."
 
+msgid "flash-online"
+msgstr "Flash online"
+
 msgid "Online = Download a image and flash it"
 msgstr "Online = Scarica l'immagine e fai un Reflash."
 
@@ -451,6 +454,9 @@ msgid ""
 msgstr ""
 "\n"
 "Elencare, installare e rimuovere i pacchetti disponibili o installati."
+
+msgid "install-extensions"
+msgstr "Installa estensioni"
 
 #, python-format
 msgid "Show"
@@ -2264,6 +2270,9 @@ msgstr "Data Backup: %s\n"
 msgid "Backup Image"
 msgstr "Backup immagine"
 
+msgid "backup-image"
+msgstr "Backup immagine"
+
 msgid "Backup Location"
 msgstr "Percorso backup"
 
@@ -2297,6 +2306,12 @@ msgstr ""
 
 msgid "Backup system settings"
 msgstr "Backup conf. sistema"
+
+msgid "system-backup"
+msgstr "Backup conf. sistema"
+
+msgid "system-restore"
+msgstr "Ripristina conf. sistema"
 
 msgid "Set backupfiles to defaults"
 msgstr "Ripristino file"
@@ -2365,6 +2380,9 @@ msgstr "Blue"
 
 msgid "Blue long"
 msgstr "Blu lungo"
+
+msgid "Blue Panel"
+msgstr "Blue Panel Opendroid"
 
 msgid "Change sort by..."
 msgstr "Cambiare ordina per ..."
@@ -5761,7 +5779,7 @@ msgid "Index allocated:"
 msgstr "Indice allocato:"
 
 msgid "Information"
-msgstr "Informazioni"
+msgstr "Informazioni Immagine"
 
 msgid "Info button (long)"
 msgstr "Pulsante Info (lungo)"
@@ -5934,6 +5952,9 @@ msgstr "Inverti"
 
 msgid "Ipkg"
 msgstr "Ipkg"
+
+msgid "ipkg-install"
+msgstr "Installa file ipkg"
 
 msgid "Is this setting ok?"
 msgstr "La configurazione è valida? "
@@ -7697,7 +7718,7 @@ msgid "Plugin manager help"
 msgstr "Aiuto gestore plugin..."
 
 msgid "Plugins"
-msgstr "Plugins"
+msgstr "Plugins installati"
 
 msgid "Polarisation"
 msgstr "Polarizzazione"
@@ -9611,6 +9632,9 @@ msgstr "Config. Software"
 msgid "Software Update"
 msgstr "Aggiornare Immagine Opendroid"
 
+msgid "software-update"
+msgstr "Aggiorna immagine"
+
 msgid "Software management"
 msgstr "Gestione software"
 
@@ -10881,7 +10905,7 @@ msgid "Timer type"
 msgstr "Tipo timer"
 
 msgid "Timers"
-msgstr "Timer"
+msgstr "Elenco Timer"
 
 msgid "Timeshift"
 msgstr "TimeShift"
