@@ -8,11 +8,14 @@ from Components.Task import Task, Job, job_manager, Condition
 from Components.Sources.StaticText import StaticText
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
+from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
+from Components.Sources.List import List
 from Screens.Console import Console
 from Screens.HelpMenu import HelpableScreen
 from Screens.TaskView import JobView
 from Tools.Downloader import downloadWithProgress
+from enigma import fbClass
 import urllib2
 import os
 import shutil
@@ -60,6 +63,8 @@ class FlashOnline(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
+		self.devrootfs = "/dev/mmcblk0p3"
+		self.List = list
 
 		Screen.setTitle(self, _("Flash On the Fly"))
 		self["key_yellow"] = Button("Local")
@@ -94,7 +99,6 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
-
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -108,9 +112,11 @@ class FlashOnline(Screen):
 
 	def quit(self):
 		self.close()
-
 	def blue(self):
-		pass
+		if self.check_hdd():
+			self.session.open(doFlashImage, online = False, list=self.list[self.selection], devrootfs=self.devrootfs)
+		else:
+			self.close()
 
 	def green(self):
 		if self.check_hdd():
@@ -138,7 +144,7 @@ class doFlashImage(Screen):
 		<widget name="imageList" position="10,10" zPosition="1" size="680,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />
 	</screen>"""
 
-	def __init__(self, session, online ):
+	def __init__(self, session, online, list=None, devrootfs=None ):
 		Screen.__init__(self, session)
 		self.session = session
 
@@ -152,6 +158,8 @@ class doFlashImage(Screen):
 		self.imagelist = []
 		self.simulate = False
 		self.Online = online
+		self.List = list
+		self.devrootfs=devrootfs
 		self.imagePath = imagePath
 		self.feedurl = images[self.imagesCounter][1]
 		self["imageList"] = MenuList(self.imagelist)
@@ -248,10 +256,7 @@ class doFlashImage(Screen):
 			job_manager.failed_jobs = []
 			self.session.openWithCallback(self.ImageDownloadCB, JobView, job, backgroundable = False, afterEventChangeable = False)
 		else:
-			if sel == str(flashTmp):
-				self.Start_Flashing()
-			else:
-				self.unzip_image(self.filename, flashPath)
+			self.session.openWithCallback(self.startInstallLocal, MessageBox, _("Do you want to backup your settings now?"), default=False)
 
 	def ImageDownloadCB(self, ret):
 		if ret:
@@ -261,13 +266,96 @@ class doFlashImage(Screen):
 			self.close()
 			return
 		if len(job_manager.failed_jobs) == 0:
-			self.session.openWithCallback(self.askUnzipCB, MessageBox, _("The image is downloaded. Do you want to flash now?"), MessageBox.TYPE_YESNO)
+			self.flashWithPostFlashActionMode = 'online'
+			self.flashWithPostFlashAction()
 		else:
 			self.session.open(MessageBox, _("Download Failed !!"), type = MessageBox.TYPE_ERROR)
 
-	def askUnzipCB(self, ret):
+	def flashWithPostFlashAction(self, ret = True):
 		if ret:
-			self.unzip_image(self.filename, flashPath)
+			print "flashWithPostFlashAction"
+			title =_("Please select what to do after flashing the image:\n(In addition, if it exists, a local script will be executed as well at /media/hdd/images/config/myrestore.sh)")
+			list = ((_("Flash and start installation wizard"), "wizard"),
+			(_("Flash and restore settings and no plugins"), "restoresettingsnoplugin"),
+			(_("Flash and restore settings and selected plugins (ask user)"), "restoresettings"),
+			(_("Flash and restore settings and all saved plugins"), "restoresettingsandallplugins"),
+			(_("Do not flash image"), "abort"))
+			self.session.openWithCallback(self.postFlashActionCallback, ChoiceBox,title=title,list=list,selection=self.SelectPrevPostFashAction())
+		else:
+			self.show()
+
+	def SelectPrevPostFashAction(self):
+		index = 0
+		Settings = False
+		AllPlugins = False
+		noPlugins = False
+		
+		if os.path.exists('/media/hdd/images/config/settings'):
+			Settings = True
+		if os.path.exists('/media/hdd/images/config/plugins'):
+			AllPlugins = True
+		if os.path.exists('/media/hdd/images/config/noplugins'):
+			noPlugins = True
+
+		if 	Settings and noPlugins:
+			index = 1
+		elif Settings and not AllPlugins and not noPlugins:
+			index = 2
+		elif Settings and AllPlugins:
+			index = 3
+
+		return index
+
+	def postFlashActionCallback(self, answer):
+		print "postFlashActionCallback"
+		restoreSettings   = False
+		restoreAllPlugins = False
+		restoreSettingsnoPlugin = False
+		if answer is not None:
+			if answer[1] == "restoresettings":
+				restoreSettings   = True
+			if answer[1] == "restoresettingsnoplugin":
+				restoreSettings = True
+				restoreSettingsnoPlugin = True
+			if answer[1] == "restoresettingsandallplugins":
+				restoreSettings   = True
+				restoreAllPlugins = True
+			if restoreSettings:
+				self.SaveEPG()
+			if answer[1] != "abort":
+				if restoreSettings:
+					try:
+						os.system('mkdir -p /media/hdd/images/config')
+						os.system('touch /media/hdd/images/config/settings')
+					except:
+						print "postFlashActionCallback: failed to create /media/hdd/images/config/settings"
+				else:
+					if os.path.exists('/media/hdd/images/config/settings'):
+						os.system('rm -f /media/hdd/images/config/settings')
+				if restoreAllPlugins:
+					try:
+						os.system('mkdir -p /media/hdd/images/config')
+						os.system('touch /media/hdd/images/config/plugins')
+					except:
+						print "postFlashActionCallback: failed to create /media/hdd/images/config/plugins"
+				else:
+					if os.path.exists('/media/hdd/images/config/plugins'):
+						os.system('rm -f /media/hdd/images/config/plugins')
+				if restoreSettingsnoPlugin:
+					try:
+						os.system('mkdir -p /media/hdd/images/config')
+						os.system('touch /media/hdd/images/config/noplugins')
+					except:
+						print "postFlashActionCallback: failed to create /media/hdd/images/config/noplugins"
+				else:
+					if os.path.exists('/media/hdd/images/config/noplugins'):
+						os.system('rm -f /media/hdd/images/config/noplugins')
+				if self.flashWithPostFlashActionMode == 'online':
+					self.unzip_image(self.filename, flashPath)
+				else:
+					self.startInstallLocalCB()
+			else:
+				self.show()
 		else:
 			self.show()
 
@@ -428,6 +516,12 @@ class doFlashImage(Screen):
 						break
 
 		self["imageList"].l.setList(self.imagelist)
+
+	def SaveEPG(self):
+		from enigma import eEPGCache
+		epgcache = eEPGCache.getInstance()
+		epgcache.save()
+
 
 class ImageDownloadJob(Job):
 	def __init__(self, url, filename, file):
