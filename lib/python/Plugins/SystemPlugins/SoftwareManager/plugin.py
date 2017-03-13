@@ -41,7 +41,7 @@ from twisted.internet import reactor
 from ImageBackup import ImageBackup
 from Flash_online import FlashOnline
 from ImageWizard import ImageWizard
-from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getOldBackupPath, getBackupFilename, RestoreMyMetrixHD
+from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getOldBackupPath, getBackupFilename
 from BackupRestore import InitConfig as BackupRestore_InitConfig
 from SoftwareTools import iSoftwareTools
 import os
@@ -64,27 +64,29 @@ else:
 
 config.plugins.configurationbackup = BackupRestore_InitConfig()
 
-config.plugins.softwaremanager = ConfigSubsection()
-config.plugins.softwaremanager.overwriteSettingsFiles = ConfigYesNo(default=False)
-config.plugins.softwaremanager.overwriteDriversFiles = ConfigYesNo(default=True)
-config.plugins.softwaremanager.overwriteEmusFiles = ConfigYesNo(default=True)
-config.plugins.softwaremanager.overwritePiconsFiles = ConfigYesNo(default=True)
-config.plugins.softwaremanager.overwriteBootlogoFiles = ConfigYesNo(default=True)
-config.plugins.softwaremanager.overwriteSpinnerFiles = ConfigYesNo(default=True)
-config.plugins.softwaremanager.overwriteConfigFiles = ConfigSelection(
-				[
-				 ("Y", _("Yes, always")),
-				 ("N", _("No, never")),
-				 ("ask", _("Always ask"))
-				], "Y")
+def Load_defaults():
+	config.plugins.softwaremanager = ConfigSubsection()
+	config.plugins.softwaremanager.overwriteSettingsFiles = ConfigYesNo(default=False)
+	config.plugins.softwaremanager.overwriteDriversFiles = ConfigYesNo(default=True)
+	config.plugins.softwaremanager.overwriteEmusFiles = ConfigYesNo(default=True)
+	config.plugins.softwaremanager.overwritePiconsFiles = ConfigYesNo(default=True)
+	config.plugins.softwaremanager.overwriteBootlogoFiles = ConfigYesNo(default=True)
+	config.plugins.softwaremanager.overwriteSpinnerFiles = ConfigYesNo(default=True)
+	config.plugins.softwaremanager.overwriteConfigFiles = ConfigSelection(
+					[
+					("Y", _("Yes, always")),
+					("N", _("No, never")),
+					("ask", _("Always ask"))
+					], "Y")
 
-config.plugins.softwaremanager.updatetype = ConfigSelection(
-				[
-					("hot", _("Upgrade with GUI")),
-					("cold", _("Unattended upgrade without GUI")),
-				], "hot")
-config.plugins.softwaremanager.epgcache = ConfigYesNo(default=False)
+	config.plugins.softwaremanager.updatetype = ConfigSelection(
+					[
+						("hot", _("Upgrade with GUI")),
+						("cold", _("Unattended upgrade without GUI")),
+					], "hot")
+	config.plugins.softwaremanager.epgcache = ConfigYesNo(default=False)
 
+Load_defaults()
 def write_cache(cache_file, cache_data):
 	#Does a cPickle dump
 	if not os_path.isdir( os_path.dirname(cache_file) ):
@@ -439,6 +441,7 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 		self["key_blue"] = StaticText()
 		self["introduction"] = StaticText()
 
+		Load_defaults()
 		self.createSetup()
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -1693,7 +1696,7 @@ class UpdatePlugin(Screen):
 				if fileExists("/etc/enigma2/.removelang"):
 					language.delLanguage()
 				#self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
-				self.restoreoDreamy()
+ #				self.restoreoDreamy()
 			else:
 				self.close()
 		else:
@@ -1706,21 +1709,21 @@ class UpdatePlugin(Screen):
 			self.session.open(TryQuitMainloop,retvalue=2)
 		self.close()
 
-	def restoreoDreamy(self):
-		try:
-			if config.skin.primary_skin.value == "oDreamy/oDreamy.xml" and not os.path.exists("/usr/share/enigma2/oDreamy/oDreamy.xml"):
-				self.session.openWithCallback(self.restoreMetrixHDCallback, RestoreoDreamy)
-			elif config.skin.primary_skin.value == "oDreamy/skin.oDreamy.xml" and config.plugins.WeatherOther.FHDenabled.value:
-				from Plugins.Extensions.Weather.MainSettingsView import MainSettingsView
-				MainSettingsView(None).getFHDiconRefresh()
-				self.restoreoDreamyCallback()
-			else:
-				self.restoreoDreamyCallback()
-		except:
-			self.restoreoDreamyCallback()
-
-	def restoreoDreamyCallback(self, ret = None):
-		self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
+#	def restoreoDreamy(self):
+#		try:
+#			if config.skin.primary_skin.value == "oDreamy/oDreamy.xml" and not os.path.exists("/usr/share/enigma2/oDreamy/oDreamy.xml"):
+#				self.session.openWithCallback(self.restoreMetrixHDCallback, RestoreoDreamy)
+#			elif config.skin.primary_skin.value == "oDreamy/skin.oDreamy.xml" and config.plugins.WeatherOther.FHDenabled.value:
+#				from Plugins.Extensions.Weather.MainSettingsView import MainSettingsView
+#				MainSettingsView(None).getFHDiconRefresh()
+#				self.restoreoDreamyCallback()
+#			else:
+#				self.restoreoDreamyCallback()
+#		except:
+#			self.restoreoDreamyCallback()
+#
+#	def restoreoDreamyCallback(self, ret = None):
+#		self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
 
 class IPKGMenu(Screen):
 	skin = """

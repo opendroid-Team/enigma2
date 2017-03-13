@@ -34,20 +34,20 @@ def InitConfig():
 	config.plugins.configurationbackup = ConfigSubsection()
 	if boxtype in ('maram9', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo', 'galaxym6') and not path.exists("/media/hdd/backup_%s" %boxtype):
 		config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/backup/', visible_width = 50, fixed_size = False)
-	else:	
+	else:
 		config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/hdd/', visible_width = 50, fixed_size = False)
-	config.plugins.configurationbackup.backupdirs_default = NoSave(ConfigLocations(default=[eEnv.resolve('${sysconfdir}/enigma2/'), '/etc/CCcam.cfg', '/usr/keys/', '/usr/lib/enigma2/python/Plugins/Extensions/MyMetrixLite/MyMetrixLiteBackup.dat',
-																							'/etc/tuxbox/config/', '/etc/auto.network', '/etc/enigma2/automounts.xml', '/etc/passwd', '/etc/shadow',
-																							'/etc/default/dropbear', '/home/root/.ssh/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
-																							'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
-																							'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/default_gw', '/etc/hostname', '/usr/lib/enigma2/python/Plugins/Extensions/VMC/DB/',
-																							'/usr/lib/enigma2/python/Plugins/Extensions/MP3Browser/db',
-																							'/usr/lib/enigma2/python/Plugins/Extensions/MovieBrowser/db',
-																							'/usr/lib/enigma2/python/Plugins/Extensions/TVSpielfilm/db', '/etc/ConfFS',
-																							eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
-																							+eEnv_resolve_multi('/usr/bin/*cam*')\
-																							+eEnv_resolve_multi('/etc/*.emu')\
-																							+eEnv_resolve_multi('/etc/init.d/softcam*')))
+	config.plugins.configurationbackup.backupdirs_default = NoSave(ConfigLocations(default=[eEnv.resolve('${sysconfdir}/enigma2/'),
+		'/etc/CCcam.cfg', '/usr/keys',
+		'/etc/tuxbox/config/', '/etc/auto.network', '/etc/feeds.xml', '/etc/machine-id', 
+		'/etc/openvpn/', '/etc/ipsec.conf', '/etc/ipsec.secrets', '/etc/ipsec.user', '/etc/strongswan.conf', 
+		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
+		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
+		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/default_gw', '/etc/hostname', '/etc/epgimport/', '/etc/exports',
+		'/etc/cron/crontabs/root', '/etc/cron/root', '/etc/enigmalight.conf', '/etc/volume.xml', '/etc/enigma2/ci_auth_slot_0.bin', '/etc/enigma2/ci_auth_slot_1.bin',
+		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
+		+eEnv_resolve_multi('/usr/bin/*cam*')\
+		+eEnv_resolve_multi('/etc/*.emu')\
+		+eEnv_resolve_multi('/etc/init.d/softcam*')))
 	config.plugins.configurationbackup.backupdirs         = ConfigLocations(default=[]) # 'backupdirs_addon' is called 'backupdirs' for backwards compatibility, holding the user's old selection, duplicates are removed during backup
 	config.plugins.configurationbackup.backupdirs_exclude = ConfigLocations(default=[])
 	return config.plugins.configurationbackup
@@ -113,12 +113,19 @@ class BackupScreen(Screen, ConfigListScreen):
 
 	def doBackup(self):
 		configfile.save()
-		if config.plugins.softwaremanager.epgcache.value:
-			eEPGCache.getInstance().save()
+		try:
+			if config.plugins.softwaremanager.epgcache.value:
+				eEPGCache.getInstance().save()
+		except:
+			pass
 		try:
 			if path.exists(self.backuppath) == False:
 				makedirs(self.backuppath)
-			self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs_default.value )
+			try:
+				self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs_default.value )
+			except:
+				InitConfig()
+				self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs_default.value )
 			for f in config.plugins.configurationbackup.backupdirs.value:
 				if not f in self.backupdirs:
 					self.backupdirs = self.backupdirs + " " + f
@@ -127,11 +134,12 @@ class BackupScreen(Screen, ConfigListScreen):
 			if not "/tmp/changed-configfiles.txt" in self.backupdirs:
 				self.backupdirs = self.backupdirs + " /tmp/changed-configfiles.txt"
 
-			cmd1 = "opkg list-installed | egrep 'enigma2-plugin-|task-base|packagegroup-base' > /tmp/installed-list.txt"
+			cmd1 = "opkg list-installed | egrep -v '^ ' | awk '{print $1 }' | egrep 'enigma2-plugin-|task-base|packagegroup-base|^ca-certificates$|^joe$|^mc$|^nano$|^openvpn|^easy-rsa$|^simple-rsa$|^perl|^streamproxy$|^wget$' > /tmp/installed-list.txt"
 			cmd2 = "opkg list-changed-conffiles > /tmp/changed-configfiles.txt"
 			cmd3 = "tar -czvf " + self.fullbackupfilename + " " + self.backupdirs
 			for f in config.plugins.configurationbackup.backupdirs_exclude.value:
 				cmd3 = cmd3 + " --exclude " + f.strip("/")
+			cmd3 = cmd3 + " --exclude home/root/.cache"
 			cmd = [cmd1, cmd2, cmd3]
 			if path.exists(self.fullbackupfilename):
 				dt = str(date.fromtimestamp(stat(self.fullbackupfilename).st_ctime))
@@ -359,10 +367,12 @@ class RestoreMenu(Screen):
 
 	def CB_startRestore(self, ret = False):
 		self.exe = True
+		cmds = ["tar -xzvf " + self.path + "/" + self.sel + " --exclude=etc/passwd --exclude=etc/shadow --exclude=etc/group -C /", "chown -R root:root /home/root /etc/auto.network /etc/default/dropbear /etc/dropbear ; chmod 600 /etc/auto.network /etc/dropbear/* /home/root/.ssh/* ; chmod 700 /home/root /home/root/.ssh", "killall -9 enigma2", "/etc/init.d/autofs restart"]
 		if ret == True:
-			self.session.open(Console, title = _("Restoring..."), cmdlist = ["rm -R /etc/enigma2", "tar -xzvf " + self.path + "/" + self.sel + " -C /", "killall -9 enigma2", "/etc/init.d/autofs restart"])
+			cmds.insert(0, "rm -R /etc/enigma2")
+			self.session.open(Console, title = _("Restoring..."), cmdlist = cmds)
 		else:
-			self.session.open(Console, title = _("Restoring..."), cmdlist = ["tar -xzvf " + self.path + "/" + self.sel + " -C /", "killall -9 enigma2", "/etc/init.d/autofs restart"])
+			self.session.open(Console, title = _("Restoring..."), cmdlist = cmds)
 
 	def deleteFile(self):
 		if (self.exe == False) and (self.entry == True):
@@ -418,10 +428,10 @@ class RestoreScreen(Screen, ConfigListScreen):
 		self.setTitle(_("Restoring..."))
 
 	def doRestore(self):
+		restorecmdlist = ["rm -R /etc/enigma2", "tar -xzvf " + self.fullbackupfilename + " --exclude=etc/passwd --exclude=etc/shadow --exclude=etc/group -C /", "chown -R root:root /home/root /etc/auto.network /etc/default/dropbear /etc/dropbear ; chmod 600 /etc/auto.network /etc/dropbear/* /home/root/.ssh/* ; chmod 700 /home/root /home/root/.ssh"]
 		if path.exists("/proc/stb/vmpeg/0/dst_width"):
-			restorecmdlist = ["rm -R /etc/enigma2", "tar -xzvf " + self.fullbackupfilename + " -C /", "echo 0 > /proc/stb/vmpeg/0/dst_height", "echo 0 > /proc/stb/vmpeg/0/dst_left", "echo 0 > /proc/stb/vmpeg/0/dst_top", "echo 0 > /proc/stb/vmpeg/0/dst_width", "/etc/init.d/autofs restart"]
-		else:
-			restorecmdlist = ["rm -R /etc/enigma2", "tar -xzvf " + self.fullbackupfilename + " -C /", "/etc/init.d/autofs restart"]
+			restorecmdlist += ["echo 0 > /proc/stb/vmpeg/0/dst_height", "echo 0 > /proc/stb/vmpeg/0/dst_left", "echo 0 > /proc/stb/vmpeg/0/dst_top", "echo 0 > /proc/stb/vmpeg/0/dst_width"]
+		restorecmdlist.append("/etc/init.d/autofs restart")
 		print"[SOFTWARE MANAGER] Restore Settings !!!!"
 
 		self.session.open(Console, title = _("Restoring..."), cmdlist = restorecmdlist, finishedCallback = self.restoreFinishedCB)
@@ -467,89 +477,6 @@ class RestoreScreen(Screen, ConfigListScreen):
 			self.session.open(Console, title = _("Your %s %s will Reboot...")% (getMachineBrand(), getMachineName()), cmdlist = ["chmod +x /tmp/rebootSYS.sh", "/tmp/rebootSYS.sh"])
 		except:
 			self.restartGUI()
-
-	def restoreMetrixSkin(self, ret = None):
-		configfile.load()
-		configfile.save()
-		try:
-			f=open("/etc/enigma2/settings", "r")
-			s=f.read()
-			f.close()
-			restore = "config.skin.primary_skin=MetrixHD/skin.MySkin.xml" in s
-		except:
-			restore = False
-		if restore:
-			self.session.openWithCallback(self.rebootSYS, RestoreMyMetrixHD)
-		else:
-			self.rebootSYS()
-
-	def runAsync(self, finished_cb):
-		self.doRestore()
-
-class RestoreMyMetrixHD(Screen):
-
-	def __init__(self, session):
-		Screen.__init__(self, session)
-		skin = """
-			<screen name="RestoreMetrixHD" position="center,center" size="600,100" title="Restore MetrixHD Settings">
-			<widget name="label" position="10,30" size="500,50" halign="center" font="Regular;20" transparent="1" foregroundColor="white" />
-			</screen> """
-		self.skin = skin
-		self.session = session
-		self["label"] = Label(_("Please wait while your skin setting is restoring..."))
-		self["summary_description"] = StaticText(_("Please wait while your skin setting is restoring..."))
-		self.onShown.append(self.setWindowTitle) 
-
-		self.check = 0
-		# if not waiting is bsod possible (RuntimeError: modal open are allowed only from a screen which is modal!)
-		self.restoreSkinTimer = eTimer()
-		self.restoreSkinTimer.callback.append(self.restoreSkin)
-		self.restoreSkinTimer.start(1000, True)
-
-	def setWindowTitle(self): 
-		self.setTitle(_("Restore MetrixHD Settings"))
-
-	def restoreSkin(self):
-		self.MainSettingsView = False
-		self.checkSkinTimer = eTimer()
-		self.checkSkinTimer.callback.append(self.checkSkin)
-		self.checkSkinTimer.start(10000, False)
-		try:
-			import Plugins.Extensions.MyMetrixLite.MainSettingsView as MainSettingsView
-			self.MainSettingsView = MainSettingsView
-			reload(self.MainSettingsView)
-			#variables testing
-			result = self.MainSettingsView.skinReady
-			resultCode = self.MainSettingsView.skinReadyCode
-			#restore skin
-			self.MainSettingsView.MainSettingsView(None,True)
-		except:
-			self.checkSkinTimer.stop()
-			self.session.openWithCallback(self.checkSkinCallback, MessageBox, _("Error creating MetrixHD-Skin.\nPlease check after reboot MyMetrixLite-Plugin and apply your settings."), MessageBox.TYPE_ERROR, timeout = 30)
-
-	def checkSkin(self):
-		result = True
-		resultCode = 1
-		self.check += 1
-		if self.MainSettingsView:
-			result = self.MainSettingsView.skinReady
-			resultCode = self.MainSettingsView.skinReadyCode
-		if self.check >= 12 or result:
-			self.checkSkinTimer.stop()
-			if resultCode > 0:
-				infotext = ({1:_("Unknown Error creating Skin.\nPlease check after reboot MyMetrixLite-Plugin and apply your settings."),
-							2:_("Error creating HD-Skin. Not enough flash memory free."),
-							3:_("Error creating FullHD-Skin. Not enough flash memory free.\nUsing HD-Skin!"),
-							4:_("Error creating FullHD-Skin. Icon package download not available.\nUsing HD-Skin!"),
-							5:_("Error creating FullHD-Skin.\nUsing HD-Skin!"),
-							6:_("Some FullHD-Icons are missing.\nUsing HD-Icons!"),
-							}[resultCode])
-				self.session.openWithCallback(self.checkSkinCallback, MessageBox, infotext, MessageBox.TYPE_ERROR, timeout = 30)
-			else:
-				self.close()
-
-	def checkSkinCallback(self, ret = None):
-		self.close()
 
 class RestartNetwork(Screen):
 
