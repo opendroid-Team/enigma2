@@ -441,30 +441,9 @@ class RestoreScreen(Screen, ConfigListScreen):
 
 	def checkPlugins(self):
 		if path.exists("/tmp/installed-list.txt"):
-			if os.path.exists("/media/hdd/images/config/noplugins") and config.misc.firstrun.value:
-				self.userRestoreScript()
-			else:
-				self.session.openWithCallback(self.userRestoreScript, installedPlugins)
+			self.session.openWithCallback(self.restartGUI, installedPlugins)
 		else:
-			self.userRestoreScript()
-
-	def userRestoreScript(self, ret = None):
-		
-		SH_List = []
-		SH_List.append('/media/hdd/images/config/myrestore.sh')
-		SH_List.append('/media/usb/images/config/myrestore.sh')
-		SH_List.append('/media/cf/images/config/myrestore.sh')
-		
-		startSH = None
-		for SH in SH_List:
-			if path.exists(SH):
-				startSH = SH
-				break
-
-		if startSH:
-			self.session.openWithCallback(self.restoreMetrixSkin, Console, title = _("Running Myrestore script, Please wait ..."), cmdlist = [startSH], closeOnSuccess = True)
-		else:
-			self.restoreMetrixSkin()
+			self.restartGUI()
 
 	def restartGUI(self, ret = None):
 		self.session.open(Console, title = _("Your %s %s will Restart...")% (getMachineBrand(), getMachineName()), cmdlist = ["killall -9 enigma2"])
