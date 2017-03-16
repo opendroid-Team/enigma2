@@ -85,7 +85,7 @@ class ImageBackup(Screen):
 			self["key_yellow"] = Button(_("STARTUP"))
 			self["info-multi"] = Label(_("You can select with yellow the OnlineFlash Image\n or select Recovery to create a USB Disk Image for clean Install."))
 		else:
-			self["key_yellow"] = StaticText("")
+			self["key_yellow"] = Button("")
 			self["info-multi"] = Label(" ")
 		self["info-usb"] = Label(_("USB = Do you want to make a back-up on USB?\nThis will take between 4 and 15 minutes depending on the used filesystem and is fully automatic.\nMake sure you first insert an USB flash drive before you select USB."))
 		self["info-hdd"] = Label(_("HDD = Do you want to make an USB-back-up image on HDD? \nThis only takes 2 or 10 minutes and is fully automatic."))
@@ -506,9 +506,10 @@ class ImageBackup(Screen):
 		self.session.open(Console, title = self.TITLE, cmdlist = cmdlist, closeOnSuccess = False)
 
 	def imageInfo(self):
-		AboutText = _("OpenDroid Full-Image Backupscript\n")
+		AboutText = _("Full Image Backup ")
+		AboutText += _("By opendroid Image Team") + "\n"
 		AboutText += _("Support at") + " www.droidsat.org\n\n"
-		AboutText += _("[Image Info's]\n")
+		AboutText += _("[Image Info]\n")
 		AboutText += _("Model: %s %s\n") % (getMachineBrand(), getMachineName())
 		AboutText += _("Backup Date: %s\n") % strftime("%Y-%m-%d", localtime(self.START))
 

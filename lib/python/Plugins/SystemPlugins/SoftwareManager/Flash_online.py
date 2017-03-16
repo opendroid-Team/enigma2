@@ -221,7 +221,9 @@ class doFlashImage(Screen):
 			"cancel": self.quit,
 		}, -2)
 		self.onLayoutFinish.append(self.layoutFinished)
-
+		self.newfeed = None
+		if os.path.exists('/etc/enigma2/newfeed'):
+			self.newfeed = ReadNewfeed()
 
 	def quit(self):
 		if self.simulate or not self.List == "STARTUP":
@@ -274,6 +276,8 @@ class doFlashImage(Screen):
 			box = box[0:3] + 'x00'
 		elif box == "odinm9":
 			box = 'maram9'
+		elif box == "dm525":
+			box = 'dm520'
 		return box
 
 	def getSel(self):
@@ -295,27 +299,32 @@ class doFlashImage(Screen):
 			self.startInstallLocal(ret)
 
 	def green(self):
-		sel = self["imageList"].l.getCurrentSelection()
+		if self.getSel():
+		        sel = self["imageList"].l.getCurrentSelection()
+			self.hide()
+			self.session.openWithCallback(self.greenCB, MessageBox, _("Do you want to backup your settings now?"), default=False)
+
 		if sel == None:
 			print"Nothing to select !!"
 			return
 		file_name = self.imagePath + "/" + sel
 		self.filename = file_name
+	def startInstallOnline(self, ret = None):
 		box = self.box()
 		brand = getMachineBrand()
 		self.hide()
 		if self.Online:
 			if self.imagesCounter == 0:
-				url = self.feedurl + "/" + brand + "/" + box + "/" + sel
+				url = self.feedurl + "/" + brand + "/" + box + "/" + self.sel
 			else:
 				url = self.feedurl + "/" + brand + "/" + box + "/" + sel
 			print "URL:", url
 			u = urllib2.urlopen(url)
-			f = open(file_name, 'wb')
+			f = open(self.filename, 'wb')
 			meta = u.info()
 			file_size = int(meta.getheaders("Content-Length")[0])
-			print "Downloading: %s Bytes: %s" % (sel, file_size)
-			job = ImageDownloadJob(url, file_name, sel)
+			print "Downloading: %s Bytes: %s" % (self.sel, file_size)
+			job = ImageDownloadJob(url, self.filename, self.sel)
 			job.afterEvent = "close"
 			job_manager.AddJob(job)
 			job_manager.failed_jobs = []
@@ -425,8 +434,13 @@ class doFlashImage(Screen):
 			self.show()
 
 	def unzip_image(self, filename, path):
-		print "Unzip %s to %s" %(filename,path)
-		self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
+		if getBoxType() in "dm7080" "dm820" "dm520" "dm525":
+			print "Untaring %s to %s" %(filename,path)
+			os.system('mkdir /dbackup.new')
+			self.session.openWithCallback(self.cmdFinished, Console, title = _("Untaring files, Please wait ..."), cmdlist = ['tar -xJf ' + filename + ' -C ' + '/dbackup.new', "sleep 3"], closeOnSuccess = True)
+		else:
+			print "Unzip %s to %s" %(filename,path)
+			self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
 
 	def cmdFinished(self):
 		self.prepair_flashtmp(flashPath)
@@ -513,7 +527,7 @@ class doFlashImage(Screen):
 	def yellow(self):
 		if not self.Online:
 			self.session.openWithCallback(self.DeviceBrowserClosed, DeviceBrowser, None, matchingPattern="^.*\.(zip|bin|jffs2|img)", showDirectories=True, showMountpoints=True, inhibitMounts=["/autofs/sr0/"])
-		elif self.getSel():
+		if self.getSel():
 			self.greenCB(True)
 
 	def startInstallLocal(self, ret = None):
@@ -656,7 +670,7 @@ class ImageDownloadTask(Task):
 		self.aborted = True
 
 	def download_progress(self, recvbytes, totalbytes):
-		if ( recvbytes - self.last_recvbytes  ) > 10000: # anti-flicker
+		if ( recvbytes - self.last_recvbytes  ) > 100000: # anti-flicker
 			self.progress = int(100*(float(recvbytes)/float(totalbytes)))
 			self.name = _("Downloading") + ' ' + "%d of %d kBytes" % (recvbytes/1024, totalbytes/1024)
 			self.last_recvbytes = recvbytes
