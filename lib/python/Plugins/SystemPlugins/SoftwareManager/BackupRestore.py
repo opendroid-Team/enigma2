@@ -441,12 +441,32 @@ class RestoreScreen(Screen, ConfigListScreen):
 
 	def checkPlugins(self):
 		if path.exists("/tmp/installed-list.txt"):
-			self.session.openWithCallback(self.restartGUI, installedPlugins)
+			if os.path.exists("/media/hdd/images/config/noplugins") and config.misc.firstrun.value:
+				self.userRestoreScript()
+			else:
+				self.session.openWithCallback(self.userRestoreScript, installedPlugins)
+		else:
+			self.userRestoreScript()
+
+	def userRestoreScript(self, ret = None):
+		SH_List = []
+		SH_List.append('/media/hdd/images/config/myrestore.sh')
+		SH_List.append('/media/usb/images/config/myrestore.sh')
+		SH_List.append('/media/cf/images/config/myrestore.sh')
+		
+		startSH = None
+		for SH in SH_List:
+			if path.exists(SH):
+				startSH = SH
+				break
+		
+		if startSH:
+			self.session.openWithCallback(self.restartGUI, Console, title = _("Running Myrestore script, Please wait ..."), cmdlist = [startSH], closeOnSuccess = True)
 		else:
 			self.restartGUI()
 
 	def restartGUI(self, ret = None):
-		self.session.open(Console, title = _("Your %s %s will Restart...")% (getMachineBrand(), getMachineName()), cmdlist = ["killall -9 enigma2"])
+		self.session.open(Console, title = _("Your %s %s will Reboot...")% (getMachineBrand(), getMachineName()), cmdlist = ["killall -9 enigma2"])
 
 	def rebootSYS(self, ret = None):
 		try:
@@ -566,9 +586,27 @@ class installedPlugins(Screen):
 		self.close()
 
 class RestorePlugins(Screen):
-
 	def __init__(self, session, menulist):
 		Screen.__init__(self, session)
+		skin = """
+		        <screen name="RestorePlugins" position="center,center" size="650,500" title="Restore Plugins">
+		        <widget source="menu" render="Listbox" position="12,12" size="627,416" scrollbarMode="showOnDemand">
+		        	<convert type="TemplatedMultiContent">
+		        		{"template": [
+		        		MultiContentEntryText(pos = (50,7), size = (590,60), flags = RT_HALIGN_LEFT, text = 0),
+		        		MultiContentEntryPixmapAlphaBlend(pos = (10,7), size = (50,40), png = 1),
+		        		],
+		        		"fonts": [gFont("Regular",22)],
+		        		"itemHeight":40
+		        		}
+		        	</convert>
+		        </widget>
+		        <ePixmap pixmap="skin_default/buttons/red.png" position="162,448" size="138,40" alphatest="blend" />
+		        <ePixmap pixmap="skin_default/buttons/green.png" position="321,448" size="138,40" alphatest="blend" />
+		        <widget name="key_red" position="169,455" size="124,26" zPosition="1" font="Regular;17" halign="center" transparent="1" />
+		        <widget name="key_green" position="329,455" size="124,26" zPosition="1" font="Regular;17" halign="center" transparent="1" />
+		        </screen>"""
+		self.skin = skin        
 		Screen.setTitle(self, _("Restore Plugins"))
 		self.index = 0
 		self.list = menulist
