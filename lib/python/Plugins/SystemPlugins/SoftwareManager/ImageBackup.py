@@ -22,7 +22,7 @@ import commands
 import datetime
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDate, getImageVersion, getImageBuild, getBrandOEM, getMachineBuild, getImageFolder, getMachineUBINIZE, getMachineMKUBIFS, getMachineMtdKernel, getMachineMtdRoot, getMachineKernelFile, getMachineRootFile, getImageFileSystem
 from Components.Button import Button
-VERSION = "Version 6.0 opendroid"
+VERSION = "Version 6.1 opendroid"
 HaveGZkernel = True
 if getMachineBuild() in ('et1x000',"vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7"):
 	HaveGZkernel = False
