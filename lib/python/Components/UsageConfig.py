@@ -1,6 +1,6 @@
 import os
 from time import time
-from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff, setEnableTtCachingOnOff, eEnv, Misc_Options, eBackgroundFileEraser, eServiceEvent
+from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff, setEnableTtCachingOnOff, eEnv, Misc_Options, eBackgroundFileEraser, eServiceEvent, eDVBFrontend
 
 from Components.About import about
 from Components.Harddisk import harddiskmanager
@@ -11,8 +11,13 @@ from Components.ServiceList import refreshServiceList
 from SystemInfo import SystemInfo
 from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType
+from sys import maxint
 
 def InitUsageConfig():
+	config.misc.SettingsVersion = ConfigFloat(default = [1,1], limits = [(1,10),(0,99)])
+	config.misc.SettingsVersion.value = [1,1]
+	config.misc.SettingsVersion.save_forced = True
+	config.misc.SettingsVersion.save()
 	config.misc.useNTPminutes = ConfigSelection(default = "30", choices = [("30", "30" + " " +_("minutes")), ("60", _("Hour")), ("1440", _("Once per day"))])
 	config.misc.remotecontrol_text_support = ConfigYesNo(default = True)
 
@@ -256,17 +261,33 @@ def InitUsageConfig():
 	config.usage.remote_fallback_enabled = ConfigYesNo(default = False)
 	config.usage.remote_fallback = ConfigText(default = "", visible_width = 50, fixed_size = False)
 
-	nims = [("-1", _("auto"))]
-	rec_nims = [("-2", _("Disabled")), ("-1", _("auto"))]
+	nims = [("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
+	rec_nims = [("-2", _("Disabled")), ("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
 	for x in nimmanager.nim_slots:
 		nims.append((str(x.slot), x.getSlotName()))
 		rec_nims.append((str(x.slot), x.getSlotName()))
-	config.usage.frontend_priority = ConfigSelection(default = "-1", choices = nims)
-	config.usage.recording_frontend_priority = ConfigSelection(default = "-2", choices = rec_nims)
+	nims_multi = [("-1", _("auto"))]
+	rec_nims_multi = [("-2", _("Disabled")), ("-1", _("auto"))]
+	for i in xrange(1,2**min(12,len(nimmanager.nim_slots))):
+		slot_names = ""
+		for x in xrange(min(12,len(nimmanager.nim_slots))):
+			if (i & 2**x):
+				if slot_names != "": slot_names = slot_names + "+"
+				slot_names = slot_names + nimmanager.nim_slots[x].getSlotName()
+		nims_multi.append((str(i), slot_names))
+		rec_nims_multi.append((str(i), slot_names))
+	priority_strictly_choices = [("no", _("No")), ("yes", _("Yes")), ("while_available", _("While available"))]
+	config.usage.frontend_priority                       = ConfigSelection(default = "-1", choices = nims)
+	config.usage.frontend_priority_multiselect           = ConfigSelection(default = "-1", choices = nims_multi)
+	config.usage.frontend_priority_strictly              = ConfigSelection(default = "no", choices = priority_strictly_choices)
+	config.usage.frontend_priority_intval                = NoSave(ConfigInteger(default = 0, limits = (-99, maxint)))
+	config.usage.recording_frontend_priority             = ConfigSelection(default = "-2", choices = rec_nims)
+	config.usage.recording_frontend_priority_multiselect = ConfigSelection(default = "-2", choices = rec_nims_multi)
+	config.usage.recording_frontend_priority_strictly    = ConfigSelection(default = "no", choices = priority_strictly_choices)
+	config.usage.recording_frontend_priority_intval      = NoSave(ConfigInteger(default = 0, limits = (-99, maxint)))
 	config.misc.disable_background_scan = ConfigYesNo(default = False)
 
 	config.usage.jobtaksextensions = ConfigYesNo(default = True)
-        config.usage.servicenum_fontsize = ConfigSelectionNumber(default=2, stepwidth=1, min=-8, max=10, wraparound=True)
 	config.usage.servicenum_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.servicename_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
@@ -381,8 +402,22 @@ def InitUsageConfig():
 	config.usage.alternatives_priority.addNotifier(TunerTypePriorityOrderChanged, immediate_feedback=False)
 
 	def PreferredTunerChanged(configElement):
-		setPreferredTuner(int(configElement.value))
+		config.usage.frontend_priority_intval.setValue(calcFrontendPriorityIntval(config.usage.frontend_priority, config.usage.frontend_priority_multiselect, config.usage.frontend_priority_strictly))
+		debugstring = ""
+		elem2 = config.usage.frontend_priority_intval.value
+		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendBinaryMode):
+			elem2 = int(elem2) - eDVBFrontend.preferredFrontendBinaryMode
+			debugstring = debugstring + "Binary +"
+		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendPrioForced):
+			elem2 = int(elem2) - eDVBFrontend.preferredFrontendPrioForced
+			debugstring = debugstring + "Forced +"
+		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendPrioHigh):
+			elem2 = int(elem2) - eDVBFrontend.preferredFrontendPrioHigh
+			debugstring = debugstring + "High +"
+		setPreferredTuner(int(config.usage.frontend_priority_intval.value))
 	config.usage.frontend_priority.addNotifier(PreferredTunerChanged)
+	config.usage.frontend_priority_multiselect.addNotifier(PreferredTunerChanged)
+	config.usage.frontend_priority_strictly.addNotifier(PreferredTunerChanged)
 	if not os.path.exists(resolveFilename(SCOPE_VOD)):
 	 try:
 	  os.mkdir(resolveFilename(SCOPE_VOD), 493)
@@ -942,6 +977,18 @@ def InitUsageConfig():
 	config.pluginbrowser.po = ConfigYesNo(default = False)
 	config.pluginbrowser.src = ConfigYesNo(default = False)
 
+def calcFrontendPriorityIntval(config_priority, config_priority_multiselect, config_priority_strictly):
+	elem = config_priority.value
+	if elem in ("expert_mode", "experimental_mode"):
+		elem = int(config_priority_multiselect.value)
+		if elem > 0:
+			elem = int(elem) + int(eDVBFrontend.preferredFrontendBinaryMode)
+			if config_priority.value == "experimental_mode":
+				if config_priority_strictly.value == "yes":
+					elem += eDVBFrontend.preferredFrontendPrioForced
+				elif config_priority_strictly.value == "while_available":
+					elem += eDVBFrontend.preferredFrontendPrioHigh
+	return elem
 def updateChoices(sel, choices):
 	if choices:
 		defval = None

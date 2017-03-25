@@ -1889,7 +1889,7 @@ class Config(ConfigSubsection):
 		ConfigSubsection.__init__(self)
 
 	def pickle_this(self, prefix, topickle, result):
-		for (key, val) in topickle.items():
+		for (key, val) in sorted(topickle.items(), key=lambda x: int(x[0]) if x[0].isdigit() else x[0].lower()):
 			name = '.'.join((prefix, key))
 			if isinstance(val, dict):
 				self.pickle_this(name, val, result)
@@ -1916,6 +1916,19 @@ class Config(ConfigSubsection):
 			(name, val) = result
 			val = val.strip()
 
+			#convert old settings
+			if l.startswith("config.Nims."):
+				tmp = name.split('.')
+				if tmp[3] == "cable":
+					tmp[3] = "dvbc"
+				elif tmp[3].startswith ("cable"):
+					tmp[3] = "dvbc." + tmp[3]
+				elif tmp[3].startswith("terrestrial"):
+					tmp[3] = "dvbt." + tmp[3]
+				else:
+					if tmp[3] not in ('dvbs', 'dvbc', 'dvbt', 'multiType'):
+						tmp[3] = "dvbs." + tmp[3]
+				name =".".join(tmp)
 			names = name.split('.')
 			base = configbase
 

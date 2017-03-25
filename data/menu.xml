@@ -7,6 +7,12 @@
 from OPENDROID.BluePanel import BluePanel
 self.session.open(BluePanel)
 </code>  
+		</item>	
+		<item weight="0" level="1" text="Green Panel" entryID="Green Panel">
+<code>
+from OPENDROID.GreenPanel import GreenPanel
+self.session.open(GreenPanel)
+</code>  
 		</item>
 	<menu weight="1" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" >
 		<id val="setup" />
@@ -79,7 +85,7 @@ self.session.open(RemoteControlCode)
 		</menu>		
 		
 		<!-- Menu / Settings / EPG -->
-		<menu weight="25" level="2" text="EPG" entryID="epg_menu">
+		<menu weight="20" level="2" text="EPG" entryID="epg_menu">
 			<id val="epg" />
 			<!-- Menu / Settings / System / Extended System / EPG / Load Save-->
 			<item weight="110" level="2" entryID="setup_epgmulti"><setup id="epgmulti" /></item>
@@ -87,7 +93,7 @@ self.session.open(RemoteControlCode)
 			<item weight="120" level="2" entryID="setup_epginfobar"><setup id="epginfobar" /></item>
 			<item weight="125" level="2" entryID="setup_epginfobargraphical"><setup id="epginfobargraphical" /></item>
 			<item weight="130" level="2" entryID="setup_epggraphical"><setup id="epggraphical" /></item>
-			<menu weight="200" level="2" text="Load/Save" entryID="epgloadsave_menu">
+			<menu weight="200" level="2" text="Load/Save/Delete" entryID="epgloadsave_menu">
 				<id val="epgloadsave_menu" />
 				<item weight="0" level="0" entryID="loadepgcache" text="Load EPG">
 					<code>
@@ -109,6 +115,21 @@ def msgClosed(ret):
 		epgcache = eEPGCache.getInstance()
 		epgcache.save()
 self.session.openWithCallback(msgClosed, EpgSaveMsg)
+</code>
+						</item>
+						<item level="0" entryID="deleteepgcache" text="Delete EPG">
+<code>
+from Components.EpgLoadSave import EpgDeleteMsg
+def msgClosed(ret):
+	if ret:
+		import os
+		from Components.config import config
+		if os.path.exists(config.misc.epgcache_filename.value):
+			os.remove(config.misc.epgcache_filename.value)
+		from enigma import eEPGCache
+		epgcache = eEPGCache.getInstance()
+		epgcache.flushEPG()
+self.session.openWithCallback(msgClosed, EpgDeleteMsg)
 </code>
 				</item>
 			</menu>

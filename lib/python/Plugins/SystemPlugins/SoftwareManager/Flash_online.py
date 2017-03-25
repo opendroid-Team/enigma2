@@ -63,7 +63,6 @@ class FlashOnline(Screen):
 		<widget name="info-online" position="10,80" zPosition="1" size="450,100" font="Regular;20" halign="left" valign="top" transparent="1" />
 		<widget name="info-local" position="10,150" zPosition="1" size="450,200" font="Regular;20" halign="left" valign="top" transparent="1" />
 	</screen>"""
-
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
@@ -112,7 +111,6 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
-
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -126,7 +124,6 @@ class FlashOnline(Screen):
 
 	def quit(self):
 		self.close()
-
 	def yellow(self):
 		if self.check_hdd():
 			self.session.open(doFlashImage, online = False, list=self.list[self.selection], multi=self.multi, devrootfs=self.devrootfs)
@@ -190,7 +187,6 @@ class doFlashImage(Screen):
 		<widget name="key_blue" position="420,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		<widget name="imageList" position="10,10" zPosition="1" size="680,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />
 	</screen>"""
-
 	def __init__(self, session, online, list=None, multi=None, devrootfs=None ):
 		Screen.__init__(self, session)
 		self.session = session
@@ -229,7 +225,6 @@ class doFlashImage(Screen):
 		if self.simulate or not self.List == "STARTUP":
 			fbClass.getInstance().unlock()
 		self.close()
-
 	def blue(self):
 		if self.Online:
 			if self.imagesCounter <= len(images) - 2:
@@ -252,7 +247,6 @@ class doFlashImage(Screen):
 				os.remove(self.imagePath + "/" + self.filename)
 			self.imagelist.remove(self.filename)
 			self["imageList"].l.setList(self.imagelist)
-
 	def box(self):
 		box = getBoxType()
 		machinename = getMachineName()
@@ -500,7 +494,6 @@ class doFlashImage(Screen):
 			os.mkdir(flashTmp)
 		kernel = True
 		rootfs = True
-
 		for path, subdirs, files in os.walk(tmpPath):
 			for name in files:
 				if name.find('kernel') > -1 and name.endswith('.bin') and kernel:
@@ -523,7 +516,6 @@ class doFlashImage(Screen):
 					dest = flashTmp + '/e2jffs2.img'
 					shutil.copyfile(binfile, dest)
 					rootfs = False
-
 	def yellow(self):
 		if not self.Online:
 			self.session.openWithCallback(self.DeviceBrowserClosed, DeviceBrowser, None, matchingPattern="^.*\.(zip|bin|jffs2|img)", showDirectories=True, showMountpoints=True, inhibitMounts=["/autofs/sr0/"])
@@ -565,7 +557,6 @@ class doFlashImage(Screen):
 				self.unzip_image(strPath + '/' + filename, flashPath)
 			else:
 				self.layoutFinished()
-
 		else:
 			self.imagePath = imagePath
 
