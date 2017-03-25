@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-03-04 23:25+0100\n"
+"PO-Revision-Date: 2017-03-26 00:46+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -39,6 +39,9 @@ msgstr "Zap up"
 
 msgid "Show Extension Selection"
 msgstr "Mostra le estensioni installate"
+
+msgid "Extension Install"
+msgstr "Installa estensioni"
 
 msgid "Activate HbbTV (Redbutton)"
 msgstr "Attivare HbbTV (Pulsante Rosso)"
@@ -2382,7 +2385,10 @@ msgid "Blue long"
 msgstr "Blu lungo"
 
 msgid "Blue Panel"
-msgstr "Blue Panel Opendroid"
+msgstr "Blue Panel"
+
+msgid "Green Panel"
+msgstr "Green Panel"
 
 msgid "Change sort by..."
 msgstr "Cambiare ordina per ..."
@@ -2574,6 +2580,12 @@ msgstr "Scansione via Cavo"
 
 msgid "Enable auto fast scan"
 msgstr "Abilita scansione automatica veloce"
+
+msgid "Enable auto cable scan"
+msgstr "Abilitare la scansione automatica via cavo"
+
+msgid "OK Start Scan"
+msgstr "Avvio scansione"
 
 msgid "Cache thumbnails"
 msgstr "Cache miniature"
@@ -2907,6 +2919,9 @@ msgstr "Pulizia del cestino"
 
 msgid "Cleanup"
 msgstr "Ripulire"
+
+msgid "HI-cleanup for external subtitles"
+msgstr "HI-pulizia per i sottotitoli esterni"
 
 msgid "Clear"
 msgstr "Cancella"
@@ -7756,6 +7771,9 @@ msgstr "Configurazione motore"
 msgid "Position of finished Timers in the Timer list"
 msgstr "Posizione dei timer conclusi in elenco timer"
 
+msgid "Position of finished Timers in Timerlist"
+msgstr "Posizione di timer conclusi in Timerlist"
+
 msgid "Position setup"
 msgstr "Impostazione Posizione"
 
@@ -9251,7 +9269,7 @@ msgstr "Mostrare stato WLAN"
 msgid "Show animation while busy"
 msgstr "Mostra animazione mentre e occupato"
 
-msgid "Show background in Radio mode"
+msgid "Show background in Radio Mode"
 msgstr "Mostra sfondo in modalità Radio"
 
 msgid "Show background when tuned to a radio channel."
@@ -10072,7 +10090,7 @@ msgid "Swap PiP and main picture"
 msgstr "Scambiare PiP e schermo principale"
 
 msgid "Swap SNR in '%' with SNR in 'db'"
-msgstr "Swap SNR in '%' with SNR in 'db"
+msgstr "Swap SNR in '%' with SNR in 'db'"
 
 msgid "Percent"
 msgstr "Percentuale"
@@ -14765,3 +14783,6 @@ msgstr "Settings"
 
 msgid "BootLogo"
 msgstr "Bootlogo"
+
+msgid "OPD_panel"
+msgstr "OPD Panel"
