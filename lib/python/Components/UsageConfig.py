@@ -11,6 +11,7 @@ from Components.ServiceList import refreshServiceList
 from SystemInfo import SystemInfo
 from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType
+from keyids import KEYIDS
 from sys import maxint
 
 def InitUsageConfig():
@@ -237,7 +238,21 @@ def InitUsageConfig():
 	config.usage.on_long_powerpress = ConfigSelection(default = "show_menu", choices = choicelist)
 	config.usage.on_short_powerpress = ConfigSelection(default = "standby", choices = choicelist)
 
-	choicelist = [("0", "Disabled")]
+	config.usage.long_press_emulation_key = ConfigSelection(default = "0", choices = [
+		("0", _("None")),
+		(str(KEYIDS["KEY_TV"]), _("TV")),
+		(str(KEYIDS["KEY_RADIO"]), _("Radio")),
+		(str(KEYIDS["KEY_AUDIO"]), _("Audio")),
+		(str(KEYIDS["KEY_VIDEO"]), _("List/Fav")),
+		(str(KEYIDS["KEY_HOME"]), _("Home")),
+		(str(KEYIDS["KEY_END"]), _("End")),
+		(str(KEYIDS["KEY_HELP"]), _("Help")),
+		(str(KEYIDS["KEY_INFO"]), _("Info (EPG)")),
+		(str(KEYIDS["KEY_TEXT"]), _("Teletext")),
+		(str(KEYIDS["KEY_SUBTITLE"]), _("Subtitle")),
+		(str(KEYIDS["KEY_FAVORITES"]), _("Favorites")) ])
+
+	choicelist = [("0", _("Disabled"))]
 	for i in (5, 30, 60, 300, 600, 900, 1200, 1800, 2700, 3600):
 		if i < 60:
 			m = ngettext("%d second", "%d seconds", i) % i
@@ -259,7 +274,7 @@ def InitUsageConfig():
 		("127", _("No priority")) ])
 
 	config.usage.remote_fallback_enabled = ConfigYesNo(default = False)
-	config.usage.remote_fallback = ConfigText(default = "", visible_width = 50, fixed_size = False)
+	config.usage.remote_fallback = ConfigText(default = "http://IP-ADRESS:8001", visible_width = 50, fixed_size = False)
 
 	nims = [("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
 	rec_nims = [("-2", _("Disabled")), ("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
@@ -770,9 +785,11 @@ def InitUsageConfig():
 		("eus baq", _("Basque")),
 		("bul", _("Bulgarian")),
 		("hrv", _("Croatian")),
+		("chn sgp", _("Simplified Chinese")),
+		("twn hkn",_("Traditional Chinese")),
 		("ces cze", _("Czech")),
 		("dan", _("Danish")),
-		("dut ndl Dutch", _("Dutch")),
+		("dut ndl nld Dutch", _("Dutch")),
 		("eng qaa Englisch", _("English")),
 		("est", _("Estonian")),
 		("fin", _("Finnish")),
