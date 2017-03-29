@@ -578,15 +578,6 @@ def applySettings(mode=config.osd.threeDmode.value, znorm=int(config.osd.threeDz
 class AutoVideoMode(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
-				iPlayableService.evStart: self.__evStart,
-				iPlayableService.evVideoSizeChanged: self.VideoChanged,
-				iPlayableService.evVideoProgressiveChanged: self.VideoChanged,
-				iPlayableService.evVideoFramerateChanged: self.VideoChanged,
-				iPlayableService.evBuffering: self.BufferInfo,
-				iPlayableService.evStopped: self.BufferInfoStop
-			})
 
 		if session != None:
 			self.__event_tracker = ServiceEventTracker(screen=self, eventmap=

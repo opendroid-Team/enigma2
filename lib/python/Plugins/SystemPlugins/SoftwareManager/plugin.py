@@ -352,6 +352,9 @@ class UpdatePluginMenu(Screen):
 					self.session.open(BackupSelection,title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
 				elif (currentEntry == "backupfiles_addon"):
 					self.session.open(BackupSelection,title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
+				elif (currentEntry == "resetbackupfiles"):
+					restartbox = self.session.openWithCallback(self.coldrestartGUI,MessageBox,_("Set selected files for backup to default \nand restart Enigma now?"), MessageBox.TYPE_YESNO)
+					restartbox.setTitle(_("Restart Enigma"))
 				elif (currentEntry == "backupfiles_exclude"):
 					self.session.open(BackupSelection,title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
 				elif (currentEntry == "advancedrestore"):
@@ -362,6 +365,11 @@ class UpdatePluginMenu(Screen):
 					self.extended = current[3]
 					self.extended(self.session, None)
 
+	def coldrestartGUI(self, answer):
+		if answer is True:
+			self.session.open(TryQuitMainloop, 9)
+		else:
+			self.close()
 	def backuplocation_choosen(self, option):
 		oldpath = config.plugins.configurationbackup.backuplocation.value
 		if option is not None:
@@ -1574,7 +1582,7 @@ class UpdatePlugin(Screen):
 			if doUpdate:
 				# Ask for Update, 
 				message += _("Do you want to update your %s %s?") % (getMachineBrand(), getMachineName()) + "\n" + _("After pressing OK, please wait!")
-				self.session.openWithCallback(self.runUpgrade, MessageBox, message, default = default, picon = picon)
+				self.session.openWithCallback(self.runUpgrade, MessageBox, message, default = False, picon = picon)
 			else:
 				# Don't Update RED LIGHT !!
 				self.session.open(MessageBox, message, picon, timeout = 20)
@@ -1668,7 +1676,7 @@ class UpdatePlugin(Screen):
 			else:
 				self.activityTimer.stop()
 				self.activityslider.setValue(0)
-				error = _("your %s %s might be unusable now. Please consult the manual for further assistance before rebooting your %s %s.") % (getMachineBrand(), getMachineName())
+				error = _("your %s %s might be unusable now. Please consult the manual for further assistance before rebooting your %s %s.") % (getMachineBrand(), getMachineName(), getMachineBrand(), getMachineName())
 				if self.packages == 0:
 					error = _("No packages were upgraded yet. So you can check your network and try again.")
 				if self.updating:
@@ -1698,8 +1706,7 @@ class UpdatePlugin(Screen):
 			if self.packages != 0 and self.error == 0:
 				if fileExists("/etc/enigma2/.removelang"):
 					language.delLanguage()
-				#self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
- #				self.restoreoDreamy()
+				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
 			else:
 				self.close()
 		else:

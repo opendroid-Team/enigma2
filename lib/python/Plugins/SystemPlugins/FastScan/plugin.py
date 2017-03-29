@@ -287,10 +287,10 @@ def FastScanMain(session, **kwargs):
 		for n in nimmanager.nim_slots:
 			if not n.isCompatible("DVB-S"):
 				continue
-			if n.config_mode == "nothing":
+			if n.config.dvbs.configMode == "nothing":
 				continue
-			if n.config_mode in ("loopthrough", "satposdepends"):
-				root_id = nimmanager.sec.getRoot(n.slot_id, int(n.config.connectedTo.value))
+			if n.config.dvbs.configMode in ("loopthrough", "satposdepends"):
+				root_id = nimmanager.sec.getRoot(n.slot_id, int(n.config.dvbs.connectedTo.value))
 				if n.type == nimmanager.nim_slots[root_id].type: # check if connected from a DVB-S to DVB-S2 Nim or vice versa
 					continue
 			nimList.append((str(n.slot), n.friendly_full_description))

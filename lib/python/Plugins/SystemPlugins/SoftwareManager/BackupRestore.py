@@ -466,16 +466,10 @@ class RestoreScreen(Screen, ConfigListScreen):
 			self.restartGUI()
 
 	def restartGUI(self, ret = None):
-		self.session.open(Console, title = _("Your %s %s will Restart...")% (getMachineBrand(), getMachineName()), cmdlist = ["killall -9 enigma2"])
+		self.session.open(Console, title = _("Your %s %s will Reboot...")% (getMachineBrand(), getMachineName()), cmdlist = ["killall -9 enigma2"])
 
-	def rebootSYS(self, ret = None):
-		try:
-			f = open("/tmp/rebootSYS.sh","w")
-			f.write("#!/bin/bash\n\nkillall -9 enigma2\nreboot\n")
-			f.close()
-			self.session.open(Console, title = _("Your %s %s will Reboot...")% (getMachineBrand(), getMachineName()), cmdlist = ["chmod +x /tmp/rebootSYS.sh", "/tmp/rebootSYS.sh"])
-		except:
-			self.restartGUI()
+	def runAsync(self, finished_cb):
+		self.doRestore()
 
 class RestartNetwork(Screen):
 

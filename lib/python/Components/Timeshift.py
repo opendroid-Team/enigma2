@@ -39,7 +39,7 @@ from Screens.MessageBox import MessageBox
 import Screens.Standby
 from ServiceReference import ServiceReference
 
-from RecordTimer import RecordTimerEntry, parseEvent
+from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from timer import TimerEntry
 
 from Tools import ASCIItranslit, Notifications
@@ -208,6 +208,7 @@ class InfoBarTimeshift:
 
 		if not state and self.pts_currplaying == self.pts_eventcount and self.timeshiftEnabled() and not self.event_changed:
 			self.setSeekState(self.SEEK_STATE_PLAY)
+			if hasattr(self, "pvrStateDialog"): self.pvrStateDialog.hide()
 
 		self.restartSubtitle()
 
@@ -247,8 +248,9 @@ class InfoBarTimeshift:
 			else:
 				self.SaveTimeshift("pts_livebuffer_%s" % self.pts_eventcount)
 		self.service_changed = 0
-		if not config.timeshift.isRecording.value:
-			self.__seekableStatusChanged()
+		#if not config.timeshift.isRecording.value:
+		#	self.__seekableStatusChanged()
+		self.__seekableStatusChanged() # fix: enable ready to start for standard timeshift after saving the event
 		self["TimeshiftActions"].setEnabled(False)
 
 	def __evSOFjump(self):
@@ -387,7 +389,7 @@ class InfoBarTimeshift:
 			if self.save_current_timeshift and self.timeshiftEnabled():
 				if config.recording.margin_after.value > 0 and len(self.recording) == 0:
 					self.SaveTimeshift(mergelater=True)
-					recording = RecordTimerEntry(ServiceReference(self.session.nav.getCurrentlyPlayingServiceOrGroup()), time(), time()+(config.recording.margin_after.value * 60), self.pts_curevent_name, self.pts_curevent_description, self.pts_curevent_eventid, dirname = config.usage.autorecord_path.value)
+					recording = RecordTimerEntry(ServiceReference(self.session.nav.getCurrentlyPlayingServiceOrGroup()), time(), time()+(config.recording.margin_after.value * 60), self.pts_curevent_name, self.pts_curevent_description, self.pts_curevent_eventid, afterEvent = AFTEREVENT.AUTO, justplay = False, always_zap = False, dirname = config.usage.autorecord_path.value)
 					recording.dontSave = True
 					self.session.nav.RecordTimer.record(recording)
 					self.recording.append(recording)
@@ -425,6 +427,7 @@ class InfoBarTimeshift:
 
 		if ts.isTimeshiftEnabled():
 			print "hu, timeshift already enabled?"
+			self.activateTimeshiftEndAndPause()
 		else:
 			self.activateAutorecordTimeshift()
 			self.activateTimeshiftEndAndPause()
@@ -508,7 +511,10 @@ class InfoBarTimeshift:
 		self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
 
 	def callServiceStarted(self):
-		self.__serviceStarted()
+		from Screens.InfoBarGenerics import isStandardInfoBar
+		if isStandardInfoBar(self):
+			ServiceEventTracker.setActiveInfoBar(self,None,None)
+			self.__serviceStarted()
 
 	# same as activateTimeshiftEnd, but pauses afterwards.
 	def activateTimeshiftEndAndPause(self):
@@ -717,16 +723,17 @@ class InfoBarTimeshift:
 			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, title=_("Which event do you want to save permanently?"), list=entrylist)
 
 	def saveTimeshiftActions(self, action=None, returnFunction=None):
-		# print 'saveTimeshiftActions'
-		# print 'action',action
+		timeshiftfile = None
+		if self.pts_currplaying != self.pts_eventcount:
+			timeshiftfile = "pts_livebuffer_%s" % self.pts_currplaying
 		if action == "savetimeshift":
-			self.SaveTimeshift()
+			self.SaveTimeshift(timeshiftfile)
 		elif action == "savetimeshiftandrecord":
-			if self.pts_curevent_end > time():
+			if self.pts_curevent_end > time() and timeshiftfile is None:
 				self.SaveTimeshift(mergelater=True)
 				self.ptsRecordCurrentEvent()
 			else:
-				self.SaveTimeshift()
+				self.SaveTimeshift(timeshiftfile)
 		elif action == "noSave":
 			config.timeshift.isRecording.value = False
 			self.save_current_timeshift = False
@@ -1111,7 +1118,6 @@ class InfoBarTimeshift:
 					self.ptsAskUser("time_and_save")
 			if self.checkEvents_value != int(config.timeshift.timeshiftCheckEvents.value):
 				if self.pts_cleanEvent_timer.isActive():
-					print "[TIMESHIFT] - 'cleanEvent_timer' was changed"
 					self.pts_cleanEvent_timer.stop()
 					if int(config.timeshift.timeshiftCheckEvents.value):
 						self.ptsEventCleanTimerSTART()
@@ -1197,7 +1203,7 @@ class InfoBarTimeshift:
 					metafile.write("%s\n%s\n%s\n%i\n" % (self.pts_curevent_servicerefname,self.pts_curevent_name.replace("\n", ""),self.pts_curevent_description.replace("\n", ""),int(self.pts_starttime)))
 					metafile.close()
 				except Exception, errormsg:
-					Notifications.AddNotification(MessageBox, _("Creating Hardlink to Timeshift file failed!")+"\n"+_("The Filesystem on your Timeshift-Device does not support hardlinks.\nMake sure it is formatted in EXT2 or EXT3!")+"\n\n%s" % errormsg, MessageBox.TYPE_ERROR, timeout=30)
+					Notifications.AddNotification(MessageBox, _("Creating Hardlink to Timeshift file failed!")+"\n"+_("The Filesystem on your Timeshift-Device does not support hardlinks.\nMake sure it is formatted in EXT2, EXT3 or EXT4!")+"\n\n%s" % errormsg, MessageBox.TYPE_ERROR, timeout=30)
 
 				# Create EIT File
 				self.ptsCreateEITFile("%spts_livebuffer_%s" % (config.usage.timeshift_path.value,self.pts_eventcount))
@@ -1639,20 +1645,27 @@ class InfoBarTimeshift:
 			self.switchToLive = False
 			self.stopTimeshiftcheckTimeshiftRunningCallback(True)
 
-		# Restart Timeshift when all records stopped
-		if timer.state == TimerEntry.StateEnded and not self.timeshiftEnabled() and not self.pts_record_running:
-			self.autostartAutorecordTimeshift()
-
-		# Restart Merge-Timer when all records stopped
-		if timer.state == TimerEntry.StateEnded and self.pts_mergeRecords_timer.isActive():
-			self.pts_mergeRecords_timer.stop()
-			self.pts_mergeRecords_timer.start(15000, True)
-
-		# Restart FrontPanel LED when still copying or merging files
-		# ToDo: Only do this on PTS Events and not events from other jobs
-		if timer.state == TimerEntry.StateEnded and (len(JobManager.getPendingJobs()) >= 1 or self.pts_mergeRecords_timer.isActive()):
-			self.ptsFrontpanelActions("start")
-			config.timeshift.isRecording.value = True
+		if timer.state == TimerEntry.StateEnded:
+			# Restart Timeshift when all records stopped
+			if not self.timeshiftEnabled() and not self.pts_record_running:
+				self.autostartAutorecordTimeshift()
+			if self.pts_mergeRecords_timer.isActive():
+				# Restart Merge-Timer when all records stopped
+				self.pts_mergeRecords_timer.stop()
+				self.pts_mergeRecords_timer.start(15000, True)
+				# Restart FrontPanel LED when still copying or merging files
+				self.ptsFrontpanelActions("start")
+				config.timeshift.isRecording.value = True
+			else:
+				# Restart FrontPanel LED when still copying or merging files
+				jobs = JobManager.getPendingJobs()
+				if len(jobs) >= 1:
+					for job in jobs:
+						jobname = str(job.name)
+						if jobname == _("Saving Timeshift files") or jobname == _("Creating AP and SC Files") or jobname == _("Merging Timeshift files"):
+							self.ptsFrontpanelActions("start")
+							config.timeshift.isRecording.value = True
+							break
 
 	def ptsLiveTVStatus(self):
 		service = self.session.nav.getCurrentService()
