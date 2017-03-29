@@ -1079,7 +1079,6 @@ RESULT eServiceMP3::seekToImpl(pts_t to)
 #if GST_VERSION_MAJOR >= 1
 	if (m_paused || m_to_paused)
 	{
-#if GST_VERSION_MAJOR >= 1
 		m_last_seek_count = 0;
 		m_event((iPlayableService*)this, evUpdatedInfo);
 	}
@@ -1447,7 +1446,7 @@ RESULT eServiceMP3::getPlayPosition(pts_t &pts)
 		if (m_last_seek_count == -10)
 		{
 			eDebug("[eServiceMP3] ** START USE LAST SEEK TIMER");
-			m_play_position_timer->start(100, false);
+			m_play_position_timer->start(50, false);
 			m_last_seek_count = 0;
 		}
 		else
