@@ -4,7 +4,7 @@ from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTun
 
 from Components.About import about
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigDictionarySet, ConfigFloat
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigFloat, ConfigDictionarySet, ConfigDirectory
 from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
 from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
@@ -38,6 +38,7 @@ def InitUsageConfig():
 	config.usage.numzaptimeout1 = ConfigSlider(default = 3000, increment = 250, limits = (750, 5000))
 	config.usage.numzaptimeout2 = ConfigSlider(default = 1000, increment = 250, limits = (750, 5000))
 	config.usage.numzappicon = ConfigYesNo(default = False)
+	config.usage.menu_show_numbers = ConfigYesNo(default = False)
 
 	config.usage.alternative_number_mode = ConfigYesNo(default = False)
 	def alternativeNumberModeChange(configElement):
@@ -107,7 +108,18 @@ def InitUsageConfig():
 	config.usage.show_spinner = ConfigYesNo(default = True)
 	config.usage.enable_tt_caching = ConfigYesNo(default = True)
 	config.usage.sort_settings = ConfigYesNo(default = False)
-	config.usage.sort_menus = ConfigYesNo(default = False)
+	config.usage.sort_menu_byname = ConfigYesNo(default = False)
+	config.usage.sort_plugins_byname = ConfigYesNo(default = True)
+	config.usage.plugins_sort_mode = ConfigSelection(default = "user", choices = [
+		("a_z", _("alphabetical")),
+		("default", _("Default")),
+		("user", _("user defined")),])
+	config.usage.plugin_sort_weight = ConfigDictionarySet()
+	config.usage.menu_sort_weight = ConfigDictionarySet(default = { "mainmenu" : {"submenu" : {} }})
+	config.usage.menu_sort_mode = ConfigSelection(default = "user", choices = [
+		("a_z", _("alphabetical")),
+		("default", _("Default")),
+		("user", _("user defined")),])
 	config.usage.sort_pluginlist = ConfigYesNo(default = True)
 	config.usage.sort_extensionslist = ConfigYesNo(default = False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default = True)
@@ -494,6 +506,12 @@ def InitUsageConfig():
 	config.epg.viasat.addNotifier(EpgSettingsChanged)
 	config.epg.netmed.addNotifier(EpgSettingsChanged)
 	config.epg.virgin.addNotifier(EpgSettingsChanged)
+	
+	config.epg.maxdays = ConfigSelectionNumber(min = 1, max = 365, stepwidth = 1, default = 7, wraparound = True)
+	def EpgmaxdaysChanged(configElement):
+		from enigma import eEPGCache
+		eEPGCache.getInstance().setEpgmaxdays(config.epg.maxdays.getValue())
+	config.epg.maxdays.addNotifier(EpgmaxdaysChanged)
 
 	config.epg.histminutes = ConfigSelectionNumber(min = 0, max = 120, stepwidth = 15, default = 0, wraparound = True)
 	def EpgHistorySecondsChanged(configElement):

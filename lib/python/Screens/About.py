@@ -181,8 +181,8 @@ class About(Screen):
 				"cancel": self.close,
 				"ok": self.close,
 				"log": self.showAboutReleaseNotes,
-				"up": self.pageUp,
-				"down": self.pageDown,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown,
 				"green": self.showTranslationInfo,
 			})
 
@@ -308,9 +308,6 @@ class About(Screen):
 			AboutText = getAboutText()[0]
 			self["AboutScrollLabel"] = ScrollLabel(AboutText)
 
-	def populate_vti(self):
-		pass
-
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)
 
@@ -319,18 +316,6 @@ class About(Screen):
 
 	def createSummary(self):
 		return AboutSummary
-
-	def pageUp(self):
-		if isVTISkin:
-			self["FullAbout"].pageUp()
-		else:
-			self["AboutScrollLabel"].pageUp()
-
-	def pageDown(self):
-		if isVTISkin:
-			self["FullAbout"].pageDown()
-		else:
-			self["AboutScrollLabel"].pageDown()
 
 class Devices(Screen):
 	def __init__(self, session):
