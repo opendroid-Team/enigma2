@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-03-26 00:46+0100\n"
+"PO-Revision-Date: 2017-04-07 00:12+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -4594,6 +4594,9 @@ msgstr "Inglese"
 
 msgid "Enigma2 Changes"
 msgstr "Enigma2 modifiche"
+
+msgid "Style: Enigma2"
+msgstr "Stile: Enigma"
 
 msgid ""
 "Enigma2 Skinselector\n"
@@ -13602,8 +13605,14 @@ msgstr "Rilascio"
 msgid "show DVD main menu"
 msgstr "Mostrare il Menu principale DVD"
 
+msgid "Show DVD-Player in Mainmenu"
+msgstr "Mostra lettore DVD in Mainmenu"
+
 msgid "Show DVD-Player in Mainmenu ?"
 msgstr "Mostra lettore DVD in Mainmenu ?"
+
+msgid "Show DVD-Player in Mainmenu when is installed ?"
+msgstr "Mostra Lettore DVD in Mainmenu quando è installato?"
 
 msgid "DVD-Player Setup"
 msgstr "Configurazione del lettore DVD"
