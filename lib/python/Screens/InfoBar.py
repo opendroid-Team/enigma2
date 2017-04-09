@@ -236,10 +236,12 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			from Screens.BoxPortal import BoxPortal
 			self.session.open(BoxPortal)
 		else:
-			self.lastservice = self.session.nav.getCurrentlyPlayingServiceOrGroup()
-			if self.lastservice and ':0:/' in self.lastservice.toString():
-				self.lastservice = enigma.eServiceReference(config.movielist.curentlyplayingservice.value)
-			self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled = self.timeshiftEnabled())
+			self.showMoviePlayer(defaultRef)
+	def showMoviePlayer(self, defaultRef=None): #for using with hotkeys (ButtonSetup.py) regardless of plugins which overwrite the showMovies function
+		self.lastservice = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+		if self.lastservice and ':0:/' in self.lastservice.toString():
+			self.lastservice = enigma.eServiceReference(config.movielist.curentlyplayingservice.value)
+		self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled = self.timeshiftEnabled())
 
 	def movieSelected(self, service):
 		ref = self.lastservice
@@ -257,7 +259,6 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			no_plugin = False
 		except Exception, e:
 			self.session.open(MessageBox, _("The MediaPlayer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-			
 	def showMediaCenter(self):
 		try:
 			from Plugins.Extensions.BMediaCenter.plugin import DMC_MainMenu
@@ -265,11 +266,9 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			no_plugin = False
 		except Exception, e:
 			self.session.open(MessageBox, _("The MediaCenter plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-			
 	def openSleepTimer(self):
 		from Screens.SleepTimerEdit import SleepTimerEdit
 		self.session.open(SleepTimerEdit)
-			
 	def openTimerList(self):
 		from Screens.TimerEdit import TimerEditList
 		self.session.open(TimerEditList)
@@ -550,8 +549,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 		MoviePlayer.instance = None
 		from Screens.MovieSelection import playlist
 		del playlist[:]
-		if not config.movielist.stop_service.value:
-			Screens.InfoBar.InfoBar.instance.callServiceStarted()
+		Screens.InfoBar.InfoBar.instance.callServiceStarted()
 		self.session.nav.playService(self.lastservice)
 		config.usage.last_movie_played.value = self.cur_service.toString()
 		config.usage.last_movie_played.save()
@@ -595,6 +593,8 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 			self.session.openWithCallback(self.leavePlayerOnExitCallback, MessageBox, _("Exit movie player?"), simple=True)
 		elif config.usage.leave_movieplayer_onExit.value == "without popup":
 			self.leavePlayerOnExitCallback(True)
+		elif config.usage.leave_movieplayer_onExit.value == "stop":
+			self.leavePlayer()
 
 	def leavePlayerOnExitCallback(self, answer):
 		if answer:
