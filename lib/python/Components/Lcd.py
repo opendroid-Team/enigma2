@@ -424,6 +424,12 @@ def InitLcd():
 				f.write(configElement.value)
 				f.close()
 
+		def setXcoreVFD(configElement):
+			if fileExists("/sys/module/brcmstb_osmega/parameters/pt6302_cgram"):
+				f = open("/sys/module/brcmstb_osmega/parameters/pt6302_cgram", "w")
+				f.write(configElement.value)
+				f.close()
+
 		config.usage.lcd_standbypowerled = ConfigSelection(default = "on", choices = [("off", _("Off")), ("on", _("On"))])
 		config.usage.lcd_standbypowerled.addNotifier(setPowerLEDstanbystate)
 
