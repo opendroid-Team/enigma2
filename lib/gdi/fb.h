@@ -41,9 +41,6 @@ public:
 #else
 public:
 	unsigned char *lfb;
-#ifdef CONFIG_ION
-	int m_accel_fd;
-#endif
 #if not defined(__sh__)
 	void enableManualBlit();
 	void disableManualBlit();

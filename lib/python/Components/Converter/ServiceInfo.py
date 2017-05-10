@@ -2,15 +2,7 @@ from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService
 from Components.Element import cached
 from os import path
-WIDESCREEN = [1,
- 3,
- 4,
- 7,
- 8,
- 11,
- 12,
- 15,
- 16]
+WIDESCREEN = [1,3,4,7,8,11,12,15,16]
 
 class ServiceInfo(Converter, object):
     HAS_TELETEXT = 1
