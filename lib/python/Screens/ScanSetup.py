@@ -545,6 +545,7 @@ class TerrestrialTransponderSearchSupport:
 
 		self.terrestrial_search_feid = nim_idx
 		self.terrestrial_search_enable_5v = GetTerrestrial5VEnable(nim_idx)
+
 		self.terrestrial_search_list = []
 		self.terrestrialTransponderInitSearchList(self.terrestrial_search_list ,region)
 		(freq, bandWidth) = self.terrestrialTransponderGetOpt()
@@ -724,6 +725,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		self.TerrestrialRegionEntry = None
 		self.multiType = None
 		nim = nimmanager.nim_slots[index_to_scan]
+
 		if nim.isMultiType():
 			multiType = config.Nims[index_to_scan].multiType
 			choices = "("
@@ -746,6 +748,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		elif nim.isCompatible("ATSC") and nim.config.atsc.configMode.value == "nothing":
 			self.setConfigList()
 			return
+
 		if nim.isCompatible("DVB-S"):
 			self.typeOfScanEntry = getConfigListEntry(_("Type of scan"), self.scan_type)
 			self.list.append(self.typeOfScanEntry)
@@ -803,6 +806,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 				sat = self.satList[index_to_scan][self.scan_satselection[index_to_scan].index]
 				self.predefinedTranspondersList(sat[0])
 				self.list.append(getConfigListEntry(_('Transponder'), self.preDefTransponders))
+
 			elif self.scan_type.value == "single_satellite":
 				self.updateSatList()
 				print self.scan_satselection[index_to_scan]
@@ -886,6 +890,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		self.list.append(getConfigListEntry(_("Clear before scan"), self.scan_clearallservices))
 		self.list.append(getConfigListEntry(_("Only free scan"), self.scan_onlyfree))
 		self.setConfigList()
+
 	def setConfigList(self):
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
@@ -1336,6 +1341,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 			if x is not None:
 				x.addNotifier(self.TriggeredByConfigElement, initial_call = False)
 		return True
+
 	def TriggeredByConfigElement(self, configElement):
 		self.scan_ter.channel.removeNotifier(self.TriggeredByConfigElement)
 		self.scan_ter.frequency.removeNotifier(self.TriggeredByConfigElement)
@@ -1402,6 +1408,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		parm.modulation = modulation
 		parm.system = system
 		tlist.append(parm)
+
 	def keyGo(self):
 		infoBarInstance = InfoBar.instance
 		if infoBarInstance:

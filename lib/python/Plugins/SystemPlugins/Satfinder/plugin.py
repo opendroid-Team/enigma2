@@ -22,6 +22,7 @@ class Satfinder(ScanSetup, ServiceScan):
 		del feinfo
 		del service
 
+
 		self.systemEntry = None
 		self.systemEntryATSC = None
 		self.satfinderTunerEntry = None
@@ -100,6 +101,7 @@ class Satfinder(ScanSetup, ServiceScan):
 			ScanSetup.newConfig(self)
 		if cur[1].value == "single_transponder":
 			self.retune()
+
 
 	def createSetup(self):
 		ScanSetup.createSetup(self)
