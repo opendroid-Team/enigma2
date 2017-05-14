@@ -271,7 +271,7 @@ SWIG_EXTEND(ePtr<eDVBResourceManager>,
 class eDVBChannelFilePush;
 
 	/* iDVBPVRChannel includes iDVBChannel. don't panic. */
-class eDVBChannel: public iDVBPVRChannel, public iFilePushScatterGather, public Object
+class eDVBChannel: public iDVBPVRChannel, public iFilePushScatterGather, public sigc::trackable
 {
 	DECLARE_REF(eDVBChannel);
 	friend class eDVBResourceManager;
