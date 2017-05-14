@@ -11,7 +11,7 @@
 class eDVBResourceManager;
 class eDVBRegisteredFrontend;
 
-typedef struct fbc_tuner
+class eFBCTunerManager: public iObject, public sigc::trackable
 {
 	int fbcSetID;
 	int fbcIndex;

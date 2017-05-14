@@ -37,13 +37,13 @@ public:
 	long long getFileSize(const eServiceReference &ref);
 };
 
-class eServiceHDMI: public iPlayableService, public iServiceInformation, public Object
+class eServiceHDMI: public iPlayableService, public iServiceInformation, public sigc::trackable
 {
 	DECLARE_REF(eServiceHDMI);
 public:
 	virtual ~eServiceHDMI();
 
-	RESULT connectEvent(const Slot2<void, iPlayableService*, int> &event, ePtr<eConnection> &connection);
+	RESULT connectEvent(const sigc::slot2<void, iPlayableService*, int> &event, ePtr<eConnection> &connection);
 	RESULT start();
 	RESULT stop();
 	RESULT setTarget(int target, bool noaudio);
