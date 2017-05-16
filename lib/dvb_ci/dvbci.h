@@ -50,6 +50,42 @@ typedef std::set<providerPair> providerSet;
 typedef std::set<uint16_t> caidSet;
 typedef std::set<eServiceReference> serviceSet;
 
+#ifdef __sh__
+/* ********************************** */
+/* constants taken from dvb-apps 
+ */
+#define T_SB                0x80	// sb                           primitive   h<--m
+#define T_RCV               0x81	// receive                      primitive   h-->m
+#define T_CREATE_T_C        0x82	// create transport connection  primitive   h-->m
+#define T_C_T_C_REPLY       0x83	// ctc reply                    primitive   h<--m
+#define T_DELETE_T_C        0x84	// delete tc                    primitive   h<->m
+#define T_D_T_C_REPLY       0x85	// dtc reply                    primitive   h<->m
+#define T_REQUEST_T_C       0x86	// request transport connection primitive   h<--m
+#define T_NEW_T_C           0x87	// new tc / reply to t_request  primitive   h-->m
+#define T_T_C_ERROR         0x77	// error creating tc            primitive   h-->m
+#define T_DATA_LAST         0xA0	// convey data from higher      constructed h<->m
+				 // layers
+#define T_DATA_MORE         0xA1	// convey data from higher      constructed h<->m
+				 // layers
+
+typedef enum {eDataTimeout, eDataError, eDataReady, eDataWrite, eDataStatusChanged} eData;
+
+static inline int time_after(struct timespec oldtime, uint32_t delta_ms)
+{
+	// calculate the oldtime + add on the delta
+	uint64_t oldtime_ms = (oldtime.tv_sec * 1000) + (oldtime.tv_nsec / 1000000);
+	oldtime_ms += delta_ms;
+
+	// calculate the nowtime
+	struct timespec nowtime;
+	clock_gettime(CLOCK_MONOTONIC, &nowtime);
+	uint64_t nowtime_ms = (nowtime.tv_sec * 1000) + (nowtime.tv_nsec / 1000000);
+
+	// check
+	return nowtime_ms > oldtime_ms;
+}
+#endif
+
 class eDVBCISlot: public iObject, public sigc::trackable
 {
 	friend class eDVBCIInterfaces;
@@ -68,7 +104,7 @@ class eDVBCISlot: public iObject, public sigc::trackable
 	providerSet possible_providers;
 	int use_count;
 	eDVBCISlot *linked_next; // needed for linked CI handling
-	std::string current_source;
+	data_source current_source;
 	int current_tuner;
 	bool user_mapped;
 	void data(int);
