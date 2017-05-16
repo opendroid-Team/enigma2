@@ -58,7 +58,7 @@ public:
 };
 
 class eServiceDVD: public iPlayableService, public iPauseableService, public iSeekableService, public iAudioTrackSelection,
-	public iServiceInformation, public iSubtitleOutput, public iServiceKeys, public iCueSheet, public eThread, public Object
+	public iServiceInformation, public iSubtitleOutput, public iServiceKeys, public iCueSheet, public eThread, public sigc::trackable
 {
 	friend class eServiceFactoryDVD;
 	DECLARE_REF(eServiceDVD);

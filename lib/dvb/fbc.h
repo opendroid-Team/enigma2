@@ -20,7 +20,7 @@ class eFBCTunerManager: public iObject, public sigc::trackable
 }FBC_TUNER;
 
 
-class eFBCTunerManager: public iObject, public Object
+class eFBCTunerManager: public iObject, public sigc::trackable
 {
 private:
 	DECLARE_REF(eFBCTunerManager);

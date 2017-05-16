@@ -1045,7 +1045,7 @@ int eDVBServicePMTHandler::tuneExt(eServiceReferenceDVB &ref, int use_decode_dem
 					 * refcount bug (channel?/demux?), so we always start a scan,
 					 * but ignore the results when background scanning is disabled
 					 */
-					m_dvb_scan->connectEvent(slot(*this, &eDVBServicePMTHandler::SDTScanEvent), m_scan_event_connection);
+					m_dvb_scan->connectEvent(sigc::mem_fun(*this, &eDVBServicePMTHandler::SDTScanEvent), m_scan_event_connection);
 				}
 			}
 		} else

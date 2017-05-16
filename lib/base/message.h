@@ -38,7 +38,7 @@ protected:
  * Automatically creates a eSocketNotifier and gives you a callback.
  */
 template<class T>
-class eFixedMessagePump: public sigc::trackable, FD
+class eFixedMessagePump: public sigc::trackable
 {
 	ePtr<eSocketNotifier> sn;
 	std::queue<T> m_queue;
