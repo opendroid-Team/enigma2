@@ -50,6 +50,7 @@ public:
 #include <lib/dvb/sec.h>
 class eSecCommandList;
 
+#endif
 class eDVBFrontend: public iDVBFrontend, public sigc::trackable
 {
 #ifndef SWIG
@@ -88,6 +89,10 @@ public:
 		NUM_DATA_ENTRIES
 	};
 	sigc::signal1<void,iDVBFrontend*> m_stateChanged;
+	enum class enumDebugOptions:uint64_t {
+		DISSABLE_ALL_DEBUG_OUTPUTS,	//prevents all debug issues with respect to this object
+		DEBUG_DELIVERY_SYSTEM,
+		NUM_DATA_ENTRIES};
 private:
 	DECLARE_REF(eDVBFrontend);
 	bool m_simulate;
