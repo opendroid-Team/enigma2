@@ -128,9 +128,6 @@ void keyEvent(const eRCKey &key)
 #include <lib/dvb/dvbtime.h>
 #include <lib/dvb/epgcache.h>
 
-/* Defined in eerror.cpp */
-void setDebugTime(bool enable);
-
 class eMain: public eApplication, public sigc::trackable
 {
 	eInit init;

@@ -430,6 +430,9 @@ if test x"$with_amlogic" = xyes ; then
 	ALSA_CFLAGS="-lasound"
 fi
 
+if test "$BOXTYPE" == "dm7080" -o "$BOXTYPE" == "dm820"  -o "$BOXTYPE" == "dm900" -o "$BOXTYPE" == "dm520"; then
+	AC_DEFINE(CONFIG_ION, 1,[define BOX use ION Allocator])
+fi
 
 if test "$BOXTYPE" == "dm7080" -o "$BOXTYPE" == "dm820" -o "$BOXTYPE" == "dm800se" -o "$BOXTYPE" == "dm800sev2" -o "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2" -o "$BOXTYPE" == "dm900"; then
 	AC_DEFINE(TUNER_DM7080, 1,[define BOXTYPE DM7080])
@@ -730,6 +733,7 @@ lib/python/Plugins/SystemPlugins/DiseqcTester/meta/Makefile
 lib/python/Plugins/SystemPlugins/FastScan/Makefile
 lib/python/Plugins/SystemPlugins/FrontprocessorUpgrade/Makefile
 lib/python/Plugins/SystemPlugins/FrontprocessorUpgrade/meta/Makefile
+lib/python/Plugins/SystemPlugins/FSBLUpdater/Makefile
 lib/python/Plugins/SystemPlugins/HdmiCEC/Makefile
 lib/python/Plugins/SystemPlugins/Hotplug/Makefile
 lib/python/Plugins/SystemPlugins/Hotplug/meta/Makefile

@@ -45,8 +45,9 @@ eDVBScan::eDVBScan(iDVBChannel *channel, bool usePAT, bool debug)
 	,m_scan_debug(debug)
 {
 	if (m_channel->getDemux(m_demux))
-		SCAN_eDebug("[eDVBScan] failed to allocate demux!");
+		SCAN_eDebug("scan: failed to allocate demux!");
 	m_channel->connectStateChange(sigc::mem_fun(*this, &eDVBScan::stateChange), m_stateChanged_connection);
+	m_lcn_file = NULL;
 }
 
 eDVBScan::~eDVBScan()
@@ -735,9 +736,9 @@ void eDVBScan::channelDone()
 		std::vector<NetworkInformationSection*>::const_iterator i;
 		for (i = m_NIT->getSections().begin(); i != m_NIT->getSections().end(); ++i)
 		{
-			if (m_networkid && m_networkid != (*i)->getNetworkId())
+			if (m_networkid && m_networkid != (*i)->getTableIdExtension()) // in NIT this is the network id
 			{
-				SCAN_eDebug("[eDVBScan] ignoring NetworkId %d!", (*i)->getNetworkId());
+				SCAN_eDebug("[eDVBScan] ignoring NetworkId %d!", (*i)->getTableIdExtension());
 				continue;
 			}
 

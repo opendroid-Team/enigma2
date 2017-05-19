@@ -1625,7 +1625,12 @@ void eEPGCache::channel_data::startEPG()
 		mask.mask[0] = 0xFF;
 		mask.data[1] = 0;
 		mask.mask[1] = 0xFF;
-		m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2), m_MHWConn2);
+		if (eEPGCache::getInstance()->getEpgmaxdays() < 4)
+		{
+			m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2_old), m_MHWConn2);
+		} else {
+			m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2), m_MHWConn2);
+		}
 		m_MHWReader2->start(mask);
 		isRunning |= MHW;
 		memcpy(&m_MHWFilterMask2, &mask, sizeof(eDVBSectionFilterMask));
