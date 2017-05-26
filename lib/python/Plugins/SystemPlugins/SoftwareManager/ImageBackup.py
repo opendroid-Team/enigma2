@@ -24,7 +24,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 from Components.Button import Button
 VERSION = "Version 6.2 openDroid"
 HaveGZkernel = True
-if getMachineBuild() in ('et1x000',"vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7"):
+if getMachineBuild() in ('et1x000',"vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s'):
 	HaveGZkernel = False
 
 def Freespace(dev):
@@ -66,6 +66,17 @@ class ImageBackup(Screen):
 		self.ROOTFSBIN = getMachineRootFile()
 		self.KERNELBIN = getMachineKernelFile()
 		self.ROOTFSTYPE = getImageFileSystem()
+
+		if self.MACHINEBUILD in ("hd51","vs1500","h7"):
+			self.MTDBOOT = "mmcblk0p1"
+			self.EMMCIMG = "disk.img"
+		elif self.MACHINEBUILD in ("xc7439"):
+			self.MTDBOOT = "mmcblk1p1"
+			self.EMMCIMG = "emmc.img"
+		else:
+			self.MTDBOOT = "none"
+			self.EMMCIMG = "none"
+
 		print "[FULL BACKUP] BOX MACHINEBUILD = >%s<" %self.MACHINEBUILD
 		print "[FULL BACKUP] BOX MACHINENAME = >%s<" %self.MACHINENAME
 		print "[FULL BACKUP] BOX MACHINEBRAND = >%s<" %self.MACHINEBRAND
@@ -74,9 +85,12 @@ class ImageBackup(Screen):
 		print "[FULL BACKUP] IMAGEFOLDER = >%s<" %self.IMAGEFOLDER
 		print "[FULL BACKUP] UBINIZE = >%s<" %self.UBINIZE_ARGS
 		print "[FULL BACKUP] MKUBIFS = >%s<" %self.MKUBIFS_ARGS
+		print "[FULL BACKUP] MTDBOOT = >%s<" %self.MTDBOOT
 		print "[FULL BACKUP] MTDKERNEL = >%s<" %self.MTDKERNEL
 		print "[FULL BACKUP] MTDROOTFS = >%s<" %self.MTDROOTFS
 		print "[FULL BACKUP] ROOTFSTYPE = >%s<" %self.ROOTFSTYPE
+		print "[FULL BACKUP] ROOTFSTYPE = >%s<" %self.ROOTFSTYPE
+		print "[FULL BACKUP] EMMCIMG = >%s<" %self.EMMCIMG
 
 		self["key_green"] = Button("USB")
 		self["key_red"] = Button("HDD")
@@ -138,10 +152,16 @@ class ImageBackup(Screen):
 			if self.selection == len(self.list):
 				self.selection = 0
 			self["key_yellow"].setText(_(self.list[self.selection]))
-			if self.list[self.selection] == "Recovery":
-				cmdline = self.read_startup("/boot/STARTUP").split("=",3)[3].split(" ",1)[0]
+			if self.MACHINEBUILD in ("hd51","vs1500","h7"):
+				if self.list[self.selection] == "Recovery":
+					cmdline = self.read_startup("/boot/STARTUP").split("=",3)[3].split(" ",1)[0]
+				else:
+					cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",3)[3].split(" ",1)[0]
 			else:
-				cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",3)[3].split(" ",1)[0]
+				if self.list[self.selection] == "Recovery":
+					cmdline = self.read_startup("/boot/cmdline.txt").split("=",1)[1].split(" ",1)[0]
+				else:
+					cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",1)[1].split(" ",1)[0]
 			cmdline = cmdline.lstrip("/dev/")
 			self.MTDROOTFS = cmdline
 			self.MTDKERNEL = cmdline[:-1] + str(int(cmdline[-1:]) -1)
@@ -161,7 +181,10 @@ class ImageBackup(Screen):
 			self.path = PATH
 			for name in listdir(self.path):
 				if path.isfile(path.join(self.path, name)):
-					cmdline = self.read_startup("/boot/" + name).split("=",3)[3].split(" ",1)[0]
+					if self.MACHINEBUILD in ("hd51","vs1500","h7"):
+						cmdline = self.read_startup("/boot/" + name).split("=",3)[3].split(" ",1)[0]
+					else:
+						cmdline = self.read_startup("/boot/" + name).split("=",1)[1].split(" ",1)[0]
 					if cmdline in Harddisk.getextdevices("ext4"):
 						files.append(name)
 			files.append("Recovery")

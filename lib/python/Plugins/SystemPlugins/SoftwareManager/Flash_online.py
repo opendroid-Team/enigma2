@@ -63,11 +63,15 @@ class FlashOnline(Screen):
 		<widget name="info-online" position="10,80" zPosition="1" size="450,100" font="Regular;20" halign="left" valign="top" transparent="1" />
 		<widget name="info-local" position="10,150" zPosition="1" size="450,200" font="Regular;20" halign="left" valign="top" transparent="1" />
 	</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
 		self.selection = 0
-		self.devrootfs = "/dev/mmcblk0p3"
+		if getMachineBuild() in ("hd51","vs1500","h7"):
+			self.devrootfs = "/dev/mmcblk0p3"
+		else:
+			self.devrootfs = "/dev/mmcblk1p3"
 		self.multi = 1
 		self.list = self.list_files("/boot")
 
@@ -111,6 +115,7 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
+
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -124,6 +129,7 @@ class FlashOnline(Screen):
 
 	def quit(self):
 		self.close()
+
 	def yellow(self):
 		if self.check_hdd():
 			self.session.open(doFlashImage, online = False, list=self.list[self.selection], multi=self.multi, devrootfs=self.devrootfs)
@@ -145,7 +151,10 @@ class FlashOnline(Screen):
 			self.multi = self.read_startup("/boot/" + self.list[self.selection]).split(".",1)[1].split(" ",1)[0]
 			self.multi = self.multi[-1:]
 			print "[Flash Online] MULTI:",self.multi
-			cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",3)[3].split(" ",1)[0]
+			if getMachineBuild() in ("hd51","vs1500","h7"):
+				cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",3)[3].split(" ",1)[0]
+			else:
+				cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",1)[1].split(" ",1)[0]
 			self.devrootfs = cmdline
 			print "[Flash Online] MULTI rootfs ", self.devrootfs
 
@@ -160,16 +169,28 @@ class FlashOnline(Screen):
 		files = []
 		if SystemInfo["HaveMultiBoot"]:
 			path = PATH
-			for name in os.listdir(path):
-				if name != 'bootname' and os.path.isfile(os.path.join(path, name)):
-					try:
-						cmdline = self.read_startup("/boot/" + name).split("=",3)[3].split(" ",1)[0]
-					except IndexError:
-						continue
-					cmdline_startup = self.read_startup("/boot/STARTUP").split("=",3)[3].split(" ",1)[0]
-					if (cmdline != cmdline_startup) and (name != "STARTUP"):
-						files.append(name)
-			files.insert(0,"STARTUP")
+			if getMachineBuild() in ("hd51","vs1500","h7"):
+				for name in os.listdir(path):
+					if name != 'bootname' and os.path.isfile(os.path.join(path, name)):
+						try:
+							cmdline = self.read_startup("/boot/" + name).split("=",3)[3].split(" ",1)[0]
+						except IndexError:
+							continue
+						cmdline_startup = self.read_startup("/boot/STARTUP").split("=",3)[3].split(" ",1)[0]
+						if (cmdline != cmdline_startup) and (name != "STARTUP"):
+							files.append(name)
+				files.insert(0,"STARTUP")
+			else:
+				for name in os.listdir(path):
+					if name != 'bootname' and os.path.isfile(os.path.join(path, name)):
+						try:
+							cmdline = self.read_startup("/boot/" + name).split("=",1)[1].split(" ",1)[0]
+						except IndexError:
+							continue
+						cmdline_startup = self.read_startup("/boot/cmdline.txt").split("=",1)[1].split(" ",1)[0]
+						if (cmdline != cmdline_startup) and (name != "cmdline.txt"):
+							files.append(name)
+				files.insert(0,"cmdline.txt")
 		else:
 			files = "None"
 		return files
@@ -187,6 +208,7 @@ class doFlashImage(Screen):
 		<widget name="key_blue" position="420,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		<widget name="imageList" position="10,10" zPosition="1" size="680,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />
 	</screen>"""
+
 	def __init__(self, session, online, list=None, multi=None, devrootfs=None ):
 		Screen.__init__(self, session)
 		self.session = session
