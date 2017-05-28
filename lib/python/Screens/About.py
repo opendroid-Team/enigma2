@@ -638,14 +638,14 @@ class ViewGitLog(Screen):
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.skinName = "SoftwareUpdateChanges"
-		self.setTitle(_("OpenDroid E2 Changes"))
-		self.logtype = 'e2'
+		self.setTitle(_("OE Changes"))
+		self.logtype = 'oe'
 		self["text"] = ScrollLabel()
 		self['title_summary'] = StaticText()
 		self['text_summary'] = StaticText()
 		self["key_red"] = Button(_("Close"))
 		self["key_green"] = Button(_("OK"))
-		self["key_yellow"] = Button(_("Last Image Updates"))
+		self["key_yellow"] = Button(_("Show E2 Log"))
 		self["myactions"] = ActionMap(['ColorActions', 'OkCancelActions', 'DirectionActions'],
 		{
 			'cancel': self.closeRecursive,
@@ -662,16 +662,12 @@ class ViewGitLog(Screen):
 
 	def changelogtype(self):
 		if self.logtype == 'e2':
-			self["key_yellow"].setText(_("Show OE-A Log"))
-			self.setTitle(_("Last Image Updates"))
-			self.logtype = 'last-upgrades'
-		elif self.logtype == 'last-upgrades':
-			self["key_yellow"].setText(_("Show OpenDroid Log"))
-			self.setTitle(_("OE-A Changes"))
+			self["key_yellow"].setText(_("Show E2 Log"))
+			self.setTitle(_("OE Changes"))
 			self.logtype = 'oe'
-		elif self.logtype == 'oe':
-			self["key_yellow"].setText(_("Show Last Updates"))
-			self.setTitle(_("OpenDroid E2 Changes"))
+		else:
+			self["key_yellow"].setText(_("Show OE Log"))
+			self.setTitle(_("Enigma2 Changes"))
 			self.logtype = 'e2'
 		self.getlog()
 
