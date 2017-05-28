@@ -52,7 +52,6 @@ class ImageBackup(Screen):
 		Screen.__init__(self, session)
 		self.session = session
 		self.selection = 0
-		self.list = self.list_files("/boot")
 		self.MODEL = getBoxType()
 		self.OEM = getBrandOEM()
 		self.MACHINEBUILD = getMachineBuild()
@@ -95,6 +94,7 @@ class ImageBackup(Screen):
 		self["key_green"] = Button("USB")
 		self["key_red"] = Button("HDD")
 		self["key_blue"] = Button(_("Exit"))
+		self.list = self.list_files("/boot")
 		if SystemInfo["HaveMultiBoot"]:
 			self["key_yellow"] = Button(_("STARTUP"))
 			self["info-multi"] = Label(_("You can select with yellow the OnlineFlash Image\n or select Recovery to create a USB Disk Image for clean Install."))
@@ -439,7 +439,7 @@ class ImageBackup(Screen):
 		else:
 			cmdlist.append('echo "rename this file to "force" to force an update without confirmation" > %s/noforce' %self.MAINDEST)
 
-		if self.MODEL in ("gbquad4k"):
+		if self.MODEL in ("gbquad4k","gbue4k"):
 			system('mv %s/boot.bin %s/boot.bin' %(self.WORKDIR, self.MAINDEST))
 			system('mv %s/rescue.bin %s/rescue.bin' %(self.WORKDIR, self.MAINDEST))
 
