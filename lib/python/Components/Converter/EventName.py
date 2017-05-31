@@ -18,6 +18,8 @@ class EventName(Converter, object):
 	SRATING = 10
 	RAWRATING = 11
 	RATINGCOUNTRY = 12
+	EVENT_EXTRADATA = 13
+	EPG_SOURCE = 14
 
 	NEXT_DESCRIPTION = 21
 	THIRD_NAME = 22
@@ -97,7 +99,10 @@ class EventName(Converter, object):
 			self.type = self.RAWRATING
 		elif type == "RatingCountry":
 			self.type = self.RATINGCOUNTRY
-
+		elif type == "EventExtraData":
+			self.type = self.EVENT_EXTRADATA
+		elif type == "EPGSource":
+			self.type = self.EPG_SOURCE
 		elif type == "NextDescription":
 			self.type = self.NEXT_DESCRIPTION
 		elif type == "ThirdName":
@@ -186,11 +191,17 @@ class EventName(Converter, object):
 		elif self.type == self.FULL_DESCRIPTION:
 			description = self.trimText(event.getShortDescription())
 			extended = self.trimText(event.getExtendedDescription())
+			if description and extended and description.replace('\n','') == extended.replace('\n',''):
+				return extended
 			if description and extended:
 				description += self.SEPARATOR
 			return description + extended
 		elif self.type == self.ID:
 			return str(event.getEventId())
+		elif self.type == self.EVENT_EXTRADATA:
+			pass
+		elif self.type == self.EPG_SOURCE:
+			pass
 		elif int(self.type) in (6, 7) or int(self.type) >= 21:
 			try:
 				reference = self.source.service
