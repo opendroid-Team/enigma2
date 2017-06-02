@@ -382,9 +382,21 @@ def callFunction(iface):
 def configStrings(iface):
 	driver = iNetwork.detectWlanModule(iface)
 	ret = ""
+	if driver == "brcm-wl":
+		encryption = config.plugins.wlan.encryption.value
+		if encryption == "WPA/WPA2":
+			encryption = "WPA2"
+		encryption = encryption.lower()
+		if encryption == "unencrypted":
+			encryption = "None"
+		ret += '\tpre-up wl-config.sh -m ' + encryption + ' -k ' + config.plugins.wlan.psk.value + ' -s \"' + config.plugins.wlan.essid.value + '\" || true\n'
+		ret += '\tpost-down wl-down.sh || true\n'
+		return ret
 	if driver == 'madwifi' and config.plugins.wlan.hiddenessid.value:
-		ret += "\tpre-up iwconfig " + iface + " essid \"" + re_escape(config.plugins.wlan.essid.value) + "\" || true\n"
+		ret += "\tpre-up iwconfig " + iface + " essid \"" + re.escape(config.plugins.wlan.essid.value) + "\" || true\n"
 	ret += "\tpre-up wpa_supplicant -i" + iface + " -c" + getWlanConfigName(iface) + " -B -dd -D" + driver + " || true\n"
+	if config.plugins.wlan.hiddenessid.value == True:
+		ret += "\tpre-up iwconfig " + iface + " essid \"" + re_escape(config.plugins.wlan.essid.value) + "\" || true\n"
 	ret += "\tpre-down wpa_cli -i" + iface + " terminate || true\n"
 	return ret
 
