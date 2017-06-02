@@ -239,6 +239,21 @@ msgstr ""
 "Configurare il disco rigido per andare in standby dopo il tempo di "
 "inattività specificato quando il Box è in standby."
 
+msgid "USB Disk Format Wizard"
+msgstr "Procedura guidata Formato disco USB"
+
+msgid "This wizard will help you to format Usb mass storage devices for Linux."
+msgstr "Questa procedura guidata ti aiuterà a formattare i dispositivi di archiviazione di massa Usb per Linux."
+
+msgid "Please be sure that your usb drive is NOT CONNECTED to your %s %s box before you continue."
+msgstr "Assicurarsi che l'unità USB non sia CONNESSA al tuo box %s %s prima di continuare."
+
+msgid "If your usb drive is connected and mounted you have to poweroff your box, remove the usb device and reboot."
+msgstr "Se l'unità USB è collegata e montata è necessario spegnere il tuo box, rimuovere il dispositivo USB e riavviare."
+
+msgid "Press Red button to continue, when you are ready and your usb is disconnected."
+msgstr "Premere il pulsante rosso per continuare, quando sei pronto e il tuo usb è scollegato."
+
 msgid "Subtitles Settings"
 msgstr "Impostazioni sottotitoli"
 
