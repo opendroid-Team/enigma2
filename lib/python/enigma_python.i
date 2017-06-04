@@ -40,7 +40,6 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/base/smartptr.h>
 #include <lib/base/eenv.h>
 #include <lib/base/eerror.h>
-#include <lib/base/etpm.h>
 #include <lib/base/message.h>
 #include <lib/base/e2avahi.h>
 #include <lib/driver/rc.h>
@@ -69,7 +68,6 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/gui/ewidgetanimation.h>
 #include <lib/gui/eslider.h>
 #include <lib/gui/epositiongauge.h>
-#include <lib/gui/egauge.h>
 #include <lib/gui/evideo.h>
 #include <lib/gui/ecanvas.h>
 #include <lib/python/connections.h>
@@ -78,7 +76,7 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/gui/elistboxcontent.h>
 #include <lib/gui/esubtitle.h>
 #include <lib/service/listboxservice.h>
-#include <lib/nav/core.h>
+#include <lib/nav/pcore.h>
 #include <lib/actions/action.h>
 #include <lib/gdi/gfont.h>
 #include <lib/gdi/epng.h>
@@ -193,7 +191,6 @@ typedef long time_t;
 %immutable eTuxtxtApp::appClosed;
 %immutable iDVBChannel::receivedTsidOnid;
 %include <lib/base/message.h>
-%include <lib/base/etpm.h>
 %include <lib/driver/rc.h>
 %include <lib/driver/rcinput_swig.h>
 %include <lib/gdi/fb.h>
@@ -215,7 +212,6 @@ typedef long time_t;
 %include <lib/gui/ewindow.h>
 %include <lib/gui/eslider.h>
 %include <lib/gui/epositiongauge.h>
-%include <lib/gui/egauge.h>
 %include <lib/gui/ewidgetdesktop.h>
 %include <lib/gui/elistbox.h>
 %include <lib/gui/elistboxcontent.h>
@@ -225,7 +221,7 @@ typedef long time_t;
 %include <lib/gui/evideo.h>
 %include <lib/gui/esubtitle.h>
 %include <lib/service/listboxservice.h>
-%include <lib/nav/core.h>
+%include <lib/nav/pcore.h>
 %include <lib/actions/action.h>
 %include <lib/gdi/gfont.h>
 %include <lib/gdi/epng.h>
@@ -417,19 +413,9 @@ int getLinkedSlotID(int);
 %{
 int getLinkedSlotID(int fe)
 {
-        eFBCTunerManager *mgr = eFBCTunerManager::getInstance();
-        if (mgr) return mgr->getLinkedSlotID(fe);
-        return -1;
-}
-%}
-
-bool isFBCLink(int);
-%{
-bool isFBCLink(int fe)
-{
-        eFBCTunerManager *mgr = eFBCTunerManager::getInstance();
-        if (mgr) return mgr->isFBCLink(fe);
-        return false;
+	eFBCTunerManager *mgr = eFBCTunerManager::getInstance();
+	if (mgr) return mgr->getLinkedSlotID(fe);
+	return -1;
 }
 %}
 
