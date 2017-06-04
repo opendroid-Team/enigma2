@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-06-05 00:20+0100\n"
+"PO-Revision-Date: 2017-06-05 00:39+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -4569,6 +4569,9 @@ msgstr "Abilita Netmed EPG"
 msgid "Enable ViaSat EPG"
 msgstr "Abilita ViaSat EPG"
 
+msgid "Enable Virgin EPG"
+msgstr "Abilita Virgin EPG"
+
 msgid "Enable debug logs"
 msgstr "Abilita debug logs"
 
@@ -6452,6 +6455,9 @@ msgstr "Maxdown -"
 msgid "Maxdown: "
 msgstr "Maxdown: "
 
+msgid "Maximum number of days in EPG"
+msgstr "Numero massimo di giorni per gli EPG"
+
 msgid "Maximum no of days:"
 msgstr "Numero massimo di giorni:"
 
@@ -7480,7 +7486,7 @@ msgid "Picon width"
 msgstr "Larghezza Picon"
 
 msgid "Info icon width"
-msgstr "Info Icon Larghezza"
+msgstr "Larghezza dell'icona"
 
 msgid ""
 "Configure the minimum width before showing the 'i' icon, '0' is equal to not "
@@ -7823,6 +7829,9 @@ msgstr "Configurazione Rotore"
 
 msgid "Positioner fine movement"
 msgstr "Posizionatore fine movimento"
+
+msgid "Position of recording icons"
+msgstr "Posizione delle icone di registrazione"
 
 msgid "Power threshold in mA"
 msgstr "Limite di potenza in mA"
@@ -8413,6 +8422,9 @@ msgstr "Utilizzare la procedura guidata per configurare la rete.\n"
 
 msgid "Set the MAC-address of your %s %s.\n"
 msgstr "Impostare l'indirizzo MAC della vostra %s %s.\n"
+
+msgid "Set the position of the recording icons"
+msgstr "Imposta la posizione delle icone di registrazione"
 
 msgid "MAC-address settings"
 msgstr "Impostazioni MAC-address"
@@ -11397,6 +11409,9 @@ msgstr "Utilizzare WOL"
 
 msgid "Use WakeOnLAN"
 msgstr "Usa WakeOnLan"
+
+msgid "Use for load only x days in EPG"
+msgstr "Utilizzare per per caricare gli EPG per x giorni"
 
 msgid "Enable Wake On LAN"
 msgstr "Abilita Wake On LAN"
