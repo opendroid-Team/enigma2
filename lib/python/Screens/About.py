@@ -9,7 +9,7 @@ from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString
-from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate
+from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
 
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
@@ -126,7 +126,7 @@ class About(Screen):
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"
 		AboutText += _("Cores:\t%s") % about.getCpuCoresString() + "\n"
-		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " - Build # " + getImageBuild() + "\n"
+		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " " + getImageType() + " - Build " + getImageBuild() + " - " + getOEVersion() + "\n"
 		AboutText += _("Kernel (Box):\t%s") % about.getKernelVersionString() + " (" + getBoxType() + ")" + "\n"
 		imagestarted = ""
 		bootname = ''
@@ -150,7 +150,7 @@ class About(Screen):
 		driversdate = '-'.join((year, month, day))
 		AboutText += _("Drivers:\t%s") % driversdate + "\n"
 		AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
-		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " - Build # " + getImageBuild() + "\n"
+		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " - Build " + getImageBuild() + "\n"
 		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
