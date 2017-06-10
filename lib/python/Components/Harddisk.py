@@ -472,14 +472,12 @@ class Harddisk:
 	# any access has been made to the disc. If there has been no access over a specifed time,
 	# we set the hdd into standby.
 	def readStats(self):
-		if os.path.exists("/sys/block/%s/stat" % self.device):
-			f = open("/sys/block/%s/stat" % self.device)
-			l = f.read()
-			f.close()
-			data = l.split(None,5)
-			return int(data[0]), int(data[4])
-		else:
+		try:
+			l = open("/sys/block/%s/stat" % self.device).read()
+		except IOError:
 			return -1,-1
+		data = l.split(None,5)
+		return (int(data[0]), int(data[4]))
 
 	def startIdle(self):
 		from enigma import eTimer
