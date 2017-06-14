@@ -360,6 +360,20 @@ def InitUsageConfig():
 		config.usage.okbutton_mode = ConfigSelection(default="0", choices = [
 						("0", _("InfoBar")),
 						("1", _("Channel List"))])
+	config.usage.volume_instead_of_channelselection = ConfigYesNo(default = False)
+	config.usage.zap_with_arrow_buttons = ConfigYesNo(default = False)
+	config.usage.infobar_frontend_source = ConfigSelection(default = 'tuner', choices = [
+        ('settings', _('Settings')),
+        ('tuner', _('Tuner'))])
+        config.usage.show_picon_bkgrn = ConfigSelection(default = 'transparent', choices = [
+        ('none', _('Disabled')),
+        ('transparent', _('Transparent')),
+        ('blue', _('Blue')),
+        ('red', _('Red')),
+        ('black', _('Black')),
+        ('white', _('White')),
+        ('lightgrey', _('Light Grey')),
+        ('grey', _('Grey'))])					
 	config.usage.show_bouquetalways = ConfigYesNo(default = False)
 	config.usage.show_event_progress_in_servicelist = ConfigSelection(default = 'barright', choices = [
 		('barleft', _("Progress bar left")),
@@ -469,6 +483,15 @@ def InitUsageConfig():
 	config.usage.hide_zap_errors = ConfigYesNo(default = True)
 	config.usage.enableVodMode = ConfigYesNo(default = True)
 	config.misc.use_ci_assignment = ConfigYesNo(default = True)
+	config.usage.messageNoResources = ConfigYesNo(default = True)
+	config.usage.messageTuneFailed = ConfigYesNo(default = True)
+	config.usage.messageNoPAT = ConfigYesNo(default = True)
+	config.usage.messageNoPATEntry = ConfigYesNo(default = True)
+	config.usage.messageNoPMT = ConfigYesNo(default = True)
+	config.usage.dsemudmessages = ConfigYesNo(default = True)
+	config.usage.messageYesPmt = ConfigYesNo(default = False)
+	config.usage.hide_zap_errors = ConfigYesNo(default = False)
+	
 	config.usage.hide_ci_messages = ConfigYesNo(default = False)
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
 	config.usage.show_eit_nownext = ConfigYesNo(default = True)

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-04-07 00:23+0100\n"
+"PO-Revision-Date: 2017-06-05 00:39+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -227,7 +227,7 @@ msgid "Hard disk standby in box standby after"
 msgstr "Sospensione HDD quando il Box è in standby:"
 
 msgid "Use Harddisk Hardware Standby Timer"
-msgstr "Usa Harddiskin Standby Timer"
+msgstr "Usa Hard disk in Standby"
 
 msgid "Option to enable the Hardware Standby Timer"
 msgstr "Opzione per la selezione del timer di standby interna del disco"
@@ -238,6 +238,35 @@ msgid ""
 msgstr ""
 "Configurare il disco rigido per andare in standby dopo il tempo di "
 "inattività specificato quando il Box è in standby."
+
+msgid "USB Disk Format Wizard"
+msgstr "Procedura guidata Formato disco USB"
+
+msgid "This wizard will help you to format Usb mass storage devices for Linux."
+msgstr ""
+"Questa procedura guidata ti aiuterà a formattare i dispositivi di "
+"archiviazione di massa Usb per Linux."
+
+msgid ""
+"Please be sure that your usb drive is NOT CONNECTED to your %s %s box before "
+"you continue."
+msgstr ""
+"Assicurarsi che l'unità USB non sia CONNESSA al tuo box %s %s prima di "
+"continuare."
+
+msgid ""
+"If your usb drive is connected and mounted you have to poweroff your box, "
+"remove the usb device and reboot."
+msgstr ""
+"Se l'unità USB è collegata e montata è necessario spegnere il tuo box, "
+"rimuovere il dispositivo USB e riavviare."
+
+msgid ""
+"Press Red button to continue, when you are ready and your usb is "
+"disconnected."
+msgstr ""
+"Premere il pulsante rosso per continuare, quando sei pronto e il tuo usb è "
+"scollegato."
 
 msgid "Subtitles Settings"
 msgstr "Impostazioni sottotitoli"
@@ -3256,8 +3285,8 @@ msgstr "Opzione per impostare il gateway."
 msgid ""
 "Configure the hard disk drive to go to standby after the specified idle time."
 msgstr ""
-"Configurare il disco rigido di andare in standby dopo il tempo di inattività "
-"specificato."
+"Configurare il disco rigido per andare in standby dopo il tempo di "
+"inattività specificato quando il Box è in standby"
 
 msgid "Configure the horizontal alignment of the subtitles."
 msgstr "Opzione per impostare l'allineamento orizzontale dei sottotitoli."
@@ -4540,6 +4569,9 @@ msgstr "Abilita Netmed EPG"
 msgid "Enable ViaSat EPG"
 msgstr "Abilita ViaSat EPG"
 
+msgid "Enable Virgin EPG"
+msgstr "Abilita Virgin EPG"
+
 msgid "Enable debug logs"
 msgstr "Abilita debug logs"
 
@@ -5817,6 +5849,9 @@ msgstr "Infobar EPG"
 msgid "InfobarEPG settings"
 msgstr "Conf. interfaccia"
 
+msgid "Info"
+msgstr "Info"
+
 msgid "Init"
 msgstr "Dentro"
 
@@ -6419,6 +6454,9 @@ msgstr "Maxdown -"
 
 msgid "Maxdown: "
 msgstr "Maxdown: "
+
+msgid "Maximum number of days in EPG"
+msgstr "Numero massimo di giorni per gli EPG"
 
 msgid "Maximum no of days:"
 msgstr "Numero massimo di giorni:"
@@ -7448,7 +7486,7 @@ msgid "Picon width"
 msgstr "Larghezza Picon"
 
 msgid "Info icon width"
-msgstr "Info Icon Larghezza"
+msgstr "Larghezza dell'icona"
 
 msgid ""
 "Configure the minimum width before showing the 'i' icon, '0' is equal to not "
@@ -7791,6 +7829,9 @@ msgstr "Configurazione Rotore"
 
 msgid "Positioner fine movement"
 msgstr "Posizionatore fine movimento"
+
+msgid "Position of recording icons"
+msgstr "Posizione delle icone di registrazione"
 
 msgid "Power threshold in mA"
 msgstr "Limite di potenza in mA"
@@ -8381,6 +8422,9 @@ msgstr "Utilizzare la procedura guidata per configurare la rete.\n"
 
 msgid "Set the MAC-address of your %s %s.\n"
 msgstr "Impostare l'indirizzo MAC della vostra %s %s.\n"
+
+msgid "Set the position of the recording icons"
+msgstr "Imposta la posizione delle icone di registrazione"
 
 msgid "MAC-address settings"
 msgstr "Impostazioni MAC-address"
@@ -9188,7 +9232,7 @@ msgid "Show Display Icons"
 msgstr "Mostra Icone su display"
 
 msgid "Show E2 Log"
-msgstr "Zeige E2 Log"
+msgstr "Show E2 Log"
 
 msgid "Show Opendroid Log"
 msgstr "Mostra Opendroid Log"
@@ -10177,12 +10221,12 @@ msgstr "TB"
 #. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
 msgstr ""
-"Traduzione italiana\n"
+"Traduzione Italiana\n"
 "enigma2\n"
 "a cura di OpenDroid-Team\n"
 "www.droidsat.org\n"
 "Supporto: www.droidsat.org\n"
-"aggiornamento: 07 Aprile 2017"
+"aggiornamento: 28 Maggio 2017"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "File TS troppo grande per ISO9660 livello 1!"
@@ -11365,6 +11409,9 @@ msgstr "Utilizzare WOL"
 
 msgid "Use WakeOnLAN"
 msgstr "Usa WakeOnLan"
+
+msgid "Use for load only x days in EPG"
+msgstr "Utilizzare per per caricare gli EPG per x giorni"
 
 msgid "Enable Wake On LAN"
 msgstr "Abilita Wake On LAN"
