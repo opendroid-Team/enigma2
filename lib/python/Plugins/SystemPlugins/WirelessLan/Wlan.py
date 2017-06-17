@@ -262,6 +262,7 @@ class wpaSupplicant:
 		encryption = config.plugins.wlan.encryption.value
 		wepkeytype = config.plugins.wlan.wepkeytype.value
 		psk = config.plugins.wlan.psk.value
+
 		fp = file(getWlanConfigName(iface), 'w')
 		fp.write('#WPA Supplicant Configuration by enigma2\n')
 		fp.write('ctrl_interface=/var/run/wpa_supplicant\n')

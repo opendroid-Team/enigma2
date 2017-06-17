@@ -3,6 +3,7 @@ from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop, \
 
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
+from skin import parseFont
 from Tools.FuzzyDate import FuzzyTime
 from Tools.LoadPixmap import LoadPixmap
 from timer import TimerEntry
@@ -86,6 +87,7 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 			days = ( _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") )
 			begin = FuzzyTime(timer.begin)
 			if timer.repeated:
+				days = ( _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") )
 				repeatedtext = []
 				flags = timer.repeated
 				for x in (0, 1, 2, 3, 4, 5, 6):
@@ -157,7 +159,13 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 		self.l.setFont(3, gFont("Regular", 27))
 		self.l.setItemHeight(50)
 		self.l.setList(list)
+		self.itemHeight = 50
+		self.rowSplit = 25
+		self.iconMargin = 4
+		self.satPosLeft = 160
 		self.iconWait = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_wait.png"))
+		self.iconWidth = self.iconWait.size().width()
+		self.iconHeight = self.iconWait.size().height()
 		self.iconRecording = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_rec.png"))
 		self.iconPrepared = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_prep.png"))
 		self.iconDone = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_done.png"))
@@ -165,6 +173,33 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 		self.iconZapped = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_zap.png"))
 		self.iconDisabled = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_off.png"))
 		self.iconFailed = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/timer_failed.png"))
+
+	def applySkin(self, desktop, parent):
+		def itemHeight(value):
+			self.itemHeight = int(value)
+		def setServiceNameFont(value):
+			self.serviceNameFont = parseFont(value, ((1,1),(1,1)))
+		def setEventNameFont(value):
+			self.eventNameFont = parseFont(value, ((1,1),(1,1)))
+		def setFont(value):
+			self.font = parseFont(value, ((1,1),(1,1)))
+		def rowSplit(value):
+			self.rowSplit = int(value)
+		def iconMargin(value):
+			self.iconMargin = int(value)
+		def satPosLeft(value):
+			self.satPosLeft = int(value)
+		for (attrib, value) in list(self.skinAttributes):
+			try:
+				locals().get(attrib)(value)
+				self.skinAttributes.remove((attrib, value))
+			except:
+				pass
+		self.l.setItemHeight(self.itemHeight)
+		self.l.setFont(0, self.serviceNameFont)
+		self.l.setFont(1, self.font)
+		self.l.setFont(2, self.eventNameFont)
+		return GUIComponent.applySkin(self, desktop, parent)
 
 	def getCurrent(self):
 		cur = self.l.getCurrentSelection()
@@ -174,6 +209,7 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 
 	def postWidgetCreate(self, instance):
 		instance.setContent(self.l)
+		self.instance = instance
 
 	def moveToIndex(self, index):
 		self.instance.moveSelectionTo(index)

@@ -1236,6 +1236,7 @@ def audiocdscan(menuid, **kwargs):
 		return [(_("Play audio-CD..."), audioCD_open_mn, "play_cd", 45)]
 	else:
 		return []
+
 def filescan(**kwargs):
 	from Components.Scanner import Scanner, ScanPath
 	return [

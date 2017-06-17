@@ -30,7 +30,6 @@ config.plugins.wlan.wepkeytype = NoSave(ConfigSelection(weplist, default = "ASCI
 config.plugins.wlan.psk = NoSave(ConfigPassword(default = "", fixed_size = False))
 
 
-
 class WlanStatus(Screen):
 	skin = """
 		<screen name="WlanStatus" position="center,center" size="560,400" title="Wireless network status" >

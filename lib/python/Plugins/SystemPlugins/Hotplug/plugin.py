@@ -3,6 +3,7 @@ from Components.Harddisk import harddiskmanager
 from twisted.internet.protocol import Protocol, Factory
 import os, os.path
 
+# globals
 hotplugNotifier = []
 audiocd = False
 
