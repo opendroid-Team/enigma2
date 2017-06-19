@@ -227,6 +227,7 @@ self.session.open(HdmiCECSetupScreen)
 		<item weight="10" level="0" text="Memory" entryID="device_screen"><screen module="About" screen="SystemMemoryInfo"/></item>
 		<item weight="15" level="0" text="Network" entryID="device_screen"><screen module="About" screen="SystemNetworkInfo"/></item>
 		<item weight="20" level="1" text="Service" entryID="service_info_screen"><screen module="ServiceInfo" screen="ServiceInfo"/></item>
+		<item weight="6" level="0" text="CommitInfo" entryID="CommitInfo_info_screen"><screen module="About" screen="CommitInfo"/></item>
 	</menu>
 
 	<!-- Menu / Timer -->

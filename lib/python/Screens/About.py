@@ -18,6 +18,9 @@ from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 
 from Tools.StbHardware import getFPVersion
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
+import skin, os
 
 from os import path, popen
 from re import search
@@ -708,12 +711,10 @@ class TranslationInfo(Screen):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Translation Information"))
 		# don't remove the string out of the _(), or it can't be "translated" anymore.
-
 		# TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 		info = _("TRANSLATOR_INFO")
-
 		if info == "TRANSLATOR_INFO":
-			info = ""
+			info = "(N/A)"
 
 		infolines = _("").split("\n")
 		infomap = {}
@@ -725,12 +726,12 @@ class TranslationInfo(Screen):
 			infomap[type] = value
 		print infomap
 
+		self["key_red"] = Button(_("Cancel"))
 		self["TranslationInfo"] = StaticText(info)
 
 		translator_name = infomap.get("Language-Team", "none")
 		if translator_name == "none":
 			translator_name = infomap.get("Last-Translator", "")
-
 		self["TranslatorName"] = StaticText(translator_name)
 
 		self["actions"] = ActionMap(["SetupActions"],
@@ -739,28 +740,79 @@ class TranslationInfo(Screen):
 				"ok": self.close,
 			})
 
-class MemoryInfo(Screen):
-
-	skin = """<screen name="MemoryInfo" position="center,60" zPosition="2" size="540,490" title="Memory Info">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="135,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="270,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="405,0" size="140,40" alphatest="on" />
-			<widget name="key_red" position="0,0" zPosition="1" size="135,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget name="key_green" position="135,0" zPosition="1" size="135,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="key_blue" position="405,0" zPosition="1" size="135,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
-
-			<widget name="lmemtext" position="10,40" size="120,450" font="Regular;16" zPosition="1" halign="left" transparent="1" />
-			<widget name="lmemvalue" position="120,40" size="90,450" font="Regular;16" zPosition="1" halign="right" transparent="1" />
-			<widget name="rmemtext" position="330,40" size="120,450" font="Regular;16" zPosition="1" halign="left" transparent="1" />
-			<widget name="rmemvalue" position="440,40" size="90,450" font="Regular;16" zPosition="1" halign="right" transparent="1" />
-
-			<widget name="info" position="330,405" size="200,100" font="Regular;14" zPosition="1" halign="center" foregroundColor="#909090" transparent="1" />
-		</screen>"""
-
+class CommitInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		self.setTitle(_("Latest Commits"))
+		self.skinName = ["CommitInfo", "About"]
+		self["AboutScrollLabel"] = ScrollLabel(_("Please wait"))
+		self["actions"] = ActionMap(["SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown,
+				"left": self.left,
+				"right": self.right
+			})
 
+		self["key_red"] = Button(_("Cancel"))
+
+		self.project = 0
+		self.projects = [
+			("https://api.github.com/repos/opendroid-Team/enigma2/commits", "enigma2"),
+			("https://api.github.com/repos/opendroid-Team/skins-oDreamy-FHD/commits", "oDreamy-FHD"),
+		]
+		self.cachedProjects = {}
+		self.Timer = eTimer()
+		self.Timer.callback.append(self.readGithubCommitLogs)
+		self.Timer.start(50, True)
+
+	def readGithubCommitLogs(self):
+		url = self.projects[self.project][0]
+		commitlog = ""
+		from datetime import datetime
+		from json import loads
+		from urllib2 import urlopen
+		try:
+			commitlog += 80 * '-' + '\n'
+			commitlog += url.split('/')[-2] + '\n'
+			commitlog += 80 * '-' + '\n'
+			try:
+				
+				from ssl import _create_unverified_context
+				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+			except:
+				log = loads(urlopen(url, timeout=5).read())
+			for c in log:
+				creator = c['commit']['author']['name']
+				title = c['commit']['message']
+				date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
+				commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
+			commitlog = commitlog.encode('utf-8')
+			self.cachedProjects[self.projects[self.project][1]] = commitlog
+		except:
+			commitlog += _("Currently the commit log cannot be retrieved - please try later again")
+		self["AboutScrollLabel"].setText(commitlog)
+
+	def updateCommitLogs(self):
+		if self.cachedProjects.has_key(self.projects[self.project][1]):
+			self["AboutScrollLabel"].setText(self.cachedProjects[self.projects[self.project][1]])
+		else:
+			self["AboutScrollLabel"].setText(_("Please wait"))
+			self.Timer.start(50, True)
+
+	def left(self):
+		self.project = self.project == 0 and len(self.projects) - 1 or self.project - 1
+		self.updateCommitLogs()
+
+	def right(self):
+		self.project = self.project != len(self.projects) - 1 and self.project + 1 or 0
+		self.updateCommitLogs()
+
+class MemoryInfo(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
 				"cancel": self.close,
@@ -768,16 +820,13 @@ class MemoryInfo(Screen):
 				"green": self.getMemoryInfo,
 				"blue": self.clearMemory,
 			})
-
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("Refresh"))
 		self["key_blue"] = Label(_("Clear"))
-
 		self['lmemtext'] = Label()
 		self['lmemvalue'] = Label()
 		self['rmemtext'] = Label()
 		self['rmemvalue'] = Label()
-
 		self['pfree'] = Label()
 		self['pused'] = Label()
 		self["slide"] = ProgressBar()
@@ -785,43 +834,62 @@ class MemoryInfo(Screen):
 
 		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not important."))
 
-		self.setTitle(_("Memory Info"))
+		Typ = _("%s  ") % (getMachineName())
+		self.setTitle(Typ + "[" + (_("Memory Info"))+ "]")
 		self.onLayoutFinish.append(self.getMemoryInfo)
 
 	def getMemoryInfo(self):
 		try:
 			ltext = rtext = ""
 			lvalue = rvalue = ""
-			mem = 0
+			mem = 1
 			free = 0
-			i = 0
-			for line in open('/proc/meminfo','r'):
-				( name, size, units ) = line.strip().split()
-				if name.find("MemTotal") != -1:
+			rows_in_column = self["params"].rows_in_column
+			for i, line in enumerate(open('/proc/meminfo','r')):
+				s = line.strip().split(None, 2)
+				if len(s) == 3:
+					name, size, units = s
+				elif len(s) == 2:
+					name, size = s
+					units = ""
+				else:
+					continue
+				if name.startswith("MemTotal"):
 					mem = int(size)
-				if name.find("MemFree") != -1:
-					free = int(size)
-				if i < 28:
+				if name.startswith("MemFree") or name.startswith("Buffers") or name.startswith("Cached"):
+					free += int(size)
+				if i < rows_in_column:
 					ltext += "".join((name,"\n"))
 					lvalue += "".join((size," ",units,"\n"))
 				else:
 					rtext += "".join((name,"\n"))
 					rvalue += "".join((size," ",units,"\n"))
-				i += 1
 			self['lmemtext'].setText(ltext)
 			self['lmemvalue'].setText(lvalue)
 			self['rmemtext'].setText(rtext)
 			self['rmemvalue'].setText(rvalue)
-
 			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
 			self['pfree'].setText("%.1f %s" % (100.*free/mem,'%'))
 			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem,'%'))
-
 		except Exception, e:
 			print "[About] getMemoryInfo FAIL:", e
 
 	def clearMemory(self):
-		from os import system
-		system("sync")
-		system("echo 3 > /proc/sys/vm/drop_caches")
+		eConsoleAppContainer().execute("sync")
+		open("/proc/sys/vm/drop_caches", "w").write("3")
 		self.getMemoryInfo()
+
+class MemoryInfoSkinParams(HTMLComponent, GUIComponent):
+	def __init__(self):
+		GUIComponent.__init__(self)
+		self.rows_in_column = 25
+
+	def applySkin(self, desktop, screen):
+		if self.skinAttributes is not None:
+			attribs = [ ]
+			for (attrib, value) in self.skinAttributes:
+				if attrib == "rowsincolumn":
+					self.rows_in_column = int(value)
+			self.skinAttributes = attribs
+		return GUIComponent.applySkin(self, desktop, screen)
+
