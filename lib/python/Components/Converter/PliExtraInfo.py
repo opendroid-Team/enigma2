@@ -303,7 +303,7 @@ class PliExtraInfo(Poll, Converter, object):
 		return str(xres) + "x" + str(yres) + mode + fps
 
 	def createVideoCodec(self, info):
-		return ("MPEG2", "AVC", "MPEG1", "MPEG4-VC", "VC1", "VC1-SM", "HEVC", "")[info.getInfo(iServiceInformation.sVideoType)]
+		return ("MPEG2", "MPEG4", "MPEG1", "MPEG4-II", "VC1", "VC1-SM", "")[info.getInfo(iServiceInformation.sVideoType)]
 
 	def createPIDInfo(self, info):
 		vpid = info.getInfo(iServiceInformation.sVideoPID)
@@ -321,22 +321,19 @@ class PliExtraInfo(Poll, Converter, object):
 		return "%d-%d:%05d:%04d:%04d:%04d" % (onid, tsid, sidpid, vpid, apid, pcrpid)
 
 	def createTransponderInfo(self, fedata, feraw):
-		if not feraw:
+		if not feraw or not fedata:
 			return ""
-		elif "DVB-T" in feraw.get("tuner_type"):
-			tmp = addspace(self.createChannelNumber(fedata, feraw)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata))
+		if "DVB-T" in feraw.get("tuner_type"):
+			tmp = addspace(self.createChannelNumber(fedata, feraw)) + self.createFrequency(fedata) + "/" + self.createPolarization(fedata)
 		else:
-			tmp = addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata))
+			tmp = addspace(self.createFrequency(fedata)) + addspace(self.createPolarization(fedata))
 		return addspace(self.createTunerSystem(fedata)) + tmp + addspace(self.createSymbolRate(fedata, feraw)) + addspace(self.createFEC(fedata, feraw)) \
-			+ addspace(self.createModulation(fedata)) + addspace(self.createOrbPos(feraw))
+			+ addspace(self.createModulation(fedata)) + self.createOrbPos(feraw)
 
 	def createFrequency(self, feraw):
 		frequency = feraw.get("frequency")
 		if frequency:
-			if "DVB-T" in feraw.get("tuner_type"):
-				return str(int(frequency / 1000000. + 0.5))
-			else:
-				return str(int(frequency / 1000 + 0.5))
+			return str(frequency)
 		return ""
 
 	def createChannelNumber(self, fedata, feraw):
