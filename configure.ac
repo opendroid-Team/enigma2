@@ -257,6 +257,16 @@ if test x"$with7segment" != xno ; then
 fi
 AM_CONDITIONAL(HAVE_7SEGMENT, test x"$with7segment" != xno)
 
+AC_ARG_WITH(bwlcd96,
+	AC_HELP_STRING([--with-bwlcd96], [use 96x64 1bpp black and white display, yes or no]),
+	[[withbwlcd96=$withval]],
+	[[withbwlcd96=no]]
+)
+if test x"$withbwlcd96" != xno ; then
+	AC_DEFINE(HAVE_BWLCD96, 1,[Define when using a 96x64 black and white display device])
+fi
+AM_CONDITIONAL(HAVE_BWLCD96, test x"$withbwlcd96" != xno)
+
 AC_ARG_WITH(colorlcd,
 	AC_HELP_STRING([--with-colorlcd], [use 96x64 16bpp color display, yes or no]),
 	[[withcolorlcd=$withval]],
@@ -319,6 +329,17 @@ if test x"$withcolorlcd720" != xno ; then
 fi
 
 AM_CONDITIONAL(HAVE_COLORLCD720, test x"$withcolorlcd720" != xno)
+
+AC_ARG_WITH(colorlcd800,
+	AC_HELP_STRING([--with-colorlcd800], [use 800x480 16bpp color display, yes or no]),
+	[[withcolorlcd800=$withval]],
+	[[withcolorlcd800=no]]
+)
+if test x"$withcolorlcd800" != xno ; then
+	AC_DEFINE(HAVE_COLORLCD800, 1,[Define when using a 800x480 color display device])
+fi
+
+AM_CONDITIONAL(HAVE_COLORLCD800, test x"$withcolorlcd800" != xno)
 
 AC_ARG_WITH(bwlcd255,
 	AC_HELP_STRING([--with-bwlcd255], [use 255x64 1bpp black and white display, yes or no]),
@@ -702,6 +723,8 @@ data/display220/Makefile
 data/display400/Makefile
 data/display480/Makefile
 data/display720/Makefile
+data/display800/Makefile
+data/display800/Default_with_Picon_Fullscreen/Makefile
 data/grautec70x0/Makefile
 data/grautec70x0/fonts/Makefile
 data/grautec8000/Makefile
