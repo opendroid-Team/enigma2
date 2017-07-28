@@ -46,7 +46,7 @@ from Tools.Directories import SCOPE_VOD
 from Tools import Directories, Notifications
 from Tools.Directories import pathExists, fileExists, getRecordingFilename, copyfile, moveFiles, resolveFilename, SCOPE_TIMESHIFT, SCOPE_CURRENT_SKIN
 from Tools.KeyBindings import getKeyDescription
-from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, iPlayableService, eServiceReference, eEPGCache, eActionMap, eDVBVolumecontrol, getDesktop, quitMainloop
+from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, iPlayableService, eServiceReference, eEPGCache, eActionMap, eDVBVolumecontrol, getDesktop, quitMainloop, eDVBDB
 from boxbranding import getBoxType, getMachineProcModel, getMachineBuild, getMachineBrand, getMachineName
 
 from time import time, localtime, strftime
@@ -289,6 +289,10 @@ class InfoBarScreenSaver:
 			self.ScreenSaverTimerStart()
 			eActionMap.getInstance().unbindAction('', self.keypressScreenSaver)
 
+class HideVBILine(Screen):
+	skin = """<screen position="0,0" size="%s,%s" backgroundColor="0" flags="wfNoBorder"/>""" % (getDesktop(0).size().width() * 2/3, getDesktop(0).size().height() / 360)
+	def __init__(self, session):
+		Screen.__init__(self, session)
 class SecondInfoBar(Screen):
 	ADD_TIMER = 0
 	REMOVE_TIMER = 1
@@ -533,6 +537,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 	STATE_HIDING = 1
 	STATE_SHOWING = 2
 	STATE_SHOWN = 3
+	skipToggleShow = False
 
 	def __init__(self):
 		self["ShowHideActions"] = ActionMap( ["InfobarShowHideActions"] ,
@@ -560,6 +565,8 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		self.onShow.append(self.__onShow)
 		self.onHide.append(self.__onHide)
 
+		self.hideVBILineScreen = self.session.instantiateDialog(HideVBILine)
+		self.hideVBILineScreen.show()
 		self.onShowHideNotifiers = []
 
 		self.standardInfoBar = False
@@ -569,6 +576,9 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		if isStandardInfoBar(self):
 			self.SwitchSecondInfoBarScreen()
 		self.onLayoutFinish.append(self.__layoutFinished)
+		self.onExecBegin.append(self.__onExecBegin)
+	def __onExecBegin(self):
+		self.showHideVBI()
 
 	def __layoutFinished(self):
 		if self.secondInfoBarScreen:
@@ -576,6 +586,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			self.standardInfoBar = True
 		self.secondInfoBarWasShown = False
 		self.EventViewIsShown = False
+		self.hideVBILineScreen.hide()
 		try:
 			if self.pvrStateDialog:
 				pass
@@ -618,6 +629,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		for x in self.onShowHideNotifiers:
 			x(True)
 		self.startHideTimer()
+		VolumeControl.instance and VolumeControl.instance.showMute()
 
 	def doDimming(self):
 		if config.usage.show_infobar_do_dimming.value:
@@ -693,6 +705,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		if self.execing:
 			if config.usage.show_infobar_on_zap.value:
 				self.doShow()
+		self.showHideVBI()
 
 	def startHideTimer(self):
 		if self.__state == self.STATE_SHOWN and not self.__locked:
@@ -710,6 +723,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			#idx = config.usage.infobar_timeout.index
 			#if idx:
 			#	self.hideTimer.start(idx*1000, True)
+		self.skipToggleShow = False
 
 	def doShow(self):
 		self.show()
@@ -722,6 +736,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		self.hideTimer.stop()
 		self.DimmingTimer.start(300, True)
 		self.dimmed = config.usage.show_infobar_dimming_speed.value
+		self.skipToggleShow = False
 
 	def doHide(self):
 		if self.__state != self.STATE_HIDDEN:
@@ -758,6 +773,9 @@ class InfoBarShowHide(InfoBarScreenSaver):
 #					pass
 
 	def toggleShow(self):
+		if self.skipToggleShow:
+			self.skipToggleShow = False
+			return
 		if not hasattr(self, "LongButtonPressed"):
 			self.LongButtonPressed = False
 		if not self.LongButtonPressed:
@@ -815,6 +833,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		if self.execing:
 			self.show()
 			self.hideTimer.stop()
+			self.skipToggleShow = False
 
 	def unlockShow(self):
 		if config.usage.show_infobar_do_dimming.value and self.lastResetAlpha is False:
@@ -943,6 +962,26 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		else:
 			self.session.open(MessageBox, _("The Cool TV Guide plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
 
+	def checkHideVBI(self):
+		service = self.session.nav.getCurrentlyPlayingServiceReference()
+		servicepath = service and service.getPath()
+		if servicepath and servicepath.startswith("/"):
+			if service.toString().startswith("1:"):
+				info = eServiceCenter.getInstance().info(service)
+				service = info and info.getInfoString(service, iServiceInformation.sServiceref)
+				FLAG_HIDE_VBI = 512
+				return service and eDVBDB.getInstance().getFlag(eServiceReference(service)) & FLAG_HIDE_VBI and True
+			else:
+				return ".hidvbi." in servicepath.lower()
+		service = self.session.nav.getCurrentService()
+		info = service and service.info()
+		return info and info.getInfo(iServiceInformation.sHideVBI)
+
+	def showHideVBI(self):
+		if self.checkHideVBI():
+			self.hideVBILineScreen.show()
+		else:
+			self.hideVBILineScreen.hide()
 class BufferIndicator(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -4070,17 +4109,20 @@ class InfoBarSubserviceSelection:
 				self.session.nav.playService(service[1], False)
 
 	def addSubserviceToBouquetCallback(self, service):
-		if len(service) > 1 and isinstance(service[1], eServiceReference):
-			self.selectedSubservice = service
-			if self.bouquets is None:
-				cnt = 0
-			else:
-				cnt = len(self.bouquets)
-			if cnt > 1: # show bouquet list
-				self.bsel = self.session.openWithCallback(self.bouquetSelClosed, BouquetSelector, self.bouquets, self.addSubserviceToBouquet)
-			elif cnt == 1: # add to only one existing bouquet
-				self.addSubserviceToBouquet(self.bouquets[0][1])
-				self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO)
+		if not service is None:
+			if len(service) > 1 and isinstance(service[1], eServiceReference):
+				self.selectedSubservice = service
+				if self.bouquets is None:
+					cnt = 0
+				else:
+					cnt = len(self.bouquets)
+				if cnt > 1: # show bouquet list
+					self.bsel = self.session.openWithCallback(self.bouquetSelClosed, BouquetSelector, self.bouquets, self.addSubserviceToBouquet)
+				elif cnt == 1: # add to only one existing bouquet
+					self.addSubserviceToBouquet(self.bouquets[0][1])
+					self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO)
+		else:
+			self.session.open(MessageBox, _("Service cant been added to the favourites."), MessageBox.TYPE_INFO)
 
 	def bouquetSelClosed(self, confirmed):
 		self.bsel = None
@@ -4098,14 +4140,51 @@ class InfoBarSubserviceSelection:
 	def openTimerList(self):
 		self.session.open(TimerEditList)
 
+from Components.Sources.HbbtvApplication import HbbtvApplication
+gHbbtvApplication = HbbtvApplication()
 class InfoBarRedButton:
 	def __init__(self):
 		self["RedButtonActions"] = HelpableActionMap(self, "InfobarRedButtonActions",
 			{
 				"activateRedButton": (self.activateRedButton, _("Red button...")),
 			})
+		self["HbbtvApplication"] = gHbbtvApplication
 		self.onHBBTVActivation = [ ]
 		self.onRedButtonActivation = [ ]
+		self.onReadyForAIT = [ ]
+		self.__et = ServiceEventTracker(screen=self, eventmap=
+			{
+				iPlayableService.evHBBTVInfo: self.detectedHbbtvApplication,
+				iPlayableService.evUpdatedInfo: self.updateInfomation
+			})
+
+	def updateAIT(self, orgId=0):
+		for x in self.onReadyForAIT:
+			try:
+				x(orgId)
+			except Exception, ErrMsg:
+				print ErrMsg
+				#self.onReadyForAIT.remove(x)
+
+	def updateInfomation(self):
+		try:
+			self["HbbtvApplication"].setApplicationName("")
+			self.updateAIT()
+		except Exception, ErrMsg:
+			pass
+
+	def detectedHbbtvApplication(self):
+		service = self.session.nav.getCurrentService()
+		info = service and service.info()
+		try:
+			for x in info.getInfoObject(iServiceInformation.sHBBTVUrl):
+				print x
+				if x[0] in (-1, 1):
+					self.updateAIT(x[3])
+					self["HbbtvApplication"].setApplicationName(x[1])
+					break
+		except Exception, ErrMsg:
+			pass
 
 	def activateRedButton(self):
 		service = self.session.nav.getCurrentService()
