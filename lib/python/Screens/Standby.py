@@ -1,7 +1,9 @@
+import os
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.AVSwitch import AVSwitch
+from Components.Console import Console
 from Components.SystemInfo import SystemInfo
 from Components.Harddisk import harddiskmanager
 from GlobalActions import globalActionMap
@@ -39,6 +41,28 @@ class Standby2(Screen):
 		#kill me
 		self.close(True)
 
+	def Power_make(self):
+		if (config.usage.on_short_powerpress.value != "standby_noTVshutdown"):
+			self.Power()
+	def Power_long(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown"):
+			self.TVoff()
+			self.ignoreKeyBreakTimer.start(250,1)
+	def Power_repeat(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown") and self.ignoreKeyBreakTimer.isActive():
+			self.ignoreKeyBreakTimer.start(250,1)
+
+	def Power_break(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown") and not self.ignoreKeyBreakTimer.isActive():
+			self.Power()
+
+	def TVoff(self):
+		print "[Standby] TVoff"
+		try:
+			config.hdmicec.control_tv_standby_skipnow.setValue(False)
+			config.hdmicec.TVoffCounter.value += 1
+		except:
+			pass
 	def setMute(self):
 		if eDVBVolumecontrol.getInstance().isMuted():
 			self.wasMuted = 1
@@ -61,11 +85,16 @@ class Standby2(Screen):
 		self["actions"] = ActionMap( [ "StandbyActions" ],
 		{
 			"power": self.Power,
+			"power_make": self.Power_make,
+			"power_break": self.Power_break,
+			"power_long": self.Power_long,
+			"power_repeat": self.Power_repeat,
 			"discrete_on": self.Power
 		}, -1)
 
 		globalActionMap.setEnabled(False)
 
+		self.ignoreKeyBreakTimer = eTimer()
 		self.standbyStopServiceTimer = eTimer()
 		self.standbyStopServiceTimer.callback.append(self.stopService)
 		self.timeHandler = None
