@@ -30,7 +30,7 @@ fonts = {
 parameters = {}
 constant_widgets = {}
 variables = {}
-DEFAULT_SKIN = 'oDreamy-FHD/skin.xml'
+DEFAULT_SKIN = 'OPD-Blue-Line/skin.xml'
 DEFAULT_DISPLAY_SKIN = 'skin_display.xml'
 isVTISkin = False
 
@@ -437,7 +437,7 @@ def cachemenu():
 
 
 try:
-    if config.skin.primary_skin.value == 'oDreamy-FHD/skin.xml' or config.skin.primary_skin.value == DEFAULT_SKIN:
+    if config.skin.primary_skin.value == 'OPD-Blue-Line/skin.xml' or config.skin.primary_skin.value == DEFAULT_SKIN:
         cachemenu()
 except:
     print '[SKIN] fail cache main menu'
