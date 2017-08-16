@@ -13,6 +13,12 @@ self.session.open(BluePanel)
 from OPENDROID.GreenPanel import GreenPanel
 self.session.open(GreenPanel)
 </code>  
+                </item>	
+		<item weight="0" level="1" text="AtileHD" entryID="AtileHD_Config">
+<code>
+from Plugins.Extensions.AtileHD.plugin import AtileHD_Config
+self.session.open(AtileHD_Config)
+</code>  
 		</item>
 	<menu weight="1" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" >
 		<id val="setup" />
