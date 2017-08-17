@@ -13,12 +13,6 @@ self.session.open(BluePanel)
 from OPENDROID.GreenPanel import GreenPanel
 self.session.open(GreenPanel)
 </code>  
-                </item>	
-		<item weight="0" level="1" text="AtileHD" entryID="AtileHD_Config">
-<code>
-from Plugins.Extensions.AtileHD.plugin import AtileHD_Config
-self.session.open(AtileHD_Config)
-</code>  
 		</item>
 	<menu weight="1" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" >
 		<id val="setup" />
@@ -62,6 +56,12 @@ self.session.open(AtileHD_Config)
     <item requires="LCDSKINSetup" level="0" text="VFD Skin Selector" entryID="vfd_skin"><screen module="VfdSkinSelector" screen="VFDSkinSelector"/></item>
 			</menu>			
 			<item weight="25" level="0" text="Skin Setup" entryID="skin_setup"><screen module="SkinSelector" screen="SkinSelector"/></item>
+			<item weight="26" level="0" text="Skinpart Setup" entryID="AtileHD_Config">
+<code>
+from Plugins.Extensions.AtileHD.plugin import AtileHD_Config
+self.session.open(AtileHD_Config)
+</code>  
+		</item>
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
 			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
