@@ -290,7 +290,7 @@ class InfoBarScreenSaver:
 			eActionMap.getInstance().unbindAction('', self.keypressScreenSaver)
 
 class HideVBILine(Screen):
-	skin = """<screen position="0,0" size="%s,%s" backgroundColor="0" flags="wfNoBorder"/>""" % (getDesktop(0).size().width() * 2/3, getDesktop(0).size().height() / 360)
+	skin = """<screen position="0,0" size="%s,%s" backgroundColor="#00000000" flags="wfNoBorder"/>""" % (getDesktop(0).size().width() * 2/3, getDesktop(0).size().height() / 360)
 	def __init__(self, session):
 		Screen.__init__(self, session)
 class SecondInfoBar(Screen):
@@ -299,8 +299,8 @@ class SecondInfoBar(Screen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		if config.usage.show_second_infobar.value == "3" and (config.skin.primary_skin.value == "oDreamy-FHD/skin.xml" or config.skin.primary_skin.value.startswith('oDreamy-FHD/skin.xml')):
-			self.skinName = "SecondInfoBar/oDreamy-FHD/skin.xml"
+		if config.usage.show_second_infobar.value == "3" and (config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml" or config.skin.primary_skin.value.startswith('OPD-Blue-Line/skin.xml')):
+			self.skinName = "SecondInfoBar/OPD-Blue-Line/skin.xml"
 		else:
 			self.skinName = "SecondInfoBar"
 		self["epg_description"] = ScrollLabel()
