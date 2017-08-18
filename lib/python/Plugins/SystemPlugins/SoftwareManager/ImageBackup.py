@@ -1,7 +1,7 @@
 #################################################################################
-# FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 4.1    	        #
+#         FULL BACKUP UYILITY FOR ENIGMA2, SUPPORTS THE MODELS OE-A 4.1    	#
 #	                         						#
-#					MAKES A FULLBACK-UP READY FOR FLASHING. #
+#		     MAKES A FULLBACK-UP READY FOR FLASHING.                    #
 #										#
 #################################################################################
 import os
@@ -24,7 +24,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 from Components.Button import Button
 VERSION = "Version 6.3 openDroid"
 HaveGZkernel = True
-if getMachineBuild() in ('et1x000',"vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s'):
+if getMachineBuild() in ('et13000','et1x000',"vuuno4k", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s'):
 	HaveGZkernel = False
 
 def Freespace(dev):
