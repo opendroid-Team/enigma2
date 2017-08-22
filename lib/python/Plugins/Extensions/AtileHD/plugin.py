@@ -24,21 +24,13 @@ from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Tools.Directories import *
 from Tools.LoadPixmap import LoadPixmap
-from Tools.WeatherID import get_woeid_from_yahoo
+from Plugins.Extensions.WeatherPlugin.plugin import MSNWeatherPlugin
 from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, makedirs
 import shutil
 
 cur_skin = config.skin.primary_skin.value.replace('/skin.xml', '')
 
-# Atile
-config.plugins.AtileHD = ConfigSubsection()
-config.plugins.AtileHD.refreshInterval = ConfigNumber(default=10)
-config.plugins.AtileHD.woeid = ConfigNumber(default = 638242)
-config.plugins.AtileHD.tempUnit = ConfigSelection(default="Celsius", choices = [
-				("Celsius", _("Celsius")),
-				("Fahrenheit", _("Fahrenheit"))
-				])
 
 def Plugins(**kwargs):
 	return [PluginDescriptor(name=_("%s Setup") % cur_skin, description=_("Personalize your Skin"), where = PluginDescriptor.WHERE_MENU, icon="plugin.png", fnc=menu)]
@@ -61,55 +53,6 @@ def isInteger(s):
 		return True
 	except ValueError:
 		return False
-
-class WeatherLocationChoiceList(Screen):
-	skin = """
-		<screen name="WeatherLocationChoiceList" position="center,center" size="1280,720" title="Location list" >
-			<widget source="Title" render="Label" position="70,47" size="950,43" font="Regular;35" transparent="1" />
-			<widget name="choicelist" position="70,115" size="700,480" scrollbarMode="showOnDemand" scrollbarWidth="6" transparent="1" />
-			<eLabel position=" 55,675" size="290, 5" zPosition="-10" backgroundColor="red" />
-			<eLabel position="350,675" size="290, 5" zPosition="-10" backgroundColor="green" />
-			<eLabel position="645,675" size="290, 5" zPosition="-10" backgroundColor="yellow" />
-			<eLabel position="940,675" size="290, 5" zPosition="-10" backgroundColor="blue" />
-			<widget name="key_red" position="70,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="foreground" transparent="1" />
-			<widget name="key_green" position="365,635" size="260,25" zPosition="1" font="Regular;20" halign="left" foregroundColor="foreground" transparent="1" />
-		</screen>
-		"""
-
-	def __init__(self, session, location_list):
-		self.session = session
-		self.location_list = location_list
-		list = []
-		Screen.__init__(self, session)
-		self.title = _("Location list")
-		self["choicelist"] = MenuList(list)
-		self["key_red"] = Label(_("Cancel"))
-		self["key_green"] = Label(_("OK"))
-		self["myActionMap"] = ActionMap(["SetupActions", "ColorActions"],
-		{
-			"ok": self.keyOk,
-			"green": self.keyOk,
-			"cancel": self.keyCancel,
-			"red": self.keyCancel,
-		}, -1)
-		self.createChoiceList()
-
-	def createChoiceList(self):
-		list = []
-		print self.location_list
-		for x in self.location_list:
-			list.append((str(x[1]), str(x[0])))
-		self["choicelist"].l.setList(list)
-
-	def keyOk(self):
-		returnValue = self["choicelist"].l.getCurrentSelection()[1]
-		if returnValue is not None:
-			self.close(returnValue)
-		else:
-			self.keyCancel()
-
-	def keyCancel(self):
-		self.close(None)
 
 
 class AtileHD_Config(Screen, ConfigListScreen):
@@ -137,7 +80,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		
 		self.start_skin = config.skin.primary_skin.value
-		
 		if self.start_skin != "skin.xml":
 			self.getInitConfig()
 		
@@ -156,8 +98,8 @@ class AtileHD_Config(Screen, ConfigListScreen):
 				"blue": self.about,
 				"cancel": self.cancel,
 				"ok": self.keyOk,
+				"menu": self.config,
 			}, -2)
-			
 		self["Picture"] = Pixmap()
 		
 		if not self.selectionChanged in self["config"].onSelectionChanged:
@@ -211,23 +153,20 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self.set_font = getConfigListEntry(_("Font:"), self.myAtileHD_font)
 		self.set_myatile = getConfigListEntry(_("Enable %s pro:") % cur_skin, self.myAtileHD_active)
 		self.set_new_skin = getConfigListEntry(_("Change skin"), ConfigNothing())
-		self.find_woeid = getConfigListEntry(_("Search weather location ID"), ConfigNothing())
 		self.list = []
 		self.list.append(self.set_myatile)
 		self.list.append(self.set_color)
 		self.list.append(self.set_font)
 		self.list.append(self.set_new_skin)
-		self.list.append(getConfigListEntry(_("---Weather---"), self.myAtileHD_fake_entry))
-		self.list.append(getConfigListEntry(_("Refresh interval in minutes:"), config.plugins.AtileHD.refreshInterval))
-		self.list.append(getConfigListEntry(_("Temperature unit:"), config.plugins.AtileHD.tempUnit))
-		self.list.append(self.find_woeid)
-		self.list.append(getConfigListEntry(_("Location # (http://weather.yahoo.com/):"), config.plugins.AtileHD.woeid))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 		if self.myAtileHD_active.value:
 			self["key_yellow"].setText("%s pro" % cur_skin)
 		else:
 			self["key_yellow"].setText("")
+	def config(self):
+		self.session.open(MSNWeatherPlugin)	
+			
 
 	def changedEntry(self):
 		if self["config"].getCurrent() == self.set_color:
@@ -364,8 +303,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		sel =  self["config"].getCurrent()
 		if sel is not None and sel == self.set_new_skin:
 			self.openSkinSelector()
-		elif sel is not None and sel == self.find_woeid:
-			self.session.openWithCallback(self.search_weather_id_callback, InputBox, title = _("Please enter search string for your location"), text = "")
 		else:
 			self.keyGreen()
 
@@ -377,23 +314,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self.delaytimer.callback.append(self.openSkinSelector)
 		self.delaytimer.start(200, True)
 
-	def search_weather_id_callback(self, res):
-		if res:
-			id_dic = get_woeid_from_yahoo(res)
-			if id_dic.has_key('error'):
-				error_txt = id_dic['error']
-				self.session.open(MessageBox, _("Sorry, there was a problem:") + "\n%s" % error_txt, MessageBox.TYPE_ERROR)
-			elif id_dic.has_key('count'):
-				result_no = int(id_dic['count'])
-				location_list = []
-				for i in range(0, result_no):
-					location_list.append(id_dic[i])
-				self.session.openWithCallback(self.select_weather_id_callback, WeatherLocationChoiceList, location_list)
-
-	def select_weather_id_callback(self, res):
-		if res and isInteger(res):
-			print res
-			config.plugins.AtileHD.woeid.value = int(res)
 
 	def skinChanged(self, ret = None):
 		global cur_skin
