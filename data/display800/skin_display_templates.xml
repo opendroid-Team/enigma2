@@ -394,6 +394,7 @@
 			<convert type="FrontendInfo">USE_TUNERS_STRING</convert>
 		</widget>
 	</screen>
+
 	<!-- ET PORTAL -->
 	<screen name="EtPortalScreen_summary" position="0,0" size="800,480">
 		<eLabel text="EtPortal" position="15,20" foregroundColor="white" size="670,120" font="FdLcD;70" halign="center" valign="top" noWrap="1" />
