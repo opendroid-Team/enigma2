@@ -48,7 +48,7 @@
 	<screen name="LCDInfoBarStartEndTime">
 		<widget source="session.Event_Now" render="Label" position="360,390" size="380,70" font="FdLcD;60" foregroundColor="white" halign="right" valign="center">
 			<convert type="EventTime">Times</convert>
-			<convert type="ClockToText"></convert>
+			<convert type="ClockToText">Default,Default</convert>
 		</widget>
 	</screen>
 	<screen name="LCDRecordIcon">
@@ -82,7 +82,7 @@
 	<screen name="LCDChannelSelectionStartEndTime">
 		<widget source="parent.ServiceEvent" render="Label" position="360,390" size="380,70" font="FdLcD;60" foregroundColor="white" halign="right" valign="center">
 			<convert type="EventTime">Times</convert>
-			<convert type="ClockToText"></convert>
+			<convert type="ClockToText">Default,Default</convert>
 		</widget>
 	</screen>
 
@@ -110,7 +110,7 @@
 	<screen name="LCDEPGStartEndTime">
 		<widget source="parent.Event" render="Label" position="360,390" size="380,70" font="FdLcD;60" foregroundColor="white" halign="right" valign="center">
 			<convert type="EventTime">Times</convert>
-			<convert type="ClockToText"></convert>
+			<convert type="ClockToText">Default,Default</convert>
 		</widget>
 	</screen>
 

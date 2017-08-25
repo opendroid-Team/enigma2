@@ -270,7 +270,7 @@
 		<widget source="desc" render="Label" position="0,75" size="220,165" font="FdLcD;30" halign="center" valign="center" transparent="1" />
 	</screen>	
 <!-- standby -->
-	<screen name="StandbySummary" position="0,0" size="220,132" flags="wfNoBorder">
+	<screen name="StandbySummary" position="0,0" size="220,176" flags="wfNoBorder">
 		<ePixmap pixmap="/usr/share/enigma2/display/analog_blue_lcd.png" position="0,0" size="220,132" zPosition="0" />
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="220,132" hColor="white" linewidth="7" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
@@ -285,6 +285,14 @@
 		<convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 	</screen> 
+
+<!-- Numberzap -->
+	<screen name="NumberZap_summary" position="0,0" size="220,176">
+		<widget source="parent.service_summary" render="Label" position="0,0" size="220,65" foregroundColor="blue" font="FdLcD;30" halign="center" valign="top" />
+		<widget source="parent.number_summary" render="Label" position="0,75" size="220,45" font="FdLcD;40" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+	</screen>
+
 <!-- Plugin browser -->
 	<screen name="PluginBrowserSummary" position="fill">
 		<widget source="parent.Title" render="Label" position="top" size="*,28" font="FdLcD;25" noWrap="1" />
