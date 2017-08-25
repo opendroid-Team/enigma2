@@ -34,7 +34,8 @@ KERNELBIN = getMachineKernelFile()
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 6.3", "http://images.opendroid.org/6.3"])
+images.append(["OPD 6.3", "http://images.opendroid.org/6.4"])
+images.append(["OPD 6.4", "http://images.opendroid.org/6.3"])
 
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
