@@ -11,7 +11,6 @@ from Components.SystemInfo import SystemInfo
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_ACTIVE_SKIN, SCOPE_ACTIVE_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
-from Components.RcModel import rc_model
 from boxbranding import getBoxType
 config.vfd = ConfigSubsection()
 config.vfd.show = ConfigSelection([('skin_text.xml', _('Channel Name')), ('skin_text_clock.xml', _('Clock'))], 'skin_text.xml')
