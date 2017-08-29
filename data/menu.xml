@@ -65,31 +65,20 @@ self.session.open(AtileHD_Config)
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
 			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
+				<item weight="10" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner2"/></item>
 				<item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item>
 				<item weight="20" level="2" text="Hotkey Setup" entryID="buttonsetup_setup"><screen module="ButtonSetup" screen="ButtonSetup"/></item>
 				<item weight="30" level="1" text="Input devices" entryID="input_device_setup"><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
-				</menu>
-				<menu weight="15" level="0" text="Storage devices" entryID="hardisk_selection" requires="Harddisk">
-				<id val="harddisk" />
-				<item weight="1" level="1" entryID="harddisk_setup"><setup id="harddisk"/></item>
-				<item weight="2" level="0" text="Initialization" entryID="harddisk_init"><screen module="HarddiskSetup" screen="HarddiskSelection"/></item>
-				<item weight="3" level="0" text="USB Disk Format" entryID="usbdisk_init">
-<code>
-from OPENDROID.MountManager import UsbFormat
-self.session.open(UsbFormat)
-</code>  
-				</item>
-				<item weight="4" level="0" text="Filesystem check" entryID="harddisk_check"><screen module="HarddiskSetup" screen="HarddiskFsckSelection"/></item>
-				<item weight="40" level="1" text="Keyboard" entryID="keyboard"><setup id="keyboard" /></item>
-				<item weight="50" level="0" text="Language" entryID="language_setup"><screen module="LanguageSelection" /></item>	
-				<item weight="60" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner2"/></item>				
-				<item weight="70" level="0" entryID="specialfeatures_menu"><setup id="specialfeatures" /></item>
 				<item weight="80" level="1" text="Remote Control Code" entryID="remotecode" requires="RemoteCode">
 					<code>
 from Plugins.SystemPlugins.RemoteControlCode.plugin import RemoteControlCode
 self.session.open(RemoteControlCode)
 </code>
 				</item>
+				<item weight="40" level="1" text="Keyboard" entryID="keyboard"><setup id="keyboard" /></item>
+				<item weight="50" level="2" text="OSD 3D Setup" entryID="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item>
+			        <item weight="70" level="0" text="Language" entryID="language_setup"><screen module="LanguageSelection" /></item>
+                                <item weight="70" level="0" entryID="specialfeatures_menu"><setup id="specialfeatures" /></item>
 				<!-- <item weight="50" level="2" text="OSD 3D Setup" entryID="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item> -->
 			</menu>
 		</menu>
@@ -174,6 +163,12 @@ self.session.openWithCallback(msgClosed, EpgDeleteMsg)
 				<item weight="0" level="1" entryID="harddisk_setup"><setup id="harddisk"/></item>
 				<item weight="5" level="0" text="Initialization" entryID="harddisk_init"><screen module="HarddiskSetup" screen="HarddiskSelection"/></item>
 				<item weight="10" level="0" text="Filesystem Check" entryID="harddisk_check"><screen module="HarddiskSetup" screen="HarddiskFsckSelection"/></item>
+				<item weight="3" level="0" text="USB Disk Format" entryID="usbdisk_init">
+<code>
+from OPENDROID.MountManager import UsbFormat
+self.session.open(UsbFormat)
+</code>  
+				</item>
 				<item weight="15" level="0" text="Convert ext3 filesystem to ext4" entryID="harddisk_convert" requires="ext4"><screen module="HarddiskSetup" screen="HarddiskConvertExt4Selection"/></item>
 			</menu>
 
