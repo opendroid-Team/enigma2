@@ -1,18 +1,18 @@
 from MenuList import MenuList
 from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER
+from enigma import eListboxPythonMultiContent, eListbox, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from Tools.LoadPixmap import LoadPixmap
 import skin
 
-
+selectionpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "skin_default/icons/lock_on.png"))
 selectiononpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_on.png"))
 selectionoffpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_off.png"))
 
 def SelectionEntryComponent(description, value, index, selected):
 	dx, dy, dw, dh = skin.parameters.get("SelectionListDescr",(25, 3, 650, 30))
 	res = [
-		(description, value, index, selected),
-		(eListboxPythonMultiContent.TYPE_TEXT, dx, dy, dw, dh, 0, RT_HALIGN_LEFT, description)
+	        (description, value, index, selected),
+	        (eListboxPythonMultiContent.TYPE_TEXT, dx, dy, dw, dh, 0, RT_HALIGN_LEFT, description)
 	]
 	if selected:
 		ix, iy, iw, ih = skin.parameters.get("SelectionListLock",(0, 2, 25, 24))
@@ -20,6 +20,8 @@ def SelectionEntryComponent(description, value, index, selected):
 	else:
 		ix, iy, iw, ih = skin.parameters.get("SelectionListLockOff",(0, 2, 25, 24))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, ix, iy, iw, ih, selectionoffpng))
+		ix, iy, iw, ih = skin.parameters.get("SelectionListLock",(0, 2, 25, 24))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, ix, iy, iw, ih, selectiononpng))
 	return res
 
 class SelectionList(MenuList):
