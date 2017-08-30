@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-06-30 19:42+0100\n"
+"PO-Revision-Date: 2017-08-31 01:04+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
@@ -1426,6 +1426,9 @@ msgstr "Fine Registrazione PIP"
 msgid "Recordings & Timeshift"
 msgstr "Registrazioni e TimeShift"
 
+msgid "Remote Control Code"
+msgstr ""
+
 msgid ""
 "When enabled, a recording is allowed to abort picture-in-picture mode, when "
 "there are no free tuners."
@@ -1841,7 +1844,7 @@ msgid "Allocate unused memory index"
 msgstr "Assegnare indice di memoria non usata"
 
 msgid "Allow quit movieplayer with exit"
-msgstr "Completa Media Player con Exit "
+msgstr "Completa Media Player con Exit"
 
 msgid "Allow subtitle language to equal audio language"
 msgstr "Associare la lingua sottotitoli alla lingua audio"
@@ -1854,6 +1857,9 @@ msgstr "Consentire instabili aggiornamenti (sperimentale)"
 
 msgid "Allow updates which are marked as faulty"
 msgstr "Consenti aggiornamenti contrassegnati come difettosi"
+
+msgid "Allow IPK Upload"
+msgstr "Consenti il ​​caricamento IPK"
 
 msgid "Disable all updates*"
 msgstr "Disattivare tutti gli aggiornamenti*"
@@ -2469,6 +2475,9 @@ msgstr "Luminosità"
 msgid "Brightness (Normal)"
 msgstr "Luminosità (Normale)"
 
+msgid "Brightness (Dimmed)"
+msgstr "Luminosità (attenuata)"
+
 msgid "Brightness (Standby)"
 msgstr "Luminosità (Standby)"
 
@@ -2659,7 +2668,7 @@ msgid "External subtitle switch fonts"
 msgstr "Font di commutazione dei sottotitoli esterni"
 
 msgid "External subtitle dialog colorisation"
-msgstr "Dialogo colorisation sottotitoli esterni"
+msgstr "Colora apici dialogo sottotitoli esterni"
 
 msgid "Can be used for different fps between external subtitles and video."
 msgstr "Può essere usato per diversi fps tra i sottotitoli e il video esterne."
@@ -2944,6 +2953,9 @@ msgid "Choose whether or not to show an icon when a motorised dish is moving."
 msgstr ""
 "Scegliere se mostrare o meno un'icona quando una parabola motorizzata è in "
 "movimento."
+
+msgid "Choose whether AC3 sound tracks should be downmixed to stereo"
+msgstr "Scegliere se le tracce audio AC3 dovrebbero essere ridotte a stereo"
 
 msgid ""
 "Choose which level of menu settings to display. Expert level shows all items."
@@ -4044,6 +4056,9 @@ msgstr "Nome dispositivo:"
 msgid "Devices"
 msgstr "Dispositivi"
 
+msgid "Dim delay"
+msgstr "Ritardo attenuazione"
+
 msgid "DiSEqC"
 msgstr "DiSEqC"
 
@@ -4132,6 +4147,10 @@ msgstr "Mostra icona REC lampeggiante durante la registrazione"
 #, python-format
 msgid "Enable blinking rec symbol on the LCD Display"
 msgstr "Abilita simbolo lampeggiante rec sul display LCD"
+
+msgid "Show blinking rec symbol on Display during recording"
+msgstr ""
+"Mostrare il simbolo rec lampeggiante nel display durante la registrazione"
 
 #, python-format
 msgid ""
@@ -5417,6 +5436,9 @@ msgstr "HD2400"
 
 msgid "HDMI"
 msgstr "HDMI"
+
+msgid "controlled by HDMI"
+msgstr "Controllato da HDMI"
 
 msgid "HDMI CEC"
 msgstr "HDMI-CEC"
@@ -7933,7 +7955,7 @@ msgid "Press OK to activate the selected skin."
 msgstr "OK -> attivare la skin selezionata."
 
 msgid "Select your skin and press OK to activate the selected skin"
-msgstr "Seleziona la tua Skin e premere OK per attivare la skin selezionata"
+msgstr "Seleziona la tua skin e premere OK per attivare la skin selezionata"
 
 msgid "Select Skin:"
 msgstr "Seleziona la skin:"
@@ -8388,6 +8410,11 @@ msgstr ""
 msgid "Repeats"
 msgstr "Ripetizioni"
 
+msgid ""
+"Replace `- ` in dialogs with colored text per speaker (like teletext "
+"subtitles for the hearing impaired)"
+msgstr "Sostituisci `- ` nei dialoghi con testo colorato "
+
 msgid "Required medium type:"
 msgstr "Tipo di supporto richiesto:"
 
@@ -8718,11 +8745,11 @@ msgstr ""
 msgid "Scrolling Speed"
 msgstr "velocità di scorrimento"
 
-msgid "Scrolling Speed (software render)"
-msgstr "Velocità di Scorrimento (software di rendering)"
+msgid "Scrolling speed (software renderer)"
+msgstr "Velocità di scorrimento(software di rendering)"
 
-msgid "Scrolling delay (software render)"
-msgstr "Ritardo Scorrimento (software rendering)"
+msgid "Scrolling delay (software renderer)"
+msgstr "Ritardo scrolling (software di rendering)"
 
 msgid ""
 "Set the delay time between repeated loops, this uses a sotware render use in "
@@ -9284,8 +9311,7 @@ msgid "Show Log Manager in extensions list ?"
 msgstr "Mostra  Log Manager nella lista estensioni?"
 
 msgid "Show Media playback Remaining/Elapsed as"
-msgstr ""
-"Mostra la riproduzione dei contenuti multimediali rimanente/trascorso come"
+msgstr "In riproduzione Media, mostra tempo rimanente/trascorso"
 
 msgid "Show OE Log"
 msgstr "Mostra OE Log"
@@ -9660,6 +9686,9 @@ msgstr "Longitudine"
 
 msgid "Size: "
 msgstr "Dimensione"
+
+msgid "Skinpart Setup"
+msgstr "Impostazioni Skinpart"
 
 msgid "Skin Setting"
 msgstr "Impostazione Skin"
@@ -10522,6 +10551,10 @@ msgstr "File Timer (timers.xml) corrotto: non caricabile!"
 
 msgid "Restarting System Opendroid Please Wait..."
 msgstr "Riavvio del sistema Opendroid Attendere prego..."
+
+#, python-format
+msgid "The user interface of your %s %s is restarting"
+msgstr "Riavvio in corso dell'interfaccia utente del tuo %s %s"
 
 #, python-format
 msgid ""
@@ -14788,6 +14821,9 @@ msgstr "standard"
 
 msgid "always number zap"
 msgstr "Sempre Numero Zap"
+
+msgid "always"
+msgstr "Sempre"
 
 msgid "only seek jump if available"
 msgstr "Cerca solo quando disponibile"
