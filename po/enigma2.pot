@@ -2160,7 +2160,7 @@ msgstr ""
 msgid "by hmmmdada"
 msgstr ""
 
-msgid "By OpendroidImage Team"
+msgid "By Opendroid Image Team"
 msgstr ""
 
 msgid "Bypass HDMI EDID Check"
