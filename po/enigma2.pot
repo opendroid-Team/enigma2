@@ -1,8 +1,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: openATV / enigma2\n"
-"POT-Creation-Date: 2017-08-18 02:02+0300\n"
+"Project-Id-Version: Opendroid / enigma2\n"
+"POT-Creation-Date: 2017-09-01 01:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME\n"
 "Language-Team: TEAM <EMAIL@ADDRESS>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-SourceCharset: UTF-8\n"
-"X-Generator: TM2TURK by thawtes\n"
+"X-Generator: Poedit 2.0.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "  REC  "
@@ -367,9 +367,6 @@ msgstr ""
 
 msgid "/s"
 msgstr ""
-
-msgid ""
-msgstr "/sec]"
 
 msgid "/usr/share/enigma2 directory"
 msgstr ""
@@ -2163,7 +2160,7 @@ msgstr ""
 msgid "by hmmmdada"
 msgstr ""
 
-msgid "By openATV Image Team"
+msgid "By OpendroidImage Team"
 msgstr ""
 
 msgid "Bypass HDMI EDID Check"
@@ -3973,7 +3970,9 @@ msgstr ""
 msgid "Do not flash image"
 msgstr ""
 
-msgid "DO NOT POWER OFF YOUR DEVICE WHILE UPDATING!\nUpdate now?"
+msgid ""
+"DO NOT POWER OFF YOUR DEVICE WHILE UPDATING!\n"
+"Update now?"
 msgstr ""
 
 msgid "Do not record"
@@ -4174,7 +4173,9 @@ msgstr ""
 msgid "Don't stop current event but disable coming events"
 msgstr ""
 
-msgid "Don't worry your device is still ok! There are several safety mechanisms in place!\nYour device is still as fine as it was before this procedure!"
+msgid ""
+"Don't worry your device is still ok! There are several safety mechanisms in place!\n"
+"Your device is still as fine as it was before this procedure!"
 msgstr ""
 
 msgid "Done - Installed or upgraded %d packages"
@@ -6006,7 +6007,9 @@ msgstr ""
 msgid "In the Standby blinking Clock on the LCD Display"
 msgstr ""
 
-msgid "In order to record a timer, a tuner was freed successfully:\n\n"
+msgid ""
+"In order to record a timer, a tuner was freed successfully:\n"
+"\n"
 msgstr ""
 
 msgid "In progress"
@@ -8074,7 +8077,7 @@ msgstr ""
 msgid "Open Timerlist..."
 msgstr ""
 
-msgid "openATV"
+msgid "Opendroid"
 msgstr ""
 
 msgid "OpenVPN"
@@ -8656,61 +8659,81 @@ msgstr ""
 msgid "Please set up tuner A"
 msgstr ""
 
-msgid "Please set up tuner A\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner A\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner B"
 msgstr ""
 
-msgid "Please set up tuner B\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner B\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner C"
 msgstr ""
 
-msgid "Please set up tuner C\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner C\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner D"
 msgstr ""
 
-msgid "Please set up tuner D\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner D\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner E"
 msgstr ""
 
-msgid "Please set up tuner E\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner E\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner F"
 msgstr ""
 
-msgid "Please set up tuner F\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner F\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner G"
 msgstr ""
 
-msgid "Please set up tuner G\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner G\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner H"
 msgstr ""
 
-msgid "Please set up tuner H\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner H\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner I"
 msgstr ""
 
-msgid "Please set up tuner I\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner I\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid "Please set up tuner J"
 msgstr ""
 
-msgid "Please set up tuner J\nFor Hybrid Tuner Models switch Tuner Type with left and right keys"
+msgid ""
+"Please set up tuner J\n"
+"For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
 msgid ""
@@ -12017,7 +12040,9 @@ msgstr ""
 msgid "Sorry, there was a problem:"
 msgstr ""
 
-msgid "Sorry, your backup destination is not writeable.\nPlease select a different one."
+msgid ""
+"Sorry, your backup destination is not writeable.\n"
+"Please select a different one."
 msgstr ""
 
 msgid "Sort"
@@ -13911,7 +13936,9 @@ msgstr ""
 msgid "Update is reported as faulty !!"
 msgstr ""
 
-msgid "Update succeeded!\nYour Bootloader is now up-to-date!"
+msgid ""
+"Update succeeded!\n"
+"Your Bootloader is now up-to-date!"
 msgstr ""
 
 msgid "Update/Backup your firmware, Backup/Restore settings"
