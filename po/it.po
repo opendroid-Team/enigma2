@@ -5,15 +5,15 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-09-01 14:51+0100\n"
+"PO-Revision-Date: 2017-09-01 14:34+0200\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
-"Language-Team: Gimsy,Formiano,erminio\n"
+"Language-Team: Gimsy & Formiano\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
 
 msgid "Switch to Radio Mode"
@@ -266,13 +266,6 @@ msgstr ""
 "rimuovere il dispositivo USB e riavviare.\n"
 "\n"
 
-msgid ""
-"Press Red button to continue, when you are ready and your usb is "
-"disconnected.\n"
-msgstr ""
-"Premere il pulsante rosso per continuare, quando sei pronto e il tuo usb è "
-"scollegato.\n"
-
 msgid "Subtitles Settings"
 msgstr "Impostazioni sottotitoli"
 
@@ -281,6 +274,9 @@ msgstr "Domanda"
 
 msgid "Warning"
 msgstr "Avvertimento"
+
+msgid "Warning: If your usb is already connected\n"
+msgstr "Attenzione: Se il vostro USB è già collegata\n"
 
 msgid "Video content: %ix%i%s %iHz"
 msgstr "I contenuti video:  %ix%i%s %iHz"
@@ -362,6 +358,23 @@ msgid ""
 msgstr ""
 "\n"
 "Premere OK sul telecomando per continuare."
+
+msgid ""
+"Press Red button to continue when ready.\n"
+"\n"
+msgstr ""
+"Premere il Tasto Rosso per continuare quando sei pronto\n"
+"\n"
+
+msgid ""
+"Press Red button to continue, when you are ready and your usb is "
+"disconnected.\n"
+msgstr ""
+"Premere il Tasto Rosso per continuare, quando sei pronto e il dispositivo "
+"USB è disconnesso\n"
+
+msgid "Press Red button to continue."
+msgstr "Premere il Tasto Rosso per continuare"
 
 msgid ""
 "\n"
@@ -3331,6 +3344,12 @@ msgstr "Selezionare ciò che si desidera fare con il tasto blu:"
 msgid "Select what you want the long blue button to activate:"
 msgstr "Selezionare ciò che si desidera fare con il tasto blu lungo:"
 
+msgid "Select number of partitions:"
+msgstr "Seleziona il numero delle partizioni:"
+
+msgid "Select of the number"
+msgstr "Selezionare il numero"
+
 msgid "Configure the gateway."
 msgstr "Opzione per impostare il gateway."
 
@@ -3605,6 +3624,13 @@ msgstr "Connettere"
 
 msgid "Connect to a wireless network"
 msgstr "Connettere a rete wireless"
+
+msgid ""
+"Connect your usb storage to your %s %s box\n"
+"\n"
+msgstr ""
+"Collega il dispositivo USB al tuo %s %s\n"
+"\n"
 
 msgid "Connected clients"
 msgstr "Clienti connessi"
@@ -4729,6 +4755,15 @@ msgid "Enter your forum user name, to make it easier to trace logs."
 msgstr ""
 "Inserisci il tuo username forum, per rendere più facile rintracciare i "
 "registri."
+
+msgid "Enter the size in Megabyte of the first partition:"
+msgstr "Imposta la dimensione in Mb della prima partizione:"
+
+msgid "Enter the size in Megabyte of the second partition:"
+msgstr "Imposta la dimensione in Mb della seconda partizione:"
+
+msgid "Enter the size in Megabyte of the third partition:"
+msgstr "Imposta la dimensione in Mb della terza partizione:"
 
 msgid "Entitlements"
 msgstr "Diritti"
@@ -9852,6 +9887,13 @@ msgid "Sorry, no details available!"
 msgstr "Spiacenti, nessun dettaglio disponibile!"
 
 msgid ""
+"Sorry, no new usb storage device detected.\n"
+"Be sure to follow the wizard instructions."
+msgstr ""
+"Spiacente, non è stato trovato nessun dispositivo USB\n"
+"Segui alla lettera le istruzioni della Guida"
+
+msgid ""
 "Sorry, your backup destination is not writeable.\n"
 "Please select a different one."
 msgstr ""
@@ -10457,6 +10499,22 @@ msgstr ""
 "La penna USB è stata configurata per essere avviabile.\n"
 "Ora si può scaricare il file immagine .NFI!"
 
+msgid ""
+"The %s %s will be now restarted to generate a new device UID.\n"
+"Don't forget to remap your device after the reboot.\n"
+"Press OK to continue"
+msgstr ""
+"%s %s sarà ora riavviato per generare un nuovo UID dispositivo.\n"
+"Non dimenticare di rimappare il dispositivo dopo il riavvio.\n"
+"Premere OK per continuare"
+
+msgid ""
+"The device has been partitioned.\n"
+"Partitions will be now formatted."
+msgstr ""
+"Il dispositivo è stato partizionato.\n"
+"Le partizioni saranno formattate"
+
 #, python-format
 msgid "The %s %s reads the stored EPG data every (hours)."
 msgstr "Il % s% s legge i dati EPG ogni x ore."
@@ -10590,6 +10648,10 @@ msgid ""
 "The wizard can backup your current settings. Do you want to do a backup now?"
 msgstr ""
 "Il wizard permette di effettuare un backup della configurazione. Farlo ora?"
+
+msgid "The wizard will now try to identify your connected usb device."
+msgstr ""
+"La procedura guidata tenterà ora di identificare il dispositivo USB collegato"
 
 #, python-format
 msgid ""
@@ -11230,6 +11292,9 @@ msgstr "Totale di EMMs Gestione client"
 
 msgid "Total:"
 msgstr "Totale"
+
+msgid "Total Megabyte Available: \t"
+msgstr "Mb totali disponibili: \t"
 
 msgid "Track"
 msgstr "Traccia"
@@ -11887,6 +11952,15 @@ msgstr "Accendere il tuo %s %s da Standby"
 
 msgid "Warning: no LNB; using factory defaults."
 msgstr "Attenzione: nessun LNB; utilizzando le impostazioni predefinite."
+
+msgid ""
+"\n"
+"Warning: all the data will be lost.\n"
+"Are you sure you want to format this device?\n"
+msgstr ""
+"\n"
+"Attenzione: tutti i dati andranno persi\n"
+"Sei sicuro di voler formattare il dispositivo ?\n"
 
 msgid "Watch movies..."
 msgstr "Guardare i film ..."
@@ -13898,11 +13972,17 @@ msgstr "File modello"
 msgid "tennis/squash"
 msgstr "Tennis/Sqash"
 
+msgid "the Green button and restart the wizard.\n"
+msgstr "il tasto Verde e riavviare la procedura guidata\n"
+
 msgid "this recording"
 msgstr "Questa registrazione"
 
 msgid "this service is protected by a parental control pin"
 msgstr "Canale protetto da codice PIN (controllo parentale)."
+
+msgid "to the box you have to unplug it, press\n"
+msgstr "bisogna staccare la spina al ricevitore, premere\n"
 
 msgid "toggle time, chapter, audio, subtitle info"
 msgstr "Info tempo, capitolo, audio, sottotitoli -> on/off"
