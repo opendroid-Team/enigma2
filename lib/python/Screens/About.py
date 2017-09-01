@@ -157,7 +157,6 @@ class About(Screen):
 		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
-		AboutText += _("Network:")
 
 		fp_version = getFPVersion()
 		if fp_version is None:
