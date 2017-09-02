@@ -9,12 +9,474 @@ msgstr ""
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Loco-Source-Locale: it_IT\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: iso-8859-15\n"
+"X-Loco-Parser: loco_parse_po\n"
+
+msgid " (higher than any auto)"
+msgstr ""
+
+msgid " (higher than rotor any auto)"
+msgstr ""
+
+msgid " (lower than any auto)"
+msgstr ""
+
+msgid "%Y-%m-%d"
+msgstr ""
+
+#, python-format
+msgid "%d"
+msgid_plural "%d"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "%d.%m.   "
+msgstr ""
+
+msgid "* current animation"
+msgstr ""
+
+msgid "Remote Control Code"
+msgstr ""
+
+msgid "ButtonSetup"
+msgstr ""
+
+msgid "CCcamInfo Mainmenu"
+msgstr ""
+
+#, python-format
+msgid "CH%s"
+msgstr ""
+
+msgid "CI (Common Interface) Setup"
+msgstr ""
+
+msgid "Circular LNB"
+msgstr ""
+
+msgid "Cool Channel Guide"
+msgstr ""
+
+msgid "Cool Easy Guide"
+msgstr ""
+
+msgid "Default files/folders to backup"
+msgstr ""
+
+msgid "Don't add this recording"
+msgstr ""
+
+msgid "E2 Log"
+msgstr ""
+
+msgid ""
+"Enigma2 Skinselector\n"
+"\n"
+"If you experience any problems please contact\n"
+"stephan@reichholf.net\n"
+"\n"
+"© 2006 - Stephan Reichholf"
+msgstr ""
+
+msgid "Epg/Guide"
+msgstr ""
+
+msgid "Execute in "
+msgstr ""
+
+msgid "Frozen Cam Check"
+msgstr ""
+
+#, python-format
+msgid "GStreamer:\t%s"
+msgstr ""
+
+msgid "Standby for timer 'After event'"
+msgstr ""
+
+msgid "HD1100/HD1200/HD1265/HD500C/et7x00/et8500"
+msgstr ""
+
+msgid "Image Version"
+msgstr ""
+
+msgid "Instant record"
+msgstr ""
+
+msgid "Internet"
+msgstr ""
+
+msgid "Lower limit in kilobits per seconds [kbit/s]"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Reshare:"
+msgstr ""
+
+msgid "Server:"
+msgstr ""
+
+msgid "Standard"
+msgstr ""
+
+msgid "F1 button mode"
+msgstr ""
+
+msgid "F2 button mode"
+msgstr ""
+
+msgid "F3 button mode"
+msgstr ""
+
+msgid "F4 button mode"
+msgstr ""
+
+msgid "TiVo support"
+msgstr ""
+
+msgid "Toggle Picture In Graphics"
+msgstr ""
+
+msgid "ballet"
+msgstr ""
+
+msgid "broadcasting/press"
+msgstr ""
+
+msgid "film/cinema"
+msgstr ""
+
+#: plugin.py:87
+msgid "8888"
+msgstr "8888 (standard)"
+
+#: plugin.py:91 plugin.py:95 plugin.py:99 plugin.py:210
+msgid "Yes"
+msgstr "Sì"
+
+#: plugin.py:103
+msgid "CI+ V13"
+msgstr "CI + V13"
+
+#: plugin.py:104
+msgid "CI+ V14"
+msgstr "CI + V14"
+
+#: plugin.py:137
+msgid "None"
+msgstr "Nessuno"
+
+#: plugin.py:183
+msgid "Your STB is not connected to the Internet"
+msgstr "STB non è connesso a Internet"
+
+#: plugin.py:183 plugin.py:184 plugin.py:191 plugin.py:195
+msgid "press color button or lame for exit"
+msgstr "pulsante  rosso per l'uscita"
+
+#: plugin.py:191 plugin.py:204 plugin.py:192
+msgid "Unsupportet CPU"
+msgstr "CPU Non supportata"
+
+#: plugin.py:192
+msgid "found"
+msgstr "Trovato"
+
+#: plugin.py:193
+msgid "OScam can not be installed"
+msgstr "OSCAM non può essere installato"
+
+#: plugin.py:204
+msgid "valueless Softcam found. Press GREEN to remove"
+msgstr "privo di valore Softcam trovato. Premete VERDE per rimuovere"
+
+#: plugin.py:204
+msgid ""
+"Remove all first.\n"
+"otherwise Oscamsmartcard will not start\n"
+"Press GREEN to remove all"
+msgstr ""
+"Rimuovere tutti  prima. \\ Altrimenti Oscammartcard non si avvia \\ Premi "
+"VERDE per rimuovere tutti"
+
+#: plugin.py:237
+msgid ""
+"INFORMATION: make your selection and press GREEN\n"
+"All config files are backed up automatically"
+msgstr ""
+"INFORMAZIONI: effettuare la selezione dei file di configurazione e premere  "
+"VERDE \\ Tutti vengono salvati automaticamente"
+
+#: plugin.py:239
+msgid "Config path set automatically to"
+msgstr "percorso Config impostato automaticamente"
+
+#: plugin.py:240
+msgid "Camstart set automatically to"
+msgstr "Camstart automaticamente impostato su"
+
+#: plugin.py:241
+msgid "Oscam type set automatically to"
+msgstr "percorso Config impostato automaticamente"
+
+#: plugin.py:242
+msgid "Cardreader found automatically"
+msgstr "Cardreader trovato automaticamente"
+
+#: plugin.py:244
+msgid "Settings:"
+msgstr "Impostazioni"
+
+#: plugin.py:245
+msgid "Select OScam WebifPort:"
+msgstr "Selezionare OSCAM WebifPort:"
+
+#: plugin.py:245
+msgid ""
+"INFORMATION: Select OScam WebifPort\n"
+"\n"
+"Oscam Webif will be accessible on the selected port.\n"
+"e.g. http:\\IPOFYOURBOX:83"
+msgstr "INFORMAZIONI: Selezionare OSCAM"
+
+#: plugin.py:247
+msgid "Internal Reader /dev/sci0:"
+msgstr "Interno del lettore / dev / sci0:"
+
+#: plugin.py:247
+msgid ""
+"INFORMATION: Internal Reader /dev/sci0\n"
+"\n"
+"All STB's having only one cardslot.\n"
+"On STB's having two cardslots it is mostly the lower cardslot."
+msgstr "INFORMAZIONI: lettore interno / dev "
+
+#: plugin.py:249
+msgid "Internal Reader /dev/sci1:"
+msgstr "Interno del lettore / dev / SCI1:"
+
+#: plugin.py:249
+msgid ""
+"INFORMATION: Internal Reader /dev/sci1\n"
+"\n"
+"On STB's having two cardslots it is mostly the upper cardslot."
+msgstr ""
+"INFORMAZIONI: lettore interno / dev / SCI1 \\  Non STB di avere due "
+"cardslots è soprattutto il cardslot superiore."
+
+#: plugin.py:251
+msgid "External Reader /dev/ttyUSB0:"
+msgstr "Esterno Reader / dev / ttyUSB0:"
+
+#: plugin.py:251
+msgid ""
+"INFORMATION: External Reader /dev/ttyUSB0\n"
+"\n"
+"This Reader can be used to configure for example a connected easymouse."
+msgstr "INFORMAZIONI: lettore esterno / dev "
+
+#: plugin.py:253
+msgid "External Reader /dev/ttyUSB1:"
+msgstr "Esterno Reader / dev / ttyUSB1:"
+
+#: plugin.py:253
+msgid ""
+"INFORMATION: External Reader /dev/ttyUSB1\n"
+"\n"
+"This Reader can be used to configure for example a second connected "
+"easymouse."
+msgstr "INFORMAZIONI: lettore esterno / dev "
+
+#: plugin.py:259
+msgid "CCcam.cfg found. Import your settings"
+msgstr "CCcam.cfg trovato. Importare le impostazioni"
+
+#: plugin.py:259
+msgid "Oscamsmartcard found "
+msgstr "Oscamsmartcard trovato"
+
+#: plugin.py:259
+msgid " Server and "
+msgstr "Server"
+
+#: plugin.py:260
+msgid "Oscam binary install"
+msgstr "binario OSCAM installazione"
+
+#: plugin.py:260
+msgid "install or update to the latest version"
+msgstr "installare o aggiornare alla versione più recente"
+
+#: plugin.py:260
+msgid "installed"
+msgstr "installato"
+
+#: plugin.py:260
+msgid "online avaible"
+msgstr "Ottima linea"
+
+#: plugin.py:263
+msgid "Install oscam EMU Version:"
+msgstr "Installare OSCAM Versione EMU:"
+
+#: plugin.py:263
+msgid ""
+"INFORMATION: install Oscam Emu Version\n"
+"\n"
+"Softcam.key included"
+msgstr "INFORMAZIONI: Installare Oscam Emu Version \\ Softcam.key incluso"
+
+#: plugin.py:264
+msgid "Is a Ci+Module installed:"
+msgstr "È un modulo CI + installato:"
+
+#: OscamSmartcard.py:264
+msgid "INFORMATION: please select your CI+ Modul"
+msgstr "INFORMAZIONI: Si prega di selezionare il Modulo \\  CI +"
+
+#: plugin.py:316
+msgid ""
+"All Softcams will be deinstalled\n"
+"Are you sure ?"
+msgstr "Tutti softcams verranno disinstallati \\ Sei sicuro"
+
+#: plugin.py:317
+msgid "System cleaning"
+msgstr "sistema di pulizia"
+
+#: plugin.py:362
+msgid ""
+"Oscam is not running\n"
+"unknown OS"
+msgstr "Oscam non è in esecuzione \\ sconosciuto OS"
+
+#: plugin.py:368
+msgid "Oscam is now running"
+msgstr "OSCAM è ora in esecuzione"
+
+#: plugin.py:370
+msgid ""
+"Oscam Binary is not installed\n"
+"You must this install"
+msgstr "OSCAM binario non è installato \\ È necessario installare questo"
+
+#: plugin.py:408
+msgid "Error creating oscam.server!"
+msgstr "Errore durante la creazione oscam.server!"
+
+#: plugin.py:434
+msgid "Error creating oscam.dvbapi!"
+msgstr "Errore durante la creazione oscam.dvbapi!"
+
+#: plugin.py:479
+msgid "Error creating oscam.user!"
+msgstr "Errore durante la creazione oscam.user!"
+
+#: plugin.py:504
+msgid "Error creating oscam.conf!"
+msgstr "Errore durante la creazione oscam.conf!"
+
+#: plugin.py:527
+msgid "Error creating oscam.services!"
+msgstr "Errore nella creazione oscam.services!"
+
+#: plugin.py:539 plugin.py:567
+msgid "Download not avaible"
+msgstr "Download non disponibile"
+
+#: plugin.py:584
+msgid "file exists, but is not executable"
+msgstr "file esiste, ma non è eseguibile"
+
+#: plugin.py:592
+msgid "no oscam_oscamsmartcard found"
+msgstr "no oscam_oscamsmartcard trovati"
+
+#: plugin.py:670
+msgid "Error creating oscam camstart files!"
+msgstr "Errore durante la creazione di file OSCAM camstart!"
+
+#: plugin.py:710
+msgid ""
+"Do you really want to remove all\n"
+"oscam_smartcard configs, binary's and camstartfiles.\n"
+"No backup !!"
+msgstr ""
+"Vuoi veramente rimuovere tutti i file di configurazione oscamsmartcard \\ "
+"binari e di camstart files. \\ Backup No !!"
+
+#: plugin.py:711
+msgid "remove current config"
+msgstr "rimuovere config corrente"
+
+#: plugin.py:817
+msgid "Configuration tool for OScam"
+msgstr "Tool di progettazione per OSCam"
+
+msgid "All config files are backed up automatically"
+msgstr "Tutti i file di configurazione vengono salvati automaticamente"
+
+msgid "Script SoftCamstart (openMips)"
+msgstr "Caricamento script"
+
+msgid "Python SoftCamstart (opendroid)"
+msgstr "Python SoftCamstart (opendroid)"
+
+msgid "/usr/keys/ (opendroid)"
+msgstr "/usr/keys/ (opendroid)"
+
+msgid "/etc/tuxbox/config/ (openMips)"
+msgstr "/ etc / tuxbox / config / (openpli)"
+
+msgid "Do you really want to reboot now?"
+msgstr "Vuoi davvero riavviare ora?"
+
+msgid "Restart STB"
+msgstr "riavvio STB"
+
+msgid "Make here your Settings:"
+msgstr "Fai qui le tue impostazioni:"
+
+msgid "Make your Selection"
+msgstr "Effettuare la selezione"
+
+msgid "Which Ci+Module is installed:"
+msgstr "Quale modulo CI + è installato:"
+
+msgid "Uninstall all Softcams ?"
+msgstr "Disinstallare tutti softcams?"
+
+msgid "make your selection and press GREEN"
+msgstr "effettuare la selezione e premere il tasto VERDE"
+
+msgid "it is strongly recommended"
+msgstr "è fortemente raccomandato"
+
+msgid ""
+"Ok Done\n"
+"Oscamsmartcard is now running"
+msgstr "OSCAM è ora in esecuzione"
+
+msgid "found installed Softcams to be remove"
+msgstr "trovato installato softcams da rimuovere"
+
+msgid "INFORMATION: "
+msgstr "Informazioni"
+
+msgid "Warning : "
+msgstr "Avvertimento"
+
+msgid "CCcam.cfg found. "
+msgstr "CCcam.cfg trovato. Importare le impostazioni"
 
 msgid "Switch to Radio Mode"
 msgstr "Passare alla modalità Radio"
@@ -65,7 +527,7 @@ msgid "Hotkey Setup"
 msgstr "Impostazioni Hotkey"
 
 msgid "History next"
-msgstr "History next"
+msgstr "storia successiva"
 
 msgid "History Zap Menu +"
 msgstr "Storia Zap Menu +"
@@ -300,7 +762,6 @@ msgstr ""
 "\n"
 "Opzioni e configurazione avanzate."
 
-#
 msgid ""
 "\n"
 "After pressing OK, please wait!"
@@ -404,15 +865,6 @@ msgstr "Decomprimo file, attendere prego ..."
 msgid " (disabled)"
 msgstr "(disabilitato)"
 
-msgid " (higher than any auto)"
-msgstr ""
-
-msgid " (higher than rotor any auto)"
-msgstr ""
-
-msgid " (lower than any auto)"
-msgstr ""
-
 msgid "The image is downloaded. Do you want to flash now?"
 msgstr ""
 "L'immagine è scaricata\n"
@@ -489,7 +941,6 @@ msgstr ""
 "Selezionare il supporto per il backup.\n"
 "Supporto attuale: "
 
-#
 msgid ""
 "\n"
 "System will restart after the restore!"
@@ -497,7 +948,6 @@ msgstr ""
 "\n"
 "Il Sistema verrà riavviato dopo il ripristino!"
 
-#
 msgid ""
 "\n"
 "View, install and remove available or installed packages."
@@ -660,9 +1110,6 @@ msgstr "%A %e %b"
 msgid "%H:%M"
 msgstr "%H:%M"
 
-msgid "%Y-%m-%d"
-msgstr ""
-
 #. TRANSLATORS: full date representations sort dayname daynum monthname long year in strftime() format! See 'man strftime'
 msgid "%a %e %B %Y"
 msgstr "%a %e %B %Y"
@@ -674,12 +1121,6 @@ msgstr "%a %e/%m"
 #. TRANSLATORS: long date representation short dayname daynum short monthname hour:minute in strftime() format! See 'man strftime'
 msgid "%a %e/%m  %-H:%M"
 msgstr "%a %e/%m  %-H:%M"
-
-#, python-format
-msgid "%d"
-msgid_plural "%d"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "%d %B %Y"
 msgstr "%d %B %Y"
@@ -775,9 +1216,6 @@ msgstr "%d-%m"
 msgid "%d.%B %Y"
 msgstr "%d.%B %Y"
 
-msgid "%d.%m.   "
-msgstr ""
-
 #. TRANSLATORS: VFD hour:minute daynum short monthname in strftime() format! See 'man strftime'
 msgid "%k:%M %e/%m"
 msgstr "%k:%M %e/%m"
@@ -846,11 +1284,9 @@ msgstr "(Mostra solo il reader:"
 msgid "(ZAP)"
 msgstr "(ZAP)"
 
-#
 msgid "ZAP"
 msgstr "ZAP"
 
-#
 msgid "(empty)"
 msgstr "(vuoto)"
 
@@ -862,9 +1298,6 @@ msgstr "* = Riavvio Richiesto"
 
 msgid "* Only available if more than one interface is active."
 msgstr "* Disponibile solo se più di un'interfaccia è attiva."
-
-msgid "* current animation"
-msgstr ""
 
 msgid "+/-"
 msgstr "+/-"
@@ -1386,7 +1819,6 @@ msgstr ""
 "Una registrazione è in corso!\n"
 "Cosa si desidera fare?"
 
-#
 msgid ""
 "PowerOff while Recording in progress!\n"
 "Spegnimento durante la registrazione in corso!"
@@ -1443,9 +1875,6 @@ msgstr "Fine Registrazione PIP"
 
 msgid "Recordings & Timeshift"
 msgstr "Registrazioni e TimeShift"
-
-msgid "Remote Control Code"
-msgstr ""
 
 msgid ""
 "When enabled, a recording is allowed to abort picture-in-picture mode, when "
@@ -2538,9 +2967,6 @@ msgstr "Pulsante"
 msgid "Button Setup"
 msgstr "Impost. tasti telecomando"
 
-msgid "ButtonSetup"
-msgstr ""
-
 msgid "By openDroid  Team"
 msgstr "By openDroid Team"
 
@@ -2613,24 +3039,14 @@ msgstr "CCcam Shares Info"
 msgid "CCcamInfo"
 msgstr "CCcamInfo"
 
-msgid "CCcamInfo Mainmenu"
-msgstr ""
-
 msgid "CF Drive"
 msgstr "Drive CF"
 
 msgid "CH"
 msgstr "CH"
 
-#, python-format
-msgid "CH%s"
-msgstr ""
-
 msgid "CHANGE BOUQUET"
 msgstr "Cambia bouquet"
-
-msgid "CI (Common Interface) Setup"
-msgstr ""
 
 msgid "CI assignment"
 msgstr "Assegnazione CI"
@@ -2995,9 +3411,6 @@ msgstr "Satelliti"
 
 msgid "Chose between record and ZAP."
 msgstr "Scegli tra registrazione e ZAP."
-
-msgid "Circular LNB"
-msgstr ""
 
 msgid "Circular left"
 msgstr "Circolare a sinistra"
@@ -3694,12 +4107,6 @@ msgstr "Convertire file system ext3 a ext4"
 msgid "Converting ext3 to ext4..."
 msgstr "Conversione ext3 a ext4 ..."
 
-msgid "Cool Channel Guide"
-msgstr ""
-
-msgid "Cool Easy Guide"
-msgstr ""
-
 msgid "Cool Info Guide"
 msgstr "Info Cool Guide"
 
@@ -3965,9 +4372,6 @@ msgstr "Predefinito (registrazione istantanea)"
 
 msgid "Default (Timeshift)"
 msgstr "Predefinito (timeshift)"
-
-msgid "Default files/folders to backup"
-msgstr ""
 
 msgid "Default movie location"
 msgstr "Percorso predefinito registrazione"
@@ -4441,9 +4845,6 @@ msgstr "Aggiornamento e chiedere di riavviare"
 msgid "Do you want to upgrade the package:\n"
 msgstr "Aggiornare il pacchetto:\n"
 
-msgid "Don't add this recording"
-msgstr ""
-
 msgid "Don't save"
 msgstr "Non salvare"
 
@@ -4546,9 +4947,6 @@ msgstr "Contrasto dinamico"
 
 msgid "E"
 msgstr "E"
-
-msgid "E2 Log"
-msgstr ""
 
 msgid "ECM Statistics"
 msgstr "Statistiche ECM"
@@ -4738,15 +5136,6 @@ msgstr "Enigma2 modifiche"
 msgid "Style: Enigma2"
 msgstr "Stile: Enigma2"
 
-msgid ""
-"Enigma2 Skinselector\n"
-"\n"
-"If you experience any problems please contact\n"
-"stephan@reichholf.net\n"
-"\n"
-"© 2006 - Stephan Reichholf"
-msgstr ""
-
 msgid "Enigma2 skin selector"
 msgstr "Selettore di Skin E2"
 
@@ -4787,9 +5176,6 @@ msgstr "Imposta la dimensione in Mb della terza partizione:"
 
 msgid "Entitlements"
 msgstr "Diritti"
-
-msgid "Epg/Guide"
-msgstr ""
 
 msgid "Error"
 msgstr "Errore"
@@ -4848,9 +5234,6 @@ msgstr "Supera la capacità di supporto doppio strato!"
 
 msgid "Execute after current event"
 msgstr "Spegni dopo l'attuale evento"
-
-msgid "Execute in "
-msgstr ""
 
 msgid "Execution finished!!"
 msgstr "Esecuzione terminata!!"
@@ -5138,9 +5521,6 @@ msgstr "Tipo di servizio ftpd: Server Vsftpd"
 msgid "Frontprocessor version: %s"
 msgstr "Versione frontprocessor : %s"
 
-msgid "Frozen Cam Check"
-msgstr ""
-
 msgid "Full Image Backup "
 msgstr "Backup completo"
 
@@ -5265,10 +5645,6 @@ msgstr "GB"
 
 msgid "GB800SOLO takes about 20 mins !!\n"
 msgstr "GB800SOLO attendere circa 20 mins !! \n"
-
-#, python-format
-msgid "GStreamer:\t%s"
-msgstr ""
 
 msgid ""
 "GUI needs a restart to apply a new skin\n"
@@ -5437,9 +5813,6 @@ msgstr "Automatica e l azione predefinita"
 msgid "Goto Standby when wakeup on a timer recording"
 msgstr "Vai in Standby quando inizia una registrazione con il timer"
 
-msgid "Standby for timer 'After event'"
-msgstr ""
-
 msgid "Standby message screen timeout(sec.)"
 msgstr "Standby messaggio sullo schermo in pochi secondi"
 
@@ -5490,9 +5863,6 @@ msgstr "HARD DISK: "
 
 msgid "HD list"
 msgstr "Lista HD"
-
-msgid "HD1100/HD1200/HD1265/HD500C/et7x00/et8500"
-msgstr ""
 
 msgid "HD2400"
 msgstr "HD2400"
@@ -5884,9 +6254,6 @@ msgstr "Informazioni Immagine"
 msgid "Image Manager"
 msgstr "Gestione Immagine"
 
-msgid "Image Version"
-msgstr ""
-
 msgid "Image-Version"
 msgstr "Versione-immagine"
 
@@ -6058,9 +6425,6 @@ msgstr "Installare Servizi"
 msgid "Installing plugins..."
 msgstr "Installazione in corso dei plugins…"
 
-msgid "Instant record"
-msgstr ""
-
 msgid "Instant record location"
 msgstr "Percorso registrazione istantanea"
 
@@ -6093,9 +6457,6 @@ msgstr "Flash interna"
 
 msgid "Internal hdd only"
 msgstr "Solo HDD interno"
-
-msgid "Internet"
-msgstr ""
 
 msgid "Interval between keys when repeating:"
 msgstr "Intervallo tra i tasti quando si ripetono:"
@@ -6494,9 +6855,6 @@ msgstr "Allegato a"
 
 msgid "Lower USB"
 msgstr "USB inferiore"
-
-msgid "Lower limit in kilobits per seconds [kbit/s]"
-msgstr ""
 
 msgid "Luxembourgish"
 msgstr "Lussemburghese"
@@ -6943,9 +7301,6 @@ msgctxt "now/next: 'next' event label"
 msgid "Next"
 msgstr "Seguente"
 
-msgid "No"
-msgstr "No"
-
 msgid "No (supported) DVDROM found!"
 msgstr "Nessun DVD-ROM (supportato) trovato!"
 
@@ -7229,9 +7584,6 @@ msgstr "NodeID"
 msgid "NodeID: "
 msgstr "NodeID: "
 
-msgid "None"
-msgstr "Nessuno"
-
 #. TRANSLATORS: (aspect ratio policy: display as fullscreen, with stretching the left/right)
 msgid "Nonlinear"
 msgstr "Non lineare"
@@ -7462,11 +7814,9 @@ msgstr "PrimeTime"
 msgid "Package list update"
 msgstr "Aggiornamento elenco pacchetti"
 
-#
 msgid "Package removal failed.\n"
 msgstr "Rimozione del pacchetto non riuscita.\n"
 
-#
 msgid "Package removed successfully.\n"
 msgstr "Pacchetto disinstallato con successo\n"
 
@@ -8505,9 +8855,6 @@ msgstr ""
 "Riportare la configurazione miglioramento immagine agli ultimi valori "
 "selezionati?"
 
-msgid "Reshare:"
-msgstr ""
-
 msgid "Resolution"
 msgstr "Risoluzione"
 
@@ -9061,9 +9408,6 @@ msgstr "numero seriale"
 
 msgid "Serv.Name"
 msgstr "Serv.Name"
-
-msgid "Server:"
-msgstr ""
 
 msgid "Servers"
 msgstr "Server"
@@ -9962,9 +10306,6 @@ msgstr "Modalità anteprima separata"
 msgid "Sports"
 msgstr "Sport"
 
-msgid "Standard"
-msgstr ""
-
 msgid "Standby"
 msgstr "Standby"
 
@@ -10106,18 +10447,6 @@ msgstr "Assegnazione pulsante INFO "
 
 msgid "FAV button mode"
 msgstr "Assegnazione del tasto FAV"
-
-msgid "F1 button mode"
-msgstr ""
-
-msgid "F2 button mode"
-msgstr ""
-
-msgid "F3 button mode"
-msgstr ""
-
-msgid "F4 button mode"
-msgstr ""
 
 msgid "Plugin button mode"
 msgstr "Assegnazione pulsante Plugin "
@@ -11046,9 +11375,6 @@ msgstr "Miniature"
 msgid "Thursday"
 msgstr "Giovedì"
 
-msgid "TiVo support"
-msgstr ""
-
 msgid "Time"
 msgstr "Ora"
 
@@ -11267,9 +11593,6 @@ msgstr ""
 
 msgid "Today"
 msgstr "Oggi"
-
-msgid "Toggle Picture In Graphics"
-msgstr ""
 
 msgid "Toggle a cut mark at the current position"
 msgstr "Alternare un segno taglio alla posizione corrente"
@@ -12468,9 +12791,6 @@ msgstr "Anno"
 msgid "Yellow DVB subtitles"
 msgstr "Giallo DVB Sottotitoli"
 
-msgid "Yes"
-msgstr "Sì"
-
 msgid "Yes to all"
 msgstr "Sì a tutto"
 
@@ -13043,9 +13363,6 @@ msgstr "Indietro"
 msgid "background image"
 msgstr "Immagine di sfondo"
 
-msgid "ballet"
-msgstr ""
-
 #, python-format
 msgid "bc%s"
 msgstr "bc%s"
@@ -13064,9 +13381,6 @@ msgstr "Lista nera"
 
 msgid "blue"
 msgstr "Blu"
-
-msgid "broadcasting/press"
-msgstr ""
 
 msgid "by date"
 msgstr "by data"
@@ -13290,9 +13604,6 @@ msgstr "Formati file (BMP, PNG, JPG, GIF)"
 
 msgid "filename"
 msgstr "Nome file"
-
-msgid "film/cinema"
-msgstr ""
 
 msgid "fine arts"
 msgstr "belle arti"
@@ -14229,11 +14540,9 @@ msgstr "Ma e stata attivata la  Installa aggiornamenti instabili "
 msgid "Update anyway?"
 msgstr "Aggiornare comunque?"
 
-#
 msgid "Select files folders to backup..."
 msgstr "Selezionare i file cartelle per il backup ..."
 
-#
 msgid "Keymap Selection"
 msgstr "Selezione keymap"
 
@@ -14252,19 +14561,15 @@ msgstr "Neutrino keymap - keymap.ntr"
 msgid "U80 keymap  keymap.u80"
 msgstr "U80 keymap  keymap.u80"
 
-#
 msgid "Remote setup"
 msgstr "Remote setup"
 
-#
 msgid "Keymap changed, you need to restart the GUI"
 msgstr "Keymap cambiato, è necessario riavviare la GUI"
 
-#
 msgid "Do you want to restart now?"
 msgstr "Vuoi riavviare ora?"
 
-#
 msgid "Show Softcam-Panel in Extensions Menu"
 msgstr "Mostra Pannello Softcam in estensioni Menu"
 
@@ -14276,11 +14581,9 @@ msgstr ""
 "Selezionare se si desidera visualizzare ogni tasto premuto in telnet init 4 "
 "della moda."
 
-#
 msgid "an internal error has occur"
 msgstr "Si è verificato un errore interno"
 
-#
 msgid ""
 "Copy your keymap to\n"
 "/usr/share/enigma2/keymap.usr"
@@ -14288,65 +14591,50 @@ msgstr ""
 "Copiare il keymap a\n"
 "/usr/share/enigma2/keymap.usr"
 
-#
 msgid "Default  (keymap.xml)"
 msgstr "Standard  (keymap.xml)"
 
-#
 msgid "User  (keymap.usr)"
 msgstr "Utente  (keymap.usr)"
 
-#
 msgid "Neutrino  (keymap.ntr)"
 msgstr "Neutrino  (keymap.ntr)"
 
-#
 msgid "Use Keymap"
 msgstr "Utilizzare keymapsl"
 
-#
 msgid "Upgrade with GUI"
 msgstr "Aggiornamento con GUI"
 
-#
 msgid "Unattended upgrade without GUI"
 msgstr "Aggiornamento automatico senza interfaccia grafica"
 
-#
 msgid "Select how your box will upgrade."
 msgstr "Selezionando la modalità di aggiornamento."
 
-#
 msgid "Overwrite setting files (channellist) during software upgrade?"
 msgstr ""
 "Sovrascrivere file di impostazione (Channellist) durante l'aggiornamento "
 "software?"
 
-#
 msgid "Overwrite driver files during software upgrade?"
 msgstr "Sovrascrivere i file dei driver durante l'aggiornamento del software?"
 
-#
 msgid "Overwrite softcam files during software upgrade?"
 msgstr "Sovrascrivere i file Softcam durante l'aggiornamento del software?"
 
-#
 msgid "Overwrite picon files during software upgrade?"
 msgstr "Sovrascrivi picon file durante l'aggiornamento del software?"
 
-#
 msgid "Choose backup files"
 msgstr "Scegli file di backup"
 
-#
 msgid "LanguageWizard"
 msgstr "LanguageWizard"
 
-#
 msgid "ImageWizard"
 msgstr "ImageWizard"
 
-#
 msgid "StartWizard"
 msgstr "StartWizard"
 
@@ -14354,35 +14642,27 @@ msgstr "StartWizard"
 msgid "Please select an aspect ratio..."
 msgstr "Si prega di selezionare un rapporto ..."
 
-#
 msgid "Refresh"
 msgstr "Refresh"
 
-#
 msgid "Mount again"
 msgstr "Rimontare"
 
-#
 msgid "use as HDD replacement"
 msgstr "utilizzare come sostituzione HDD"
 
-#
 msgid "AutoMountManager"
 msgstr "AutoMountManager"
 
-#
 msgid "Add a new NFS or CIFS mount point to your"
 msgstr "Creare un nuovo NFS o CIFS mount"
 
-#
 msgid "MountEdit"
 msgstr "MountEdit"
 
-#
 msgid "MountView"
 msgstr "MountView"
 
-#
 msgid "UserManager"
 msgstr "UserManager"
 
@@ -14390,51 +14670,39 @@ msgstr "UserManager"
 msgid "Network Neighbourhood"
 msgstr "Risorse di rete"
 
-#
 msgid "Rescan"
 msgstr "Rescan"
 
-#
 msgid "DVB Transmission Way"
 msgstr "DVB Trasmissione Way"
 
-#
 msgid "OK/green = activate settings"
 msgstr "OK/verde = attivare le impostazioni"
 
-#
 msgid "Info = show tuner informations"
 msgstr "Info = mostra informazioni tuner"
 
-#
 msgid "Bouquet -= scan for IPTV server addresses"
 msgstr "Bouquet -= la scansione di indirizzi server IPTV"
 
-#
 msgid "Remote"
 msgstr "a distanza"
 
-#
 msgid "Select a scirpt to run"
 msgstr "Selezionare uno script per avviare"
 
-#
 msgid "Scan All"
 msgstr "Scansione completa"
 
-#
 msgid "Please select a resolution..."
 msgstr "Si prega di selezionare la risoluzione"
 
-#
 msgid "Auto(not available)"
 msgstr "Auto(non disponibile)"
 
-#
 msgid "Aspect list..."
 msgstr "Aspect"
 
-#
 msgid ""
 "USB = Do you want to make a back-up on USB?\n"
 "This will take between 4 and 15 minutes depending on the used filesystem and "
@@ -14446,7 +14714,6 @@ msgstr ""
 "ed è completamente automatico.\n"
 "Assicurati di aver inserito un flash drive USB prima di selezionare USB."
 
-#
 msgid ""
 "HDD = Do you want to make an USB-back-up image on HDD? \n"
 "This only takes 2 or 10 minutes and is fully automatic."
@@ -14454,29 +14721,23 @@ msgstr ""
 "HDD = Volete creare un'immagine USB-back-up su disco fisso? \n"
 "Ci vogliono solo pochi minuti ed è completamente automatizzato."
 
-#
 msgid ""
 "Press Yellow Button to switch between TV/Backup \n"
 "during the backup is running."
 msgstr "Per passare Backup e TV premere il tasto giallo."
 
-#
 msgid "via Network"
 msgstr "sulla rete"
 
-#
 msgid "OK/ green = activate settings"
 msgstr "OK/verde = attivare le impostazioni"
 
-#
 msgid "Bouquet + = install or update driver"
 msgstr "Bouquet + = installare o aggiornare i driver"
 
-#
 msgid "Bouquet - = scan for IPTV server addresses"
 msgstr "Bouquet - = cercare collegamento server di IPTV"
 
-#
 msgid ""
 "Sundtek legal notice:\n"
 "This software comes without any warranty, use it at your own risk?"
@@ -14484,11 +14745,9 @@ msgstr ""
 "Sundtek informazioni generali:\n"
 "Utilizzare a proprio rischio e pericolo!"
 
-#
 msgid "No IPTV media server found"
 msgstr "Non é Stato Trovato nessun media server IPTV"
 
-#
 msgid ""
 "\n"
 "\n"
@@ -14498,19 +14757,15 @@ msgstr ""
 "\n"
 "Usare seguente indirizzo di server multimediale IPTV?\n"
 
-#
 msgid "installs the sundtek driver and runs related shellscripts"
 msgstr "Installa il driver Sundtek in uno script shell"
 
-#
 msgid "VideoWizard"
 msgstr "VideoWizard"
 
-#
 msgid "Swap Place:"
 msgstr "Swap Luogo:"
 
-#
 msgid "Swap Size:"
 msgstr "Swap Dimensione:"
 
@@ -14558,7 +14813,6 @@ msgstr ""
 "Selezionare cosa si dovrebbe fare quando il %s %s è stato arrestato in modo "
 "non corretto, o dopo che è mancata la corrente."
 
-#
 msgid "Show MiniTV in the Front Display"
 msgstr "Mostra miniTV sul display anteriore"
 
@@ -14568,11 +14822,9 @@ msgstr "Mostra la miniTV display con o senza menu OSD"
 msgid "MiniTV with OSD"
 msgstr "MiniTV con OSD"
 
-#
 msgid "Set Framerate for MiniTV"
 msgstr "Impostare il frame rate in miniTV"
 
-#
 msgid "Lower Framerate save CPU Time"
 msgstr "Il Frame rate basso riduce il carico della CPU"
 
