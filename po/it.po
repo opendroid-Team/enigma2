@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-09-05 18:35+0200\n"
+"PO-Revision-Date: 2017-09-08 08:13+0200\n"
 "Last-Translator: OPD Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -3339,6 +3339,15 @@ msgstr "Capitolo"
 msgid "Chapter:"
 msgstr "Capitolo:"
 
+msgid ""
+"Check with an alternative method (some boxes gives no signal when starts "
+"from a timer) if there is a timer started in the next 10 mins (at bootup), "
+"then will put your box in standby."
+msgstr ""
+"Controllare con un metodo alternativo (alcune caselle non forniscono alcun "
+"segnale quando si avvia da un timer) se c'è un timer avviato nei prossimi 10 "
+"minuti (all'avvio), quindi metterà la tua casella in standby."
+
 msgid "Check"
 msgstr "Verifica"
 
@@ -5680,8 +5689,8 @@ msgstr ""
 "Questa opzione consente di scegliere la modalità di visualizzazione standar "
 "sul televisore. "
 
-msgid "Function of OK button"
-msgstr "Funzione del pulsante OK "
+msgid "This option allows you can config the Colorspace from Auto to RGB"
+msgstr "Questa opzione consente di configurare l'area colori da Auto a RGB"
 
 msgid "Allows you to setup the button to do what you choose."
 msgstr "Permette di impostare il pulsante per fare ciò che si sceglie."
@@ -6664,10 +6673,11 @@ msgid "Button setup for"
 msgstr "Configurazione Pulsante per"
 
 #, python-format
-msgid "Click on your remote on the button you want to change, then click on OK"
+msgid ""
+"Click on your remote on the button you want to change, then click on \"OK\""
 msgstr ""
-"Clicca sul telecomando il tasto che si desidera modificare, quindi fare clic "
-"su OK"
+"Fai clic sul telecomando sul pulsante da modificare, quindi fai clic su \"OK"
+"\""
 
 #, python-format
 msgid ""
@@ -16200,6 +16210,9 @@ msgstr "Aiuto lungo"
 
 msgid "HDMI Rx long"
 msgstr "HDMI Rx lungo"
+
+msgid "HDMI colorspace"
+msgstr "HDMI Spazio colore"
 
 msgid "Home long"
 msgstr "Home lungo"
