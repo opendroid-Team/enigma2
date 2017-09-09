@@ -2471,9 +2471,8 @@ msgid "by hmmmdada"
 msgstr ""
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "Par penATV Image Team"
+msgstr "Par OPD Image Team"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Contourner la vérification du HDMI EDID"
@@ -15670,7 +15669,7 @@ msgstr "Traductions"
 msgid "TRANSLATOR_INFO"
 msgstr ""
 "Traduction Française\n"
-"Enigma2 - OpenATV\n"
+"Enigma2 - OPD\n"
 "Support: www.opena.tv\n"
 "Dernière MAJ: 21 mai 2016"
 

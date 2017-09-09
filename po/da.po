@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "ButtonSetup"
 msgstr ""
 
-msgid "By openATV Image Team"
+msgid "By OPD Image Team"
 msgstr ""
 
 msgid "Bypass HDMI EDID Check"
@@ -13141,7 +13141,7 @@ msgstr ""
 msgid "open nameserver configuration"
 msgstr "åbn navneserver opsætning"
 
-msgid "openATV"
+msgid "opendroid"
 msgstr ""
 
 msgid "original"

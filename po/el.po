@@ -2373,9 +2373,8 @@ msgid "by hmmmdada"
 msgstr "από τον hmmmdada"
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "Από την ομάδα του openATV"
+msgstr "Από την ομάδα του OPD"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Παράκαμψη ελέγχου HDMI EDID"
@@ -13174,8 +13173,8 @@ msgid ""
 "persists please check www.opena.tv"
 msgstr ""
 "Λυπούμαστε, οι πηγές δεν είναι διαθέσιμες λόγω συντήρησης, δοκιμάστε "
-"αργότερα. Αν αυτό το πρόβλημα επιμένει, παρακαλούμε επισκεφτείτε το www."
-"openatv.tv"
+"αργότερα. Αν αυτό το πρόβλημα επιμένει, παρακαλούμε επισκεφτείτε το ."
+"https://droidsat.org/forum/"
 
 msgid "Sorry Inadyn Config is Missing"
 msgstr "Λυπούμαστε, απουσιάζει το αρχείο ρυθμίσεων του Inadyn"

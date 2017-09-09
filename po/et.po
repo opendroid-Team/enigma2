@@ -2369,9 +2369,8 @@ msgid "by hmmmdada"
 msgstr "autorilt hmmmdada"
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "openATV tiimilt"
+msgstr "OPD tiimilt"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "HDMI EDID kontrollist möödaminek"
@@ -11480,7 +11479,7 @@ msgid ""
 "Select if you want to use the image coloured Buttons (set to 'no' if you "
 "want to use (Multi) Quick Button)."
 msgstr ""
-"Määra 'jah', kui soovid kasutada oATV värvinuppe (määra 'ei', kui kasutad "
+"Määra 'jah', kui soovid kasutada oOPD värvinuppe (määra 'ei', kui kasutad "
 "MultiQuickButtonit)."
 
 msgid "Select Image: %s"
@@ -15153,7 +15152,7 @@ msgstr "Tõlge"
 
 msgid "TRANSLATOR_INFO"
 msgstr ""
-"OpenATV-enigma2\n"
+"OPD-enigma2\n"
 "tõlge eesti keelde\n"
 "Aprill 2017"
 

@@ -2372,9 +2372,8 @@ msgid "by hmmmdada"
 msgstr "door hmmmdada"
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "Door het OpenATV Image Team"
+msgstr "Door het OPD Image Team"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Omzeil HDMI EDID controle"
@@ -8964,7 +8963,7 @@ msgid "Online = Download a image and flash it"
 msgstr "Online = Download een image en flash deze"
 
 msgid "Online software update"
-msgstr "OpenATV via het internet updaten"
+msgstr "OPD via het internet updaten"
 
 msgid "OnlineVersionCheck"
 msgstr "Controle op update"
@@ -15199,7 +15198,7 @@ msgstr "Vertalingen"
 msgid "TRANSLATOR_INFO"
 msgstr ""
 "Deze vertaling wordt u aangeboden door :\n"
-"- het OpenATV team\n"
+"- het OPD team\n"
 "\n"
 "- neoatomic"
 

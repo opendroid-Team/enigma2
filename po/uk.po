@@ -2656,9 +2656,8 @@ msgid "by hmmmdada"
 msgstr ""
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "Від команди openATV"
+msgstr "Від команди OPD"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Відключити перевірку HDMI EDID"

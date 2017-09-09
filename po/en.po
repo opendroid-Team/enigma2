@@ -2387,9 +2387,8 @@ msgid "by hmmmdada"
 msgstr "by hmmmdada"
 
 #, fuzzy
-#| msgid "By openATV Image Team"
 msgid "By OPD team Image Team"
-msgstr "By openATV Image Team"
+msgstr "By OPD Image Team"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Bypass HDMI EDID Check"

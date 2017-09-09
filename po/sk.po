@@ -2399,9 +2399,9 @@ msgid "by hmmmdada"
 msgstr ""
 
 #, fuzzy
-#| msgid "By openATV Image Team"
+
 msgid "By OPD team Image Team"
-msgstr "Od OpenATV Image Team"
+msgstr "Od OPD Image Team"
 
 msgid "Bypass HDMI EDID Check"
 msgstr "Preskočiť HDMI EDID test"
@@ -15139,8 +15139,8 @@ msgstr "Preklad"
 
 msgid "TRANSLATOR_INFO"
 msgstr ""
-"Špeciálne pre OpenATV - @dym1\n"
-"http://www.opena.tv\n"
+"Špeciálne pre OPD - @dym1\n"
+"https://droidsat.org/forum/\n"
 "Posledná aktualizácia 28.02.2015"
 
 msgid "Transmission mode"
