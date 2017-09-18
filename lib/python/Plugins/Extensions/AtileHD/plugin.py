@@ -89,7 +89,7 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("OK"))
 		self["key_yellow"] = Label()
-		self["key_blue"] = Label(_("About"))
+		self["key_blue"] = Label(_("About Weather"))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
 				"green": self.keyGreen,
