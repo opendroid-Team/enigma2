@@ -741,6 +741,8 @@ lib/python/Components/Converter/Makefile
 lib/python/Components/Renderer/Makefile
 lib/python/Components/Sources/Makefile
 lib/python/Screens/Makefile
+lib/python/OPENDROID/Makefile
+lib/python/OPENDROID/icons/Makefile
 lib/python/Plugins/Makefile
 lib/python/Plugins/Extensions/Makefile
 lib/python/Plugins/Extensions/AtileHD/Makefile

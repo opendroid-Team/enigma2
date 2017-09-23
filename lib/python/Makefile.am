@@ -1,2 +1,2 @@
-SUBDIRS = Components Tools Screens Plugins
+SUBDIRS = Components Tools Screens Plugins OPENDROID
 
