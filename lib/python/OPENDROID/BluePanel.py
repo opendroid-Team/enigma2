@@ -25,13 +25,13 @@ from Screens.CCcamInfo import CCcamInfoMain
 from Screens.OScamInfo import OscamInfoMenu
 from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo
 def Check_Softcam():
-	found = False
+	found = True
 	if fileExists("/etc/enigma2/noemu"):
 		found = False
 	else:
 		for x in os.listdir('/etc'):
 			if x.find('.emu') > -1:
-				found = False
+				found = True
 				break;
 	return found
 
