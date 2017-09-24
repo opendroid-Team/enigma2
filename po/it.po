@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-09-24 21:38+0100\n"
+"PO-Revision-Date: 2017-09-25 00:25+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -189,11 +189,19 @@ msgstr "Premere VERDE per rimuovere tutti"
 
 #: plugin.py:204 plugin.py:237
 msgid ""
-"INFORMATION: make your selection and press GREENAll config files are backed "
+"INFORMATION: make your selection and press GREEN All config files are backed "
 "up automatically"
 msgstr ""
 "INFORMAZIONI: effettuare la selezione dei file di configurazione e premere "
-"VERDETutti vengono salvati automaticamente"
+"VERDE Tutti i file vengono salvati automaticamente"
+
+#: plugin.py:204 plugin.py:237
+msgid ""
+"INFORMATION: make your selection and press GREEN\n"
+"All config files are backed up automatically"
+msgstr ""
+"INFORMAZIONI: Selezionare i file da configurare e premere VERDE\n"
+"Tutti i file vengono salvati automaticamente"
 
 #: plugin.py:239
 msgid "Config path set automatically to"
@@ -201,7 +209,7 @@ msgstr "Il percorso di configurazione è impostato automaticamente su"
 
 #: plugin.py:240
 msgid "Camstart set automatically to"
-msgstr "Camstart automaticamente impostato su"
+msgstr "Camstart è impostato automaticamente su"
 
 #: plugin.py:241
 msgid "Oscam type set automatically to"
@@ -221,7 +229,7 @@ msgstr "Selezionare OSCAM WebifPort:"
 
 #: plugin.py:245
 msgid ""
-"INFORMATION: Select OScam WebifPortOscam Webif will be accessible on the "
+"INFORMATION: Select OScam WebifPort Oscam Webif will be accessible on the "
 "selected port. e.g. http:\\IPOFYOURBOX:83"
 msgstr ""
 "INFORMAZIONI: Selezionare OScam WebifPortOscam Webif sarà accessibile nella "
@@ -229,20 +237,20 @@ msgstr ""
 
 #: plugin.py:247
 msgid "Internal Reader /dev/sci0:"
-msgstr "Interno del lettore /dev/sci0:"
+msgstr "Lettore interno /dev/sci0:"
 
 #: plugin.py:247
 msgid ""
-"INFORMATION: Internal Reader /dev/sci0All STB's having only one cardslot.On "
+"INFORMATION: Internal Reader /dev/sci0 All STB's having only one cardslot.On "
 "STB's having two cardslots it is mostly the lower cardslot."
 msgstr ""
-"INFORMAZIONI: Lettore Interno /dev/sci0Tutti i STB hanno solo uno slot per "
+"INFORMAZIONI: Lettore Interno /dev/sci0 Tutti i STB hanno solo uno slot per "
 "schede.Sull'STB con due slot per schede è principalmente lo slot per schede "
 "inferiori."
 
 #: plugin.py:249
 msgid "Internal Reader /dev/sci1:"
-msgstr "Interno del lettore /dev/SCI1:"
+msgstr "Lettore interno /dev/SCI1:"
 
 #: plugin.py:249
 msgid ""
@@ -254,7 +262,7 @@ msgstr ""
 
 #: plugin.py:251
 msgid "External Reader /dev/ttyUSB0:"
-msgstr "Esterno Reader /dev/ttyUSB0:"
+msgstr "Reader Esterno /dev/ttyUSB0:"
 
 #: plugin.py:251
 msgid ""
@@ -266,7 +274,7 @@ msgstr ""
 
 #: plugin.py:253
 msgid "External Reader /dev/ttyUSB1:"
-msgstr "Esterno Reader /dev/ttyUSB1:"
+msgstr "Reader Esterno  /dev/ttyUSB1:"
 
 #: plugin.py:253
 msgid ""
@@ -290,7 +298,7 @@ msgstr "Server con"
 
 #: plugin.py:260
 msgid "Oscam binary install"
-msgstr "Installazione binaria Oscam"
+msgstr "Installazione binario Oscam"
 
 #: plugin.py:260
 msgid "install or update to the latest version"
@@ -302,7 +310,7 @@ msgstr "installato"
 
 #: plugin.py:260
 msgid "online avaible"
-msgstr "ottima linea"
+msgstr "disponibile online"
 
 #: plugin.py:263
 msgid "Install oscam EMU Version:"
@@ -313,15 +321,19 @@ msgid ""
 "INFORMATION: install Oscam Emu Version\n"
 "\n"
 "Softcam.key included"
-msgstr "INFORMAZIONI: Installare Oscam Emu Version \\ Softcam.key incluso"
+msgstr "INFORMAZIONI: Installare Oscam Versione Emu \\ Softcam.key incluso"
 
 #: plugin.py:264
-msgid "Is a Ci+Module installed:"
-msgstr "È un modulo CI + installato:"
+msgid "Is a Ci+ Module installed:"
+msgstr "Selezionare un modulo CI+:"
 
 #: OscamSmartcard.py:264
-msgid "INFORMATION: please select your CI+ Modul"
-msgstr "INFORMAZIONI: Si prega di selezionare il Modulo \\  CI +"
+msgid ""
+"INFORMATION: please select your CI+ Modul\n"
+"\n"
+msgstr ""
+"INFORMAZIONI: Si prega di selezionare il Modulo CI+\n"
+"\n"
 
 #: plugin.py:316
 msgid ""
@@ -347,7 +359,7 @@ msgstr "OSCAM è ora in esecuzione"
 msgid ""
 "Oscam Binary is not installed\n"
 "You must this install"
-msgstr "OSCAM binario non è installato \\ È necessario installare questo"
+msgstr "Il binario OSCAM non è installato \\ È necessario installare questo"
 
 #: plugin.py:408
 msgid "Error creating oscam.server!"
@@ -375,7 +387,7 @@ msgstr "Download non disponibile"
 
 #: plugin.py:584
 msgid "file exists, but is not executable"
-msgstr "file esiste, ma non è eseguibile"
+msgstr "Il file esiste, ma non è eseguibile"
 
 #: plugin.py:592
 msgid "no oscam_oscamsmartcard found"
@@ -396,7 +408,7 @@ msgstr ""
 
 #: plugin.py:711
 msgid "remove current config"
-msgstr "rimuovere config corrente"
+msgstr "rimuovere configurazione corrente"
 
 #: plugin.py:817
 msgid "Configuration tool for OScam"
@@ -415,7 +427,7 @@ msgid "/usr/keys/ (opendroid)"
 msgstr "/usr/keys/ (opendroid)"
 
 msgid "/etc/tuxbox/config/ (openMips)"
-msgstr "/ etc / tuxbox / config / (openpli)"
+msgstr "/etc/tuxbox/config/ (openpli)"
 
 msgid "Do you really want to reboot now?"
 msgstr "Vuoi davvero riavviare ora?"
@@ -839,7 +851,7 @@ msgid "flash-online"
 msgstr "flash-online"
 
 msgid "Local = Flash a image from local path /hdd/images"
-msgstr "Local = Flash un'immagine dal percorso/HDD/immagini locali"
+msgstr "Locale = Installa un'immagine dal percorso/HDD/immagini locali"
 
 msgid "Flash On the fly (select a image)"
 msgstr "Flash On Line (Selezionare Immagine)"
@@ -6034,7 +6046,7 @@ msgid "Guard interval"
 msgstr "Intervallo di guardia"
 
 msgid "H: = Hourly / D: = Daily / W: = Weekly / M: = Monthly"
-msgstr "H: = Ogniora / D: = Ognigiorno / W: =Ognisettimana / M: = Ognimese"
+msgstr "H: = Ogni ora / D: = Ogni giorno / W: =Ogni settimana / M: = Ogni mese"
 
 msgid "HARD DISK: "
 msgstr "HARD DISK: "
@@ -7020,6 +7032,9 @@ msgstr "Caricare la playlist"
 
 msgid "Load/Save"
 msgstr "Caricare/Salvare"
+
+msgid "Local"
+msgstr "Locale"
 
 msgid "Local box"
 msgstr "Box locale"
@@ -9456,6 +9471,9 @@ msgstr "Risoluzione"
 
 msgid "Auto resolution"
 msgstr "Risoluzione automatica"
+
+msgid "ReStart"
+msgstr "Riavviare"
 
 msgid "Restart"
 msgstr "Riavviare"
@@ -15807,6 +15825,9 @@ msgstr "romanticismo"
 msgid "running..."
 msgstr "in corso..."
 
+msgid "Run"
+msgstr "Eseguire"
+
 msgid "save last directory on exit"
 msgstr "in uscita salvare l'ultima cartella"
 
@@ -16526,7 +16547,7 @@ msgid "Swap Place:"
 msgstr "Swap Luogo:"
 
 msgid "Swap Size:"
-msgstr "Swap Dimensione:"
+msgstr "Dimensione Swap:"
 
 msgid "Recovery Mode"
 msgstr "Modalità di ripristino"
@@ -16544,9 +16565,9 @@ msgid ""
 "\n"
 "Do you want to put it in %s?"
 msgstr ""
-"Ihre %s %s ist nicht sauber heruntergefahren.\n"
+"Il tuo %s %s non era stato chiuso correttamente.\n"
 "\n"
-"Wollen Sie sie in %s versetzen?"
+"Vuoi metterlo %s?"
 
 # Powerlost usage.config
 msgid "just boot"
@@ -16755,6 +16776,9 @@ msgstr "Consente la registrazione automatica per il time shift in background."
 
 msgid "Enable Autorecord"
 msgstr "Consente la registrazione automatica"
+
+msgid "Enable Swap at startup"
+msgstr "Abilita Swap all'avvio"
 
 msgid "Autorecord location"
 msgstr "Directory per la registrazione automatica"
