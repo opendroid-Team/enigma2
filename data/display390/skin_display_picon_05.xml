@@ -282,7 +282,7 @@
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="390,240" sColor="red" linewidth="9" zPosition="2" alphatest="on">
 		<convert type="OMaclock">Seconds</convert>
 	</widget>
-	<widget source="session.RecordState" render="Pixmap" pixmap="/usr/share/enigma2/display/analogcircle_lcd_rec.png" position="0,0" size="390,240" zPosition="1" transparent="1" alphatest="on" >
+	<widget source="session.RecordState" render="Pixmap" pixmap="/usr/share/enigma2/display/analogquad_lcd_rec.png" position="0,0" size="390,240" zPosition="1" transparent="1" alphatest="on" >
 		<convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 	</screen> 
