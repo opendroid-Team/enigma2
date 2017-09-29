@@ -136,7 +136,7 @@ class SkinSelectorBase:
 				config.skin.display_skin.save()
 			else:
 				try:
-					if config.skin.primary_skin.value == "oDreamy-FHD/skin.xml":
+					if config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml":
 						from Plugins.Extensions.MyMetrixLite.MainSettingsView import MainSettingsView
 						MainSettingsView(None).getFHDiconRefresh(restore=True)
 				except:
