@@ -60,7 +60,7 @@ class GreenPanel(Screen):
 		self.pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
 		for plugin in self.pluginlist:
 			if plugin.icon is None:
-				png = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, '/usr/share/enigma2/oDreamy-FHD/icons/plugin.png'))
+				png = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, '/usr/lib/enigma2/python/OPENDROID/icons/plugin.png'))
 			else:
 				png = plugin.icon
 			res = (plugin.name, plugin.description, png, plugin)
