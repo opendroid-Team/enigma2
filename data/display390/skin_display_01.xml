@@ -80,14 +80,14 @@
 		</widget>
 	</screen>
 <!-- main-->
-	<screen name="InfoBarSummary" position="0,0" size="400,240">
-		<widget source="session.CurrentService" render="Label" position="0,25" size="400,50" font="FdLcD;48" halign="center" foregroundColor="#FFDD00" >
+	<screen name="InfoBarSummary" position="0,0" size="390,240">
+		<widget source="session.CurrentService" render="Label" position="0,25" size="390,50" font="FdLcD;48" halign="center" foregroundColor="#FFDD00" >
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Label" position="0,80" size="400,50" font="FdLcD;24" halign="center" >
+		<widget source="session.Event_Now" render="Label" position="0,80" size="390,50" font="FdLcD;24" halign="center" >
 			<convert type="EventName">Name</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Progress" position="0,135" size="400,30" borderWidth="1" zPosition="0" >
+		<widget source="session.Event_Now" render="Progress" position="0,135" size="390,30" borderWidth="1" zPosition="0" >
 			<convert type="EventTime">Progress</convert>
 		</widget>
 		<widget source="session.Event_Now" render="Label" position="349,140" size="50,20" font="FdLcD; 20" halign="right" foregroundColor="#FFDD00" zPosition="1" >
@@ -99,7 +99,7 @@
 		<panel name="RecordingPanel" />
 	</screen>
 <!-- channelselection-->
-	<screen name="ChannelSelection_summary" position="0,0" size="400,240">
+	<screen name="ChannelSelection_summary" position="0,0" size="390,240">
 		<widget source="parent.ServiceEvent" render="Label" position="top" size="*,65" font="FdLcD;50" halign="center" foregroundColor="#FFFF00" >
 			<convert type="ServiceName">Name</convert>
 		</widget>
@@ -114,46 +114,46 @@
 <!-- menus-->
 	<screen name="MenuSummary" position="fill">
 		<widget source="parent.title" render="Label" position="top" size="*,118" font="FdLcD;40" foregroundColor="#FFDD00" halign="center" valign="center" transparent="1" />
-		<ePixmap position="top" pixmap="~/bar.png" transparent="0" size="400,3" zPosition="4" />
+		<ePixmap position="top" pixmap="~/bar.png" transparent="0" size="390,3" zPosition="4" />
 		<widget source="parent.menu" render="Label" position="top" size="*,118" font="FdLcD;40" halign="center" valign="center">
 			<convert type="StringListSelection" />
 		</widget>
 		<panel name="RecordingPanel" />
 	</screen>
 <!-- movieplayer-->
-	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="400,240">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="400,136" font="FdLcD;34" foregroundColor="#FFFFFF" halign="center" valign="center" transparent="1" zPosition="2">
+	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="390,240">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="390,136" font="FdLcD;34" foregroundColor="#FFFFFF" halign="center" valign="center" transparent="1" zPosition="2">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<eLabel position="0,138" size="400,2" backgroundColor="#BDBDBD" zPosition="3" />
-		<widget source="session.CurrentService" render="Progress" pixmap="~/progress1.png" position="0,140" size="400,25" transparent="1">
+		<eLabel position="0,138" size="390,2" backgroundColor="#BDBDBD" zPosition="3" />
+		<widget source="session.CurrentService" render="Progress" pixmap="~/progress1.png" position="0,140" size="390,25" transparent="1">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
-		<eLabel position="0,165" size="400,2" backgroundColor="#BDBDBD" zPosition="3" />
+		<eLabel position="0,165" size="390,2" backgroundColor="#BDBDBD" zPosition="3" />
 		<widget source="session.CurrentService" render="Label" position="0,170" size="200,42" font="LCD;40" foregroundColor="#FFDD00" zPosition="0" halign="left" transparent="1">
 			<convert type="ServicePosition">Remaining</convert>
 		</widget>
 		<panel name="SummaryClockPanel" />
 	</screen>
-	<screen name="MovieContextMenuSummary" position="0,0" size="400,240">
-		<widget source="parent.Title" render="Label" position="0,0" size="400,110" font="FdLcD;30" halign="center" valign="center" />
-		<ePixmap pixmap="~/bar.png" position="0,111" size="400,3" transparent="0" zPosition="4" />
-		<widget source="selected" render="Label" position="0,115" size="400,135" font="FdLcD;30" halign="center" valign="center" />
+	<screen name="MovieContextMenuSummary" position="0,0" size="390,240">
+		<widget source="parent.Title" render="Label" position="0,0" size="390,110" font="FdLcD;30" halign="center" valign="center" />
+		<ePixmap pixmap="~/bar.png" position="0,111" size="390,3" transparent="0" zPosition="4" />
+		<widget source="selected" render="Label" position="0,115" size="390,135" font="FdLcD;30" halign="center" valign="center" />
 	</screen>	
-	<screen name="MovieSelectionSummary" position="0,0" size="400,240">
-		<widget source="parent.Title" render="Label" position="0,0" size="400,65" foregroundColor="#FFDD00" font="FdLcD;28" halign="center" valign="center" zPosition="14" />
-		<eLabel position="0,66" size="400,1" backgroundColor="#FFFFFF" />
-		<widget source="name" render="Label" position="0,67" size="400,138" font="FdLcD;34" halign="center" valign="center" />
-		<widget source="parent.Service" render="Label" position="0,206" size="400,46" font="FdLcD;34" halign="left" transparent="1">
+	<screen name="MovieSelectionSummary" position="0,0" size="390,240">
+		<widget source="parent.Title" render="Label" position="0,0" size="390,65" foregroundColor="#FFDD00" font="FdLcD;28" halign="center" valign="center" zPosition="14" />
+		<eLabel position="0,66" size="390,1" backgroundColor="#FFFFFF" />
+		<widget source="name" render="Label" position="0,67" size="390,138" font="FdLcD;34" halign="center" valign="center" />
+		<widget source="parent.Service" render="Label" position="0,206" size="390,46" font="FdLcD;34" halign="left" transparent="1">
 			<convert type="ServiceTime">Duration</convert>
 			<convert type="ClockToText">AsLength</convert>
 		</widget>
-		<widget source="parent.Service" render="Label" position="0,206" size="400,46" font="FdLcD;34" halign="right" transparent="1">
+		<widget source="parent.Service" render="Label" position="0,206" size="390,46" font="FdLcD;34" halign="right" transparent="1">
 			<convert type="MovieInfo">FileSize</convert>
 		</widget>
 	</screen>
 <!-- EMC Screen - thx HD75hd for this -->
-	<screen name="EMCSelection_summary" position="0,0" size="400,240">
+	<screen name="EMCSelection_summary" position="0,0" size="390,240">
 		<widget source="parent.Service" render="Label" position="0,0" size="230,240" font="FdLcD;36" foregroundColor="#FFFFFF" transparent="1" zPosition="2" halign="center" valign="center" >
 			<convert type="ServiceName">Name</convert>
 		</widget>
@@ -164,7 +164,7 @@
 		<eLabel position="397,0" size="3,237" backgroundColor="#848484" zPosition="-1" />
 		<widget source="parent.Service" render="Cover" position="237,0" size="163,240" zPosition="1" />
 	</screen>
-	<screen name="EMCMoviePlayerSummary" position="0,0" size="400,240" >
+	<screen name="EMCMoviePlayerSummary" position="0,0" size="390,240" >
 		<widget source="session.CurrentService" render="Label" position="0,28" size="315,128" font="FdLcD;36" halign="center" valign="center" transparent="1" zPosition="2" >
 			  <convert type="ServiceName">Name</convert>
 		</widget>
@@ -174,8 +174,8 @@
 		<eLabel position="397,39" size="3,115" backgroundColor="#848484" zPosition="-1" />
 		<eLabel text="No Cover" position="318,39" size="82,115" font="FdLcD;23" halign="center" valign="center" zPosition="-1" transparent="1" />
 		<widget source="session.CurrentService" render="Cover" position="318,37" size="82,120" zPosition="1" />
-		<eLabel position="0,164" size="400,3" backgroundColor="#87CEFA" zPosition="3" />
-		<widget source="Service" render="Progress" pixmap="~/progress1.png" position="0,157" size="400,17" transparent="1" zPosition="4">
+		<eLabel position="0,164" size="390,3" backgroundColor="#87CEFA" zPosition="3" />
+		<widget source="Service" render="Progress" pixmap="~/progress1.png" position="0,157" size="390,17" transparent="1" zPosition="4">
 			<convert type="EMCServicePosition">Position</convert>
 		</widget>		
 		<widget source="session.CurrentService" render="Label" position="235,178" size="165,62" font="FdLcD;30" zPosition="0" foregroundColor="#FFFFFF" halign="right" transparent="1">
@@ -216,9 +216,9 @@
 	</screen>
 
 <!-- JobView Summary -->
-	<screen name="JobView_summary" position="0,0" size="400,240">
-		<widget source="parent.summary_job_name" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
-		<widget source="parent.summary_job_task" render="Label" position="0,66" size="400,20" font="FdLcD;19" halign="left" noWrap="1" />
+	<screen name="JobView_summary" position="0,0" size="390,240">
+		<widget source="parent.summary_job_name" render="Label" position="0,38" size="390,26" font="FdLcD;24" halign="left" noWrap="1" />
+		<widget source="parent.summary_job_task" render="Label" position="0,66" size="390,20" font="FdLcD;19" halign="left" noWrap="1" />
 		<widget source="parent.summary_job_progress" render="Progress" position="6,50" size="60,12" borderWidth="1" zPosition="1" />
 		<widget source="parent.summary_job_progress" render="Label" position="66,50" size="50,12" font="FdLcD;12" zposition="0" halign="center" transparent="1" >
 			<convert type="ProgressToText" />
@@ -226,78 +226,78 @@
 		<panel name="IconPanel" />
 	</screen>
 
-	<screen name="EventView_summary" position="0,0" size="400,240">
+	<screen name="EventView_summary" position="0,0" size="390,240">
 		<widget source="parent.Title" render="Label" position="0,0" size="160,22" font="FdLcD;20" halign="left" noWrap="1" />
-		<widget source="parent.summary_description" render="Label" position="0,22" size="400,140" font="FdLcD;24" />
+		<widget source="parent.summary_description" render="Label" position="0,22" size="390,140" font="FdLcD;24" />
 	</screen>
 
-	<screen name="EventViewSimple_summary" position="0,0" size="400,240">
+	<screen name="EventViewSimple_summary" position="0,0" size="390,240">
 		<widget source="parent.Title" render="Label" position="0,0" size="160,22" font="FdLcD;20" halign="left" noWrap="1" />
-		<widget source="parent.summary_description" render="Label" position="0,22" size="400,140" font="FdLcD;24" />
+		<widget source="parent.summary_description" render="Label" position="0,22" size="390,140" font="FdLcD;24" />
 	</screen>
 
 <!-- EPG Screens -->
-	<screen name="EPGSelection_summary" position="0,0" size="400,240">
+	<screen name="EPGSelection_summary" position="0,0" size="390,240">
 		<panel name="SummaryEpgPanel" />
 		<panel name="SummaryIconsPanel" />
 		<panel name="SummaryTunerStatusPanel" />
 	</screen>
-	<screen name="QuickEPG_summary" position="0,0" size="400,240">
+	<screen name="QuickEPG_summary" position="0,0" size="390,240">
 		<panel name="SummaryEpgPanel" />
 		<panel name="SummaryIconsPanel" />
 		<panel name="SummaryTunerStatusPanel" />
 	</screen>
-	<screen name="GraphicalEPG_summary" position="0,0" size="400,240">
+	<screen name="GraphicalEPG_summary" position="0,0" size="390,240">
 		<panel name="SummaryEpgPanel" />
 		<panel name="SummaryIconsPanel" />
 		<panel name="SummaryTunerStatusPanel" />
 	</screen>
-	<screen name="GraphicalEPGPIG_summary" position="0,0" size="400,240">
+	<screen name="GraphicalEPGPIG_summary" position="0,0" size="390,240">
 		<panel name="SummaryEpgPanel" />
 		<panel name="SummaryIconsPanel" />
 		<panel name="SummaryTunerStatusPanel" />
 	</screen>
 
-	<screen name="ChoiceBox_summary" position="0,0" size="400,240">
-		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="FdLcD;16" noWrap="1" />
+	<screen name="ChoiceBox_summary" position="0,0" size="390,240">
+		<widget source="parent.summary_list" render="Label" position="0,0" size="390,240" font="FdLcD;16" noWrap="1" />
 	</screen>
 
-	<screen name="MessageBox_summary" position="0,0" size="400,240">
-		<widget source="parent.Text" render="Label" position="0,0" size="400,240" font="FdLcD;24" halign="center" />
-		<widget source="parent.selectedChoice" render="Label" position="0,135" size="400,28" font="FdLcD;26" halign="center" noWrap="1" />
+	<screen name="MessageBox_summary" position="0,0" size="390,240">
+		<widget source="parent.Text" render="Label" position="0,0" size="390,240" font="FdLcD;24" halign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="0,135" size="390,28" font="FdLcD;26" halign="center" noWrap="1" />
 	</screen>
-	<screen name="MessageBoxSimple_summary" position="0,0" size="400,240">
-		<widget source="parent.Text" render="Label" position="0,0" size="400,240" font="FdLcD;24" halign="center" />
-		<widget source="parent.selectedChoice" render="Label" position="0,135" size="400,28" font="FdLcD;26" halign="center" noWrap="1" />
-	</screen>
-
-	<screen name="AboutSummary" position="0,0" size="400,240">
-		<widget source="AboutText" render="Label" position="0,0" size="400,240" font="FdLcD;11" />
+	<screen name="MessageBoxSimple_summary" position="0,0" size="390,240">
+		<widget source="parent.Text" render="Label" position="0,0" size="390,240" font="FdLcD;24" halign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="0,135" size="390,28" font="FdLcD;26" halign="center" noWrap="1" />
 	</screen>
 
-	<screen name="TimerEditListSummary" position="0,0" size="400,240">
-		<widget source="service" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
-		<widget source="name" render="Label" position="0,66" size="400,20" font="FdLcD;19" halign="left" noWrap="1" />
-		<widget source="time" render="Label" position="0,86" size="400,20" font="FdLcD;19" halign="left" transparent="1" />
-		<widget source="duration" render="Label" position="0,110" size="400,20" font="FdLcD;19" halign="left" transparent="1" />
-		<widget source="state" render="Label" position="0,110" size="400,20" font="FdLcD;19" halign="right" transparent="1" />
+	<screen name="AboutSummary" position="0,0" size="390,240">
+		<widget source="AboutText" render="Label" position="0,0" size="390,240" font="FdLcD;11" />
+	</screen>
+
+	<screen name="TimerEditListSummary" position="0,0" size="390,240">
+		<widget source="service" render="Label" position="0,38" size="390,26" font="FdLcD;24" halign="left" noWrap="1" />
+		<widget source="name" render="Label" position="0,66" size="390,20" font="FdLcD;19" halign="left" noWrap="1" />
+		<widget source="time" render="Label" position="0,86" size="390,20" font="FdLcD;19" halign="left" transparent="1" />
+		<widget source="duration" render="Label" position="0,110" size="390,20" font="FdLcD;19" halign="left" transparent="1" />
+		<widget source="state" render="Label" position="0,110" size="390,20" font="FdLcD;19" halign="right" transparent="1" />
 		<panel name="IconPanel" />
 	</screen>
 
-	<screen name="WizardSummary" position="0,0" size="400,240">
-		<widget source="text" render="Label" position="0,0" size="400,55" font="FdLcD;24" halign="center" />
-		<widget source="parent.list" render="Label" position="0,85" size="400,124" font="FdLcD;24" halign="center" >
+	<screen name="WizardSummary" position="0,0" size="390,240">
+		<widget source="text" render="Label" position="0,0" size="390,55" font="FdLcD;24" halign="center" />
+		<widget source="parent.list" render="Label" position="0,85" size="390,124" font="FdLcD;24" halign="center" >
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
-	<screen name="LanguageWizardSummary" position="0,0" size="400,240">
-		<widget source="parent.summarytext" render="Label" position="0,0" size="400,55" font="FdLcD;24" halign="center" />
-		<widget source="parent.summarylangname" render="Label" position="0,85" size="400,124" font="FdLcD;24" halign="center" />
+	<screen name="LanguageWizardSummary" position="0,0" size="390,240">
+		<widget source="parent.summarytext" render="Label" position="0,0" size="390,55" font="FdLcD;24" halign="center" />
+		<widget source="parent.summarylangname" render="Label" position="0,85" size="390,124" font="FdLcD;24" halign="center" />
 <!-- 		<widget source="parent.flag" render="Pixmap" position="0,0" size="110,40" backgroundColor="#ff000000" /> -->
 	</screen>
 	<screen name="VideoWizardSummary" position="fill">
-		<widget source="text" render="Label" position="0,0" size="400,50" font="FdLcD;24" halign="center" />
-		<widget source="parent.list" render="Label" position="0,85" size="400,124" font="FdLcD;24" halign="center" >
+		<widget source="text" render="Label" position="0,0" size="390,50" font="FdLcD;24" halign="center" />
+		<widget source="parent.list" render="Label" position="0,85" size="390,124" font="FdLcD;24" halign="center" >
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
@@ -319,53 +319,53 @@
 	</screen>
 
 <!-- ViX -->
-	<screen name="VIXDevicesPanelSummary" position="0,0" size="400,240">
-		<widget source="parent.Title" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
-		<widget source="entry" render="Label" position="0,21" size="400,16" font="FdLcD;14" halign="left" noWrap="1" />
-		<widget source="desc" render="Label" position="0,38" size="400,26" font="FdLcD;12" halign="left" transparent="1" />
+	<screen name="VIXDevicesPanelSummary" position="0,0" size="390,240">
+		<widget source="parent.Title" render="Label" position="0,38" size="390,26" font="FdLcD;24" halign="left" noWrap="1" />
+		<widget source="entry" render="Label" position="0,21" size="390,16" font="FdLcD;14" halign="left" noWrap="1" />
+		<widget source="desc" render="Label" position="0,38" size="390,26" font="FdLcD;12" halign="left" transparent="1" />
 		<panel name="IconPanel" />
 		<panel name="SummaryClockPanel" />
 	</screen>
-	<screen name="VIXSwap_summary" position="0,0" size="400,240">
-		<widget source="parent.Title" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
-		<widget source="parent.swapname_summary" render="Label" position="0,66" size="400,20" font="FdLcD;19" halign="left" noWrap="1" />
-		<widget source="parent.swapactive_summary" render="Label" position="0,93" size="400,16" font="FdLcD;14" halign="left" transparent="1" />
+	<screen name="VIXSwap_summary" position="0,0" size="390,240">
+		<widget source="parent.Title" render="Label" position="0,38" size="390,26" font="FdLcD;24" halign="left" noWrap="1" />
+		<widget source="parent.swapname_summary" render="Label" position="0,66" size="390,20" font="FdLcD;19" halign="left" noWrap="1" />
+		<widget source="parent.swapactive_summary" render="Label" position="0,93" size="390,16" font="FdLcD;14" halign="left" transparent="1" />
 		<panel name="IconPanel" />
 		<panel name="SummaryClockPanel" />
 	</screen>
-	<screen name="UpdatePlugin_summary" position="0,0" size="400,240">
-		<widget source="parent.Title" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
-		<widget source="parent.package" render="Label" position="0,66" size="400,20" font="FdLcD;19" halign="left" noWrap="1" />
-		<widget source="parent.status" render="Label" position="0,93" size="400,16" font="FdLcD;14" halign="left" transparent="1" />
+	<screen name="UpdatePlugin_summary" position="0,0" size="390,240">
+		<widget source="parent.Title" render="Label" position="0,38" size="390,26" font="FdLcD;24" halign="left" noWrap="1" />
+		<widget source="parent.package" render="Label" position="0,66" size="390,20" font="FdLcD;19" halign="left" noWrap="1" />
+		<widget source="parent.status" render="Label" position="0,93" size="390,16" font="FdLcD;14" halign="left" transparent="1" />
 		<panel name="IconPanel" />
 		<panel name="SummaryClockPanel" />
 	</screen>
-	<screen name="SoftwareUpdateChanges_summary" position="0,0" size="400,240">
+	<screen name="SoftwareUpdateChanges_summary" position="0,0" size="390,240">
 		<widget source="parent.title_summary" render="Label" position="0,0" size="160,15" font="FdLcD;15" halign="left" noWrap="1" />
-		<widget source="parent.text_summary" render="Label" position="0,16" size="400,54" font="FdLcD;12" halign="left" transparent="1" />
+		<widget source="parent.text_summary" render="Label" position="0,16" size="390,54" font="FdLcD;12" halign="left" transparent="1" />
 		<panel name="IconPanel" />
 	</screen>
 	
 	<!-- webradioFS -->
-	<screen name="webradioFSdisplay13" position="0,0" size="400,240" >
-	<widget source="Zeile1" render="Label" position="0,0" size="400,100" font="FdLcD;30" foregroundColor="#FFDD00" halign="center" />
-	<widget source="Zeile2" render="Label" position="0,110" size="400,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
-	<widget source="Zeile3" render="Label" position="0,180" size="400,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
+	<screen name="webradioFSdisplay13" position="0,0" size="390,240" >
+	<widget source="Zeile1" render="Label" position="0,0" size="390,100" font="FdLcD;30" foregroundColor="#FFDD00" halign="center" />
+	<widget source="Zeile2" render="Label" position="0,110" size="390,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
+	<widget source="Zeile3" render="Label" position="0,180" size="390,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
 	</screen>
 	
 	<!-- standby -->
-	<screen name="StandbySummary" position="0,0" size="400,240" flags="wfNoBorder">
-		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="center,center" size="400,240" zPosition="0" />
-	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="400,240" hColor="white" linewidth="8" zPosition="4" alphatest="on">
+	<screen name="StandbySummary" position="0,0" size="390,240" flags="wfNoBorder">
+		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="center,center" size="390,240" zPosition="0" />
+	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="390,240" hColor="white" linewidth="8" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
 	</widget>
-	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="400,240" mColor="white" linewidth="8" zPosition="3" alphatest="on">
+	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="390,240" mColor="white" linewidth="8" zPosition="3" alphatest="on">
 		<convert type="OMaclock">Minutes</convert>
 	</widget>
-	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="400,240" sColor="grey" linewidth="2" zPosition="2" alphatest="on">
+	<widget source="global.CurrentTime" render="OMaClockLcd" position="90,30" size="390,240" sColor="grey" linewidth="2" zPosition="2" alphatest="on">
 		<convert type="OMaclock">Seconds</convert>
 	</widget>
-	<widget source="session.RecordState" render="Pixmap" pixmap="/usr/share/enigma2/display/analog_white_lcd_rec.png" position="0,0" size="400,240" zPosition="1" transparent="1" alphatest="on" >
+	<widget source="session.RecordState" render="Pixmap" pixmap="/usr/share/enigma2/display/analog_white_lcd_rec.png" position="0,0" size="390,240" zPosition="1" transparent="1" alphatest="on" >
 		<convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 	</screen>    
