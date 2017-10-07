@@ -290,7 +290,7 @@ class InfoBarScreenSaver:
 			eActionMap.getInstance().unbindAction('', self.keypressScreenSaver)
 
 class HideVBILine(Screen):
-	skin = """<screen position="0,0" size="%s,%s" backgroundColor="#00000000" flags="wfNoBorder"/>""" % (getDesktop(0).size().width() * 2/3, getDesktop(0).size().height() / 360)
+	skin = """<screen position="0,0" size="%s,%s" backgroundColor="#000000" flags="wfNoBorder"/>""" % (getDesktop(0).size().width() * 2/3, getDesktop(0).size().height() / 360)
 	def __init__(self, session):
 		Screen.__init__(self, session)
 class SecondInfoBar(Screen):
@@ -1184,7 +1184,6 @@ class InfoBarNumberZap:
 				rootbouquet = eServiceReference(bqrootstr)
 				bouquet = eServiceReference(bqrootstr)
 				bouquetlist = serviceHandler.list(bouquet)
-
 				if not bouquetlist is None:
 					while True:
 						bouquet = bouquetlist.getNext()
@@ -2330,7 +2329,6 @@ class InfoBarSeek:
 		for x in lst:
 			if x > n:
 				return x
-
 		return False
 
 	def getLower(self, n, lst):
@@ -2339,7 +2337,6 @@ class InfoBarSeek:
 		for x in lst:
 			if x < n:
 				return x
-
 		return False
 
 	def showAfterSeek(self):
@@ -2948,7 +2945,6 @@ class InfoBarPVRState:
 			self._mayShow()
 
 class InfoBarTimeshiftState(InfoBarPVRState):
-
 	def __init__(self):
 		InfoBarPVRState.__init__(self, screen=TimeshiftState, force_show=True)
 		self.onPlayStateChanged.append(self.__timeshiftEventName)
@@ -3465,6 +3461,7 @@ class InfoBarPiP:
 				del self.session.pip
 				if SystemInfo["LCDMiniTV"]:
 					if config.lcd.modepip.value >= "1":
+						print '[LCDMiniTV] disable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
 						f.write(config.lcd.modeminitv.value)
 						f.close()
@@ -3484,10 +3481,10 @@ class InfoBarPiP:
 				if self.session.pip.playService(newservice):
 					self.session.pipshown = True
 					self.session.pip.servicePath = self.servicelist.getCurrentServicePath()
-					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.minitvpipmode.value) >= 1:
+					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 						print '[LCDMiniTV] enable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
-						f.write(config.lcd.minitvpipmode.value)
+						f.write(config.lcd.modepip.value)
 						f.close()
 						f = open("/proc/stb/vmpeg/1/dst_width", "w")
 						f.write("0")
@@ -3503,7 +3500,7 @@ class InfoBarPiP:
 					if self.session.pip.playService(newservice):
 						self.session.pipshown = True
 						self.session.pip.servicePath = self.servicelist.getCurrentServicePath()
-						if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.minitvpipmode.value) >= 1:
+						if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 							print '[LCDMiniTV] enable PIP'
 							f = open("/proc/stb/lcd/mode", "w")
 							f.write(config.lcd.modepip.value)
@@ -3711,7 +3708,6 @@ class InfoBarInstantRecord():
 			for x in self.recording:
 				if x.isRunning():
 					return True
-
 		return False
 
 	def recordQuestionCallback(self, answer):
@@ -3866,7 +3862,6 @@ class InfoBarInstantRecord():
 					for x in self.recording:
 						if x.isRunning() and x == timer:
 							identical += 1
-
 		return timers > identical
 
 	def instantRecord(self, serviceRef = None):
@@ -3938,7 +3933,6 @@ class InfoBarAudioSelection:
 	def audio_key(self):
 		from Screens.AudioSelection import AudioSelection
 		self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
-
 	def audioSelected(self, ret=None):
 		print "[infobar::audioSelected]", ret
 
@@ -4213,7 +4207,6 @@ class InfoBarAspectSelection:
 		print "do self.STATE_RESOLUTION"
 		self.__ExGreen_state = self.STATE_RESOLUTION
 		self.resolutionSelection()
-
 	def ExGreen_doHide(self):
 		print "do self.STATE_HIDDEN"
 		self.__ExGreen_state = self.STATE_HIDDEN 
@@ -4275,7 +4268,6 @@ class InfoBarResolutionSelection:
 			except:
 				print"[InfoBarResolutionSelection] Error open /proc/stb/vmpeg/0/framerate !!"
 				fpsString = '50000'
-
 		xres = int(xresString, 16)
 		yres = int(yresString, 16)
 		fps = int(fpsString)
@@ -4904,7 +4896,7 @@ class InfoBarHdmi:
 		self.hdmi_enabled_full = False
 		self.hdmi_enabled_pip = False
 
-		if getMachineBuild() in ('inihdp', 'hd2400', 'dm7080', 'dm820', 'dm900', 'gb7252', 'vuultimo4k'):
+		if getMachineBuild() in ('inihdp', 'hd2400', 'dm7080', 'dm820', 'dm900', 'dm920', 'gb7252', 'vuultimo4k'):
 			if not self.hdmi_enabled_full:
 				self.addExtension((self.getHDMIInFullScreen, self.HDMIInFull, lambda: True), "blue")
 			if not self.hdmi_enabled_pip:
@@ -4954,7 +4946,7 @@ class InfoBarHdmi:
 			return _("Turn off HDMI-IN PiP mode")
 
 	def HDMIInPiP(self):
-		if getMachineBuild() in ('dm7080', 'dm820', 'dm900', 'gb7252'):
+		if getMachineBuild() in ('dm7080', 'dm820', 'dm900', 'dm920'):
 			f=open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor","r")
 			check=f.read()
 			f.close()
@@ -4992,7 +4984,7 @@ class InfoBarHdmi:
 					del self.session.pip
 
 	def HDMIInFull(self):
-		if getMachineBuild() in ('dm7080', 'dm820', 'dm900', 'gb7252'):
+		if getMachineBuild() in ('dm7080', 'dm820', 'dm900', 'dm920'):
 			f=open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor","r")
 			check=f.read()
 			f.close()
@@ -5007,7 +4999,10 @@ class InfoBarHdmi:
 				self.oldvideomode_60hz=f.read()
 				f.close()
 				f=open("/proc/stb/video/videomode","w")
-				f.write("720p")
+				if getMachineBuild() in ('dm900', 'dm920'):
+					f.write("1080p")
+				else:
+					f.write("720p")
 				f.close()
 				f=open("/proc/stb/audio/hdmi_rx_monitor","w")
 				f.write("on")
