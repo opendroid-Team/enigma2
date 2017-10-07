@@ -82,4 +82,4 @@ SystemInfo["HasoDreamy-FHDSkinSupport"] = HardwareInfo().get_device_model() not 
 SystemInfo["ForceLNBPowerChanged"] = fileCheck("/proc/stb/frontend/fbc/force_lnbon")
 SystemInfo["ForceToneBurstChanged"] = fileCheck("/proc/stb/frontend/fbc/force_toneburst")
 SystemInfo["USETunersetup"] = SystemInfo["ForceLNBPowerChanged"] or SystemInfo["ForceToneBurstChanged"]
-SystemInfo["HDMIin"] = getMachineBuild() in ('inihdp', 'hd2400', 'dm7080', 'dm820', 'dm900', 'dm920', 'gb7252', 'vuultimo4k')
+SystemInfo["HDMIin"] = getMachineBuild() in ('inihdp', 'hd2400', 'dm7080', 'dm820', 'dm900', 'dm920', 'gb7252', 'vuultimo4k', 'et13000', 'sf5008')
