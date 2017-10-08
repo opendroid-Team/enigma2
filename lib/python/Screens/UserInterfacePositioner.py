@@ -262,9 +262,10 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("save"))
 		self["key_yellow"] = StaticText(_("Defaults"))
+		self["key_blue"] = StaticText()
 		
 		self["title"] = StaticText(_("OSD Adjustment"))
-		self["text"] = StaticText(_("Please setup your user interface by adjusting the values till the edges of the red box are touching the edges of your TV.\nWhen you are ready press green to continue."))
+		self["text"] = Label(_("Please setup your user interface by adjusting the values till the edges of the red box are touching the edges of your TV.\nWhen you are ready press green to continue."))
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
@@ -534,7 +535,11 @@ class OSD3DSetupScreen(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		self.setup_title = _("OSD 3D Setup")
 		self.skinName = "Setup"
+		self["HelpWindow"] = Pixmap()
+		self["HelpWindow"].hide()
 		self["status"] = StaticText()
+		self["footnote"] = StaticText()
+		self["description"] = StaticText()
 
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
