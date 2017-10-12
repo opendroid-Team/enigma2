@@ -98,7 +98,7 @@ boxversion = getBoxType()
 machinename = getMachineName()
 machinebrand = getMachineBrand()
 OEMname = getBrandOEM()
-OPD_panel_Version = 'OPD PANEL V1.3 (By Opendroid)'
+OPD_panel_Version = 'OPD PANEL V1.4 (By OPD-Team)'
 print '[OPD_panel] machinebrand: %s' % machinebrand
 print '[OPD_panel] machinename: %s' % machinename
 print '[OPD_panel] oem name: %s' % OEMname
