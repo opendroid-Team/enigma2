@@ -37,10 +37,10 @@ def Plugins(**kwargs):
 
 def menu(menuid, **kwargs):
 	if menuid == "system" and not config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml":
-		print "opendroid"
+		
 		return [(_("Setup - %s") % cur_skin, main, "atilehd_setup", None)]
 	else:
-		print "opendroid"
+		pass
 	return [ ]
 
 def main(session, **kwargs):
