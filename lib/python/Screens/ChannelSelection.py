@@ -40,6 +40,7 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.ServiceInfo import ServiceInfo
+from Screens.ButtonSetup import InfoBarButtonSetup, ButtonSetupActionMap, getButtonSetupFunctions
 profile("ChannelSelection.py 4")
 from Screens.PictureInPicture import PictureInPicture
 from Screens.RdsDisplay import RassInteractive
@@ -48,6 +49,7 @@ from Tools.BoundFunction import boundFunction
 from Tools import Notifications
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
+from RecordTimer import TIMERTYPE
 
 from time import localtime, time
 try:
@@ -61,6 +63,7 @@ profile("ChannelSelection.py after imports")
 FLAG_SERVICE_NEW_FOUND = 64
 FLAG_IS_DEDICATED_3D = 128 
 FLAG_HIDE_VBI = 512 #define in lib/dvb/idvb.h as dxNewFound = 64 and dxIsDedicated3D = 128
+FLAG_CENTER_DVB_SUBS = 2048
 
 class BouquetSelector(Screen):
 	def __init__(self, session, bouquets, selectedFunc, enableWrapAround=True):
@@ -191,10 +194,6 @@ class ChannelContextMenu(Screen):
 						append_when_current_valid(current, menu, (_("stop using as startup service"), self.unsetStartupService), level=0)
 					else:
 						append_when_current_valid(current, menu, (_("set as startup service"), self.setStartupService), level=0)
-					if config.servicelist.startupservice_standby.value == self.csel.getCurrentSelection().toString():
-						append_when_current_valid(current, menu, (_("stop using as startup service from standby"), self.unsetStartupServiceStandby), level = 0)
-					else:
-						append_when_current_valid(current, menu, (_("set as startup service from standby"), self.setStartupServiceStandby), level = 0)
 					if self.parentalControlEnabled:
 						if self.parentalControl.getProtectionLevel(csel.getCurrentSelection().toCompareString()) == -1:
 							append_when_current_valid(current, menu, (_("add to parental protection"), boundFunction(self.addParentalProtection, csel.getCurrentSelection())), level=0)
@@ -211,6 +210,10 @@ class ChannelContextMenu(Screen):
 						append_when_current_valid(current, menu, (_("Remove hide VBI line for this service"), self.removeHideVBIFlag), level=0)
 					else:
 						append_when_current_valid(current, menu, (_("Hide VBI line for this service"), self.addHideVBIFlag), level=0)
+					if eDVBDB.getInstance().getFlag(eServiceReference(current.toString())) & FLAG_CENTER_DVB_SUBS:
+						append_when_current_valid(current, menu, (_("Do not center DVB subs on this service"), self.removeCenterDVBSubsFlag), level=0)
+					else:
+						append_when_current_valid(current, menu, (_("Do center DVB subs on this service"), self.addCenterDVBSubsFlag), level=0)
 					if haveBouquets:
 						bouquets = self.csel.getBouquetList()
 						if bouquets is None:
@@ -332,6 +335,19 @@ class ChannelContextMenu(Screen):
 		eDVBDB.getInstance().removeFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_HIDE_VBI)
 		eDVBDB.getInstance().reloadBouquets()
 		self.close()
+
+	def addCenterDVBSubsFlag(self):
+		eDVBDB.getInstance().addFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_CENTER_DVB_SUBS)
+		eDVBDB.getInstance().reloadBouquets()
+		config.subtitles.dvb_subtitles_centered.value = True
+		self.close()
+
+	def removeCenterDVBSubsFlag(self):
+		eDVBDB.getInstance().removeFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_CENTER_DVB_SUBS)
+		eDVBDB.getInstance().reloadBouquets()
+		config.subtitles.dvb_subtitles_centered.value = False
+		self.close()
+
 	def isProtected(self):
 		return self.csel.protectContextMenu and config.ParentalControl.setuppinactive.value and config.ParentalControl.config_sections.context_menus.value
 
@@ -530,7 +546,7 @@ class ChannelContextMenu(Screen):
 				if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
 					print '[LCDMiniTV] disable PIP'
 					f = open("/proc/stb/lcd/mode", "w")
-					f.write(config.lcd.minitvmode.value)
+					f.write(config.lcd.modeminitv.value)
 					f.close()
 			self.session.pip = self.session.instantiateDialog(PictureInPicture)
 			self.session.pip.setAnimationMode(0)
@@ -545,7 +561,7 @@ class ChannelContextMenu(Screen):
 					if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
 						print '[LCDMiniTV] enable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
-						f.write(config.lcd.minitvpipmode.value)
+						f.write(config.lcd.modepip.value)
 						f.close()
 						f = open("/proc/stb/vmpeg/1/dst_width", "w")
 						f.write("0")
@@ -563,7 +579,7 @@ class ChannelContextMenu(Screen):
 					if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
 						print '[LCDMiniTV] disable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
-						f.write(config.lcd.minitvmode.value)
+						f.write(config.lcd.modeminitv.value)
 						f.close()
 					self.session.openWithCallback(self.close, MessageBox, _("Could not open Picture in Picture"), MessageBox.TYPE_ERROR)
 		else:
@@ -731,10 +747,17 @@ def parseNextEvent(list):
 		return begin, end, name, description, eit
 	return False
 
-class ChannelSelectionEPG:
+class ChannelSelectionEPG(InfoBarButtonSetup):
 	def __init__(self):
 		self.ChoiceBoxDialog = None
 		self.RemoveTimerDialog = None
+		self.hotkeys = [("Info (EPG)", "info", "Infobar/openEventView"),
+			("Info (EPG)" + " " + _("long"), "info_long", "Infobar/showEventInfoPlugins"),
+			("Epg/Guide", "epg", "Infobar/EPGPressed/1"),
+			("Epg/Guide" + " " + _("long"), "epg_long", "Infobar/showEventInfoPlugins")]
+		self["ChannelSelectEPGActions"] = ButtonSetupActionMap(["ChannelSelectEPGActions"], dict((x[1], self.ButtonSetupGlobal) for x in self.hotkeys))
+		self.currentSavedPath = []
+		self.onExecBegin.append(self.clearLongkeyPressed)
 
 		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],
 			{
@@ -750,6 +773,15 @@ class ChannelSelectionEPG:
 				'cancel': self.closeChoiceBoxDialog,
 			})
 		self['dialogactions'].execEnd()
+
+	def getKeyFunctions(self, key):
+		selection = eval("config.misc.ButtonSetup." + key + ".value.split(',')")
+		selected = []
+		for x in selection:
+			function = list(function for function in getButtonSetupFunctions() if function[1] == x and function[2] == "EPG")
+			if function:
+				selected.append(function[0])
+		return selected
 
 	def RecordTimerQuestion(self):
 		serviceref = ServiceReference(self.getCurrentSelection())
@@ -809,6 +841,7 @@ class ChannelSelectionEPG:
 		self['actions'].setEnabled(False)
 		self['recordingactions'].setEnabled(False)
 		self['ChannelSelectEPGActions'].setEnabled(False)
+		self["ChannelSelectBaseActions"].setEnabled(False)
 		self['dialogactions'].execBegin()
 		self.ChoiceBoxDialog['actions'].execBegin()
 		self.ChoiceBoxDialog.show()
@@ -821,12 +854,13 @@ class ChannelSelectionEPG:
 		self['actions'].setEnabled(True)
 		self['recordingactions'].setEnabled(True)
 		self['ChannelSelectEPGActions'].setEnabled(True)
+		self["ChannelSelectBaseActions"].setEnabled(True)
 
 	def doRecordCurrentTimer(self):
-		self.doInstantTimer(0, parseCurentEvent)
+		self.doInstantTimer(TIMERTYPE.JUSTPLAY, parseCurentEvent)
 
 	def doRecordNextTimer(self):
-		self.doInstantTimer(0, parseNextEvent, True)
+		self.doInstantTimer(TIMERTYPE.JUSTPLAY, parseNextEvent, True)
 
 	def doZapTimer(self):
 		self.doInstantTimer(1, parseNextEvent)
@@ -2635,10 +2669,10 @@ class PiPZapSelection(ChannelSelection):
 					self.saveRoot()
 					self.saveChannel(ref)
 					self.setCurrentSelection(ref)
-					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.minitvpipmode.value) >= 1:
+					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 						print '[LCDMiniTV] enable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
-						f.write(config.lcd.minitvpipmode.value)
+						f.write(config.lcd.modepip.value)
 						f.close()
 						f = open("/proc/stb/vmpeg/1/dst_width", "w")
 						f.write("0")
@@ -2654,10 +2688,10 @@ class PiPZapSelection(ChannelSelection):
 					self.pipzapfailed = True
 					self.session.pipshown = False
 					del self.session.pip
-					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.minitvpipmode.value) >= 1:
+					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 							print '[LCDMiniTV] disable PIP'
 							f = open("/proc/stb/lcd/mode", "w")
-							f.write(config.lcd.minitvmode.value)
+							f.write(config.lcd.modeminitv.value)
 							f.close()
 					self.close(None)
 
@@ -2667,10 +2701,10 @@ class PiPZapSelection(ChannelSelection):
 		if self.startservice and hasattr(self.session, 'pip') and self.session.pip.getCurrentService() and self.startservice == self.session.pip.getCurrentService():
 			self.session.pipshown = False
 			del self.session.pip
-			if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.minitvpipmode.value) >= 1:
+			if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 					print '[LCDMiniTV] disable PIP'
 					f = open("/proc/stb/lcd/mode", "w")
-					f.write(config.lcd.minitvmode.value)
+					f.write(config.lcd.modeminitv.value)
 					f.close()
 		self.correctChannelNumber()
 		self.close(None)
@@ -2679,6 +2713,7 @@ class PiPZapSelection(ChannelSelection):
 class RadioInfoBar(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		Screen.setTitle(self, _("Radio Channel Selection"))
 		self['RdsDecoder'] = RdsDecoder(self.session.nav)
 
 

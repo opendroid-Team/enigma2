@@ -25,6 +25,7 @@
 #include <lib/dvb/db.h>
 #include <lib/python/python.h>
 #include <errno.h>
+#include "absdiff.h"
 
 #define SCAN_eDebug(x...) do { if (m_scan_debug) eDebug(x); } while(0)
 #define SCAN_eDebugNoNewLineStart(x...) do { if (m_scan_debug) eDebugNoNewLineStart(x); } while(0)

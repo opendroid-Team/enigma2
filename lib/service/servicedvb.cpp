@@ -17,6 +17,7 @@
 #include <lib/dvb/tstools.h>
 #include <lib/python/python.h>
 #include <lib/base/nconfig.h> // access to python config
+#include <lib/base/httpsstream.h>
 #include <lib/base/httpstream.h>
 #include "servicepeer.h"
 
@@ -2213,7 +2214,11 @@ int eDVBServicePlay::selectAudioStream(int i)
 		int different_pid = program.videoStreams.empty() && program.audioStreams.size() == 1 && program.audioStreams[stream].rdsPid != -1;
 		if (different_pid)
 			rdsPid = program.audioStreams[stream].rdsPid;
+#if HAVE_HISILICON
+		if (different_pid && (!m_rds_decoder || m_rds_decoder->getPid() != rdsPid))
+#else 
 		if (!m_rds_decoder || m_rds_decoder->getPid() != rdsPid)
+#endif
 		{
 			m_rds_decoder = 0;
 			ePtr<iDVBDemux> data_demux;
@@ -2815,6 +2820,12 @@ ePtr<iTsSource> eDVBServicePlay::createTsSource(eServiceReferenceDVB &ref, int p
 	if (ref.path.substr(0, 7) == "http://")
 	{
 		eHttpStream *f = new eHttpStream();
+		f->open(ref.path.c_str());
+		return ePtr<iTsSource>(f);
+	}
+	else if (ref.path.substr(0, 8) == "https://")
+	{
+		eHttpsStream *f = new eHttpsStream();
 		f->open(ref.path.c_str());
 		return ePtr<iTsSource>(f);
 	}

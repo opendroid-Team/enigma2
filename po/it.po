@@ -6301,6 +6301,27 @@ msgstr "HD2400"
 msgid "HDMI"
 msgstr "HDMI"
 
+msgid "Downmix"
+msgstr "Downmix"
+
+msgid "Passthrough"
+msgstr "Passare attraverso"
+
+msgid "convert to multi-channel PCM"
+msgstr "convertire in PCM multicanale"
+
+msgid "use best / controlled by HDMI"
+msgstr "utilizzare meglio / controllato da HDMI"
+
+msgid "convert to AC3"
+msgstr "convertire in AC3"
+
+msgid "force AC3plus"
+msgstr "forza AC3 plus"
+
+msgid "convert to DTS"
+msgstr "convertire in DTS"
+
 msgid "controlled by HDMI"
 msgstr "controllato da HDMI"
 
