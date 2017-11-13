@@ -8,6 +8,7 @@
 #source code of your modifications.
 
 from enigma import eTimer
+from enigma import ePicLoad, getDesktop, loadPic
 from Components.ActionMap import ActionMap
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigYesNo, NoSave, ConfigNothing, ConfigNumber
 from Components.ConfigList import ConfigListScreen
@@ -16,6 +17,7 @@ from Components.MenuList import MenuList
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.AVSwitch import AVSwitch
 from Plugins.Plugin import PluginDescriptor
 from Screens.SkinSelector import SkinSelector
 from Screens.InputBox import InputBox
@@ -28,7 +30,7 @@ from Plugins.Extensions.WeatherPlugin.plugin import MSNWeatherPlugin
 from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, makedirs
 import shutil
-
+from Tools.Directories import fileExists
 cur_skin = config.skin.primary_skin.value.replace('/skin.xml', '')
 
 
@@ -81,6 +83,9 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self.start_skin = config.skin.primary_skin.value
 		if self.start_skin != "skin.xml":
 			self.getInitConfig()
+			self.Scale = AVSwitch().getFramebufferScale()
+			self.PicLoad = ePicLoad()
+			self['Preview'] = Pixmap()
 		
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
@@ -288,6 +293,11 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		preview = self.skin_base_dir + "preview/preview_" + pic
 		if path.exists(preview):
 			self["Picture"].instance.setPixmapFromFile(preview)
+			self.PicLoad.setPara([self['Preview'].instance.size().width(),
+			self['Preview'].instance.size().height(),
+			self.Scale[0],
+			self.Scale[1], 0, 1,'#00000000'])
+			self.PicLoad.startDecode(self.GetPicturePath())
 			self["Picture"].show()
 		else:
 			self["Picture"].hide()
