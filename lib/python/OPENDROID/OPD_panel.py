@@ -1,6 +1,8 @@
 from Plugins.Plugin import PluginDescriptor
 from Screens.PluginBrowser import *
 from Screens.Ipkg import Ipkg
+from Screens.HarddiskSetup import HarddiskSetup
+from Components.ProgressBar import ProgressBar
 from Components.SelectionList import SelectionList
 from Screens.NetworkSetup import *
 from enigma import *
@@ -23,7 +25,7 @@ from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
 from Components.Pixmap import Pixmap
 from Components.config import ConfigSubsection, ConfigInteger, ConfigText, getConfigListEntry, ConfigSelection, ConfigIP, ConfigYesNo, ConfigSequence, ConfigNumber, NoSave, ConfigEnableDisable, configfile
-from Components.ConfigList import ConfigListScreen
+from Components.ConfigList import ConfigListScreen, ConfigList
 from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
 from Components.Button import Button
@@ -36,6 +38,10 @@ from enigma import eConsoleAppContainer
 from Tools.Directories import fileExists
 from Tools.Downloader import downloadWithProgress
 from boxbranding import getBoxType, getMachineName, getMachineBrand, getBrandOEM
+from enigma import getDesktop
+from Screens.InputBox import PinInput
+import string
+from random import Random
 import os
 import sys
 import re, string
@@ -123,9 +129,9 @@ def main(session, **kwargs):
 def Apanel(menuid, **kwargs):
 	if menuid == 'mainmenu':
 		return [('OPD_panel',
-                 main,
+                         main,
                  'OPD_panel',
-          11)]
+                 11)]
 	else:
 		return []
 
@@ -134,9 +140,9 @@ def Apanel(menuid, **kwargs):
 
 def Plugins(**kwargs):
 	return [PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_MENU, fnc=Apanel),
-            PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=camstart),
+                PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=camstart),
             PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=SwapAutostart),
-     PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
+            PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
 
 
 MENU_SKIN = '<screen position="center,center" size="950,470" title="OPD Panel - Main Menu" >\n\t<ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/icons/redlogo.png" position="0,380" size="950,84" alphatest="on" zPosition="1"/>\n\t<ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/icons/opendroid_info.png" position="510,11" size="550,354" alphatest="on" zPosition="1"/>\n\t\t<widget source="global.CurrentTime" render="Label" position="450, 340" size="500,24" font="Regular;20" foregroundColor="#FFFFFF" halign="right" transparent="1" zPosition="5">\n\t\t<convert type="ClockToText">>Format%H:%M:%S</convert>\n\t</widget>\n\t<eLabel backgroundColor="#56C856" position="0,330" size="950,1" zPosition="0" />\n <widget name="Mlist" position="70,110" size="705,260" itemHeight="50" scrollbarMode="showOnDemand" transparent="1" zPosition="0" />\n\t<widget name="label1" position="10,340" size="490,25" font="Regular;20" transparent="1" foregroundColor="#f2e000" halign="left" />\n</screen>'
@@ -145,20 +151,30 @@ INFO_SKIN = '<screen name="OPD_panel"  position="center,center" size="730,400" t
 INFO_SKIN2 = '<screen name="OPD_panel"  position="center,center" size="530,400" title="OPD_panel" backgroundColor="#251e1f20">\n\t<widget name="label1" position="10,50" size="510,340" font="Regular;15" zPosition="1" backgroundColor="#251e1f20" transparent="1" />\n</screen>'
 
 class PanelList(MenuList):
-
-	def __init__(self, list, font0 = 32, font1 = 24, itemHeight = 50, enableWrapAround = True):
-		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		self.l.setFont(0, gFont('Regular', font0))
-		self.l.setFont(1, gFont('Regular', font1))
-		self.l.setItemHeight(itemHeight)
-
+	if (getDesktop(0).size().width() == 1920):
+		def __init__(self, list, font0 = 38, font1 = 28, itemHeight = 60, enableWrapAround = True):
+			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
+			self.l.setFont(0, gFont("Regular", font0))
+			self.l.setFont(1, gFont("Regular", font1))
+			self.l.setItemHeight(itemHeight)
+	else:
+		def __init__(self, list, font0 = 24, font1 = 16, itemHeight = 50, enableWrapAround = True):	        
+			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
+			self.l.setFont(0, gFont("Regular", font0))
+			self.l.setFont(1, gFont("Regular", font1))
+			self.l.setItemHeight(itemHeight)
 
 def MenuEntryItem(entry):
-	res = [entry]
-	res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 5), size=(70, 70), png=entry[0]))
-	res.append(MultiContentEntryText(pos=(90, 10), size=(440, 45), font=0, text=entry[1]))
-	return res
-
+	if (getDesktop(0).size().width() == 1920):
+		res = [entry]
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 10), size=(100, 50), png=entry[0]))  
+		res.append(MultiContentEntryText(pos=(110, 5), size=(690, 50), font=0, text=entry[1]))  
+		return res
+	else:
+		res = [entry]
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 5), size=(100, 40), png=entry[0]))  
+		res.append(MultiContentEntryText(pos=(110, 10), size=(440, 40), font=0, text=entry[1]))  
+		return res
 
 from Screens.PiPSetup import PiPSetup
 from Screens.InfoBarGenerics import InfoBarPiP
@@ -181,6 +197,7 @@ class OPD_panel(Screen, InfoBarPiP):
 	def __init__(self, session, services = None):
 		global menu
 		global inOPD_panel
+		self['spaceused'] = ProgressBar()			
 		global pluginlist
 		global INFOCONF
 		Screen.__init__(self, session)
@@ -202,9 +219,9 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.servicelist = None
 		self.list = []
 		self['actions'] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions'], {'cancel': self.Exit,
-                                                                                              'upUp': self.up,
+                                                                                                      'upUp': self.up,
                                                                                               'downUp': self.down,
-         'ok': self.ok}, 1)
+                                                                                              'ok': self.ok}, 1)
 		self['label1'] = Label(OPD_panel_Version)
 		self.Mlist = []
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
@@ -214,15 +231,20 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infos'), _('Infos'), 'Infos')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infobar_Setup'), _('Infobar_Setup'), 'Infobar_Setup')))
 		self.onChangedEntry = []
-		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Decoding_Setup'), _('Decoding_Setup'), 'Decoding_Setup')))
-		if getDesktop(0).size().width() == 1280:
-			self['Mlist'] = PanelList([])
-		else:
-			self['Mlist'] = PanelList([], font0=32, font1=24, itemHeight=50)
-		self['Mlist'].l.setList(self.Mlist)
+		self["Mlist"] = PanelList([])
+		self["Mlist"].l.setList(self.Mlist)
 		menu = 0
 		self['Mlist'].onSelectionChanged.append(self.selectionChanged)
 		return
+	def setWindowTitle(self):
+		diskSpace = getVarSpaceKb()
+		percFree = int(diskSpace[0] / diskSpace[1] * 100)
+		percUsed = int((diskSpace[1] - diskSpace[0]) / diskSpace[1] * 100)
+		self.setTitle('%s - %s: %s (%d%%)' % (_('OPD Panel'),
+                                                      _('Free'),
+                 self.ConvertSize(int(diskSpace[0])),
+                 percFree))
+		self['spaceused'].setValue(percUsed)
 
 	def getCurrentEntry(self):
 		if self['Mlist'].l.getCurrentSelection():
@@ -386,6 +408,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('SwapManager'), _('SwapManager'), 'SwapManager')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('OscamSmartcard'), _('OscamSmartcard'), 'OscamSmartcard')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Samba'), _('Samba'), 'Samba')))
+
 		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/plugin.pyo') is True:
 			self.tlist.append(MenuEntryItem((InfoEntryComponent('MultiQuickButton'), _('MultiQuickButton'), 'MultiQuickButton')))
 		self['Mlist'].moveToIndex(0)
@@ -499,9 +522,9 @@ class RedPanel(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 		self.createSetup()
 		self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.keySave,
-                                                                       'cancel': self.keyCancel,
+                                                                               'cancel': self.keyCancel,
                                                                        'red': self.keyCancel,
-         'green': self.keySave,
+                                                                       'green': self.keySave,
          'menu': self.keyCancel}, -2)
 		self['key_red'] = StaticText(_('Cancel'))
 		self['key_green'] = StaticText(_('OK'))
@@ -586,9 +609,9 @@ class YellowPanel(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 		self.createSetup()
 		self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.keySave,
-                                                                       'cancel': self.keyCancel,
+                                                                               'cancel': self.keyCancel,
                                                                        'red': self.keyCancel,
-         'green': self.keySave,
+                                                                       'green': self.keySave,
          'menu': self.keyCancel}, -2)
 		self['key_red'] = StaticText(_('Cancel'))
 		self['key_green'] = StaticText(_('OK'))
@@ -691,9 +714,9 @@ class Info(Screen):
 		elif info == 'Swap':
 			self.Swap()
 		self['actions'] = ActionMap(['OkCancelActions', 'DirectionActions'], {'cancel': self.Exit,
-                                                                              'ok': self.ok,
+                                                                                      'ok': self.ok,
                                                                               'up': self.Up,
-         'down': self.Down}, -1)
+                                                                              'down': self.Down}, -1)
 		return
 
 	def Exit(self):
@@ -1006,4 +1029,6 @@ class FileDownloadTask(Task):
 		if self.aborted:
 			self.finish(aborted=True)
 		else:
-			Task.processFinished(self, 0)        
+			Task.processFinished(self, 0)
+
+
