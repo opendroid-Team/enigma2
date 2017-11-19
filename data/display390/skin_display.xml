@@ -2,6 +2,7 @@
 <skin>
 	<windowstyle id="1" type="skinned">
 		<color color="#000000" name="Background"/>
+		<color color="#BDBDBD" name="Background"/>
 		<color color="#ffffff" name="LabelForeground"/>
 		<color color="#FFDD00" name="LabelForeground"/>
 		<color color="#000000" name="ListboxBackground"/>
