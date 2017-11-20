@@ -167,7 +167,7 @@ class PanelList(MenuList):
 def MenuEntryItem(entry):
 	if (getDesktop(0).size().width() == 1920):
 		res = [entry]
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 10), size=(100, 50), png=entry[0]))  
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 10), size=(60, 60), png=entry[0]))  
 		res.append(MultiContentEntryText(pos=(110, 5), size=(690, 50), font=0, text=entry[1]))  
 		return res
 	else:
