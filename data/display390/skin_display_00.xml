@@ -278,7 +278,7 @@
 		<panel name="SummaryClockPanel" />
 	</screen>
 	<screen name="SoftwareUpdateChanges_summary" position="0,0" size="390,240">
-		<widget source="parent.title_summary" render="Label" position="0,0" size="390,15" font="FdLcD;15" halign="left" noWrap="1" />
+		<widget source="parent.title_summary" render="Label" position="0,0" size="160,15" font="FdLcD;15" halign="left" noWrap="1" />
 		<widget source="parent.text_summary" render="Label" position="0,16" size="390,54" font="FdLcD;12" halign="left" transparent="1" />
 		<panel name="SummaryIconsPanel" />
 	</screen>
