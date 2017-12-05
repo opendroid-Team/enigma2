@@ -30,8 +30,7 @@
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="400,240">
 		<ePixmap pixmap="/usr/share/enigma2/display/analog_lcd.png" position="0,0" size="400,240" zPosition="0" />
-		<ePixmap pixmap="/usr/share/enigma2/display/analog_lcd.png" position="center,center" size="400,240" zPosition="0" />
-   <widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" hColor="white" linewidth="8" zPosition="4" alphatest="on">
+	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" hColor="white" linewidth="8" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
 	</widget>
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" mColor="white" linewidth="8" zPosition="3" alphatest="on">
@@ -131,7 +130,6 @@
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="400,240" flags="wfNoBorder">
 		<ePixmap pixmap="/usr/share/enigma2/display/analog_lcd.png" position="0,0" size="400,240" zPosition="0" />
-		<ePixmap pixmap="/usr/share/enigma2/display/analog_lcd.png" position="center,center" size="400,240" zPosition="0" />
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" hColor="white" linewidth="8" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
 	</widget>
@@ -222,6 +220,7 @@
 		<panel name="SummaryIconsPanel" />
 		<panel name="SummaryTunerStatusPanel" />
 	</screen>
+
 	<screen name="WizardSummary" position="0,0" size="400,240">
 		<widget source="text" render="Label" position="0,0" size="400,55" font="FdLcD;24" halign="center" />
 		<widget source="parent.list" render="Label" position="0,85" size="400,124" font="FdLcD;24" halign="center" >
@@ -239,6 +238,7 @@
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
+
 <!-- DVD -->
 	<screen name="DVDSummary" position="fill">
 		<widget source="session.CurrentService" render="Label" position="top" size="*,28" font="FdLcD;12"  >
