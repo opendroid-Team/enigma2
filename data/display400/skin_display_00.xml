@@ -29,6 +29,8 @@
 
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="400,240">
+
+		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="0,0" size="400,240" zPosition="0" />
 		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="center,center" size="400,240" zPosition="0" />
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" hColor="black" linewidth="8" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
@@ -129,7 +131,11 @@
 
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="400,240" flags="wfNoBorder">
+
+		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="0,0" size="400,240" zPosition="0" />
+
 		<ePixmap pixmap="/usr/share/enigma2/display/analog_white_lcd.png" position="center,center" size="400,240" zPosition="0" />
+
 	<widget source="global.CurrentTime" render="OMaClockLcd" position="0,0" size="400,240" hColor="black" linewidth="8" zPosition="4" alphatest="on">
 		<convert type="OMaclock">Hours</convert>
 	</widget>

@@ -40,6 +40,9 @@ class HardwareInfo:
 				elif "MIPS 4KEc V4.8" in rd:
 					HardwareInfo.device_name = "dm7025"
 					print "dm7025 detected!"
+				elif "bcm7439" in rd:
+					HardwareInfo.device_name = "dm900"
+					print "dm900 detected!"
 			except:
 				pass
 
@@ -65,6 +68,6 @@ class HardwareInfo:
 		return getBoxType() != 'dm800'
 
 	def is_nextgen(self):
-		if about.getCPUString() in ('BCM7346B2', 'BCM7425B2', 'BCM7429B0'):
+		if about.getCPUString() in ('BCM7346B2', 'BCM7425B2', 'BCM7429B0', 'BCM7439'):
 			return True
 		return False
