@@ -14,4 +14,8 @@ if VUULTIMO4K
 SUBDIRS += MiniTV
 endif
 
+if GB7252
+SUBDIRS += QuadPip
+endif
+
 install_PYTHON = __init__.py

@@ -14,7 +14,7 @@ from boxbranding import getMachineBuild
 class MultiBootStartup(ConfigListScreen, Screen):
 
 	skin = """
-	<screen name="MultiBootStartup" position="center,center" size="600,250"  flags="wfNoBorder" title="MultiBoot STARTUP Selector" backgroundColor="transparent">
+	<screen name="MultiBootStartupOPT" position="center,center" size="600,250"  flags="wfNoBorder" title="MultiBoot STARTUP Selector" backgroundColor="transparent">
 		<eLabel name="b" position="0,0" size="600,250" backgroundColor="#00ffffff" zPosition="-2" />
 		<eLabel name="a" position="1,1" size="598,248" backgroundColor="#00000000" zPosition="-1" />
 		<widget source="Title" render="Label" position="10,10" foregroundColor="#00ffffff" size="580,50" halign="center" font="Regular; 35" backgroundColor="#00000000" />
@@ -35,7 +35,7 @@ class MultiBootStartup(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.title = _("MultiBoot Selector")
-		self.skinName = ["MultiBootStartup"]
+		self.skinName = ["MultiBootStartupOPT"]
 
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Save"))
