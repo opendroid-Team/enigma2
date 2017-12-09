@@ -73,7 +73,7 @@ class AVSwitch:
 	if hw_type in ('elite', 'premium', 'premium+', 'ultra', "me", "minime") : config.av.edid_override = True
 	
 	if (about.getChipSetString() in ('7366', '7376', '5272s', '7444', '7445', '7445s')):
-		modes["HDMI"] = ["720p", "1080p", "2160p", "2160p30", "1080i", "576p", "576i", "480p", "480i"]
+		modes["HDMI"] = ["720p", "1080p", "2160p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i", "2160p"}
 	elif (about.getChipSetString() in ('7252', '7251', '7251S', '7252S', '7251s', '7252s', '72604', '7444s', '3798mv200', '3798cv200')):
 		modes["HDMI"] = ["720p", "1080p", "2160p", "2160p30", "1080i", "576p", "576i", "480p", "480i"]
@@ -875,6 +875,7 @@ def InitAVSwitch():
 	config.av.volume_stepsize = ConfigSelectionNumber(1, 10, 1, default = 5)
 	config.av.volume_stepsize_fastmode = ConfigSelectionNumber(1, 10, 1, default = 5)
 	config.av.volume_stepsize.addNotifier(setVolumeStepsize)
+
 	try:
 		f = open("/proc/stb/audio/ac3_choices", "r")
 		file = f.read()[:-1]
