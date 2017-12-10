@@ -8,3 +8,4 @@ if test "$DVBINCLUDES"; then
 fi
 
 AC_CHECK_HEADERS_ONCE(linux/dvb/version.h)
+])
