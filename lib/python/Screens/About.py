@@ -3,7 +3,7 @@ from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
 from Components.Sources.StaticText import StaticText
-from Components.Harddisk import Harddisk
+from Components.Harddisk import Harddisk, harddiskmanager
 from Components.NimManager import nimmanager
 from Components.About import about
 from Components.ScrollLabel import ScrollLabel
@@ -29,7 +29,7 @@ class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Image Information"))
-		self.skinName = "AboutOE"
+		self.skinName = ["AboutOE","About"]
 		self.populate()
 
 		self["key_green"] = Button(_("Translations"))
@@ -146,8 +146,19 @@ class About(Screen):
 			image = f.read(1) 
 			f.close()
 			if bootname: bootname = "   (%s)" %bootname 
-			AboutText += _("Image started:\t%s") % "STARTUP_" + image + bootname + "\n"
-		
+			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
+		elif path.exists('/boot/cmdline.txt'):
+			f = open('/boot/cmdline.txt', 'r')
+			f.seek(38)
+			image = f.read(1) 
+			f.close()
+			if bootname: bootname = "   (%s)" %bootname 
+			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
+
+		AboutText += _("Version:\t%s") % getImageVersion() + "\n"
+		AboutText += _("Build:\t%s") % getImageBuild() + "\n"
+		AboutText += _("Kernel:\t%s") % about.getKernelVersionString() + "\n"
+	
 		string = getDriverDate()
 		year = string[0:4]
 		month = string[4:6]
@@ -301,7 +312,7 @@ class Devices(Screen):
 					freeline = _("Free: ") + _("full")
 				self.list.append(mount + '\t' + sizeline + ' \t' + freeline)
 			else:
-				self.list.append(mount + '\t' + _('Not mounted'))	
+				self.list.append(mount + '\t' + _('Not mounted'))
 
 			list2.append(device)
 		self.list = '\n'.join(self.list)
@@ -316,9 +327,18 @@ class Devices(Screen):
 			self.parts = line.split()
 			if line and self.parts[0] and (self.parts[0].startswith('192') or self.parts[0].startswith('//192')):
 				line = line.split()
-				ipaddress = line[0]
-				mounttotal = line[1]
-				mountfree = line[3]
+				try:
+					ipaddress = line[0]
+				except:
+					ipaddress = ""
+				try:
+					mounttotal = line[1]
+				except:
+					mounttotal = ""
+				try:
+					mountfree = line[3]
+				except:
+					mountfree = ""
 				if self.mountinfo:
 					self.mountinfo += "\n"
 				self.mountinfo += "%s (%sB, %sB %s)" % (ipaddress, mounttotal, mountfree, _("free"))
