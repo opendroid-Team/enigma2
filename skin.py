@@ -1076,6 +1076,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			r.setBottom(int(v))
 		getDesktop(style_id).setMargins(r)
 
+display_skin_id = 1
 dom_screens = {}
 def loadSkin(name, scope = SCOPE_SKIN):
 	global display_skin_id
@@ -1102,7 +1103,7 @@ def loadSkin(name, scope = SCOPE_SKIN):
 		file.close()
 
 def loadSkinData(desktop):
-	global dom_skins
+	global dom_skins, dom_screens, display_skin_id
 	skins = dom_skins[:]
 	skins.reverse()
 	for (path, dom_skin) in skins:
@@ -1123,6 +1124,17 @@ def loadSkinData(desktop):
 			else:
 				elem.clear()
 	del dom_skins
+
+def lookupScreen(name, style_id):
+	if dom_screens.has_key(name):
+		elem, path = dom_screens[name]
+		screen_style_id = elem.attrib.get('id', '-1')
+		if screen_style_id == '-1' and name.find('ummary') > 0:
+			screen_style_id = '1'
+		if (style_id != 2 and int(screen_style_id) == -1) or int(screen_style_id) == style_id:
+			return elem, path
+
+	return None, None
 
 class additionalWidget:
 	def __init__(self):
@@ -1222,45 +1234,43 @@ class SkinContextStack(SkinContext):
 def readSkin(screen, skin, names, desktop):
 	if not isinstance(names, list):
 		names = [names]
-	global dom_screens
+
+	name = "<embedded-in-'%s'>" % screen.__class__.__name__
+
+	style_id = desktop.getStyleID();
+
 	for n in names:
-		myscreen, path = dom_screens.get(n, (None,None))
+		myscreen, path = lookupScreen(n, style_id)
 		if myscreen is not None:
 			name = n
 			break
-	else:
-		name = "<embedded-in-'%s'>" % screen.__class__.__name__
 
 	if myscreen is None:
 		myscreen = getattr(screen, "parsedSkin", None)
 	if myscreen is None and getattr(screen, "skin", None):
-		skin = screen.skin
-		print "[SKIN] Parsing embedded skin", name
-		if isinstance(skin, tuple):
-			for s in skin:
-				candidate = xml.etree.cElementTree.fromstring(s)
-				if candidate.tag == 'screen':
-					sid = candidate.attrib.get('id', None)
-					if (not sid) or (int(sid) == display_skin_id):
-						myscreen = candidate
-						break
-			else:
-				print "[SKIN] Hey, no suitable screen!"
-		else:
-			myscreen = xml.etree.cElementTree.fromstring(skin)
-		if myscreen:
-			screen.parsedSkin = myscreen
+		print "Looking for embedded skin"
+		skin_tuple = screen.skin
+		if not isinstance(skin_tuple, tuple):
+			skin_tuple = (skin_tuple,)
+		for sskin in skin_tuple:
+			parsedSkin = xml.etree.cElementTree.fromstring(sskin)
+			screen_style_id = parsedSkin.attrib.get('id', '-1')
+			if (style_id != 2 and int(screen_style_id) == -1) or int(screen_style_id) == style_id:
+				myscreen = screen.parsedSkin = parsedSkin
+				break
 	if myscreen is None:
-		print "[SKIN] No skin to read..."
-		myscreen = screen.parsedSkin = xml.etree.cElementTree.fromstring("<screen></screen>")
+		print "No skin to read..."
+		emptySkin = "<screen></screen>"
+		myscreen = screen.parsedSkin = xml.etree.cElementTree.fromstring(emptySkin)
 
 	screen.skinAttributes = [ ]
+
 	skin_path_prefix = getattr(screen, "skin_path", path)
 
-	context = SkinContextStack()
-	s = desktop.bounds()
-	context.x = s.left()
-	context.y = s.top()
+	context = SkinContext()
+	s = desktop.size()
+	context.x = 0
+	context.y = 0
 	context.w = s.width()
 	context.h = s.height()
 	del s
