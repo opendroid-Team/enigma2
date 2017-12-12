@@ -62,6 +62,9 @@ def InitUsageConfig():
 	config.usage.numzaptimeout1 = ConfigSlider(default = 3000, increment = 250, limits = (750, 5000))
 	config.usage.numzaptimeout2 = ConfigSlider(default = 1000, increment = 250, limits = (750, 5000))
 	config.usage.numzappicon = ConfigYesNo(default = False)
+	config.usage.use_pig = ConfigYesNo(default = False)
+	config.usage.update_available = NoSave(ConfigYesNo(default = False))
+	config.misc.ecm_info = ConfigYesNo(default = False)
 	config.usage.menu_show_numbers = ConfigYesNo(default = False)
 
 	config.usage.alternative_number_mode = ConfigYesNo(default = False)
