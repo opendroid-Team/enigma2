@@ -53,9 +53,6 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		if config.usage.show_infobar_lite.value and (config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml" or config.skin.primary_skin.value.startswith('oDreamy-FHD/skin.xml/')):
-			self.skinName = "OPD-Blue-Line/skin.xml"
-
 		self["actions"] = HelpableActionMap(self, "InfobarActions",
 			{
 				"showMovies": (self.showMovies, _("Play recorded movies...")),
