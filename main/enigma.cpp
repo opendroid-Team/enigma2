@@ -275,8 +275,6 @@ int main(int argc, char **argv)
 	printf("PYTHONPATH: %s\n", getenv("PYTHONPATH"));
 	printf("DVB_API_VERSION %d DVB_API_VERSION_MINOR %d\n", DVB_API_VERSION, DVB_API_VERSION_MINOR);
 
-	bsodLogInit();
-
 	ePython python;
 	eMain main;
 
@@ -360,9 +358,9 @@ int main(int argc, char **argv)
 			i++;
 		}
 		if (i)
-			my_dc->setSpinner(eRect(ePoint(50, 50), wait[0]->size()), wait, i);
+			my_dc->setSpinner(eRect(ePoint(75, 75), wait[0]->size()), wait, i);
 		else
-			my_dc->setSpinner(eRect(50, 50, 0, 0), wait, 1);
+			my_dc->setSpinner(eRect(75, 75, 0, 0), wait, 1);
 	}
 
 	gRC::getInstance()->setSpinnerDC(my_dc);
