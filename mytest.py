@@ -622,7 +622,8 @@ def runScreenTest():
 		configfile.save()
 
 	# kill showiframe if it is running (sh4 hack...)
-	os.system("killall -9 showiframe")
+	if getMachineBuild() in ('spark' , 'spark7162'):
+		os.system("killall -9 showiframe")
 
 	runReactor()
 
