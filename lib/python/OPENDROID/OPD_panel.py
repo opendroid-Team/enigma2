@@ -197,7 +197,6 @@ class OPD_panel(Screen, InfoBarPiP):
 	def __init__(self, session, services = None):
 		global menu
 		global inOPD_panel
-		self['spaceused'] = ProgressBar()			
 		global pluginlist
 		global INFOCONF
 		Screen.__init__(self, session)
@@ -235,16 +234,6 @@ class OPD_panel(Screen, InfoBarPiP):
 		self["Mlist"].l.setList(self.Mlist)
 		menu = 0
 		self['Mlist'].onSelectionChanged.append(self.selectionChanged)
-		return
-	def setWindowTitle(self):
-		diskSpace = getVarSpaceKb()
-		percFree = int(diskSpace[0] / diskSpace[1] * 100)
-		percUsed = int((diskSpace[1] - diskSpace[0]) / diskSpace[1] * 100)
-		self.setTitle('%s - %s: %s (%d%%)' % (_('OPD Panel'),
-                                                      _('Free'),
-                 self.ConvertSize(int(diskSpace[0])),
-                 percFree))
-		self['spaceused'].setValue(percUsed)
 
 	def getCurrentEntry(self):
 		if self['Mlist'].l.getCurrentSelection():
