@@ -378,14 +378,22 @@ def InitUsageConfig():
 	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceitems_per_page = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 8, max = 40, wraparound = True)
 	config.usage.show_servicelist = ConfigYesNo(default = True)
-        config.usage.servicelist_mode = ConfigSelection(default='standard', choices=[('standard', _('Standard')), ('simple', _('Simple'))])
-        config.usage.servicelistpreview_mode = ConfigYesNo(default=False)
-        config.usage.tvradiobutton_mode = ConfigSelection(default='BouquetList', choices=[('ChannelList', _('Channel List')), ('BouquetList', _('Bouquet List')), ('MovieList', _('Movie List'))])
-        config.usage.channelbutton_mode = ConfigSelection(default='0', choices=[('0', _('Just change channels')), ('1', _('Channel List')), ('2', _('Bouquet List'))])
-        config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
-                   ("standard", _("Standard")),
-                   ("simple", _("Simple")) ] )
-        config.usage.arrowupdownbutton_mode = ConfigSelection(default='1', choices=[('0', _('Open Service List for PiP')), ('1', _('Open Bouqet List'))])
+	config.usage.servicelist_mode = ConfigSelection(default = "standard", choices = [
+		("standard", _("Standard")),
+		("simple", _("Simple")) ] )
+	config.usage.servicelistpreview_mode = ConfigYesNo(default = False)
+	config.usage.tvradiobutton_mode = ConfigSelection(default="BouquetList", choices = [
+					("ChannelList", _("Channel List")),
+					("BouquetList", _("Bouquet List")),
+					("MovieList", _("Movie List"))])
+	config.usage.channelbutton_mode = ConfigSelection(default="0", choices = [
+					("0", _("Just change channels")),
+					("1", _("Channel List")),
+					("2", _("Bouquet List")),
+					("3", _("Just change Bouquet"))])
+	config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
+					("0", _("Just change channels")),
+					("1", _("Channel List"))])
         config.usage.scroll_label_delay = ConfigSelection(default='3000', choices=[('1000', '1 ' + _('seconds')),
          ('2000', '2 ' + _('seconds')),
          ('3000', '3 ' + _('seconds')),
@@ -660,6 +668,8 @@ def InitUsageConfig():
 		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 	config.usage.keymap = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"))
+	config.usage.keytrans = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keytranslation.xml"))
+	config.usage.keymap_usermod = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap_usermod.xml"))
 
 	config.network = ConfigSubsection()
 	if SystemInfo["WakeOnLAN"]:
