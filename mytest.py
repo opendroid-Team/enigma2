@@ -602,6 +602,7 @@ def runScreenTest():
 
 	profile("RunReactor")
 	profile_final()
+	runReactor()
 
 	if boxtype in ('sf8', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo'):
 		f = open("/dev/dbox/oled0", "w")
@@ -620,8 +621,6 @@ def runScreenTest():
 	config.usage.shutdownOK.save()
 	if not RestoreSettings:
 		configfile.save()
-
-	runReactor()
 
 	print "[mytest.py] normal shutdown"
 	config.misc.startCounter.save()
