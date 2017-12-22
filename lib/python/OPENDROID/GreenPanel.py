@@ -30,6 +30,7 @@ class GreenPanel(Screen):
 		</screen>"""
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		Screen.setTitle(self, _("Green Panel"))
 		self.list = []
 		self['list'] = List(self.list)
 		self.updateList()
