@@ -97,6 +97,7 @@
 		<panel name="SummaryClockPanel" />
 		<panel name="IconPanel" />
 		<panel name="RecordingPanel" />
+		<panel name="TunerInfoPanel" />
 	</screen>
 <!-- channelselection-->
 	<screen name="ChannelSelection_summary" position="0,0" size="400,240">
@@ -113,9 +114,8 @@
 	</screen>
 <!-- menus-->
 	<screen name="MenuSummary" position="fill">
-		<widget source="parent.title" render="Label" position="top" size="*,118" font="FdLcD;40" foregroundColor="#FFDD00" halign="center" valign="center" transparent="1" />
-		<ePixmap position="top" pixmap="~/bar.png" transparent="0" size="400,3" zPosition="4" />
-		<widget source="parent.menu" render="Label" position="top" size="*,118" font="FdLcD;40" halign="center" valign="center">
+		<widget source="parent.title" render="Label" position="0,0" size="400,84" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.menu" render="Label" position="0,92" size="400,83" font="FdLcD;40" halign="center" valign="center" foregroundColor="#C0FFC0">
 			<convert type="StringListSelection" />
 		</widget>
 		<panel name="RecordingPanel" />
@@ -186,9 +186,9 @@
 	</screen>
 <!-- setup-->
 	<screen name="SetupSummary" position="fill">
-		<widget source="SetupTitle" render="Label" position="top" size="*,61" font="FdLcD;50" halign="left" />
-		<widget source="SetupEntry" render="Label" position="top" size="*,51" font="FdLcD;25" halign="left" />
-		<widget source="SetupValue" render="Label" position="top" size="*,51" font="FdLcD;25" halign="left" />
+		<widget source="SetupTitle" render="Label" position="0,0" size="400,57" font="FdLcD;50" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="SetupEntry" render="Label" position="0,65" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#C0FFC0" />
+		<widget source="SetupValue" render="Label" position="0,123" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#FFFFC0" />
 	</screen>
 <!-- misc-->
 	<screen name="SimpleSummary" position="fill">
@@ -209,12 +209,15 @@
 	</screen>
 
 <!-- Plugin browser -->
-	<screen name="PluginBrowserSummary" position="fill">
-		<widget source="parent.Title" render="Label" position="top" size="*,26" font="FdLcD;25" noWrap="1" />
-		<widget source="entry" render="Label" position="top" size="*,61" font="FdLcD;50" halign="left" />
-		<widget source="desc" render="Label" position="fill" font="FdLcD;22" valign="top" />
-	</screen>
-
+	<screen name="PluginBrowserSummary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
+<!-- Green Panel -->
+    	<screen name="GreenPanelSummary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
 <!-- JobView Summary -->
 	<screen name="JobView_summary" position="0,0" size="400,240">
 		<widget source="parent.summary_job_name" render="Label" position="0,38" size="400,26" font="FdLcD;24" halign="left" noWrap="1" />
@@ -283,7 +286,11 @@
 		<widget source="state" render="Label" position="0,110" size="400,20" font="FdLcD;19" halign="right" transparent="1" />
 		<panel name="IconPanel" />
 	</screen>
-
+	<screen name="AutoTimerOverviewSummary" position="0,0" size="400,240">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,26" font="FdLcD;24" halign="center" noWrap="1" />
+		<widget source="entry" render="Label" position="0,40" size="400,125" font="FdLcD;28" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+	</screen>
 	<screen name="WizardSummary" position="0,0" size="400,240">
 		<widget source="text" render="Label" position="0,0" size="400,55" font="FdLcD;24" halign="center" />
 		<widget source="parent.list" render="Label" position="0,85" size="400,124" font="FdLcD;24" halign="center" >
@@ -352,6 +359,10 @@
 	<widget source="Zeile2" render="Label" position="0,110" size="400,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
 	<widget source="Zeile3" render="Label" position="0,180" size="400,60" font="FdLcD;28" foregroundColor="#FFFF00" halign="center" />
 	</screen>
+	<screen name="installedPlugins_summary" position="fill">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,57" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.summary_description" render="Label" position="0,65" size="400,110" font="FdLcD;30" halign="center" valign="center" />
+	</screen>
 	
 	<!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="400,240" flags="wfNoBorder">
@@ -370,4 +381,9 @@
 	</widget>
 	</screen>    
 	
+		<screen name="GreenPanel_summary" position="fill">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,57" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.summary_description" render="Label" position="0,65" size="400,110" font="FdLcD;30" halign="center" valign="center" />
+	</screen>
+	<include filename="/usr/share/enigma2/display/skin_display.xml" />
 </skin>

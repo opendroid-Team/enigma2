@@ -17,8 +17,9 @@
 	<fonts>
 		<!-- pick a funky name for the font, so we don't conflict  -->
 		<font filename="nmsbd.ttf" name="FdLcD" scale="100"/>
+		<font filename="verdana.ttf" name="FdLcDLight" scale="90"/>
 	</fonts>
-
+        <include filename="/usr/share/enigma2/display/skin_display.xml" />
 <!-- template -->
 	<screen name="SummaryClockPanel">
 		<widget source="global.CurrentTime" render="Label" position="250,185" size="150,55" font="FdLcD;55" halign="right" valign="bottom" noWrap="1">
@@ -67,5 +68,4 @@
 		</widget>
 		<panel name="SummaryClockPanel" />
 	</screen>
-	<include filename="/usr/share/enigma2/display/skin_display.xml" />
 </skin>

@@ -214,9 +214,8 @@
 <!-- menus-->
 	<screen name="MenuSummary" position="fill">
 		<panel name="MeinRecordingPanel" />
-		<widget source="parent.title" render="Label" position="top" size="*,118" font="MyLcD;41" foregroundColor="Menue-Titel" halign="center" valign="center" transparent="1" />
-		<ePixmap position="top" pixmap="~/bar.png" transparent="0" size="400,3" zPosition="4" />
-		<widget source="parent.menu" render="Label" position="top" size="*,118" font="MyLcD;41"  foregroundColor="Menue-Auswahl" backgroundColor="Menue-Auswahl-Hintergrund" halign="center" valign="center">
+		<widget source="parent.title" render="Label" position="0,0" size="400,84" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.menu" render="Label" position="0,92" size="400,83" font="FdLcD;40" halign="center" valign="center" foregroundColor="#C0FFC0">
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
@@ -229,12 +228,9 @@
 	</screen>
 <!-- setup-->
 	<screen name="SetupSummary" position="fill">
-<!-- 		<widget source="SetupTitle" render="Label" position="top" size="*,85" font="FdLcD;38" foregroundColor="#87CEFA" halign="left"  valign="center" />
-		<eLabel position="top" size="*,1" backgroundColor="white" /> -->
-		<panel name="MeinRecordingPanel" />
-		<widget source="SetupEntry" render="Label" position="top" size="*,115" font="MyLcD;34" halign="center" valign="center" transparent="1" />
-		<ePixmap position="top" pixmap="~/bar.png" transparent="0" size="400,2" zPosition="4" />
-		<widget source="SetupValue" render="Label" position="top" size="*,125" font="MyLcD;40" foregroundColor="#F4FA58" halign="center" valign="center" />
+		<widget source="SetupTitle" render="Label" position="0,0" size="400,57" font="FdLcD;50" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="SetupEntry" render="Label" position="0,65" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#C0FFC0" />
+		<widget source="SetupValue" render="Label" position="0,123" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#FFFFC0" />
 	</screen>	
 <!-- Servicescan -->
 	<screen name="ServiceScanSummary" position="0,0" size="400,240">
@@ -288,7 +284,12 @@
 	</screen>
 <!-- Plugin browser -->
 	<screen name="PluginBrowserSummary" position="0,0" size="400,240">
-		<widget source="entry" render="Label" position="0,0" size="400,178" font="MyLcD;41" foregroundColor="Menue-Titel" halign="center" valign="center" />
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
+<!-- Green Panel -->
+    	<screen name="GreenPanel_Summary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
 		<panel name="SummaryClockPanel" />
 	</screen>
 <!-- JobView Summary -->
