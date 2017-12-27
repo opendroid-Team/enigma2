@@ -65,7 +65,8 @@ class AddonsUtility(Screen):
 		self.list=[]
 		self.entrylist = []  #List reset
 		self.entrylist.append((_("Plugin"), "Plg", "/usr/lib/enigma2/python/OPENDROID/icons/Plugin.png"))
-		self.entrylist.append((_("Picons"), "Pcs", "/usr/lib/enigma2/python/OPENDROID/icons/Picons.png"))
+		self.entrylist.append((_("Picons-USB"), "Pcs", "/usr/lib/enigma2/python/OPENDROID/icons/Picons.png"))
+                self.entrylist.append((_("Picons-HDD"), "Pcs", "/usr/lib/enigma2/python/OPENDROID/icons/Picons.png"))
 		self.entrylist.append((_("Setting"), "Stg", "/usr/lib/enigma2/python/OPENDROID/icons/Setting_list.png"))
                 self.entrylist.append((_("Skin"), "Sks", "/usr/lib/enigma2/python/OPENDROID/icons/Skins.png"))
                 self.entrylist.append((_("BootLogo"), "Logo","/usr/lib/enigma2/python/OPENDROID/icons/BootLogo.png"))
