@@ -55,7 +55,7 @@ def getVarSpaceKb():
 class AddonsUtility(Screen):
 	skin = """
 		<screen name="AddonsUtility" position="center,60" size="800,635" title="OPENDROID Addons Manager" >
-		<widget name="list" position="80,100" size="510,350" zPosition="2" scrollbarMode="showOnDemand" transparent="1"/>
+		<widget name="list" position="80,100" size="710,350" zPosition="2" scrollbarMode="showOnDemand" transparent="1"/>
 		<widget name="key_red" position="135,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="red" backgroundColor="red" transparent="1" />		
 		<widget name="key_green" position="400,600" zPosition="1" size="100,45" font="Regular;18" foregroundColor="green" backgroundColor="green" transparent="1" />
 		<widget name="key_yellow" position="675,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="yellow" backgroundColor="yellow" transparent="1" />
@@ -65,7 +65,8 @@ class AddonsUtility(Screen):
 		self.list=[]
 		self.entrylist = []  #List reset
 		self.entrylist.append((_("Plugin"), "Plg", "/usr/lib/enigma2/python/OPENDROID/icons/Plugin.png"))
-		self.entrylist.append((_("Picons"), "Pcs", "/usr/lib/enigma2/python/OPENDROID/icons/Picons.png"))
+		self.entrylist.append((_("Picons-HDD"), "Pcs-HDD", "/usr/lib/enigma2/python/OPENDROID/icons/Picons-HDD.png"))
+		self.entrylist.append((_("Picons-USB"), "Pcs-USB", "/usr/lib/enigma2/python/OPENDROID/icons/Picons-USB.png"))
 		self.entrylist.append((_("Setting"), "Stg", "/usr/lib/enigma2/python/OPENDROID/icons/Setting_list.png"))
                 self.entrylist.append((_("Skin"), "Sks", "/usr/lib/enigma2/python/OPENDROID/icons/Skins.png"))
                 self.entrylist.append((_("BootLogo"), "Logo","/usr/lib/enigma2/python/OPENDROID/icons/BootLogo.png"))
@@ -104,11 +105,15 @@ class AddonsUtility(Screen):
 			addons = 'Plugins'
 			self.title = ' OPENDROID Downloader Plugins'
 			self.session.open(Connection_Server, addons, self.title)
-		elif (selection == "Pcs"):
-		       	addons = 'Picons'
-			self.title = ' OPENDROID Downloader Picons'
+		elif (selection == "Pcs-HDD"):
+		       	addons = 'Picons-HDD'
+			self.title = 'Picons-HDD'
 			self.session.open(Connection_Server, addons, self.title)
-		elif (selection == "Stg"):
+		elif (selection == "Pcs-USB"):
+		        addons = 'Picons-USB'
+		        self.title = 'Picons-USB'
+		        self.session.open(Connection_Server, addons, self.title)
+                elif (selection == "Stg"):
 			addons = 'Settings'
 			self.title = ' OPENDROID Downloader Settings '
 			self.session.open(Connection_Server, addons, self.title)

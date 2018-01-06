@@ -16,7 +16,7 @@ from OPENDROID.OPD_panel import OPD_panel
 from Screens.Ipkg import Ipkg
 class GreenPanel(Screen):
 	skin = """
-		<screen name="GreenPanel" position="center,60" size="1225,635" title="OPENDROID Green Panel" >
+		<screen name="GreenPanel" position="center,60" size="1225,635" title="Green Panel" >
 		<widget source="list" render="Listbox" position="80,100" size="600,400" enableWrapAround="1" zPosition="2" scrollbarMode="showOnDemand"  transparent="1">
 		<convert type="TemplatedMultiContent">
 		{"template": [MultiContentEntryText(pos = (115, 3), size = (385, 24), font=0, text = 0),MultiContentEntryText(pos = (115, 25), size = (385, 20), font=1, text = 1),MultiContentEntryPixmapAlphaTest(pos = (5, 5), size = (100, 40), png = 2),],"fonts": [gFont("Regular", 22),gFont("Regular", 18)],
@@ -30,6 +30,7 @@ class GreenPanel(Screen):
 		</screen>"""
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		Screen.setTitle(self, _("Green Panel"))
 		self.list = []
 		self['list'] = List(self.list)
 		self.updateList()

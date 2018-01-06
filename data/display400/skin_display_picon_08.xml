@@ -40,7 +40,27 @@
 		<widget source="session.CurrentService" render="PiconRes" position="0,150" zPosition="1" size="150,90" alphatest="on">
 				<convert type="ServiceName">Reference</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+<!-- menus-->
+	<screen name="MenuSummary" position="fill">
+		<widget source="parent.title" render="Label" position="0,0" size="400,84" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.menu" render="Label" position="0,92" size="400,83" font="FdLcD;40" halign="center" valign="center" foregroundColor="#C0FFC0">
+			<convert type="StringListSelection" />
+		</widget>
 	</screen>
+	<screen name="SetupSummary" position="fill">
+		<widget source="SetupTitle" render="Label" position="0,0" size="400,57" font="FdLcD;50" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="SetupEntry" render="Label" position="0,65" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#C0FFC0" />
+		<widget source="SetupValue" render="Label" position="0,123" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#FFFFC0" />
+	</screen>
+<!-- Plugin browser -->
+	<screen name="PluginBrowserSummary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
+<!-- Green Panel -->
+    	<screen name="GreenPanel_Summary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
 	<include filename="/usr/share/enigma2/display/skin_display.xml" />
 </skin>
