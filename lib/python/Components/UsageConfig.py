@@ -13,27 +13,8 @@ from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType
 from keyids import KEYIDS
 from sys import maxint
-import glob
-import os
-from Components.RcModel import rc_model
 
 def InitUsageConfig():
-	AvailRemotes=glob.glob('/usr/share/enigma2/rc_models/*')
-	RemoteChoices=[]
-	DefaultRemote=rc_model.getRcFolder(GetDefault=True)
-	
-	remoteSelectable=False
-	if AvailRemotes is not None:
-		for remote in AvailRemotes:
-			if os.path.isfile(remote+'/rc.png') and os.path.isfile(remote+'/rcpositions.xml') and os.path.isfile(remote+'/remote.html'):
-				pass
-			else:
-				AvailRemotes.remove(remote)
-		if len(AvailRemotes)>1:
-			remoteSelectable=True
-			for remote in AvailRemotes:
-				toadd = (remote.split('/')[-1], remote.split('/')[-1])
-				RemoteChoices.append(toadd)
 	config.misc.SettingsVersion = ConfigFloat(default = [1,1], limits = [(1,10),(0,99)])
 	config.misc.SettingsVersion.value = [1,1]
 	config.misc.SettingsVersion.save_forced = True
@@ -49,9 +30,6 @@ def InitUsageConfig():
 	config.workaround.wakeupwindow = ConfigSelectionNumber(default = 5, stepwidth = 5, min = 5, max = 60, wraparound = True)
 
 	config.usage = ConfigSubsection()
-	config.usage.useVideoCuesheet = ConfigYesNo(default = True)		#use marker for video media file
-	config.usage.useAudioCuesheet = ConfigYesNo(default = True)		#use marker for audio media file
-	config.usage.useChapterInfo = ConfigYesNo(default = True) 		#show chapter positions (gst >= 1 and supported media files)
 	config.usage.shutdownOK = ConfigBoolean(default = True)
 	config.usage.shutdownNOK_action = ConfigSelection(default = "normal", choices = [("normal", _("just boot")), ("standby", _("goto standby")), ("deepstandby", _("goto deep-standby"))])
 	config.usage.boot_action = ConfigSelection(default = "normal", choices = [("normal", _("just boot")), ("standby", _("goto standby"))])
@@ -62,11 +40,7 @@ def InitUsageConfig():
 	config.usage.numzaptimeout1 = ConfigSlider(default = 3000, increment = 250, limits = (750, 5000))
 	config.usage.numzaptimeout2 = ConfigSlider(default = 1000, increment = 250, limits = (750, 5000))
 	config.usage.numzappicon = ConfigYesNo(default = False)
-	config.usage.use_pig = ConfigYesNo(default = False)
-	config.usage.update_available = NoSave(ConfigYesNo(default = False))
-	config.misc.ecm_info = ConfigYesNo(default = False)
 	config.usage.menu_show_numbers = ConfigYesNo(default = False)
-	config.usage.subnetwork = ConfigYesNo(default = True)
 
 	config.usage.alternative_number_mode = ConfigYesNo(default = False)
 	def alternativeNumberModeChange(configElement):
@@ -180,7 +154,6 @@ def InitUsageConfig():
 	config.usage.sort_extensionslist = ConfigYesNo(default = False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default = True)
 	config.usage.movieplayer_pvrstate = ConfigYesNo(default = False)
-	config.usage.rc_model = ConfigSelection(default = DefaultRemote, choices = RemoteChoices)
 
 	choicelist = []
 	for i in (10, 30):
@@ -378,22 +351,14 @@ def InitUsageConfig():
 	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceitems_per_page = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 8, max = 40, wraparound = True)
 	config.usage.show_servicelist = ConfigYesNo(default = True)
-	config.usage.servicelist_mode = ConfigSelection(default = "standard", choices = [
-		("standard", _("Standard")),
-		("simple", _("Simple")) ] )
-	config.usage.servicelistpreview_mode = ConfigYesNo(default = False)
-	config.usage.tvradiobutton_mode = ConfigSelection(default="BouquetList", choices = [
-					("ChannelList", _("Channel List")),
-					("BouquetList", _("Bouquet List")),
-					("MovieList", _("Movie List"))])
-	config.usage.channelbutton_mode = ConfigSelection(default="0", choices = [
-					("0", _("Just change channels")),
-					("1", _("Channel List")),
-					("2", _("Bouquet List")),
-					("3", _("Just change Bouquet"))])
-	config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
-					("0", _("Just change channels")),
-					("1", _("Channel List"))])
+        config.usage.servicelist_mode = ConfigSelection(default='standard', choices=[('standard', _('Standard')), ('simple', _('Simple'))])
+        config.usage.servicelistpreview_mode = ConfigYesNo(default=False)
+        config.usage.tvradiobutton_mode = ConfigSelection(default='BouquetList', choices=[('ChannelList', _('Channel List')), ('BouquetList', _('Bouquet List')), ('MovieList', _('Movie List'))])
+        config.usage.channelbutton_mode = ConfigSelection(default='0', choices=[('0', _('Just change channels')), ('1', _('Channel List')), ('2', _('Bouquet List'))])
+        config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
+                   ("standard", _("Standard")),
+                   ("simple", _("Simple")) ] )
+        config.usage.arrowupdownbutton_mode = ConfigSelection(default='1', choices=[('0', _('Open Service List for PiP')), ('1', _('Open Bouqet List'))])
         config.usage.scroll_label_delay = ConfigSelection(default='3000', choices=[('1000', '1 ' + _('seconds')),
          ('2000', '2 ' + _('seconds')),
          ('3000', '3 ' + _('seconds')),
@@ -559,7 +524,7 @@ def InitUsageConfig():
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
 	config.usage.show_eit_nownext = ConfigYesNo(default = True)
 	config.usage.show_vcr_scart = ConfigYesNo(default = False)
-	config.usage.pic_resolution = ConfigSelection(default=None, choices=[(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")][:SystemInfo["HasOPD-Blue-LineSkinSupport"] and 4 or 3])
+	config.usage.pic_resolution = ConfigSelection(default=None, choices=[(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")][:SystemInfo["HasoDreamy-FHDSkinSupport"] and 4 or 3])
 	config.usage.enable_delivery_system_workaround = ConfigYesNo(default = False)
 
 	config.epg = ConfigSubsection()
@@ -668,8 +633,6 @@ def InitUsageConfig():
 		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 	config.usage.keymap = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"))
-	config.usage.keytrans = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keytranslation.xml"))
-	config.usage.keymap_usermod = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap_usermod.xml"))
 
 	config.network = ConfigSubsection()
 	if SystemInfo["WakeOnLAN"]:
@@ -801,10 +764,10 @@ def InitUsageConfig():
 	def updateEraseFlags(el):
 		eBackgroundFileEraser.getInstance().setEraseFlags(int(el.value))
 	config.misc.erase_speed = ConfigSelection(default="20", choices = [
-		("10", _("10 MB/s")),
-		("20", _("20 MB/s")),
-		("50", _("50 MB/s")),
-		("100", _("100 MB/s"))])
+		("10", "10 MB/s"),
+		("20", "20 MB/s"),
+		("50", "50 MB/s"),
+		("100", "100 MB/s")])
 	config.misc.erase_speed.addNotifier(updateEraseSpeed, immediate_feedback = False)
 	config.misc.erase_flags = ConfigSelection(default="1", choices = [
 		("0", _("Disable")),
@@ -1124,7 +1087,6 @@ def InitUsageConfig():
 	config.streaming = ConfigSubsection()
 	config.streaming.stream_ecm = ConfigYesNo(default = False)
 	config.streaming.descramble = ConfigYesNo(default = True)
-	config.streaming.descramble_client = ConfigYesNo(default = False)
 	config.streaming.stream_eit = ConfigYesNo(default = True)
 	config.streaming.stream_ait = ConfigYesNo(default = True)
 	config.streaming.authentication = ConfigYesNo(default = False)

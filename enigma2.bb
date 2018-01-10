@@ -10,7 +10,7 @@ WORKDIR = "${S}/build"
 
 PV = "2.7+git"
 PKGV = "2.7+git${GITPKGV}"
-PR = "r31"
+PR = "r230"
 
 FILES_${PN} += "${datadir}/keymaps"
 FILES_${PN}-meta = "${datadir}/meta"
@@ -19,15 +19,6 @@ PACKAGES += "${PN}-meta"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit autotools-brokensep pkgconfig pythonnative
-
-do_unpack[noexec] = "1"
-do_patch[no_exec] = "1"
-do_populate_sysroot[noexec] = "1"
-do_populate_lic[noexec] = "1"
-do_packagedata[noexec] = "1"
-do_package_write_ipk[noexec] = "1"
-do_rm_work[noexec] = "1"
-do_rm_work_all[noexec] = "1"
 
 ACLOCALDIR = "${B}/aclocal-copy"
 e2_copy_aclocal () {
@@ -39,6 +30,20 @@ e2_copy_aclocal () {
         if [ -d ${STAGING_DATADIR}/aclocal -a "${STAGING_DATADIR_NATIVE}/aclocal" != "${STAGING_DATADIR}/aclocal" ]; then
                 cp-noerror ${STAGING_DATADIR}/aclocal/ ${ACLOCALDIR}/
         fi
+}
+
+EXTRACONFFUNCS += "e2_copy_aclocal"
+
+ACLOCALDIR = "${B}/aclocal-copy"
+e2_copy_aclocal () {
+	rm -rf ${ACLOCALDIR}/
+	mkdir -p ${ACLOCALDIR}/
+	if [ -d ${STAGING_DATADIR_NATIVE}/aclocal ]; then
+		cp-noerror ${STAGING_DATADIR_NATIVE}/aclocal/ ${ACLOCALDIR}/
+	fi
+	if [ -d ${STAGING_DATADIR}/aclocal -a "${STAGING_DATADIR_NATIVE}/aclocal" != "${STAGING_DATADIR}/aclocal" ]; then
+		cp-noerror ${STAGING_DATADIR}/aclocal/ ${ACLOCALDIR}/
+	fi
 }
 
 EXTRACONFFUNCS += "e2_copy_aclocal"
@@ -63,7 +68,6 @@ EXTRA_OECONF = " \
     ${@base_contains("MACHINE_FEATURES", "colorlcd400", "--with-colorlcd400" , "", d)} \
     ${@base_contains("MACHINE_FEATURES", "colorlcd480", "--with-colorlcd480" , "", d)} \
     ${@base_contains("MACHINE_FEATURES", "colorlcd720", "--with-colorlcd720" , "", d)} \
-    ${@base_contains("MACHINE_FEATURES", "colorlcd800", "--with-colorlcd800" , "", d)} \
     ${@base_contains("MACHINE_FEATURES", "bwlcd128", "--with-bwlcd128" , "", d)} \
     ${@base_contains("MACHINE_FEATURES", "bwlcd140", "--with-bwlcd140" , "", d)} \
     ${@base_contains("MACHINE_FEATURES", "bwlcd255", "--with-bwlcd255" , "", d)} \

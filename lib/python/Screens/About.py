@@ -3,7 +3,7 @@ from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
 from Components.Sources.StaticText import StaticText
-from Components.Harddisk import Harddisk, harddiskmanager
+from Components.Harddisk import Harddisk
 from Components.NimManager import nimmanager
 from Components.About import about
 from Components.ScrollLabel import ScrollLabel
@@ -29,7 +29,7 @@ class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Image Information"))
-		self.skinName = ["AboutOE","About"]
+		self.skinName = "AboutOE"
 		self.populate()
 
 		self["key_green"] = Button(_("Translations"))
@@ -81,13 +81,11 @@ class About(Screen):
 
 		if getMachineBuild() in ('vusolo4k','vuultimo4k'):
 			cpuMHz = "   (1,5 GHz)"
-	        elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
+		elif getMachineBuild() in ('vuuno4k','dm900','gb7252','dags7252'):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u5','u5pvr'):
-			cpuMHz = "   (1,6 GHz)"
-		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
+		elif getMachineBuild() in ('et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
 				import binascii
 				f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
@@ -115,23 +113,23 @@ class About(Screen):
 		if res:
 			cpuMHz = "" + res.replace("\n", "") + " MHz"
 		if res2:
-			bogoMIPS = "" + res2.replace("\n", "")
+			bogoMIPS = "" + res2.replace("\n", "") 
 
-		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7','gb7252'):
+		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7'):
 			AboutText += _("CPU:\t%s") % about.getCPUString() + cpuMHz + "\n"
 		else:
 			AboutText += _("CPU:\t%s") % about.getCPUString() + " " + cpuMHz + "\n"
 		dMIPS = 0
 		if getMachineBuild() in ('vusolo4k','vuultimo4k'):
 			dMIPS = "10.500"
-		elif getMachineBuild() in ('hd52','hd51','sf4008','dm900','h7','gb7252'):
+		elif getMachineBuild() in ('hd52','hd51','sf4008','dm900','h7'):
 			dMIPS = "12.000"
-		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7','gb7252'):
+		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7'):
 			AboutText += _("DMIPS:\t") + dMIPS + "\n"
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"
 		AboutText += _("Cores:\t%s") % about.getCpuCoresString() + "\n"
-		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
+		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " " + getImageType() + " - Build " + getImageBuild() + " - " + getOEVersion() + "\n"
 		AboutText += _("Kernel (Box):\t%s") % about.getKernelVersionString() + " (" + getBoxType() + ")" + "\n"
 		imagestarted = ""
 		bootname = ''
@@ -146,19 +144,8 @@ class About(Screen):
 			image = f.read(1) 
 			f.close()
 			if bootname: bootname = "   (%s)" %bootname 
-			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
-		elif path.exists('/boot/cmdline.txt'):
-			f = open('/boot/cmdline.txt', 'r')
-			f.seek(38)
-			image = f.read(1) 
-			f.close()
-			if bootname: bootname = "   (%s)" %bootname 
-			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
-
-		AboutText += _("Version:\t%s") % getImageVersion() + "\n"
-		AboutText += _("Build:\t%s") % getImageBuild() + "\n"
-		AboutText += _("Kernel:\t%s") % about.getKernelVersionString() + "\n"
-	
+			AboutText += _("Image started:\t%s") % "STARTUP_" + image + bootname + "\n"
+		
 		string = getDriverDate()
 		year = string[0:4]
 		month = string[4:6]
@@ -170,6 +157,7 @@ class About(Screen):
 		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
+		AboutText += _("Network:")
 
 		fp_version = getFPVersion()
 		if fp_version is None:
@@ -312,7 +300,7 @@ class Devices(Screen):
 					freeline = _("Free: ") + _("full")
 				self.list.append(mount + '\t' + sizeline + ' \t' + freeline)
 			else:
-				self.list.append(mount + '\t' + _('Not mounted'))
+				self.list.append(mount + '\t' + _('Not mounted'))	
 
 			list2.append(device)
 		self.list = '\n'.join(self.list)
@@ -327,18 +315,9 @@ class Devices(Screen):
 			self.parts = line.split()
 			if line and self.parts[0] and (self.parts[0].startswith('192') or self.parts[0].startswith('//192')):
 				line = line.split()
-				try:
-					ipaddress = line[0]
-				except:
-					ipaddress = ""
-				try:
-					mounttotal = line[1]
-				except:
-					mounttotal = ""
-				try:
-					mountfree = line[3]
-				except:
-					mountfree = ""
+				ipaddress = line[0]
+				mounttotal = line[1]
+				mountfree = line[3]
 				if self.mountinfo:
 					self.mountinfo += "\n"
 				self.mountinfo += "%s (%sB, %sB %s)" % (ipaddress, mounttotal, mountfree, _("free"))

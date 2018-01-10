@@ -14,13 +14,12 @@ config.misc.pluginlist.extension_order = ConfigText(default='')
 
 class ChoiceBox(Screen):
 
-    def __init__(self, session, title="", list=None, keys=None, selection=0, skin_name=None, text='', reorderConfig = '', var = '', windowTitle = None, allow_cancel = True, titlebartext = _("Choice Box")):
-	if not windowTitle:
-		windowTitle = titlebartext
-	if not list: list = []
-	if not skin_name: skin_name = []
+    def __init__(self, session, title = '', list = None, keys = None, selection = 0, skin_name = None, text = '', reorderConfig = '', var = ''):
+        if not list:
+            list = []
+        if not skin_name:
+            skin_name = []
         Screen.__init__(self, session)
-	self.allow_cancel = allow_cancel
         if isinstance(skin_name, str):
             skin_name = [skin_name]
         self.skinName = skin_name + ['ChoiceBox']
@@ -109,7 +108,7 @@ class ChoiceBox(Screen):
                 self.keymap[self.__keys[pos]] = list[pos]
             self.summarylist.append((self.__keys[pos], x[0]))
             pos += 1
-	self["windowtitle"] = Label(_(windowTitle))
+
         self['list'] = ChoiceList(list=self.list, selection=selection)
         self['summary_list'] = StaticText()
         self['summary_selection'] = StaticText()

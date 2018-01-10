@@ -263,14 +263,6 @@ void eRCDeviceInputDev::handleCode(long rccode)
 	}
 #endif
 
-#if KEY_VIDEO_TO_KEY_FAVORITES
-	if (ev->code == KEY_VIDEO)
-	{
-		/* formuler rcu fav key send key_media change this to  KEY_FAVORITES */
-		ev->code = KEY_FAVORITES;
-	}
-#endif
-
 #if KEY_FAV_TO_KEY_PVR
 	if (ev->code == KEY_FAVORITES)
 	{
@@ -369,14 +361,6 @@ void eRCDeviceInputDev::handleCode(long rccode)
 	{
 		/* AZBOX rc has a KEY Check key, which sends KEY_AUDIO events. Correct this, so we do not have to place hacks in the keymaps. */
 		ev->code = KEY_TEXT;
-	}
-#endif
-
-#if KEY_CONTEXT_MENU_TO_KEY_AUX
-	if (ev->code == KEY_CONTEXT_MENU)
-	{
-		/* Gigablue New Remote rc has a KEY_HDMI-IN, which sends KEY_CONTEXT_MENU events. Correct this, so we do not have to place hacks in the keymaps. */
-		ev->code = KEY_AUX;
 	}
 #endif
 

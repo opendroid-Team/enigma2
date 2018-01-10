@@ -1,7 +1,6 @@
 from GUIComponent import GUIComponent
 from skin import applyAllAttributes
 from Tools.CList import CList
-from Components.config import config
 from Sources.StaticText import StaticText
 
 class GUISkin:
@@ -82,7 +81,7 @@ class GUISkin:
 
 	def applySkin(self):
 		z = 0
-		baseres = (1280, 720) # FIXME: a skin might have set another resolution, which should be the base res
+		baseres = (720, 576) # FIXME: a skin might have set another resolution, which should be the base res
 		idx = 0
 		skin_title_idx = -1
 		title = self.title

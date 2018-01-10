@@ -2,7 +2,7 @@ from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from skin import parseColor, parseFont
 
-from enigma import eListboxServiceContent, eListbox, eServiceCenter, eServiceReference, gFont, eRect, eSize, getDesktop
+from enigma import eListboxServiceContent, eListbox, eServiceCenter, eServiceReference, gFont, eRect, eSize
 from Tools.LoadPixmap import LoadPixmap
 from Tools.TextBoundary import getTextBoundarySize
 
@@ -84,11 +84,11 @@ class ServiceList(HTMLComponent, GUIComponent):
 		def foregroundColorEvent(value):
 			self.l.setColor(eListboxServiceContent.eventForeground, parseColor(value))
 		def colorServiceDescription(value):
-			self.l.setColor(eListboxServiceContent.serviceDescriptionColor, parseColor(value))
+			self.l.setColor(eListboxServiceContent.eventForeground, parseColor(value))
 		def foregroundColorEventSelected(value):
 			self.l.setColor(eListboxServiceContent.eventForegroundSelected, parseColor(value))
 		def colorServiceDescriptionSelected(value):
-			self.l.setColor(eListboxServiceContent.serviceDescriptionColorSelected, parseColor(value))
+			self.l.setColor(eListboxServiceContent.eventForegroundSelected, parseColor(value))
 		def foregroundColorEventborder(value):
 			self.l.setColor(eListboxServiceContent.eventborderForeground, parseColor(value))
 		def foregroundColorEventborderSelected(value):
@@ -115,10 +115,6 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.l.setColor(eListboxServiceContent.eventForegroundFallback, parseColor(value))
 		def colorServiceDescriptionSelectedFallback(value):
 			self.l.setColor(eListboxServiceContent.eventForegroundSelectedFallback, parseColor(value))
-		def colorServiceRecording(value):
-			self.l.setColor(eListboxServiceContent.serviceRecordingColor, parseColor(value))
-		def colorServiceWithAdvertisment(value):
-			self.l.setColor(eListboxServiceContent.serviceAdvertismentColor, parseColor(value))
 		def picServiceEventProgressbar(value):
 			pic = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, value))
 			pic and self.l.setPixmap(self.l.picServiceEventProgressbar, pic)
@@ -148,13 +144,12 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.l.setNonplayableMargins(int(value))
 		def itemsDistances(value):
 			self.l.setItemsDistances(int(value))
-		if self.skinAttributes is not None:
-			for (attrib, value) in list(self.skinAttributes):
-				try:
-					locals().get(attrib)(value)
-					self.skinAttributes.remove((attrib, value))
-				except:
-					pass
+		for (attrib, value) in list(self.skinAttributes):
+			try:
+				locals().get(attrib)(value)
+				self.skinAttributes.remove((attrib, value))
+			except:
+				pass
 		rc = GUIComponent.applySkin(self, desktop, parent)
 		self.listHeight = self.instance.size().height()
 		self.listWidth = self.instance.size().width()
@@ -371,7 +366,6 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.l.setCurrentMarked(state)
 
 	def setMode(self, mode):
-		screenwidth = getDesktop(0).size().width()
 		self.mode = mode
 		self.setItemsPerPage()
 		self.l.setItemHeight(self.ItemHeight)
@@ -383,10 +377,6 @@ class ServiceList(HTMLComponent, GUIComponent):
 		else:
 			self.l.setGetPiconNameFunc(None)
 
-		if screenwidth and screenwidth == 1920:
-			progressBarWidth = 78
-		else:
-			progressBarWidth = 52
 		rowWidth = self.instance.size().width() - 30 #scrollbar is fixed 20 + 10 Extra marge
 
 		if mode == self.MODE_NORMAL or not config.usage.show_channel_numbers_in_servicelist.value:
@@ -416,7 +406,3 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.l.setCryptoIconMode(int(config.usage.crypto_icon_mode.value))
 		self.l.setRecordIndicatorMode(int(config.usage.record_indicator_mode.value))
 		self.l.setColumnWidth(int(config.usage.servicelist_column.value))
-		
-	def selectionEnabled(self, enabled):
-		if self.instance is not None:
-			self.instance.setSelectionEnable(enabled)
