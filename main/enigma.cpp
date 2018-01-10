@@ -326,36 +326,25 @@ int main(int argc, char **argv)
 	eDebug("[MAIN] Loading spinners...");
 
 	{
-		int i = 0;
-		bool def = false;
-		std::string path = "${sysconfdir}/enigma2/spinner";
+		int i;
 #define MAX_SPINNER 64
 		ePtr<gPixmap> wait[MAX_SPINNER];
-		while(i < MAX_SPINNER)
+		for (i=0; i<MAX_SPINNER; ++i)
 		{
 			char filename[64];
 			std::string rfilename;
-			snprintf(filename, sizeof(filename), "%s/wait%d.png", path.c_str(), i + 1);
+			snprintf(filename, sizeof(filename), "${datadir}/enigma2/%s/wait%d.png", active_skin.c_str(), i + 1);
 			rfilename = eEnv::resolve(filename);
 			loadPNG(wait[i], rfilename.c_str());
 
 			if (!wait[i])
 			{
 				if (!i)
-				{
-					if (!def)
-					{
-						def = true;
-						snprintf(filename, sizeof(filename), "${datadir}/enigma2/%s", active_skin.c_str());
-						path = filename;
-						continue;
-					}
-				}
+					eDebug("[MAIN] failed to load %s! (%m)", rfilename.c_str());
 				else
 					eDebug("[MAIN] found %d spinner!", i);
 				break;
 			}
-			i++;
 		}
 		if (i)
 			my_dc->setSpinner(eRect(ePoint(75, 75), wait[0]->size()), wait, i);
@@ -367,7 +356,7 @@ int main(int argc, char **argv)
 
 	eRCInput::getInstance()->keyEvent.connect(sigc::ptr_fun(&keyEvent));
 
-	eDebug("[MAIN] executing main\n");
+	printf("[MAIN] executing main\n");
 
 	bsodCatchSignals();
 	catchTermSignal();
