@@ -11,18 +11,12 @@ class Label(VariableText, Renderer):
 	GUI_WIDGET = eLabel
 
 	def connect(self, source):
-		if(source):
-			Renderer.connect(self, source)
-			self.changed((self.CHANGED_DEFAULT,))
-		else:
-			print "SKINERROR: render label has no source"
+		Renderer.connect(self, source)
+		self.changed((self.CHANGED_DEFAULT,))
 
 	def changed(self, what):
 		if what[0] == self.CHANGED_CLEAR:
 			self.text = ""
-		elif self.source:
-			self.text = self.source.text
 		else:
-			self.text = "<no-source>"
-			print "SKINERROR: render label has no source"
+			self.text = self.source.text
 

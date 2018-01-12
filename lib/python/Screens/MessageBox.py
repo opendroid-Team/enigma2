@@ -14,9 +14,7 @@ class MessageBox(Screen):
 	TYPE_WARNING = 2
 	TYPE_ERROR = 3
 
-	def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=True, simple=False, wizard=False, list=None, skin_name=None, timeout_default=None, windowTitle = None, title = "Message"):
-		if not windowTitle:
-			windowTitle = title
+	def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=True, simple=False, wizard=False, list=None, skin_name=None, timeout_default=None):
 		if not list: list = []
 		if not skin_name: skin_name = []
 		self.type = type
@@ -31,12 +29,12 @@ class MessageBox(Screen):
 		elif self.type == self.TYPE_ERROR:
 			self.setTitle(_("Error"))
 		else:
-			self.setTitle(_(windowTitle))
+			self.setTitle(_("Message"))
 		if wizard:
 			from Components.config import config
 			from Components.Pixmap import MultiPixmap
 			self["rc"] = MultiPixmap()
-			self["rc"].setPixmapNum(config.misc.rcused.value)
+			self["rc"].setPixmapNum(config.misc.rcused.value)		
 			self.skinName = ["MessageBoxWizard"]
 
 		if simple:

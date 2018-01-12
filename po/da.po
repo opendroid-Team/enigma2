@@ -3,16 +3,16 @@ msgstr ""
 "Project-Id-Version: Opendroid\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-04-02 23:04+0200\n"
-"PO-Revision-Date: 2017-09-09 09:18+0200\n"
-"Last-Translator: OPD Team <opendroid2013@gmail.com>\n"
+"PO-Revision-Date: 2016-04-02 23:04+0200\n"
+"Last-Translator: Andy Blackburn <andyblac@icloud.com>\n"
 "Language-Team: None <tbt_dk@hotmail.com>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-SourceCharset: iso-8859-15\n"
 
 msgid ""
 "\n"
@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "ButtonSetup"
 msgstr ""
 
-msgid "By OPD Image Team"
+msgid "By openATV Image Team"
 msgstr ""
 
 msgid "Bypass HDMI EDID Check"
@@ -13141,7 +13141,7 @@ msgstr ""
 msgid "open nameserver configuration"
 msgstr "åbn navneserver opsætning"
 
-msgid "opendroid"
+msgid "openATV"
 msgstr ""
 
 msgid "original"
@@ -16631,3 +16631,438 @@ msgstr ""
 "Din backup er lykkedes. Vi vil nu forsætte forklaringen på opdaterings "
 "processen."
 
+#
+#, fuzzy
+#~ msgid "%d job is running in the background!"
+#~ msgid_plural "%d jobs are running in the background!"
+#~ msgstr[0] "%d jobs kører i baggrunden!"
+#~ msgstr[1] "%d jobs kører i baggrunden!"
+
+#
+#~ msgid "%d jobs are running in the background!"
+#~ msgstr "%d jobs kører i baggrunden!"
+
+#
+#, fuzzy
+#~ msgid "%s %s format data DVD (HDTV compatible)"
+#~ msgstr "%s %s format data DVD (HDTV kompatibel)"
+
+#
+#~ msgid "(ZAP)"
+#~ msgstr "(ZAP)"
+
+#, fuzzy
+#~ msgid ""
+#~ "A finished power timer wants to shut down\n"
+#~ "your %s %s. Shutdown now?"
+#~ msgstr ""
+#~ "En afsluttet optagelsestimer vil gerne slukke\n"
+#~ "din %s %s. Slukke nu?"
+
+#
+#~ msgid "AA"
+#~ msgstr "AA"
+
+#
+#~ msgid "AB"
+#~ msgstr "AB"
+
+#
+#, fuzzy
+#~ msgid "Audio track (%s) format"
+#~ msgstr "lydspor (%s) format"
+
+#
+#, fuzzy
+#~ msgid "Audio track (%s) language"
+#~ msgstr "lydspor (%s) sprog"
+
+#
+#~ msgid "BA"
+#~ msgstr "BA"
+
+#
+#~ msgid "BB"
+#~ msgstr "BB"
+
+#
+#, fuzzy
+#~ msgid "Burn audio track (%s)"
+#~ msgstr "brænd lydspor (%s)"
+
+#
+#~ msgid "Burn existing image to DVD"
+#~ msgstr "Brænd eksisterende image til DVD"
+
+#
+#, fuzzy
+#~ msgid "Burn to DVD"
+#~ msgstr "Brænd til DVD..."
+
+#~ msgid "Change service PIN"
+#~ msgstr "Skift liste kode"
+
+#~ msgid "Change service PINs"
+#~ msgstr "Skift service koder"
+
+#~ msgid "Change setup PIN"
+#~ msgstr "Skit opsætningskode"
+
+#
+#~ msgid "Committed DiSEqC command"
+#~ msgstr "Kommiteret DiSEqC kommando"
+
+#
+#, fuzzy
+#~ msgid "Configure the skip time interval for the 1 and 3 buttons."
+#~ msgstr "Bruger skip tid for '1'/'3'-taster"
+
+#
+#, fuzzy
+#~ msgid "Configure the skip time interval for the 4 and 6 buttons."
+#~ msgstr "Bruger skip tid for '4'/'6'-taster"
+
+#
+#, fuzzy
+#~ msgid "Configure the skip time interval for the 7 and 9 buttons."
+#~ msgstr "Bruger skip tid for '7'/'9'-taster"
+
+#
+#~ msgid "Connected!"
+#~ msgstr "Forbundet!"
+
+#
+#, fuzzy
+#~ msgid "Could not load medium! No disc inserted?"
+#~ msgstr "Kunne ikke indlæse media! Ingen disk isat?"
+
+#~ msgid "Create more detailed crash log"
+#~ msgstr "Opret mere detaljeret nedbrudslog"
+
+#
+#, fuzzy
+#~ msgid "Custom skip time for '1''3' buttons"
+#~ msgstr "Bruger skip tid for '1'/'3'-taster"
+
+#
+#~ msgid "DVD media toolbox"
+#~ msgstr "DVD media værktøjskasse"
+
+#
+#, fuzzy
+#~ msgid "DVD player"
+#~ msgstr "skjul afspiller"
+
+#
+#, fuzzy
+#~ msgid "DVD titlelist"
+#~ msgstr "DVD titel oplistning"
+
+#
+#, fuzzy
+#~ msgid "Delete..."
+#~ msgstr "slet..."
+
+#
+#~ msgid "DiSEqC repeats"
+#~ msgstr "DiSEqC gentagelser"
+
+#
+#~ msgid "Dialing:"
+#~ msgstr "Ringer op:"
+
+#
+#~ msgid "Disconnect"
+#~ msgstr "Afbryd"
+
+#
+#~ msgid "Edit bouquets list"
+#~ msgstr "Edit pakkeliste"
+
+#
+#~ msgid "Edit services list"
+#~ msgstr "Ændre kanallister"
+
+#, fuzzy
+#~ msgid "Enable FreeSat EPG"
+#~ msgstr "Aktiver Freesat EPG"
+
+#
+#~ msgid "Enable parental control"
+#~ msgstr "Aktivere forældre kontrol?"
+
+#
+#~ msgid "Frontprocessor version: %d"
+#~ msgstr "Frontprocessor Version: %d"
+
+#, fuzzy
+#~ msgid "Full screen"
+#~ msgstr "frys skærm"
+
+#
+#, fuzzy
+#~ msgid "Fullview resolution"
+#~ msgstr "Placering af film"
+
+#
+#, fuzzy
+#~ msgid "Graphical Infobar EPG settings"
+#~ msgstr "Grafisk multi EPG"
+
+#~ msgid "Hide CI messages"
+#~ msgstr "Skjul CI beskeder"
+
+#
+#~ msgid ""
+#~ "In order to record a timer, the TV was switched to the recording "
+#~ "service!\n"
+#~ msgstr "For at optage via timer, er TV skiftet til optage kanal!\n"
+
+#
+#, fuzzy
+#~ msgid "InfoBar EPG"
+#~ msgstr "InfoBjælke"
+
+#~ msgid "Input device setup"
+#~ msgstr "Opsætning af enhed"
+
+#
+#, fuzzy
+#~ msgid "Last update: %s"
+#~ msgstr "Pakke liste opdatering"
+
+#
+#, fuzzy
+#~ msgid "Memory positions"
+#~ msgstr "Gemme position"
+
+#
+#~ msgid "Move Picture in Picture"
+#~ msgstr "Flytte Billed i Billed"
+
+#~ msgid "Move to other directory"
+#~ msgstr "Flyt til anden mappe"
+
+#
+#~ msgid ""
+#~ "No valid service PIN found!\n"
+#~ "Do you like to change the service PIN now?\n"
+#~ "When you say 'No' here the service protection stay disabled!"
+#~ msgstr ""
+#~ "Ingen gyldig kanal PIN kode fundet!\n"
+#~ "Vil du skifte kanal PIN kode nu?\n"
+#~ "Siger du 'Nej' her vil kanal beskyttelsen ikke være tilsluttet!"
+
+#
+#~ msgid ""
+#~ "No valid setup PIN found!\n"
+#~ "Do you like to change the setup PIN now?\n"
+#~ "When you say 'No' here the setup protection stay disabled!"
+#~ msgstr ""
+#~ "Ingen gyldig  PIN kode opsætning fundet!\n"
+#~ "Vil du gerne ændre PIN kode opsætning nu?\n"
+#~ "Siger du 'Nej' her vil opsætnings beskyttelsen ikke være tilsluttet!"
+
+#
+#~ msgid "Parental control type"
+#~ msgstr "Forældrekontrol type"
+
+#
+#~ msgid "Phone number"
+#~ msgstr "Telefonnummer"
+
+#
+#, fuzzy
+#~ msgid ""
+#~ "Please setup your user interface by adjusting the values till the edges "
+#~ "of the blue box are touching the edges of your TV.\n"
+#~ "When you are ready press OK to continue."
+#~ msgstr ""
+#~ "Opsæt venligst din internetforbindelse ved at udfylde de ønskede "
+#~ "værdier.\n"
+#~ "Tryk på OK når du er færdig, for at fortsætte."
+
+#, fuzzy
+#~ msgid "Position of finished Timers in the Timer list"
+#~ msgstr "Position af afsluttede timere i timerlisten"
+
+#~ msgid "Press '0' to toggle internal/external PiP."
+#~ msgstr "Tryk nul for at skifte mellem BiB"
+
+#
+#~ msgid "Press yellow to set this interface as default interface."
+#~ msgstr "Tryk på gul for at vælge dette interface som standard interface."
+
+#
+#~ msgid "Protect setup"
+#~ msgstr "Beskytte opsætning?"
+
+#~ msgid "Reenter new PIN"
+#~ msgstr "Skriv PIN igen"
+
+#
+#, fuzzy
+#~ msgid "Reload black-/white lists"
+#~ msgstr "Genindlæs sort/hvid lister"
+
+#~ msgid "Rewrap teletext subtitles"
+#~ msgstr "Genindlæs tekstv undertekser"
+
+#
+#~ msgid "Satellites"
+#~ msgstr "Satellitter"
+
+#
+#, fuzzy
+#~ msgid "Select backup files"
+#~ msgstr "Vælg backup filer"
+
+#~ msgid "Select files for backup."
+#~ msgstr "Vælg filer til backup"
+
+#
+#~ msgid "Set interface as default Interface"
+#~ msgstr "Sætter interfacet om standard interface"
+
+#, fuzzy
+#~ msgid "Show CCcam Info in extensions?"
+#~ msgstr "Vis kanalistevalg menu"
+
+#, fuzzy
+#~ msgid "Show OScam Info in extensions?"
+#~ msgstr "Vis kanalistevalg menu"
+
+#
+#, fuzzy
+#~ msgid "Show background in Radio mode"
+#~ msgstr "baggrunds billede"
+
+#
+#, fuzzy
+#~ msgid "Show picon background color"
+#~ msgstr "baggrundsfarve"
+
+#, fuzzy
+#~ msgid "Show second infobar"
+#~ msgstr "Vis krypteringsinfo i infobar"
+
+#
+#~ msgid "Show services beginning with"
+#~ msgstr "Vis kanaler begyndende med"
+
+#
+#, fuzzy
+#~ msgid "Show status icons in movie list"
+#~ msgstr "Kanalen er ikke kanal oplistningen"
+
+#
+#, fuzzy
+#~ msgid "Show tag menu"
+#~ msgstr "vis mærke menu"
+
+#
+#~ msgid "Single transponder"
+#~ msgstr "Enkelt transponder"
+
+#
+#, fuzzy
+#~ msgid "SoftcamCheck"
+#~ msgstr "Software"
+
+#
+#, fuzzy
+#~ msgid "Software update settings"
+#~ msgstr "Software opdatering"
+
+#
+#, fuzzy
+#~ msgid "Table of contents for collection"
+#~ msgstr "Indholdsfortegnelse for kollektion"
+
+#
+#, fuzzy
+#~ msgid ""
+#~ "The DVD standard doesn't support H.264 (HDTV) video streams. Do you want "
+#~ "to create a %s %s format data DVD (which will not play in stand-alone DVD "
+#~ "players) instead?"
+#~ msgstr ""
+#~ "DVD standarderne understøtter ikke H.264 (HDTV) video streams. Vil du i "
+#~ "stedet oprette en %s %s format DVD (som ikke kan afspilles i en "
+#~ "almindelig DVD afspiller)? "
+
+#
+#, fuzzy
+#~ msgid "Tuner status:"
+#~ msgstr "Tuner status"
+
+#
+#~ msgid "Uncommitted DiSEqC command"
+#~ msgstr "Ukommiteret DiSEqC kommando"
+
+#
+#~ msgid "Unicable"
+#~ msgstr "Unikabel"
+
+#
+#, fuzzy
+#~ msgid "Video fine tuning"
+#~ msgstr "Video finindstilling..."
+
+#
+#, fuzzy
+#~ msgid "Video fine-tuning"
+#~ msgstr "Video finindstilling..."
+
+#, fuzzy
+#~ msgid "Vix forum user name"
+#~ msgstr "Enhedsnavn"
+
+#
+#, fuzzy
+#~ msgid "You can only burn %s %s recordings!"
+#~ msgstr "Du kan kun brænde Dreamboxoptagelser!"
+
+#
+#~ msgid ""
+#~ "You need a PC connected to your %s %s. If you need further instructions, "
+#~ "please visit the website http://www.dm7025.de.\n"
+#~ "Your %s %s will now be halted. After you have performed the update "
+#~ "instructions from the website, your new firmware will ask you to restore "
+#~ "your settings."
+#~ msgstr ""
+#~ "Du skal have en PC forbundet til din %s %s. Hvis du mangler yderligere "
+#~ "Informationer, så gå til websiden http://www.dm7025.de.\n"
+#~ "Din %s %s bliver slukket nu. Efter du har udført opdateringen "
+#~ "Instruktioner fra websiden, vil den nye firmware vil bede dig om at "
+#~ "geninstallere, dine indstillinger."
+
+#
+#~ msgid "complex"
+#~ msgstr "komplex"
+
+#
+#, fuzzy
+#~ msgid "e-mail address"
+#~ msgstr "IP-Adresse"
+
+#
+#~ msgid "fine-tune your display"
+#~ msgstr "finjuster dit display"
+
+#~ msgid "setup PIN"
+#~ msgstr "Opsæt PIN"
+
+#
+#~ msgid "special characters"
+#~ msgstr "special karakterer"
+
+#~ msgid "tuner is not supported"
+#~ msgstr "tuner ikke supporteret"
+
+#
+#~ msgid "wait for ci..."
+#~ msgstr "vent på CA..."
+
+#
+#~ msgid "whitelist"
+#~ msgstr "hvidliste"

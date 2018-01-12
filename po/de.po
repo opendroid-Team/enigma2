@@ -212,10 +212,10 @@ msgid " extensions."
 msgstr "Erweiterungen."
 
 msgid ""
-" has been sent to the OPD beta team.\n"
+" has been sent to the AAF beta team.\n"
 "please quote "
 msgstr ""
-"wurde an das OPD Beta Team gesendet.\n"
+"wurde an das openATV Beta Team gesendet.\n"
 "Bitte angeben"
 
 msgid " ms"
@@ -1501,8 +1501,8 @@ msgstr "Bus: "
 msgid "Button"
 msgstr "Taste"
 
-msgid "By OPD Image Team"
-msgstr "Vom OPD-Imageteam"
+msgid "By openATV Image Team"
+msgstr "Vom openATV-Imageteam"
 
 #
 msgid ""

@@ -203,7 +203,7 @@ void eAVSwitch::setAspectRatio(int ratio)
 	close(fd);
 
 //	if((fd = open("/proc/stb/video/policy2", O_WRONLY)) < 0) {
-//		eDebug("cannot open /proc/stb/video/policy2");
+//		eDebug("[eAVSwitch] cannot open /proc/stb/video/policy2");
 //		return;
 //	}
 //	write(fd, policy[ratio], strlen(policy[ratio]));

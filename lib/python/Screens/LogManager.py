@@ -5,7 +5,6 @@ from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.Button import Button
 from Components.FileList import FileList
-from Components.MenuList import MenuList
 from Components.ScrollLabel import ScrollLabel
 from Components.config import config, configfile
 from Components.FileList import MultiFileSelectList
@@ -13,8 +12,7 @@ from Screens.MessageBox import MessageBox
 from os import path, remove, walk, stat, rmdir
 from time import time
 from datetime import datetime
-from enigma import eTimer, eBackgroundFileEraser, eLabel, getDesktop, gFont, fontRenderClass
-from Tools.TextBoundary import getTextBoundarySize
+from enigma import eTimer, eBackgroundFileEraser, eLabel
 from glob import glob
 
 import Components.Task
@@ -175,8 +173,6 @@ class LogManagerPoller:
 						size -= st_size
 		now = datetime.now()
 		seconds_since_0330am = (now - now.replace(hour=3, minute=30, second=0)).total_seconds()
-		if (seconds_since_0330am <= 0):
-			seconds_since_0330am += 86400
 		if (seconds_since_0330am > 43200):
 			self.TrashTimer.startLongTimer(int(86400-seconds_since_0330am)) #at 03:30 AM
 		else:
@@ -316,15 +312,14 @@ class LogManager(Screen):
 		self.selectedFiles = self["list"].getSelectedList()
 		self.selectedFiles = ",".join(self.selectedFiles).replace(",", " ")
 		self.sel = self["list"].getCurrent()[0]
-		if self.sel is not None:
-			if answer is True:
-				message = _("Are you sure you want to delete all selected logs:\n") + self.selectedFiles
-				ybox = self.session.openWithCallback(self.doDelete2, MessageBox, message, MessageBox.TYPE_YESNO)
-				ybox.setTitle(_("Delete Confirmation"))
-			else:
-				message = _("Are you sure you want to delete this log:\n") + str(self.sel[0])
-				ybox = self.session.openWithCallback(self.doDelete3, MessageBox, message, MessageBox.TYPE_YESNO)
-				ybox.setTitle(_("Delete Confirmation"))
+		if answer is True:
+			message = _("Are you sure you want to delete all selected logs:\n") + self.selectedFiles
+			ybox = self.session.openWithCallback(self.doDelete2, MessageBox, message, MessageBox.TYPE_YESNO)
+			ybox.setTitle(_("Delete Confirmation"))
+		else:
+			message = _("Are you sure you want to delete this log:\n") + str(self.sel[0])
+			ybox = self.session.openWithCallback(self.doDelete3, MessageBox, message, MessageBox.TYPE_YESNO)
+			ybox.setTitle(_("Delete Confirmation"))
 
 	def doDelete2(self, answer):
 		if answer is True:
@@ -484,63 +479,19 @@ class LogManagerViewLog(Screen):
 		self.session = session
 		Screen.__init__(self, session)
 		self.setTitle(selected)
-		self.logfile = config.crash.debug_path.value + selected
-		self.log=[]
-		self["list"] = MenuList(self.log)
+		if path.exists(config.crash.debug_path.value + selected):
+			log = file(config.crash.debug_path.value + selected).read()
+		else:
+			log = ""
+		self["list"] = ScrollLabel(str(log))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
 		{
 			"cancel": self.cancel,
 			"ok": self.cancel,
-			"up": self["list"].up,
-			"down": self["list"].down,
-			"right": self["list"].pageDown,
-			"left": self["list"].pageUp,
-			"moveUp": self.gotoFirstPage,
-			"moveDown": self.gotoLastPage
+			"up": self["list"].pageUp,
+			"down": self["list"].pageDown,
+			"right": self["list"].lastPage
 		}, -2)
-
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		screenwidth = getDesktop(0).size().width()
-		if screenwidth and screenwidth < 1920:
-			f = 1
-		elif screenwidth and screenwidth < 3840:
-			f = 1.5
-		else:
-			f = 3
-		font = gFont("Console", int(16*f))
-		if not int(fontRenderClass.getInstance().getLineHeight(font)):
-			font = gFont("Regular", int(16*f))
-		self["list"].instance.setFont(font)
-		fontwidth = getTextBoundarySize(self.instance, font, self["list"].instance.size(), _(" ")).width()
-		listwidth = int(self["list"].instance.size().width() / fontwidth) - 2
-		if path.exists(self.logfile):
-			for line in file(self.logfile ).readlines():
-				line = line.replace('\t',' '*9)
-				if len(line) > listwidth:
-					pos = 0
-					offset = 0
-					readyline = True
-					while readyline:
-						a = " " * offset + line[pos:pos+listwidth-offset]
-						self.log.append(a)
-						if len(line[pos+listwidth-offset:]):
-							pos += listwidth-offset
-							offset = 19
-						else:
-							readyline = False
-				else:
-					self.log.append(line)
-		else:
-			self.log = [_("file can not displayed - file not found")]
-		self["list"].setList(self.log)
-
-	def gotoFirstPage(self):
-		self["list"].moveToIndex(0)
-
-	def gotoLastPage(self):
-		self["list"].moveToIndex(len(self.log)-1)
 
 	def cancel(self):
 		self.close()

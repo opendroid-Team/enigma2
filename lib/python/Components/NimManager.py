@@ -1,4 +1,4 @@
-from boxbranding import getBoxType, getBrandOEM
+from boxbranding import getBoxType
 from time import localtime, mktime
 from datetime import datetime
 import xml.etree.cElementTree
@@ -69,7 +69,6 @@ class SecConfigure:
 				tunermask |= (1 << slot)
 		sec.setLNBSatCR(-1)
 		sec.setLNBSatCRTuningAlgo(0)
-		sec.setLNBBootupTime(0)
 		sec.setLNBSatCRpositionnumber(1)
 		sec.setLNBLOFL(CircularLNB and 10750000 or 9750000)
 		sec.setLNBLOFH(CircularLNB and 10750000 or 10600000)
@@ -393,7 +392,6 @@ class SecConfigure:
 				if currLnb.lof.value != "unicable":
 					sec.setLNBSatCR(-1)
 					sec.setLNBSatCRTuningAlgo(0)
-					sec.setLNBBootupTime(0)
 				if currLnb.lof.value == "universal_lnb":
 					sec.setLNBLOFL(9750000)
 					sec.setLNBLOFH(10600000)
@@ -420,7 +418,6 @@ class SecConfigure:
 								sec.setLNBLOFH(manufacturer.lofh[product_name][position_idx].value * 1000)
 								sec.setLNBThreshold(manufacturer.loft[product_name][position_idx].value * 1000)
 								sec.setLNBSatCRTuningAlgo(currLnb.unicableTuningAlgo.value == "reliable" and 1 or 0)
-								sec.setLNBBootupTime(manufacturer.bootuptime[product_name][0].value)
 								configManufacturer.save_forced = True
 								manufacturer.product.save_forced = True
 								manufacturer.vco[product_name][manufacturer_scr[product_name].index].save_forced = True
@@ -444,7 +441,6 @@ class SecConfigure:
 						sec.setLNBLOFH(currLnb.lofh.value * 1000)
 						sec.setLNBThreshold(currLnb.threshold.value * 1000)
 						sec.setLNBSatCRpositions(64)
-						sec.setLNBBootupTime(currLnb.bootuptimeuser.value)
 					elif currLnb.unicable.value == "unicable_matrix":
 						self.reconstructUnicableDate(currLnb.unicableMatrixManufacturer, currLnb.unicableMatrix, currLnb)
 						setupUnicable(currLnb.unicableMatrixManufacturer, currLnb.unicableMatrix)
@@ -640,7 +636,6 @@ class SecConfigure:
 			tmp.lofl = ConfigSubDict()
 			tmp.lofh = ConfigSubDict()
 			tmp.loft = ConfigSubDict()
-			tmp.bootuptime = ConfigSubDict()
 			tmp.diction = ConfigSubDict()
 			tmp.product = ConfigSelection(choices = [], default = None)
 			tmp.positions = ConfigSubDict()
@@ -656,9 +651,6 @@ class SecConfigure:
 			positions = int(positionslist[0])
 			tmp.positions[PN] = ConfigSubList()
 			tmp.positions[PN].append(ConfigInteger(default=positions, limits = (positions, positions)))
-
-			tmp.bootuptime[PN] = ConfigSubList()
-			tmpbootuptime[PN].append(ConfigInteger(default=0, limits = (0, 0)))
 
 			positionsoffsetlist=[0,]	##adenin_todo
 			positionsoffset = int(positionsoffsetlist[0])
@@ -750,12 +742,12 @@ class NIM(object):
 			print "%s is not suportetd "%(what)
 			return False
 		if self.isMultiType():
-			#print"[adenin] %s is multitype"%(self.slot)
+			print"[adenin] %s is multitype"%(self.slot)
 			for type in self.multi_type.values():
 				if what in self.compatible[type]:
 					return True
 		elif  what in self.compatible[self.getType()]:
-			#print"[adenin] %s is NOT multitype"%(self.slot)
+			print"[adenin] %s is NOT multitype"%(self.slot)
 			return True
 		return False
 
@@ -911,44 +903,11 @@ class NimManager:
 			return self.transpondersatsc[self.atscList[nimConfig.atsc.index][0]]
 		return []
 
-	def getCablesList(self):
-		return self.cablesList
-
-	def getCablesCountrycodeList(self):
-		countrycodes = []
-		for x in self.cablesList:
-			if x[2] and x[2] not in countrycodes:
-				countrycodes.append(x[2])
-		return countrycodes
-
-	def getCablesByCountrycode(self, countrycode):
-		if countrycode:
-			return [x for x in self.cablesList if x[2] == countrycode]
-		return []
-
 	def getCableDescription(self, nim):
 		return self.cablesList[config.Nims[nim].dvbc.scan_provider.index][0]
 
 	def getCableFlags(self, nim):
 		return self.cablesList[config.Nims[nim].dvbc.scan_provider.index][1]
-
-	def getCableCountrycode(self, nim):
-		return self.cablesList and self.cablesList[config.Nims[nim].dvbc.scan_provider.index][2] or None
-
-	def getTerrestrialsList(self):
-		return self.terrestrialsList
-
-	def getTerrestrialsCountrycodeList(self):
-		countrycodes = []
-		for x in self.terrestrialsList:
-			if x[2] and x[2] not in countrycodes:
-				countrycodes.append(x[2])
-		return countrycodes
-
-	def getTerrestrialsByCountrycode(self, countrycode):
-		if countrycode:
-			return [x for x in self.terrestrialsList if x[2] == countrycode]
-		return []
 
 	def getTerrestrialDescription(self, nim):
 		return self.terrestrialsList[config.Nims[nim].dvbt.terrestrial.index][0]
@@ -958,9 +917,6 @@ class NimManager:
 
 	def getTerrestrialFlags(self, nim):
 		return self.terrestrialsList[config.Nims[nim].dvbt.terrestrial.index][1]
-
-	def getTerrestrialCountrycode(self, nim):
-		return self.terrestrialsList and self.terrestrialsList[config.Nims[nim].dvbt.terrestrial.index][2] or None
 
 	def getATSCFlags(self, nim):
 		return self.atscList[config.Nims[nim].atsc.atsc.index][1]
@@ -1186,8 +1142,6 @@ class NimManager:
 				entries[current_slot] = {}
 			elif line.startswith("Type:"):
 				entries[current_slot]["type"] = str(line[6:])
-				if entries[current_slot]["type"] == "DVB-S2X":
-					entries[current_slot]["type"] = "DVB-S2"
 				entries[current_slot]["isempty"] = False
 			elif line.strip().startswith("Input_Name:"):
 				entries[current_slot]["input_name"] = str(line.strip()[12:])
@@ -1669,9 +1623,6 @@ def InitNimManager(nimmgr, update_slots = []):
 
 			p_update({"positions":tuple(positions)})							#add positons to dict product
 
-			bootuptime = product.get("bootuptime",2700)
-			p_update({"bootuptime":tuple([bootuptime])})							#add add boot up time
-
 			m_update({product.get("name"):p})								#add dict product to dict manufacturer
 		unicablelnbproducts.update({manufacturer.get("name"):m})
 
@@ -1716,9 +1667,6 @@ def InitNimManager(nimmgr, update_slots = []):
 				positions_append(tuple(lof))
 
 			p_update({"positions":tuple(positions)})							#add positons to dict product
-
-			bootuptime = product.get("bootuptime",2700)
-			p_update({"bootuptime":tuple([bootuptime])})							#add boot up time
 
 			m_update({product.get("name"):p})								#add dict product to dict manufacturer
 		unicablematrixproducts.update({manufacturer.get("name"):m})						#add dict manufacturer to dict unicablematrixproducts
@@ -1813,22 +1761,14 @@ def InitNimManager(nimmgr, update_slots = []):
 					tmp.lofl = ConfigSubDict()
 					tmp.lofh = ConfigSubDict()
 					tmp.loft = ConfigSubDict()
-					tmp.bootuptime = ConfigSubDict()
 					tmp.positionsoffset = ConfigSubDict()
 					tmp.positions = ConfigSubDict()
 					tmp.diction = ConfigSubDict()
 					for article in products:
+						positionslist = unicableproducts[manufacturer][article].get("positions")
 						positionsoffsetlist = unicableproducts[manufacturer][article].get("positionsoffset")
 						positionsoffset = int(positionsoffsetlist[0])
-
-						positionslist = unicableproducts[manufacturer][article].get("positions")
 						positions = int(positionslist[0])
-
-						bootuptimelist = unicableproducts[manufacturer][article].get("bootuptime")
-						bootuptime = int(bootuptimelist[0])
-						tmp.bootuptime[article] = ConfigSubList()
-						tmp.bootuptime[article].append(ConfigInteger(default=bootuptime, limits = (bootuptime, bootuptime)))
-
 						dictionlist = [unicableproducts[manufacturer][article].get("diction")]
 						if dictionlist[0][0] !="EN50607" or ((lnb > positionsoffset) and (lnb <= (positions + positionsoffset))):
 							tmp.positionsoffset[article] = ConfigSubList()
@@ -1885,7 +1825,6 @@ def InitNimManager(nimmgr, update_slots = []):
 
 			#TODO satpositions for satcruser
 
-			section.bootuptimeuser = ConfigInteger(default=2700, limits = (0, 15000))
 			section.dictionuser = ConfigSelection(advanced_lnb_diction_user_choices, default="EN50494")
 			section.satcruserEN50494 = ConfigSelection(advanced_lnb_satcr_user_choicesEN50494, default="1")
 			section.satcruserEN50607 = ConfigSelection(advanced_lnb_satcr_user_choicesEN50607, default="1")
@@ -2081,10 +2020,14 @@ def InitNimManager(nimmgr, update_slots = []):
 		try:
 			nim.scan_networkid
 		except:
-			list = [(x[0], x[0]) for x in nimmgr.cablesList]
+			list = [ ]
+			n = 0
+			for x in nimmgr.cablesList:
+				list.append((str(n), x[0]))
+				n += 1
 			nim.scan_networkid = ConfigInteger(default = 0, limits = (0, 99999))
 			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps"))]
-			if list:
+			if n:
 				possible_scan_types.append(("provider", _("Provider")))
 				nim.scan_provider = ConfigSelection(default = "0", choices = list)
 			nim.scan_type = ConfigSelection(default = "provider", choices = possible_scan_types)
@@ -2115,7 +2058,11 @@ def InitNimManager(nimmgr, update_slots = []):
 		try:
 			nim.terrestrial
 		except:
-			list = [(x[0], x[0]) for x in nimmgr.terrestrialsList]
+			list = []
+			n = 0
+			for x in nimmgr.terrestrialsList:
+				list.append((str(n), x[0]))
+				n += 1
 			nim.terrestrial = ConfigSelection(choices = list)
 			nim.terrestrial_5V = ConfigOnOff()
 
@@ -2123,7 +2070,7 @@ def InitNimManager(nimmgr, update_slots = []):
 		try:
 			nim.atsc
 		except:
-			list = [(x[0], x[0]) for x in nimmgr.atscList]
+			list = [(str(n), x[0]) for n, x in enumerate(nimmgr.atscList)]
 			nim.atsc = ConfigSelection(choices = list)
 
 	try:
@@ -2147,7 +2094,6 @@ def InitNimManager(nimmgr, update_slots = []):
 	for slot in nimmgr.nim_slots:
 		x = slot.slot
 		nim = config.Nims[x]
-		nim.force_legacy_signal_stats = ConfigYesNo(default = False)
 		if slot.canBeCompatible("DVB-S"):
 			nim = config.Nims[x].dvbs
 			createSatConfig(nim, x, empty_slots)
@@ -2204,7 +2150,7 @@ def InitNimManager(nimmgr, update_slots = []):
 	nimmgr.sec = SecConfigure(nimmgr)
 
 	def tunerTypeChanged(nimmgr, configElement):
-		if int(iDVBFrontend.dvb_api_version) < 5 or getBrandOEM() in ('vuplus'):
+		if int(iDVBFrontend.dvb_api_version) < 5:
 			print "dvb_api_version ",iDVBFrontend.dvb_api_version
 			print "api <5 or old style tuner driver"
 			fe_id = configElement.fe_id
@@ -2220,7 +2166,7 @@ def InitNimManager(nimmgr, update_slots = []):
 			if slot.isMultiType():
 				eDVBResourceManager.getInstance().setFrontendType(slot.frontend_id, "dummy", False) #to force a clear of m_delsys_whitelist
 				types = slot.getMultiTypeList()
-				#print"[adenin]",types
+				print"[adenin]",types
 				for FeType in types.itervalues():
 					if FeType in ("DVB-S", "DVB-S2", "DVB-S2X") and config.Nims[slot.slot].dvbs.configMode.value == "nothing":
 						continue
