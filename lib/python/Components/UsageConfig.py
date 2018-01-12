@@ -1,10 +1,10 @@
 import os
 from time import time
-from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff, setEnableTtCachingOnOff, eEnv, Misc_Options, eBackgroundFileEraser, eServiceEvent, eDVBFrontend, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP
+from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff, setEnableTtCachingOnOff, eEnv, Misc_Options, eBackgroundFileEraser, eServiceEvent, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP
 
 from Components.About import about
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigFloat, ConfigDictionarySet, ConfigDirectory
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigFloat, ConfigDirectory
 from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
 from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
@@ -131,56 +131,17 @@ def InitUsageConfig():
 	config.usage.infobar_frontend_source = ConfigSelection(default = "tuner", choices = [("settings", _("Settings")), ("tuner", _("Tuner"))])
 	
 	config.usage.show_picon_bkgrn = ConfigSelection(default = "transparent", choices = [("none", _("Disabled")), ("transparent", _("Transparent")), ("blue", _("Blue")), ("red", _("Red")), ("black", _("Black")), ("white", _("White")), ("lightgrey", _("Light Grey")), ("grey", _("Grey"))])
-
+	config.usage.show_genre_info = ConfigYesNo(default=False)
+	config.usage.menu_show_numbers = ConfigYesNo(default = False)
 	config.usage.show_menupath = ConfigSelection(default = "small", choices = [("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
 	config.usage.show_spinner = ConfigYesNo(default = True)
 	config.usage.enable_tt_caching = ConfigYesNo(default = True)
-	config.usage.tuxtxt_font_and_res = ConfigSelection(default = "TTF_SD", choices = [("X11_SD", _("Fixed X11 font (SD)")), ("TTF_SD", _("TrueType font (SD)")), ("TTF_HD", _("TrueType font (HD)")), ("TTF_FHD", _("TrueType font (full-HD)")), ("expert_mode", _("Expert mode"))])
-	config.usage.tuxtxt_UseTTF = ConfigSelection(default = "1", choices = [("0", "0"), ("1", "1")])
-	config.usage.tuxtxt_TTFBold = ConfigSelection(default = "1", choices = [("0", "0"), ("1", "1")])
-	config.usage.tuxtxt_TTFScreenResX = ConfigSelection(default = "720", choices = [("720", "720"), ("1280", "1280"), ("1920", "1920")])
-	config.usage.tuxtxt_StartX = ConfigInteger(default=50, limits = (0, 200))
-	config.usage.tuxtxt_EndX = ConfigInteger(default=670, limits = (500, 1920))
-	config.usage.tuxtxt_StartY = ConfigInteger(default=30, limits = (0, 200))
-	config.usage.tuxtxt_EndY = ConfigInteger(default=555, limits = (400, 1080))
-	config.usage.tuxtxt_TTFShiftY = ConfigSelection(default = "2", choices = [("-9", "-9"), ("-8", "-8"), ("-7", "-7"), ("-6", "-6"), ("-5", "-5"), ("-4", "-4"), ("-3", "-3"), ("-2", "-2"), ("-1", "-1"), ("0", "0"), ("1", "1"), ("2", "2"), ("3", "3"), ("4", "4"), ("5", "5"), ("6", "6"), ("7", "7"), ("8", "8"), ("9", "9")])
-	config.usage.tuxtxt_TTFShiftX = ConfigSelection(default = "0", choices = [("-9", "-9"), ("-8", "-8"), ("-7", "-7"), ("-6", "-6"), ("-5", "-5"), ("-4", "-4"), ("-3", "-3"), ("-2", "-2"), ("-1", "-1"), ("0", "0"), ("1", "1"), ("2", "2"), ("3", "3"), ("4", "4"), ("5", "5"), ("6", "6"), ("7", "7"), ("8", "8"), ("9", "9")])
-	config.usage.tuxtxt_TTFWidthFactor16 = ConfigInteger(default=29, limits = (8, 31))
-	config.usage.tuxtxt_TTFHeightFactor16 = ConfigInteger(default=14, limits = (8, 31))
-	config.usage.tuxtxt_CleanAlgo = ConfigInteger(default=0, limits = (0, 9))
-	config.usage.tuxtxt_ConfFileHasBeenPatched = NoSave(ConfigYesNo(default=False))
-
-	config.usage.tuxtxt_font_and_res.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_UseTTF.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFBold.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFScreenResX.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_StartX.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_EndX.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_StartY.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_EndY.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFShiftY.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFShiftX.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFWidthFactor16.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_TTFHeightFactor16.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
-	config.usage.tuxtxt_CleanAlgo.addNotifier(patchTuxtxtConfFile, initial_call = False, immediate_feedback = False, call_on_save_or_cancel = True)
 	config.usage.sort_settings = ConfigYesNo(default = False)
-	config.usage.sort_menu_byname = ConfigYesNo(default = False)
-	config.usage.sort_plugins_byname = ConfigYesNo(default = True)
-	config.usage.plugins_sort_mode = ConfigSelection(default = "user", choices = [
-		("a_z", _("alphabetical")),
-		("default", _("Default")),
-		("user", _("user defined")),])
-	config.usage.plugin_sort_weight = ConfigDictionarySet()
-	config.usage.menu_sort_weight = ConfigDictionarySet(default = { "mainmenu" : {"submenu" : {} }})
-	config.usage.menu_sort_mode = ConfigSelection(default = "user", choices = [
-		("a_z", _("alphabetical")),
-		("default", _("Default")),
-		("user", _("user defined")),])
+	config.usage.sort_menus = ConfigYesNo(default = False)
 	config.usage.sort_pluginlist = ConfigYesNo(default = True)
+	config.usage.movieplayer_pvrstate = ConfigYesNo(default = True)
 	config.usage.sort_extensionslist = ConfigYesNo(default = False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default = True)
-	config.usage.movieplayer_pvrstate = ConfigYesNo(default = False)
-	config.usage.rc_model = ConfigSelection(default = DefaultRemote, choices = RemoteChoices)
 
 	choicelist = []
 	for i in (10, 30):
@@ -559,7 +520,7 @@ def InitUsageConfig():
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
 	config.usage.show_eit_nownext = ConfigYesNo(default = True)
 	config.usage.show_vcr_scart = ConfigYesNo(default = False)
-	config.usage.pic_resolution = ConfigSelection(default=None, choices=[(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")][:SystemInfo["HasOPD-Blue-LineSkinSupport"] and 4 or 3])
+	config.usage.pic_resolution = ConfigSelection(default = None, choices = [(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")])
 	config.usage.enable_delivery_system_workaround = ConfigYesNo(default = False)
 
 	config.epg = ConfigSubsection()
@@ -595,13 +556,6 @@ def InitUsageConfig():
 	config.epg.viasat.addNotifier(EpgSettingsChanged)
 	config.epg.netmed.addNotifier(EpgSettingsChanged)
 	config.epg.virgin.addNotifier(EpgSettingsChanged)
-	
-	config.epg.maxdays = ConfigSelectionNumber(min = 1, max = 365, stepwidth = 1, default = 7, wraparound = True)
-	def EpgmaxdaysChanged(configElement):
-		from enigma import eEPGCache
-		eEPGCache.getInstance().setEpgmaxdays(config.epg.maxdays.getValue())
-	config.epg.maxdays.addNotifier(EpgmaxdaysChanged)
-
 	config.epg.histminutes = ConfigSelectionNumber(min = 0, max = 120, stepwidth = 15, default = 0, wraparound = True)
 	def EpgHistorySecondsChanged(configElement):
 		eEPGCache.getInstance().setEpgHistorySeconds(config.epg.histminutes.value*60)
