@@ -34,30 +34,30 @@ eFbLCD::eFbLCD(const char *fb)
 	lcdfd = open(fb, O_RDWR);
 	if (lcdfd < 0)
 	{
-		eDebug("[eFbLCD] %s %m", fb);
+		eDebug("[eFbLCD] %s: %m", fb);
 		goto nolfb;
 	}
 
 	if (ioctl(lcdfd, FBIOGET_VSCREENINFO, &m_screeninfo) < 0)
 	{
-		eDebug("[eFbLCD] FBIOGET_VSCREENINFO %m");
+		eDebug("[eFbLCD] FBIOGET_VSCREENINFO: %m");
 		goto nolfb;
 	}
 
 	fb_fix_screeninfo fix;
 	if (ioctl(lcdfd, FBIOGET_FSCREENINFO, &fix) < 0)
 	{
-		eDebug("[eFbLCD] FBIOGET_FSCREENINFO %m");
+		eDebug("[eFbLCD] FBIOGET_FSCREENINFO: %m");
 		goto nolfb;
 	}
 
 	m_available = fix.smem_len;
 	m_phys_mem = fix.smem_start;
-	eDebug("[eFbLCD] %dk video mem", m_available / 1024);
+	eDebug("[eFbLCD] %s %dk video mem", fb, m_available / 1024);
 	_buffer=(unsigned char*)mmap(0, m_available, PROT_WRITE|PROT_READ, MAP_SHARED, lcdfd, 0);
 	if (!_buffer)
 	{
-		eDebug("[eFbLCD] mmap %m");
+		eDebug("[eFbLCD] mmap: %m");
 		goto nolfb;
 	}
 
@@ -144,7 +144,8 @@ int eFbLCD::setMode(int nxRes, int nyRes, int nbpp)
 
 	ioctl(lcdfd, FBIOGET_VSCREENINFO, &m_screeninfo);
 
-	if ((m_screeninfo.xres != nxRes) || (m_screeninfo.yres != nyRes) || (m_screeninfo.bits_per_pixel != nbpp))
+	if ((m_screeninfo.xres != (unsigned int)nxRes) || (m_screeninfo.yres != (unsigned int)nyRes) ||
+		(m_screeninfo.bits_per_pixel != (unsigned int)nbpp))
 	{
 		eDebug("[eFbLCD] SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
 			nxRes, nyRes, nbpp,

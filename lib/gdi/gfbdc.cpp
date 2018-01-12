@@ -15,6 +15,15 @@
 #include <lib/base/cfile.h>
 #endif
 
+#ifdef CONFIG_ION
+extern void bcm_accel_blit(
+		int src_addr, int src_width, int src_height, int src_stride, int src_format,
+		int dst_addr, int dst_width, int dst_height, int dst_stride,
+		int src_x, int src_y, int width, int height,
+		int dst_x, int dst_y, int dwidth, int dheight,
+		int pal_addr, int flags);
+#endif
+
 gFBDC::gFBDC()
 {
 	fb=new fbClass;
@@ -160,6 +169,30 @@ void gFBDC::exec(const gOpcode *o)
 #else
 		fb->blit();
 #endif
+#ifdef CONFIG_ION
+		if (surface_back.data_phys)
+		{
+			gUnmanagedSurface s(surface);
+			surface = surface_back;
+			surface_back = s;
+
+			fb->waitVSync();
+			if (surface.data_phys > surface_back.data_phys)
+			{
+				fb->setOffset(0);
+			}
+			else
+			{
+				fb->setOffset(surface_back.y);
+			}
+			bcm_accel_blit(
+				surface_back.data_phys, surface_back.x, surface_back.y, surface_back.stride, 0,
+				surface.data_phys, surface.x, surface.y, surface.stride,
+				0, 0, surface.x, surface.y,
+				0, 0, surface.x, surface.y,
+				0, 0);
+		}
+#endif
 		break;
 	case gOpcode::sendShow:
 	{
@@ -223,30 +256,15 @@ void gFBDC::setGamma(int g)
 
 void gFBDC::setResolution(int xres, int yres, int bpp)
 {
-#if defined(__sh__)
-	/* if xres and yres are negative call SetMode with the lates xres and yres
-	 * we need that to read the new screen dimesnions after a resolution change
-	 * without changing the frambuffer dimensions
-	 */
-	if (xres<0 && yres<0 ) {
-		fb->SetMode(surface.x, surface.y, bpp);
-		return;
-	}
-#else
 	if (m_pixmap && (surface.x == xres) && (surface.y == yres) && (surface.bpp == bpp))
 		return;
-#endif
+
 #ifndef CONFIG_ION
 	if (gAccel::getInstance())
 		gAccel::getInstance()->releaseAccelMemorySpace();
 #endif
 	fb->SetMode(xres, yres, bpp);
 
-#if defined(__sh__)
-	for (int y = 0; y<yres; y++) { // make whole screen transparent
-		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
-	}
-#endif
 	surface.x = xres;
 	surface.y = yres;
 	surface.bpp = bpp;
@@ -274,7 +292,7 @@ void gFBDC::setResolution(int xres, int yres, int bpp)
 		surface_back.data_phys = 0;
 	}
 
-	eDebug("[gFBDC] resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, fb->Stride());
+	eDebug("[gFBDC] resolution: %d x %d x %d (stride: %d) pages: %d", surface.x, surface.y, surface.bpp, fb->Stride(), fb->getNumPages());
 
 #ifndef CONFIG_ION
 	/* accel is already set in fb.cpp */
