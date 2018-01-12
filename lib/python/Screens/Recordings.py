@@ -37,11 +37,15 @@ class SetupSummary(Screen):
 		self["SetupValue"].text = self.parent.getCurrentValue()
 		if hasattr(self.parent,"getCurrentDescription"):
 			self.parent["description"].text = self.parent.getCurrentDescription()
+		if self.parent.has_key('footnote'):
+			if self.parent.getCurrentEntry().endswith('*'):
+				self.parent['footnote'].text = (_("* = Restart Required"))
+			else:
+				self.parent['footnote'].text = (_(" "))
 
 class RecordingSettings(Screen,ConfigListScreen):
 	def removeNotifier(self):
-		if config.usage.setup_level.notifiers:
-			config.usage.setup_level.notifiers.remove(self.levelChanged)
+		config.usage.setup_level.notifiers.remove(self.levelChanged)
 
 	def levelChanged(self, configElement):
 		list = []
@@ -57,10 +61,11 @@ class RecordingSettings(Screen,ConfigListScreen):
 			self.setup_title = x.get("title", "").encode("UTF-8")
 			self.seperation = int(x.get('separation', '0'))
 
-	def __init__(self, session):
-		from Components.Sources.StaticText import StaticText
+	def __init__(self, session, menu_path=""):
 		Screen.__init__(self, session)
 		self.skinName = "Setup"
+		self.menu_path = menu_path
+		self["menu_path_compressed"] = StaticText()
 		self['footnote'] = Label()
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
@@ -148,7 +153,17 @@ class RecordingSettings(Screen,ConfigListScreen):
 			self["config"].list.sort()
 
 	def layoutFinished(self):
-		self.setTitle(_(self.setup_title))
+		if config.usage.show_menupath.value == 'large' and self.menu_path:
+			title = self.menu_path + _(self.setup_title)
+			self["menu_path_compressed"].setText("")
+		elif config.usage.show_menupath.value == 'small':
+			title = _(self.setup_title)
+			self["menu_path_compressed"].setText(self.menu_path + " >" if not self.menu_path.endswith(' / ') else self.menu_path[:-3] + " >" or "")
+		else:
+			title = _(self.setup_title)
+			self["menu_path_compressed"].setText("")
+		self.setup_title = title
+		self.setTitle(title)
 
 	# for summary:
 	def changedEntry(self):
@@ -176,7 +191,6 @@ class RecordingSettings(Screen,ConfigListScreen):
 		currentry = self["config"].getCurrent()
 		self.lastvideodirs = config.movielist.videodirs.value
 		self.lasttimeshiftdirs = config.usage.allowed_timeshift_paths.value
-		self.lastautorecorddirs = config.usage.allowed_autorecord_paths.value
 		if config.usage.setup_level.index >= 2:
 			txt = _("Default movie location")
 		else:

@@ -1,19 +1,17 @@
 import struct
 import os
-from fcntl import ioctl
 from sys import maxint
-from enigma import eTimer, eHdmiCEC, eActionMap
-from config import config, ConfigSelection, ConfigYesNo, ConfigSubsection, ConfigText, NoSave, ConfigInteger
-from Components.Console import Console
+
+from enigma import eHdmiCEC, eActionMap
+from enigma import eTimer
+
+from config import config, ConfigSelection, ConfigYesNo, ConfigSubsection, ConfigText
 from Tools.StbHardware import getFPWasTimerWakeup
-from Tools.Directories import fileExists
 
 
 config.hdmicec = ConfigSubsection()
 config.hdmicec.enabled = ConfigYesNo(default = False)
 config.hdmicec.control_tv_standby = ConfigYesNo(default = True)
-config.hdmicec.control_tv_standby_skipnow = ConfigYesNo(default = False)
-config.hdmicec.TVoffCounter = NoSave(ConfigInteger(default = 0))
 config.hdmicec.control_tv_wakeup = ConfigYesNo(default = True)
 config.hdmicec.report_active_source = ConfigYesNo(default = True)
 config.hdmicec.report_active_menu = ConfigYesNo(default = True)
@@ -34,14 +32,14 @@ config.hdmicec.volume_forwarding = ConfigYesNo(default = False)
 config.hdmicec.control_receiver_wakeup = ConfigYesNo(default = False)
 config.hdmicec.control_receiver_standby = ConfigYesNo(default = False)
 config.hdmicec.handle_deepstandby_events = ConfigYesNo(default = False)
-config.hdmicec.preemphasis = ConfigYesNo(default = False)	
 choicelist = []
-for i in (10, 50, 100, 150, 250, 500, 750, 1000, 1500, 2000):
-	choicelist.append(("%d" % i, "%d ms" % i))
+for i in (10, 50, 100, 150, 250, 500, 750, 1000):
+	choicelist.append(("%d" % i, _("%d ms") % i))
 config.hdmicec.minimum_send_interval = ConfigSelection(default = "0", choices = [("0", _("Disabled"))] + choicelist)
 
+config.hdmicec.sourceactive_zaptimers = ConfigYesNo(default=False)
+
 class HdmiCec:
-	instance = None
 
 	def __init__(self):
 		if config.hdmicec.enabled.value:
@@ -54,7 +52,6 @@ class HdmiCec:
 
 			eHdmiCEC.getInstance().messageReceived.get().append(self.messageReceived)
 			config.misc.standbyCounter.addNotifier(self.onEnterStandby, initial_call = False)
-			config.hdmicec.TVoffCounter.addNotifier(self.TVoff, initial_call = False)
 			config.misc.DeepStandby.addNotifier(self.onEnterDeepStandby, initial_call = False)
 			self.setFixedPhysicalAddress(config.hdmicec.fixed_physical_address.value)
 
@@ -66,9 +63,6 @@ class HdmiCec:
 			if config.hdmicec.handle_deepstandby_events.value:
 				if not getFPWasTimerWakeup():
 					self.wakeupMessages()
-			dummy = self.checkifPowerupWithoutWakingTv() # initially write 'False' to file, see below
-#			if fileExists("/proc/stb/hdmi/preemphasis"):		
-#				self.sethdmipreemphasis()
 
 	def getPhysicalAddress(self):
 		physicaladdress = eHdmiCEC.getInstance().getPhysicalAddress()
@@ -139,7 +133,7 @@ class HdmiCec:
 				cmd = 0x44
 				data = str(struct.pack('B', 0x6c))
 			if cmd:
-				if config.hdmicec.minimum_send_interval.value != "0" and message != "standby": # Use no interval time when message is standby. usefull for Panasonic TV
+				if config.hdmicec.minimum_send_interval.value != "0":
 					self.queue.append((address, cmd, data))
 					if not self.wait.isActive():
 						self.wait.start(int(config.hdmicec.minimum_send_interval.value), True)
@@ -157,53 +151,40 @@ class HdmiCec:
 			self.sendMessage(address, message)
 
 	def wakeupMessages(self):
-		if self.checkifPowerupWithoutWakingTv() == 'True':
-			print "[HdmiCec] Skip waking TV, found 'True' in '/tmp/powerup_without_waking_tv.txt' (usually written by openWebif)"
-		else:
-			if config.hdmicec.enabled.value:
-				messages = []
-				if config.hdmicec.control_tv_wakeup.value:
-					messages.append("wakeup")
-				if config.hdmicec.report_active_source.value:
-					messages.append("sourceactive")
-				if config.hdmicec.report_active_menu.value:
-					messages.append("menuactive")
-				if messages:
-					self.sendMessages(0, messages)
+		if config.hdmicec.enabled.value:
+			messages = []
+			if config.hdmicec.control_tv_wakeup.value:
+				messages.append("wakeup")
+			if config.hdmicec.report_active_source.value:
+				messages.append("sourceactive")
+			if config.hdmicec.report_active_menu.value:
+				messages.append("menuactive")
+			if messages:
+				self.sendMessages(0, messages)
 
-				if config.hdmicec.control_receiver_wakeup.value:
-					self.sendMessage(5, "keypoweron")
-					self.sendMessage(5, "setsystemaudiomode")
-			if os.path.exists("/usr/script/TvOn.sh"):
-				Console().ePopen("/usr/script/TvOn.sh &")
+			if config.hdmicec.control_receiver_wakeup.value:
+				self.sendMessage(5, "keypoweron")
+				self.sendMessage(5, "setsystemaudiomode")
 
 	def standbyMessages(self):
-		if config.hdmicec.control_tv_standby_skipnow.value:
-			print "[HdmiCec] Skip turning off TV (action standby_skipTVshutdown)"
-		else:
-			if config.hdmicec.enabled.value:
-				messages = []
-				if config.hdmicec.control_tv_standby.value:
-					messages.append("standby")
-				else:
-					if config.hdmicec.report_active_source.value:
-						messages.append("sourceinactive")
-					if config.hdmicec.report_active_menu.value:
-						messages.append("menuinactive")
-				if messages:
-					self.sendMessages(0, messages)
+		if config.hdmicec.enabled.value:
+			messages = []
+			if config.hdmicec.control_tv_standby.value:
+				messages.append("standby")
+			else:
+				if config.hdmicec.report_active_source.value:
+					messages.append("sourceinactive")
+				if config.hdmicec.report_active_menu.value:
+					messages.append("menuinactive")
+			if messages:
+				self.sendMessages(0, messages)
 
-				if config.hdmicec.control_receiver_standby.value:
-					self.sendMessage(5, "keypoweroff")
-					self.sendMessage(5, "standby")
-			if os.path.exists("/usr/script/TvOff.sh"):
-				Console().ePopen("/usr/script/TvOff.sh &")
+			if config.hdmicec.control_receiver_standby.value:
+				self.sendMessage(5, "keypoweroff")
+				self.sendMessage(5, "standby")
 
 	def onLeaveStandby(self):
 		self.wakeupMessages()
-
-	def TVoff(self, configElement):
-		self.standbyMessages()
 
 	def onEnterStandby(self, configElement):
 		from Screens.Standby import inStandby
@@ -221,7 +202,7 @@ class HdmiCec:
 			Notifications.AddNotification(Standby)
 
 	def wakeup(self):
-		from Screens.Standby import Standby, inStandby
+		from Screens.Standby import inStandby
 		if inStandby:
 			inStandby.Power()
 
@@ -335,38 +316,5 @@ class HdmiCec:
 			return 1
 		else:
 			return 0
-			
-	def sethdmipreemphasis(self):
-		try:
-			if config.hdmicec.preemphasis.value == True:
-				file = open("/proc/stb/hdmi/preemphasis", "w")
-				file.write('on')
-				file.close()
-			else:
-				file = open("/proc/stb/hdmi/preemphasis", "w")
-				file.write('off')
-				file.close()
-		except:
-			return
-
-	def checkifPowerupWithoutWakingTv(self):
-		try:
-			#returns 'True' if openWebif function "Power on without TV" has written 'True' to this file:
-			f = open("/tmp/powerup_without_waking_tv.txt", "r")
-			powerupWithoutWakingTv = f.read()
-			f.close()
-		except:
-			powerupWithoutWakingTv = 'False'
-
-		try:
-			#write 'False' to the file so that turning on the TV is only suppressed once
-			#(and initially, so that openWebif knows that the image supports this feature)
-			f = open("/tmp/powerup_without_waking_tv.txt", "w")
-			f.write('False')
-			f.close()
-		except:
-			print "[HdmiCec] failed writing /tmp/powerup_without_waking_tv.txt"
-
-		return powerupWithoutWakingTv
 
 hdmi_cec = HdmiCec()

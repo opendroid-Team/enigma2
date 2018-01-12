@@ -1,15 +1,13 @@
 # the implementation here is a bit crappy.
+from boxbranding import getBoxType, getMachineBuild
 import time
 from Directories import resolveFilename, SCOPE_CONFIG
-from boxbranding import getBoxType
 
-boxtype = getBoxType()
-
-PERCENTAGE_START = 50
+PERCENTAGE_START = 0
 PERCENTAGE_END = 100
 
 profile_start = time.time()
- 
+
 profile_data = {}
 total_time = 1
 profile_file = None
@@ -26,15 +24,35 @@ try:
 		total_time = t
 		profile_data[id] = t
 except:
-	print "no profile data available"
+	print "[Profile] no profile data available"
 
 try:
 	profile_file = open(resolveFilename(SCOPE_CONFIG, "profile"), "w")
 except IOError:
-	print "WARNING: couldn't open profile file!"
+	print "[Profile] WARNING: couldn't open profile file!"
 
 def profile(id):
 	now = time.time() - profile_start
+
+	# GML: Set the device and format here...probably more could be added?
+	#
+	box_type = getBoxType()
+	if box_type in ("odinm7", "odinm6", "xp1000s"):
+		dev_fmt = ("/dev/dbox/oled0", "%d")
+	elif box_type in ("gb800se", "gb800solo"):
+		dev_fmt = ("/dev/dbox/oled0", "%d  \n")
+	elif box_type == "mbtwin":
+		dev_fmt = ("/dev/dbox/oled0", "%d%%")
+	elif box_type == "gb800seplus":
+		dev_fmt = ("/dev/mcu", "%d  \n")
+	elif box_type == "ebox5000":
+		dev_fmt = ("/proc/progress", "%d"),
+	elif getMachineBuild() in ("inihdp", "inihdx"):
+		dev_fmt = ("/proc/vfd", "Loading %d%%\n")
+	else:
+		dev_fmt = ("/proc/progress", "%d \n")
+	(dev, fmt) = dev_fmt
+
 	if profile_file:
 		profile_file.write("%7.3f\t%s\n" % (now, id))
 
@@ -45,24 +63,8 @@ def profile(id):
 			else:
 				perc = PERCENTAGE_START
 			try:
-				if boxtype in ("classm", "axodin", "axodinc", "starsatlx", "evo", "genius", "galaxym6" ):
-					f = open("/dev/dbox/oled0", "w")
-					f.write("%d" % perc)
-				elif boxtype in ('gb800solo', 'gb800se', 'gb800seplus', 'gbultrase'):
-					f = open("/dev/mcu", "w")
-					f.write("%d  \n" % perc)
-				elif boxtype in ("mixosf5", "gi9196m", "osmini", "osmega", "spycatmini", "osminiplus", "spycatminiplus"):
-					f = open("/proc/progress", "w")
-					f.write("%d" % perc)
-				elif boxtype in ("xpeedlx3", "sezammarvel", "atemionemesis", "fegasusx3", "fegasusx5s", "fegasusx5t"):
-					f = open("/proc/vfd", "w")
-					f.write("Loading %d %%" % perc)
-				elif boxtype in ('amikomini', 'amiko8900', 'sognorevolution', 'arguspingulux', 'arguspinguluxmini', 'sparkreloaded', 'sabsolo', 'sparklx', 'gis8120'):
-					f = open("/proc/vfd", "w")
-					f.write("%d \n" % perc)
-				else:
-					f = open("/proc/progress", "w")
-					f.write("%d \n" % perc)
+				f = open(dev, "w")
+				f.write(fmt % perc)
 				f.close()
 			except IOError:
 				pass

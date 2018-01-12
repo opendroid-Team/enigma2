@@ -64,7 +64,7 @@ class SetupSummary(Screen):
 	def selectionChanged(self):
 		self["SetupEntry"].text = self.parent.getCurrentEntry()
 		self["SetupValue"].text = self.parent.getCurrentValue()
-		if hasattr(self.parent,"getCurrentDescription") and self.parent.has_key("description"):
+		if hasattr(self.parent,"getCurrentDescription") and "description" in self.parent:
 			self.parent["description"].text = self.parent.getCurrentDescription()
 		if self.parent.has_key('footnote'):
 			if self.parent.getCurrentEntry().endswith('*'):
@@ -77,7 +77,7 @@ class Setup(ConfigListScreen, Screen):
 	ALLOW_SUSPEND = True
 
 	def removeNotifier(self):
-		self.onNotifiers.remove(self.levelChanged)
+		config.usage.setup_level.notifiers.remove(self.levelChanged)
 
 	def levelChanged(self, configElement):
 		list = []
@@ -90,33 +90,38 @@ class Setup(ConfigListScreen, Screen):
 			if x.get("key") != self.setup:
 				continue
 			self.addItems(list, x)
-			self.setup_title = x.get("title", "").encode("UTF-8")
+			if config.usage.show_menupath.value in ('large', 'small') and x.get("titleshort", "").encode("UTF-8") != "":
+				self.setup_title = x.get("titleshort", "").encode("UTF-8")
+			else:
+				self.setup_title = x.get("title", "").encode("UTF-8")
 			self.seperation = int(x.get('separation', '0'))
 
-	def __init__(self, session, setup, plugin=None, PluginLanguageDomain=None):
+	def __init__(self, session, setup, plugin=None, menu_path=None, PluginLanguageDomain=None):
 		Screen.__init__(self, session)
 		# for the skin: first try a setup_<setupID>, then Setup
 		self.skinName = ["setup_" + setup, "Setup" ]
 
+		self["menu_path_compressed"] = StaticText()
 		self['footnote'] = Label()
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
-		self["status"] = StaticText()
 		self.onChangedEntry = [ ]
 		self.item = None
 		self.setup = setup
 		self.plugin = plugin
 		self.PluginLanguageDomain = PluginLanguageDomain
+		self.menu_path = menu_path
 		list = []
-		self.onNotifiers = [ ]
+
 		self.refill(list)
+
 		ConfigListScreen.__init__(self, list, session = session, on_change = self.changedEntry)
 		self.createSetup()
 
 		#check for list.entries > 0 else self.close
 		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("OK"))
+		self["key_green"] = StaticText(_("Save"))
 		self["description"] = Label("")
 
 		self["actions"] = NumberActionMap(["SetupActions", "MenuActions"],
@@ -160,7 +165,6 @@ class Setup(ConfigListScreen, Screen):
 		self["config"].setCurrentIndex(newIdx)
 
 	def handleInputHelpers(self):
-		self["status"].setText(self["config"].getCurrent()[2])
 		if self["config"].getCurrent() is not None:
 			try:
 				if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
@@ -186,12 +190,10 @@ class Setup(ConfigListScreen, Screen):
 				self["VKeyIcon"].boolean = False
 
 	def HideHelp(self):
-		self.help_window_was_shown = False
 		try:
 			if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
 				if self["config"].getCurrent()[1].help_window.instance is not None:
 					self["config"].getCurrent()[1].help_window.hide()
-					self.help_window_was_shown = True
 		except:
 			pass
 
@@ -208,14 +210,22 @@ class Setup(ConfigListScreen, Screen):
 			self["config"].invalidate(self["config"].getCurrent())
 
 	def layoutFinished(self):
-		self.setTitle(_(self.setup_title))
+		if config.usage.show_menupath.value == 'large' and self.menu_path:
+			title = self.menu_path + _(self.setup_title)
+			self["menu_path_compressed"].setText("")
+		elif config.usage.show_menupath.value == 'small' and self.menu_path:
+			title = _(self.setup_title)
+			self["menu_path_compressed"].setText(self.menu_path + " >" if not self.menu_path.endswith(' / ') else self.menu_path[:-3] + " >" or "")
+		else:
+			title = _(self.setup_title)
+			self["menu_path_compressed"].setText("")
+		self.setTitle(title)
 
 	# for summary:
 	def changedEntry(self):
 		self.item = self["config"].getCurrent()
 		try:
-			#FIXME This code prevents an LCD refresh for this ConfigElement(s)
-			if not isinstance(self["config"].getCurrent()[1], ConfigText):
+			if isinstance(self["config"].getCurrent()[1], ConfigYesNo) or isinstance(self["config"].getCurrent()[1], ConfigSelection):
 				self.createSetup()
 		except:
 			pass
@@ -226,25 +236,12 @@ class Setup(ConfigListScreen, Screen):
 				continue
 			if x.tag == 'item':
 				item_level = int(x.get("level", 0))
-				item_tunerlevel = int(x.get("tunerlevel", 0))
-				item_rectunerlevel = int(x.get("rectunerlevel", 0))
-				item_tuxtxtlevel = int(x.get("tt_level", 0))
 
-				if not self.onNotifiers:
-					self.onNotifiers.append(self.levelChanged)
+				if not self.levelChanged in config.usage.setup_level.notifiers:
+					config.usage.setup_level.notifiers.append(self.levelChanged)
 					self.onClose.append(self.removeNotifier)
 
 				if item_level > config.usage.setup_level.index:
-					continue
-				if (item_tuxtxtlevel == 1) and (config.usage.tuxtxt_font_and_res.value != "expert_mode"):
-					continue
-				if item_tunerlevel == 1 and not config.usage.frontend_priority.value in ("expert_mode", "experimental_mode"):
-					continue
-				if item_tunerlevel == 2 and not config.usage.frontend_priority.value == "experimental_mode":
-					continue
-				if item_rectunerlevel == 1 and not config.usage.recording_frontend_priority.value in ("expert_mode", "experimental_mode"):
-					continue
-				if item_rectunerlevel == 2 and not config.usage.recording_frontend_priority.value == "experimental_mode":
 					continue
 
 				requires = x.get("requires")
@@ -281,14 +278,8 @@ def getSetupTitle(id):
 	xmldata = setupdom().getroot()
 	for x in xmldata.findall("setup"):
 		if x.get("key") == id:
-			if _(x.get("title", "").encode("UTF-8")) == _("OSD Settings") or _(x.get("title", "").encode("UTF-8")) == _("Softcam Setup") or _(x.get("title", "").encode("UTF-8")) == _("EPG settings"):
-				return _("Settings...")
-			return x.get("title", "").encode("UTF-8")
+			if x.get("titleshort", "").encode("UTF-8") != "":
+				return _(x.get("titleshort", "").encode("UTF-8"))
+			else:
+				return _(x.get("title", "").encode("UTF-8"))
 	raise SetupError("unknown setup id '%s'!" % repr(id))
-
-def getSetupTitleLevel(id):
-	xmldata = setupdom().getroot()
-	for x in xmldata.findall("setup"):
-		if x.get("key") == id:
-			return int(x.get("level", 0))
-	return 0

@@ -13,6 +13,7 @@ class MessageBox(Screen):
 	TYPE_INFO = 1
 	TYPE_WARNING = 2
 	TYPE_ERROR = 3
+	TYPE_MESSAGE = 4
 
 	def __init__(self, session, text, type=TYPE_YESNO, timeout=-1, close_on_any_key=False, default=True, enable_input=True, msgBoxID=None, picon=True, simple=False, wizard=False, list=None, skin_name=None, timeout_default=None):
 		if not list: list = []
@@ -20,16 +21,6 @@ class MessageBox(Screen):
 		self.type = type
 		Screen.__init__(self, session)
 		self.skinName = ["MessageBox"]
-		if self.type == self.TYPE_YESNO:
-			self.setTitle(_("Question"))
-		elif self.type == self.TYPE_INFO:
-			self.setTitle(_("Information"))
-		elif self.type == self.TYPE_WARNING:
-			self.setTitle(_("Warning"))
-		elif self.type == self.TYPE_ERROR:
-			self.setTitle(_("Error"))
-		else:
-			self.setTitle(_("Message"))
 		if wizard:
 			from Components.config import config
 			from Components.Pixmap import MultiPixmap
@@ -69,10 +60,10 @@ class MessageBox(Screen):
 				self["ErrorPixmap"].show()
 			elif picon == self.TYPE_YESNO:
 				self["QuestionPixmap"].show()
-			elif picon == self.TYPE_INFO or picon == self.TYPE_WARNING:
+			elif picon == self.TYPE_INFO:
 				self["InfoPixmap"].show()
 
-		self.messtype = type
+		self.setTitle(self.type < self.TYPE_MESSAGE and [_("Question"), _("Information"), _("Warning"), _("Error")][self.type] or "Message")
 		if type == self.TYPE_YESNO:
 			if list:
 				self.list = list
@@ -115,10 +106,11 @@ class MessageBox(Screen):
 			listsize = (520, 25*count)
 			if self["ErrorPixmap"].visible or self["QuestionPixmap"].visible or self["InfoPixmap"].visible:
 				self["list"].instance.move(enigma.ePoint(65, 0))
+				wsizex = textsize[0]+65
 			else:
 				self["list"].instance.move(enigma.ePoint(0, 0))
+				wsizex = textsize[0]
 			self["list"].instance.resize(enigma.eSize(*listsize))
-
 		else:
 			textsize = self["text"].getSize()
 			if textsize[0] < textsize[1]:
@@ -195,7 +187,7 @@ class MessageBox(Screen):
 				self.timeoutCallback()
 
 	def timeoutCallback(self):
-		print "Timeout!"
+		print "[MessageBox] Timeout!"
 		if self.timeout_default is not None:
 			self.close(self.timeout_default)
 		else:
@@ -210,8 +202,7 @@ class MessageBox(Screen):
 					else:
 						self.close(False)
 					break
-		else:
-			self.close(False)
+		self.close(False)
 
 	def ok(self):
 		if self["list"].getCurrent():

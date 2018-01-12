@@ -55,10 +55,7 @@ class GetEcmInfo:
 				if 'ECM' in line:
 					linetmp = mgcam.split(' ')
 					info['eEnc'] = linetmp[1]
-					try:			
-						info['eCaid'] = linetmp[5][2:-1]
-					except:
-						info['eCaid'] = ""
+					info['eCaid'] = linetmp[5][2:-1]
 					continue
 				if 'source' in line:
 					linetmp = mgcam.split(' ')
@@ -136,6 +133,8 @@ class GetEcmInfo:
 					protocol = _('Protocol:') + ' '
 					if info.get('protocol', None):
 						protocol += info.get('protocol', '')
+					elif info.get('using', None):
+						protocol += info.get('using', '')
 
 					hops = _('Hops:') + ' '
 					if info.get('hops', None):
@@ -182,10 +181,14 @@ class GetEcmInfo:
 							hops = ''
 						self.textvalue = reader + hops + " (%ss)" % info.get('ecm time', '?')
 					else:
-						self.textvalue = ""
-		decCI = info.get('caid', '0')
-		provid = info.get('provid', '0')
-		if provid == '0':
-			provid = info.get('prov', '0')
-		ecmpid = info.get('pid', '0')
+						response = info.get('response time', None)
+						if response:
+							# wicardd
+							response = response.split(' ')
+							self.textvalue = "%s (%ss)" % (response[4], float(response[0])/1000)
+						else:
+							self.textvalue = ""
+		decCI = info.get('caid', info.get('CAID', '0'))
+		provid = info.get('provid', info.get('prov', info.get('Provider', '0')))
+		ecmpid = info.get('pid', info.get('ECM PID', '0'))
 		return self.textvalue,decCI,provid,ecmpid

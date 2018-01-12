@@ -9,31 +9,51 @@ from Tools.LoadPixmap import LoadPixmap
 import skin
 
 EXTENSIONS = {
-		"m4a": "music",
-		"mp2": "music",
+		"dts": "music",
 		"mp3": "music",
 		"wav": "music",
+		"wave": "music",
+		"oga": "music",
 		"ogg": "music",
-		"wma": "music",
 		"flac": "music",
+		"m4a": "music",
+		"mp2": "music",
+		"m2a": "music",
+		"wma": "music",
+		"ac3": "music",
+		"mka": "music",
+		"aac": "music",
+		"ape": "music",
+		"alac": "music",
 		"jpg": "picture",
-		"jpeg": "picture",
 		"png": "picture",
+		"gif": "picture",
 		"bmp": "picture",
-		"ts": "movie",
+		"jpeg": "picture",
+		"mpg": "movie",
+		"vob": "movie",
+		"m4v": "movie",
+		"mkv": "movie",
 		"avi": "movie",
 		"divx": "movie",
-		"m4v": "movie",
-		"mpg": "movie",
-		"mpeg": "movie",
-		"mkv": "movie",
+		"dat": "movie",
+		"flv": "movie",
 		"mp4": "movie",
 		"mov": "movie",
-		"m2ts": "movie",
+		"wmv": "movie",
+		"asf": "movie",
 		"3gp": "movie",
 		"3g2": "movie",
-		"asf": "movie",
-		"wmv": "movie",
+		"mpeg": "movie",
+		"mpe": "movie",
+		"rm": "movie",
+		"rmvb": "movie",
+		"ogm": "movie",
+		"ogv": "movie",
+		"m2ts": "movie",
+		"mts": "movie",
+		"ts": "movie",
+		"webm": "movie",
 	}
 
 def FileEntryComponent(name, absolute = None, isDir = False):
@@ -45,7 +65,7 @@ def FileEntryComponent(name, absolute = None, isDir = False):
 	else:
 		extension = name.split('.')
 		extension = extension[-1].lower()
-		if EXTENSIONS.has_key(extension):
+		if extension in EXTENSIONS:
 			png = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "extensions/" + EXTENSIONS[extension] + ".png"))
 		else:
 			png = None
@@ -272,20 +292,6 @@ class FileList(MenuList):
 
 def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected = False):
 	res = [ (absolute, isDir, selected, name) ]
-	x, y, w, h = skin.parameters.get("FileListMultiName",(55, 0, 470, 25))
-	res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, name))
-	if isDir:
-		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "extensions/directory.png"))
-	else:
-		extension = name.split('.')
-		extension = extension[-1].lower()
-		if EXTENSIONS.has_key(extension):
-			png = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "extensions/" + EXTENSIONS[extension] + ".png"))
-		else:
-			png = None
-	if png is not None:
-		x, y, w, h = skin.parameters.get("FileListMultiIcon",(30, 2, 20, 20))
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, png))
 	if not name.startswith('<'):
 		if selected:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_on.png"))
@@ -293,6 +299,26 @@ def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_off.png"))
 		x, y, w, h = skin.parameters.get("FileListMultiLock",(2, 0, 25, 25))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, icon))
+
+	if isDir:
+		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "extensions/directory.png"))
+	else:
+		extension = name.split('.')
+		extension = extension[-1].lower()
+		if extension in EXTENSIONS:
+			png = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "extensions/" + EXTENSIONS[extension] + ".png"))
+		else:
+			png = None
+
+	if png is not None:
+		x, y, w, h = skin.parameters.get("FileListMultiIcon",(30, 2, 20, 20))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, png))
+		x, y, w, h = skin.parameters.get("FileListMultiName",(55, 0, 470, 25))
+		res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, name))
+	else:
+		x1, y1, w1, h1 = skin.parameters.get("FileListMultiIcon",(30, 2, 20, 20))
+		x, y, w, h = skin.parameters.get("FileListMultiName",(55, 0, 470, 25))
+		res.append((eListboxPythonMultiContent.TYPE_TEXT, x1, y, w, h, 0, RT_HALIGN_LEFT, name))
 	return res
 
 
@@ -425,8 +451,7 @@ class MultiFileSelectList(FileList):
 				if (self.matchingPattern is None) or self.matchingPattern.search(path):
 					alreadySelected = False
 					for entry in self.selectedFiles:
-						#if os.path.basename(entry) == x:
-						if entry == path:
+						if os.path.basename(entry) == x:
 							alreadySelected = True
 					self.list.append(MultiFileSelectEntryComponent(name = name, absolute = x , isDir = False, selected = alreadySelected))
 

@@ -6,24 +6,26 @@ from Tools.Directories import pathExists, SCOPE_ACTIVE_SKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
 from boxbranding import getBoxType
 from ServiceReference import ServiceReference
-from Components.SystemInfo import SystemInfo
+from Components.config import config
 
 searchPaths = []
 lastLcdPiconPath = None
 
+bw_lcd = ('xpeedlx3','vuultimo')
+
 def initLcdPiconPaths():
 	global searchPaths
 	searchPaths = []
-	for part in harddiskmanager.getMountedPartitions():
-		onMountpointAdded(part.mountpoint)
 	for mp in ('/usr/share/enigma2/', '/'):
 		onMountpointAdded(mp)
-		
+	for part in harddiskmanager.getMountedPartitions():
+		onMountpointAdded(part.mountpoint)
+
 def onMountpointAdded(mountpoint):
 	global searchPaths
 	try:
-		if getBoxType() in ('vuultimo', 'et10000', 'mutant2400', 'xpeedlx3', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4', 'dm7020hd', 'dm7080') and not SystemInfo["grautec"] or os.path.isdir(mountpoint + 'piconlcd'):
-			path = os.path.join(mountpoint, 'piconlcd') + '/'
+		if getBoxType() in bw_lcd or config.lcd.picon_pack.value:
+			path = os.path.join(mountpoint, 'lcd_picon') + '/'
 		else:
 			path = os.path.join(mountpoint, 'picon') + '/'
 		if os.path.isdir(path) and path not in searchPaths:
@@ -37,8 +39,8 @@ def onMountpointAdded(mountpoint):
 
 def onMountpointRemoved(mountpoint):
 	global searchPaths
-	if getBoxType() in ('vuultimo', 'et10000', 'mutant2400', 'xpeedlx3', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4', 'dm7020hd', 'dm7080') and not SystemInfo["grautec"] or os.path.isdir(mountpoint + 'piconlcd'):
-		path = os.path.join(mountpoint, 'piconlcd') + '/'
+	if getBoxType() in bw_lcd or config.lcd.picon_pack.value:
+		path = os.path.join(mountpoint, 'lcd_picon') + '/'
 	else:
 		path = os.path.join(mountpoint, 'picon') + '/'
 	try:
@@ -65,7 +67,7 @@ def findLcdPicon(serviceName):
 		global searchPaths
 		pngname = ""
 		for path in searchPaths:
-			if pathExists(path) and not path.startswith('/media/net'):
+			if pathExists(path) and not path.startswith('/media/net') and not path.startswith('/media/autofs'):
 				pngname = path + serviceName + ".png"
 				if pathExists(pngname):
 					lastLcdPiconPath = path
@@ -82,14 +84,21 @@ def findLcdPicon(serviceName):
 
 def getLcdPiconName(serviceName):
 	#remove the path and name fields, and replace ':' by '_'
-	sname = '_'.join(GetWithAlternative(serviceName).split(':', 10)[:10])
-	pngname = findLcdPicon(sname)
-	if not pngname:
-		fields = sname.split('_', 3)
-		if len(fields) > 2 and fields[2] != '2': #fallback to 1 for tv services with nonstandard servicetypes
-			fields[2] = '1'
-		if len(fields) > 0 and fields[0] == '4097': #fallback to 1 for IPTV streams
-			fields[0] = '1'
+	fields = GetWithAlternative(serviceName).split(':', 10)[:10]
+	if not fields or len(fields) < 10:
+		return ""
+	pngname = findLcdPicon('_'.join(fields))
+	if not pngname and not fields[6].endswith("0000"):
+		#remove "sub-network" from namespace
+		fields[6] = fields[6][:-4] + "0000"
+		pngname = findLcdPicon('_'.join(fields))
+	if not pngname and fields[0] != '1':
+		#fallback to 1 for other reftypes
+		fields[0] = '1'
+		pngname = findLcdPicon('_'.join(fields))
+	if not pngname and fields[2] != '1':
+		#fallback to 1 for services with different service types
+		fields[2] = '1'
 		pngname = findLcdPicon('_'.join(fields))
 	if not pngname: # picon by channel name
 		name = ServiceReference(serviceName).getServiceName()
@@ -109,20 +118,20 @@ class LcdPicon(Renderer):
 		self.piconsize = (0,0)
 		self.pngname = ""
 		self.lastPath = None
-		if getBoxType() in ('vuultimo', 'et10000', 'mutant2400', 'xpeedlx3', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4', 'dm7020hd', 'dm7080') and not SystemInfo["grautec"]:
+		if getBoxType() in bw_lcd or config.lcd.picon_pack.value:
 			pngname = findLcdPicon("lcd_picon_default")
 		else:
 			pngname = findLcdPicon("picon_default")
 		self.defaultpngname = None
 		if not pngname:
-			if getBoxType() in ('vuultimo', 'et10000', 'mutant2400', 'xpeedlx3', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4', 'dm7020hd', 'dm7080') and not SystemInfo["grautec"]:
+			if getBoxType() in bw_lcd or config.lcd.picon_pack.value:
 				tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "lcd_picon_default.png")
 			else:
 				tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
 			if pathExists(tmp):
 				pngname = tmp
 			else:
-				if getBoxType() in ('vuultimo', 'et10000', 'mutant2400', 'xpeedlx3', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4', 'dm7020hd', 'dm7080') and not SystemInfo["grautec"]:
+				if getBoxType() in bw_lcd or config.lcd.picon_pack.value:
 					pngname = resolveFilename(SCOPE_ACTIVE_SKIN, "lcd_picon_default.png")
 				else:
 					pngname = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")

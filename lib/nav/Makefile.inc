@@ -6,4 +6,5 @@ nav_libenigma_nav_a_SOURCES = \
 
 navincludedir = $(pkgincludedir)/lib/nav
 navinclude_HEADERS = \
-	nav/core.h
+	nav/core.h \
+	nav/pcore.h

@@ -10,29 +10,6 @@ from timer import TimerEntry
 from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
 from PowerTimer import AFTEREVENT, TIMERTYPE
 
-def gettimerType(timer):
-	timertype = {
-		TIMERTYPE.NONE: _("Nothing"),
-		TIMERTYPE.WAKEUP: _("Wake Up"),
-		TIMERTYPE.WAKEUPTOSTANDBY: _("Wake Up To Standby"),
-		TIMERTYPE.STANDBY: _("Standby"),
-		TIMERTYPE.AUTOSTANDBY: _("Auto Standby"),
-		TIMERTYPE.AUTODEEPSTANDBY: _("Auto Deep Standby"),
-		TIMERTYPE.DEEPSTANDBY: _("Deep Standby"),
-		TIMERTYPE.REBOOT: _("Reboot"),
-		TIMERTYPE.RESTART: _("Restart GUI")
-		}[timer.timerType]
-	return timertype
-
-def getafterEvent(timer):
-	afterevent = {
-		AFTEREVENT.NONE: _("Nothing"),
-		AFTEREVENT.WAKEUP: _("Wake Up"),
-		AFTEREVENT.WAKEUPTOSTANDBY: _("Wake Up To Standby"),
-		AFTEREVENT.STANDBY: _("Standby"),
-		AFTEREVENT.DEEPSTANDBY: _("Deep Standby")
-		}[timer.afterEvent]
-	return afterevent
 
 class PowerTimerList(HTMLComponent, GUIComponent, object):
 #
@@ -41,20 +18,32 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 #
 	def buildTimerEntry(self, timer, processed):
 		screenwidth = getDesktop(0).size().width()
+		timertype = {
+			TIMERTYPE.WAKEUP: _("Wake Up"),
+			TIMERTYPE.WAKEUPTOSTANDBY: _("Wake Up To Standby"),
+			TIMERTYPE.STANDBY: _("Standby"),
+			TIMERTYPE.AUTOSTANDBY: _("Auto Standby"),
+			TIMERTYPE.AUTODEEPSTANDBY: _("Auto Deep Standby"),
+			TIMERTYPE.DEEPSTANDBY: _("Deep Standby"),
+			TIMERTYPE.REBOOT: _("Reboot"),
+			TIMERTYPE.RESTART: _("Restart GUI")
+			}[timer.timerType]
+
+		afterevent = {
+			AFTEREVENT.NONE: _("Nothing"),
+			AFTEREVENT.WAKEUPTOSTANDBY: _("Wake Up To Standby"),
+			AFTEREVENT.STANDBY: _("Standby"),
+			AFTEREVENT.DEEPSTANDBY: _("Deep Standby")
+			}[timer.afterEvent]
+
 		height = self.l.getItemSize().height()
 		width = self.l.getItemSize().width()
 		res = [ None ]
 		x = width / 2
-		if screenwidth and screenwidth == 1920:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, 39, 3, width, 38, 2, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, gettimerType(timer)))
-		else:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, 26, 3, width, 25, 0, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, gettimerType(timer)))
+		res.append((eListboxPythonMultiContent.TYPE_TEXT, self.iconWidth + self.iconMargin, 2, width, self.rowSplit, 0, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, timertype))
 		if timer.timerType == TIMERTYPE.AUTOSTANDBY or timer.timerType == TIMERTYPE.AUTODEEPSTANDBY:
 			if self.iconRepeat and timer.autosleeprepeat != "once":
-				if screenwidth and screenwidth == 1920:
-					res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, 5, 30, 30, self.iconRepeat))
-				else:
-					res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 3, 20, 20, self.iconRepeat))
+				res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, self.iconMargin / 2, self.rowSplit + (self.itemHeight - self.rowSplit - self.iconHeight) / 2, self.iconWidth, self.iconHeight, self.iconRepeat))
 			icon = None
 			if not processed:
 				if timer.state == TimerEntry.StateWaiting:
@@ -72,41 +61,32 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 			else:
 				state = _("done!")
 				icon = self.iconDone
-			autosleepwindow = ""
-			if timer.autosleepwindow == 'yes':
-				autosleepwindow = _("Time range:") + " " + FuzzyTime(timer.autosleepbegin)[1] + " ... " + FuzzyTime(timer.autosleepend)[1] + ", "
-			if screenwidth and screenwidth == 1920:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, 225, 38, width-225, 35, 3, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, autosleepwindow + _("Delay:") + " " + str(timer.autosleepdelay) + "(" + _("mins") + ")"))
-			else:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, 150, 26, width-150, 23, 1, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, autosleepwindow + _("Delay:") + " " + str(timer.autosleepdelay) + "(" + _("mins") + ")"))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, 148, 26, width-150, self.itemHeight - self.rowSplit, 2, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, _("Delay:") + " " + str(timer.autosleepdelay) + "(" + _("mins") + ")"))
 		else:
-			if screenwidth and screenwidth == 1920:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, x+36, 3, x-3-36, 35, 3, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, _('At End:') + ' ' + getafterEvent(timer)))
-			else:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, x+24, 3, x-2-24, 23, 1, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, _('At End:') + ' ' + getafterEvent(timer)))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, x+24, 2, x-2-24, self.itemHeight - self.rowSplit, 2, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, _('At End:') + ' ' + afterevent))
 			days = ( _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") )
 			begin = FuzzyTime(timer.begin)
 			if timer.repeated:
-				days = ( _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") )
 				repeatedtext = []
 				flags = timer.repeated
 				for x in (0, 1, 2, 3, 4, 5, 6):
 					if flags & 1 == 1:
 						repeatedtext.append(days[x])
 					flags >>= 1
-				repeatedtext = ", ".join(repeatedtext)
+				if repeatedtext == [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]:
+					repeatedtext = _('Everyday')
+				elif repeatedtext == [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri")]:
+					repeatedtext = _('Weekday')
+				elif repeatedtext == [_("Sat"), _("Sun")]:
+					repeatedtext = _('Weekend')
+				else:
+					repeatedtext = ", ".join(repeatedtext)
 				if self.iconRepeat:
-					if screenwidth and screenwidth == 1920:
-						res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, 5, 30, 30, self.iconRepeat))
-					else:
-						res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 3, 20, 20, self.iconRepeat))
+					res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, self.rowSplit, 20, 20, self.iconRepeat))
 			else:
 				repeatedtext = begin[0] # date
 			text = repeatedtext + ((" %s ... %s (%d " + _("mins") + ")") % (begin[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60))
-			if screenwidth and screenwidth == 1920:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, 225, 38, width-225, 35, 3, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text))
-			else:
-				res.append((eListboxPythonMultiContent.TYPE_TEXT, 150, 26, width-150, 23, 1, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, 148, self.itemHeight - self.rowSplit, width-150, self.rowSplit, 2, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text))
 			icon = None
 			if not processed:
 				if timer.state == TimerEntry.StateWaiting:
@@ -135,15 +115,11 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 		if timer.failed:
 			state = _("failed")
 			icon = self.iconFailed
-		if screenwidth and screenwidth == 1920:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, 39, 38, 225, 35, 3, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, state))
-		else:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, 26, 26, 150, 23, 1, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, state))
-		if icon:
-			if screenwidth and screenwidth == 1920:
-				res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, 39, 30, 30, icon))
-			else:
-				res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 26, 20, 20, icon))
+		icon and res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, self.iconMargin / 2, (self.rowSplit - self.iconHeight) / 2, self.iconWidth, self.iconHeight, icon))
+
+		res.append((eListboxPythonMultiContent.TYPE_TEXT, self.iconMargin + self.iconWidth, self.rowSplit, 126, height - self.rowSplit, 2, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, state))
+
+
 		line = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 0, height-2, width, 2, line))
 
@@ -153,11 +129,9 @@ class PowerTimerList(HTMLComponent, GUIComponent, object):
 		GUIComponent.__init__(self)
 		self.l = eListboxPythonMultiContent()
 		self.l.setBuildFunc(self.buildTimerEntry)
-		self.l.setFont(0, gFont("Regular", 20))
-		self.l.setFont(1, gFont("Regular", 18))
-		self.l.setFont(2, gFont("Regular", 30))
-		self.l.setFont(3, gFont("Regular", 27))
-		self.l.setItemHeight(50)
+		self.serviceNameFont = gFont("Regular", 20)
+		self.font = gFont("Regular", 18)
+		self.eventNameFont = gFont("Regular", 18)
 		self.l.setList(list)
 		self.itemHeight = 50
 		self.rowSplit = 25

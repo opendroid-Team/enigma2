@@ -4,7 +4,6 @@ from Components.About import about
 class HardwareInfo:
 	device_name = None
 	device_version = None
-	device_model = None
 
 	def __init__(self):
 		if HardwareInfo.device_name is not None:
@@ -16,8 +15,6 @@ class HardwareInfo:
 			file = open("/proc/stb/info/model", "r")
 			HardwareInfo.device_name = file.readline().strip()
 			file.close()
-			if getBrandOEM() == "dags":
-				HardwareInfo.device_name = "dm800se"
 			try:
 				file = open("/proc/stb/info/version", "r")
 				HardwareInfo.device_version = file.readline().strip()
@@ -49,17 +46,8 @@ class HardwareInfo:
 	def get_device_version(self):
 		return HardwareInfo.device_version
 
-	def get_device_model(self):
-		return getBoxType()
-
 	def has_hdmi(self):
-		return not (HardwareInfo.device_name == 'dm800' or (HardwareInfo.device_name == 'dm8000' and HardwareInfo.device_version == None))
-
-	def linux_kernel(self):
-		try:
-			return open("/proc/version","r").read().split(' ', 4)[2].split('-',2)[0]
-		except:
-			return "unknown"
+		return getBrandOEM() in ('xtrend', 'gigablue', 'dags', 'ixuss', 'odin', 'vuplus', 'ini', 'ebox', 'ceryon') or (getBoxType() in ('dm7020hd', 'dm800se', 'dm500hd', 'dm8000') and HardwareInfo.device_version is not None)
 
 	def has_deepstandby(self):
 		return getBoxType() != 'dm800'

@@ -1,5 +1,4 @@
 import os
-from boxbranding import getImageVersion
 
 def enumFeeds():
 	for fn in os.listdir('/etc/opkg'):
@@ -16,16 +15,16 @@ def enumFeeds():
 				pass
 
 def enumPlugins(filter_start=''):
-	list_dir = listsDirPath()
 	for feed in enumFeeds():
 		package = None
 		try:
-			for line in open(os.path.join(list_dir, feed), 'r'):
+			file = open(os.path.join(listsDirPath(), feed), 'r')
+			for line in file:
 				if line.startswith('Package:'):
 					package = line.split(":",1)[1].strip()
 					version = ''
 					description = ''
-					if package.startswith(filter_start) and not package.endswith('-dev') and not package.endswith('-staticdev') and not package.endswith('-dbg') and not package.endswith('-doc') and not package.endswith('-src'):
+					if package.startswith(filter_start) and not package.endswith('-dev') and not package.endswith('-staticdev') and not package.endswith('-dbg') and not package.endswith('-doc'):
 						continue
 					package = None
 				if package is None:
@@ -46,20 +45,17 @@ def enumPlugins(filter_start=''):
 							description = description.split(' ',1)[1]
 					yield package, version, description.strip()
 					package = None
+			file.close()
 		except IOError:
 			pass
 
 def listsDirPath():
 	try:
 		for line in open('/etc/opkg/opkg.conf', "r"):
-			if line.startswith('option'):
-				line = line.split(' ', 2)
-				if len(line) > 2 and line[1] == ('lists_dir'):
-					return line[2].strip()
-			elif line.startswith('lists_dir'):
+			if line.startswith('option lists_dir') or line.startswith('lists_dir'):
 				return line.replace('\n','').split(' ')[2]
-	except Exception, ex:
-		print "[opkg]", ex
+	except IOError:
+		print "[Opkg] cannot open /etc/opkg/opkg.conf"
 	return '/var/lib/opkg/lists'
 
 if __name__ == '__main__':

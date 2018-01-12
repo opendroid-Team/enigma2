@@ -45,7 +45,7 @@ void eDVBServiceStream::serviceEvent(int event)
 	}
 	case eDVBServicePMTHandler::eventTuneFailed:
 	{
-		eDebug("[eDVBServiceStream] stream failed to tune");
+		eDebug("[eDVBServiceStream] failed to tune");
 		tuneFailed();
 		break;
 	}
@@ -263,7 +263,7 @@ int eDVBServiceStream::doRecord()
 		eDebugNoNewLine(", and the pcr pid is %04x", program.pcrPid);
 		if (program.pcrPid >= 0 && program.pcrPid < 0x1fff)
 			pids_to_record.insert(program.pcrPid);
-		eDebugNoNewLineEnd(", and the text pid is %04x", program.textPid);
+		eDebugNoNewLine(", and the text pid is %04x\n", program.textPid);
 		if (program.textPid != -1)
 			pids_to_record.insert(program.textPid); // Videotext
 

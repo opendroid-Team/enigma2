@@ -5,12 +5,7 @@
 
 int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const void *data, int len)
 {
-#ifdef __sh__
-	eDebug("[CI RM] eDVBCIResourceManagerSession::%s >", __func__);
-	eDebugNoNewLineStart("[CI RM] SESSION(%d) %02x %02x %02x (len = %d): ", session_nb, tag[0], tag[1], tag[2], len);
-#else
 	eDebugNoNewLineStart("[CI RM] SESSION(%d) %02x %02x %02x: ", session_nb, tag[0], tag[1], tag[2]);
-#endif
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
 	eDebugNoNewLine("\n");
@@ -28,11 +23,10 @@ int eDVBCIResourceManagerSession::receivedAPDU(const unsigned char *tag,const vo
 			if (!len)
 				eDebugNoNewLine("nothing");
 			else
-			{
 				for (int i=0; i<len; i++)
 					eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
-				eDebugNoNewLine("\n");
-			}
+			eDebugNoNewLine("\n");
+
 			if (state == stateFirstProfileEnquiry)
 			{
 				// profile change
@@ -74,7 +68,10 @@ int eDVBCIResourceManagerSession::doAction()
 	case stateProfileEnquiry:
 	{
 		const unsigned char tag[3]={0x9F, 0x80, 0x11};
-		const unsigned char data[][4]=
+
+		if (!eDVBCIInterfaces::getInstance()->isClientConnected())
+		{
+			const unsigned char data[][4]=
 			{
 				{0x00, 0x01, 0x00, 0x41},
 				{0x00, 0x02, 0x00, 0x41},
@@ -84,7 +81,28 @@ int eDVBCIResourceManagerSession::doAction()
 				{0x00, 0x40, 0x00, 0x41},
 //				{0x00, 0x10, 0x00, 0x41}, // auth.
 			};
-		sendAPDU(tag, data, sizeof(data));
+			sendAPDU(tag, data, sizeof(data));
+		}
+		else
+		{
+			const unsigned char data[][4]=
+			{
+				{0x00, 0x01, 0x00, 0x41},
+				{0x00, 0x02, 0x00, 0x41},
+				{0x00, 0x02, 0x00, 0x42},
+				{0x00, 0x03, 0x00, 0x41},
+				{0x00, 0x20, 0x00, 0x41},
+				{0x00, 0x24, 0x00, 0x41},
+				{0x00, 0x40, 0x00, 0x41},
+				{0x00, 0x02, 0x00, 0x43},
+				{0x00, 0x8C, 0x10, 0x01},
+				{0x00, 0x8D, 0x10, 0x01},
+				{0x00, 0x8E, 0x10, 0x01},
+				{0x00, 0x97, 0x10, 0x01},
+				{0x00, 0x41, 0x00, 0x41},
+			};
+			sendAPDU(tag, data, sizeof(data));
+		}
 		state=stateFinal;
 		return 0;
 	}

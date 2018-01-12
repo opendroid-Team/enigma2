@@ -35,7 +35,7 @@ public:
 	 * \param input The \ref eRCDriver where this remote gets its codes from.
 	 */
 	eRCDevice(std::string id, eRCDriver *input);
-	~eRCDevice();
+	virtual ~eRCDevice();
 	/**
 	 * \brief Handles a device specific code.
 	 *
@@ -111,6 +111,7 @@ public:
 class eRCInputEventDriver: public eRCDriver
 {
 protected:
+	bool m_remote_control;
 	int handle;
 	unsigned char evCaps[(EV_MAX / 8) + 1];
 	unsigned char keyCaps[(KEY_MAX / 8) + 1];

@@ -132,11 +132,11 @@ class ServiceName2(Converter, object):
 			lastpath = isRadioService and config.radio.lastroot.value or config.tv.lastroot.value
 			if 'FROM BOUQUET' not in lastpath:
 				if 'FROM PROVIDERS' in lastpath:
-					return 'P', _("Provider")
+					return 'P', 'Provider'
 				if 'FROM SATELLITES' in lastpath:
-					return 'S', _("Satellites")
+					return 'S', 'Satellites'
 				if ') ORDER BY name' in lastpath:
-					return 'A', _("All Services")
+					return 'A', 'All Services'
 				return 0, 'N/A'
 			try:
 				acount = config.plugins.NumberZapExt.enable.value and config.plugins.NumberZapExt.acount.value or config.usage.alternative_number_mode.value
@@ -312,8 +312,9 @@ class ServiceName2(Converter, object):
 					result += x in range(5) and {0:'1/32',1:'1/16',2:'1/8',3:'1/4',4:'Auto'}[x] or ''
 			elif f == 'b':	# %b - bandwidth (dvb-t)
 				if type == 'DVB-T':
-					x = self.tpdata.get('bandwidth', 1)
-					result += x in range(4) and {0:'8 MHz',1:'7 MHz',2:'6 MHz',3:'Auto'}[x] or ''
+					x = self.tpdata.get('bandwidth', 0)
+					if isinstance(x, int):
+						result += str("%.3f" % (float(x) / 1000000.0)).rstrip('0').rstrip('.') + " MHz" if x else "Auto"
 			elif f == 'e':	# %e - hierarchy_information (dvb-t)
 				if type == 'DVB-T':
 					x = self.tpdata.get('hierarchy_information', 4)
@@ -382,7 +383,7 @@ class ServiceName2(Converter, object):
 		elif 'udp/238.0.' in refstr or 'udp/233.191.' in refstr:
 			return "Triolan"
 		elif '%3a8208' in refstr:
-			return "MOVISTAR+"
+			return "MovieStar"
 		elif 'udp/239.0.0.' in refstr:
 			return "Trinity"
 		elif '.cn.ru' in refstr or 'novotelecom' in refstr:

@@ -16,7 +16,6 @@ class eDVBFrontendParameters: public iDVBFrontendParameters
 		eDVBFrontendParametersATSC atsc;
 	};
 	int m_type;
-	int m_types;
 	int m_flags;
 public:
 	eDVBFrontendParameters();
@@ -25,7 +24,6 @@ public:
 	}
 
 	SWIG_VOID(RESULT) getSystem(int &SWIG_OUTPUT) const;
-	SWIG_VOID(RESULT) getSystems(int &SWIG_OUTPUT) const;
 	SWIG_VOID(RESULT) getDVBS(eDVBFrontendParametersSatellite &SWIG_OUTPUT) const;
 	SWIG_VOID(RESULT) getDVBC(eDVBFrontendParametersCable &SWIG_OUTPUT) const;
 	SWIG_VOID(RESULT) getDVBT(eDVBFrontendParametersTerrestrial &SWIG_OUTPUT) const;
@@ -50,10 +48,8 @@ public:
 #include <lib/dvb/sec.h>
 class eSecCommandList;
 
-#endif
 class eDVBFrontend: public iDVBFrontend, public sigc::trackable
 {
-#ifndef SWIG
 public:
 	enum {
 		NEW_CSW,
@@ -69,30 +65,14 @@ public:
 		LINKED_PREV_PTR,      // prev double linked list (for linked FEs)
 		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
 		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
-		CUR_FREQ,             // current frequency
-		CUR_SYM,              // current symbolrate
-		CUR_LOF,              // current local oszillator frequency
-		CUR_BAND,             // current band
 		FREQ_OFFSET,          // current frequency offset
 		CUR_VOLTAGE,          // current voltage
 		CUR_TONE,             // current continuous tone
 		SATCR,                // current SatCR
-		DICTION,              // current diction
-		PIN,                  // pin
-		DISEQC_WDG,           // Watchdog for buggy DiSEqC-implementation (VuZero)
-		SPECTINV_CNT,         // spectral inversation counter (need for offset calculation)
-		LFSR,                 // PRNG collision handling
-		TAKEOVER_COUNTDOWN,
-		TAKEOVER_MASTER,
-		TAKEOVER_SLAVE,
-		TAKEOVER_RELEASE,
+		DICTION,              // current "diction" (0 = normal, 1 = Unicable, 2 = JESS)
 		NUM_DATA_ENTRIES
 	};
 	sigc::signal1<void,iDVBFrontend*> m_stateChanged;
-	enum class enumDebugOptions:uint64_t {
-		DISSABLE_ALL_DEBUG_OUTPUTS,	//prevents all debug issues with respect to this object
-		DEBUG_DELIVERY_SYSTEM,
-		NUM_DATA_ENTRIES};
 private:
 	DECLARE_REF(eDVBFrontend);
 	bool m_simulate;
@@ -103,19 +83,12 @@ private:
 	int m_dvbid;
 	int m_slotid;
 	int m_fd;
-	int m_teakover;
-	int m_waitteakover;
-	int m_break_teakover;
-	int m_break_waitteakover;
 #define DVB_VERSION(major, minor) ((major << 8) | minor)
 	int m_dvbversion;
 	bool m_rotor_mode;
 	bool m_need_rotor_workaround;
-	bool m_need_delivery_system_workaround;
 	bool m_multitype;
-	std::map<fe_delivery_system_t, int> m_modelist;
 	std::map<fe_delivery_system_t, bool> m_delsys, m_delsys_whitelist;
-	std::map<fe_delivery_system_t, dvb_frontend_info> m_fe_info;
 	std::string m_filename;
 	char m_description[128];
 	dvb_frontend_info fe_info;
@@ -144,23 +117,17 @@ private:
 	int tuneLoopInt();
 	void setFrontend(bool recvEvents=true);
 	bool setSecSequencePos(int steps);
-	void calculateSignalPercentage(int signalqualitydb, int &signalquality);
+	int calculateSignalPercentage(int signalqualitydb);
 	void calculateSignalQuality(int snr, int &signalquality, int &signalqualitydb);
 
 	static int PriorityOrder;
 	static int PreferredFrontendIndex;
-
-	uint64_t m_DebugOptions;
-
-#endif
 public:
-#ifndef SWIG
 	eDVBFrontend(const char *devidenodename, int fe, int &ok, bool simulate=false, eDVBFrontend *simulate_fe=NULL);
 	virtual ~eDVBFrontend();
 
 	int readInputpower();
-	int getCurrentType(){return m_type;}
-	void overrideType(int type){m_type = type;} //workaraound for dvb api < 5
+	RESULT getFrontendType(int &type);
 	RESULT tune(const iDVBFrontendParameters &where);
 	RESULT prepare_sat(const eDVBFrontendParametersSatellite &, unsigned int timeout);
 	RESULT prepare_cable(const eDVBFrontendParametersCable &);
@@ -174,17 +141,14 @@ public:
 	RESULT sendToneburst(int burst);
 	RESULT setSEC(iDVBSatelliteEquipmentControl *sec);
 	RESULT setSecSequence(eSecCommandList &list);
-	RESULT setSecSequence(eSecCommandList &list, iDVBFrontend *fe);
 	RESULT getData(int num, long &data);
 	RESULT setData(int num, long val);
-	bool changeType(int type);
 
 	int readFrontendData(int type); // iFrontendInformation_ENUMS
 	void getFrontendStatus(ePtr<iDVBFrontendStatus> &dest);
 	void getTransponderData(ePtr<iDVBTransponderData> &dest, bool original);
 	void getFrontendData(ePtr<iDVBFrontendData> &dest);
 
-	bool isPreferred(int preferredFrontend, int slotid);
 	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
 	int getDVBID() { return m_dvbid; }
 	int getSlotID() { return m_slotid; }
@@ -193,48 +157,24 @@ public:
 	static int getTypePriorityOrder() { return PriorityOrder; }
 	static void setPreferredFrontend(int index) { PreferredFrontendIndex = index; }
 	static int getPreferredFrontend() { return PreferredFrontendIndex; }
-#endif
-	static const int preferredFrontendScore = 100000;
-	static const int preferredFrontendBinaryMode = 0x4000;
-	static const int preferredFrontendPrioForced = 0x2000;
-	static const int preferredFrontendPrioHigh   = 0x1000;
-#ifndef SWIG
 	bool supportsDeliverySystem(const fe_delivery_system_t &sys, bool obeywhitelist);
-	void setDeliverySystemWhitelist(const std::vector<fe_delivery_system_t> &whitelist, bool append=false);
-	bool setDeliverySystem(fe_delivery_system_t delsys);
+	void setDeliverySystemWhitelist(const std::vector<fe_delivery_system_t> &whitelist);
+	bool setDeliverySystem(const char *type);
 
-	int initModeList();
 	void reopenFrontend();
 	int openFrontend();
 	int closeFrontend(bool force=false, bool no_delayed=false);
 	const char *getDescription() const { return m_description; }
-	bool is_simulate() const { return m_simulate; }
 	const dvb_frontend_info getFrontendInfo() const { return fe_info; }
-	const dvb_frontend_info getFrontendInfo(fe_delivery_system_t delsys)  { return m_fe_info[delsys]; }
+	bool is_simulate() const { return m_simulate; }
 	bool is_FBCTuner() { return m_fbc; }
-	void setFBCTuner(bool enable) { m_fbc = enable; }
+	void set_FBCTuner(bool yesno) { m_fbc = yesno; }
 	bool getEnabled() { return m_enabled; }
 	void setEnabled(bool enable) { m_enabled = enable; }
 	bool is_multistream();
 	std::string getCapabilities();
-	std::string getCapabilities(fe_delivery_system_t delsys);
-	bool has_prev() { return (m_data[LINKED_PREV_PTR] != -1); }
-	bool has_next() { return (m_data[LINKED_NEXT_PTR] != -1); }
-
-	eDVBRegisteredFrontend *getPrev(eDVBRegisteredFrontend *fe);
-	eDVBRegisteredFrontend *getNext(eDVBRegisteredFrontend *fe);
-
-	void getTop(eDVBRegisteredFrontend *fe, eDVBRegisteredFrontend* &top_fe);
-	void getTop(eDVBRegisteredFrontend *fe, eDVBFrontend* &top_fe);
-	void getTop(eDVBFrontend *fe, eDVBRegisteredFrontend* &top_fe);
-	void getTop(eDVBFrontend *fe, eDVBFrontend* &top_fe);
-	void getTop(iDVBFrontend &fe, eDVBRegisteredFrontend * &top_fe);
-	void getTop(iDVBFrontend &fe, eDVBFrontend * &top_fe);
-
-	eDVBRegisteredFrontend *getLast(eDVBRegisteredFrontend *fe);
-#endif // SWIG
-
 };
 
+#endif // SWIG
 
 #endif

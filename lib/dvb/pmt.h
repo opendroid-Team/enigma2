@@ -41,27 +41,6 @@ class OCSection : public LongCrcSection
 		void *getData() { return data; }
 };
 
-#include <list>
-#include <string>
-class HbbTVApplicationInfo
-{
-public:
-	int m_OrgId;
-	int m_AppId;
-	int m_ControlCode;
-	short m_ProfileCode;
-	std::string m_HbbTVUrl;
-	std::string m_ApplicationName;
-public:
-	HbbTVApplicationInfo(int controlCode, int orgid, int appid, std::string hbbtvUrl, std::string applicationName,int profileCode)
-		: m_ControlCode(controlCode), m_HbbTVUrl(hbbtvUrl), m_ApplicationName(applicationName), m_OrgId(orgid), m_AppId(appid),
-		m_ProfileCode(profileCode)
-	{}
-};
-typedef std::list<HbbTVApplicationInfo *> HbbTVApplicationInfoList;
-typedef HbbTVApplicationInfoList::iterator HbbTVApplicationInfoListIterator;
-typedef HbbTVApplicationInfoList::const_iterator HbbTVApplicationInfoListConstIterator;
-
 class eDVBServicePMTHandler: public eDVBPMTParser
 {
 #ifndef SWIG
@@ -71,7 +50,6 @@ class eDVBServicePMTHandler: public eDVBPMTParser
 
 	int m_last_channel_state;
 	eDVBCAService *m_ca_servicePtr;
-	bool doDescramble;
 	ePtr<eDVBScan> m_dvb_scan; // for sdt scan
 
 	eAUTable<eTable<ProgramAssociationSection> > m_PAT;
@@ -99,11 +77,7 @@ class eDVBServicePMTHandler: public eDVBPMTParser
 
 	int m_pmt_pid;
 	int m_dsmcc_pid;
-	int m_ait_pid;
-	HbbTVApplicationInfoList m_HbbTVApplications;
 	std::string m_HBBTVUrl;
-	std::string m_ApplicationName;
-	unsigned char m_AITData[4096];
 
 	int m_use_decode_demux;
 	uint8_t m_decode_demux_num;
@@ -146,8 +120,7 @@ public:
 	int getDataDemux(ePtr<iDVBDemux> &demux);
 	int getDecodeDemux(ePtr<iDVBDemux> &demux);
 	void getAITApplications(std::map<int, std::string> &aitlist);
-	void getCaIds(std::vector<int> &caids, std::vector<int> &ecmpids);
-	PyObject *getHbbTVApplications();
+	void getCaIds(std::vector<int> &caids, std::vector<int> &ecmpids, std::vector<std::string> &ecmdatabytes);
 
 	int getPVRChannel(ePtr<iDVBPVRChannel> &pvr_channel);
 	int getServiceReference(eServiceReferenceDVB &service) { service = m_reference; return 0; }
@@ -178,7 +151,7 @@ public:
 	int tune(eServiceReferenceDVB &ref, int use_decode_demux, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0, serviceType type = livetv, bool descramble = true);
 
 	/* new interface */
-	int tuneExt(eServiceReferenceDVB &ref, int use_decode_demux, ePtr<iTsSource> &, const char *streaminfo_file, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0, serviceType type = livetv, bool descramble = true);
+	int tuneExt(eServiceReferenceDVB &ref, ePtr<iTsSource> &, const char *streaminfo_file, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0, serviceType type = livetv, bool descramble = true);
 
 	void free();
 private:

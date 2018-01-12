@@ -44,7 +44,7 @@ class Dish(Screen):
 
 		self.rotor_pos = self.cur_orbpos = config.misc.lastrotorposition.value
 		config.misc.lastrotorposition.addNotifier(self.rotorPositionChanged)
-		self.turn_time = self.total_time = self.pmt_timeout = self.close_timeout = None
+		self.turn_time = self.total_time = self.pmt_timeout = self.close_timeout = self.rotor_sat = None
 		self.cur_polar = 0
 		self.__state = self.STATE_HIDDEN
 
@@ -67,11 +67,16 @@ class Dish(Screen):
 	def updateRotorMovingState(self):
 		moving = eDVBSatelliteEquipmentControl.getInstance().isRotorMoving()
 		if moving:
-			if self.cur_orbpos != INVALID_POSITION and self.cur_orbpos != config.misc.lastrotorposition.value:
-				config.misc.lastrotorposition.value = self.cur_orbpos
-				config.misc.lastrotorposition.save()
-			if self.__state == self.STATE_HIDDEN:
-				self.show()
+			if self.rotor_sat is None:
+				self.rotor_sat = self.isSatRotorMode()
+			if self.rotor_sat:
+				if self.cur_orbpos != INVALID_POSITION and self.cur_orbpos != config.misc.lastrotorposition.value:
+					config.misc.lastrotorposition.value = self.cur_orbpos
+					config.misc.lastrotorposition.save()
+				if self.__state == self.STATE_HIDDEN:
+					self.show()
+			else:
+				self.__toHide()
 
 	def turnTimerLoop(self):
 		if self.total_time:
@@ -131,13 +136,13 @@ class Dish(Screen):
 	def __toHide(self):
 		self.rotorTimer.stop()
 		self.timeoutTimer.stop()
+		self.rotor_sat = None
 		if self.__state == self.STATE_SHOWN:
 			self.hide()
 
 	def __serviceTunedIn(self):
-		if self.close_timeout is not None:
-			self.pmt_timeout = self.close_timeout
-			self.timeoutTimer.start(500, False)
+		self.pmt_timeout = self.close_timeout
+		self.timeoutTimer.start(500, False)
 
 	def testIsTuned(self):
 		if self.pmt_timeout >= 0:
@@ -186,13 +191,23 @@ class Dish(Screen):
 			mrt = round((mrt * 1000 / self.getTurningSpeed(pol) ) / 10000) + 3
 		return mrt
 
+	def isSatRotorMode(self):
+		satRotorMode = False
+		tuner = self.getCurrentTuner()
+		if tuner is not None:
+			for sat in nimmanager.getRotorSatListForNim(tuner):
+				if sat[0] == self.cur_orbpos:
+					satRotorMode = True
+					break
+		return satRotorMode
+
 	def getTurningSpeed(self, pol=0):
 		tuner = self.getCurrentTuner()
 		if tuner is not None:
-			nimConfig = nimmanager.getNimConfig(tuner).dvbs
+			nimConfig = nimmanager.getNimConfig(tuner)
 			if nimConfig.configMode.value == "simple":
 				if "positioner" in nimConfig.diseqcMode.value:
-					nim = config.Nims[tuner].dvbs
+					nim = config.Nims[tuner]
 					if pol in (1, 3): # vertical
 						return nim.turningspeedV.float
 					return nim.turningspeedH.float
@@ -223,14 +238,7 @@ class Dish(Screen):
 	def getTunerName(self):
 		nr = self.getCurrentTuner()
 		if nr is not None:
-			nims = nimmanager.nimList()
-			if nr < len(nims) and nr >= 0:
-				return "".join(nims[nr].split(':')[:1])
-			print "[Dish.py] bug hunting nr: %s\n" %nr
-			print "[Dish.py] bug hunting nims:\n"
-			print nims
-			raise
-#			return " ".join((_("Tuner"),str(nr)))
+			return _("Tuner") + " " + chr(nr+65)
 		return ""
 
 	def OrbToStr(self, orbpos):
@@ -289,7 +297,8 @@ class Dishpip(Dish, Screen):
 			if self.__state == self.STATE_HIDDEN:
 				self.rotorTimer.stop()
 				self.moving_timeout = 0
-				self.show()
+				if config.usage.showdish.value:
+					self.show()
 				if self.cur_orbpos != INVALID_POSITION and self.cur_orbpos != config.misc.lastrotorposition.value:
 					config.misc.lastrotorposition.value = self.cur_orbpos
 					config.misc.lastrotorposition.save()
@@ -315,7 +324,7 @@ class Dishpip(Dish, Screen):
 	def startPiPService(self, ref=None):
 		if self.__state == self.STATE_SHOWN:
 			self.__toHide()
-		if not config.usage.showdish.value or ref is None:
+		if ref is None:
 			return
 		info = eServiceCenter.getInstance().info(ref)
 		data = info and info.getInfoObject(ref, iServiceInformation.sTransponderData)
