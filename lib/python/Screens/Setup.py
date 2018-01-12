@@ -236,12 +236,25 @@ class Setup(ConfigListScreen, Screen):
 				continue
 			if x.tag == 'item':
 				item_level = int(x.get("level", 0))
+				item_tunerlevel = int(x.get("tunerlevel", 0))
+				item_rectunerlevel = int(x.get("rectunerlevel", 0))
+				item_tuxtxtlevel = int(x.get("tt_level", 0))
 
-				if not self.levelChanged in config.usage.setup_level.notifiers:
-					config.usage.setup_level.notifiers.append(self.levelChanged)
+				if not self.onNotifiers:
+					self.onNotifiers.append(self.levelChanged)
 					self.onClose.append(self.removeNotifier)
 
 				if item_level > config.usage.setup_level.index:
+					continue
+				if (item_tuxtxtlevel == 1) and (config.usage.tuxtxt_font_and_res.value != "expert_mode"):
+					continue
+				if item_tunerlevel == 1 and not config.usage.frontend_priority.value in ("expert_mode", "experimental_mode"):
+					continue
+				if item_tunerlevel == 2 and not config.usage.frontend_priority.value == "experimental_mode":
+					continue
+				if item_rectunerlevel == 1 and not config.usage.recording_frontend_priority.value in ("expert_mode", "experimental_mode"):
+					continue
+				if item_rectunerlevel == 2 and not config.usage.recording_frontend_priority.value == "experimental_mode":
 					continue
 
 				requires = x.get("requires")
@@ -278,8 +291,14 @@ def getSetupTitle(id):
 	xmldata = setupdom().getroot()
 	for x in xmldata.findall("setup"):
 		if x.get("key") == id:
-			if x.get("titleshort", "").encode("UTF-8") != "":
-				return _(x.get("titleshort", "").encode("UTF-8"))
-			else:
-				return _(x.get("title", "").encode("UTF-8"))
+			if _(x.get("title", "").encode("UTF-8")) == _("OSD Settings") or _(x.get("title", "").encode("UTF-8")) == _("Softcam Setup") or _(x.get("title", "").encode("UTF-8")) == _("EPG settings"):
+				return _("Settings...")
+			return x.get("title", "").encode("UTF-8")
 	raise SetupError("unknown setup id '%s'!" % repr(id))
+
+def getSetupTitleLevel(id):
+	xmldata = setupdom().getroot()
+	for x in xmldata.findall("setup"):
+		if x.get("key") == id:
+			return int(x.get("level", 0))
+	return 0

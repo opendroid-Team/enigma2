@@ -19,19 +19,21 @@ class WizardSummary(Screen):
 	def __init__(self, session, parent):
 		Screen.__init__(self, session, parent)
 		self["text"] = StaticText("")
+		self["entry"] = StaticText("")
 		self.onShow.append(self.setCallback)
 
 	def setCallback(self):
 		self.parent.setLCDTextCallback(self.setText)
 
 	def setText(self, text):
-		self["text"].setText(text)
+		self["text"].setText(text[0])
+		self["entry"].setText(text[1])
 
 class Wizard(Screen):
 	instance = None
 
 	def createSummary(self):
-		print "[Wizard] WizardCreateSummary"
+		print "WizardCreateSummary"
 		return WizardSummary
 
 	class parseWizard(ContentHandler):
@@ -46,44 +48,44 @@ class Wizard(Screen):
 			self.currContent = name
 			if name == "step":
 				self.lastStep += 1
-				if 'id' in attrs:
+				if attrs.has_key('id'):
 					id = str(attrs.get('id'))
 				else:
 					id = ""
-				#print "[Wizard] id:", id
-				if 'nextstep' in attrs:
+				#print "id:", id
+				if attrs.has_key('nextstep'):
 					nextstep = str(attrs.get('nextstep'))
 				else:
 					nextstep = None
-				if 'timeout' in attrs:
+				if attrs.has_key('timeout'):
 					timeout = int(attrs.get('timeout'))
 				else:
 					timeout = None
-				if 'timeoutaction' in attrs:
+				if attrs.has_key('timeoutaction'):
 					timeoutaction = str(attrs.get('timeoutaction'))
 				else:
 					timeoutaction = 'nextpage'
 
-				if 'timeoutstep' in attrs:
+				if attrs.has_key('timeoutstep'):
 					timeoutstep = str(attrs.get('timeoutstep'))
 				else:
 					timeoutstep = ''
 				self.wizard[self.lastStep] = {"id": id, "condition": "", "text": "", "timeout": timeout, "timeoutaction": timeoutaction, "timeoutstep": timeoutstep, "list": [], "config": {"screen": None, "args": None, "type": "" }, "code": "", "codeafter": "", "code_async": "", "codeafter_async": "", "nextstep": nextstep}
-				if 'laststep' in attrs:
+				if attrs.has_key('laststep'):
 					self.wizard[self.lastStep]["laststep"] = str(attrs.get('laststep'))
 			elif name == "text":
 				self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif name == "displaytext":
 				self.wizard[self.lastStep]["displaytext"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif name == "list":
-				if 'type' in attrs:
+				if attrs.has_key('type'):
 					if attrs["type"] == "dynamic":
 						self.wizard[self.lastStep]["dynamiclist"] = attrs.get("source")
 					#self.wizard[self.lastStep]["list"].append(("Hallo", "test"))
-				if "evaluation" in attrs:
-					#print "[Wizard] evaluation"
+				if attrs.has_key("evaluation"):
+					#print "evaluation"
 					self.wizard[self.lastStep]["listevaluation"] = attrs.get("evaluation")
-				if "onselect" in attrs:
+				if attrs.has_key("onselect"):
 					self.wizard[self.lastStep]["onselect"] = attrs.get("onselect")
 			elif name == "listentry":
 				self.wizard[self.lastStep]["list"].append((str(attrs.get('caption')), str(attrs.get('step'))))
@@ -97,16 +99,16 @@ class Wizard(Screen):
 						exec "from " + str(attrs.get('module')) + " import *"
 
 					self.wizard[self.lastStep]["config"]["screen"] = eval(str(attrs.get('screen')))
-					if 'args' in attrs:
+					if attrs.has_key('args'):
 						#print "has args"
 						self.wizard[self.lastStep]["config"]["args"] = str(attrs.get('args'))
 				elif type == "dynamic":
 					self.wizard[self.lastStep]["config"]["source"] = str(attrs.get('source'))
-					if 'evaluation' in attrs:
+					if attrs.has_key('evaluation'):
 						self.wizard[self.lastStep]["config"]["evaluation"] = str(attrs.get('evaluation'))
 			elif name == "code":
 				self.async_code = attrs.has_key('async') and str(attrs.get('async')) == "yes"
-				if 'pos' in attrs and str(attrs.get('pos')) == "after":
+				if attrs.has_key('pos') and str(attrs.get('pos')) == "after":
 					self.codeafter = True
 				else:
 					self.codeafter = False
@@ -203,6 +205,7 @@ class Wizard(Screen):
 		Wizard.instance = self
 
 		self.lcdCallbacks = []
+		self.first = False
 
 		self.disableKeys = False
 
@@ -309,7 +312,7 @@ class Wizard(Screen):
 		count = 0
 		for x in self.wizard.keys():
 			if self.wizard[x]["id"] == id:
-				print "[Wizard] result:", count
+				print "result:", count
 				return count
 			count += 1
 # 		print "result: nothing"
@@ -330,7 +333,7 @@ class Wizard(Screen):
 			if len(self.wizard[currStep]["evaluatedlist"]) > 0:
 # 				print "current:", self["list"].current
 				nextStep = self["list"].current[1]
-				if "listevaluation" in self.wizard[currStep]:
+				if self.wizard[currStep].has_key("listevaluation"):
 					exec("self." + self.wizard[self.currStep]["listevaluation"] + "('" + nextStep + "')")
 				else:
 					self.currStep = self.getStepWithID(nextStep)
@@ -410,12 +413,13 @@ class Wizard(Screen):
 			self.handleInputHelpers()
 		elif self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0:
 			self["list"].selectPrevious()
-			if "onselect" in self.wizard[self.currStep]:
-				print "[Wizard] current:", self["list"].current
+			if self.wizard[self.currStep].has_key("onselect"):
+				print "current:", self["list"].current
 				self.selection = self["list"].current[-1]
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 # 		print "up"
+		self.updateLcd()
 
 	def down(self):
 		self.resetCounter()
@@ -425,7 +429,7 @@ class Wizard(Screen):
 		elif self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0:
 			#self["list"].instance.moveSelection(self["list"].instance.moveDown)
 			self["list"].selectNext()
-			if "onselect" in self.wizard[self.currStep]:
+			if self.wizard[self.currStep].has_key("onselect"):
 # 				print "current:", self["list"].current
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				#exec("self." + self.wizard[self.currStep]["onselect"] + "()")
@@ -433,6 +437,38 @@ class Wizard(Screen):
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 # 		print "down"
+		self.updateLcd()
+
+	def updateLcd(self):
+		if self.wizard[self.currStep]["id"] == "end":
+			return
+		else:
+			displaytext = []
+			displaytext.append(self.getTranslation(self.wizard[self.currStep]["text"]))
+			if self.first:
+				try:
+					getlist = self.getTranslation(self.wizard[self.currStep]["list"][0][0])
+					if getlist is not None:
+						entry = getlist
+				except:
+					entry = ""
+				self.first = False
+			else:
+				if self.showList:
+					if self["list"].getCurrent() is not None:
+						getlistentry = self["list"].getCurrent()[0]
+						entry = getlistentry
+					else:
+						entry = ""
+				elif self.showConfig:
+					getconfigentry = self.wizard[self.currStep]["config"]
+					entry = getconfigentry
+				else:
+					entry = ""
+			displaytext.append(entry)
+#			print "set LCD text"
+			for x in self.lcdCallbacks:
+				x(displaytext)
 
 	def selChanged(self):
 		self.resetCounter()
@@ -440,9 +476,9 @@ class Wizard(Screen):
 		if self.showConfig and self.wizard[self.currStep]["config"]["screen"] is not None:
 			self["config"].instance.moveSelection(self["config"].instance.moveUp)
 		elif self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0:
-			if "onselect" in self.wizard[self.currStep]:
+			if self.wizard[self.currStep].has_key("onselect"):
 				self.selection = self["list"].current[-1]
-				print "[Wizard] self.selection:", self.selection
+				print "self.selection:", self.selection
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 
 	def resetCounter(self):
@@ -489,15 +525,16 @@ class Wizard(Screen):
 		exec (self.wizard[self.currStep]["condition"])
 		if not self.condition:
 # 			print "keys*******************:", self.wizard[self.currStep].keys()
-			if "laststep" in self.wizard[self.currStep]: # exit wizard, if condition of laststep doesn't hold
+			if self.wizard[self.currStep].has_key("laststep"): # exit wizard, if condition of laststep doesn't hold
 				self.markDone()
 				self.exit()
 				return
 			else:
 				self.currStep += 1
 				self.updateValues()
+			self.first = True
 		else:
-			if "displaytext" in self.wizard[self.currStep]:
+			if self.wizard[self.currStep].has_key("displaytext"):
 				displaytext = self.getTranslation(self.wizard[self.currStep]["displaytext"])
 # 				print "set LCD text"
 				for x in self.lcdCallbacks:
@@ -517,7 +554,7 @@ class Wizard(Screen):
 
 # 			print "wizard text", self.getTranslation(self.wizard[self.currStep]["text"])
 			self.updateText(firstset = True)
-			if "displaytext" in self.wizard[self.currStep]:
+			if self.wizard[self.currStep].has_key("displaytext"):
 				displaytext = self.getTranslation(self.wizard[self.currStep]["displaytext"])
 # 				print "set LCD text"
 				for x in self.lcdCallbacks:
@@ -530,6 +567,7 @@ class Wizard(Screen):
 					self.onShown.remove(self.updateValues)
 			else:
 				self.afterAsyncCode()
+		self.updateLcd()
 
 	def afterAsyncCode(self):
 		if not self.updateValues in self.onShown:
@@ -550,13 +588,13 @@ class Wizard(Screen):
 					rootrenderer = renderer
 					while renderer.source is not None:
 						if renderer.source is self["list"]:
-							print "[Wizard] setZPosition"
+							print "setZPosition"
 							rootrenderer.instance.setZPosition(1)
 						renderer = renderer.source
 
 				#self["list"].instance.setZPosition(1)
 				self.list = []
-				if "dynamiclist" in self.wizard[self.currStep]:
+				if self.wizard[self.currStep].has_key("dynamiclist"):
 # 					print "dynamic list, calling",  self.wizard[self.currStep]["dynamiclist"]
 					newlist = eval("self." + self.wizard[self.currStep]["dynamiclist"] + "()")
 					#self.wizard[self.currStep]["evaluatedlist"] = []
@@ -575,19 +613,19 @@ class Wizard(Screen):
 				self["list"].hide()
 
 			if self.showConfig:
-				print "[Wizard] showing config"
+				print "showing config"
 # 				self["config"].instance.setZPosition(1)
 				if self.wizard[self.currStep]["config"]["type"] == "dynamic":
-					print "[Wizard] config type is dynamic"
+					print "config type is dynamic"
 					self["config"].instance.setZPosition(2)
 					self["config"].l.setList(eval("self." + self.wizard[self.currStep]["config"]["source"])())
 				elif self.wizard[self.currStep]["config"]["screen"] is not None:
 					if self.wizard[self.currStep]["config"]["type"] == "standalone":
-						print "[Wizard] Type is standalone"
+						print "Type is standalone"
 						self.session.openWithCallback(self.ok, self.wizard[self.currStep]["config"]["screen"])
 					else:
 						self["config"].instance.setZPosition(2)
-						print "[Wizard] ", self.wizard[self.currStep]["config"]["screen"]
+						print "wizard screen", self.wizard[self.currStep]["config"]["screen"]
 						if self.wizard[self.currStep]["config"]["args"] is None:
 							self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"])
 						else:
@@ -596,17 +634,17 @@ class Wizard(Screen):
 						self["config"].l.setList(self.configInstance["config"].list)
 						callbacks = self.configInstance["config"].onSelectionChanged
 						self.configInstance["config"].destroy()
-						print "[Wizard] clearConfigList", self.configInstance["config"], self["config"]
+						print "clearConfigList", self.configInstance["config"], self["config"]
 						self.configInstance["config"] = self["config"]
 						self.configInstance["config"].onSelectionChanged = callbacks
-						print "[Wizard] clearConfigList", self.configInstance["config"], self["config"]
+						print "clearConfigList", self.configInstance["config"], self["config"]
 				else:
 					self["config"].l.setList([])
 					self.handleInputHelpers()
 
 
 			else:
-				if "config" in self:
+				if self.has_key("config"):
 					self["config"].hide()
 
 	def timeoutCounterFired(self):
@@ -624,20 +662,20 @@ class Wizard(Screen):
 	def handleInputHelpers(self):
 		if self["config"].getCurrent() is not None:
 			if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
-				if "VKeyIcon" in self:
+				if self.has_key("VKeyIcon"):
 					self["VirtualKB"].setEnabled(True)
 					self["VKeyIcon"].boolean = True
-				if "HelpWindow" in self:
+				if self.has_key("HelpWindow"):
 					if self["config"].getCurrent()[1].help_window.instance is not None:
 						helpwindowpos = self["HelpWindow"].getPosition()
 						from enigma import ePoint
 						self["config"].getCurrent()[1].help_window.instance.move(ePoint(helpwindowpos[0],helpwindowpos[1]))
 			else:
-				if "VKeyIcon" in self:
+				if self.has_key("VKeyIcon"):
 					self["VirtualKB"].setEnabled(False)
 					self["VKeyIcon"].boolean = False
 		else:
-			if "VKeyIcon" in self:
+			if self.has_key("VKeyIcon"):
 				self["VirtualKB"].setEnabled(False)
 				self["VKeyIcon"].boolean = False
 
@@ -649,7 +687,7 @@ class Wizard(Screen):
 	def VirtualKeyBoardCallback(self, callback = None):
 		if callback is not None and len(callback):
 			if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
-				if "HelpWindow" in self:
+				if self.has_key("HelpWindow"):
 					if self["config"].getCurrent()[1].help_window.instance is not None:
 						helpwindowpos = self["HelpWindow"].getPosition()
 						from enigma import ePoint
