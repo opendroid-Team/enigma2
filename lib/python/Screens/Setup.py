@@ -77,7 +77,7 @@ class Setup(ConfigListScreen, Screen):
 	ALLOW_SUSPEND = True
 
 	def removeNotifier(self):
-		config.usage.setup_level.notifiers.remove(self.levelChanged)
+		self.onNotifiers.remove(self.levelChanged)
 
 	def levelChanged(self, configElement):
 		list = []
@@ -113,7 +113,7 @@ class Setup(ConfigListScreen, Screen):
 		self.PluginLanguageDomain = PluginLanguageDomain
 		self.menu_path = menu_path
 		list = []
-
+		self.onNotifiers = [ ]
 		self.refill(list)
 
 		ConfigListScreen.__init__(self, list, session = session, on_change = self.changedEntry)
