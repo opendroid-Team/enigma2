@@ -24,6 +24,7 @@ void eDVBPMTParser::clearProgramInfo(program &program)
 	program.videoStreams.clear();
 	program.audioStreams.clear();
 	program.subtitleStreams.clear();
+	program.caids.clear();
 	program.pcrPid = -1;
 	program.pmtPid = -1;
 	program.textPid = -1;
@@ -178,7 +179,7 @@ int eDVBPMTParser::getProgramInfo(program &program)
 						isaudio = 1;
 						audio.type = audioStream::atDTS;
 					}
-				case 0x84: // DDP (bluray)
+				case 0x84: // DDP (blueray)
 				case 0x87: // DDP (ATSC)
 					if (!isvideo && !isaudio)
 					{

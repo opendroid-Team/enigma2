@@ -38,13 +38,16 @@ eDVBVolumecontrol* eDVBVolumecontrol::getInstance()
 }
 
 eDVBVolumecontrol::eDVBVolumecontrol()
+:m_volsteps(5)
 {
 #ifdef HAVE_ALSA
 	mainVolume = NULL;
 	openMixer();
 #endif
 	volumeUnMute();
+#if not defined (__sh__) // dont reset volume on start
 	setVolume(100, 100);
+#endif
 }
 
 int eDVBVolumecontrol::openMixer()
@@ -110,14 +113,19 @@ void eDVBVolumecontrol::closeMixer(int fd)
 #endif
 }
 
+void eDVBVolumecontrol::setVolumeSteps(int steps)
+{
+	m_volsteps = steps;
+}
+
 void eDVBVolumecontrol::volumeUp(int left, int right)
 {
-	setVolume(leftVol + left, rightVol + right);
+	setVolume(leftVol + (left ? left : m_volsteps), rightVol + (right ? right : m_volsteps));
 }
 
 void eDVBVolumecontrol::volumeDown(int left, int right)
 {
-	setVolume(leftVol - left, rightVol - right);
+	setVolume(leftVol - (left ? left : m_volsteps), rightVol - (right ? right : m_volsteps));
 }
 
 int eDVBVolumecontrol::checkVolume(int vol)

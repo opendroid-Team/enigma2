@@ -15,6 +15,7 @@
 #include <dvbsi++/descriptor_tag.h>
 #include <dvbsi++/service_descriptor.h>
 #include <dvbsi++/satellite_delivery_system_descriptor.h>
+#include <dvbsi++/s2_satellite_delivery_system_descriptor.h>
 #include <dirent.h>
 
 DEFINE_REF(eDVBService);
@@ -212,8 +213,41 @@ int eDVBService::isPlayable(const eServiceReference &ref, const eServiceReferenc
 		((const eServiceReferenceDVB&)ignore).getChannelID(chid_ignore);
 
 		if (res_mgr->canAllocateChannel(chid, chid_ignore, system, simulate))
+		{
+			std::string python_config_str;
+			bool use_ci_assignment = eConfigManager::getConfigBoolValue("config.misc.use_ci_assignment", false);
+			if (use_ci_assignment)
+			{
+				int is_ci_playable = 1;
+				PyObject *pName, *pModule, *pFunc;
+				PyObject *pArgs, *pArg, *pResult;
+				Py_Initialize();
+				pName = PyString_FromString("Tools.CIHelper");
+				pModule = PyImport_Import(pName);
+				Py_DECREF(pName);
+				if (pModule != NULL)
+				{
+					pFunc = PyObject_GetAttrString(pModule, "isPlayable");
+					if (pFunc) 
+					{
+						pArgs = PyTuple_New(1);
+						pArg = PyString_FromString(ref.toString().c_str());
+						PyTuple_SetItem(pArgs, 0, pArg);
+						pResult = PyObject_CallObject(pFunc, pArgs);
+						Py_DECREF(pArgs);
+						if (pResult != NULL)
+						{
+							is_ci_playable = PyInt_AsLong(pResult);
+							Py_DECREF(pResult);
+							return is_ci_playable;
+						}
+					}
+				}
+				eDebug("[eDVBService] isPlayble... error in python code");
+				PyErr_Print();
+			}
 			return 1;
-
+		}
 		if (remote_fallback_enabled)
 			return 2;
 	}
@@ -377,7 +411,7 @@ void eDVBDB::parseServiceData(ePtr<eDVBService> s, std::string str)
 		else if (p == 'f')
 		{
 			sscanf(v.c_str(), "%x", &s->m_flags);
-			s->m_flags &= ~eDVBService::dxDontshow;
+			s->m_flags &= ~eDVBService::dxIsParentalProtected;
 		} else if (p == 'c')
 		{
 			int cid, val;
@@ -410,15 +444,14 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 				modulation=eDVBFrontendParametersSatellite::Modulation_QPSK,
 				rolloff=eDVBFrontendParametersSatellite::RollOff_alpha_0_35,
 				pilot=eDVBFrontendParametersSatellite::Pilot_Unknown,
-				is_id = NO_STREAM_ID_FILTER,
-				pls_code = 1,
-				pls_mode = eDVBFrontendParametersSatellite::PLS_Root;
+				is_id = 0, //NO_STREAM_ID_FILTER
+				pls_mode = eDVBFrontendParametersSatellite::PLS_Root,
+				pls_code = 1;
 
 			sscanf(line+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				&frequency, &symbol_rate, &polarisation, &fec, &orbital_position,
 				&inversion, &flags, &system, &modulation, &rolloff, &pilot,
 				&is_id, &pls_code, &pls_mode);
-
 			sat.frequency = frequency;
 			sat.symbol_rate = symbol_rate;
 			sat.polarisation = polarisation;
@@ -429,6 +462,9 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 			sat.modulation = modulation;
 			sat.rolloff = rolloff;
 			sat.pilot = pilot;
+			sat.is_id = is_id;
+			sat.pls_mode = pls_mode & 3;
+			sat.pls_code = pls_code & 0x3FFFF;
 			// Process optional features
 			while (options) {
 				char * next = strchr(options, ',');
@@ -441,13 +477,8 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 				//	sat.parm3 = parm3;
 				//}
 				//else ...
-				if (strncmp(options, "MIS/PLS:", 8) == 0)
-					sscanf(options+8, "%d:%d:%d", &is_id, &pls_code, &pls_mode);
 				options = next;
 			}
-			sat.is_id = is_id;
-			sat.pls_mode = pls_mode & 3;
-			sat.pls_code = pls_code & 0x3FFFF;
 			feparm->setDVBS(sat);
 			feparm->setFlags(flags);
 			break;
@@ -723,7 +754,7 @@ void eDVBDB::saveServicelist(const char *file)
 		fprintf(g, "eDVB services /5/\n");
 		fprintf(g, "# Transponders: t:dvb_namespace:transport_stream_id:original_network_id,FEPARMS\n");
 		fprintf(g, "#     DVBS  FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags\n");
-		fprintf(g, "#     DVBS2 FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags:system:modulation:rolloff:pilot[,MIS/PLS:is_id:pls_code:pls_mode]\n");
+		fprintf(g, "#     DVBS2 FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags:system:modulation:rolloff:pilot\n");
 		fprintf(g, "#     DVBT  FEPARMS:   t:frequency:bandwidth:code_rate_HP:code_rate_LP:modulation:transmission_mode:guard_interval:hierarchy:inversion:flags:system:plp_id\n");
 		fprintf(g, "#     DVBC  FEPARMS:   c:frequency:symbol_rate:inversion:modulation:fec_inner:flags:system\n");
 		fprintf(g, "#     ATSC  FEPARMS:   a:frequency:inversion:modulation:flags:system\n");
@@ -762,17 +793,15 @@ void eDVBDB::saveServicelist(const char *file)
 			if (sat.system == eDVBFrontendParametersSatellite::System_DVB_S2)
 			{
 				fprintf(f, ":%d:%d:%d:%d", sat.system, sat.modulation, sat.rolloff, sat.pilot);
-				if (g)
-					fprintf(g, ":%d:%d:%d:%d", sat.system, sat.modulation, sat.rolloff, sat.pilot);
-
 				if (static_cast<unsigned int>(sat.is_id) != NO_STREAM_ID_FILTER ||
-					(sat.pls_code & 0x3FFFF) != 1 ||
+					(sat.pls_code & 0x3FFFF) != 0 ||
 					(sat.pls_mode & 3) != eDVBFrontendParametersSatellite::PLS_Root)
 				{
-					fprintf(f, ":%d:%d:%d", sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
-					if (g)
-						fprintf(g, ",MIS/PLS:%d:%d:%d", sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
+					fprintf(f, ":%d:%d:%d",
+						sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
 				}
+				if (g)
+					fprintf(g, ":%d:%d:%d:%d", sat.system, sat.modulation, sat.rolloff, sat.pilot);
 			}
 			fprintf(f, "\n");
 			if (g)
@@ -1318,9 +1347,9 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 				inv = eDVBFrontendParametersSatellite::Inversion_Unknown;
 				pilot = eDVBFrontendParametersSatellite::Pilot_Unknown;
 				rolloff = eDVBFrontendParametersSatellite::RollOff_alpha_0_35;
-				is_id = NO_STREAM_ID_FILTER;
-				pls_code = 1;
+				is_id = 0; //NO_STREAM_ID_FILTER
 				pls_mode = eDVBFrontendParametersSatellite::PLS_Root;
+				pls_code = 1;
 				tsid = -1;
 				onid = -1;
 
@@ -1498,7 +1527,6 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 					else if (name == "inversion") dest = &inversion;
 					else if (name == "system") dest = &system;
 					else continue;
-
 					if (dest)
 					{
 						tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
@@ -2009,18 +2037,6 @@ PyObject *eDVBDB::getFlag(const eServiceReference &ref)
 			return PyInt_FromLong(it->second->m_flags);
 	}
 	return PyInt_FromLong(0);
-}
-
-PyObject *eDVBDB::getCachedPid(const eServiceReference &ref, int id)
-{
-	if (ref.type == eServiceReference::idDVB)
-	{
-		eServiceReferenceDVB &service = (eServiceReferenceDVB&)ref;
-		std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator it(m_services.find(service));
-		if (it != m_services.end())
-			return PyInt_FromLong(it->second->getCacheEntry((eDVBService::cacheID)id));
-	}
-	return PyInt_FromLong(-1);
 }
 
 bool eDVBDB::isCrypted(const eServiceReference &ref)
