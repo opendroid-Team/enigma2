@@ -19,14 +19,14 @@ int fileExist(const char* filename){
 	struct stat buffer;
 	int exist = stat(filename,&buffer);
 	if(exist == 0)
-	    return 1;
+		return 1;
 	else // -1
-	    return 0;
+		return 0;
 }
 
 void noRTC()
 {
-	mybox[0] = 0;
+	mybox[0] = NULL;
 	if(fileExist("/proc/stb/info/gbmodel"))
 	{
 		FILE *fb = fopen("/proc/stb/info/gbmodel","r");
@@ -37,7 +37,6 @@ void noRTC()
 			strncpy(mybox, buf, 20);
 			fclose(fb);
 			strtok(mybox, "\n");
-			eDebug("[eDVBLocalTimerHandler] Boxtype = [%s]", mybox);
 		}
 	}
 }
@@ -191,7 +190,7 @@ TDT::TDT(eDVBChannel *chan, int update_count)
 
 int TDT::createTable(unsigned int nr, const uint8_t *data, unsigned int max)
 {
-	if ( data && (data[0] == TID_TDT || data[0] == TID_TOT ))
+	if ( data && (data[0] == 0x70 || data[0] == 0x73 ))
 	{
 		int length = ((data[1] & 0x0F) << 8) | data[2];
 		if ( length >= 5 )
@@ -209,7 +208,6 @@ int TDT::createTable(unsigned int nr, const uint8_t *data, unsigned int max)
 void TDT::start()
 {
 	eDVBTableSpec spec;
-	memset(&spec, 0, sizeof(spec));
 	spec.pid = TimeAndDateSection::PID;
 	spec.tid = TimeAndDateSection::TID;
 	spec.tid_mask = 0xFC;
@@ -314,13 +312,13 @@ void eDVBLocalTimeHandler::setUseDVBTime(bool b)
 		if (!b)
 		{
 			time_t now = time(0);
-			if (now < 1072224000) /* 01.01.2004 */
+			if (now < timeOK) /* 01.01.2004 */
 			{
 				eDebug("[eDVBLocalTimeHandler] invalid system time, refuse to disable transponder time sync");
 				return;
-			} else {
-				m_time_ready = true;
 			}
+			else
+				m_time_ready = true;
 		}
 		if (m_use_dvb_time) {
 			eDebug("[eDVBLocalTimeHandler] disable sync local time with transponder time!");
@@ -453,20 +451,9 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 	{
 		std::map< eDVBChannelID, int >::iterator it( m_timeOffsetMap.find( chan->getChannelID() ) );
 
-// current linux time
+ // current linux time
 		time_t linuxTime = time(0);
-#ifdef DEBUG
-// current transponder time
-		tm tp_now;
-		localtime_r(&tp_time, &tp_now);
-		eDebug("[eDVBLocalTimerHandler] Transponder time is %02d.%02d.%04d %02d:%02d:%02d",
-			tp_now.tm_mday,
-			tp_now.tm_mon + 1,
-			tp_now.tm_year + 1900,
-			tp_now.tm_hour,
-			tp_now.tm_min,
-			tp_now.tm_sec);
-#endif
+
 	// difference between current enigma time and transponder time
 		int enigma_diff = tp_time-linuxTime;
 
@@ -576,8 +563,10 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 		time_difference = t - linuxTime;   // calc our new linux_time -> enigma_time correction
 		eDebug("[eDVBLocalTimerHandler] m_time_difference is %d", time_difference );
 
-		if ( time_difference ) {
-			if ( (time_difference >= -15) && (time_difference <= 15) ) {
+		if ( time_difference )
+		{
+			if ( (time_difference >= -15) && (time_difference <= 15) )
+			{
 				// Slew small diffs ...
 				// Even good transponders can differ by 0-5 sec, if we would step these
 				// the system clock would permanentely jump around when zapping.
@@ -586,10 +575,14 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 				int rc=adjtime(&tdelta,&tolddelta);
 				if(rc==0) {
 					eDebug("[eDVBLocalTimerHandler] slewing Linux Time by %03d seconds", time_difference);
-				} else {
+				}
+				else
+				{
 					eDebug("[eDVBLocalTimerHandler] slewing Linux Time by %03d seconds FAILED", time_difference);
 				}
-			} else {
+			}
+			else
+			{
 				// ... only step larger diffs
 				timeval tnow;
 				gettimeofday(&tnow,0);

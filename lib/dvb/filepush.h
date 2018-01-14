@@ -13,17 +13,13 @@ class iFilePushScatterGather
 public:
 	virtual void getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size, int blocksize)=0;
 	virtual ~iFilePushScatterGather() {}
-#if defined(__sh__)
-	//Changes in this file are cause e2 doesnt tell the player to play reverse
-	virtual int getSkipMode() = 0;
-#endif
 };
 
 class eFilePushThread: public eThread, public sigc::trackable, public iObject
 {
 	DECLARE_REF(eFilePushThread);
 public:
-	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=0, int blocksize=188, size_t buffersize=188*1024);
+	eFilePushThread(int blocksize, size_t buffersize);
 	~eFilePushThread();
 	void thread();
 	void stop();
@@ -45,8 +41,6 @@ public:
 protected:
 	virtual void filterRecordData(const unsigned char *data, int len);
 private:
-	int prio_class;
-	int prio;
 	iFilePushScatterGather *m_sg;
 	int m_stop;
 	int m_fd_dest;
@@ -70,11 +64,7 @@ private:
 class eFilePushThreadRecorder: public eThread, public sigc::trackable
 {
 public:
-#if HAVE_AMLOGIC
-	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize=10*188*1024);
-#else
-	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize=188*1024);
-#endif
+	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize);
 	void thread();
 	void stop();
 	void start(int sourcefd);

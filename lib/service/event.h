@@ -82,11 +82,12 @@ class eServiceEvent: public iObject
 	time_t m_begin;
 	int m_duration;
 	int m_event_id;
-	std::string m_event_name, m_short_description, m_extended_description, m_extra_event_data, m_epg_source;
+	int m_pdc_pil;
+	int m_running_status;
+	std::string m_event_name, m_short_description, m_extended_description, m_tmp_extended_description;
 	static std::string m_language, m_language_alternative;
 	// .. additional info
 public:
-	eServiceEvent();
 #ifndef SWIG
 	RESULT parseFrom(Event *evt, int tsidonid=0);
 	RESULT parseFrom(ATSCEvent *evt);
@@ -98,11 +99,11 @@ public:
 	time_t getBeginTime() const { return m_begin; }
 	int getDuration() const { return m_duration; }
 	int getEventId() const { return m_event_id; }
+	int getPdcPil() const { return m_pdc_pil; }
+	int getRunningStatus() const { return m_running_status; }
 	std::string getEventName() const { return m_event_name; }
 	std::string getShortDescription() const { return m_short_description; }
 	std::string getExtendedDescription() const { return m_extended_description; }
-	std::string getExtraEventData() const { return m_extra_event_data; }
-	std::string getEPGSource() const { return m_epg_source; }
 	std::string getBeginTimeString() const;
 	SWIG_VOID(RESULT) getComponentData(ePtr<eComponentData> &SWIG_OUTPUT, int tagnum) const;
 	PyObject *getComponentData() const;

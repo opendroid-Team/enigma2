@@ -111,15 +111,6 @@ eServiceTS::~eServiceTS()
 
 DEFINE_REF(eServiceTS);
 
-static size_t crop(char *buf)
-{
-	size_t len = strlen(buf) - 1;
-	while (len > 0 && (buf[len] == '\r' || buf[len] == '\n')) {
-		buf[len--] = '\0';
-	}
-	return len;
-}
-
 static int getline(char** pbuffer, size_t* pbufsize, int fd)
 {
 	size_t i = 0;
@@ -275,10 +266,8 @@ RESULT eServiceTS::stop()
 		m_destfd = -1;
 	}
 	printf("TS: %s stop\n", m_filename.c_str());
-	if (m_streamthread != NULL)
-		m_streamthread->stop();
-	if (m_decodedemux != NULL)
-		m_decodedemux->flush();
+	m_streamthread->stop();
+	m_decodedemux->flush();
 	m_audioInfo = 0;
 	return 0;
 }
