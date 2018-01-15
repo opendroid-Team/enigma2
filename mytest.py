@@ -18,6 +18,7 @@ enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 boxtype = getBoxType()
 
+
 if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/plugin.pyo") and boxtype in ('dm7080','dm820','dm520','dm525','dm900','dm920'):
 	import pyo_patcher
 
@@ -583,7 +584,7 @@ def runScreenTest():
 	profile("Init:PowerKey")
 	power = PowerKey(session)
 	
-	if boxtype in ('mbmicrov2','revo4k','force3uhd', 'dm7020hd', 'dm7020hdv2', 'osminiplus', 'osmega', 'sf3038', 'spycat', 'e4hd', 'e4hdhybrid', 'mbmicro', 'et7500', 'mixosf5', 'mixosf7', 'mixoslumi', 'gi9196m', 'maram9', 'ixussone', 'ixusszero', 'uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'sezam1000hd', 'mbmini', 'atemio5x00', 'beyonwizt3', '9910lx', '9911lx') or getBrandOEM() in ('fulan') or getMachineBuild() in ('dags7362' , 'dags73625', 'dags5'):
+	if boxtype in ('osnino','osninoplus','mbmicrov2','revo4k','force3uhd', 'dm7020hd', 'dm7020hdv2', 'osminiplus', 'osmega', 'sf3038', 'spycat', 'e4hd', 'e4hdhybrid', 'mbmicro', 'et7500', 'mixosf5', 'mixosf7', 'mixoslumi', 'gi9196m', 'maram9', 'ixussone', 'ixusszero', 'uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'sezam1000hd', 'mbmini', 'atemio5x00', 'beyonwizt3', '9910lx', '9911lx') or getBrandOEM() in ('fulan') or getMachineBuild() in ('dags7362' , 'dags73625', 'dags5'):
 		profile("VFDSYMBOLS")
 		import Components.VfdSymbols
 		Components.VfdSymbols.SymbolsCheck(session)
@@ -601,6 +602,7 @@ def runScreenTest():
 
 	profile("RunReactor")
 	profile_final()
+	runReactor()
 
 	if boxtype in ('sf8', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo'):
 		f = open("/dev/dbox/oled0", "w")
@@ -619,11 +621,6 @@ def runScreenTest():
 	config.usage.shutdownOK.save()
 	if not RestoreSettings:
 		configfile.save()
-
-	# kill showiframe if it is running (sh4 hack...)
-	os.system("killall -9 showiframe")
-
-	runReactor()
 
 	print "[mytest.py] normal shutdown"
 	config.misc.startCounter.save()
@@ -668,7 +665,7 @@ def runScreenTest():
 		nextPluginTimeInStandby = 1
 	elif "serienrecorder" in tmp:
 		nextPluginName = "SerienRecorder"
-		nextPluginTimeInStandby = 0 # plugin function for deep standby from standby not compatible (not available)
+		nextPluginTimeInStandby = 0
 	elif "elektro" in tmp:
 		nextPluginName = "Elektro"
 		nextPluginTimeInStandby = 1
@@ -695,7 +692,7 @@ def runScreenTest():
 	print "="*100
 	if wakeupList and wakeupList[0][0] > 0:
 		startTime = wakeupList[0]
-		# wakeup time is 5 min before timer starts + offset
+		# wakeup time before timer begins
 		wptime = startTime[0] - (config.workaround.wakeuptime.value * 60)
 		if (wptime - nowTime) < 120: # no time to switch box back on
 			wptime = int(nowTime) + 120  # so switch back on in 120 seconds

@@ -182,6 +182,9 @@ class LCD:
 
 	def setFlipped(self, value):
 		eDBoxLCD.getInstance().setFlipped(value)
+		
+#	def setScreenShot(self, value):
+# 		eDBoxLCD.getInstance().setDump(value)
 
 	def isOled(self):
 		return eDBoxLCD.getInstance().isOled()
@@ -317,6 +320,7 @@ def InitLcd():
 		if can_lcdmodechecking:
 			def setLCDModeMinitTV(configElement):
 				try:
+					print 'setLCDModeMinitTV',configElement.value
 					f = open("/proc/stb/lcd/mode", "w")
 					f.write(configElement.value)
 					f.close()
@@ -324,6 +328,7 @@ def InitLcd():
 					pass
 			def setMiniTVFPS(configElement):
 				try:
+					print 'setMiniTVFPS',configElement.value
 					f = open("/proc/stb/lcd/fps", "w")
 					f.write("%d \n" % configElement.value)
 					f.close()
@@ -331,28 +336,53 @@ def InitLcd():
 					pass
 			def setLCDModePiP(configElement):
 				pass
+#			def setLCDScreenshot(configElement):
+# 				ilcd.setScreenShot(configElement.value);
 
-			config.lcd.modepip = ConfigSelection(choices={
-					"0": _("off"),
-					"5": _("PIP"),
-					"7": _("PIP with OSD")},
-					default = "0")
+			if getBoxType() in ('gbquad4k', 'gbue4k'):
+				config.lcd.modepip = ConfigSelection(choices={
+						"0": _("off"),
+						"4": _("PIP"),
+						"6": _("PIP with OSD")},
+						default = "0")
+			else:
+				config.lcd.modepip = ConfigSelection(choices={
+						"0": _("off"),
+						"5": _("PIP"),
+						"7": _("PIP with OSD")},
+						default = "0")
 			if config.misc.boxtype.value in ( 'gbquad', 'gbquadplus', 'gbquad4k', 'gbue4k'):
 				config.lcd.modepip.addNotifier(setLCDModePiP)
 			else:
 				config.lcd.modepip = ConfigNothing()
+				
+#			config.lcd.screenshot = ConfigYesNo(default=False)
+# 			config.lcd.screenshot.addNotifier(setLCDScreenshot)	
 
-			config.lcd.modeminitv = ConfigSelection(choices={
-					"0": _("normal"),
-					"1": _("MiniTV"),
-					"2": _("OSD"),
-					"3": _("MiniTV with OSD")},
-					default = "0")
+			if getBoxType() in ('gbquad4k', 'gbue4k'):
+				#  (0:normal, 1:video0, 2:fb, 3:vide0+fb, 4:video1, 5:vide0+video1, 6:video1+fb, 7:video0+video1+fb)
+				config.lcd.modeminitv = ConfigSelection(default = "0", choices=[
+						("0", _("normal")),
+						("1", _("MiniTV") + _(" - video0")),
+						("3", _("MiniTV with OSD") + _(" - video0")),
+						("2", _("OSD")),
+						("4", _("MiniTV") + _(" - video1")),
+						("6", _("MiniTV with OSD") + _(" - video1")),
+						("5", _("MiniTV") + _(" - video0+video1")),
+						("7", _("MiniTV with OSD") + _(" - video0+video1"))]) 
+			else:
+				config.lcd.modeminitv = ConfigSelection(choices={
+						"0": _("normal"),
+						"1": _("MiniTV"),
+						"2": _("OSD"),
+						"3": _("MiniTV with OSD")},
+						default = "0")
 			config.lcd.fpsminitv = ConfigSlider(default=30, limits=(0, 30))
 			config.lcd.modeminitv.addNotifier(setLCDModeMinitTV)
 			config.lcd.fpsminitv.addNotifier(setMiniTVFPS)
 		else:
 			config.lcd.modeminitv = ConfigNothing()
+			config.lcd.screenshot = ConfigNothing()
 			config.lcd.fpsminitv = ConfigNothing()
 
 		config.lcd.scroll_speed = ConfigSelection(default = "300", choices = [
@@ -427,19 +457,18 @@ def InitLcd():
 		config.usage.lcd_standbypowerled = ConfigSelection(default = "on", choices = [("off", _("Off")), ("on", _("On"))])
 		config.usage.lcd_standbypowerled.addNotifier(setPowerLEDstanbystate)
 
-		standby_default = 0
+		if getBoxType() in ('dm900', 'dm920', 'e4hdultra'):
+			standby_default = 4
+		elif getBoxType() in ('spycat4kmini', 'osmega'):
+			standby_default = 10
+		else:
+			standby_default = 1
 
 		if not ilcd.isOled():
 			config.lcd.contrast = ConfigSlider(default=5, limits=(0, 20))
 			config.lcd.contrast.addNotifier(setLCDcontrast);
 		else:
 			config.lcd.contrast = ConfigNothing()
-			if getBoxType() in ('dm900'):
-				standby_default = 4
-			elif getBoxType() in ('spycat4kmini', 'osmega'):
-				standby_default = 10
-			else:
-				standby_default = 1
 
 		if getBoxType() in ('novatwin', 'novacombo', 'mixosf5', 'mixosf5mini', 'gi9196m', 'gi9196lite', 'zgemmas2s', 'zgemmash1', 'zgemmash2', 'zgemmass', 'zgemmahs', 'zgemmah2s', 'zgemmah2h', 'spycat'):
 			config.lcd.standby = ConfigSlider(default=standby_default, limits=(0, 4))
@@ -487,7 +516,9 @@ def InitLcd():
 			config.lcd.showTv = ConfigYesNo(default = False)
 			config.lcd.showTv.addNotifier(lcdLiveTvChanged)
 
-		if SystemInfo["LCDMiniTV"]:
+		if SystemInfo["LCDMiniTV"] and config.misc.boxtype.value not in ( 'gbquad', 'gbquadplus', 'gbquad4k', 'gbue4k'):
+			config.lcd.minitvmode = ConfigSelection([("0", _("normal")), ("1", _("MiniTV")), ("2", _("OSD")), ("3", _("MiniTV with OSD"))], "0")
+			config.lcd.minitvmode.addNotifier(setLCDminitvmode)
 			config.lcd.minitvpipmode = ConfigSelection([("0", _("off")), ("5", _("PIP")), ("7", _("PIP with OSD"))], "0")
 			config.lcd.minitvpipmode.addNotifier(setLCDminitvpipmode)
 			config.lcd.minitvfps = ConfigSlider(default=30, limits=(0, 30))
@@ -502,7 +533,10 @@ def InitLcd():
 
 		if SystemInfo["VFD_scroll_delay"] and getBoxType() not in ('ixussone', 'ixusszero'):
 			def scroll_delay(el):
-				open(SystemInfo["VFD_scroll_delay"], "w").write(str(el.value))
+				if getBoxType() in ('sf4008', 'beyonwizu4'):
+					open(SystemInfo["VFD_scroll_delay"], "w").write(hex(int(el.value)))
+				else:
+					open(SystemInfo["VFD_scroll_delay"], "w").write(str(el.value))
 			config.usage.vfd_scroll_delay = ConfigSlider(default = 150, increment = 10, limits = (0, 500))
 			config.usage.vfd_scroll_delay.addNotifier(scroll_delay, immediate_feedback = False)
 			config.lcd.hdd = ConfigSelection([("0", _("No")), ("1", _("Yes"))], "1")
@@ -511,8 +545,12 @@ def InitLcd():
 
 		if SystemInfo["VFD_initial_scroll_delay"] and getBoxType() not in ('ixussone', 'ixusszero'):
 			def initial_scroll_delay(el):
-				open(SystemInfo["VFD_initial_scroll_delay"], "w").write(el.value)
+				if getBoxType() in ('sf4008', 'beyonwizu4'):
+					open(SystemInfo["VFD_initial_scroll_delay"], "w").write(hex(int(el.value)))
+				else:
+					open(SystemInfo["VFD_initial_scroll_delay"], "w").write(el.value)
 			choicelist = [
+			("3000", "3 " + _("seconds")),
 			("5000", "5 " + _("seconds")),
 			("10000", "10 " + _("seconds")),
 			("20000", "20 " + _("seconds")),
@@ -523,8 +561,13 @@ def InitLcd():
 
 		if SystemInfo["VFD_final_scroll_delay"] and getBoxType() not in ('ixussone', 'ixusszero'):
 			def final_scroll_delay(el):
-				open(SystemInfo["VFD_final_scroll_delay"], "w").write(el.value)
+				if getBoxType() in ('sf4008', 'beyonwizu4'):
+					open(SystemInfo["VFD_final_scroll_delay"], "w").write(hex(int(el.value)))
+				else:
+					open(SystemInfo["VFD_final_scroll_delay"], "w").write(el.value)
+
 			choicelist = [
+			("3000", "3 " + _("seconds")),
 			("5000", "5 " + _("seconds")),
 			("10000", "10 " + _("seconds")),
 			("20000", "20 " + _("seconds")),

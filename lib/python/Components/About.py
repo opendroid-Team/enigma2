@@ -9,10 +9,7 @@ def getVersionString():
 
 def getFlashDateString():
 	try:
-		if path.exists("/boot/STARTUP"):
-			return _("Multiboot active")
-		else:
-			return time.strftime(_("%Y-%m-%d"), time.localtime(os.stat("/boot").st_ctime))
+		return time.strftime(_("%Y-%m-%d"), time.localtime(os.stat("/boot").st_ctime))
 	except:
 		return _("unknown")
 
@@ -44,9 +41,9 @@ def getModelString():
 def getChipSetString():
 	if getMachineBuild() in ('dm7080','dm820'):
 		return "7435"
-	elif getMachineBuild() in ('dm520'):
+	elif getMachineBuild() in ('dm520','dm525'):
 		return "73625"
-	elif getMachineBuild() in ('dm900'):
+	elif getMachineBuild() in ('dm900','dm920','et13000','sf5008'):
 		return "7252S"
 	elif getMachineBuild() in ('hd51','vs1500','h7'):
 		return "7251S"

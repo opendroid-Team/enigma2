@@ -203,23 +203,9 @@ self.clearSelectedKeys()
 self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
-			</step>
-			<step id="nimk">
-				<condition>
-from Components.NimManager import nimmanager
-self.condition = len(nimmanager.nim_slots) > 10 and not nimmanager.nim_slots[10].empty and not nimmanager.nim_slots[10].isFBCLink()
-			</condition>
-			<text value="Please set up tuner K" />
-			<displaytext value="Please set up tuner K" />
-			<config screen="NimSetup" module="Satconfig" args="10" type="ConfigList" />
-			<code>
-self.clearSelectedKeys()
-self.selectKey("LEFT")
-self.selectKey("RIGHT")
-			</code>
-			</step>
-			<step id="nimq">
-				<condition>
+		</step>
+		<step id="nimq">
+			<condition>
 from Components.NimManager import nimmanager
 from enigma import isFBCLink
 self.condition = len(nimmanager.nim_slots) > 16 and not nimmanager.nim_slots[16].empty and not isFBCLink(nimmanager.nim_slots[16].slot)

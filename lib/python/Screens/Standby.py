@@ -28,6 +28,10 @@ def setLCDModeMinitTV(value):
 class Standby2(Screen):
 	def Power(self):
 		print "[Standby] leave standby"
+		
+		if os.path.exists("/usr/script/StandbyLeave.sh"):
+			Console().ePopen("/usr/script/StandbyLeave.sh &")
+
 		if (getBrandOEM() in ('fulan')):
 			open("/proc/stb/hdmi/output", "w").write("on")
 		#set input to encoder
@@ -81,6 +85,9 @@ class Standby2(Screen):
 		self.avswitch = AVSwitch()
 
 		print "[Standby] enter standby"
+
+		if os.path.exists("/usr/script/StandbyEnter.sh"):
+			Console().ePopen("/usr/script/StandbyEnter.sh &")
 
 		self["actions"] = ActionMap( [ "StandbyActions" ],
 		{

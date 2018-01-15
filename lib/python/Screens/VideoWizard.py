@@ -17,26 +17,19 @@ boxtype = getBoxType()
 
 has_rca = False
 has_dvi = False
-if boxtype in ('zgemmah4''zgemmah52splus','zgemmah2splus','zgemmah7','zgemmah32tc','zgemmah52tc','alphatriple','tmtwin4k','tmnanom3','tiviarmin','mbmicrov2', 'vimastec1500', 'revo4k','force3uhdplus','force3uhd','force2nano','zgemmah5ac', 'zgemmah3ac','bre2zet2c', 'e4hdcombo', 'ultrabox', 'osmega', 'tmnano3t', 'novacombo', 'novatwin', 'megaforce2', 'purehd', 'mutant11', 'sf128', 'sf138', 'xpeedlxpro', 'mbtwinplus', 'mutant51', 'ax51', 'formuler4', 'formuler4turbo', 'zgemmah5', 'zgemmah52s', 'sf98', 'evoslim', 'zgemmaslc', '9900lx', '9910lx', '9911lx', 'et7x00mini', 'tmnanosem2', 'tmnanosem2plus', 'evomini', 'evominiplus', 'zgemmahs', 'zgemmah2s', 'zgemmah2h', 't2cable', 'osmini', 'osminiplus', 'xpeedlxcs2', 'xpeedlxcc', 'odin2hybrid', 'odinplus', 'mutant500c', 'mutant530c', 'e4hd', 'e4hdhybrid' , 'mbmicro', 'beyonwizt2', 'fegasusx3', 'fegasusx5s', 'fegasusx5t', 'twinboxlcd', 'singleboxlcd', 'twinboxlcdci', 'twinboxlcdci5', 'sf3038', 'spycat', 'zgemmash1', 'zgemmash2', 'zgemmas2s', 'zgemmass' , 'formuler3', 'enibox', 'mago', 'sf108', 'x1plus', 'x2plus', 'atemio6000', 'atemio6100', 'atemio6200', 'mbminiplus', 'vp7358ci', 'xcombo', 'gbquad', 'gbquadplus', 'et5x00', 'et6000', 'et7000', 'et7100', 'et7500', 'et8500', 'et8500s', 'classm', 'axodin', 'axodinc', 'genius', 'evo', 'galaxym6', 'geniuse3hd', 'evoe3hd', 'axase3', 'axase3c', 'starsatlx', 'mixosf7', 'mixoslumi', 'tmnano', 'azboxme',  'azboxminime', 'optimussos1',  'optimussos2', 'gb800seplus', 'gb800ueplus', 'gbultrase', 'gbultraue', 'gbultraueh', 'sezam1000hd', 'ixussone', 'ixusszero', 'enfinity', 'marvel1', 'bre2ze', 'force1', 'force1plus', 'worldvisionf1', 'optimussos1plus',  'optimussos2plus',  'optimussos3plus', 'formuler1', 'tmnano2super', 'vusolose', 'vuzero', 'tyrant'):
+if boxtype in ('dinobot4k','dinobot4kse','zgemmah6','vipert2c','vipercombo','vipercombohdd','evoslimse','evoslimt2c','zgemmah4','spycat4kcombo','spycat4k','valalinux','formuler4ip','formuler3ip','formuler1tc','tm4ksuper','galaxy4k','zgemmah52splus','zgemmah2splus','zgemmah7','zgemmah32tc','zgemmah52tc','alphatriple','tmtwin4k','tmnanom3','tiviarmin','mbmicrov2', 'vimastec1500', 'revo4k','force3uhdplus','force3uhd','force2nano','zgemmah5ac', 'zgemmah3ac','bre2zet2c', 'e4hdcombo', 'ultrabox', 'osmega', 'tmnano3t', 'novacombo', 'novatwin', 'megaforce2', 'purehd', 'mutant11', 'sf128', 'sf138', 'xpeedlxpro', 'mbtwinplus', 'mutant51', 'ax51', 'formuler4', 'formuler4turbo', 'zgemmah5', 'zgemmah52s', 'sf98', 'evoslim', 'zgemmaslc', '9900lx', '9910lx', '9911lx', 'et7x00mini', 'tmnanosem2', 'tmnanosem2plus', 'evomini', 'evominiplus', 'zgemmahs', 'zgemmah2s', 'zgemmah2h', 't2cable', 'osmini', 'osminiplus', 'xpeedlxcs2', 'xpeedlxcc', 'odin2hybrid', 'odinplus', 'mutant500c', 'mutant530c', 'e4hd', 'e4hdhybrid' , 'mbmicro', 'beyonwizt2', 'fegasusx3', 'fegasusx5s', 'fegasusx5t', 'twinboxlcd', 'singleboxlcd', 'twinboxlcdci', 'twinboxlcdci5', 'sf3038', 'spycat', 'zgemmash1', 'zgemmash2', 'zgemmas2s', 'zgemmass' , 'formuler3', 'enibox', 'mago', 'sf108', 'x1plus', 'x2plus', 'atemio6000', 'atemio6100', 'atemio6200', 'mbminiplus', 'vp7358ci', 'xcombo', 'gbquad', 'gbquadplus', 'et5x00', 'et6000', 'et7000', 'et7100', 'et7500', 'et8500', 'et8500s', 'classm', 'axodin', 'axodinc', 'genius', 'evo', 'galaxym6', 'geniuse3hd', 'evoe3hd', 'axase3', 'axase3c', 'starsatlx', 'mixosf7', 'mixoslumi', 'tmnano', 'azboxme',  'azboxminime', 'optimussos1',  'optimussos2', 'gb800seplus', 'gb800ueplus', 'gbultrase', 'gbultraue', 'gbultraueh', 'sezam1000hd', 'ixussone', 'ixusszero', 'enfinity', 'marvel1', 'bre2ze', 'force1', 'force1plus', 'worldvisionf1', 'optimussos1plus',  'optimussos2plus',  'optimussos3plus', 'formuler1', 'tmnano2super', 'vusolose', 'vuzero', 'tyrant'):
 	has_rca = True
 if boxtype == 'dm8000' or boxtype == 'dm800':
 	has_dvi = True
 
 class VideoWizardSummary(WizardSummary):
 	skin = (
-	"""<screen name="VideoWizardSummary" position="0,0" size="132,64" id="1">
+	"""<screen name="VideoWizardSummary" position="0,0" size="132,64">
 		<widget name="text" position="6,4" size="120,40" font="Regular;12" transparent="1" />
 		<widget source="parent.list" render="Label" position="6,40" size="120,21" font="Regular;14">
 			<convert type="StringListSelection" />
 		</widget>
 		<!--widget name="pic" pixmap="%s" position="6,22" zPosition="10" size="64,64" transparent="1" alphatest="on"/-->
-	</screen>""",
-	"""<screen name="VideoWizardSummary" position="0,0" size="96,64" id="2">
-		<widget name="text" position="0,4" size="96,40" font="Regular;12" transparent="1" />
-		<widget source="parent.list" render="Label" position="0,40" size="96,21" font="Regular;14">
-			<convert type="StringListSelection" />
-		</widget>
-		<!--widget name="pic" pixmap="%s" position="0,22" zPosition="10" size="64,64" transparent="1" alphatest="on"/-->
 	</screen>""")
 	#% (resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/lcd_Scart.png"))
 
@@ -82,6 +75,8 @@ class VideoWizard(WizardLanguage, Rc):
 		WizardLanguage.__init__(self, session, showSteps = False, showStepSlider = False)
 		Rc.__init__(self)
 		self["wizard"] = Pixmap()
+		self["HelpWindow"] = Pixmap()
+		self["HelpWindow"].hide()
 		self["portpic"] = Pixmap()
 		#Screen.setTitle(self, _("Welcome..."))
 		Screen.setTitle(self, _("VideoWizard"))

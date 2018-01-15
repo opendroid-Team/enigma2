@@ -24,10 +24,6 @@ fonts = {
 }
 
 parameters = {}
-constant_widgets = {}
-variables = {}
-DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
-DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -78,13 +74,20 @@ def get_modular_files(name, scope = SCOPE_SKIN):
 	file_list = sorted(file_list, key=str.lower)
 	return file_list
 def skin_user_skinname():
-	name = "skin_user_" + config.skin.primary_skin.value[:config.skin.primary_skin.value.rfind('/')] + ".xml"
+	skin_name = config.skin.primary_skin.value
+	skin_base = skin_name[:skin_name.rfind('/')]
+	name = "skin_user_" + skin_base + ".xml"
 	filename = resolveFilename(SCOPE_CONFIG, name)
 	if fileExists(filename):
+		skin_path = resolveFilename(SCOPE_SKIN, skin_name)
+		if not os.path.isfile(skin_path):
+			print "[skin::skin_user_skinname] ignoring user entry for not-found skin:", skin_path
+			return None
 		return name
 	return None
 
 config.skin = ConfigSubsection()
+DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
 	DEFAULT_SKIN = "skin.xml"
 config.skin.primary_skin = ConfigText(default=DEFAULT_SKIN)
@@ -103,12 +106,6 @@ addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 display_skin_id = 1
-if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
-	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
-		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
-			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
-		else:	
-			addSkin('display/' + config.skin.display_skin.value)
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "[Skin] display skin not found"
@@ -520,7 +517,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					# load palette (not yet implemented)
 					pass
 				if yres >= 1080:
-					parameters["ConfigListSeperator"] = (380)
+					parameters["ConfigListSeperator"] = (580)
 					parameters["ChoicelistDash"] = (0,3,1000,50)
 					parameters["ChoicelistName"] = (85,3,1000,50)
 					parameters["ChoicelistIcon"] = (10,4,64,50)

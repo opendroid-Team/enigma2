@@ -13,8 +13,27 @@ from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType
 from keyids import KEYIDS
 from sys import maxint
+import glob
+import os
+from Components.RcModel import rc_model
 
 def InitUsageConfig():
+	AvailRemotes=glob.glob('/usr/share/enigma2/rc_models/*')
+	RemoteChoices=[]
+	DefaultRemote=rc_model.getRcFolder(GetDefault=True)
+	
+	remoteSelectable=False
+	if AvailRemotes is not None:
+		for remote in AvailRemotes:
+			if os.path.isfile(remote+'/rc.png') and os.path.isfile(remote+'/rcpositions.xml') and os.path.isfile(remote+'/remote.html'):
+				pass
+			else:
+				AvailRemotes.remove(remote)
+		if len(AvailRemotes)>1:
+			remoteSelectable=True
+			for remote in AvailRemotes:
+				toadd = (remote.split('/')[-1], remote.split('/')[-1])
+				RemoteChoices.append(toadd)
 	config.misc.SettingsVersion = ConfigFloat(default = [1,1], limits = [(1,10),(0,99)])
 	config.misc.SettingsVersion.value = [1,1]
 	config.misc.SettingsVersion.save_forced = True
@@ -351,14 +370,22 @@ def InitUsageConfig():
 	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.serviceitems_per_page = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 8, max = 40, wraparound = True)
 	config.usage.show_servicelist = ConfigYesNo(default = True)
-        config.usage.servicelist_mode = ConfigSelection(default='standard', choices=[('standard', _('Standard')), ('simple', _('Simple'))])
-        config.usage.servicelistpreview_mode = ConfigYesNo(default=False)
-        config.usage.tvradiobutton_mode = ConfigSelection(default='BouquetList', choices=[('ChannelList', _('Channel List')), ('BouquetList', _('Bouquet List')), ('MovieList', _('Movie List'))])
-        config.usage.channelbutton_mode = ConfigSelection(default='0', choices=[('0', _('Just change channels')), ('1', _('Channel List')), ('2', _('Bouquet List'))])
-        config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
-                   ("standard", _("Standard")),
-                   ("simple", _("Simple")) ] )
-        config.usage.arrowupdownbutton_mode = ConfigSelection(default='1', choices=[('0', _('Open Service List for PiP')), ('1', _('Open Bouqet List'))])
+	config.usage.servicelist_mode = ConfigSelection(default = "standard", choices = [
+		("standard", _("Standard")),
+		("simple", _("Simple")) ] )
+	config.usage.servicelistpreview_mode = ConfigYesNo(default = False)
+	config.usage.tvradiobutton_mode = ConfigSelection(default="BouquetList", choices = [
+					("ChannelList", _("Channel List")),
+					("BouquetList", _("Bouquet List")),
+					("MovieList", _("Movie List"))])
+	config.usage.channelbutton_mode = ConfigSelection(default="0", choices = [
+					("0", _("Just change channels")),
+					("1", _("Channel List")),
+					("2", _("Bouquet List")),
+					("3", _("Just change Bouquet"))])
+	config.usage.updownbutton_mode = ConfigSelection(default="1", choices = [
+					("0", _("Just change channels")),
+					("1", _("Channel List"))])
         config.usage.scroll_label_delay = ConfigSelection(default='3000', choices=[('1000', '1 ' + _('seconds')),
          ('2000', '2 ' + _('seconds')),
          ('3000', '3 ' + _('seconds')),
@@ -764,10 +791,10 @@ def InitUsageConfig():
 	def updateEraseFlags(el):
 		eBackgroundFileEraser.getInstance().setEraseFlags(int(el.value))
 	config.misc.erase_speed = ConfigSelection(default="20", choices = [
-		("10", "10 MB/s"),
-		("20", "20 MB/s"),
-		("50", "50 MB/s"),
-		("100", "100 MB/s")])
+		("10", _("10 MB/s")),
+		("20", _("20 MB/s")),
+		("50", _("50 MB/s")),
+		("100", _("100 MB/s"))])
 	config.misc.erase_speed.addNotifier(updateEraseSpeed, immediate_feedback = False)
 	config.misc.erase_flags = ConfigSelection(default="1", choices = [
 		("0", _("Disable")),
@@ -804,12 +831,12 @@ def InitUsageConfig():
 		("1", _("white")),
 		("2", _("yellow")) ])
 	config.subtitles.ttx_subtitle_original_position = ConfigYesNo(default = False)
-	config.subtitles.subtitle_position = ConfigSelection( choices = ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "150", "200", "250", "300", "350", "400", "450"], default = "50")
-	config.subtitles.subtitle_alignment = ConfigSelection(choices = [("left", _("left")), ("center", _("center")), ("right", _("right"))], default = "center")
+	config.subtitles.subtitle_position = ConfigSelection( choices = ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "150", "200", "250", "300", "350", "400", "450", "500"], default = "450")
+	config.subtitles.subtitle_alignment = ConfigSelection(choices = [("left", _("left")), ("center", _("center")), ("right", _("right"))], default = "left")
 	config.subtitles.subtitle_rewrap = ConfigYesNo(default = False)
 	config.subtitles.colourise_dialogs = ConfigYesNo(default = False)
 	config.subtitles.subtitle_borderwidth = ConfigSelection(choices = ["1", "2", "3", "4", "5"], default = "3")
-	config.subtitles.subtitle_fontsize  = ConfigSelection(choices = ["%d" % x for x in range(16,101) if not x % 2], default = "40")
+	config.subtitles.subtitle_fontsize  = ConfigSelection(choices = ["%d" % x for x in range(16,101) if not x % 2], default = "60")
 
 	subtitle_delay_choicelist = []
 	for i in range(-54000000, 54045000, 45000):
@@ -1087,6 +1114,7 @@ def InitUsageConfig():
 	config.streaming = ConfigSubsection()
 	config.streaming.stream_ecm = ConfigYesNo(default = False)
 	config.streaming.descramble = ConfigYesNo(default = True)
+	config.streaming.descramble_client = ConfigYesNo(default = False)
 	config.streaming.stream_eit = ConfigYesNo(default = True)
 	config.streaming.stream_ait = ConfigYesNo(default = True)
 	config.streaming.authentication = ConfigYesNo(default = False)
