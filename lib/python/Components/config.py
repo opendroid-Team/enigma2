@@ -99,9 +99,6 @@ class ConfigElement(object):
 			self.changedFinal()  # call none immediate_feedback notifiers, immediate_feedback Notifiers are called as they are chanaged, so do not need to be called here.
 
 	def isChanged(self):
-# NOTE - sv should already be stringified!
-#        self.default may be a string or None
-#
 		sv = self.saved_value
 		strv = self.tostring(self.value)
 		if sv is None:
@@ -1351,6 +1348,12 @@ class ConfigSelectionNumber(ConfigSelection):
 
 	index = property(getIndex)
 
+	def isChanged(self):
+		sv = self.saved_value
+		strv = str(self.tostring(self.value))
+		if sv is None and strv == str(self.default):
+			return False
+		return strv != str(sv)
 	def handleKey(self, key):
 		if not self.wraparound:
 			if key == KEY_RIGHT:
@@ -1376,7 +1379,14 @@ class ConfigNumber(ConfigText):
 		ConfigText.__init__(self, str(default), fixed_size = False)
 
 	def getValue(self):
-		return int(self.text)
+		try:
+			return int(self.text)
+		except ValueError:
+			if self.text == "true":
+				self.text = "1"
+			else:
+				self.text = str(default)
+			return int(self.text)
 
 	def setValue(self, val):
 		self.text = str(val)
@@ -1385,8 +1395,6 @@ class ConfigNumber(ConfigText):
 	_value = property(getValue, setValue)
 
 	def isChanged(self):
-# NOTE - sv should already be stringified
-#        and self.default should *also* be a string value
 		sv = self.saved_value
 		strv = self.tostring(self.value)
 		if sv is None:
@@ -1605,6 +1613,75 @@ class ConfigSet(ConfigElement):
 
 	description = property(lambda self: descriptionList(self.choices.choices, choicesList.LIST_TYPE_LIST))
 
+class ConfigDictionarySet(ConfigElement):
+	def __init__(self, default = {}):
+		ConfigElement.__init__(self)
+		self.default = default
+		self.dirs = {}
+		self.value = self.default
+
+	def getKeys(self):
+		return self.dir_pathes
+
+	def setValue(self, value):
+		if isinstance(value, dict):
+			self.dirs = value
+			self.changed()
+
+	def getValue(self):
+		return self.dirs
+
+	value = property(getValue, setValue)
+
+	def tostring(self, value):
+		return str(value)
+
+	def fromstring(self, val):
+		return eval(val)
+
+	def load(self):
+		sv = self.saved_value
+		if sv is None:
+			tmp = self.default
+		else:
+			tmp = self.fromstring(sv)
+		self.dirs = tmp
+
+	def changeConfigValue(self, value, config_key, config_value):
+		if isinstance(value, str) and isinstance(config_key, str):
+			if value in self.dirs:
+				self.dirs[value][config_key] = config_value
+			else:
+				self.dirs[value] = {config_key : config_value}
+			self.changed()
+
+	def getConfigValue(self, value, config_key):
+		if isinstance(value, str) and isinstance(config_key, str):
+			if value in self.dirs and config_key in self.dirs[value]:
+				return self.dirs[value][config_key]
+		return None
+
+	def removeConfigValue(self, value, config_key):
+		if isinstance(value, str) and isinstance(config_key, str):
+			if value in self.dirs and config_key in self.dirs[value]:
+				try:
+					del self.dirs[value][config_key]
+				except KeyError:
+					pass
+				self.changed()
+
+	def save(self):
+		del_keys = []
+		for key in self.dirs:
+			if not len(self.dirs[key]):
+				del_keys.append(key)
+		for del_key in del_keys:
+			try:
+				del self.dirs[del_key]
+			except KeyError:
+				pass
+			self.changed()
+		self.saved_value = self.tostring(self.dirs)
 class ConfigLocations(ConfigElement):
 	def __init__(self, default=None, visible_width=False):
 		if not default: default = []
@@ -2163,3 +2240,14 @@ class ConfigCECAddress(ConfigSequence):
 	def getHTML(self, id):
 		# we definitely don't want leading zeros
 		return '.'.join(["%d" % d for d in self.value])
+class ConfigAction(ConfigElement):
+	def __init__(self, action, *args):
+		ConfigElement.__init__(self)
+		self.value = "(OK)"
+		self.action = action
+		self.actionargs = args
+	def handleKey(self, key):
+		if (key == KEY_OK):
+			self.action(*self.actionargs)
+	def getMulti(self, dummy):
+		pass

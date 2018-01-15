@@ -2,16 +2,17 @@ from Tools.Profile import profile
 profile("LOAD:ElementTree")
 import xml.etree.cElementTree
 import os
-
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, eRect, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, addFont, gRGB, eWindowStyleSkinned, getDesktop
-from Components.config import ConfigSubsection, ConfigText, config
-from Components.Sources.Source import ObsoleteSource
+from Components.config import ConfigSubsection, ConfigText, config, ConfigYesNo, ConfigSelection, ConfigNothing, ConfigSlider
+from Components.Converter.Converter import Converter
+from Components.Sources.Source import Source, ObsoleteSource
+from Components.SystemInfo import SystemInfo
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_ACTIVE_SKIN, SCOPE_ACTIVE_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Components.RcModel import rc_model
-
+from boxbranding import getBoxType
 colorNames = {}
 switchPixmap = {}  # dict()
 
@@ -61,10 +62,17 @@ def addSkin(name, scope = SCOPE_SKIN):
 			return True
 	return False
 
-# get own skin_user_skinname.xml file, if it exists
-# ...but first check that the relevant base dir exists, otherwise
-# we may well get into a start-up loop with skin failures
-#
+def get_modular_files(name, scope = SCOPE_SKIN):
+	dirname = resolveFilename(scope, name + 'mySkin/')
+	file_list = []
+	if fileExists(dirname):
+		skin_files = (os.listdir(dirname))
+		if len(skin_files):
+			for f in skin_files:
+				if f.startswith('skin_') and f.endswith('.xml'):
+					file_list.append(("mySkin/" + f))
+	file_list = sorted(file_list, key=str.lower)
+	return file_list
 def skin_user_skinname():
 	skin_name = config.skin.primary_skin.value
 	skin_base = skin_name[:skin_name.rfind('/')]
@@ -112,6 +120,12 @@ addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 display_skin_id = 1
+if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "[Skin] display skin not found"
@@ -286,6 +300,29 @@ def loadPixmap(path, desktop):
 		raise SkinError("[Skin] pixmap file %s not found!" % path)
 	return ptr
 
+pngcache = []
+def cachemenu():
+	pixmaplist = []
+	for (path, skin) in dom_skins:
+		for x in skin.findall("screen"):
+			if x.attrib.get('name') == 'menu_mainmenu':
+				print x.attrib.get('name')
+				for s in x.findall("ePixmap"):
+					if s.attrib.get('pixmap','') is not '':
+						pixmaplist.append(s.attrib.get('pixmap',''))
+				for s in x.findall('widget'):
+					if s.attrib.get('pixmap','') is not '':
+						pixmaplist.append(s.attrib.get('pixmap',''))
+	desktop = getDesktop(0)
+	for s in pixmaplist:
+		value ='/usr/share/enigma2/'+s
+		ptr = loadPixmap(value, desktop)
+		pngcache.append((value, ptr))
+try:
+	if config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml" or config.skin.primary_skin.value == DEFAULT_SKIN:
+		cachemenu()
+except:
+	print "fail cache main menu"
 class AttributeParser:
 	def __init__(self, guiObject, desktop, scale=((1,1),(1,1))):
 		self.guiObject = guiObject

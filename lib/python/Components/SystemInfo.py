@@ -1,3 +1,4 @@
+from os import path
 from enigma import eDVBResourceManager, Misc_Options
 from Tools.Directories import fileExists, fileCheck
 from Tools.HardwareInfo import HardwareInfo
@@ -39,11 +40,14 @@ SystemInfo["Fan"] = fileCheck("/proc/stb/fp/fan")
 SystemInfo["FanPWM"] = SystemInfo["Fan"] and fileCheck("/proc/stb/fp/fan_pwm")
 SystemInfo["StandbyLED"] = fileCheck("/proc/stb/power/standbyled")
 SystemInfo["WakeOnLAN"] = getBoxType() not in ('et8000', 'et10000') and fileCheck("/proc/stb/power/wol") or fileCheck("/proc/stb/fp/wol")
+SystemInfo["StandbyPowerLed"] = fileExists("/proc/stb/power/standbyled")
+SystemInfo["FBLCDDisplay"] = fileCheck("/proc/stb/fb/sd_detach")
 SystemInfo["HDMICEC"] = (fileExists("/dev/hdmi_cec") or fileExists("/dev/misc/hdmi_cec0")) and fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/HdmiCEC/plugin.pyo")
 SystemInfo["SABSetup"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/SABnzbd/plugin.pyo")
 SystemInfo["Blindscan"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Blindscan/plugin.pyo")
 SystemInfo["Satfinder"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Satfinder/plugin.pyo")
 SystemInfo["HasExternalPIP"] = getMachineBuild() not in ('et9x00', 'et6x00', 'et5x00') and fileCheck("/proc/stb/vmpeg/1/external")
+SystemInfo["LCDSKINSetup"] = path.exists("/usr/share/enigma2/display")
 SystemInfo["VideoDestinationConfigurable"] = fileExists("/proc/stb/vmpeg/0/dst_left")
 SystemInfo["hasPIPVisibleProc"] = fileCheck("/proc/stb/vmpeg/1/visible")
 SystemInfo["VFD_scroll_repeats"] = getBoxType() not in ('et8500') and fileCheck("/proc/stb/lcd/scroll_repeats")
@@ -54,6 +58,10 @@ SystemInfo["LcdLiveTV"] = fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/pro
 SystemInfo["LCDMiniTV"] = fileExists("/proc/stb/lcd/mode")
 SystemInfo["LCDMiniTVPiP"] = SystemInfo["LCDMiniTV"] and getBoxType() != 'gb800ueplus'
 SystemInfo["FastChannelChange"] = False
+SystemInfo["LcdLiveTV"] = fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/proc/stb/lcd/live_enable")
+SystemInfo["LcdLiveTVPiP"] = fileCheck("/proc/stb/lcd/live_decoder")
+SystemInfo["MiniTV"] = fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/proc/stb/lcd/live_enable")
+SystemInfo["CIHelper"] = fileExists("/usr/bin/cihelper")
 SystemInfo["3DMode"] = fileCheck("/proc/stb/fb/3dmode") or fileCheck("/proc/stb/fb/primary/3d")
 SystemInfo["3DZNorm"] = fileCheck("/proc/stb/fb/znorm") or fileCheck("/proc/stb/fb/primary/zoffset")
 SystemInfo["Blindscan_t2_available"] = fileCheck("/proc/stb/info/vumodel")
@@ -65,7 +73,8 @@ SystemInfo["CanDoTranscodeAndPIP"] = getBoxType() in ('vusolo4k','gbquad4k')
 SystemInfo["hasXcoreVFD"] = getBoxType() in ('osmega','spycat4k','spycat4kmini','spycat4kcombo') and fileCheck("/sys/module/brcmstb_%s/parameters/pt6302_cgram" % getBoxType())
 SystemInfo["HasHDMIin"] = getMachineBuild() in ('inihdp', 'hd2400', 'et10000', 'et13000', 'dm7080', 'dm820', 'dm900', 'vuultimo4k', 'vuuno4kse') or getBoxType() in ('gbquad4k')
 SystemInfo["HasHDMI-CEC"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/HdmiCEC/plugin.pyo")
-SystemInfo["HaveTouchSensor"] = getBoxType() in ('dm520', 'dm525', 'dm900')
-SystemInfo["DefaultDisplayBrightness"] = getBoxType() == 'dm900' and 8 or 5
+SystemInfo["HaveTouchSensor"] = getBoxType() in ('dm520', 'dm525', 'dm900', 'dm920')
+SystemInfo["DefaultDisplayBrightness"] = getBoxType() in ('dm900', 'dm920') and 8 or 5
 SystemInfo["RecoveryMode"] = fileCheck("/proc/stb/fp/boot_mode")
 SystemInfo["HasInfoButton"] = getBrandOEM() in ('broadmedia', 'ceryon', 'dags', 'formuler', 'gfutures', 'gigablue', 'ini', 'octagon', 'odin', 'skylake', 'tiviar', 'xcore', 'xp', 'xtrend')
+SystemInfo["LCDsymbol_circle"] = fileCheck("/proc/stb/lcd/symbol_circle")

@@ -4,6 +4,7 @@
 #ifndef SWIG
 
 #include <linux/dvb/frontend.h>
+#include <linux/dvb/version.h>
 #include <linux/dvb/video.h>
 #include <lib/base/object.h>
 #include <lib/base/ebase.h>
@@ -304,13 +305,14 @@ public:
 		dxHoldName=8,
 		dxNewFound=64,
 		dxIsDedicated3D=128,
+		dxIsParentalProtected=256,
 		dxHideVBI=512,
 		dxIsScrambledPMT=1024,
 		dxCenterDVBSubs=2048,
 	};
 
 	bool usePMT() const { return !(m_flags & dxNoDVB); }
-	bool isHidden() const { return m_flags & dxDontshow; }
+	bool isHidden() const { return (m_flags & dxDontshow || m_flags & dxIsParentalProtected); }
 	bool isDedicated3D() const { return m_flags & dxIsDedicated3D; }
 	bool doHideVBI() const { return m_flags & dxHideVBI; }
 	bool doCenterDVBSubs() const { return m_flags & dxCenterDVBSubs; }
@@ -413,19 +415,21 @@ class eDVBFrontendParametersATSC;
 
 class iDVBFrontendParameters: public iObject
 {
-public:
 #ifdef SWIG
+public:
 	iDVBFrontendParameters();
 	~iDVBFrontendParameters();
+private:
 #endif
+public:
 	enum { flagOnlyFree = 1 };
 	virtual SWIG_VOID(RESULT) getSystem(int &SWIG_OUTPUT) const = 0;
+	virtual SWIG_VOID(RESULT) getSystems(int &SWIG_OUTPUT) const = 0;
 	virtual SWIG_VOID(RESULT) getDVBS(eDVBFrontendParametersSatellite &SWIG_OUTPUT) const = 0;
 	virtual SWIG_VOID(RESULT) getDVBC(eDVBFrontendParametersCable &SWIG_OUTPUT) const = 0;
 	virtual SWIG_VOID(RESULT) getDVBT(eDVBFrontendParametersTerrestrial &SWIG_OUTPUT) const = 0;
 	virtual SWIG_VOID(RESULT) getATSC(eDVBFrontendParametersATSC &SWIG_OUTPUT) const = 0;
 	virtual SWIG_VOID(RESULT) getFlags(unsigned int &SWIG_OUTPUT) const = 0;
-	virtual RESULT setDVBT(const eDVBFrontendParametersTerrestrial &p) = 0;
 #ifndef SWIG
 	virtual SWIG_VOID(RESULT) calculateDifference(const iDVBFrontendParameters *parm, int &, bool exact) const = 0;
 	virtual SWIG_VOID(RESULT) getHash(unsigned long &) const = 0;
@@ -459,6 +463,7 @@ class iDVBFrontend_ENUMS
 	~iDVBFrontend_ENUMS();
 #endif
 public:
+	enum { dvb_api_version = DVB_API_VERSION };
 	enum { feSatellite, feCable, feTerrestrial, feATSC };
 	enum { stateIdle, stateTuning, stateFailed, stateLock, stateLostLock, stateClosed };
 	enum { toneOff, toneOn };
@@ -483,8 +488,8 @@ class iDVBTransponderData: public iObject
 public:
 	virtual std::string getTunerType() const = 0;
 	virtual int getInversion() const = 0;
-	virtual unsigned int getFrequency() const = 0;
-	virtual unsigned int getSymbolRate() const = 0;
+	virtual int getFrequency() const = 0;
+	virtual int getSymbolRate() const = 0;
 	virtual int getOrbitalPosition() const = 0;
 	virtual int getFecInner() const = 0;
 	virtual int getModulation() const = 0;
@@ -492,6 +497,7 @@ public:
 	virtual int getRolloff() const = 0;
 	virtual int getPilot() const = 0;
 	virtual int getSystem() const = 0;
+	virtual int getSystems() const = 0;
 	virtual int getIsId() const = 0;
 	virtual int getPLSMode() const = 0;
 	virtual int getPLSCode() const = 0;
@@ -529,18 +535,23 @@ public:
 #ifndef SWIG
 	virtual RESULT setSEC(iDVBSatelliteEquipmentControl *sec)=0;
 	virtual RESULT setSecSequence(eSecCommandList &list)=0;
+	virtual RESULT setSecSequence(eSecCommandList &list, iDVBFrontend *fe)=0;
 #endif
 	virtual int readFrontendData(int type)=0;
 	virtual void getFrontendStatus(ePtr<iDVBFrontendStatus> &dest)=0;
 	virtual void getTransponderData(ePtr<iDVBTransponderData> &dest, bool original)=0;
 	virtual void getFrontendData(ePtr<iDVBFrontendData> &dest)=0;
 #ifndef SWIG
+	virtual int getDVBID() = 0;
 	virtual RESULT getData(int num, long &data)=0;
 	virtual RESULT setData(int num, long val)=0;
 		/* 0 means: not compatible. other values are a priority. */
 	virtual int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm)=0;
 #endif
-	virtual bool setDeliverySystem(const char *type)=0;
+	virtual bool changeType(int type)=0;
+	virtual int getCurrentType()=0;
+	virtual void overrideType(int type)=0; //workaraound for dvb api < 5
+
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iDVBFrontend>, iDVBFrontendPtr);
 
@@ -684,7 +695,7 @@ class iDVBDemux: public iObject
 public:
 	virtual RESULT createSectionReader(eMainloop *context, ePtr<iDVBSectionReader> &reader)=0;
 	virtual RESULT createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reader)=0;
-	virtual RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder, int packetsize = 188, bool streaming=false)=0;
+	virtual RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder, unsigned int packetsize = 188, bool streaming=false)=0;
 	virtual RESULT getMPEGDecoder(ePtr<iTSMPEGDecoder> &reader, int index = 0)=0;
 	virtual RESULT getSTC(pts_t &pts, int num=0)=0;
 	virtual RESULT getCADemuxID(uint8_t &id)=0;
