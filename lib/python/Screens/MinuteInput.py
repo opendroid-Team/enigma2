@@ -1,7 +1,6 @@
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.Input import Input
-from Screens.MessageBox import MessageBox
 
 class MinuteInput(Screen):
 	def __init__(self, session, basemins = 5):
@@ -62,11 +61,7 @@ class MinuteInput(Screen):
 		self["minutes"].down()
 
 	def ok(self):
-		try:
-			self.close(int(self["minutes"].getText()))
-		except:
-			self.session.open(MessageBox, _("Incorrect format for skip value: '%s'\nSkip cancelled.") % self["minutes"].getText(), MessageBox.TYPE_WARNING, timeout=5)
-			self.cancel()
+		self.close(int(self["minutes"].getText()))
 
 	def cancel(self):
 		self.close(0)

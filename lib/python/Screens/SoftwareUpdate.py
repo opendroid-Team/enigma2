@@ -248,7 +248,7 @@ class UpdatePlugin(Screen):
 		if event == IpkgComponent.EVENT_DOWNLOAD:
 			self.status.setText(_("Downloading"))
 		elif event == IpkgComponent.EVENT_UPGRADE:
-			if param in self.sliderPackages:
+			if self.sliderPackages.has_key(param):
 				self.slider.setValue(self.sliderPackages[param])
 			self.package.setText(param)
 			self.status.setText(_("Upgrading") + ": %s/%s" % (self.packages, self.total_packages))
@@ -270,6 +270,7 @@ class UpdatePlugin(Screen):
 		elif event == IpkgComponent.EVENT_CONFIGURING:
 			self.package.setText(param)
 			self.status.setText(_("Configuring"))
+
 		elif event == IpkgComponent.EVENT_MODIFIED:
 			if config.plugins.softwaremanager.overwriteConfigFiles.value in ("N", "Y"):
 				self.ipkg.write(True and config.plugins.softwaremanager.overwriteConfigFiles.value)

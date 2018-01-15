@@ -14,7 +14,7 @@ class WizardLanguage(Wizard):
 		self.languageSelect()
 
 	def languageSelect(self):
-		print "[WizardLanguage] languageSelect"
+		print "languageSelect"
 		newlanguage = language.getActiveLanguageIndex() + 1
 		if newlanguage >= len(language.getLanguageList()):
 			newlanguage = 0
@@ -27,7 +27,7 @@ class WizardLanguage(Wizard):
 		self["languagetext"].setText(self.getTranslation(language.getLanguageList()[language.getActiveLanguageIndex()][1][0]))
 
 	def updateTexts(self):
-		print "[WizardLanguage] updateTexts"
+		print "updateTexts"
 		self.updateText(firstset = True)
 		self.updateValues()
 		self.updateLanguageDescription()

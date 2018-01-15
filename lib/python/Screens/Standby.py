@@ -28,10 +28,6 @@ def setLCDModeMinitTV(value):
 class Standby2(Screen):
 	def Power(self):
 		print "[Standby] leave standby"
-		
-		if os.path.exists("/usr/script/StandbyLeave.sh"):
-			Console().ePopen("/usr/script/StandbyLeave.sh &")
-
 		if (getBrandOEM() in ('fulan')):
 			open("/proc/stb/hdmi/output", "w").write("on")
 		#set input to encoder
@@ -86,9 +82,6 @@ class Standby2(Screen):
 
 		print "[Standby] enter standby"
 
-		if os.path.exists("/usr/script/StandbyEnter.sh"):
-			Console().ePopen("/usr/script/StandbyEnter.sh &")
-
 		self["actions"] = ActionMap( [ "StandbyActions" ],
 		{
 			"power": self.Power,
@@ -142,6 +135,13 @@ class Standby2(Screen):
 			self.avswitch.setInput("SCART")
 		else:
 			self.avswitch.setInput("AUX")
+		if (getBrandOEM() in ('fulan')):
+			open("/proc/stb/hdmi/output", "w").write("off")
+
+		if int(config.usage.hdd_standby_in_standby.value) != -1: # HDD standby timer value (box in standby) / -1 = same as when box is active
+			for hdd in harddiskmanager.HDDList():
+				hdd[1].setIdleTime(int(config.usage.hdd_standby_in_standby.value))
+
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
 		self.onClose.append(self.__onClose)
 
@@ -243,21 +243,24 @@ class TryQuitMainloop(MessageBox):
 	def __init__(self, session, retvalue=1, timeout=-1, default_yes = True):
 		self.retval = retvalue
 		self.ptsmainloopvalue = retvalue
-		recordings = session.nav.getRecordings()
-		jobs = []
+		recordings = session.nav.getRecordings(False,Components.RecordingConfig.recType(config.recording.warn_box_restart_rec_types.getValue()))
+		jobs = len(job_manager.getPendingJobs())
 		inTimeshift = Screens.InfoBar.InfoBar and Screens.InfoBar.InfoBar.instance and Screens.InfoBar.InfoBar.ptsGetTimeshiftStatus(Screens.InfoBar.InfoBar.instance)
 		self.connected = False
 		reason = ""
 		next_rec_time = -1
 		if not recordings:
 			next_rec_time = session.nav.RecordTimer.getNextRecordingTime()
-		if len(jobs):
-			reason = (ngettext("%d job is running in the background!", "%d jobs are running in the background!", len(jobs)) % len(jobs)) + '\n'
-			if len(jobs) == 1:
-				job = jobs[0]
-				reason += "%s: %s (%d%%)\n" % (job.getStatustext(), job.name, int(100*job.progress/float(job.end)))
-			else:
-				reason += (_("%d jobs are running in the background!") % len(jobs)) + '\n'
+#		if jobs:
+#			reason = (ngettext("%d job is running in the background!", "%d jobs are running in the background!", jobs) % jobs) + '\n'
+#			if jobs == 1:
+#				job = job_manager.getPendingJobs()[0]
+#				if job.name == "VFD Checker":
+#					reason = ""
+#				else:
+#					reason += "%s: %s (%d%%)\n" % (job.getStatustext(), job.name, int(100*job.progress/float(job.end)))
+#			else:
+#				reason += (_("%d jobs are running in the background!") % jobs) + '\n'
 		if inTimeshift:
 			reason = _("You seem to be in timeshift!") + '\n'
 			default_yes = True
@@ -321,14 +324,8 @@ class TryQuitMainloop(MessageBox):
 			self.quitScreen.show()
 			print "[Standby] quitMainloop #1"
 			quitMainloopCode = self.retval
-			if SystemInfo["Display"] and SystemInfo["LCDMiniTV"]:
-				# set LCDminiTV off / fix a deep-standby-crash on some boxes / gb4k 
-				print "[Standby] LCDminiTV off"
-				setLCDModeMinitTV("0")
 			if getBoxType() == "vusolo4k":  #workaround for white display flash
-				f = open("/proc/stb/fp/oled_brightness", "w")
-				f.write("0")
-				f.close()
+				open("/proc/stb/fp/oled_brightness", "w").write("0")
 			quitMainloop(self.retval)
 		else:
 			MessageBox.close(self, True)

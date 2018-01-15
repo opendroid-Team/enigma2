@@ -13,7 +13,7 @@ def getTunerDescription(nim):
 
 def getMHz(frequency):
 	if str(frequency).endswith('MHz'):
-		return float(frequency.split()[0])
+		return frequency.split()[0]
 	return (frequency+50000)/100000/10.
 
 def getChannelNumber(frequency, nim):
@@ -22,7 +22,7 @@ def getChannelNumber(frequency, nim):
 			if n.isCompatible("DVB-T"):
 				nim = n.slot
 				break
-	f = getMHz(frequency)
+	f = int(getMHz(frequency))
 	descr = getTunerDescription(nim)
 	if "DVB-T" in descr:
 		if "Europe" in descr:
@@ -149,16 +149,17 @@ def ConvertToHumanReadable(tp, tunertype = None):
 		ret["system"] = {
 			eDVBFrontendParametersCable.System_DVB_C_ANNEX_A : "DVB-C",
 			eDVBFrontendParametersCable.System_DVB_C_ANNEX_C : "DVB-C ANNEX C"}.get(tp.get("system"))
-		ret["frequency"] = (tp.get("frequency") and ('%s MHz' % str(tp.get("frequency")/1000.))) or '0 MHz'
-		ret["symbol_rate"] = (tp.get("symbol_rate") and tp.get("symbol_rate")/1000) or 0
+		ret["frequency"] = (tp.get("frequency") and str(tp.get("frequency")/1000) + ' MHz') or '0 MHz'
 	elif tunertype == "DVB-T":
 		ret["tuner_type"] = _("Terrestrial")
-		x = tp.get("bandwidth")
-		if isinstance(x, int):
-			x = str("%.3f" % (float(x) / 1000000.0)).rstrip('0').rstrip('.') + " MHz" if x else "Auto"
-		else:
-			x = ""
-		ret["bandwidth"] = x
+		ret["bandwidth"] = {
+			0 : _("Auto"),
+			10000000 : "10 MHz",
+			8000000 : "8 MHz",
+			7000000 : "7 MHz",
+			6000000 : "6 MHz",
+			5000000 : "5 MHz",
+			1712000 : "1.712 MHz"}.get(tp.get("bandwidth"))
 		#print 'bandwidth:',tp.get("bandwidth")
 		ret["code_rate_lp"] = {
 			eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
@@ -223,7 +224,7 @@ def ConvertToHumanReadable(tp, tunertype = None):
 			eDVBFrontendParametersTerrestrial.System_DVB_T : "DVB-T",
 			eDVBFrontendParametersTerrestrial.System_DVB_T2 : "DVB-T2"}.get(tp.get("system"))
 #		print 'system:',tp.get("system")
-		ret["frequency"] = (tp.get("frequency") and ('%s MHz' % str(tp.get("frequency")/1000000.))) or '0 MHz'
+		ret["frequency"] = (tp.get("frequency") and ('%i MHz' % int(round(tp.get("frequency"), -6)/1000000))) or '0 MHz'
 #		print 'frequency:',tp.get("frequency")
 		ret["channel"] = _("CH%s") % getChannelNumber(tp.get("frequency"), "DVB-T")
 	elif tunertype == "ATSC":

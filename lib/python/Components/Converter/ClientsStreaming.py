@@ -1,7 +1,6 @@
 from Converter import Converter
 from Poll import Poll
 from Components.Element import cached
-from Components.Sources.StreamService import StreamServiceList
 from enigma import eStreamServer
 from ServiceReference import ServiceReference
 import socket
@@ -18,11 +17,12 @@ class ClientsStreaming(Converter, Poll, object):
 	INFO = 7
 	INFO_RESOLVE = 8
 	INFO_RESOLVE_SHORT = 9
+	EXTRA_INFO = 10
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
 		Poll.__init__(self)
-		self.poll_interval = 5000
+		self.poll_interval = 30000
 		self.poll_enabled = True
 		if type == "REF":
 			self.type = self.REF
@@ -44,6 +44,8 @@ class ClientsStreaming(Converter, Poll, object):
 			self.type = self.INFO_RESOLVE
 		elif type == "INFO_RESOLVE_SHORT":
 			self.type = self.INFO_RESOLVE_SHORT
+		elif type == "EXTRA_INFO":
+			self.type = self.EXTRA_INFO
 		else:
 			self.type = self.UNKNOWN
 
@@ -59,6 +61,7 @@ class ClientsStreaming(Converter, Poll, object):
 		ips = []
 		names = []
 		encoders = []
+		extrainfo = _("ClientIP") + "\t" + _("Transcode")  + "\t" + _("Channel")  + "\n"
 		info = ""
 
 		for x in self.streamServer.getConnectedClients():
@@ -71,10 +74,10 @@ class ClientsStreaming(Converter, Poll, object):
 			ips.append((ip))
 
 			if int(x[2]) == 0:
-				strtype = "Streaming: "
+				strtype = "S"
 				encoder = _('NO')
 			else:
-				strtype = "Transcoding: "
+				strtype = "T"
 				encoder = _('YES')
 
 			encoders.append((encoder))
@@ -89,10 +92,14 @@ class ClientsStreaming(Converter, Poll, object):
 				if self.type == self.INFO_RESOLVE_SHORT:
 					ip, sep, tail = ip.partition('.')
 
-			info += ("%s  %-8s  %s\n") % (strtype, ip, service_name)
+			info += ("%s %-8s %s\n") % (strtype, ip, service_name)
 
 			clients.append((ip, service_name, encoder))
-
+			
+			extrainfo += ("%-8s\t%s\t%s") % (ip, encoder, service_name) +"\n"
+			
+			
+			
 		if self.type == self.REF:
 			return ' '.join(refs)
 		elif self.type == self.IP:
@@ -103,6 +110,8 @@ class ClientsStreaming(Converter, Poll, object):
 			return _("Transcoding: ") + ' '.join(encoders)
 		elif self.type == self.NUMBER:
 			return str(len(clients))
+		elif self.type == self.EXTRA_INFO:
+			return extrainfo
 		elif self.type == self.SHORT_ALL:
 			return _("Total clients streaming: %d (%s)") % (len(clients), ' '.join(names))
 		elif self.type == self.ALL:
@@ -110,7 +119,7 @@ class ClientsStreaming(Converter, Poll, object):
 		elif self.type == self.INFO or self.type == self.INFO_RESOLVE or self.type == self.INFO_RESOLVE_SHORT:
 			return info
 		else:
-			return _("(unknown)")
+			return "(unknown)"
 
 		return ""
 
@@ -120,7 +129,7 @@ class ClientsStreaming(Converter, Poll, object):
 	def getBoolean(self):
 		if self.streamServer is None:
 			return False
-		return (self.streamServer.getConnectedClients() or StreamServiceList) and True or False
+		return self.streamServer.getConnectedClients() and True or False
 
 	boolean = property(getBoolean)
 

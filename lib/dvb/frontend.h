@@ -69,6 +69,10 @@ public:
 		LINKED_PREV_PTR,      // prev double linked list (for linked FEs)
 		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
 		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
+		CUR_FREQ,             // current frequency
+		CUR_SYM,              // current symbolrate
+		CUR_LOF,              // current local oszillator frequency
+		CUR_BAND,             // current band
 		FREQ_OFFSET,          // current frequency offset
 		CUR_VOLTAGE,          // current voltage
 		CUR_TONE,             // current continuous tone
@@ -140,7 +144,7 @@ private:
 	int tuneLoopInt();
 	void setFrontend(bool recvEvents=true);
 	bool setSecSequencePos(int steps);
-	int calculateSignalPercentage(int signalqualitydb);
+	void calculateSignalPercentage(int signalqualitydb, int &signalquality);
 	void calculateSignalQuality(int snr, int &signalquality, int &signalqualitydb);
 
 	static int PriorityOrder;
@@ -148,6 +152,7 @@ private:
 
 	uint64_t m_DebugOptions;
 
+#endif
 public:
 #ifndef SWIG
 	eDVBFrontend(const char *devidenodename, int fe, int &ok, bool simulate=false, eDVBFrontend *simulate_fe=NULL);

@@ -2,7 +2,6 @@ from enigma import getPrevAsciiCode
 from Tools.NumericalTextInput import NumericalTextInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
 from Components.Harddisk import harddiskmanager
-from Tools.LoadPixmap import LoadPixmap
 from copy import copy as copy_copy
 from os import path as os_path
 from time import localtime, strftime
@@ -34,28 +33,24 @@ class ConfigElement(object):
 		self.save_forced = False
 		self.last_value = None
 		self.save_disabled = False
-		self.__notifiers = None
-		self.__notifiers_final = None
+		self.__notifiers = { }
+		self.__notifiers_final = { }
 		self.enabled = True
 		self.callNotifiersOnSaveAndCancel = False
 
 	def getNotifiers(self):
-		if self.__notifiers is None:
-			self.__notifiers = [ ]
-		return self.__notifiers
+		return [func for (func, val, call_on_save_and_cancel) in self.__notifiers.itervalues()]
 
 	def setNotifiers(self, val):
-		self.__notifiers = val
+		print "just readonly access to notifiers is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
 
 	notifiers = property(getNotifiers, setNotifiers)
 
 	def getNotifiersFinal(self):
-		if self.__notifiers_final is None:
-			self.__notifiers_final = [ ]
-		return self.__notifiers_final
+		return [func for (func, val, call_on_save_and_cancel) in self.__notifiers_final.itervalues()]
 
 	def setNotifiersFinal(self, val):
-		self.__notifiers_final = val
+		print "just readonly access to notifiers_final is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
 
 	notifiers_final = property(getNotifiersFinal, setNotifiersFinal)
 
@@ -91,29 +86,24 @@ class ConfigElement(object):
 		else:
 			self.saved_value = self.tostring(self.value)
 		if self.callNotifiersOnSaveAndCancel:
-			self.changedFinal()  # call none immediate_feedback notifiers, immediate_feedback Notifiers are called as they are chanaged, so do not need to be called here.
+			self.changed()
 
 	def cancel(self):
 		self.load()
 		if self.callNotifiersOnSaveAndCancel:
-			self.changedFinal()  # call none immediate_feedback notifiers, immediate_feedback Notifiers are called as they are chanaged, so do not need to be called here.
+			self.changed()
 
 	def isChanged(self):
 		sv = self.saved_value
-		strv = self.tostring(self.value)
-		if sv is None:
-			retval = strv != self.tostring(self.default)
-		else:
-			retval = strv != sv
-#debug		if retval:
-#debug			print 'orig ConfigElement X (val, tostring(val)):', sv, self.tostring(sv)
-		return retval
+		if sv is None and self.value == self.default:
+			return False
+		return self.tostring(self.value) != sv
 
 	def changed(self):
 		if self.__notifiers:
 			for x in self.notifiers:
 				try:
-					if self.extra_args[x]:
+					if self.extra_args and self.extra_args[x]:
 						x(self, self.extra_args[x])
 					else:
 						x(self)
@@ -124,23 +114,26 @@ class ConfigElement(object):
 		if self.__notifiers_final:
 			for x in self.notifiers_final:
 				try:
-					if self.extra_args[x]:
+					if self.extra_args and self.extra_args[x]:
 						x(self, self.extra_args[x])
 					else:
 						x(self)
 				except:
 					x(self)
 
-	def addNotifier(self, notifier, initial_call = True, immediate_feedback = True, extra_args=None):
+	# immediate_feedback = True means call notifier on every value CHANGE
+	# immediate_feedback = False means call notifier on leave the config element (up/down) when value have CHANGED
+	# call_on_save_or_cancel = True means call notifier always on save/cancel.. even when value have not changed
+	def addNotifier(self, notifier, initial_call = True, immediate_feedback = True, call_on_save_or_cancel = False, extra_args=None):
 		if not extra_args: extra_args = []
 		assert callable(notifier), "notifiers must be callable"
 		try:
 			self.extra_args[notifier] = extra_args
-		except: pass
+		except: pass	
 		if immediate_feedback:
-			self.notifiers.append(notifier)
+			self.__notifiers[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
 		else:
-			self.notifiers_final.append(notifier)
+			self.__notifiers_final[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
 		# CHECKME:
 		# do we want to call the notifier
 		#  - at all when adding it? (yes, though optional)
@@ -156,16 +149,13 @@ class ConfigElement(object):
 				notifier(self)
 
 	def removeNotifier(self, notifier):
-		notifier in self.notifiers and self.notifiers.remove(notifier)
-		notifier in self.notifiers_final and self.notifiers_final.remove(notifier)
 		try:
 			del self.__notifiers[str(notifier)]
 		except:
-			pass
-		try:
-			del self.__notifiers_final[str(notifier)]
-		except:
-			pass
+			try:
+				del self.__notifiers_final[str(notifier)]
+			except:
+				pass
 
 	def clearNotifiers(self):
 		self.__notifiers = { }
@@ -182,6 +172,7 @@ class ConfigElement(object):
 
 	def onDeselect(self, session):
 		if not self.last_value == self.value:
+			self.changedFinal()
 			self.last_value = self.value
 
 KEY_LEFT = 0
@@ -243,6 +234,7 @@ class choicesList(object): # XXX: we might want a better name for this
 		else:
 			key = self.choices.keys()[index]
 			self.choices[key] = descr
+
 	def __getitem__(self, index):
 		if self.type == choicesList.LIST_TYPE_LIST:
 			ret = self.choices[index]
@@ -355,7 +347,7 @@ class ConfigSelection(ConfigElement):
 		self.changed()
 
 	def tostring(self, val):
-		return str(val)
+		return val
 
 	def getValue(self):
 		return self._value
@@ -393,21 +385,14 @@ class ConfigSelection(ConfigElement):
 		self.value = self.choices[(i + 1) % nchoices]
 
 	def getText(self):
-		if self._descr is not None:
-			return self._descr
-		descr = self._descr = self.description[self.value]
-		if descr:
-			return _(descr)
-		return descr
+		if self._descr is None:
+			self._descr = self.description[self.value]
+		return self._descr
 
 	def getMulti(self, selected):
-		if self._descr is not None:
-			descr = self._descr
-		else:
-			descr = self._descr = self.description[self.value]
-		if descr:
-			return "text", _(descr)
-		return "text", descr
+		if self._descr is None:
+			self._descr = self.description[self.value]
+		return ("text", self._descr)
 
 	# HTML
 	def getHTML(self, id):
@@ -432,24 +417,11 @@ class ConfigSelection(ConfigElement):
 # several customized versions exist for different
 # descriptions.
 #
-boolean_descriptions = {False: _("false"), True: _("true")}
 class ConfigBoolean(ConfigElement):
-	def __init__(self, default=False, descriptions=boolean_descriptions, graphic=True):
+	def __init__(self, default = False, descriptions = {False: _("false"), True: _("true")}):
 		ConfigElement.__init__(self)
 		self.descriptions = descriptions
 		self.value = self.last_value = self.default = default
-		self.graphic = False
-		if graphic:
-			from skin import switchPixmap
-			offPath = switchPixmap.get('menu_off')
-			onPath = switchPixmap.get('menu_on')
-			if offPath and onPath:
-				falseIcon = LoadPixmap(offPath, cached=True)
-				trueIcon = LoadPixmap(onPath, cached=True)
-				if falseIcon and trueIcon:
-					self.falseIcon = falseIcon
-					self.trueIcon = trueIcon
-					self.graphic = True
 
 	def handleKey(self, key):
 		if key in (KEY_LEFT, KEY_RIGHT):
@@ -460,32 +432,19 @@ class ConfigBoolean(ConfigElement):
 			self.value = True
 
 	def getText(self):
-		descr = self.descriptions[self.value]
-		if descr:
-			return _(descr)
-		return descr
+		return self.descriptions[self.value]
 
 	def getMulti(self, selected):
-		from config import config
-		if self.graphic and config.usage.boolean_graphic.value:
-			if self.value:
-				return ('pixmap', self.trueIcon)
-			else:
-				return ('pixmap', self.falseIcon)
-		else:
-			descr = self.descriptions[self.value]
-			if descr:
-				return "text", _(descr)
-			return "text", descr
+		return ("text", self.descriptions[self.value])
 
 	def tostring(self, value):
-		if not value or str(value).lower() == 'false':
-			return "False"
+		if not value:
+			return "false"
 		else:
-			return "True"
+			return "true"
 
 	def fromstring(self, val):
-		if str(val).lower() == "true":
+		if val == "true":
 			return True
 		else:
 			return False
@@ -509,20 +468,17 @@ class ConfigBoolean(ConfigElement):
 			self.changedFinal()
 			self.last_value = self.value
 
-yes_no_descriptions = {False: _("no"), True: _("yes")}
 class ConfigYesNo(ConfigBoolean):
 	def __init__(self, default = False):
-		ConfigBoolean.__init__(self, default = default, descriptions = yes_no_descriptions)
+		ConfigBoolean.__init__(self, default = default, descriptions = {False: _("no"), True: _("yes")})
 
-on_off_descriptions = {False: _("off"), True: _("on")}
 class ConfigOnOff(ConfigBoolean):
 	def __init__(self, default = False):
-		ConfigBoolean.__init__(self, default = default, descriptions = on_off_descriptions)
+		ConfigBoolean.__init__(self, default = default, descriptions = {False: _("off"), True: _("on")})
 
-enable_disable_descriptions = {False: _("disable"), True: _("enable")}
 class ConfigEnableDisable(ConfigBoolean):
 	def __init__(self, default = False):
-		ConfigBoolean.__init__(self, default = default, descriptions = enable_disable_descriptions)
+		ConfigBoolean.__init__(self, default = default, descriptions = {False: _("disable"), True: _("enable")})
 
 class ConfigDateTime(ConfigElement):
 	def __init__(self, default, formatstring, increment = 86400):
@@ -700,16 +656,13 @@ class ConfigSequence(ConfigElement):
 			return "text", value
 
 	def tostring(self, val):
-		if val:
-			return self.seperator.join([self.saveSingle(x) for x in val])
-		return None
+		return self.seperator.join([self.saveSingle(x) for x in val])
 
 	def saveSingle(self, v):
 		return str(v)
 
 	def fromstring(self, value):
-		ret = [int(x) for x in value.split(self.seperator)]
-		return ret + [int(x[0]) for x in self.limits[len(ret):]]
+		return [int(x) for x in value.split(self.seperator)]
 
 	def onDeselect(self, session):
 		if self.last_value != self._value:
@@ -776,12 +729,11 @@ class ConfigIP(ConfigSequence):
 	def genText(self):
 		value = ""
 		block_strlen = []
-		if self._value:
-			for i in self._value:
-				block_strlen.append(len(str(i)))
-				if value:
-					value += self.seperator
-				value += str(i)
+		for i in self._value:
+			block_strlen.append(len(str(i)))
+			if value:
+				value += self.seperator
+			value += str(i)
 		leftPos = sum(block_strlen[:self.marked_block])+self.marked_block
 		rightPos = sum(block_strlen[:(self.marked_block+1)])+self.marked_block
 		mBlock = range(leftPos, rightPos)
@@ -883,7 +835,7 @@ class ConfigMacText(ConfigElement, NumericalTextInput):
 		try:
 			return self.text.encode("utf-8")
 		except UnicodeDecodeError:
-			print "[Config] Broken UTF8!"
+			print "Broken UTF8!"
 			return self.text
 
 	def setValue(self, val):
@@ -891,7 +843,7 @@ class ConfigMacText(ConfigElement, NumericalTextInput):
 			self.text = val.decode("utf-8")
 		except UnicodeDecodeError:
 			self.text = val.decode("utf-8", "ignore")
-			print "[Config] Broken UTF8!"
+			print "Broken UTF8!"
 
 	value = property(getValue, setValue)
 	_value = property(getValue, setValue)
@@ -944,8 +896,8 @@ class ConfigPosition(ConfigSequence):
 clock_limits = [(0,23),(0,59)]
 class ConfigClock(ConfigSequence):
 	def __init__(self, default):
-		self.t = localtime(default)
-		ConfigSequence.__init__(self, seperator=":", limits=clock_limits, default=[self.t.tm_hour, self.t.tm_min])
+		t = localtime(default)
+		ConfigSequence.__init__(self, seperator = ":", limits = clock_limits, default = [t.tm_hour, t.tm_min])
 
 	def increment(self):
 		# Check if Minutes maxed out
@@ -976,82 +928,6 @@ class ConfigClock(ConfigSequence):
 			self._value[1] -= 1
 		# Trigger change
 		self.changed()
-
-	def handleKey(self, key):
-		if key == KEY_DELETE and config.usage.time.wide.value:
-			if self._value[0] < 12:
-				self._value[0] += 12
-				self.validate()
-				self.changed()
-
-		elif key == KEY_BACKSPACE and config.usage.time.wide.value:
-			if self._value[0] >= 12:
-				self._value[0] -= 12
-				self.validate()
-				self.changed()
-
-		elif key in KEY_NUMBERS or key == KEY_ASCII:
-			if key == KEY_ASCII:
-				code = getPrevAsciiCode()
-				if code < 48 or code > 57:
-					return
-				digit = code - 48
-			else:
-				digit = getKeyNumber(key)
-
-			hour = self._value[0]
-			pmadjust = 0
-			if config.usage.time.wide.value:
-				if hour > 11:  # All the PM times
-					hour -= 12
-					pmadjust = 12
-				if hour == 0:  # 12AM & 12PM map to 12
-					hour = 12
-				if self.marked_pos == 0 and digit >= 2:  # Only 0, 1 allowed (12 hour clock)
-					return
-				if self.marked_pos == 1 and hour > 9 and digit >= 3:  # Only 10, 11, 12 allowed
-					return
-				if self.marked_pos == 1 and hour < 10 and digit == 0:  # Only 01, 02, ..., 09 allowed
-					return
-			else:
-				if self.marked_pos == 0 and digit >= 3:  # Only 0, 1, 2 allowed (24 hour clock)
-					return
-				if self.marked_pos == 1 and hour > 19 and digit >= 4:  # Only 20, 21, 22, 23 allowed
-					return
-			if self.marked_pos == 2 and digit >= 6:  # Only 0, 1, ..., 5 allowed (tens digit of minutes)
-				return
-
-			value = bytearray(b"%02d%02d" % (hour, self._value[1]))  # Must be ASCII!
-			value[self.marked_pos] = digit + ord(b'0')
-			hour = int(value[:2])
-			minute = int(value[2:])
-
-			if config.usage.time.wide.value:
-				if hour == 12:  # 12AM & 12PM map to back to 00
-					hour = 0
-				elif hour > 12:
-					hour = 10
-				hour += pmadjust
-			elif hour > 23:
-				hour = 20
-
-			self._value[0] = hour
-			self._value[1] = minute
-			self.marked_pos += 1
-			self.validate()
-			self.changed()
-		else:
-			ConfigSequence.handleKey(self, key)
-
-	def genText(self):
-		mPos = self.marked_pos
-		if mPos >= 2:
-			mPos += 1  # Skip over the separator
-		newtime = list(self.t)
-		newtime[3] = self._value[0]
-		newtime[4] = self._value[1]
-		value = strftime(config.usage.time.short.value.replace("%-I", "%_I").replace("%-H", "%_H"), newtime)
-		return value, mPos
 
 integer_limits = (0, 9999999999)
 class ConfigInteger(ConfigSequence):
@@ -1091,15 +967,6 @@ class ConfigFloat(ConfigSequence):
 		return float(self.value[1] / float(self.limits[1][1] + 1) + self.value[0])
 
 	float = property(getFloat)
-
-	def getFloatInt(self):
-		return int(self.value[0] * float(self.limits[1][1] + 1) + self.value[1])
-
-	def setFloatInt(self, val):
-		self.value[0] = val / float(self.limits[1][1] + 1)
-		self.value[1] = val % float(self.limits[1][1] + 1)
-
-	floatint = property(getFloatInt, setFloatInt)
 
 # an editable text...
 class ConfigText(ConfigElement, NumericalTextInput):
@@ -1243,7 +1110,7 @@ class ConfigText(ConfigElement, NumericalTextInput):
 		try:
 			return self.text.encode("utf-8")
 		except UnicodeDecodeError:
-			print "[Config] Broken UTF8!"
+			print "Broken UTF8!"
 			return self.text
 
 	def setValue(self, val):
@@ -1251,7 +1118,7 @@ class ConfigText(ConfigElement, NumericalTextInput):
 			self.text = val.decode("utf-8")
 		except UnicodeDecodeError:
 			self.text = val.decode("utf-8", "ignore")
-			print "[Config] Broken UTF8!"
+			print "Broken UTF8!"
 
 	value = property(getValue, setValue)
 	_value = property(getValue, setValue)
@@ -1354,6 +1221,7 @@ class ConfigSelectionNumber(ConfigSelection):
 		if sv is None and strv == str(self.default):
 			return False
 		return strv != str(sv)
+
 	def handleKey(self, key):
 		if not self.wraparound:
 			if key == KEY_RIGHT:
@@ -1397,13 +1265,9 @@ class ConfigNumber(ConfigText):
 	def isChanged(self):
 		sv = self.saved_value
 		strv = self.tostring(self.value)
-		if sv is None:
-			retval = strv != self.default
-		else:
-			retval = strv != sv
-#debug		if retval:
-#debug			print 'orig ConfigNumber X (val, tostring(val)):', sv, self.tostring(sv)
-		return retval
+		if sv is None and strv == self.default:
+			return False
+		return strv != sv
 
 	def conform(self):
 		pos = len(self.text) - self.marked_pos
@@ -1484,25 +1348,30 @@ class ConfigSlider(ConfigElement):
 		self.max = limits[1]
 		self.increment = increment
 
-	def checkValues(self):
-		if self.value < self.min:
-			self.value = self.min
-
-		if self.value > self.max:
-			self.value = self.max
+	def checkValues(self, value = None):
+		if value is None:
+			value = self.value
+		if value < self.min:
+			value = self.min
+		elif value > self.max:
+			value = self.max
+		if self.value != value:		#avoid call of setter if value not changed
+			self.value = value
 
 	def handleKey(self, key):
 		if key == KEY_LEFT:
-			self.value -= self.increment
+			tmp = self.value - self.increment
 		elif key == KEY_RIGHT:
-			self.value += self.increment
+			tmp = self.value + self.increment
 		elif key == KEY_HOME:
 			self.value = self.min
+			return
 		elif key == KEY_END:
 			self.value = self.max
+			return
 		else:
 			return
-		self.checkValues()
+		self.checkValues(tmp)
 
 	def getText(self):
 		return "%d / %d" % (self.value, self.max)
@@ -1613,6 +1482,7 @@ class ConfigSet(ConfigElement):
 
 	description = property(lambda self: descriptionList(self.choices.choices, choicesList.LIST_TYPE_LIST))
 
+
 class ConfigDictionarySet(ConfigElement):
 	def __init__(self, default = {}):
 		ConfigElement.__init__(self)
@@ -1682,6 +1552,7 @@ class ConfigDictionarySet(ConfigElement):
 				pass
 			self.changed()
 		self.saved_value = self.tostring(self.dirs)
+
 class ConfigLocations(ConfigElement):
 	def __init__(self, default=None, visible_width=False):
 		if not default: default = []
@@ -1744,10 +1615,7 @@ class ConfigLocations(ConfigElement):
 		locations = self.locations
 		if val is None and not locations:
 			return False
-		retval = self.tostring([x[0] for x in locations]) != sv
-#debug		if retval:
-#debug			print 'orig ConfigLocations X (val):', sv
-		return retval
+		return self.tostring([x[0] for x in locations]) != sv
 
 	def addedMount(self, mp):
 		for x in self.locations:
@@ -2044,7 +1912,22 @@ class Config(ConfigSubsection):
 			(name, val) = result
 			val = val.strip()
 
+			#convert old settings
+			if l.startswith("config.Nims."):
+				tmp = name.split('.')
+				if tmp[3] == "cable":
+					tmp[3] = "dvbc"
+				elif tmp[3].startswith ("cable"):
+					tmp[3] = "dvbc." + tmp[3]
+				elif tmp[3].startswith("terrestrial"):
+					tmp[3] = "dvbt." + tmp[3]
+				else:
+					if tmp[3] not in ('dvbs', 'dvbc', 'dvbt', 'multiType'):
+						tmp[3] = "dvbs." + tmp[3]
+				name =".".join(tmp)
+
 			names = name.split('.')
+
 			base = configbase
 
 			for n in names[1:-1]:
@@ -2077,7 +1960,7 @@ class Config(ConfigSubsection):
 			f.close()
 			os.rename(filename + ".writing", filename)
 		except IOError:
-			print "[Config] Couldn't write %s" % filename
+			print "Config: Couldn't write %s" % filename
 
 	def loadFromFile(self, filename, base_file=True):
 		self.unpickle(open(filename, "r"), base_file)
@@ -2094,9 +1977,8 @@ class ConfigFile:
 	def load(self):
 		try:
 			config.loadFromFile(self.CONFIG_FILE, True)
-			print "[Config] Config file loaded ok..."
 		except IOError, e:
-			print "[Config] unable to load config (%s), assuming defaults..." % str(e)
+			print "unable to load config (%s), assuming defaults..." % str(e)
 
 	def save(self):
 #		config.save()
@@ -2104,7 +1986,7 @@ class ConfigFile:
 
 	def __resolveValue(self, pickles, cmap):
 		key = pickles[0]
-		if key in cmap:
+		if cmap.has_key(key):
 			if len(pickles) > 1:
 				return self.__resolveValue(pickles[1:], cmap[key].dict())
 			else:
@@ -2118,7 +2000,7 @@ class ConfigFile:
 				ret=self.__resolveValue(names[1:], config.content.items)
 				if ret and len(ret):
 					return ret
-		print "[Config] getResolvedKey", key, "empty variable."
+		print "getResolvedKey", key, "failed !! (Typo??)"
 		return ""
 
 def NoSave(element):
@@ -2240,14 +2122,3 @@ class ConfigCECAddress(ConfigSequence):
 	def getHTML(self, id):
 		# we definitely don't want leading zeros
 		return '.'.join(["%d" % d for d in self.value])
-class ConfigAction(ConfigElement):
-	def __init__(self, action, *args):
-		ConfigElement.__init__(self)
-		self.value = "(OK)"
-		self.action = action
-		self.actionargs = args
-	def handleKey(self, key):
-		if (key == KEY_OK):
-			self.action(*self.actionargs)
-	def getMulti(self, dummy):
-		pass

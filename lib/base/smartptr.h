@@ -2,6 +2,8 @@
 #define __smartptr_h
 
 #include "object.h"
+#include <stdio.h>
+#include <string.h>
 #include <lib/python/swig.h>
 
 template<class T>
@@ -47,13 +49,16 @@ public:
 		if (ptr)
 			ptr->Release();
 	}
-	/*
-	 * Horribly misnamed now, but ServiceEventTracker does not
-	 * care about the returned type.
-	 */
-	void *getPtrString() const
+	/* Horribly misnamed now, but why waste >9 bytes on each object just
+	 * to satisfy one ServiceEventTracker which doesn't even care about
+	 * the actual type it returns. */
+	unsigned int getPtrString() const
 	{
-		return ptr;
+#if defined(__aarch64__)
+		return (unsigned long)ptr;
+#else
+		return (unsigned int)ptr;
+#endif
 	}
 #ifndef SWIG
 	T* grabRef() { if (!ptr) return 0; ptr->AddRef(); return ptr; }

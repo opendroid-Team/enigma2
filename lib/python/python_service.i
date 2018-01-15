@@ -8,6 +8,10 @@ PyObject *getInfoObject(int w)
 {
 	switch (w)
 	{
+		case iServiceInformation::sHBBTVUrl:
+		{
+			return self->getHbbTVApplications();
+		}
 		case iServiceInformation::sTransponderData:
 		{
 			ePyObject ret = PyDict_New();
@@ -27,9 +31,8 @@ PyObject *getInfoObject(int w)
 		{
 			ePyObject ret;
 			std::vector<int> caids, ecmpids;
-			std::vector<std::string> databytes;
-			self->getCaIds(caids, ecmpids, databytes);
-			unsigned int cnt = caids.size();
+			self->getCaIds(caids, ecmpids);
+			int cnt = caids.size();
 
 			ret = PyList_New(cnt);
 
@@ -43,18 +46,16 @@ PyObject *getInfoObject(int w)
 		{
 			ePyObject ret;
 			std::vector<int> caids, ecmpids;
-			std::vector<std::string> databytes;
-			self->getCaIds(caids, ecmpids, databytes);
-			unsigned int cnt = caids.size();
+			self->getCaIds(caids, ecmpids);
+			int cnt = caids.size();
 
 			ret = PyList_New(cnt);
 
 			for (unsigned int i = 0; i < cnt; i++)
 			{
-				ePyObject tuple = PyTuple_New(3);
+				ePyObject tuple = PyTuple_New(2);
 				PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(caids[i]));
 				PyTuple_SET_ITEM(tuple, 1, PyInt_FromLong(ecmpids[i]));
-				PyTuple_SET_ITEM(tuple, 2, PyString_FromString(databytes[i].c_str()));
 				PyList_SET_ITEM(ret, i, tuple);
 			}
 			return ret;
@@ -126,8 +127,14 @@ PyObject *getInfoObject(int w)
 	return Py_None;
 }
 
+PyObject *getHbbTVApplications()
+{
+	return self->getHbbTVApplications();
+}
+
 PyObject *getAITApplications()
 {
+	ePyObject tuple = PyTuple_New(2);
 	std::map<int, std::string> aitlist;
 	self->getAITApplications(aitlist);
 	if (!aitlist.empty())

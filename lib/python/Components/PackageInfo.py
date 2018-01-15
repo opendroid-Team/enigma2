@@ -32,13 +32,13 @@ class InfoHandler(xml.sax.ContentHandler):
 		self.elements.append(name)
 
 		if name in ("hardware", "bcastsystem", "satellite", "tag", "flag"):
-			if "type" not in attrs:
+			if not attrs.has_key("type"):
 					self.printError(str(name) + " tag with no type attribute")
 			if self.elements[-3] in ("default", "package"):
 				prerequisites = self.globalprerequisites
 			else:
 				prerequisites = self.prerequisites
-			if name not in prerequisites:
+			if not prerequisites.has_key(name):
 				prerequisites[name] = []
 			prerequisites[name].append(str(attrs["type"]))
 
@@ -47,7 +47,7 @@ class InfoHandler(xml.sax.ContentHandler):
 			self.data = ""
 
 		if name == "files":
-			if "type" in attrs:
+			if attrs.has_key("type"):
 				if attrs["type"] == "directories":
 					self.attributes["filestype"] = "directories"
 				elif attrs["type"] == "package":
@@ -55,13 +55,13 @@ class InfoHandler(xml.sax.ContentHandler):
 
 		if name == "file":
 			self.prerequisites = {}
-			if "type" not in attrs:
+			if not attrs.has_key("type"):
 				self.printError("file tag with no type attribute")
 			else:
-				if "name" not in attrs:
+				if not attrs.has_key("name"):
 					self.printError("file tag with no name attribute")
 				else:
-					if "directory" not in attrs:
+					if not attrs.has_key("directory"):
 						directory = self.directory
 					type = attrs["type"]
 					if not type in self.validFileTypes:
@@ -71,30 +71,30 @@ class InfoHandler(xml.sax.ContentHandler):
 						self.fileattrs = attrs
 
 		if name == "package":
-			if "details" in attrs:
+			if attrs.has_key("details"):
 				self.attributes["details"] = str(attrs["details"])
-			if "name" in attrs:
+			if attrs.has_key("name"):
 				self.attributes["name"] = str(attrs["name"])
-			if "packagename" in attrs:
+			if attrs.has_key("packagename"):
 				self.attributes["packagename"] = str(attrs["packagename"])
-			if "packagetype" in attrs:
+			if attrs.has_key("packagetype"):
 				self.attributes["packagetype"] = str(attrs["packagetype"])
-			if "needsRestart" in attrs:
+			if attrs.has_key("needsRestart"):
 				self.attributes["needsRestart"] = str(attrs["needsRestart"])
-			if "shortdescription" in attrs:
+			if attrs.has_key("shortdescription"):
 				self.attributes["shortdescription"] = str(attrs["shortdescription"])
 
 		if name == "screenshot":
-			if "src" in attrs:
+			if attrs.has_key("src"):
 				self.attributes["screenshot"] = str(attrs["src"])
 
 	def endElement(self, name):
 		self.elements.pop()
 		if name == "file":
 			if len(self.prerequisites) == 0 or self.prerequisitesMet(self.prerequisites):
-				if self.filetype not in self.attributes:
+				if not self.attributes.has_key(self.filetype):
 					self.attributes[self.filetype] = []
-				if "directory" in self.fileattrs:
+				if self.fileattrs.has_key("directory"):
 					directory = str(self.fileattrs["directory"])
 					if len(directory) < 1 or directory[0] != "/":
 						directory = self.directory + directory
@@ -234,39 +234,39 @@ class PackageInfoHandler:
 	def prerequisiteMet(self, prerequisites):
 		met = True
 		if self.neededTag is None:
-			if "tag" in prerequisites:
+			if prerequisites.has_key("tag"):
 				return False
 		elif self.neededTag == 'ALL_TAGS':
 				return True
 		else:
-			if "tag" in prerequisites:
+			if prerequisites.has_key("tag"):
 				if not self.neededTag in prerequisites["tag"]:
 					return False
 			else:
 				return False
 
 		if self.neededFlag is None:
-			if "flag" in prerequisites:
+			if prerequisites.has_key("flag"):
 				return False
 		else:
-			if "flag" in prerequisites:
+			if prerequisites.has_key("flag"):
 				if not self.neededFlag in prerequisites["flag"]:
 					return False
 			else:
 				return True
 
-		if "satellite" in prerequisites:
+		if prerequisites.has_key("satellite"):
 			for sat in prerequisites["satellite"]:
 				if int(sat) not in nimmanager.getConfiguredSats():
 					return False
-		if "bcastsystem" in prerequisites:
+		if prerequisites.has_key("bcastsystem"):
 			has_system = False
 			for bcastsystem in prerequisites["bcastsystem"]:
 				if nimmanager.hasNimType(bcastsystem):
 					has_system = True
 			if not has_system:
 				return False
-		if "hardware" in prerequisites:
+		if prerequisites.has_key("hardware"):
 			hardware_found = False
 			for hardware in prerequisites["hardware"]:
 				if hardware == getBoxType():
@@ -320,7 +320,7 @@ class PackageInfoHandler:
 
 		currentAttribute = self.attributeNames[self.currentAttributeIndex]
 
-		if currentAttribute in attributes:
+		if attributes.has_key(currentAttribute):
 			if self.currentIndex >= len(attributes[currentAttribute]):
 				self.currentIndex = -1
 				self.currentAttributeIndex += 1

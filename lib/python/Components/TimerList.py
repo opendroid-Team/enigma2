@@ -21,7 +21,8 @@ class TimerList(HTMLComponent, GUIComponent, object):
 		height = self.l.getItemSize().height()
 		width = self.l.getItemSize().width()
 		res = [ None ]
-		serviceName = timer.service_ref.getServiceName()
+
+		serviceName = "  " + timer.service_ref.getServiceName()
 
 		serviceNameWidth = getTextBoundarySize(self.instance, self.serviceNameFont, self.l.getItemSize(), serviceName).width()
 		if 200 > width - serviceNameWidth - self.iconWidth - self.iconMargin:
@@ -39,25 +40,19 @@ class TimerList(HTMLComponent, GUIComponent, object):
 				if flags & 1 == 1:
 					repeatedtext.append(days[x])
 				flags >>= 1
-			if repeatedtext == [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]:
-				repeatedtext = _('Everyday')
-			elif repeatedtext == [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri")]:
-				repeatedtext = _('Weekday')
-			elif repeatedtext == [_("Sat"), _("Sun")]:
-				repeatedtext = _('Weekend')
-			else:
-				repeatedtext = ", ".join(repeatedtext)
+			repeatedtext = ", ".join(repeatedtext)
 			if self.iconRepeat:
 				res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, self.iconMargin / 2, self.rowSplit + (self.itemHeight - self.rowSplit - self.iconHeight) / 2, self.iconWidth, self.iconHeight, self.iconRepeat))
 		else:
 			repeatedtext = begin[0] # date
 		if timer.justplay:
-			extra_text = _("(ZAP)")
-			if timer.pipzap:
-				extra_text = _("(ZAP as PiP)")
-			text = repeatedtext + ((" %s "+ extra_text) % (begin[1]))
+			if timer.end > timer.begin + 3:
+				text = repeatedtext + ((" %s ... %s (" + _("ZAP") + ", %d " + _("mins") + ")") % (begin[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60))
+			else:
+				text = repeatedtext + ((" %s (" + _("ZAP") + ")") % (begin[1]))
 		else:
 			text = repeatedtext + ((" %s ... %s (%d " + _("mins") + ")") % (begin[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60))
+
 		icon = None
 		if not processed:
 			if timer.state == TimerEntry.StateWaiting:

@@ -3,9 +3,9 @@ class ResourceManager:
 		self.resourceList = {}
 
 	def addResource(self, name, resource):
-		print "[ResourceManager] adding Resource", name
+		print "adding Resource", name
 		self.resourceList[name] = resource
-		print "[ResourceManager] resources:", self.resourceList
+		print "resources:", self.resourceList
 
 
 	def getResource(self, name):
@@ -14,7 +14,7 @@ class ResourceManager:
 		return self.resourceList[name]
 
 	def hasResource(self, name):
-		return name in self.resourceList
+		return self.resourceList.has_key(name)
 
 	def removeResource(self, name):
 		if self.hasResource(name):

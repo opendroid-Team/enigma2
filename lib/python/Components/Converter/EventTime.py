@@ -20,9 +20,6 @@ class EventTime(Poll, Converter, object):
 	THIRD_START_TIME = 11
 	THIRD_END_TIME = 12
 	THIRD_DURATION = 13
-	TIMES = 14
-	NEXT_TIMES = 15
-	THIRD_TIMES = 16
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -58,22 +55,16 @@ class EventTime(Poll, Converter, object):
 			self.type = self.NEXT_START_TIME
 		elif type == "NextEndTime":
 			self.type = self.NEXT_END_TIME
-		elif type == "NextDuration":
+		elif type == "NextDurartion":
 			self.type = self.NEXT_DURATION
 		elif type == "ThirdStartTime":
 			self.type = self.THIRD_START_TIME
 		elif type == "ThirdEndTime":
 			self.type = self.THIRD_END_TIME
-		elif type == "ThirdDuration":
+		elif type == "ThirdDurartion":
 			self.type = self.THIRD_DURATION
-		elif type == "Times":
-			self.type = self.TIMES
-		elif type == "NextTimes":
-			self.type = self.NEXT_TIMES
-		elif type == "ThirdTimes":
-			self.type = self.THIRD_TIMES
 		else:
-			raise ElementError("'%s' is not <StartTime|EndTime|Remaining|Elapsed|Duration|Progress|VFDRemaining|VFDElapsed|NextStartTime|NextEndTime|NextDuration|ThirdStartTime|ThirdEndTime|ThirdDuration|Times|NextTimes|ThirdTimes> for EventTime converter" % type)
+			raise ElementError("'%s' is not <StartTime|EndTime|Remaining|Elapsed|Duration|Progress> for EventTime converter" % type)
 
 	@cached
 	def getTime(self):
@@ -91,16 +82,13 @@ class EventTime(Poll, Converter, object):
 		if self.type == self.DURATION:
 			return duration
 
-		et = st + duration
+		st += duration
 		if self.type == self.ENDTIME:
-			return et
-
-		if self.type == self.TIMES:
-			return (st, et)
+			return st
 
 		if self.type == self.REMAINING or self.type == self.REMAINING_VFD or self.type == self.ELAPSED or self.type == self.ELAPSED_VFD:
 			now = int(time())
-			remaining = et - now
+			remaining = st - now
 			if remaining < 0:
 				remaining = 0
 			start_time = event.getBeginTime()
@@ -142,7 +130,7 @@ class EventTime(Poll, Converter, object):
 			else:
 				return duration, None
 
-		elif self.type in (self.NEXT_START_TIME, self.NEXT_END_TIME, self.NEXT_DURATION, self.THIRD_START_TIME, self.THIRD_END_TIME, self.THIRD_DURATION, self.NEXT_TIMES, self.THIRD_TIMES):
+		elif self.type == self.NEXT_START_TIME or self.type == self.NEXT_END_TIME or self.type == self.NEXT_DURATION or self.type == self.THIRD_START_TIME or self.type == self.THIRD_END_TIME or self.type == self.THIRD_DURATION:
 			reference = self.source.service
 			info = reference and self.source.info
 			if info is None:
@@ -153,20 +141,12 @@ class EventTime(Poll, Converter, object):
 				try:
 					if self.type == self.NEXT_START_TIME and self.list[1][1]:
 						return self.list[1][1]
-					elif self.type == self.NEXT_DURATION and self.list[1][2]:
-						return self.list[1][2]
 					elif self.type == self.NEXT_END_TIME and self.list[1][1] and self.list[1][2]:
 						return int(self.list[1][1]) + int(self.list[1][2])
-					elif self.type == self.NEXT_TIMES and self.list[1][1] and self.list[1][2]:
-						return (int(self.list[1][1]), int(self.list[1][1]) + int(self.list[1][2]))
 					elif self.type == self.THIRD_START_TIME and self.list[2][1]:
 						return self.list[2][1]
-					elif self.type == self.THIRD_DURATION and self.list[2][2]:
-						return self.list[2][2]
 					elif self.type == self.THIRD_END_TIME and self.list[2][1] and self.list[2][2]:
 						return int(self.list[2][1]) + int(self.list[2][2])
-					elif self.type == self.THIRD_TIMES and self.list[2][1] and self.list[2][2]:
-						return (int(self.list[2][1]), int(self.list[2][1]) + int(self.list[2][2]))
 					else:
 						# failed to return any epg data.
 						return None

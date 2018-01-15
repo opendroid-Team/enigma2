@@ -35,6 +35,7 @@ class Navigation:
 		self.currentlyPlayingServiceReference = None
 		self.currentlyPlayingServiceOrGroup = None
 		self.currentlyPlayingService = None
+
 		self.RecordTimer = None
 		self.isRecordTimerImageStandard = False
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_RECORDTIMER):

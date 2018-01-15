@@ -2,9 +2,10 @@ import os, re, unicodedata
 from Renderer import Renderer
 from enigma import ePixmap, ePicLoad
 from Tools.Alternatives import GetWithAlternative
-from Tools.Directories import pathExists, SCOPE_ACTIVE_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_ACTIVE_SKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
 from ServiceReference import ServiceReference
+from Components.config import config, ConfigBoolean
 
 searchPaths = []
 lastPiconPath = None
@@ -15,7 +16,9 @@ def initPiconPaths():
 	for mp in ('/usr/share/enigma2/', '/'):
 		onMountpointAdded(mp)
 	for part in harddiskmanager.getMountedPartitions():
+		mp = path = os.path.join(part.mountpoint, 'usr/share/enigma2')
 		onMountpointAdded(part.mountpoint)
+		onMountpointAdded(mp)
 
 def onMountpointAdded(mountpoint):
 	global searchPaths
@@ -57,7 +60,7 @@ def findPicon(serviceName):
 		global searchPaths
 		pngname = ""
 		for path in searchPaths:
-			if pathExists(path) and not path.startswith('/media/net') and not path.startswith('/media/autofs'):
+			if pathExists(path) and not path.startswith('/media/net'):
 				pngname = path + serviceName + ".png"
 				if pathExists(pngname):
 					lastPiconPath = path
@@ -74,21 +77,14 @@ def findPicon(serviceName):
 
 def getPiconName(serviceName):
 	#remove the path and name fields, and replace ':' by '_'
-	fields = GetWithAlternative(serviceName).split(':', 10)[:10]
-	if not fields or len(fields) < 10:
-		return ""
-	pngname = findPicon('_'.join(fields))
-	if not pngname and not fields[6].endswith("0000"):
-		#remove "sub-network" from namespace
-		fields[6] = fields[6][:-4] + "0000"
-		pngname = findPicon('_'.join(fields))
-	if not pngname and fields[0] != '1':
-		#fallback to 1 for other reftypes
-		fields[0] = '1'
-		pngname = findPicon('_'.join(fields))
-	if not pngname and fields[2] != '1':
-		#fallback to 1 for services with different service types
-		fields[2] = '1'
+	sname = '_'.join(GetWithAlternative(serviceName).split(':', 10)[:10])
+	pngname = findPicon(sname)
+	if not pngname:
+		fields = sname.split('_', 3)
+		if len(fields) > 2 and fields[2] != '2': #fallback to 1 for tv services with nonstandard servicetypes
+			fields[2] = '1'
+		if len(fields) > 0 and fields[0] == '4097': #fallback to 1 for IPTV streams
+			fields[0] = '1'
 		pngname = findPicon('_'.join(fields))
 	if not pngname: # picon by channel name
 		name = ServiceReference(serviceName).getServiceName()
@@ -109,7 +105,17 @@ class Picon(Renderer):
 		self.pngname = ""
 		self.lastPath = None
 		pngname = findPicon("picon_default")
-		self.defaultpngname = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
+		self.defaultpngname = None
+		if not pngname:
+			tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
+			if pathExists(tmp):
+				pngname = tmp
+			else:
+				pngname = resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/picon_default.png")
+		self.nopicon = resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/picon_default.png")
+		if os.path.getsize(pngname):
+			self.defaultpngname = pngname
+			self.nopicon = pngname
 
 	def addPath(self, value):
 		if pathExists(value):
@@ -148,6 +154,8 @@ class Picon(Renderer):
 				pngname = getPiconName(self.source.text)
 				if not pathExists(pngname): # no picon for service found
 					pngname = self.defaultpngname
+				if not config.usage.showpicon.value:
+					pngname = self.nopicon
 				if self.pngname != pngname:
 					if pngname:
 						self.instance.setScale(1)

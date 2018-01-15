@@ -191,7 +191,7 @@ eServiceHDMIRecord::eServiceHDMIRecord(const eServiceReference &ref)
 	m_thread = NULL;
 }
 
-RESULT eServiceHDMIRecord::prepare(const char *filename, time_t begTime, time_t endTime, int eit_event_id, const char *name, const char *descr, const char *tags, bool descramble, bool recordecm, int packetsize)
+RESULT eServiceHDMIRecord::prepare(const char *filename, time_t begTime, time_t endTime, int eit_event_id, const char *name, const char *descr, const char *tags, bool descramble, bool recordecm)
 {
 	m_filename = filename;
 
@@ -273,7 +273,7 @@ int eServiceHDMIRecord::doRecord()
 		int fd = ::open(m_filename.c_str(), O_WRONLY | O_CREAT | O_LARGEFILE | O_CLOEXEC, 0666);
 		if (fd < 0)
 		{
-			eDebug("[eServiceHDMIRecord] can't open recording file: %m");
+			eDebug("[eServiceHDMIRecord] can't open recording file!");
 			m_error = errOpenRecordFile;
 			m_event((iRecordableService*)this, evRecordFailed);
 			return errOpenRecordFile;

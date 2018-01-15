@@ -3,12 +3,10 @@ from time import localtime, mktime, time, strftime
 from enigma import eEPGCache, eTimer, eServiceReference, ePoint
 
 from Screens.Screen import Screen
-from Screens.TimerEdit import TimerSanityConflict
 from Screens.ChoiceBox import ChoiceBox
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
-from Components.config import config
 from Components.Sources.StaticText import StaticText
 from Components.ScrollLabel import ScrollLabel
 from Components.PluginComponent import plugins
@@ -17,22 +15,31 @@ from Components.UsageConfig import preferredTimerPath
 from Components.Pixmap import Pixmap
 from Components.Sources.ServiceEvent import ServiceEvent
 from Components.Sources.Event import Event
+from Components.config import config
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from Screens.TimerEntry import TimerEntry
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 
-
 class EventViewContextMenu(Screen):
 	def __init__(self, session, menu):
 		Screen.__init__(self, session)
-		self.setTitle(_('Event view menu'))
+		self.setTitle(_('Eventview menu'))
 
 		self["actions"] = ActionMap(["OkCancelActions"],
 			{
 				"ok": self.okbuttonClick,
 				"cancel": self.cancelClick
 			})
+
+		try:
+			if config.skin.primary_skin.value.startswith('MetrixHD/'):
+				count = 0
+				for entry in menu:
+					menu[count] = ("        " + entry[0], entry[1])
+					count += 1
+		except:
+			pass
 
 		self["menu"] = MenuList(menu)
 
@@ -70,6 +77,7 @@ class EventViewBase:
 			{
 				"cancel": self.close,
 				"ok": self.close,
+				"info": self.close,
 				"pageUp": self.pageUp,
 				"pageDown": self.pageDown,
 				"prevEvent": self.prevEvent,
@@ -143,7 +151,7 @@ class EventViewBase:
 		self['actions'].setEnabled(True)
 
 	def finishedAdd(self, answer):
-		print "[EventView] finished add"
+		print "finished add"
 		if answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.RecordTimer.record(entry)
@@ -166,13 +174,17 @@ class EventViewBase:
 						if change_time:
 							simulTimerList = self.session.nav.RecordTimer.record(entry)
 					if simulTimerList is not None:
+						try:
+							from Screens.TimerEdit import TimerSanityConflict
+						except: # maybe already been imported from another module
+							pass
 						self.session.openWithCallback(self.finishSanityCorrection, TimerSanityConflict, simulTimerList)
 			self["key_green"].setText(_("Change timer"))
 			self.key_green_choice = self.REMOVE_TIMER
 		else:
 			self["key_green"].setText(_("Add timer"))
 			self.key_green_choice = self.ADD_TIMER
-			print "[EventView] Timeredit aborted"
+			print "Timeredit aborted"
 
 	def finishSanityCorrection(self, answer):
 		self.finishedAdd(answer)
@@ -225,14 +237,28 @@ class EventViewBase:
 
 		self["summary_description"].setText(extended)
 
-		begint = event.getBeginTime()
-		begintime = localtime(begint)
-		endtime = localtime(begint + event.getDuration())
-		self["datetime"].setText("%s - %s" % (strftime("%s, %s" % (config.usage.date.short.value, config.usage.time.short.value), begintime), strftime(config.usage.time.short.value, endtime)))
+		beginTimeString = event.getBeginTimeString()
+
+		if not beginTimeString:
+			return
+		if beginTimeString.find(', ') > -1:
+			begintime = beginTimeString.split(', ')[1].split(':')
+			begindate = beginTimeString.split(', ')[0].split('.')
+		else:
+			if len(beginTimeString.split(' ')) > 1:
+				begintime = beginTimeString.split(' ')[1].split(':')
+			else:
+				return
+			begindate = beginTimeString.split(' ')[0].split('.')
+		nowt = time()
+		now = localtime(nowt)
+		begin = localtime(int(mktime((now.tm_year, int(begindate[1]), int(begindate[0]), int(begintime[0]), int(begintime[1]), 0, now.tm_wday, now.tm_yday, now.tm_isdst))))
+		end = localtime(int(mktime((now.tm_year, int(begindate[1]), int(begindate[0]), int(begintime[0]), int(begintime[1]), 0, now.tm_wday, now.tm_yday, now.tm_isdst))) + event.getDuration())
+		self["datetime"].setText(strftime(_("%d.%m.   "), begin) + strftime(_("%-H:%M - "), begin) + strftime(_("%-H:%M"), end))
 		self["duration"].setText(_("%d min")%(event.getDuration()/60))
 		if self.SimilarBroadcastTimer is not None:
 			self.SimilarBroadcastTimer.start(400, True)
-
+			
 		serviceref = self.currentService
 		eventid = self.event.getEventId()
 		refstr = ':'.join(serviceref.ref.toString().split(':')[:11])
@@ -269,7 +295,8 @@ class EventViewBase:
 			text = '\n\n' + _('Similar broadcasts:')
 			ret.sort(self.sort_func)
 			for x in ret:
-				text += "\n%s  -  %s" % (strftime(config.usage.date.long.value + ", " + config.usage.time.short.value, localtime(x[1])), x[0])
+				t = localtime(x[1])
+				text += '\n%d.%d.%d, %2d:%02d  -  %s'%(t[2], t[1], t[0], t[3], t[4], x[0])
 			descr = self["epg_description"]
 			descr.setText(descr.getText()+text)
 			descr = self["FullDescription"]
@@ -299,7 +326,7 @@ class EventViewBase:
 class EventViewSimple(Screen, EventViewBase):
 	def __init__(self, session, event, ref, callback=None, singleEPGCB=None, multiEPGCB=None, similarEPGCB=None, skin='EventViewSimple'):
 		Screen.__init__(self, session)
-		self.setTitle(_('Event view'))
+		self.setTitle(_('Eventview'))
 		self.skinName = [skin,"EventView"]
 		EventViewBase.__init__(self, event, ref, callback, similarEPGCB)
 		self.key_green_choice = None

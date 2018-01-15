@@ -64,7 +64,7 @@ class SetupSummary(Screen):
 	def selectionChanged(self):
 		self["SetupEntry"].text = self.parent.getCurrentEntry()
 		self["SetupValue"].text = self.parent.getCurrentValue()
-		if hasattr(self.parent,"getCurrentDescription") and "description" in self.parent:
+		if hasattr(self.parent,"getCurrentDescription") and self.parent.has_key("description"):
 			self.parent["description"].text = self.parent.getCurrentDescription()
 		if self.parent.has_key('footnote'):
 			if self.parent.getCurrentEntry().endswith('*'):
@@ -90,38 +90,33 @@ class Setup(ConfigListScreen, Screen):
 			if x.get("key") != self.setup:
 				continue
 			self.addItems(list, x)
-			if config.usage.show_menupath.value in ('large', 'small') and x.get("titleshort", "").encode("UTF-8") != "":
-				self.setup_title = x.get("titleshort", "").encode("UTF-8")
-			else:
-				self.setup_title = x.get("title", "").encode("UTF-8")
+			self.setup_title = x.get("title", "").encode("UTF-8")
 			self.seperation = int(x.get('separation', '0'))
 
-	def __init__(self, session, setup, plugin=None, menu_path=None, PluginLanguageDomain=None):
+	def __init__(self, session, setup, plugin=None, PluginLanguageDomain=None):
 		Screen.__init__(self, session)
 		# for the skin: first try a setup_<setupID>, then Setup
 		self.skinName = ["setup_" + setup, "Setup" ]
 
-		self["menu_path_compressed"] = StaticText()
 		self['footnote'] = Label()
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
+		self["status"] = StaticText()
 		self.onChangedEntry = [ ]
 		self.item = None
 		self.setup = setup
 		self.plugin = plugin
 		self.PluginLanguageDomain = PluginLanguageDomain
-		self.menu_path = menu_path
 		list = []
 		self.onNotifiers = [ ]
 		self.refill(list)
-
 		ConfigListScreen.__init__(self, list, session = session, on_change = self.changedEntry)
 		self.createSetup()
 
 		#check for list.entries > 0 else self.close
 		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("Save"))
+		self["key_green"] = StaticText(_("OK"))
 		self["description"] = Label("")
 
 		self["actions"] = NumberActionMap(["SetupActions", "MenuActions"],
@@ -165,6 +160,7 @@ class Setup(ConfigListScreen, Screen):
 		self["config"].setCurrentIndex(newIdx)
 
 	def handleInputHelpers(self):
+		self["status"].setText(self["config"].getCurrent()[2])
 		if self["config"].getCurrent() is not None:
 			try:
 				if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
@@ -190,10 +186,12 @@ class Setup(ConfigListScreen, Screen):
 				self["VKeyIcon"].boolean = False
 
 	def HideHelp(self):
+		self.help_window_was_shown = False
 		try:
 			if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
 				if self["config"].getCurrent()[1].help_window.instance is not None:
 					self["config"].getCurrent()[1].help_window.hide()
+					self.help_window_was_shown = True
 		except:
 			pass
 
@@ -210,22 +208,14 @@ class Setup(ConfigListScreen, Screen):
 			self["config"].invalidate(self["config"].getCurrent())
 
 	def layoutFinished(self):
-		if config.usage.show_menupath.value == 'large' and self.menu_path:
-			title = self.menu_path + _(self.setup_title)
-			self["menu_path_compressed"].setText("")
-		elif config.usage.show_menupath.value == 'small' and self.menu_path:
-			title = _(self.setup_title)
-			self["menu_path_compressed"].setText(self.menu_path + " >" if not self.menu_path.endswith(' / ') else self.menu_path[:-3] + " >" or "")
-		else:
-			title = _(self.setup_title)
-			self["menu_path_compressed"].setText("")
-		self.setTitle(title)
+		self.setTitle(_(self.setup_title))
 
 	# for summary:
 	def changedEntry(self):
 		self.item = self["config"].getCurrent()
 		try:
-			if isinstance(self["config"].getCurrent()[1], ConfigYesNo) or isinstance(self["config"].getCurrent()[1], ConfigSelection):
+			#FIXME This code prevents an LCD refresh for this ConfigElement(s)
+			if not isinstance(self["config"].getCurrent()[1], ConfigText):
 				self.createSetup()
 		except:
 			pass

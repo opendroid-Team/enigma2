@@ -1,6 +1,7 @@
 #include <sys/select.h>
 #include <unistd.h>
 #include <string.h>
+#include <openssl/evp.h>
 #include <sys/types.h>
 #include <pwd.h>
 #include <shadow.h>
@@ -93,7 +94,24 @@ void eStreamClient::notifier(int what)
 				std::string hash = request.substr(pos + 21);
 				pos = hash.find('\r');
 				hash = hash.substr(0, pos);
-				authentication = base64decode(hash);
+				hash += "\n";
+				{
+					char *in, *out;
+					in = strdup(hash.c_str());
+					out = (char*)calloc(1, hash.size());
+					if (in && out)
+					{
+						BIO *b64, *bmem;
+						b64 = BIO_new(BIO_f_base64());
+						bmem = BIO_new_mem_buf(in, hash.size());
+						bmem = BIO_push(b64, bmem);
+						BIO_read(bmem, out, hash.size());
+						BIO_free_all(bmem);
+						authentication.append(out, hash.size());
+					}
+					free(in);
+					free(out);
+				}
 				pos = authentication.find(':');
 				if (pos != std::string::npos)
 				{
@@ -161,6 +179,15 @@ void eStreamClient::notifier(int what)
 
 				if (serviceref.substr(0, 10) == "file?file=") /* convert openwebif stream reqeust back to serviceref */
 					serviceref = "1:0:1:0:0:0:0:0:0:0:" + serviceref.substr(10);
+				/* Strip session ID from URL if it exists, PLi streaming can not handle it */
+				pos = serviceref.find("&sessionid=");
+				if (pos != std::string::npos) {
+					serviceref.erase(pos, std::string::npos);
+				}
+				pos = serviceref.find("?sessionid=");
+				if (pos != std::string::npos) {
+					serviceref.erase(pos, std::string::npos);
+				}
 				pos = serviceref.find('?');
 				if (pos == std::string::npos)
 				{

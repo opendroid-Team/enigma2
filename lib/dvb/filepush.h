@@ -15,9 +15,8 @@ public:
 	virtual ~iFilePushScatterGather() {}
 };
 
-class eFilePushThread: public eThread, public sigc::trackable, public iObject
+class eFilePushThread: public eThread, public sigc::trackable
 {
-	DECLARE_REF(eFilePushThread);
 public:
 	eFilePushThread(int blocksize, size_t buffersize);
 	~eFilePushThread();

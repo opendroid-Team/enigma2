@@ -1,8 +1,8 @@
 ## Our buildserver is currently running on: ##
 
-> Ubuntu 16.04.1 LTS 
+> Ubuntu 15.10 
 
-## openDroid 6.4 is build using oe-alliance build-environment and several git repositories: ##
+## openDroid 5.5 is build using oe-alliance build-environment and several git repositories: ##
 
 > [https://github.com/oe-alliance/oe-alliance-core]
 > 
@@ -18,7 +18,8 @@
 
 1 - Install packages on your buildserver
 
-    sudo apt-get install -y autoconf automake bison bzip2 curl cvs diffstat flex g++ gawk gcc gettext git-core gzip help2man ncurses-bin ncurses-dev libc6-dev libtool make texinfo patch perl pkg-config subversion tar texi2html wget zlib1g-dev chrpath libxml2-utils xsltproc libglib2.0-dev python-setuptools zip info coreutils diffstat chrpath libproc-processtable-perl libperl4-corelibs-perl sshpass default-jre default-jre-headless java-common libserf-dev qemu quilt
+    sudo apt-get install -y autoconf automake bison bzip2 chrpath coreutils cvs default-jre default-jre-headless diffstat flex g++ gawk gcc gettext git-core gzip help2man htop info java-common libc6-dev libglib2.0-dev libperl4-corelibs-perl libproc-processtable-perl libtool libxml2-utils make ncdu ncurses-bin ncurses-dev patch perl pkg-config po4a python-setuptools quilt sgmltools-lite sshpass subversion swig tar texi2html texinfo wget xsltproc zip zlib1g-dev
+
 ----------
 2 - Set your shell to /bin/bash.
 
@@ -54,7 +55,7 @@
 ----------
 8 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b 4.1
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 3.4
 
 ----------
 9 - Switch to folder build-enviroment
@@ -69,4 +70,4 @@
 ----------
 11 - Finally you can start building a image
 
-    MACHINE=sf4008 DISTRO=opendroid make image
+    MACHINE=zgemmah2h DISTRO=opendroid make image
