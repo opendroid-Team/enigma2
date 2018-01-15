@@ -18,7 +18,7 @@ enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 boxtype = getBoxType()
 
-if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/plugin.pyo") and boxtype in ('dm7080','dm820','dm520','dm525','dm900'):
+if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/plugin.pyo") and boxtype in ('dm7080','dm820','dm520','dm525','dm900','dm920'):
 	import pyo_patcher
 
 from traceback import print_exc
@@ -375,6 +375,8 @@ class PowerKey:
 		globalActionMap.actions["power_long"]=self.powerlong
 		globalActionMap.actions["deepstandby"]=self.shutdown # frontpanel long power button press
 		globalActionMap.actions["discrete_off"]=self.standby
+		globalActionMap.actions["sleeptimer_standby"]=self.sleepStandby
+		globalActionMap.actions["sleeptimer_deepstandby"]=self.sleepDeepStandby
 		globalActionMap.actions["sleeptimer"]=self.openSleepTimer
 		globalActionMap.actions["powertimer_standby"]=self.sleepStandby
 		globalActionMap.actions["powertimer_deepstandby"]=self.sleepDeepStandby
@@ -690,20 +692,11 @@ def runScreenTest():
 	]
 	wakeupList.sort()
 
-	# individual wakeup time offset
-	if config.workaround.wakeuptimeoffset.value == "standard":
-		if boxtype.startswith("gb"):
-			wpoffset = -120 # Gigaboxes already starts 2 min. before wakeup time
-		else:
-			wpoffset = 0
-	else:
-		wpoffset = int(config.workaround.wakeuptimeoffset.value)
-
 	print "="*100
 	if wakeupList and wakeupList[0][0] > 0:
 		startTime = wakeupList[0]
 		# wakeup time is 5 min before timer starts + offset
-		wptime = startTime[0] - 300 - wpoffset
+		wptime = startTime[0] - (config.workaround.wakeuptime.value * 60)
 		if (wptime - nowTime) < 120: # no time to switch box back on
 			wptime = int(nowTime) + 120  # so switch back on in 120 seconds
 
@@ -808,7 +801,7 @@ if boxtype in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', '
 	except:
 		print "Error disable enable_clock for ini5000 boxes"
 
-if boxtype in ('dm7080', 'dm820', 'dm900', 'gb7252'):
+if boxtype in ('dm7080', 'dm820', 'dm900', 'dm920', 'gb7252'):
 	f=open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor","r")
 	check=f.read()
 	f.close()

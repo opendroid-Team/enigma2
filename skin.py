@@ -24,6 +24,10 @@ fonts = {
 }
 
 parameters = {}
+constant_widgets = {}
+variables = {}
+DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
+DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -74,33 +78,14 @@ def get_modular_files(name, scope = SCOPE_SKIN):
 	file_list = sorted(file_list, key=str.lower)
 	return file_list
 def skin_user_skinname():
-	skin_name = config.skin.primary_skin.value
-	skin_base = skin_name[:skin_name.rfind('/')]
-	name = "skin_user_" + skin_base + ".xml"
+	name = "skin_user_" + config.skin.primary_skin.value[:config.skin.primary_skin.value.rfind('/')] + ".xml"
 	filename = resolveFilename(SCOPE_CONFIG, name)
 	if fileExists(filename):
-		skin_path = resolveFilename(SCOPE_SKIN, skin_name)
-		if not os.path.isfile(skin_path):
-			print "[skin::skin_user_skinname] ignoring user entry for not-found skin:", skin_path
-			return None
 		return name
 	return None
 
-# we do our best to always select the "right" value
-# skins are loaded in order of priority: skin with
-# highest priority is loaded last, usually the user-provided
-# skin.
-
-# currently, loadSingleSkinData (colors, bordersets etc.)
-# are applied one-after-each, in order of ascending priority.
-# the dom_skin will keep all screens in descending priority,
-# so the first screen found will be used.
-
-# example: loadSkin("nemesis_greenline/skin.xml")
 config.skin = ConfigSubsection()
-DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	# in that case, fallback to Magic (which is an SD skin)
 	DEFAULT_SKIN = "skin.xml"
 config.skin.primary_skin = ConfigText(default=DEFAULT_SKIN)
 
@@ -114,8 +99,6 @@ if name:
 	res = addSkin(name, SCOPE_CONFIG)
 if not name or not res:
 	addSkin('skin_user.xml', SCOPE_CONFIG)
-
-# some boxes lie about their dimensions
 addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
@@ -537,7 +520,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					# load palette (not yet implemented)
 					pass
 				if yres >= 1080:
-					parameters["ConfigListSeperator"] = (580)
+					parameters["ConfigListSeperator"] = (380)
 					parameters["ChoicelistDash"] = (0,3,1000,50)
 					parameters["ChoicelistName"] = (85,3,1000,50)
 					parameters["ChoicelistIcon"] = (10,4,64,50)

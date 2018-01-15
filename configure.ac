@@ -329,6 +329,13 @@ if test x"$withcolorlcd480" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD480, 1,[Define when using a 480x320 color display device])
 fi
 
+AC_ARG_WITH(memcheck,
+	AS_HELP_STRING([--with-memcheck],[enable memory leak checks]),
+	[with_memcheck="$withval"],[with_memcheck="no"])
+if test "$with_memcheck" = "yes"; then
+	AC_DEFINE([MEMLEAK_CHECK],[1],[Define to 1 to enable memory leak checks])
+fi
+
 AM_CONDITIONAL(HAVE_COLORLCD480, test x"$withcolorlcd480" != xno)
 
 AC_ARG_WITH(colorlcd720,

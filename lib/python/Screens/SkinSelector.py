@@ -135,12 +135,6 @@ class SkinSelectorBase:
 				config.skin.display_skin.value = self.skinfile
 				config.skin.display_skin.save()
 			else:
-				try:
-					if config.skin.primary_skin.value == "oDreamy-FHD/skin.xml":
-						from Plugins.Extensions.MyMetrixLite.MainSettingsView import MainSettingsView
-						MainSettingsView(None).getFHDiconRefresh(restore=True)
-				except:
-					pass
 				config.skin.primary_skin.value = self.skinfile
 				config.skin.primary_skin.save()
 			self.session.open(TryQuitMainloop, 3)
