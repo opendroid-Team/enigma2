@@ -81,11 +81,12 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		
 		self.start_skin = config.skin.primary_skin.value
+		
 		if self.start_skin != "skin.xml":
 			self.getInitConfig()
-			self.Scale = AVSwitch().getFramebufferScale()
-			self.PicLoad = ePicLoad()
-			self['Preview'] = Pixmap()
+#			self.Scale = AVSwitch().getFramebufferScale()
+#			self.PicLoad = ePicLoad()
+#			self['Preview'] = Pixmap()
 		
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
@@ -293,11 +294,11 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		preview = self.skin_base_dir + "preview/preview_" + pic
 		if path.exists(preview):
 			self["Picture"].instance.setPixmapFromFile(preview)
-			self.PicLoad.setPara([self['Preview'].instance.size().width(),
-			self['Preview'].instance.size().height(),
-			self.Scale[0],
-			self.Scale[1], 0, 1,'#00000000'])
-			self.PicLoad.startDecode(self.GetPicturePath())
+#			self.PicLoad.setPara([self['Preview'].instance.size().width(),
+#			self['Preview'].instance.size().height(),
+#			self.Scale[0],
+#			self.Scale[1], 0, 1,'#00000000'])
+#			self.PicLoad.startDecode(self.GetPicturePath())
 			self["Picture"].show()
 		else:
 			self["Picture"].hide()
