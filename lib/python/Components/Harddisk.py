@@ -6,6 +6,7 @@ from Components.Console import Console
 from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType, getMachineBuild
 import Task
+import re
 
 def readFile(filename):
 	file = open(filename)
@@ -360,10 +361,10 @@ class Harddisk:
 			if size > 128000:
 				# Start at sector 8 to better support 4k aligned disks
 				print "[HD] Detected >128GB disk, using 4k alignment"
-				task.initial_input = "8,,L\n;0,0\n;0,0\n;0,0\ny\n"
+				task.initial_input = "8,\n;0,0\n;0,0\n;0,0\ny\n"
 			else:
 				# Smaller disks (CF cards, sticks etc) don't need that
-				task.initial_input = ",,L\n;\n;\n;\ny\n"
+				task.initial_input = "0,\n;\n;\n;\ny\n"
 
 		task = Task.ConditionTask(job, _("Waiting for partition"))
 		task.check = lambda: os.path.exists(self.partitionPath("1"))
@@ -472,12 +473,14 @@ class Harddisk:
 	# any access has been made to the disc. If there has been no access over a specifed time,
 	# we set the hdd into standby.
 	def readStats(self):
-		try:
-			l = open("/sys/block/%s/stat" % self.device).read()
-		except IOError:
+		if os.path.exists("/sys/block/%s/stat" % self.device):
+			f = open("/sys/block/%s/stat" % self.device)
+			l = f.read()
+			f.close()
+			data = l.split(None,5)
+			return int(data[0]), int(data[4])
+		else:
 			return -1,-1
-		data = l.split(None,5)
-		return (int(data[0]), int(data[4]))
 
 	def startIdle(self):
 		from enigma import eTimer
@@ -614,174 +617,114 @@ DEVICEDB = \
 			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.4/1-1.4.": _("Internal USB"),
 		},
 	"dm7020hd":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0": _("Front USB"),
-			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1.": _("Front USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Back, upper USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-2/1-2.": _("Back, upper USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Back, lower USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.": _("Back, lower USB")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0": _("Front USB"),
+		"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1.": _("Front USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Back, upper USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2.": _("Back, upper USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Back, lower USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.": _("Back, lower USB"),
+	},
 	"dm7080":
-		{
-			"/devices/pci0000:00/0000:00:00.0/usb9/9-1/": _("Back USB 3.0"),
-			"/devices/pci0000:00/0000:00:00.0/usb9/9-2/": _("Front USB 3.0"),
-			"/devices/platform/ehci-brcm.0/": _("Back, lower USB"),
-			"/devices/platform/ehci-brcm.1/": _("Back, upper USB"),
-			"/devices/platform/ehci-brcm.2/": _("Internal USB"),
-			"/devices/platform/ehci-brcm.3/": _("Internal USB"),
-			"/devices/platform/ohci-brcm.0/": _("Back, lower USB"),
-			"/devices/platform/ohci-brcm.1/": _("Back, upper USB"),
-			"/devices/platform/ohci-brcm.2/": _("Internal USB"),
-			"/devices/platform/ohci-brcm.3/": _("Internal USB"),
-			"/devices/platform/sdhci-brcmstb.0/": _("eMMC"),
-			"/devices/platform/sdhci-brcmstb.1/": _("SD"),
-			"/devices/platform/strict-ahci.0/ata1/": _("SATA"),	# front
-			"/devices/platform/strict-ahci.0/ata2/": _("SATA")	# back
-		},
+	{
+		"/devices/pci0000:00/0000:00:00.0/usb9/9-1/": _("Back USB 3.0"),
+		"/devices/pci0000:00/0000:00:00.0/usb9/9-2/": _("Front USB 3.0"),
+		"/devices/platform/ehci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ehci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ehci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ehci-brcm.3/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ohci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ohci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.3/": _("Internal USB"),
+		"/devices/platform/sdhci-brcmstb.0/": _("eMMC"),
+		"/devices/platform/sdhci-brcmstb.1/": _("SD"),
+		"/devices/platform/strict-ahci.0/ata1/": _("SATA"),	# front
+		"/devices/platform/strict-ahci.0/ata2/": _("SATA"),	# back
+	},
 	"dm800":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
-			"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB"),
+	},
 	"dm820":
-		{
-			"/devices/platform/ehci-brcm.0/": _("Back, lower USB"),
-			"/devices/platform/ehci-brcm.1/": _("Back, upper USB"),
-			"/devices/platform/ehci-brcm.2/": _("Internal USB"),
-			"/devices/platform/ehci-brcm.3/": _("Internal USB"),
-			"/devices/platform/ohci-brcm.0/": _("Back, lower USB"),
-			"/devices/platform/ohci-brcm.1/": _("Back, upper USB"),
-			"/devices/platform/ohci-brcm.2/": _("Internal USB"),
-			"/devices/platform/ohci-brcm.3/": _("Internal USB"),
-			"/devices/platform/sdhci-brcmstb.0/": _("eMMC"),
-			"/devices/platform/sdhci-brcmstb.1/": _("SD"),
-			"/devices/platform/strict-ahci.0/ata1/": _("SATA"),     # front
-			"/devices/platform/strict-ahci.0/ata2/": _("SATA"),     # back
-		},
+	{
+		"/devices/platform/ehci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ehci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ehci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ehci-brcm.3/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ohci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ohci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.3/": _("Internal USB"),
+		"/devices/platform/sdhci-brcmstb.0/": _("eMMC"),
+		"/devices/platform/sdhci-brcmstb.1/": _("SD"),
+		"/devices/platform/strict-ahci.0/ata1/": _("SATA"),     # front
+		"/devices/platform/strict-ahci.0/ata2/": _("SATA"),     # back
+	},
 	"dm520":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-2/": _("Back, outer USB"),
-			"/devices/platform/ohci-brcm.0/usb2/2-2/": _("Back, outer USB"),
-			"/devices/platform/ehci-brcm.0/usb1/1-1/": _("Back, inner USB"),
-			"/devices/platform/ohci-brcm.0/usb2/2-1/": _("Back, inner USB"),
-		},
+	{
+		"/devices/platform/ehci-brcm.0/usb1/1-2/": _("Back, outer USB"),
+		"/devices/platform/ohci-brcm.0/usb2/2-2/": _("Back, outer USB"),
+		"/devices/platform/ehci-brcm.0/usb1/1-1/": _("Back, inner USB"),
+		"/devices/platform/ohci-brcm.0/usb2/2-1/": _("Back, inner USB"),
+	},
 	"dm900":
-		{
-			"/devices/platform/brcmstb-ahci.0/ata1/": _("SATA"),
-			"/devices/rdb.4/f03e0000.sdhci/mmc_host/mmc0/": _("eMMC"),
-			"/devices/rdb.4/f03e0200.sdhci/mmc_host/mmc1/": _("SD"),
-			"/devices/rdb.4/f0470600.ohci_v2/usb6/6-0:1.0/port1/": _("Front USB"),
-			"/devices/rdb.4/f0470300.ehci_v2/usb3/3-0:1.0/port1/": _("Front USB"),
-			"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port1/": _("Front USB"),
-			"/devices/rdb.4/f0470400.ohci_v2/usb5/5-0:1.0/port1/": _("Back USB"),
-			"/devices/rdb.4/f0470500.ehci_v2/usb4/4-0:1.0/port1/": _("Back USB"),
-			"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port2/": _("Back USB"),
-		},
+	{
+		"/devices/platform/brcmstb-ahci.0/ata1/": _("SATA"),
+		"/devices/rdb.4/f03e0000.sdhci/mmc_host/mmc0/": _("eMMC"),
+		"/devices/rdb.4/f03e0200.sdhci/mmc_host/mmc1/": _("SD"),
+		"/devices/rdb.4/f0470600.ohci_v2/usb6/6-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470300.ehci_v2/usb3/3-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470400.ohci_v2/usb5/5-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0470500.ehci_v2/usb4/4-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port2/": _("Back USB"),
+	},
+	"dm920":
+	{
+		"/devices/platform/brcmstb-ahci.0/ata1/": _("SATA"),
+		"/devices/rdb.4/f03e0000.sdhci/mmc_host/mmc0/": _("eMMC"),
+		"/devices/rdb.4/f03e0200.sdhci/mmc_host/mmc1/": _("SD"),
+		"/devices/rdb.4/f0470600.ohci_v2/usb6/6-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470300.ehci_v2/usb3/3-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470400.ohci_v2/usb5/5-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0470500.ehci_v2/usb4/4-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port2/": _("Back USB"),
+	},
 	"dm800se":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
-			"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB"),
+	},
 	"dm500hd":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA"),
+	},
 	"dm800sev2":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
-			"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB"),
+	},
 	"dm500hdv2":
-		{
-			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
-			"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA")
-		},
+	{
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA"),
+	},
 	"dm7025":
-		{
-			"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "Compact Flash", #hdc
-			"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
-		},
-	"gbquadplus":
-		{
-			"/devices/platform/ehci-brcm.2/usb3/3-1/3-1:1.0": "Front USB Slot",
-			"/devices/platform/ehci-brcm.3/usb4/4-1/4-1:1.0": "Back single USB Slot",
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back, upper USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Back, lower USB Slot"
-		},
-	"gbquad":
-		{
-			"/devices/platform/ehci-brcm.2/usb3/3-1/3-1:1.0": "Front USB Slot",
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back, upper USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Back, lower USB Slot"
-		},
-	"gbultraue":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Front USB Slot",
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot"
-		},
-	"gbultraueh":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Front USB Slot",
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot"
-		},
-	"gbx1":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot (LAN-Port)",
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Back USB Slot"
-		},
-	"gbx2":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot (LAN-Port)",
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Back USB Slot"
-		},
-	"gbx3":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot (LAN-Port)",
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Back USB Slot"
-		},
-	"gbx3h":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot (LAN-Port)",
-			"/devices/platform/ehci-brcm.0/usb1/1-2/1-2:1.0": "Back USB Slot"
-		},
-	"gb800ueplus":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Front USB Slot"
-		},
-	"gb800seplus":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Front USB Slot"
-		},
-	"gbipbox":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot"
-		},
-	"gb800ue":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Front USB Slot"
-		},
-	"gb800se":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Front USB Slot"
-		},
-	"gb800solo":
-		{
-			"/devices/platform/ehci-brcm.0/usb1/1-1/1-1:1.0": "Back USB Slot",
-			"/devices/platform/ehci-brcm.1/usb2/2-1/2-1:1.0": "Internal USB Slot"
-		}
+	{
+		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "Compact Flash", #hdc
+		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
+	}
 	}
 
 DEVICEDB["dm525"] = DEVICEDB["dm520"]
@@ -812,7 +755,19 @@ class HarddiskManager:
 		devpath = "/sys/block/" + blockdev
 		error = False
 		removable = False
+		BLACKLIST=[]
+		if getMachineBuild() in ('vuzero4k','et1x000','vuuno4k','vuuno4kse','vuultimo4k','vusolo4k','hd51','hd52','sf4008','dm900','dm7080','dm820', 'gb7252', 'dags7252', 'vs1500','h7','8100s','et13000','sf5008'):
+			BLACKLIST=["mmcblk0"]
+		elif getMachineBuild() in ('xc7439'):
+			BLACKLIST=["mmcblk1"]
+		elif getMachineBuild() in ('u5','u5pvr'):
+			BLACKLIST=["mmcblk0", "mmcblk1"]
+
 		blacklisted = False
+		if blockdev[:7] in BLACKLIST:
+			blacklisted = True
+		if blockdev.startswith("mmcblk") and (re.search(r"mmcblk\dboot", blockdev) or re.search(r"mmcblk\drpmb", blockdev)):
+			blacklisted = True
 		is_cdrom = False
 		partitions = []
 		try:
@@ -822,10 +777,7 @@ class HarddiskManager:
 				dev = int(readFile(devpath + "/dev").split(':')[0])
 			else:
 				dev = None
-			if getMachineBuild() in ('et1x000', 'vuuno4k', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'dm7080', 'dm820', 'gb7252', 'dags7252', 'vs1500', 'h7', 'xc7439'):
-				devlist = [1, 7, 31, 253, 254, 179] # ram, loop, mtdblock, romblock, ramzswap, mmc
-			else:
-				devlist = [1, 7, 31, 253, 254] # ram, loop, mtdblock, romblock, ramzswap
+			devlist = [1, 7, 31, 253, 254] # ram, loop, mtdblock, romblock, ramzswap
 			if dev in devlist:
 				blacklisted = True
 			if blockdev[0:2] == 'sr':
@@ -841,6 +793,8 @@ class HarddiskManager:
 			if not is_cdrom and os.path.exists(devpath):
 				for partition in os.listdir(devpath):
 					if partition[0:len(blockdev)] != blockdev:
+						continue
+					if dev == 179 and not re.search(r"mmcblk\dp\d+", partition):
 						continue
 					partitions.append(partition)
 			else:
@@ -920,7 +874,7 @@ class HarddiskManager:
 				self.on_partition_list_change("add", p)
 			# see if this is a harddrive
 			l = len(device)
-			if l and (not device[l-1].isdigit() or device.startswith('mmcblk')):
+			if l and (not device[l-1].isdigit() or (device.startswith('mmcblk') and not re.search(r"mmcblk\dp\d+", device))):
 				self.hdd.append(Harddisk(device, removable))
 				self.hdd.sort()
 				SystemInfo["Harddisk"] = True
@@ -952,7 +906,7 @@ class HarddiskManager:
 				if x.mountpoint: # Plugins won't expect unmounted devices
 					self.on_partition_list_change("remove", x)
 		l = len(device)
-		if l and not device[l-1].isdigit():
+		if l and (not device[l-1].isdigit() or (device.startswith('mmcblk') and not re.search(r"mmcblk\dp\d+", device))):
 			for hdd in self.hdd:
 				if hdd.device == device:
 					hdd.stop()
@@ -992,13 +946,20 @@ class HarddiskManager:
 		return [x for x in parts if not x.device or x.device in devs]
 
 	def splitDeviceName(self, devname):
-		# this works for: sdaX, hdaX, sr0 (which is in fact dev="sr0", part=""). It doesn't work for other names like mtdblock3, but they are blacklisted anyway.
-		dev = devname[:3]
-		part = devname[3:]
-		for p in part:
-			if not p.isdigit():
+		if re.search(r"^mmcblk\d(?:p\d+$|$)", devname):
+			m = re.search(r"(?P<dev>mmcblk\d)p(?P<part>\d+)$", devname)
+			if m:
+				return m.group('dev'), m.group('part') and int(m.group('part')) or 0
+			else:
 				return devname, 0
-		return dev, part and int(part) or 0
+		else:
+			# this works for: sdaX, hdaX, sr0 (which is in fact dev="sr0", part=""). It doesn't work for other names like mtdblock3, but they are blacklisted anyway.
+			dev = devname[:3]
+			part = devname[3:]
+			for p in part:
+				if not p.isdigit():
+					return devname, 0
+			return dev, part and int(part) or 0
 
 	def getUserfriendlyDeviceName(self, dev, phys):
 		dev, part = self.splitDeviceName(dev)
@@ -1129,12 +1090,4 @@ class MkfsTask(Task.LoggingTask):
 
 
 harddiskmanager = HarddiskManager()
-
-def internalHDDNotSleeping():
-	if harddiskmanager.HDDCount():
-		for hdd in harddiskmanager.HDDList():
-			if ("pci" in hdd[1].phys_path or "ahci" in hdd[1].phys_path) and hdd[1].max_idle_time and not hdd[1].isSleeping():
-				return True
-	return False
-
 SystemInfo["ext4"] = isFileSystemSupported("ext4")

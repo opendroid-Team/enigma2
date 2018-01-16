@@ -11,7 +11,7 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 	def __init__(self, list, session = None):
 		GUIComponent.__init__(self)
 		self.l = eListboxPythonConfigContent()
-		seperation, = skin.parameters.get("ConfigListSeperator", (580, ))
+		seperation, = skin.parameters.get("ConfigListSeperator", (350, ))
 		self.l.setSeperation(seperation)
 		self.timer = eTimer()
 		self.list = list

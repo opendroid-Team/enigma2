@@ -4,13 +4,13 @@
 
 #include <lib/base/cfile.h>
 #include <lib/base/eerror.h>
-#include <lib/base/filepush.h>
 #include <lib/base/wrappers.h>
 #include <lib/dvb/cahandler.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/sec.h>
 #include <lib/dvb/specs.h>
+#include "filepush.h"
 
 #include <lib/dvb/fbc.h>
 
@@ -136,6 +136,8 @@ eDVBResourceManager::eDVBResourceManager()
 		m_boxtype = DM525;
 	else if (!strncmp(tmp, "dm900\n", rd))
 		m_boxtype = DM900;
+	else if (!strncmp(tmp, "dm920\n", rd))
+		m_boxtype = DM920;
 	else if (!strncmp(tmp, "Gigablue\n", rd))
 		m_boxtype = GIGABLUE;
 	else if (!strncmp(tmp, "gb800solo\n", rd))
@@ -189,7 +191,7 @@ eDVBResourceManager::eDVBResourceManager()
 	else if (!strncmp(tmp, "wetekhub\n", rd))
 		m_boxtype = WETEKHUB;
 	else {
-		eDebug("[eDVBResourceManager] boxtype detection via /proc/stb/info not possible... use fallback via demux count!\n");
+		eDebug("[eDVBResourceManager] boxtype detection via /proc/stb/info not possible... use fallback via demux count!");
 		if (m_demux.size() == 3)
 			m_boxtype = DM800;
 		else if (m_demux.size() < 5)
@@ -337,8 +339,8 @@ bool eDVBAdapterLinux::isusb(int nr)
 	{
 		return true;
 	}
-	snprintf(devicename, sizeof(devicename), "/sys/class/dvb/dvb%d.frontend0/device/ep_84", nr);
-	return ::access(devicename, X_OK) >= 0;
+	snprintf(devicename, sizeof(devicename), "/sys/class/dvb/dvb%d.frontend0/device/subsystem", nr);
+	return readLink(devicename).find("/usb") != std::string::npos;
 }
 
 DEFINE_REF(eDVBUsbAdapter);
@@ -461,7 +463,11 @@ eDVBUsbAdapter::eDVBUsbAdapter(int nr)
 	while (vtunerFd < 0)
 	{
 		snprintf(filename, sizeof(filename), "/dev/misc/vtuner%d", vtunerid);
-		if (::access(filename, F_OK) < 0) break;
+		if (::access(filename, F_OK) < 0)
+		{
+			snprintf(filename, sizeof(filename), "/dev/vtuner%d", vtunerid);
+			if (::access(filename, F_OK) < 0) break;
+		}
 		vtunerFd = open(filename, O_RDWR | O_CLOEXEC);
 		if (vtunerFd < 0)
 		{
@@ -630,7 +636,7 @@ void *eDVBUsbAdapter::vtunerPump()
 
 						if (pidcount > 1)
 						{
-							eDebug("[adenin]rmove PID %d(0x%04x)", pidList[i], pidList[i]);
+							//eDebug("[adenin]rmove PID %d(0x%04x)", pidList[i], pidList[i]);
 							::ioctl(demuxFd, DMX_REMOVE_PID, &pidList[i]);
 							pidcount--;
 						}
@@ -651,7 +657,7 @@ void *eDVBUsbAdapter::vtunerPump()
 
 						if (pidcount)
 						{
-							eDebug("[adenin]add PID %d(0x%04x)", message.pidlist[i], message.pidlist[i]);
+							//eDebug("[adenin]add PID %d(0x%04x)", message.pidlist[i], message.pidlist[i]);
 							::ioctl(demuxFd, DMX_ADD_PID, &message.pidlist[i]);
 							pidcount++;
 						}
@@ -2038,9 +2044,8 @@ static size_t diff_upto(off_t high, off_t low, size_t max)
 }
 
 	/* remember, this gets called from another thread. */
-void eDVBChannel::getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size)
+void eDVBChannel::getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size, int blocksize)
 {
-	const int blocksize = 188;
 	unsigned int max = align(1024*1024*1024, blocksize);
 	current_offset = align(current_offset, blocksize);
 
@@ -2374,6 +2379,16 @@ int eDVBChannel::reserveDemux()
 	return -1;
 }
 
+int eDVBChannel::getDvrId()
+{
+	ePtr<eDVBAllocatedDemux> dmx = m_decoder_demux ? m_decoder_demux : m_demux;
+	if (dmx)
+	{
+		return dmx->get().getDvrId();
+	}
+	return -1;
+}
+
 RESULT eDVBChannel::requestTsidOnid()
 {
 	if (!getDemux(m_tsid_onid_demux, 0))
@@ -2468,7 +2483,6 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 	if (m_pvr_thread)
 	{
 		m_pvr_thread->stop();
-		delete m_pvr_thread;
 		m_pvr_thread = 0;
 	}
 
@@ -2481,20 +2495,8 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 	m_source = source;
 	m_tstools.setSource(m_source, streaminfo_file);
 
-		/* DON'T EVEN THINK ABOUT FIXING THIS. FIX THE ATI SOURCES FIRST,
-		   THEN DO A REAL FIX HERE! */
-
 	if (m_pvr_fd_dst < 0)
 	{
-		/* (this codepath needs to be improved anyway.) */
-#ifdef HAVE_OLDPVR
-		m_pvr_fd_dst = open("/dev/misc/pvr", O_WRONLY);
-		if (m_pvr_fd_dst < 0)
-		{
-			eDebug("[eDVBChannel] can't open /dev/misc/pvr - %m"); // or wait for the driver to be improved.
-			return -ENODEV;
-		}
-#else
 #if defined(__sh__) // our pvr device is called dvr
 		char dvrDev[128];
 		int dvrIndex = m_mgr->m_adapter.begin()->getNumDemux() - 1;
@@ -2507,7 +2509,7 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			m_pvr_fd_dst = demux->get().openDVR(O_WRONLY);
 			if (m_pvr_fd_dst < 0)
 			{
-				eDebug("[eDVBChannel] can't open /dev/dvb/adapterX/dvrX - you need to buy the new(!) $$$ box! (%m)"); // or wait for the driver to be improved.
+				eDebug("[eDVBChannel] can't open /dev/dvb/adapterX/dvrX: %m");
 				return -ENODEV;
 			}
 		}
@@ -2516,7 +2518,6 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			eDebug("[eDVBChannel] no demux allocated yet.. so its not possible to open the dvr device!!");
 			return -ENODEV;
 		}
-#endif
 #endif
 	}
 
@@ -2541,7 +2542,6 @@ void eDVBChannel::stop()
 	if (m_pvr_thread)
 	{
 		m_pvr_thread->stop();
-		delete m_pvr_thread;
 		m_pvr_thread = 0;
 	}
 	if (m_pvr_fd_dst >= 0)

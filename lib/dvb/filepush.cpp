@@ -4,9 +4,21 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#if defined(__sh__) // this allows filesystem tasks to be prioritised
+#include <sys/vfs.h>
+#define USBDEVICE_SUPER_MAGIC 0x9fa2
+#define EXT2_SUPER_MAGIC      0xEF53
+#define EXT3_SUPER_MAGIC      0xEF53
+#define SMB_SUPER_MAGIC       0x517B
+#define NFS_SUPER_MAGIC       0x6969
+#define MSDOS_SUPER_MAGIC     0x4d44 /* MD */
+#endif
 //#define SHOW_WRITE_TIME
 
-eFilePushThread::eFilePushThread(int blocksize, size_t buffersize):
+DEFINE_REF(eFilePushThread);
+eFilePushThread::eFilePushThread(int io_prio_class, int io_prio_level, int blocksize, size_t buffersize)
+	:prio_class(io_prio_class),
+	 prio(io_prio_level),
 	 m_sg(NULL),
 	 m_stop(1),
 	 m_send_pvr_commit(0),
@@ -45,7 +57,7 @@ void eFilePushThread::thread()
 {
 	ignore_but_report_signals();
 	hasStarted(); /* "start()" blocks until we get here */
-	setIoPrio(IOPRIO_CLASS_BE, 0);
+	setIoPrio(prio_class, prio);
 	eDebug("[eFilePushThread] START thread");
 
 	do
@@ -56,10 +68,30 @@ void eFilePushThread::thread()
 	off_t current_span_offset = 0;
 	size_t current_span_remaining = 0;
 
+#if defined(__sh__)
+// opens video device for the reverse playback workaround
+// Changes in this file are cause e2 doesnt tell the player to play reverse
+	int fd_video = open("/dev/dvb/adapter0/video0", O_RDONLY);
+// Fix to ensure that event evtEOF is called at end of playbackl part 1/3
+	bool already_empty = false;
+#endif
+
 	while (!m_stop)
 	{
 		if (m_sg && !current_span_remaining)
 		{
+#if defined (__sh__) // tells the player to play in reverse
+#define VIDEO_DISCONTINUITY                   _IO('o', 84)
+#define DVB_DISCONTINUITY_SKIP                0x01
+#define DVB_DISCONTINUITY_CONTINUOUS_REVERSE  0x02
+			if ((m_sg->getSkipMode() != 0))
+			{
+				// inform the player about the jump in the stream data
+				// this only works if the video device allows the discontinuity ioctl in read-only mode (patched)
+				int param = DVB_DISCONTINUITY_SKIP; // | DVB_DISCONTINUITY_CONTINUOUS_REVERSE;
+				int rc = ioctl(fd_video, VIDEO_DISCONTINUITY, (void*)param);
+			}
+#endif
 			m_sg->getNextSourceSpan(m_current_position, bytes_read, current_span_offset, current_span_remaining, m_blocksize);
 			ASSERT(!(current_span_remaining % m_blocksize));
 			m_current_position = current_span_offset;
@@ -126,7 +158,19 @@ void eFilePushThread::thread()
 				{
 					case 0:
 						eDebug("[eFilePushThread] wait for driver eof timeout");
+#if defined(__sh__) // Fix to ensure that event evtEOF is called at end of playbackl part 2/3
+						if (already_empty)
+						{
+							break;
+						}
+						else
+						{
+							already_empty = true;
+							continue;
+						}
+#else
 						continue;
+#endif
 					case 1:
 						eDebug("[eFilePushThread] wait for driver eof ok");
 						break;
@@ -180,7 +224,15 @@ void eFilePushThread::thread()
 						break;
 					}
 					if (w < 0 && (errno == EINTR || errno == EAGAIN || errno == EBUSY))
+					{
+#if HAVE_CPULOADFIX
+						sleep(2);
+#endif
+#if HAVE_HISILICON
+						usleep(100000);
+#endif
 						continue;
+					}
 					eDebug("[eFilePushThread] write: %m");
 					sendEvent(evtWriteError);
 					break;
@@ -189,12 +241,18 @@ void eFilePushThread::thread()
 			}
 
 			eofcount = 0;
+#if defined(__sh__) // Fix to ensure that event evtEOF is called at end of playbackl part 3/3
+			already_empty = false;
+#endif
 			m_current_position += buf_end;
 			bytes_read += buf_end;
 			if (m_sg)
 				current_span_remaining -= buf_end;
 		}
 	}
+#if defined(__sh__) // closes video device for the reverse playback workaround
+	close(fd_video);
+#endif
 	sendEvent(evtStopped);
 
 	{ /* mutex lock scope */
@@ -285,12 +343,16 @@ void eFilePushThread::setScatterGather(iFilePushScatterGather *sg)
 
 void eFilePushThread::sendEvent(int evt)
 {
+	/* add a ref, to make sure the object is not destroyed while the messagepump contains unhandled messages */
+	AddRef();
 	m_messagepump.send(evt);
 }
 
 void eFilePushThread::recvEvent(const int &evt)
 {
 	m_event(evt);
+	/* release the ref which we grabbed in sendEvent() */
+	Release();
 }
 
 void eFilePushThread::filterRecordData(const unsigned char *data, int len)
@@ -319,6 +381,7 @@ void eFilePushThreadRecorder::thread()
 
 	/* we set the signal to not restart syscalls, so we can detect our signal. */
 	struct sigaction act;
+	memset(&act, 0, sizeof(act));
 	act.sa_handler = signal_handler; // no, SIG_IGN doesn't do it. we want to receive the -EINTR
 	act.sa_flags = 0;
 	sigaction(SIGUSR1, &act, 0);
@@ -337,6 +400,9 @@ void eFilePushThreadRecorder::thread()
 				break;
 			}
 			if (errno == EINTR || errno == EBUSY || errno == EAGAIN)
+#if HAVE_HISILICON
+				usleep(100000);
+#endif
 				continue;
 			if (errno == EOVERFLOW)
 			{

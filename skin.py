@@ -24,6 +24,8 @@ fonts = {
 }
 
 parameters = {}
+constant_widgets = {}
+variables = {}
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -106,6 +108,15 @@ addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 display_skin_id = 1
+if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+
+if getBoxType().startswith('dm'):
+	display_skin_id = 2
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "[Skin] display skin not found"
@@ -651,9 +662,30 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			try:
 				name = get("name")
 				value = get("value")
-				parameters[name] = "," in value and map(paramConvert, value.split(",")) or paramConvert(value)
+				if name.find('Font') != -1:
+					font = value.split(";")
+					if isinstance(font, list) and len(font) == 2:
+						parameters[name] = (str(font[0]), int(font[1]))
+				else:
+					parameters[name] = map(int, value.split(","))
 			except Exception, ex:
-				print "[Skin] bad parameter", ex
+				print "[SKIN] bad parameter", ex
+
+	for c in skin.findall("constant-widgets"):
+		for constant_widget in c.findall("constant-widget"):
+			get = constant_widget.attrib.get
+			name = get("name")
+			if name:
+				constant_widgets[name] = constant_widget
+
+	for c in skin.findall("variables"):
+		for parameter in c.findall("variable"):
+			get = parameter.attrib.get
+			name = get("name")
+			value = get("value")
+			x, y = value.split(',')
+			if value and name:
+				variables[name] = str(x) + "," + str(y)
 
 	for c in skin.findall("subtitles"):
 		from enigma import eSubtitleWidget

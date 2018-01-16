@@ -1,14 +1,16 @@
 #include <cstdio>
-#include <openssl/evp.h>
 
-#include <lib/base/httpstream.h>
+#include <lib/base/httpsstream.h>
 #include <lib/base/eerror.h>
 #include <lib/base/wrappers.h>
 #include <lib/base/nconfig.h> // access to python config
 
-DEFINE_REF(eHttpStream);
+// for shutdown
+#include <sys/socket.h>
 
-eHttpStream::eHttpStream()
+DEFINE_REF(eHttpsStream);
+
+eHttpsStream::eHttpsStream()
 {
 	streamSocket = -1;
 	connectionStatus = FAILED;
@@ -17,9 +19,12 @@ eHttpStream::eHttpStream()
 	partialPktSz = 0;
 	tmpBufSize = 32;
 	tmpBuf = (char*)malloc(tmpBufSize);
+
+	ctx = NULL;
+	ssl = NULL;
 }
 
-eHttpStream::~eHttpStream()
+eHttpsStream::~eHttpsStream()
 {
 	abort_badly();
 	kill();
@@ -27,8 +32,9 @@ eHttpStream::~eHttpStream()
 	close();
 }
 
-int eHttpStream::openUrl(const std::string &url, std::string &newurl)
+int eHttpsStream::openUrl(const std::string &url, std::string &newurl)
 {
+	int retval;
 	int port;
 	std::string hostname;
 	std::string uri = url;
@@ -41,10 +47,13 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 	char statusmsg[100];
 	bool playlist = false;
 	bool contenttypeparsed = false;
+	//std::string PREFERRED_CIPHERS = "HIGH:!aNULL:!kRSA:!PSK:!SRP:!MD5:!RC4";
+	std::string PREFERRED_CIPHERS = "ALL:!aNULL:!eNULL";
+	const char *errstr = NULL;
 
 	close();
 
-	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;opendroid;;;)";
+	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenPLi;;;)";
 	std::string extra_headers = "";
 	size_t pos = uri.find('#');
 	if (pos != std::string::npos)
@@ -64,38 +73,22 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 		}
 	}
 
-	int pathindex = uri.find("/", 7);
+	int pathindex = uri.find("/", 8);
 	if (pathindex > 0)
 	{
-		hostname = uri.substr(7, pathindex - 7);
+		hostname = uri.substr(8, pathindex - 8);
 		uri = uri.substr(pathindex, uri.length() - pathindex);
 	}
 	else
 	{
-		hostname = uri.substr(7, uri.length() - 7);
+		hostname = uri.substr(8, uri.length() - 8);
 		uri = "/";
 	}
 	int authenticationindex = hostname.find("@");
 	if (authenticationindex > 0)
 	{
-		BIO *mbio, *b64bio, *bio;
-		char *p = (char*)NULL;
-		int length = 0;
-		authorizationData = hostname.substr(0, authenticationindex);
+		authorizationData =  base64encode(hostname.substr(0, authenticationindex));
 		hostname = hostname.substr(authenticationindex + 1);
-		mbio = BIO_new(BIO_s_mem());
-		b64bio = BIO_new(BIO_f_base64());
-		bio = BIO_push(b64bio, mbio);
-		BIO_write(bio, authorizationData.c_str(), authorizationData.length());
-		BIO_flush(bio);
-		length = BIO_ctrl(mbio, BIO_CTRL_INFO, 0, (char*)&p);
-		authorizationData = "";
-		if (p && length > 0)
-		{
-			/* base64 output contains a linefeed, which we ignore */
-			authorizationData.append(p, length - 1);
-		}
-		BIO_free_all(bio);
 	}
 	int customportindex = hostname.find(":");
 	if (customportindex > 0)
@@ -113,9 +106,74 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 		port = 80;
 	}
 
+	ctx = initCTX();
+	if (!ctx)
+	{
+		eDebug("[eHttpsStream] initCTX failed");
+		goto error;
+	}
+
 	streamSocket = Connect(hostname.c_str(), port, 10);
 	if (streamSocket < 0)
+	{
+		eDebug("[eHttpsStream] Connect failed on %s", hostname.c_str());
 		goto error;
+	}
+
+	ssl = SSL_new(ctx);		/* create new SSL connection state */
+	if (!ssl)
+	{
+		eDebug("[eHttpsStream] SSL_new failed");
+		goto error;
+	}
+
+	/* set preffered ciphers */
+	if (!SSL_set_cipher_list(ssl, PREFERRED_CIPHERS.c_str()))
+	{
+		eDebug("[eHttpsStream] SSL_set_cipher_list failed");
+		goto error;
+	}
+
+	/* initialize TLS SNI extension when enabled */
+#ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+	if (!SSL_set_tlsext_host_name(ssl, hostname.c_str()))
+	{
+		eDebug("[eHttpsStream] SSL_set_tlsext_host_name failed");
+		goto error;
+	}
+#endif
+
+	/* attach the socket descriptor */
+	if (!SSL_set_fd(ssl, streamSocket))
+	{
+		eDebug("[eHttpsStream] SSL_set_fd failed");
+		goto error;
+	}
+
+	retval = SSL_connect(ssl);
+	if (retval <= 0)
+	{
+		errstr = ERR_reason_error_string(ERR_get_error());
+		eDebug("[eHttpsStream] SSL handshake failed: %s", errstr != NULL ? errstr : "unknown SSL error");
+		goto error;
+	}
+
+	/* TODO Enigma2 settings should allow self signed certificates or error ones */
+	retval = SSL_get_verify_result(ssl);
+	if (retval != X509_V_OK)
+	{
+		if (retval == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT || retval == X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN)
+		{
+			eWarning("[eHttpsStream] Self Signed Certificate!");
+		}
+		else
+		{
+			eWarning("[eHttpsStream] Certificate verification Error %ld", SSL_get_verify_result(ssl));
+		}
+	}
+
+	eDebug("[eHttpsStream] Connected with %s encryption", SSL_get_cipher(ssl));
+	showCerts(ssl);
 
 	request = "GET ";
 	request.append(uri).append(" HTTP/1.1\r\n");
@@ -152,12 +210,12 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 		{
 			if (name.compare("User-Agent") == 0)
 				continue;
-			eDebug("[eHttpStream] setting extra-header '%s:%s'", name.c_str(), value.c_str());
+			eDebug("[eHttpsStream] setting extra-header '%s:%s'", name.c_str(), value.c_str());
 			request.append(name).append(": ").append(value).append("\r\n");
 		}
 		else
 		{
-			eDebug("[eHttpStream] Invalid header format %s", extra_headers.c_str());
+			eDebug("[eHttpsStream] Invalid header format %s", extra_headers.c_str());
 			break;
 		}
 	}
@@ -166,24 +224,24 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 	request.append("Connection: close\r\n");
 	request.append("\r\n");
 
-	writeAll(streamSocket, request.c_str(), request.length());
+	SSL_writeAll(ssl, request.c_str(), request.length());
 
 	linebuf = (char*)malloc(buflen);
 
-	result = readLine(streamSocket, &linebuf, &buflen);
+	result = SSL_readLine(ssl, &linebuf, &buflen);
 	if (result <= 0)
 		goto error;
 
 	result = sscanf(linebuf, "%99s %d %99s", proto, &statuscode, statusmsg);
 	if (result != 3 || (statuscode != 200 && statuscode != 206 && statuscode != 302))
 	{
-		eDebug("[eHttpStream] %s: wrong http response code: %d", __func__, statuscode);
+		eDebug("[eHttpsStream] %s: wrong http response code: %d", __func__, statuscode);
 		goto error;
 	}
 
 	while (1)
 	{
-		result = readLine(streamSocket, &linebuf, &buflen);
+		result = SSL_readLine(ssl, &linebuf, &buflen);
 		if (!contenttypeparsed)
 		{
 			char contenttype[33];
@@ -201,10 +259,10 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 				continue;
 			}
 		}
-		if (playlist && !strncasecmp(linebuf, "http://", 7))
+		if (playlist && !strncasecmp(linebuf, "https://", 8))
 		{
 			newurl = linebuf;
-			eDebug("[eHttpStream] %s: playlist entry: %s", __func__, newurl.c_str());
+			eDebug("[eHttpsStream] %s: playlist entry: %s", __func__, newurl.c_str());
 			break;
 		}
 		if (((statuscode == 301) || (statuscode == 302) || (statuscode == 303) || (statuscode == 307) || (statuscode == 308)) &&
@@ -213,7 +271,7 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 			newurl = &linebuf[10];
 			if (!extra_headers.empty())
 				newurl.append("#").append(extra_headers);
-			eDebug("[eHttpStream] %s: redirecting to: %s", __func__, newurl.c_str());
+			eDebug("[eHttpsStream] %s: redirecting to: %s", __func__, newurl.c_str());
 			break;
 		}
 
@@ -230,13 +288,13 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 	free(linebuf);
 	return 0;
 error:
-	eDebug("[eHttpStream] %s failed", __func__);
+	eDebug("[eHttpsStream] %s failed", __func__);
 	free(linebuf);
 	close();
 	return -1;
 }
 
-int eHttpStream::open(const char *url)
+int eHttpsStream::open(const char *url)
 {
 	streamUrl = url;
 	/*
@@ -245,12 +303,12 @@ int eHttpStream::open(const char *url)
 	 * Spawn a new thread to establish the connection.
 	 */
 	connectionStatus = BUSY;
-	eDebug("[eHttpStream] Start thread");
+	eDebug("[eHttpsStream] Start thread");
 	run();
 	return 0;
 }
 
-void eHttpStream::thread()
+void eHttpsStream::thread()
 {
 	hasStarted();
 	if (eConfigManager::getConfigBoolValue("config.usage.remote_fallback_enabled", false))
@@ -262,14 +320,14 @@ void eHttpStream::thread()
 		if (openUrl(currenturl, newurl) < 0)
 		{
 			/* connection failed */
-			eDebug("[eHttpStream] Thread end NO connection");
+			eDebug("[eHttpsStream] Thread end NO connection");
 			connectionStatus = FAILED;
 			return;
 		}
 		if (newurl == "")
 		{
 			/* we have a valid stream connection */
-			eDebug("[eHttpStream] Thread end connection");
+			eDebug("[eHttpsStream] Thread end connection");
 			connectionStatus = CONNECTED;
 			return;
 		}
@@ -279,14 +337,36 @@ void eHttpStream::thread()
 		newurl = "";
 	}
 	/* too many redirect / playlist levels */
-	eDebug("[eHttpStream] hread end NO connection");
+	eDebug("[eHttpsStream] thread end NO connection");
 	connectionStatus = FAILED;
 	return;
 }
 
-int eHttpStream::close()
+int eHttpsStream::close()
 {
 	int retval = -1;
+
+	if (ssl)
+	{
+		if (!SSL_shutdown(ssl))	/* try to shutdown up to 2 times */
+		{
+			if (streamSocket >= 0)
+			{
+				/* send TCP FIN to force shutdown */
+				shutdown(streamSocket, SHUT_WR);
+			}
+			SSL_shutdown(ssl);
+		}
+		SSL_free(ssl);			/* release connection state */
+		ssl = NULL;
+	}
+
+	if (ctx)
+	{
+		SSL_CTX_free(ctx);		/* release context */
+		ctx = NULL;
+	}
+
 	if (streamSocket >= 0)
 	{
 		retval = ::close(streamSocket);
@@ -295,7 +375,7 @@ int eHttpStream::close()
 	return retval;
 }
 
-ssize_t eHttpStream::syncNextRead(void *buf, ssize_t length)
+ssize_t eHttpsStream::syncNextRead(void *buf, ssize_t length)
 {
 	unsigned char *b = (unsigned char*)buf;
 	unsigned char *e = b + length;
@@ -327,7 +407,7 @@ ssize_t eHttpStream::syncNextRead(void *buf, ssize_t length)
 	return (length - partialPktSz);
 }
 
-ssize_t eHttpStream::httpChunkedRead(void *buf, size_t count)
+ssize_t eHttpsStream::httpChunkedRead(void *buf, size_t count)
 {
 	ssize_t ret = -1;
 	size_t total_read = partialPktSz;
@@ -341,7 +421,7 @@ ssize_t eHttpStream::httpChunkedRead(void *buf, size_t count)
 
 	if (!isChunked)
 	{
-		ret = timedRead(streamSocket,((char*)buf) + total_read , count - total_read, 5000, 100);
+		ret = SSL_singleRead(ssl,((char*)buf) + total_read , count - total_read);
 		if (ret > 0)
 		{
 			ret += total_read;
@@ -356,7 +436,7 @@ ssize_t eHttpStream::httpChunkedRead(void *buf, size_t count)
 			{
 				do
 				{
-					ret = readLine(streamSocket, &tmpBuf, &tmpBufSize);
+					ret = SSL_readLine(ssl, &tmpBuf, &tmpBufSize);
 					if (ret < 0) return -1;
 				} while (!*tmpBuf && ret > 0); /* skip CR LF from last chunk */
 				if (ret == 0)
@@ -370,7 +450,7 @@ ssize_t eHttpStream::httpChunkedRead(void *buf, size_t count)
 				to_read = currentChunkSize;
 
 			// do not wait too long if we have something in the buffer already
-			ret = timedRead(streamSocket, ((char*)buf) + total_read, to_read, ((total_read)? 100 : 5000), 100);
+			ret = SSL_singleRead(ssl, ((char*)buf) + total_read, to_read);
 			if (ret <= 0)
 				break;
 			currentChunkSize -= ret;
@@ -384,7 +464,7 @@ ssize_t eHttpStream::httpChunkedRead(void *buf, size_t count)
 	return ret;
 }
 
-ssize_t eHttpStream::read(off_t offset, void *buf, size_t count)
+ssize_t eHttpsStream::read(off_t offset, void *buf, size_t count)
 {
 	if (connectionStatus == BUSY)
 		return 0;
@@ -393,19 +473,154 @@ ssize_t eHttpStream::read(off_t offset, void *buf, size_t count)
 	return httpChunkedRead(buf, count);
 }
 
-int eHttpStream::valid()
+int eHttpsStream::valid()
 {
 	if (connectionStatus == BUSY)
 		return 0;
 	return streamSocket >= 0;
 }
 
-off_t eHttpStream::length()
+off_t eHttpsStream::length()
 {
 	return (off_t)-1;
 }
 
-off_t eHttpStream::offset()
+off_t eHttpsStream::offset()
 {
 	return 0;
+}
+
+SSL_CTX* eHttpsStream::initCTX()
+{
+	const SSL_METHOD *method;
+	SSL_CTX *ctx;
+
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+	if (!OPENSSL_init_ssl(OPENSSL_INIT_SSL_DEFAULT, NULL))
+	{
+		eDebug("[eHttpsStream] Error initializing OpenSSL");
+		return NULL;
+	}
+#else
+	SSL_library_init();
+	SSL_load_error_strings();
+	OpenSSL_add_all_algorithms();
+#endif
+
+	method = SSLv23_method();		/* Create new client-method instance TODO rename to TLS_method */
+	if (!method)
+	{
+		eDebug("[eHttpsStream] Error initializing OpenSSL");
+		return NULL;
+	}
+
+	ctx = SSL_CTX_new(method);		/* Create new context */
+	if (!ctx)
+	{
+		eDebug("[eHttpsStream] Error initializing OpenSSL");
+		return NULL;
+	}
+
+	if (!SSL_CTX_load_verify_locations(ctx, NULL, "/etc/ssl/certs"))
+	{
+		eDebug("[eHttpsStream] Error loading trust store");
+	}
+
+	/* TODO Add SSL_CTX_use_certificate_file controller by Enigma2 to allow client certificates */
+#if 0
+	if (!SSL_CTX_use_certificate_file(ctx, "/etc/enigma2/certificate.pem", SSL_FILETYPE_PEM))
+	{
+		eDebug("[eHttpsStream] Error loading client certificate");
+	}
+	SSL_CTX_use_PrivateKey_file(ctx, "/etc/enigma2/key.pem", SSL_FILETYPE_PEM);
+#endif
+
+	const long flags = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION;
+	SSL_CTX_set_options(ctx, flags);	/* Allow only TLS */
+
+	return ctx;
+}
+
+void eHttpsStream::showCerts(SSL *ssl)
+{
+	X509 *cert;
+	char *line;
+
+	cert = SSL_get_peer_certificate(ssl);	/* get the server's certificate */
+	if (cert)
+	{
+		eDebug("[eHttpsStream] Show Server Sertificates");
+		line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+		eDebug("[eHttpsStream] Subject: %s", line);
+		free(line); /* free the malloc'ed string */
+		line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+		eDebug("[eHttpsStream] Issuer: %s", line);
+		free(line); /* free the malloc'ed string */
+		X509_free(cert); /* free the malloc'ed certificate copy */
+	}
+	else
+	{
+		eWarning("[eHttpsStream] No certificates!");
+	}
+}
+
+ssize_t eHttpsStream::SSL_writeAll(SSL *ssl, const void *buf, size_t count)
+{
+	int retval;
+	char *ptr = (char*)buf;
+	size_t handledcount = 0;
+	while (handledcount < count)
+	{
+		retval = SSL_write(ssl, &ptr[handledcount], count - handledcount);
+
+		if (retval == 0) return -1;
+		if (retval < 0)
+		{
+			if (errno == EINTR) continue;
+			eDebug("[eHttpsStream] SSL_writeAll error: %m");
+			return retval;
+		}
+		handledcount += retval;
+	}
+	return handledcount;
+}
+
+ssize_t eHttpsStream::SSL_singleRead(SSL *ssl, void *buf, size_t count)
+{
+	int retval;
+	while (1)
+	{
+		retval = SSL_read(ssl, buf, count);
+		if (retval < 0)
+		{
+			if (errno == EINTR) continue;
+			eDebug("[eHttpsStream] singleRead error: %m");
+		}
+		return retval;
+	}
+}
+
+ssize_t eHttpsStream::SSL_readLine(SSL *ssl, char** buffer, size_t* bufsize)
+{
+	size_t i = 0;
+	int result;
+	while (1)
+	{
+		if (i >= *bufsize)
+		{
+			char *newbuf = (char*)realloc(*buffer, (*bufsize)+1024);
+			if (newbuf == NULL)
+				return -ENOMEM;
+			*buffer = newbuf;
+			*bufsize = (*bufsize) + 1024;
+		}
+		result = SSL_singleRead(ssl, (*buffer) + i, 1);
+		if (result <= 0 || (*buffer)[i] == '\n')
+		{
+			(*buffer)[i] = '\0';
+			return result <= 0 ? -1 : i;
+		}
+		if ((*buffer)[i] != '\r') i++;
+	}
+	return -1;
 }
