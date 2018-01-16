@@ -321,7 +321,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					# country/region tier one
 					if self.cableCountriesEntry is None:
 						cablecountrycodelist = nimmanager.getCablesCountrycodeList()
-#						cablecountrycode = nimmanager.getCableCountrycode(self.slotid)
+						cablecountrycode = nimmanager.getCableCountrycode(self.slotid)
 						default = cablecountrycode in cablecountrycodelist and cablecountrycode or None
 						choices = [("all", _("All"))]+sorted([(x, self.countrycodeToCountry(x)) for x in cablecountrycodelist], key=lambda listItem: listItem[1])
 						self.cableCountries = ConfigSelection(default = default, choices = choices)

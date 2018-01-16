@@ -13,6 +13,10 @@ from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Components.RcModel import rc_model
 from boxbranding import getBoxType
+config.vfd = ConfigSubsection()
+config.vfd.show = ConfigSelection([("skin_text.xml", _("Channel Name")), ("skin_text_clock.xml", _("Clock"))], "skin_text.xml")
+if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
+	config.vfd.show = ConfigNothing()
 colorNames = {}
 switchPixmap = {}  # dict()
 
