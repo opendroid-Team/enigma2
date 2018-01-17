@@ -1,4 +1,6 @@
 from Screen import Screen
+from Screens.MessageBox import MessageBox
+from Components.config import config
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
@@ -51,8 +53,7 @@ class About(Screen):
 		AboutText = ""
 		self["lab2"] = StaticText(_("Support:") + " www.droidsat.org")
 		AboutText += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
-		#AboutText += _("Boxtype:\t%s\n") % getBoxType()
-
+		AboutText += _("OEM Model:\t\t%s\n") % getMachineBuild()
 		if path.exists('/proc/stb/info/chipset'):
 			AboutText += _("Chipset:\tBCM%s") % about.getChipSetString() + "\n"
 
@@ -79,23 +80,31 @@ class About(Screen):
 		except:
 			BootLoaderVersion = 0
 
-		if getMachineBuild() in ('vusolo4k','vusolo4k','vuultimo4k'):
+		if path.exists('/proc/stb/info/chipset'):
+			AboutText += _("Chipset:\t%s") % about.getChipSetString() + "\n"
+
+		cpuMHz = ""
+		if getMachineBuild() in ('vusolo4k','vuultimo4k','vuzero4k'):
+			cpuMHz = "   (1,5 GHz)"
+		elif getMachineBuild() in ('formuler1tc','formuler1', 'triplex', 'tiviaraplus'):
 			cpuMHz = "   (1,5 GHz)"
 	        elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u5','u5pvr'):
+		elif getMachineBuild() in ('u5','u5pvr','h9'):
 			cpuMHz = "   (1,6 GHz)"
+		elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
+			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
 				import binascii
 				f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
 				clockfrequency = f.read()
 				f.close()
-				cpuMHz = "%s MHz" % str(round(int(binascii.hexlify(clockfrequency), 16)/1000000,1))
+				cpuMHz = "   (%s MHz)" % str(round(int(binascii.hexlify(clockfrequency), 16)/1000000,1))
 			except:
-				cpuMHz = "1,7 GHz"
+				cpuMHz = "   (1,7 GHz)"
 		else:
 			if path.exists('/proc/cpuinfo'):
 				f = open('/proc/cpuinfo', 'r')
@@ -237,11 +246,14 @@ class Devices(Screen):
 		self["nims"] = StaticText()
 		self["hdd"] = StaticText()
 		self["mounts"] = StaticText()
+		self["allinonedevices"] = ScrollLabel()
 		self.list = []
 		self.activityTimer = eTimer()
 		self.activityTimer.timeout.get().append(self.populate2)
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "TimerEditActions"],
 			{
+				"up": self["allinonedevices"].pageUp,
+				"down": self["allinonedevices"].pageDown,
 				"cancel": self.close,
 				"ok": self.close,
 			})
@@ -254,6 +266,7 @@ class Devices(Screen):
 		self["nims"].setText(scanning)
 		self["hdd"].setText(scanning)
 		self['mounts'].setText(scanning)
+		self['allinonedevices'].setText(scanning)
 		self.activityTimer.start(1)
 
 	def populate2(self):
@@ -317,6 +330,12 @@ class Devices(Screen):
 			list2.append(device)
 		self.list = '\n'.join(self.list)
 		self["hdd"].setText(self.list)
+		self["allinonedevices"].setText(
+			self["TunerHeader"].getText() + "\n\n" +
+			self["nims"].getText() + "\n\n" +
+			self["HDDHeader"].getText() + "\n\n" +
+			self["hdd"].getText() + "\n\n"
+			)
 
 		self.Console.ePopen("df -mh | grep -v '^Filesystem'", self.Stage1Complete)
 
@@ -347,6 +366,12 @@ class Devices(Screen):
 			self["mounts"].setText(self.mountinfo)
 		else:
 			self["mounts"].setText(_('none'))
+
+		self["allinonedevices"].setText(
+			self["allinonedevices"].getText() +
+			self["MountsHeader"].getText() + "\n\n" +
+			self["mounts"].getText()
+			)
 		self["actions"].setEnabled(True)
 
 	def createSummary(self):
@@ -502,6 +527,15 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += _("MAC:") + "\t" + wlan0['hwaddr'] + "\n"
 			self.iface = 'wlan0'
 
+		wlan1 = about.getIfConfig('wlan1')
+		if wlan1.has_key('addr'):
+			self.AboutText += _("IP:") + "\t" + wlan1['addr'] + "\n"
+			if wlan1.has_key('netmask'):
+				self.AboutText += _("Netmask:") + "\t" + wlan1['netmask'] + "\n"
+			if wlan1.has_key('hwaddr'):
+				self.AboutText += _("MAC:") + "\t" + wlan1['hwaddr'] + "\n"
+			self.iface = 'wlan1'
+
 		rx_bytes, tx_bytes = about.getIfTransferredData(self.iface)
 		self.AboutText += "\n" + _("Bytes received:") + "\t" + rx_bytes + "\n"
 		self.AboutText += _("Bytes sent:") + "\t" + tx_bytes + "\n"
@@ -523,22 +557,22 @@ class SystemNetworkInfo(Screen):
 		if data is not None:
 			if data is True:
 				if status is not None:
-					if self.iface == 'wlan0' or self.iface == 'ra0':
+					if self.iface == 'wlan0' or self.iface == 'wlan1' or self.iface == 'ra0':
 						if status[self.iface]["essid"] == "off":
 							essid = _("No Connection")
 						else:
-							essid = status[self.iface]["essid"]
+							essid = str(status[self.iface]["essid"])
 						if status[self.iface]["accesspoint"] == "Not-Associated":
 							accesspoint = _("Not-Associated")
 							essid = _("No Connection")
 						else:
-							accesspoint = status[self.iface]["accesspoint"]
+							accesspoint = str(status[self.iface]["accesspoint"])
 						if self.has_key("BSSID"):
 							self.AboutText += _('Accesspoint:') + '\t' + accesspoint + '\n'
 						if self.has_key("ESSID"):
 							self.AboutText += _('SSID:') + '\t' + essid + '\n'
 
-						quality = status[self.iface]["quality"]
+						quality = str(status[self.iface]["quality"])
 						if self.has_key("quality"):
 							self.AboutText += _('Link Quality:') + '\t' + quality + '\n'
 
@@ -549,7 +583,7 @@ class SystemNetworkInfo(Screen):
 						if self.has_key("bitrate"):
 							self.AboutText += _('Bitrate:') + '\t' + bitrate + '\n'
 
-						signal = status[self.iface]["signal"]
+						signal = str(status[self.iface]["signal"])
 						if self.has_key("signal"):
 							self.AboutText += _('Signal Strength:') + '\t' + signal + '\n'
 
@@ -627,7 +661,7 @@ class SystemNetworkInfo(Screen):
 class AboutSummary(Screen):
 	def __init__(self, session, parent):
 		Screen.__init__(self, session, parent = parent)
-		self["selected"] = StaticText("OPD:" + getImageVersion())
+		self["selected"] = StaticText("OPD-Team:" + getImageVersion())
 
 		AboutText = _("Model: %s %s\n") % (getMachineBrand(), getMachineName())
 
@@ -712,8 +746,12 @@ class ViewGitLog(Screen):
 		except:
 			print "there is a problem with reading log file"
 		try:
-			self['title_summary'].setText(summarytext[0] + ':')
-			self['text_summary'].setText(summarytext[1])
+			if self.logtype == 'e2':
+				self['title_summary'].setText(_("E2 Log"))
+				self['text_summary'].setText(_("Enigma2 Changes"))
+			else:
+				self['title_summary'].setText(_("OE Log"))
+				self['text_summary'].setText(_("OE Changes"))
 		except:
 			self['title_summary'].setText("")
 			self['text_summary'].setText("")
@@ -779,9 +817,13 @@ class CommitInfo(Screen):
 
 		self["key_red"] = Button(_("Cancel"))
 
+		try:
+			branch = "?sha=" + "-".join(about.getEnigmaVersionString().split("-")[3:])
+		except:
+			branch = ""
 		self.project = 0
 		self.projects = [
-			("https://api.github.com/repos/opendroid-Team/enigma2/commits", "enigma2"),
+			("https://api.github.com/repos/opendroid-Team/enigma2/commits" + branch, "enigma2"),
 			("https://api.github.com/repos/opendroid-Team/skins-oDreamy-FHD/commits", "oDreamy-FHD"),
 		]
 		self.cachedProjects = {}
@@ -853,10 +895,11 @@ class MemoryInfo(Screen):
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
 
-		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not important."))
+		self["params"] = MemoryInfoSkinParams()
 
-		Typ = _("%s  ") % (getMachineName())
-		self.setTitle(Typ + "[" + (_("Memory Info"))+ "]")
+		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not relevant.\nDon't panic please when you see values being displayed that you think look suspicious!"))
+
+		self.setTitle(_("Memory Info"))
 		self.onLayoutFinish.append(self.getMemoryInfo)
 
 	def getMemoryInfo(self):
