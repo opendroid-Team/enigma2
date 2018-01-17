@@ -1,5 +1,5 @@
 import Screens.InfoBar
-from enigma import eServiceReference, eTimer
+from enigma import eServiceReference
 
 from Screens.Screen import Screen
 from Components.ServiceScan import ServiceScan as CScan
@@ -9,6 +9,8 @@ from Components.ActionMap import ActionMap
 from Components.FIFOList import FIFOList
 from Components.Sources.FrontendInfo import FrontendInfo
 from Components.config import config
+from Components.PluginComponent import plugins
+from Plugins.Plugin import PluginDescriptor
 
 
 class ServiceScanSummary(Screen):
@@ -34,27 +36,8 @@ class ServiceScanSummary(Screen):
 
 class ServiceScan(Screen):
 
-	def up(self):
-		self["servicelist"].up()
-		selectedService = self["servicelist"].getCurrentSelection()
-		if selectedService:
-			self.session.summary.updateService(selectedService[0])
-
-	def down(self):
-		self["servicelist"].down()
-		selectedService = self["servicelist"].getCurrentSelection()
-		if selectedService:
-			self.session.summary.updateService(selectedService[0])
-
 	def ok(self):
 		if self["scan"].isDone():
-			try:
-				from Plugins.SystemPlugins.LCNScanner.plugin import LCNBuildHelper
-				lcn = LCNBuildHelper()
-				lcn.buildAfterScan()
-			except Exception, e:
-				print e
-
 			if self.currentInfobar.__class__.__name__ == "InfoBar":
 				selectedService = self["servicelist"].getCurrentSelection()
 				if selectedService and self.currentServiceList is not None:
@@ -118,8 +101,6 @@ class ServiceScan(Screen):
 
 		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
 		{
-			"up": self.up,
-			"down": self.down,
 			"ok": self.ok,
 			"save": self.ok,
 			"cancel": self.cancel,
@@ -127,21 +108,15 @@ class ServiceScan(Screen):
 		}, -2)
 		self.setTitle(_("Service scan"))
 		self.onFirstExecBegin.append(self.doServiceScan)
-		self.scanTimer = eTimer()
-		self.scanTimer.callback.append(self.scanPoll)
-
-	def scanPoll(self):
-		if self["scan"].isDone():
-			self.scanTimer.stop()
-			self["servicelist"].moveToIndex(0)
-			selectedService = self["servicelist"].getCurrentSelection()
-			if selectedService:
-				self.session.summary.updateService(selectedService[0])
+		self.onClose.append(self.doPluginCB)
+	
+	def doPluginCB(self):
+		for p in plugins.getPlugins(PluginDescriptor.WHERE_SERVICESCAN):
+			p()
 
 	def doServiceScan(self):
 		self["servicelist"].len = self["servicelist"].instance.size().height() / self["servicelist"].l.getItemSize().height()
 		self["scan"] = CScan(self["scan_progress"], self["scan_state"], self["servicelist"], self["pass"], self.scanList, self["network"], self["transponder"], self["FrontendInfo"], self.session.summary)
-		self.scanTimer.start(250)
 
 	def createSummary(self):
 		return ServiceScanSummary

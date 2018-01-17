@@ -2,19 +2,16 @@ from enigma import eConsoleAppContainer
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.ScrollLabel import ScrollLabel
-from Components.Sources.StaticText import StaticText
 
 class Console(Screen):
-	def __init__(self, session, title = "Console", cmdlist = None, finishedCallback = None, closeOnSuccess = False, showStartStopText=True):
+	def __init__(self, session, title = "Console", cmdlist = None, finishedCallback = None, closeOnSuccess = False):
 		Screen.__init__(self, session)
 
 		self.finishedCallback = finishedCallback
 		self.closeOnSuccess = closeOnSuccess
-		self.showStartStopText = showStartStopText
 		self.errorOcurred = False
 
 		self["text"] = ScrollLabel("")
-		self["summary_description"] = StaticText("")
 		self["actions"] = ActionMap(["WizardActions", "DirectionActions"],
 		{
 			"ok": self.cancel,
@@ -23,7 +20,7 @@ class Console(Screen):
 			"down": self["text"].pageDown
 		}, -1)
 
-		self.cmdlist = isinstance(cmdlist, list) and cmdlist or [cmdlist]
+		self.cmdlist = cmdlist
 		self.newtitle = title
 
 		self.onShown.append(self.updateTitle)
@@ -38,10 +35,8 @@ class Console(Screen):
 		self.setTitle(self.newtitle)
 
 	def startRun(self):
-		if self.showStartStopText:
-			self["text"].setText(_("Execution progress:") + "\n\n")
-		self["summary_description"].setText(_("Execution progress:"))
-		print "Console: executing in run", self.run, " the command:", self.cmdlist[self.run]
+		self["text"].setText(_("Execution progress:") + "\n\n")
+		print "[Console] executing in run", self.run, " the command:", self.cmdlist[self.run]
 		if self.container.execute(self.cmdlist[self.run]): #start of container application failed...
 			self.runFinished(-1) # so we must call runFinished manual
 
@@ -54,11 +49,7 @@ class Console(Screen):
 				self.runFinished(-1) # so we must call runFinished manual
 		else:
 			lastpage = self["text"].isAtLastPage()
-			self["summary_description"].setText(_("Execution finished!!"))
-			if self.showStartStopText:
-				self["text"].appendText(_("Execution finished!!"))
-			if lastpage:
-				self["text"].lastPage()
+			self["text"].appendText(_("Execution finished!!"))
 			if self.finishedCallback is not None:
 				self.finishedCallback()
 			if not self.errorOcurred and self.closeOnSuccess:
@@ -71,7 +62,4 @@ class Console(Screen):
 			self.container.dataAvail.remove(self.dataAvail)
 
 	def dataAvail(self, str):
-		lastpage = self["text"].isAtLastPage()
-		self["text"].setText(self["text"].getText() + str)
-		if lastpage:
-			self["text"].lastPage()
+		self["text"].appendText(str)

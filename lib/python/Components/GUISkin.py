@@ -1,7 +1,6 @@
 from GUIComponent import GUIComponent
 from skin import applyAllAttributes
 from Tools.CList import CList
-from Components.config import config
 from Sources.StaticText import StaticText
 
 class GUISkin:
@@ -20,7 +19,7 @@ class GUISkin:
 				if not updateonly:
 					val.GUIcreate(parent)
 				if not val.applySkin(desktop, self):
-					print "warning, skin is missing renderer", val, "in", self
+					print "[GUISkin] warning, skin is missing renderer", val, "in", self
 
 		for key in self:
 			val = self[key]
@@ -30,10 +29,10 @@ class GUISkin:
 				depr = val.deprecationInfo
 				if val.applySkin(desktop, self):
 					if depr:
-						print "WARNING: OBSOLETE COMPONENT '%s' USED IN SKIN. USE '%s' INSTEAD!" % (key, depr[0])
-						print "OBSOLETE COMPONENT WILL BE REMOVED %s, PLEASE UPDATE!" % (depr[1])
+						print "[GUISkin] WARNING: OBSOLETE COMPONENT '%s' USED IN SKIN. USE '%s' INSTEAD!" % (key, depr[0])
+						print "[GUISkin] OBSOLETE COMPONENT WILL BE REMOVED %s, PLEASE UPDATE!" % (depr[1])
 				elif not depr:
-					print "warning, skin is missing element", key, "in", self
+					print "[GUISkin] warning, skin is missing element", key, "in", self
 
 		for w in self.additionalWidgets:
 			if not updateonly:
@@ -59,19 +58,19 @@ class GUISkin:
 		return None
 
 	def addSummary(self, summary):
-		self.summaries.append(summary)
+		if summary is not None:
+			self.summaries.append(summary)
 
 	def removeSummary(self, summary):
-		self.summaries.remove(summary)
+		if summary is not None:
+			self.summaries.remove(summary)
 
 	def setTitle(self, title):
-		try:
-			if self.instance:
-				self.instance.setTitle(title)
-			self["Title"].text = title
-			self.summaries.setTitle(title)
-		except:
-			pass
+		if self.instance:
+			self.instance.setTitle(title)
+		self["Title"].text = title
+		self.summaries.setTitle(title)
+
 	def getTitle(self):
 		return self["Title"].text
 
@@ -82,7 +81,7 @@ class GUISkin:
 
 	def applySkin(self):
 		z = 0
-		baseres = (1280, 720) # FIXME: a skin might have set another resolution, which should be the base res
+		baseres = (720, 576) # FIXME: a skin might have set another resolution, which should be the base res
 		idx = 0
 		skin_title_idx = -1
 		title = self.title

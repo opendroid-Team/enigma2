@@ -126,13 +126,12 @@ eHdmiCEC::eHdmiCEC()
 
 	if (!linuxCEC)
 	{
-#ifdef DREAMBOX
-#define HDMIDEV "/dev/misc/hdmi_cec0"
-#else
-#define HDMIDEV "/dev/hdmi_cec"
-#endif
 
-		hdmiFd = ::open(HDMIDEV, O_RDWR | O_NONBLOCK | O_CLOEXEC);
+#ifdef DREAMBOX
+	hdmiFd = ::open("/dev/misc/hdmi_cec0", O_RDWR | O_NONBLOCK | O_CLOEXEC);
+#else
+	hdmiFd = ::open("/dev/hdmi_cec", O_RDWR | O_NONBLOCK | O_CLOEXEC);
+#endif
 		if (hdmiFd >= 0)
 		{
 
@@ -149,10 +148,6 @@ eHdmiCEC::eHdmiCEC()
 	{
 		messageNotifier = eSocketNotifier::create(eApp, hdmiFd, eSocketNotifier::Read | eSocketNotifier::Priority);
 		CONNECT(messageNotifier->activated, eHdmiCEC::hdmiEvent);
-	}
-	else
-	{
-		eDebug("[eHdmiCEC] cannot open %s: %m", HDMIDEV);
 	}
 
 	getAddressInfo();
@@ -187,6 +182,7 @@ void eHdmiCEC::getAddressInfo()
 	if (hdmiFd >= 0)
 	{
 		bool hasdata = false;
+
 		struct addressinfo addressinfo;
 
 		if (linuxCEC)
@@ -230,6 +226,7 @@ void eHdmiCEC::getAddressInfo()
 			if (::ioctl(hdmiFd, 1, &addressinfo) >= 0)
 			{
 				hasdata = true;
+
 #if DREAMBOX
 				/* we do not get the device type, check the logical address to determine the type */
 				switch (addressinfo.logical)

@@ -110,7 +110,6 @@ int eDVBSatelliteEquipmentControl::canTune(const eDVBFrontendParametersSatellite
 
 	eSecDebugNoSimulate("[eDVBSatelliteEquipmentControl] canTune %d", slot_id);
 
-
 	for (int idx=0; idx <= m_lnbidx; ++idx )
 	{
 		bool rotor=false;

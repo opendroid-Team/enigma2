@@ -2,10 +2,9 @@ import os, re, unicodedata
 from Renderer import Renderer
 from enigma import ePixmap, ePicLoad
 from Tools.Alternatives import GetWithAlternative
-from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_ACTIVE_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_ACTIVE_SKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
 from ServiceReference import ServiceReference
-from Components.config import config, ConfigBoolean
 
 searchPaths = []
 lastPiconPath = None
@@ -16,9 +15,7 @@ def initPiconPaths():
 	for mp in ('/usr/share/enigma2/', '/'):
 		onMountpointAdded(mp)
 	for part in harddiskmanager.getMountedPartitions():
-		mp = path = os.path.join(part.mountpoint, 'usr/share/enigma2')
 		onMountpointAdded(part.mountpoint)
-		onMountpointAdded(mp)
 
 def onMountpointAdded(mountpoint):
 	global searchPaths
@@ -60,7 +57,7 @@ def findPicon(serviceName):
 		global searchPaths
 		pngname = ""
 		for path in searchPaths:
-			if pathExists(path) and not path.startswith('/media/net'):
+			if pathExists(path) and not path.startswith('/media/net') and not path.startswith('/media/autofs'):
 				pngname = path + serviceName + ".png"
 				if pathExists(pngname):
 					lastPiconPath = path
@@ -112,17 +109,7 @@ class Picon(Renderer):
 		self.pngname = ""
 		self.lastPath = None
 		pngname = findPicon("picon_default")
-		self.defaultpngname = None
-		if not pngname:
-			tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
-			if pathExists(tmp):
-				pngname = tmp
-			else:
-				pngname = resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/picon_default.png")
-		self.nopicon = resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/picon_default.png")
-		if os.path.getsize(pngname):
-			self.defaultpngname = pngname
-			self.nopicon = pngname
+		self.defaultpngname = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
 
 	def addPath(self, value):
 		if pathExists(value):
@@ -161,8 +148,6 @@ class Picon(Renderer):
 				pngname = getPiconName(self.source.text)
 				if not pathExists(pngname): # no picon for service found
 					pngname = self.defaultpngname
-				if not config.usage.showpicon.value:
-					pngname = self.nopicon
 				if self.pngname != pngname:
 					if pngname:
 						self.instance.setScale(1)

@@ -10,11 +10,14 @@ from Tools.Notifications import AddPopup
 from time import time
 
 class InputBox(Screen):
-	def __init__(self, session, title = "", windowTitle = _("Input"), useableChars = None, **kwargs):
+	def __init__(self, session, title = "", windowTitle = None, useableChars = None, **kwargs):
 		Screen.__init__(self, session)
 
 		self["text"] = Label(title)
 		self["input"] = Input(**kwargs)
+
+		if windowTitle is None:
+			windowTitle = _("Input")
 		self.onShown.append(boundFunction(self.setTitle, windowTitle))
 		if useableChars is not None:
 			self["input"].setUseableChars(useableChars)
@@ -45,10 +48,7 @@ class InputBox(Screen):
 		}, -1)
 
 		if self["input"].type == Input.TEXT:
-			if config.misc.remotecontrol_text_support.value:
-				self.onExecBegin.append(self.setKeyboardModeNone)
-			else:
-				self.onExecBegin.append(self.setKeyboardModeAscii)
+			self.onExecBegin.append(self.setKeyboardModeAscii)
 		else:
 			self.onExecBegin.append(self.setKeyboardModeNone)
 
@@ -138,21 +138,26 @@ class PinInput(InputBox):
 		return False
 
 	def go(self):
-		self.triesEntry.time.setValue(int(time()))
-		self.triesEntry.time.save()
-		if self.checkPin(self["input"].getText()):
-			self.setTries(3)
-			self.closePinCorrect()
-		else:
-			self.keyHome()
-			self.decTries()
-			if self.getTries() == 0:
-				self.closePinWrong()
+		if self.pinList:
+			self.triesEntry.time.value = int(time())
+			self.triesEntry.time.save()
+			if self.checkPin(self["input"].getText()):
+				self.setTries(3)
+				self.closePinCorrect()
 			else:
-				pass
+				self.keyHome()
+				self.decTries()
+				if self.getTries() == 0:
+					self.closePinWrong()
+		else:
+			pin = self["input"].getText()
+			if pin and pin.isdigit():
+				self.close(int(pin))
+			else:
+				self.close(None)
 
 	def closePinWrong(self, *args):
-		print "args:", args
+		print "[InputBox] args:", args
 		self.close(False)
 
 	def closePinCorrect(self, *args):
@@ -166,15 +171,18 @@ class PinInput(InputBox):
 		self.closePinCancel()
 
 	def getTries(self):
-		return self.triesEntry.tries.value
+		return self.triesEntry and self.triesEntry.tries.value
 
 	def decTries(self):
 		self.setTries(self.triesEntry.tries.value - 1)
 		self.showTries()
 
 	def setTries(self, tries):
-		self.triesEntry.tries.setValue(tries)
+		self.triesEntry.tries.value = tries
 		self.triesEntry.tries.save()
 
 	def showTries(self):
-		self["tries"].setText(_("Tries left:") + " " + str(self.getTries()))
+		self["tries"].setText(self.triesEntry and _("Tries left:") + " " + str(self.getTries() or ""))
+
+	def keyRight(self):
+		pass

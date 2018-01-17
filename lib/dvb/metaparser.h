@@ -3,7 +3,6 @@
 
 #include <string>
 #include <lib/dvb/idvb.h>
-#include <lib/dvb/tstools.h>
 
 class eDVBMetaParser
 {
@@ -15,8 +14,7 @@ public:
 	int updateMeta(const std::string &basename);
 
 	eServiceReferenceDVB m_ref;
-	int m_data_ok, m_time_create, m_packet_size, m_scrambled;
-	pts_t  m_length;
+	int m_data_ok, m_time_create, m_length, m_packet_size, m_scrambled;
 	std::string m_name, m_description, m_tags, m_service_data;
 	long long m_filesize;
 };

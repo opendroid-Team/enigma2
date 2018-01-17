@@ -6,7 +6,6 @@ from Components.VariableText import VariableText
 import time
 import os
 import enigma
-from enigma import pNavigation
 
 def getTrashFolder(path=None):
 	# Returns trash folder without symlinks
@@ -25,7 +24,9 @@ def getTrashFolder(path=None):
 		return None
 
 def createTrashFolder(path=None):
+	print '[TRASHCAN DeBug path]', path
 	trash = getTrashFolder(path)
+	print '[TRASHCAN DeBug]', trash
 	if trash and os.access(os.path.split(trash)[0], os.W_OK):
 		if not os.path.isdir(trash):
 			try:
@@ -55,7 +56,7 @@ class Trashcan:
 		self.gotRecordEvent(None, None)
 
 	def gotRecordEvent(self, service, event):
-		self.recordings = len(self.session.nav.getRecordings(False,pNavigation.isRealRecording))
+		from RecordTimer import n_recordings
 		if event == enigma.iRecordableService.evEnd:
 			self.cleanIfIdle()
 
@@ -70,10 +71,17 @@ class Trashcan:
 	def cleanIfIdle(self):
 		# RecordTimer calls this when preparing a recording. That is a
 		# nice moment to clean up.
-		if self.recordings:
-			print "[Trashcan] Recording in progress", self.recordings
+		from RecordTimer import n_recordings
+		if n_recordings > 0:
+			print "[Trashcan] Recording(s) in progress:", n_recordings
 			return
-		ctimeLimit = time.time() - (config.usage.movielist_trashcan_days.value * 3600 * 24)
+# If movielist_trashcan_days is 0 it means don't timeout anything - 
+# just use the "leave nGB settting"
+#
+		if (config.usage.movielist_trashcan_days.value > 0):
+			ctimeLimit = time.time() - (config.usage.movielist_trashcan_days.value * 3600 * 24)
+		else:
+			ctimeLimit = 0
 		reserveBytes = 1024*1024*1024 * int(config.usage.movielist_trashcan_reserve.value)
 		clean(ctimeLimit, reserveBytes)
 
@@ -160,6 +168,9 @@ class CleanTrashTask(Components.Task.PythonTask):
 				size = 0
 				for root, dirs, files in os.walk(trashfolder, topdown=False):
 					for name in files:
+# Don't delete any per-directory config files from .Trash if the option is in use
+						if (config.movielist.settings_per_directory.value and name == ".e2settings.pkl"):
+							continue
 						try:
 							fn = os.path.join(root, name)
 							st = os.stat(fn)

@@ -44,7 +44,7 @@ class Wizard(Screen):
 			self.lastStep = 0
 
 		def startElement(self, name, attrs):
-			#print "startElement", name
+			#print "[Wizard] startElement", name
 			self.currContent = name
 			if name == "step":
 				self.lastStep += 1

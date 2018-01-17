@@ -1,6 +1,4 @@
 from Converter import Converter
-from Components.Sources.Clock import Clock
-from time import time as getTime, localtime, strftime
 from Poll import Poll
 from enigma import iPlayableService
 from Components.Element import cached, ElementError
@@ -12,12 +10,11 @@ class ServicePosition(Poll, Converter, object):
 	TYPE_REMAINING = 2
 	TYPE_GAUGE = 3
 	TYPE_SUMMARY = 4
-	TYPE_ENDTIME = 5
-	TYPE_VFD_LENGTH = 6
-	TYPE_VFD_POSITION = 7
-	TYPE_VFD_REMAINING = 8
-	TYPE_VFD_GAUGE = 9
-	TYPE_VFD_SUMMARY = 10
+	TYPE_VFD_LENGTH = 5
+	TYPE_VFD_POSITION = 6
+	TYPE_VFD_REMAINING = 7
+	TYPE_VFD_GAUGE = 8
+	TYPE_VFD_SUMMARY = 9
 
 	def __init__(self, type):
 		Poll.__init__(self)
@@ -30,8 +27,6 @@ class ServicePosition(Poll, Converter, object):
 		self.detailed = 'Detailed' in args
 		self.showHours = 'ShowHours' in args
 		self.showNoSeconds = 'ShowNoSeconds' in args
-		self.showNoSeconds2 = 'ShowNoSeconds2' in args
-		self.OnlyMinute = 'OnlyMinute' in args
 
 		if type == "Length":
 			self.type = self.TYPE_LENGTH
@@ -53,17 +48,13 @@ class ServicePosition(Poll, Converter, object):
 			self.type = self.TYPE_VFD_GAUGE
 		elif type == "VFDSummary":
 			self.type = self.TYPE_VFD_SUMMARY
-		elif type == "EndTime":
-			self.type = self.TYPE_ENDTIME
 		else:
-			raise ElementError("type must be {Length|Position|Remaining|Gauge|Summary} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds|ShowNoSeconds2} for ServicePosition converter")
+			raise ElementError("type must be {Length|Position|Remaining|Gauge|Summary} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
 
 		if self.detailed:
 			self.poll_interval = 100
 		elif self.type == self.TYPE_LENGTH or self.type == self.TYPE_VFD_LENGTH:
 			self.poll_interval = 2000
-		elif self.type == self.TYPE_ENDTIME:
-			self.poll_interval = 1000
 		else:
 			self.poll_interval = 500
 
@@ -144,7 +135,7 @@ class ServicePosition(Poll, Converter, object):
 			r = -r
 			sign_r = "-"
 
-		if self.type < self.TYPE_VFD_LENGTH:
+		if self.type < 5:
 			if config.usage.elapsed_time_positive_osd.value:
 				sign_p = "+"
 				sign_r = "-"
@@ -272,7 +263,7 @@ class ServicePosition(Poll, Converter, object):
 			else: # Skin Setting
 				if not self.detailed:
 					if self.showHours:
-						if self.showNoSeconds and self.showNoSeconds2:
+						if self.showNoSeconds:
 							if self.type == self.TYPE_LENGTH:
 								return sign_l + "%d:%02d" % (l/3600, l%3600/60)
 							elif self.type == self.TYPE_POSITION:
@@ -292,21 +283,6 @@ class ServicePosition(Poll, Converter, object):
 								return ngettext("%d Min", "%d Mins", (l/60)) % (l/60)
 							elif self.type == self.TYPE_POSITION:
 								return sign_p + ngettext("%d Min", "%d Mins", (p/60)) % (p/60)
-							elif self.type == self.TYPE_REMAINING and self.OnlyMinute:
-								return ngettext("%d", "%d", (r/60)) % (r/60)
-							elif self.type == self.TYPE_REMAINING:
-								return sign_r + ngettext("%d Min", "%d Mins", (r/60)) % (r/60)
-						elif self.showNoSeconds2:
-							if self.type == self.TYPE_LENGTH:
-								return ngettext("%d Min", "%d Mins", (l/60)) % (l/60)
-							elif self.type == self.TYPE_POSITION:
-								return sign_p + ngettext("%d Min", "%d Mins", (p/60)) % (p/60)
-							elif self.type == self.TYPE_REMAINING and self.OnlyMinute:
-								myRestMinuten = ngettext("%+6d", "%+6d", (r/60)) % (r/60)
-								time = getTime()
-								t = localtime(time)
-								d = _("%-H:%M")
-								return strftime(d, t) + myRestMinuten
 							elif self.type == self.TYPE_REMAINING:
 								return sign_r + ngettext("%d Min", "%d Mins", (r/60)) % (r/60)
 						else:

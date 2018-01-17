@@ -3,10 +3,10 @@ from Screens.Dish import Dishpip
 from enigma import ePoint, eSize, eRect, eServiceCenter, getBestPlayableServiceReference, eServiceReference, eTimer
 from Components.SystemInfo import SystemInfo
 from Components.VideoWindow import VideoWindow
-from Components.config import config, ConfigPosition, ConfigYesNo, ConfigSelection
+from Components.Sources.StreamService import StreamServiceList
+from Components.config import config, ConfigPosition, ConfigSelection
 from Tools import Notifications
 from Screens.MessageBox import MessageBox
-from os import access, W_OK
 
 MAX_X = 720
 MAX_Y = 576
@@ -20,7 +20,7 @@ def timedStopPipPigMode():
 		if SystemInfo["hasPIPVisibleProc"]:
 			open(SystemInfo["hasPIPVisibleProc"], "w").write("1")
 		elif hasattr(InfoBar.instance.session, "pip"):
-			InfoBar.instance.session.pip.playService(InfoBar.instance.session.pip.currentService)
+			InfoBar.instance.session.pip.relocate()
 	global PipPigModeEnabled
 	PipPigModeEnabled = False
 
@@ -36,7 +36,11 @@ def PipPigMode(value):
 				if SystemInfo["hasPIPVisibleProc"]:
 					open(SystemInfo["hasPIPVisibleProc"], "w").write("0")
 				else:
-					InfoBar.instance.session.pip.pipservice = False
+					import skin
+					x, y, w, h = skin.parameters.get("PipHidePosition",(16, 16, 16, 16))
+					pip = InfoBar.instance.session.pip
+					pip.move(x, y, doSave=False)
+					pip.resize(w, h, doSave=False)
 				PipPigModeEnabled = True
 		else:
 			PipPigModeTimer.start(100, True)
@@ -92,9 +96,11 @@ class PictureInPicture(Screen):
 		self.relocate()
 		self.setExternalPiP(config.av.pip_mode.value == "external")
 
-	def move(self, x, y):
-		config.av.pip.value[0] = x
-		config.av.pip.value[1] = y
+	def move(self, x, y, doSave=True):
+		if doSave:
+			config.av.pip.value[0] = x
+			config.av.pip.value[1] = y
+			config.av.pip.save()
 		w = config.av.pip.value[2]
 		h = config.av.pip.value[3]
 		if config.av.pip_mode.value == "cascade":
@@ -109,13 +115,13 @@ class PictureInPicture(Screen):
 		elif config.av.pip_mode.value in "bigpig external":
 			x = 0
 			y = 0
-		config.av.pip.save()
 		self.instance.move(ePoint(x, y))
 
-	def resize(self, w, h):
-		config.av.pip.value[2] = w
-		config.av.pip.value[3] = h
-		config.av.pip.save()
+	def resize(self, w, h, doSave=True):
+		if doSave:
+			config.av.pip.value[2] = w
+			config.av.pip.value[3] = h
+			config.av.pip.save()
 		if config.av.pip_mode.value == "standard":
 			self.instance.resize(eSize(*(w, h)))
 			self["video"].instance.resize(eSize(*(w, h)))
@@ -177,14 +183,21 @@ class PictureInPicture(Screen):
 			return False
 		ref = self.resolveAlternatePipService(service)
 		if ref:
+			if SystemInfo["CanDoTranscodeAndPIP"] and StreamServiceList:
+				self.pipservice = None
+				self.currentService = None
+				self.currentServiceReference = None
+				if not config.usage.hide_zap_errors.value:
+					Notifications.AddPopup(text = "PiP...\n" + _("Connected transcoding, limit - no PiP!"), type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapPipError")
+				return False
 			if self.isPlayableForPipService(ref):
-				print "playing pip service", ref and ref.toString()
+				print "[PictureInPicture] playing pip service", ref and ref.toString()
 			else:
 				if not config.usage.hide_zap_errors.value:
-					Notifications.AddPopup(text = _("No free tuner!"), type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapPipError")
+					Notifications.AddPopup(text = "PiP...\n" + _("No free tuner!"), type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapPipError")
 				return False
 			self.pipservice = eServiceCenter.getInstance().play(ref)
-			if self.pipservice and not self.pipservice.setTarget(1):
+			if self.pipservice and not self.pipservice.setTarget(1, True):
 				if hasattr(self, "dishpipActive") and self.dishpipActive is not None:
 					self.dishpipActive.startPiPService(ref)
 				self.pipservice.start()
@@ -196,7 +209,7 @@ class PictureInPicture(Screen):
 				self.currentService = None
 				self.currentServiceReference = None
 				if not config.usage.hide_zap_errors.value:
-					Notifications.AddPopup(text = _("Incorrect type service for PiP!"), type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapPipError")
+					Notifications.AddPopup(text = _("Incorrect service type for PiP!"), type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapPipError")
 		return False
 
 	def getCurrentService(self):

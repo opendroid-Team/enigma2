@@ -1,4 +1,4 @@
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Components.InputDevice import iInputDevices, iRcTypeControl
@@ -9,27 +9,35 @@ from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
 from Tools.LoadPixmap import LoadPixmap
-from Components.Pixmap import Pixmap
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM
-
-boxtype = getBoxType()
+from boxbranding import getBoxType, getMachineBrand, getMachineName
 
 class InputDeviceSelection(Screen, HelpableScreen):
-	def __init__(self, session):
+	def __init__(self, session, menu_path=""):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
+		menu_path += _("Input devices") + " / "
+		screentitle = _("Select input device")
+		menu_path += screentitle
+		self.menu_path = menu_path + " / "
+		if config.usage.show_menupath.value == 'large':
+			title = menu_path
+			self["menu_path_compressed"] = StaticText("")
+		elif config.usage.show_menupath.value == 'small':
+			title = screentitle
+			self["menu_path_compressed"] = StaticText(menu_path + " >" if not menu_path.endswith(' / ') else menu_path[:-3] + " >" or "")
+		else:
+			title = screentitle
+			self["menu_path_compressed"] = StaticText("")
+		Screen.setTitle(self, title)
 
-		self.setTitle(_("Select input device"))
 		self.edittext = _("Press OK to edit the settings.")
 
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Select"))
-		self["key_yellow"] = StaticText("")
-		self["key_blue"] = StaticText("")
 		self["introduction"] = StaticText(self.edittext)
 
 		self.devices = [(iInputDevices.getDeviceName(x),x) for x in iInputDevices.getDeviceList()]
-		print "[InputDeviceSelection] found devices :->", len(self.devices),self.devices
+		print "[InputDeviceSetup] found devices :->", len(self.devices),self.devices
 
 		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
 			{
@@ -47,11 +55,7 @@ class InputDeviceSelection(Screen, HelpableScreen):
 		self.list = []
 		self["list"] = List(self.list)
 		self.updateList()
-		self.onLayoutFinish.append(self.layoutFinished)
 		self.onClose.append(self.cleanup)
-
-	def layoutFinished(self):
-		self.setTitle(_("Select input device"))
 
 	def cleanup(self):
 		self.currentIndex = 0
@@ -107,19 +111,32 @@ class InputDeviceSelection(Screen, HelpableScreen):
 			if selection[0] == 'rctype':
 				self.session.open(RemoteControlType)
 			else:
-				self.session.openWithCallback(self.DeviceSetupClosed, InputDeviceSetup, selection[0])
+				self.session.openWithCallback(self.DeviceSetupClosed, InputDeviceSetup, self.menu_path, selection[0])
 
 	def DeviceSetupClosed(self, *ret):
 		self.updateList()
 
 
 class InputDeviceSetup(Screen, ConfigListScreen):
-	def __init__(self, session, device):
+	def __init__(self, session, menu_path="", device=None):
 		Screen.__init__(self, session)
+		screentitle = _("Input device setup")
+		if config.usage.show_menupath.value == 'large':
+			menu_path += screentitle
+			title = menu_path
+			self["menu_path_compressed"] = StaticText("")
+		elif config.usage.show_menupath.value == 'small':
+			title = screentitle
+			self["menu_path_compressed"] = StaticText(menu_path + " >" if not menu_path.endswith(' / ') else menu_path[:-3] + " >" or "")
+		else:
+			title = screentitle
+			self["menu_path_compressed"] = StaticText("")
+		Screen.setTitle(self, title)
+		self.setup_title = title
+
 		self.inputDevice = device
 		iInputDevices.currentDevice = self.inputDevice
 		self.onChangedEntry = [ ]
-		self.setup_title = (_("Setup InputDevice"))
 		self.isStepSlider = None
 		self.enableEntry = None
 		self.repeatEntry = None
@@ -139,8 +156,6 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
-		self["key_yellow"] = StaticText()
-		self["key_blue"] = StaticText()
 		self["introduction"] = StaticText()
 
 		# for generating strings into .po only
@@ -151,7 +166,6 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 		self.onClose.append(self.cleanup)
 
 	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 		listWidth = self["config"].l.getItemSize().width()
 		# use 20% of list width for sliders
 		self["config"].l.setSeperation(int(listWidth*.8))
@@ -218,7 +232,7 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 
 	def confirm(self, confirmed):
 		if not confirmed:
-			print "not confirmed"
+			print "[InputDeviceSetup] not confirmed"
 			return
 		else:
 			self.nameEntry[1].setValue(iInputDevices.getDeviceAttribute(self.inputDevice, 'name'))
@@ -259,138 +273,50 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 
 
 class RemoteControlType(Screen, ConfigListScreen):
-	if getBrandOEM() in ('broadmedia','octagon','odin','protek','ultramini') or getBoxType() in ('et7x00','et8500','et1x000','et13000'):
-		rcList = [
-				("0", _("Default")),
-				("3", _("MaraM9")),
-				("4", _("DMM normal")),
-				("5", _("et9000/et9100")),
-				("6", _("DMM advanced")),
-				("7", _("et5000/6000")),
-				("8", _("VU+")),
-				("9", _("et8000/et10000/et13000/SF5008")),
-				("11", _("et9200/9500/6500")),
-				("13", _("et4000")),
-				("14", _("XP1000")),
-				("16", _("HD11/HD51/HD1100/HD1200/HD1265/HD1500/HD500C/HD530C/et7x00/et8500/VS1000/VS1500")),
-				("17", _("XP3000")),
-				("18", _("F1/F3/F4/F4-TURBO/TRIPLEX")),
-				("19", _("HD2400")),
-				("20", _("Zgemma Star S/2S/H1/H2")),
-				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7")),
-				("500", _("WWIO_BRE2ZE_TC")),
-				("501", _("OCTAGON_SFXXX8")),
-				("502", _("GIGABLUE Black")),
-				("503", _("MIRACLEBOX_TWINPLUS")),
-				("504", _("E3HD/XPEEDLX/GI")),
-				("505", _("ODIN_M7"))
-				]
-		defaultRcList = [
-				("et4000", 13),
-				("et5000", 7),
-				("et6000", 7),
-				("et6500", 11),
-				("et7x00",16),
-				("et7000mini",16),
-				("et8000", 9),
-				("et13000", 9),
-				("et8500",16),
-				("et9000", 5),
-				("et9100", 5),
-				("et9200", 11),
-				("et9500", 11),
-				("et10000", 9),
-				("formuler1",18),
-				("formuler3",18),
-				("formuler4",18),
-				("formuler4turbo",18),
-				("hd11",16),
-				("hd51",16),
-				("hd1100",16),
-				("hd1200",16),
-				("hd1265",16),
-				("hd500c",16),
-				("hd530c",16),
-				("vs1000",16),
-				("vs1500",16),
-				("hd2400",19),
-				("triplex",18),
-				("xp1000", 14),
-				("xp3000", 17),
-				("sh1", 20),
-				("h3", 21),
-				("h5", 21),
-				("h7", 21),
-				("bre2ze_tc", 500),
-				("sf4008", 501),
-				("g100", 501),
-				("sf4018", 501),
-				("sf5008", 9),
-				("gbquadplus", 502),
-				("g300", 503),
-				("e3hd", 504),
-				("et7000mini", 504),
-				("et1x000", 504),
-				("xpeedc.", 504),
-				("odinm7", 505)
-				]
-	else:
-		rcList = [
-				("0", _("Default")),
-				("3", _("MaraM9")),
-				("4", _("DMM normal")),
-				("5", _("et9000/et9100")),
-				("6", _("DMM advanced")),
-				("7", _("et5000/6000")),
-				("8", _("VU+")),
-				("9", _("et8000/et10000/et13000/SF5008")),
-				("11", _("et9200/9500/6500")),
-				("13", _("et4000")),
-				("14", _("XP1000")),
-				("16", _("HD11/HD51/HD1100/HD1200/HD1265/HD1500/HD500C/HD530C/VS1000/VS1500")),
-				("17", _("XP3000")),
-				("18", _("F1/F3/F4/F4-TURBO/TRIPLEX")),
-				("19", _("HD2400")),
-				("20", _("Zgemma Star S/2S/H1/H2")),
-				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7"))
-				]
-		defaultRcList = [
-				("et4000", 13),
-				("et5000", 7),
-				("et6000", 7),
-				("et6500", 11),
-				("et8000", 9),
-				("et13000", 9),
-				("et9000", 5),
-				("et9100", 5),
-				("et9200", 11),
-				("et9500", 11),
-				("et10000", 9),
-				("formuler1",18),
-				("formuler3",18),
-				("formuler4",18),
-				("formuler4turbo",18),
-				("hd11",16),
-				("hd51",16),
-				("hd1100",16),
-				("hd1200",16),
-				("hd1265",16),
-				("hd500c",16),
-				("hd530c",16),
-				("vs1000",16),
-				("vs1500",16),
-				("hd2400",19),
-				("triplex",18),
-				("xp1000", 14),
-				("xp3000", 17),
-				("sh1", 20),
-				("sf5008", 9),
-				("h3", 21),
-				("h5", 21),
-				("h7", 21)
-				]
+	odinRemote = "OdinM9"
+	if getBoxType() == "maram9":
+		odinRemote = "MaraM9"
+	
+	rcList = [
+			("0", _("Default")),
+			("3", _(odinRemote)),
+			("4", _("DMM normal")),
+			("5", _("et9000/et9100")),
+			("6", _("DMM advanced")),
+			("7", _("et5000/6000")),
+			("8", _("VU+")),
+			("9", _("et8000/et10000")),
+			("11", _("et9200/9500/6500")),
+			("13", _("et4000")),
+			("14", _("XP1000")),
+			("16", _("HD1100/et7x00/et8500")),
+			("18", _("F1/F3")),
+			("19", _("HD2400")),
+			]
 
-	def __init__(self, session):
+	defaultRcList = [
+			("et4000", 13),
+			("et5000", 7),
+			("et6000", 7),
+			("et6500", 11),
+			("et8000", 9),
+			("et9000", 5),
+			("et9100", 5),
+			("et9200", 11),
+			("et9500", 11),
+			("et10000", 9),
+			("formuler1", 18),
+			("formuler3", 18),
+			("xp1000", 14),
+			("hd1100", 16),
+			("hd2400", 19),
+			("et7000", 16),
+			("et7500", 16),
+			("et8500", 16),
+			("hd51", 16),
+		]
+
+	def __init__(self, session, menu_path=""):
 		Screen.__init__(self, session)
 		self.skinName = ["RemoteControlType", "Setup" ]
 
@@ -400,13 +326,8 @@ class RemoteControlType(Screen, ConfigListScreen):
 			"save": self.keySave,
 		}, -1)
 
-		self["HelpWindow"] = Pixmap()
-		self["HelpWindow"].hide()
-
 		self["key_green"] = StaticText(_("Save"))
 		self["key_red"] = StaticText(_("Cancel"))
-		self["footnote"] = StaticText()
-		self["description"] = StaticText()
 
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session)
@@ -416,7 +337,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Remote control type"), self.rctype))
 		self["config"].list = self.list
 
-		self.defaultRcType = None
+		self.defaultRcType = 0
 		self.getDefaultRcType()
 
 	def getDefaultRcType(self):
@@ -425,6 +346,10 @@ class RemoteControlType(Screen, ConfigListScreen):
 			if x[0] in data:
 				self.defaultRcType = x[1]
 				break
+# If there is none in the list, use the current value...
+#
+		if self.defaultRcType == 0:
+			self.defaultRcType = iRcTypeControl.readRcType()
 
 	def setDefaultRcType(self):
 		iRcTypeControl.writeRcType(self.defaultRcType)
