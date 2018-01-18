@@ -12,23 +12,17 @@
 typedef FTC_ImageCache FTC_Image_Cache;
 typedef FTC_ImageTypeRec FTC_Image_Desc;
 typedef FTC_SBitCache FTC_SBit_Cache;
-
-#ifdef HAVE_FREETYPE2
-typedef FT_UInt GlyphIndex;
-#else
-typedef FT_ULong GlyphIndex;
-#endif
-
-#include <string>
 #include <vector>
-#include <list>
-#include <set>
 
 #include <lib/gdi/fb.h>
 #include <lib/gdi/esize.h>
 #include <lib/gdi/epoint.h>
 #include <lib/gdi/erect.h>
+#include <string>
+#include <list>
 #include <lib/base/object.h>
+
+#include <set>
 
 class FontRenderClass;
 class Font;
@@ -37,7 +31,6 @@ class gFont;
 class gRGB;
 
 #endif
-
 class fontRenderClass
 {
 #ifndef SWIG
@@ -61,10 +54,13 @@ class fontRenderClass
 	int strokerRadius;
 
 	int getFaceProperties(const std::string &face, FTC_FaceID &id, int &renderflags);
-
-    FT_Error getGlyphBitmap(FTC_Image_Desc *font, GlyphIndex glyph_index, FTC_SBit *sbit);
-    FT_Error getGlyphImage(FTC_Image_Desc *font, GlyphIndex glyph_index, FT_Glyph *glyph, FT_Glyph *borderglyph, int bordersize);
-
+#ifdef HAVE_FREETYPE2
+	FT_Error getGlyphBitmap(FTC_Image_Desc *font, FT_UInt glyph_index, FTC_SBit *sbit);
+	FT_Error getGlyphImage(FTC_Image_Desc *font, FT_UInt glyph_index, FT_Glyph *glyph, FT_Glyph *borderglyph, int bordersize);
+#else
+	FT_Error getGlyphBitmap(FTC_Image_Desc *font, FT_ULong glyph_index, FTC_SBit *sbit);
+	FT_Error getGlyphImage(FTC_Image_Desc *font, FT_ULong glyph_index, FT_Glyph *glyph, FT_Glyph *borderglyph, int bordersize);
+#endif
 	static fontRenderClass *instance;
 #else
 	fontRenderClass();
@@ -104,8 +100,11 @@ struct pGlyph
 	int x, y, w;
 	unsigned long newcolor;
 	ePtr<Font> font;
-	GlyphIndex glyph_index;
-
+#ifdef HAVE_FREETYPE2
+	FT_UInt glyph_index;
+#else
+	FT_ULong glyph_index;
+#endif
 	int flags;
 	eRect bbox;
 	FT_Glyph image, borderimage;
@@ -139,6 +138,7 @@ class eTextPara: public iObject
 	std::list<int> lineOffsets;
 	std::list<int> lineChars;
 	int charCount;
+	int lineCount;
 	int totalheight;
 	int bboxValid;
 	eRect boundBox;
@@ -165,6 +165,7 @@ public:
 	int renderString(const char *string, int flags=0, int border=0);
 
 	void clear();
+	int getLineCount(void) const { return lineCount; }
 
 	void blit(gDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground, bool border = false);
 
@@ -217,8 +218,13 @@ public:
 	FTC_ScalerRec scaler;
 	FTC_Image_Desc font;
 	fontRenderClass *renderer;
+#ifdef HAVE_FREETYPE2
+	FT_Error getGlyphBitmap(FT_UInt glyph_index, FTC_SBit *sbit);
+	FT_Error getGlyphImage(FT_UInt glyph_index, FT_Glyph *glyph, FT_Glyph *borderglyph, int bordersize);
+#else
 	FT_Error getGlyphBitmap(FT_ULong glyph_index, FTC_SBit *sbit);
 	FT_Error getGlyphImage(FT_ULong glyph_index, FT_Glyph *glyph, FT_Glyph *borderglyph, int bordersize);
+#endif
 	FT_Face face;
 	FT_Size size;
 

@@ -22,6 +22,7 @@ gRC::gRC(): rp(0), wp(0)
 #else
 ,m_notify_pump(eApp, 1)
 #endif
+,m_spinner_enabled(0), m_spinneronoff(1), m_prev_idle_count(0)
 {
 	ASSERT(!instance);
 	instance=this;
@@ -40,8 +41,6 @@ gRC::gRC(): rp(0), wp(0)
 	else
 		eDebug("[gRC] thread created successfully");
 #endif
-	m_spinner_enabled = 0;
-	m_spinneronoff = 1;
 }
 
 DEFINE_REF(gRC);
@@ -121,7 +120,7 @@ void *gRC::thread()
 #endif
 		if ( rp != wp )
 		{
-				/* make sure the spinner is not displayed when something is painted */
+				/* make sure the spinner is not displayed when we something is painted */
 			disableSpinner();
 
 			gOpcode o(queue[rp++]);
@@ -733,7 +732,7 @@ void gDC::exec(const gOpcode *o)
 			int vcentered_top = o->parm.renderText->area.top() + ((o->parm.renderText->area.height() - bbox.height()) / 2);
 			int correction = vcentered_top - bbox.top();
 			// Only center if it fits, don't push text out the top
-			if (correction > 0)
+			if ((correction > 0) || (para->getLineCount() == 1))
 			{
 				offset += ePoint(0, correction);
 			}
