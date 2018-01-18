@@ -158,7 +158,7 @@ std::string fontRenderClass::AddFont(const std::string &filename, const std::str
 	singleLock s(ftlock);
 
 	if ((error=FT_New_Face(library, filename.c_str(), 0, &face)))
-		eFatal("[Font] failed: %m");
+		eDebugNoNewLineEnd("[FONT] failed: %s", strerror(error));
 
 	n->filename=filename;
 	n->face=name;
@@ -166,7 +166,7 @@ std::string fontRenderClass::AddFont(const std::string &filename, const std::str
 	FT_Done_Face(face);
 
 	n->next=font;
-	eDebugNoNewLine(" -> %s\n", n->face.c_str());
+	eDebugNoNewLineEnd("OK (%s)", n->face.c_str());
 	font=n;
 
 	return n->face;

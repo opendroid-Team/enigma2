@@ -2,6 +2,8 @@
 #define __smartptr_h
 
 #include "object.h"
+#include <stdio.h>
+#include <string.h>
 #include <lib/python/swig.h>
 
 template<class T>
@@ -55,6 +57,7 @@ public:
 	{
 		return ptr;
 	}
+
 #ifndef SWIG
 	T* grabRef() { if (!ptr) return 0; ptr->AddRef(); return ptr; }
 	T* &ptrref() { return ptr; }
