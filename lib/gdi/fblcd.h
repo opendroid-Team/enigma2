@@ -6,10 +6,6 @@
 #include <lib/gdi/lcd.h>
 #include "gpixmap.h"
 
-#ifndef FBIO_WAITFORVSYNC
-#define FBIO_WAITFORVSYNC _IOW('F', 0x20, uint32_t)
-#endif
-
 #ifndef LCD_DEV
 # define LCD_DEV "/dev/fb1"
 #endif
@@ -50,7 +46,6 @@ public:
 	int lock();
 	void unlock();
 	int islocked() { return locked; }
-	void setDump(bool) {}
 };
 
 #endif

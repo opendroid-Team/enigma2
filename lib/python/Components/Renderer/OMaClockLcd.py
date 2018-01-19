@@ -8,17 +8,17 @@ from Components.config import config
 from boxbranding import getBoxType
 
 LCDSIZE400 = []
-LCDSIZE220 = []
+LCDSIZEdm900 = []
 
 if getBoxType() in ('gbquad4k', 'gbquadplus'):
 	LCDSIZE400 = True
 else:
 	LCDSIZE400 = False
 
-if getBoxType() in ('gbue4k', 'gbultraue'):
-	LCDSIZE220 = True
+if getBoxType() == 'dm900':
+	LCDSIZEdm900 = True
 else:
-	LCDSIZE220 = False
+	LCDSIZEdm900 = False
 
 #print "LCDSIZE400: ", LCDSIZE400
 
@@ -63,10 +63,10 @@ class OMaClockLcd(Renderer):
 			width = 396
 			height = 240
 			l = 55
-		elif LCDSIZE220:
-			width = 218
-			height = 176
-			l = 35
+		elif LCDSIZEdm900:
+			width = 390
+			height = 220
+			l = 33
 		else:
 			width = 218
 			height = 176
@@ -77,18 +77,18 @@ class OMaClockLcd(Renderer):
 		if opt == 'sec':
 			if LCDSIZE400:
 				l = l + 60
-			elif LCDSIZE220:
-				l = l + 35
+			elif LCDSIZEdm900:
+				l = l + 58
 			else:
 				l = l + 50
 			self.fColor = self.fColors
 		elif opt == 'min':
 			if LCDSIZE400:
 				l = l + 50
-			elif LCDSIZE220:
-				l = l + 35
+			elif LCDSIZEdm900:
+				l = l + 48
 			else:
-				l = l + 40
+				l = l + 48
 			self.fColor = self.fColorm
 		else:
 			self.fColor = self.fColorh

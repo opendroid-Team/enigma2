@@ -120,7 +120,7 @@ int eSocketMMIHandler::send_to_mmisock( void* buf, size_t len)
 {
 	ssize_t ret = write(connfd, buf, len);
 	if ( ret < 0 )
-		eDebug("[eSocketMMIHandler] write (%m)");
+		eDebug("[eSocketMMIHandler] write: %m");
 	else if ( (size_t)ret != len )
 		eDebug("[eSocketMMIHandler] only %zd bytes sent.. %zu bytes should be sent", ret, len );
 	else
@@ -138,21 +138,21 @@ eSocketMMIHandler::eSocketMMIHandler()
 	clilen = sizeof(servaddr.sun_family) + strlen(servaddr.sun_path);
 	if ((listenfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 	{
-		eDebug("[eSocketMMIHandler] socket (%m)");
+		eDebug("[eSocketMMIHandler] socket: %m");
 		return;
 	}
 
 	int val = 1;
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)
-		eDebug("[eSocketMMIHandler] SO_REUSEADDR (%m)");
+		eDebug("[eSocketMMIHandler] SO_REUSEADDR: %m");
 	else if ((val = fcntl(listenfd, F_GETFL)) == -1)
-		eDebug("[eSocketMMIHandler] F_GETFL (%m)");
+		eDebug("[eSocketMMIHandler] F_GETFL: %m");
 	else if (fcntl(listenfd, F_SETFL, val | O_NONBLOCK) == -1)
-		eDebug("[eSocketMMIHandler] F_SETFL (%m)");
+		eDebug("[eSocketMMIHandler] F_SETFL: %m");
 	else if (bind(listenfd, (struct sockaddr *) &servaddr, clilen) == -1)
-		eDebug("[eSocketMMIHandler] bind (%m)");
+		eDebug("[eSocketMMIHandler] bind: %m");
 	else if (listen(listenfd, 0) == -1)
-		eDebug("[eSocketMMIHandler] listen (%m)");
+		eDebug("[eSocketMMIHandler] listen: %m");
 	else {
 		listensn = eSocketNotifier::create( eApp, listenfd, POLLIN );
 		listensn->start();
@@ -176,15 +176,15 @@ void eSocketMMIHandler::listenDataAvail(int what)
 		}
 		connfd = accept(listenfd, (struct sockaddr *) &servaddr, (socklen_t *) &clilen);
 		if (connfd == -1) {
-			eDebug("[eSocketMMIHandler] accept (%m)");
+			eDebug("[eSocketMMIHandler] accept: %m");
 			return;
 		}
 
 		int val;
 		if ((val = fcntl(connfd, F_GETFL)) == -1)
-			eDebug("[eSocketMMIHandler] F_GETFL (%m)");
+			eDebug("[eSocketMMIHandler] F_GETFL: %m");
 		else if (fcntl(connfd, F_SETFL, val | O_NONBLOCK) == -1)
-			eDebug("[eSocketMMIHandler] F_SETFL (%m)");
+			eDebug("[eSocketMMIHandler] F_SETFL: %m");
 		else {
 			connsn = eSocketNotifier::create( eApp, connfd, POLLIN|POLLHUP|POLLERR );
 			CONNECT( connsn->activated, eSocketMMIHandler::connDataAvail );
@@ -204,7 +204,7 @@ void eSocketMMIHandler::connDataAvail(int what)
 
 		if (length == -1) {
 			if (errno != EAGAIN && errno != EINTR && errno != EBUSY) {
-				eDebug("[eSocketMMIHandler] read (%m)");
+				eDebug("[eSocketMMIHandler] read: %m");
 				what |= POLLERR;
 			}
 		} else if (length == 0){
@@ -236,7 +236,7 @@ void eSocketMMIHandler::connDataAvail(int what)
 #endif
 			}
 #ifdef MMIDEBUG
-			eDebugNoNewLineStart("Put to buffer:");
+			eDebugNoNewLineStart("[eSocketMMIHandler] Put to buffer:");
 			for (int i=0; i < len; ++i)
 				eDebugNoNewLine("%02x ", data[i]);
 			eDebugNoNewLine("\n--------\n");

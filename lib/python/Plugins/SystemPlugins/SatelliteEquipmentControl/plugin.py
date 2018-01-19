@@ -65,7 +65,7 @@ def SecSetupStart(menuid):
 
 	# only show if DVB-S frontends are available
 	for slot in nimmgr.nim_slots:
-		if slot.canBeCompatible("DVB-S"):
+		if slot.isCompatible("DVB-S"):
 			return [(_("Satellite equipment setup"), SecSetupMain, "satellite_equipment_setup", None)]
 
 	return [ ]

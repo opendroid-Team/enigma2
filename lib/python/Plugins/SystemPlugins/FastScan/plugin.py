@@ -125,12 +125,13 @@ class FastScanScreen(ConfigListScreen, Screen):
 		('TV Vlaanderen', (1, 910, True)),
 		('TéléSAT', (0, 920, True)),
 		('HD Austria', (0, 950, False)),
-		('Fast Scan Deutschland', (0, 960, False)),
+		('Diveo', (0, 960, False)),
 		('Skylink Czech Republic', (1, 30, False)),
 		('Skylink Slovak Republic', (1, 31, False)),
+		('KabelKiosk', (0, 970, False)),
 		('TéléSAT Astra3', (1, 920, True)),
 		('HD Austria Astra3', (1, 950, False)),
-		('Fast Scan Deutschland Astra3', (1, 960, False)),
+		('Diveo Astra3', (1, 960, False)),
 		('Canal Digitaal Astra 1', (0, 900, True)),
 		('TV Vlaanderen  Astra 1', (0, 910, True))]
 
@@ -145,8 +146,6 @@ class FastScanScreen(ConfigListScreen, Screen):
 
 	def __init__(self, session, nimList):
 		Screen.__init__(self, session)
-
-		self.setTitle(_("Fast Scan"))
 
 		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
 		{
@@ -233,7 +232,7 @@ class FastScanScreen(ConfigListScreen, Screen):
 		transponderParameters.modulation = self.transponders[number][7]
 		transponderParameters.rolloff = self.transponders[number][8]
 		transponderParameters.pilot = self.transponders[number][9]
-		transponderParameters.is_id = 0 #-1
+		transponderParameters.is_id = -1
 		transponderParameters.pls_mode = eDVBFrontendParametersSatellite.PLS_Root
 		transponderParameters.pls_code = 1
 		return transponderParameters
@@ -288,7 +287,7 @@ class FastScanAutoScreen(FastScanScreen):
 	def scanCompleted(self, result):
 		print "[AutoFastScan] completed result = ", result
 		refreshServiceList()
-		self.close(result>0)
+		self.close(result)
 
 	def Power(self):
 		from Screens.Standby import inStandby
@@ -309,10 +308,10 @@ def FastScanMain(session, **kwargs):
 		for n in nimmanager.nim_slots:
 			if not n.isCompatible("DVB-S"):
 				continue
-			if n.config.dvbs.configMode == "nothing":
+			if n.config_mode == "nothing":
 				continue
-			if n.config.dvbs.configMode in ("loopthrough", "satposdepends"):
-				root_id = nimmanager.sec.getRoot(n.slot_id, int(n.config.dvbs.connectedTo.value))
+			if n.config_mode in ("loopthrough", "satposdepends"):
+				root_id = nimmanager.sec.getRoot(n.slot_id, int(n.config.connectedTo.value))
 				if n.type == nimmanager.nim_slots[root_id].type: # check if connected from a DVB-S to DVB-S2 Nim or vice versa
 					continue
 			nimList.append((str(n.slot), n.friendly_full_description))
@@ -329,7 +328,7 @@ def restartScanAutoStartTimer(reply=False):
 	if not reply:
 		print "[AutoFastScan] Scan was not succesfully retry in one hour"
 		FastScanAutoStartTimer.startLongTimer(3600)
-	else:
+	elif reply is not True:
 		global autoproviders
 		if autoproviders:
 			provider = autoproviders.pop(0)
@@ -365,10 +364,14 @@ def standbyCountChanged(value):
 		inStandby.onClose.append(leaveStandby)
 		FastScanAutoStartTimer.startLongTimer(90)
 
-def startSession(session, **kwargs):
+def autostart(reason, **kwargs):
 	global Session
-	Session = session
-	config.misc.standbyCounter.addNotifier(standbyCountChanged, initial_call=False)
+	if reason == 0 and "session" in kwargs and not Session:
+		Session = kwargs["session"]
+		config.misc.standbyCounter.addNotifier(standbyCountChanged, initial_call=False)
+	elif reason == 1 and Session:
+		Session = None
+		config.misc.standbyCounter.removeNotifier(standbyCountChanged)
 
 def FastScanStart(menuid, **kwargs):
 	if menuid == "scan":
@@ -378,7 +381,7 @@ def FastScanStart(menuid, **kwargs):
 
 def Plugins(**kwargs):
 	if (nimmanager.hasNimType("DVB-S")):
-		return [PluginDescriptor(name=_("Fast Scan"), description="Scan Dutch/Belgian sat provider", where = PluginDescriptor.WHERE_MENU, fnc=FastScanStart),
-			PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=startSession)]
+		return [PluginDescriptor(name=_("Fast Scan"), description="Scan M7 Brands, BE/NL/DE/AT/CZ", where = PluginDescriptor.WHERE_MENU, fnc=FastScanStart),
+			PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=autostart)]
 	else:
 		return []

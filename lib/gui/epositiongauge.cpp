@@ -203,7 +203,7 @@ int ePositionGauge::scale(const pts_t &val)
 
 	int width = size().width();
 
-	return (int)(width * val / m_length);
+	return width * val / m_length;
 }
 
 void ePositionGauge::setForegroundColor(const gRGB &col)
