@@ -39,6 +39,7 @@
 
 #include <gst/gst.h>
 
+#ifdef OBJECT_DEBUG
 int object_total_remaining;
 
 void object_dump()
