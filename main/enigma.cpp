@@ -39,7 +39,6 @@
 
 #include <gst/gst.h>
 
-#ifdef OBJECT_DEBUG
 int object_total_remaining;
 
 void object_dump()
@@ -308,7 +307,8 @@ int main(int argc, char **argv)
 			std::string rfilename;
 			snprintf(filename, sizeof(filename), "${datadir}/enigma2/%s/wait%d.png", active_skin.c_str(), i + 1);
 			rfilename = eEnv::resolve(filename);
-			loadPNG(wait[i], rfilename.cif (::access(rfilename.c_str(), R_OK) < 0)
+
+			if (::access(rfilename.c_str(), R_OK) < 0)
 				break;
 
 			loadPNG(wait[i], rfilename.c_str());
