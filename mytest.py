@@ -389,11 +389,24 @@ class PowerKey:
 		self.session.infobar = None
 
 	def shutdown(self):
-		recordings = self.session.nav.getRecordingsCheckBeforeActivateDeepStandby()
-		if recordings:
-			from Screens.MessageBox import MessageBox
-			self.session.openWithCallback(self.gotoStandby,MessageBox,_("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type = MessageBox.TYPE_INFO, close_on_any_key = True, timeout = 10)
+		wasRecTimerWakeup = False
+		recordings = self.session.nav.getRecordings()
+		if not recordings:
+			next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
+		if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
+			if os.path.exists("/tmp/was_rectimer_wakeup") and not self.session.nav.RecordTimer.isRecTimerWakeup():
+				f = open("/tmp/was_rectimer_wakeup", "r")
+				file = f.read()
+				f.close()
+				wasRecTimerWakeup = int(file) and True or False
+			if self.session.nav.RecordTimer.isRecTimerWakeup() or wasRecTimerWakeup:
+				print "PowerOff (timer wakewup) - Recording in progress or a timer about to activate, entering standby!"
+				self.standby()
+			else:
+				print "PowerOff - Now!"
+				self.session.open(Screens.Standby.TryQuitMainloop, 1)
 		elif not Screens.Standby.inTryQuitMainloop and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND:
+			print "PowerOff - Now!"
 			self.session.open(Screens.Standby.TryQuitMainloop, 1)
 
 	def powerlong(self):
