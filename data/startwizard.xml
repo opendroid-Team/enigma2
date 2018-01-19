@@ -363,6 +363,17 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
+		<step id="skins">
+			<condition>
+self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+			</condition>
+			<text value="Skin install" />
+			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
+			<code>
+self.clearSelectedKeys()
+self.selectKey("OK")
+			</code>
+		</step>
 		<step id="end" laststep="true">
 			<condition>
 self.condition = self.isLastWizard

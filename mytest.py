@@ -8,22 +8,15 @@ if os.path.isfile("/usr/lib/enigma2/python/enigma.zip"):
 from Tools.Profile import profile, profile_final
 profile("PYTHON_START")
 
-# Don't remove this line. It may seem to do nothing, but if removed,
-# it will break output redirection for crash logs.
 import Tools.RedirectOutput
-from boxbranding import getBoxType, getBrandOEM, getImageVersion, getImageBuild, getImageDevBuild, getImageType
-print "[Image Type] %s" % getImageType()
-print "[Image Version] %s" % getImageVersion()
-print "[Image Build] %s" % getImageBuild()
-if getImageType() != 'release':
-	print "[Image DevBuild] %s" % getImageDevBuild()
-
 import enigma
+from boxbranding import getBoxType, getBrandOEM, getMachineBuild
 import eConsoleImpl
 import eBaseImpl
 enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
+boxtype = getBoxType()
 
 from traceback import print_exc
 
@@ -62,6 +55,7 @@ from Components.config import config, configfile, ConfigText, ConfigYesNo, Confi
 InitFallbackFiles()
 
 profile("config.misc")
+config.misc.boxtype = ConfigText(default = boxtype)
 config.misc.blackradiopic = ConfigText(default = resolveFilename(SCOPE_ACTIVE_SKIN, "black.mvi"))
 radiopic = resolveFilename(SCOPE_ACTIVE_SKIN, "radio.mvi")
 if os.path.exists(resolveFilename(SCOPE_CONFIG, "radio.mvi")):
@@ -383,6 +377,11 @@ class PowerKey:
 		globalActionMap.actions["power_long"]=self.powerlong
 		globalActionMap.actions["deepstandby"]=self.shutdown # frontpanel long power button press
 		globalActionMap.actions["discrete_off"]=self.standby
+		globalActionMap.actions["sleeptimer_standby"]=self.sleepStandby
+		globalActionMap.actions["sleeptimer_deepstandby"]=self.sleepDeepStandby
+		globalActionMap.actions["sleeptimer"]=self.openSleepTimer
+		globalActionMap.actions["powertimer_standby"]=self.sleepStandby
+		globalActionMap.actions["powertimer_deepstandby"]=self.sleepDeepStandby
 		self.standbyblocked = 1
 
 	def MenuClosed(self, *val):
@@ -431,7 +430,25 @@ class PowerKey:
 						menu_screen.setTitle(_("Standby / restart"))
 						return
 		elif action == "standby":
+			try:
+				config.hdmicec.control_tv_standby_skipnow.setValue(False)
+			except:
+				pass # no HdmiCec
 			self.standby()
+		elif action == "standby_noTVshutdown":
+			try:
+				config.hdmicec.control_tv_standby_skipnow.setValue(True)
+			except:
+				pass # no HdmiCec
+			self.standby()
+		elif action == "powertimerStandby":
+			val = 3
+			self.setSleepTimer(val)
+		elif action == "powertimerDeepStandby":
+			val = 4
+			self.setSleepTimer(val)
+		elif action == "sleeptimer":
+			self.openSleepTimer()
 
 	def powerdown(self):
 		self.standbyblocked = 0
@@ -440,9 +457,37 @@ class PowerKey:
 		if self.standbyblocked == 0:
 			self.doAction(action = config.usage.on_short_powerpress.value)
 
+	def gotoStandby(self, ret):
+		self.standby()
+
 	def standby(self):
 		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 			self.session.open(Screens.Standby.Standby)
+
+	def openSleepTimer(self):
+		from Screens.SleepTimerEdit import SleepTimerEdit
+		self.session.open(SleepTimerEdit)
+
+	def setSleepTimer(self, val):
+		from PowerTimer import PowerTimerEntry
+		sleeptime = 15
+		data = (int(time() + 60), int(time() + 120))
+		self.addSleepTimer(PowerTimerEntry(checkOldTimers = True, *data, timerType = val, autosleepdelay = sleeptime))
+
+	def addSleepTimer(self, timer):
+		from Screens.PowerTimerEntry import TimerEntry
+		self.session.openWithCallback(self.finishedAdd, TimerEntry, timer)
+
+	def finishedAdd(self, answer):
+		if answer[0]:
+			entry = answer[1]
+			simulTimerList = self.session.nav.PowerTimer.record(entry)
+
+	def sleepStandby(self):
+		self.doAction(action = "powertimerStandby")
+
+	def sleepDeepStandby(self):
+		self.doAction(action = "powertimerDeepStandby")
 
 profile("Scart")
 from Screens.Scart import Scart

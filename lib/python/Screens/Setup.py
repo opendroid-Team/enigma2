@@ -106,6 +106,7 @@ class Setup(ConfigListScreen, Screen):
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
+		self["status"] = StaticText()
 		self.onChangedEntry = [ ]
 		self.item = None
 		self.setup = setup
@@ -165,6 +166,7 @@ class Setup(ConfigListScreen, Screen):
 		self["config"].setCurrentIndex(newIdx)
 
 	def handleInputHelpers(self):
+		self["status"].setText(self["config"].getCurrent()[2])
 		if self["config"].getCurrent() is not None:
 			try:
 				if isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
@@ -225,7 +227,8 @@ class Setup(ConfigListScreen, Screen):
 	def changedEntry(self):
 		self.item = self["config"].getCurrent()
 		try:
-			if isinstance(self["config"].getCurrent()[1], ConfigYesNo) or isinstance(self["config"].getCurrent()[1], ConfigSelection):
+			#FIXME This code prevents an LCD refresh for this ConfigElement(s)
+			if not isinstance(self["config"].getCurrent()[1], ConfigText):
 				self.createSetup()
 		except:
 			pass
