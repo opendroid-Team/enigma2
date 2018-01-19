@@ -19,6 +19,7 @@ import timer
 import xml.etree.cElementTree
 import NavigationInstance
 from ServiceReference import ServiceReference
+from enigma import pNavigation, eDVBFrontend
 
 from time import localtime, strftime, ctime, time
 from bisect import insort
@@ -315,7 +316,11 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					return False
 
 			self.setRecordingPreferredTuner()
-			self.record_service = rec_ref and NavigationInstance.instance.recordService(rec_ref)
+			try:
+				#not all images support recording type indicators
+				self.record_service = rec_ref and NavigationInstance.instance.recordService(rec_ref,False,pNavigation.isRealRecording)
+			except:
+				self.record_service = rec_ref and NavigationInstance.instance.recordService(rec_ref)
 
 			if not self.record_service:
 				self.log(1, "'record service' failed")

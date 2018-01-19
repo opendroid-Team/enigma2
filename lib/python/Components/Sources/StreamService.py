@@ -2,7 +2,7 @@ from Source import Source
 from Components.Element import cached
 from Components.SystemInfo import SystemInfo
 from enigma import eServiceReference
-
+from enigma import eServiceReference, pNavigation
 StreamServiceList = []
 
 class StreamService(Source):
@@ -46,6 +46,7 @@ class StreamService(Source):
 					InfoBar.instance.session.pipshown = False
 		self.__service = self.navcore.recordService(self.ref)
 		self.navcore.record_event.append(self.recordEvent)
+		self.__service = self.navcore.recordService(self.ref,False,pNavigation.isStreaming)
 		if self.__service is not None:
 			if self.__service.__deref__() not in StreamServiceList:
 				StreamServiceList.append(self.__service.__deref__())
