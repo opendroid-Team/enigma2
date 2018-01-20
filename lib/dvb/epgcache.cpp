@@ -384,6 +384,7 @@ eEPGCache::eEPGCache()
 
 	enabledSources = 0;
 	historySeconds = 0;
+	maxdays = 7;
 
 	CONNECT(messages.recv_msg, eEPGCache::gotMessage);
 	CONNECT(eDVBLocalTimeHandler::getInstance()->m_timeUpdated, eEPGCache::timeUpdated);
@@ -849,7 +850,7 @@ void eEPGCache::sectionRead(const uint8_t *data, int source, channel_data *chann
 
 		if ( (TM != 3599) &&		// NVOD Service
 		     (now <= (TM+duration)) &&	// skip old events
-		     (TM < (now+28*24*60*60)) &&	// no more than 4 weeks in future
+		     (TM < (now+maxdays*24*60*60)) &&	// maxdays for EPG - no more than 4 weeks in future
 		     ( (onid != 1714) || (duration != (24*3600-1)) )	// PlatformaHD invalid event
 		   )
 		{
@@ -1605,7 +1606,12 @@ void eEPGCache::channel_data::startEPG()
 		mask.mask[0] = 0xFF;
 		mask.data[1] = 0;
 		mask.mask[1] = 0xFF;
-		m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2), m_MHWConn2);
+		if (eEPGCache::getInstance()->getEpgmaxdays() < 4)
+		{
+			m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2_old), m_MHWConn2);
+		} else {
+			m_MHWReader2->connectRead(sigc::mem_fun(*this, &eEPGCache::channel_data::readMHWData2), m_MHWConn2);
+		}
 		m_MHWReader2->start(mask);
 		isRunning |= MHW;
 		memcpy(&m_MHWFilterMask2, &mask, sizeof(eDVBSectionFilterMask));
@@ -3180,6 +3186,11 @@ void eEPGCache::submitEventData(const std::vector<int>& sids, const std::vector<
 	}
 }
 
+void eEPGCache::setEpgmaxdays(unsigned int epgmaxdays)
+{
+	maxdays = epgmaxdays;
+}
+
 void eEPGCache::setEpgHistorySeconds(time_t seconds)
 {
 	historySeconds = seconds;
@@ -3193,6 +3204,11 @@ void eEPGCache::setEpgSources(unsigned int mask)
 unsigned int eEPGCache::getEpgSources()
 {
 	return enabledSources;
+}
+
+unsigned int eEPGCache::getEpgmaxdays()  
+{
+	return maxdays;
 }
 
 static const char* getStringFromPython(ePyObject obj)

@@ -278,6 +278,7 @@ private:
 
 	unsigned int enabledSources;
 	unsigned int historySeconds;
+	unsigned int maxdays;
 
 	std::vector<int> onid_blacklist;
 	std::map<std::string,int> customeitpids;
@@ -394,9 +395,11 @@ public:
 #endif
 	,EPG_IMPORT=0x80000000
 	};
+	void setEpgmaxdays(unsigned int epgmaxdays);
 	void setEpgHistorySeconds(time_t seconds);
 	void setEpgSources(unsigned int mask);
 	unsigned int getEpgSources();
+	unsigned int getEpgmaxdays();
 
 	void submitEventData(const std::vector<eServiceReferenceDVB>& serviceRefs, long start, long duration, const char* title, const char* short_summary, const char* long_description, char event_type);
 

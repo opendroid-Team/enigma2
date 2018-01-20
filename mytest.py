@@ -143,7 +143,7 @@ def dump(dir, p = ""):
 			dump(val, p + "(dict)/" + entry)
 	if hasattr(dir, "__dict__"):
 		for name, value in dir.__dict__.items():
-			if str(value) not in had:
+			if not had.has_key(str(value)):
 				had[str(value)] = 1
 				dump(value, p + "/" + str(name))
 			else:
@@ -255,7 +255,7 @@ class Session:
 		self.current_dialog.restoreKeyboardMode()
 		self.current_dialog.hide()
 
-		if last and self.summary is not None:
+		if last:
 			self.current_dialog.removeSummary(self.summary)
 			self.popSummary()
 
@@ -273,13 +273,12 @@ class Session:
 			callback(*retval)
 
 	def instantiateSummaryDialog(self, screen, **kwargs):
-		if self.summary_desktop is not None:
-			self.pushSummary()
-			summary = screen.createSummary() or SimpleSummary
-			arguments = (screen,)
-			self.summary = self.doInstantiateDialog(summary, arguments, kwargs, self.summary_desktop)
-			self.summary.show()
-			screen.addSummary(self.summary)
+		self.pushSummary()
+		summary = screen.createSummary() or SimpleSummary
+		arguments = (screen,)
+		self.summary = self.doInstantiateDialog(summary, arguments, kwargs, self.summary_desktop)
+		self.summary.show()
+		screen.addSummary(self.summary)
 
 	def doInstantiateDialog(self, screen, arguments, kwargs, desktop):
 		# create dialog
@@ -350,16 +349,13 @@ class Session:
 	def pushSummary(self):
 		if self.summary is not None:
 			self.summary.hide()
-			self.summary_stack.append(self.summary)
-			self.summary = None
+		self.summary_stack.append(self.summary)
+		self.summary = None
 
 	def popSummary(self):
 		if self.summary is not None:
 			self.summary.doClose()
-		if not self.summary_stack:
-			self.summary = None
-		else:
-			self.summary = self.summary_stack.pop()
+		self.summary = self.summary_stack.pop()
 		if self.summary is not None:
 			self.summary.show()
 
@@ -389,22 +385,10 @@ class PowerKey:
 		self.session.infobar = None
 
 	def shutdown(self):
-		wasRecTimerWakeup = False
-		recordings = self.session.nav.getRecordings()
-		if not recordings:
-			next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
-		if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
-			if os.path.exists("/tmp/was_rectimer_wakeup") and not self.session.nav.RecordTimer.isRecTimerWakeup():
-				f = open("/tmp/was_rectimer_wakeup", "r")
-				file = f.read()
-				f.close()
-				wasRecTimerWakeup = int(file) and True or False
-			if self.session.nav.RecordTimer.isRecTimerWakeup() or wasRecTimerWakeup:
-				print "PowerOff (timer wakewup) - Recording in progress or a timer about to activate, entering standby!"
-				self.standby()
-			else:
-				print "PowerOff - Now!"
-				self.session.open(Screens.Standby.TryQuitMainloop, 1)
+		recordings = self.session.nav.getRecordingsCheckBeforeActivateDeepStandby()
+		if recordings:
+			from Screens.MessageBox import MessageBox
+			self.session.openWithCallback(self.gotoStandby,MessageBox,_("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type = MessageBox.TYPE_INFO, close_on_any_key = True, timeout = 10)
 		elif not Screens.Standby.inTryQuitMainloop and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND:
 			print "PowerOff - Now!"
 			self.session.open(Screens.Standby.TryQuitMainloop, 1)

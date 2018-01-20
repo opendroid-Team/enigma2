@@ -14,7 +14,7 @@ from time import localtime, time
 import Screens.InfoBar
 from gettext import dgettext
 import Components.RecordingConfig
-
+from Components.Harddisk import harddiskmanager
 inStandby = None
 
 def setLCDModeMinitTV(value):
@@ -39,6 +39,28 @@ class Standby2(Screen):
 		#kill me
 		self.close(True)
 
+	def Power_make(self):
+		if (config.usage.on_short_powerpress.value != "standby_noTVshutdown"):
+			self.Power()
+	def Power_long(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown"):
+			self.TVoff()
+			self.ignoreKeyBreakTimer.start(250,1)
+	def Power_repeat(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown") and self.ignoreKeyBreakTimer.isActive():
+			self.ignoreKeyBreakTimer.start(250,1)
+
+	def Power_break(self):
+		if (config.usage.on_short_powerpress.value == "standby_noTVshutdown") and not self.ignoreKeyBreakTimer.isActive():
+			self.Power()
+
+	def TVoff(self):
+		print "[Standby] TVoff"
+		try:
+			config.hdmicec.control_tv_standby_skipnow.setValue(False)
+			config.hdmicec.TVoffCounter.value += 1
+		except:
+			pass
 	def setMute(self):
 		if eDVBVolumecontrol.getInstance().isMuted():
 			self.wasMuted = 1
@@ -111,6 +133,10 @@ class Standby2(Screen):
 			self.avswitch.setInput("SCART")
 		else:
 			self.avswitch.setInput("AUX")
+		if int(config.usage.hdd_standby_in_standby.value) != -1: # HDD standby timer value (box in standby) / -1 = same as when box is active
+			for hdd in harddiskmanager.HDDList():
+				hdd[1].setIdleTime(int(config.usage.hdd_standby_in_standby.value))
+
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
 		self.onClose.append(self.__onClose)
 
@@ -131,6 +157,8 @@ class Standby2(Screen):
 				self.session.nav.playService(self.prev_running_service)
 		self.session.screen["Standby"].boolean = False
 		globalActionMap.setEnabled(True)
+		for hdd in harddiskmanager.HDDList():
+			hdd[1].setIdleTime(int(config.usage.hdd_standby.value)) # HDD standby timer value (box active)
 
 	def __onFirstExecBegin(self):
 		global inStandby
