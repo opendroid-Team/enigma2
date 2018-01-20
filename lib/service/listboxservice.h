@@ -6,6 +6,7 @@
 #include <lib/service/iservice.h>
 #include <lib/python/python.h>
 #include <set>
+#include <lib/nav/core.h>
 
 class eListboxServiceContent: public virtual iListboxContent
 {
@@ -119,7 +120,7 @@ public:
 	};
 
 	void setColor(int color, gRGB &col);
-	bool checkServiceIsRecorded(eServiceReference ref);
+	bool checkServiceIsRecorded(eServiceReference ref,pNavigation::RecordType type=pNavigation::isAnyRecording);
 protected:
 	void cursorHome();
 	void cursorEnd();
