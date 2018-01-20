@@ -16,6 +16,8 @@ from Components.RcModel import rc_model
 from boxbranding import getBoxType
 config.vfd = ConfigSubsection()
 config.vfd.show = ConfigSelection([("skin_text.xml", _("Channel Name")), ("skin_text_clock.xml", _("Clock"))], "skin_text.xml")
+if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
+	config.vfd.show = ConfigNothing()
 colorNames = {}
 switchPixmap = {}  # dict()
 
@@ -65,10 +67,17 @@ def addSkin(name, scope = SCOPE_SKIN):
 			return True
 	return False
 
-# get own skin_user_skinname.xml file, if it exists
-# ...but first check that the relevant base dir exists, otherwise
-# we may well get into a start-up loop with skin failures
-#
+def get_modular_files(name, scope = SCOPE_SKIN):
+	dirname = resolveFilename(scope, name + 'mySkin/')
+	file_list = []
+	if fileExists(dirname):
+		skin_files = (os.listdir(dirname))
+		if len(skin_files):
+			for f in skin_files:
+				if f.startswith('skin_') and f.endswith('.xml'):
+					file_list.append(("mySkin/" + f))
+	file_list = sorted(file_list, key=str.lower)
+	return file_list
 def skin_user_skinname():
 	skin_name = config.skin.primary_skin.value
 	skin_base = skin_name[:skin_name.rfind('/')]
@@ -103,6 +112,22 @@ config.skin.primary_skin = ConfigText(default=DEFAULT_SKIN)
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 config.skin.display_skin = ConfigText(default=DEFAULT_DISPLAY_SKIN)
 
+def skinExists(skin = False):
+	if not skin or not isinstance(skin, skin):
+		skin = config.skin.primary_skin.value
+	skin =  resolveFilename(SCOPE_SKIN, skin)
+	if not fileExists(skin):
+		if fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
+			config.skin.primary_skin.value = DEFAULT_SKIN
+		else:
+			config.skin.primary_skin.value = "skin.xml"
+		config.skin.primary_skin.save()
+def getSkinPath():
+	primary_skin_path = config.skin.primary_skin.value.replace('skin.xml', '')
+	if not primary_skin_path.endswith('/'):
+		primary_skin_path = primary_skin_path + '/'
+	return primary_skin_path
+primary_skin_path = getSkinPath()
 profile("LoadSkin")
 res = None
 name = skin_user_skinname()
@@ -116,6 +141,16 @@ addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
 display_skin_id = 1
+
+if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+
+if getBoxType().startswith('dm'):
+	display_skin_id = 2
 try:
 	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
 		raise DisplaySkinError, "[Skin] display skin not found"
@@ -130,8 +165,35 @@ except Exception, err:
 	addSkin(skin)
 	del skin
 
-addSkin('skin_subtitles.xml')
+try:
+	if not addSkin(config.vfd.show.value):
+		raise DisplaySkinError, "[Skin] display vfd skin not found"
+except:
+	addSkin('skin_text.xml')
 
+addSkin('skin_subtitles.xml')
+try:
+	addSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined colors for skin"
+
+try:
+	addSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined header file for skin"
+
+def load_modular_files():
+	modular_files = get_modular_files(primary_skin_path, SCOPE_SKIN)
+	if len(modular_files):
+		for f in modular_files:
+			try:
+				addSkin(primary_skin_path + f, SCOPE_SKIN)
+				print "[SKIN] loading modular skin file : ", (primary_skin_path + f)
+			except (SkinError, IOError, AssertionError), err:
+				print "[SKIN] failed to load modular skin file : ", err
+load_modular_files()
 try:
 	if not addSkin(config.skin.primary_skin.value):
 		raise SkinError, "[Skin] primary skin not found"
@@ -174,11 +236,7 @@ def parseCoordinate(s, e, size=0, font=None):
 			elif s[-1] is 'h':
 				val += fonts[font][2] * int(s[:-1])
 			else:
-				try:
-					val += int(s)
-				except:
-					print "[skin][parseCoordinate] Unexpected input value: ", s
-					val = int(eval(s))
+				val += int(s)
 	if val < 0:
 		val = 0
 	return val
@@ -290,6 +348,29 @@ def loadPixmap(path, desktop):
 		raise SkinError("[Skin] pixmap file %s not found!" % path)
 	return ptr
 
+pngcache = []
+def cachemenu():
+	pixmaplist = []
+	for (path, skin) in dom_skins:
+		for x in skin.findall("screen"):
+			if x.attrib.get('name') == 'menu_mainmenu':
+				print x.attrib.get('name')
+				for s in x.findall("ePixmap"):
+					if s.attrib.get('pixmap','') is not '':
+						pixmaplist.append(s.attrib.get('pixmap',''))
+				for s in x.findall('widget'):
+					if s.attrib.get('pixmap','') is not '':
+						pixmaplist.append(s.attrib.get('pixmap',''))
+	desktop = getDesktop(0)
+	for s in pixmaplist:
+		value ='/usr/share/enigma2/'+s
+		ptr = loadPixmap(value, desktop)
+		pngcache.append((value, ptr))
+try:
+	if config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml" or config.skin.primary_skin.value == DEFAULT_SKIN:
+		cachemenu()
+except:
+	print "fail cache main menu"
 class AttributeParser:
 	def __init__(self, guiObject, desktop, scale=((1,1),(1,1))):
 		self.guiObject = guiObject
@@ -466,9 +547,6 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 def applyAllAttributes(guiObject, desktop, attributes, scale):
 	AttributeParser(guiObject, desktop, scale).applyAll(attributes)
 
-def paramConvert(val):
-	return float(val) if '.' in val else int(val)
-
 def loadSingleSkinData(desktop, skin, path_prefix):
 	"""loads skin data like colors, windowstyle etc."""
 	assert skin.tag == "skin", "root element in skin must be 'skin'!"
@@ -503,61 +581,6 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				if bpp != 32:
 					# load palette (not yet implemented)
 					pass
-				if yres >= 1080:
-					parameters["ConfigListSeperator"] = (580)
-					parameters["ChoicelistDash"] = (0,3,1000,50)
-					parameters["ChoicelistName"] = (85,3,1000,50)
-					parameters["ChoicelistIcon"] = (10,4,64,50)
-					parameters["FileListName"] = (38,4,1000,50)
-					parameters["FileListIcon"] = (7,4,52,50)
-					parameters["FileListMultiName"] = (90,3,1000,50)
-					parameters["FileListMultiIcon"] = (45, 4, 50, 50)
-					parameters["FileListMultiLock"] = (2,0,50,50)
-					parameters["PluginListItemHeight"] = (80)
-					parameters["PluginListName"] = (130,2,900,37)
-					parameters["PluginListDescription"] = (130,40,900,32)
-					parameters["PluginListIcon"] = (0,0,120,50)
-					parameters["PluginBrowserName"] = (180,3,45)
-					parameters["PluginBrowserDescr"] = (180,36,39)
-					parameters["PluginBrowserIcon"] = (0,0,160,70)
-					parameters["PluginBrowserDownloadName"] = (120,3,45)
-					parameters["PluginBrowserDownloadDescr"] = (120,50,50)
-					parameters["PluginBrowserDownloadIcon"] = (0,0,120,85)
-					parameters["ServiceInfo"] = (0,0,450,50)
-					parameters["ServiceInfoLeft"] = (0,0,450,45)
-					parameters["ServiceInfoRight"] = (450,0,1000,45)
-					parameters["ServicelistServiceNumber"] = (30,0,180,0)
-					parameters["ServicelistServiceNumber100"] = (25,1,180,0)
-					parameters["ServicelistHorNumber"] = (43, 21, 150, 45)
-					parameters["SelectionListDescr"] = (55, 3, 1000, 50)
-					parameters["SelectionListLock"] = (10, 7, 50, 50)
-					parameters["VirtualKeyboard"] = (68, 45)
-					parameters["PartnerBoxEntryListName"] = (8, 2, 225, 38)
-					parameters["PartnerBoxEntryListIP"] = (180, 2, 225, 38)
-					parameters["PartnerBoxEntryListPort"] = (405, 2, 150, 38)
-					parameters["PartnerBoxEntryListType"] = (615, 2, 150, 38)
-					parameters["PartnerBoxTimerServicename"] = (0, 0, 45)
-					parameters["PartnerBoxTimerName"] = (0, 42, 30)
-					parameters["PartnerBoxE1TimerTime"] = (0, 78, 255, 30)
-					parameters["PartnerBoxE1TimerState"] = (255, 78, 255, 30)
-					parameters["PartnerBoxE2TimerTime"] = (0, 78, 225, 30)
-					parameters["PartnerBoxE2TimerState"] = (225, 78, 225, 30)
-					parameters["PartnerBoxE2TimerIcon"] = (735, 8, 60, 60)
-					parameters["PartnerBoxBouquetListName"] = (0, 0, 45)
-					parameters["PartnerBoxChannelListName"] = (0, 0, 45)
-					parameters["PartnerBoxChannelListTitle"] = (0, 42, 30)
-					parameters["PartnerBoxChannelListTime"] = (0, 78, 225, 30)
-					parameters["PiconManagerList"] = (10,2,1150,45)
-					parameters["PiconManagerListItemHeight"] = (45)
-					parameters["HelpMenuListHlp"] = (0, 0, 900, 42)
-					parameters["HelpMenuListExtHlp0"] = (0, 0, 900, 39)
-					parameters["HelpMenuListExtHlp1"] = (0, 42, 900, 30)
-					parameters["AboutHddSplit"] = 1
-					parameters["DreamexplorerName"] = (62, 0, 1200, 38)
-					parameters["DreamexplorerIcon"] = (15, 4, 30, 30)
-					parameters["PicturePlayerThumb"] = (30, 285, 45, 300, 30, 25)
-					parameters["PlayListName"] = (65,2,1000,50)
-					parameters["PlayListIcon"] = (10,0,50,50)
 	for skininclude in skin.findall("include"):
 		filename = skininclude.attrib.get("filename")
 		if filename:
@@ -567,21 +590,6 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			if fileExists(skinfile):
 				print "[Skin] loading include:", skinfile
 				loadSkin(skinfile)
-
-	for c in skin.findall('switchpixmap'):
-		for pixmap in c.findall('pixmap'):
-			get_attr = pixmap.attrib.get
-			name = get_attr('name')
-			if not name:
-				raise SkinError('[Skin] pixmap needs name attribute')
-			filename = get_attr('filename')
-			if not filename:
-				raise SkinError('[Skin] pixmap needs filename attribute')
-			resolved_png = resolveFilename(SCOPE_ACTIVE_SKIN, filename, path_prefix=path_prefix)
-			if fileExists(resolved_png):
-				switchPixmap[name] = resolved_png
-			else:
-				raise SkinError('[Skin] switchpixmap pixmap filename="%s" (%s) not found' % (filename, resolved_png))
 
 	for c in skin.findall("colors"):
 		for color in c.findall("color"):
@@ -719,7 +727,10 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					if fileExists(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix)):
 						pngfile = resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix)
 					png = loadPixmap(pngfile, desktop)
-					style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
+					try:
+						style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
+					except:
+						pass
 				#print "  borderset:", bpName, filename
 		for color in windowstyle.findall("color"):
 			get_attr = color.attrib.get

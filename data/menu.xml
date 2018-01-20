@@ -60,7 +60,7 @@ self.session.open(GreenPanel)
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
 			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
-				<item weight="10" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner2"/></item>
+				<item weight="10" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner"/></item>
 				<item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item>
 				<item weight="20" level="2" text="Hotkey Setup" entryID="buttonsetup_setup"><screen module="ButtonSetup" screen="ButtonSetup"/></item>
 				<item weight="30" level="1" text="Input devices" entryID="input_device_setup"><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
