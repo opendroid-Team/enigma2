@@ -3,7 +3,7 @@ from Components.About import about
 from Tools.CList import CList
 from Tools.HardwareInfo import HardwareInfo
 from enigma import eAVSwitch, getDesktop
-from boxbranding import getBoxType, getBrandOEM
+from boxbranding import getBoxType, getMachineBuild, getBrandOEM
 from SystemInfo import SystemInfo
 import os
 
@@ -324,7 +324,15 @@ class AVSwitch:
 		lst = []
 
 		config.av.videomode = ConfigSubDict()
+		config.av.autores_mode_sd = ConfigSubDict()
+		config.av.autores_mode_hd = ConfigSubDict()
+		config.av.autores_mode_fhd = ConfigSubDict()
+		config.av.autores_mode_uhd = ConfigSubDict()
 		config.av.videorate = ConfigSubDict()
+		config.av.autores_rate_sd = ConfigSubDict()
+		config.av.autores_rate_hd = ConfigSubDict()
+		config.av.autores_rate_fhd = ConfigSubDict()
+		config.av.autores_rate_uhd = ConfigSubDict()
 
 		# create list of output ports
 		portlist = self.getPortList()
@@ -338,8 +346,16 @@ class AVSwitch:
 			modes = self.getModeList(port)
 			if len(modes):
 				config.av.videomode[port] = ConfigSelection(choices = [mode for (mode, rates) in modes])
+				config.av.autores_mode_sd[port] = ConfigSelection(choices = [mode for (mode, rates) in modes])
+				config.av.autores_mode_hd[port] = ConfigSelection(choices = [mode for (mode, rates) in modes])
+				config.av.autores_mode_fhd[port] = ConfigSelection(choices = [mode for (mode, rates) in modes])
+				config.av.autores_mode_uhd[port] = ConfigSelection(choices = [mode for (mode, rates) in modes])
 			for (mode, rates) in modes:
 				config.av.videorate[mode] = ConfigSelection(choices = rates)
+				config.av.autores_rate_sd[mode] = ConfigSelection(choices = rates)
+				config.av.autores_rate_hd[mode] = ConfigSelection(choices = rates)
+				config.av.autores_rate_fhd[mode] = ConfigSelection(choices = rates)
+				config.av.autores_rate_uhd[mode] = ConfigSelection(choices = rates)
 		config.av.videoport = ConfigSelection(choices = lst)
 
 	def setInput(self, input):
@@ -433,6 +449,9 @@ class AVSwitch:
 		fb_size = getDesktop(0).size()
 		return aspect[0] * fb_size.height(), aspect[1] * fb_size.width()
 
+	def setAspectRatio(self, value):
+		eAVSwitch.getInstance().setAspectRatio(value)
+
 	def getAspectRatioSetting(self):
 		valstr = config.av.aspectratio.value
 		if valstr == "4_3_letterbox":
@@ -460,7 +479,40 @@ def InitAVSwitch():
 	if config.av.yuvenabled.value:
 		colorformat_choices["yuv"] = _("YPbPr")
 
-	config.av.autores = ConfigSelection(choices={"disabled": _("Disabled"), "all": _("All resolutions"), "hd": _("only HD")}, default="disabled")
+	config.av.autores = ConfigSelection(choices={"disabled": _("Disabled"), "simple": _("Simple"), "native": _("Native"), "all": _("All resolutions"), "hd": _("only HD")}, default="disabled")
+	config.av.autores_preview = NoSave(ConfigYesNo(default=False))
+	config.av.autores_1080i_deinterlace = ConfigYesNo(default=False)
+	choicelist = {
+			"24,24": _("24p/24p"),
+			"24,25": _("24p/25p"),
+			"24,30": _("24p/30p"),
+			"24,50": _("24p/50p"),
+			"24,60": _("24p/60p"),
+			"25,24": _("25p/24p"),
+			"30,24": _("30p/24p"),
+			"50,24": _("50p/24p"),
+			"60,24": _("60p/24p"),
+			"25,25": _("25p/25p"),
+			"25,30": _("25p/30p"),
+			"25,50": _("25p/50p"),
+			"25,60": _("25p/60p"),
+			"30,25": _("30p/25p"),
+			"50,25": _("50p/25p"),
+			"60,25": _("60p/25p"),
+			"30,30": _("30p/30p"),
+			"30,50": _("30p/50p"),
+			"30,60": _("30p/60p"),
+			"50,30": _("50p/30p"),
+			"60,30": _("60p/30p"),
+			"50,50": _("50p/50p"),
+			"50,60": _("50p/60p"),
+			"60,50": _("60p/50p"),
+			"60,60": _("60p/60p")
+				}  # first value <=720p , second value > 720p
+	config.av.autores_24p =  ConfigSelection(choices=choicelist, default="50,24")
+	config.av.autores_25p =  ConfigSelection(choices=choicelist, default="50,25")
+	config.av.autores_30p =  ConfigSelection(choices=choicelist, default="60,30")
+	config.av.autores_unknownres =  ConfigSelection(choices={"next": _("next higher Resolution"), "highest": _("highest Resolution")}, default="next")
 	choicelist = []
 	for i in range(5, 16):
 		choicelist.append(("%d" % i, ngettext("%d second", "%d seconds", i) % i))
@@ -476,6 +528,7 @@ def InitAVSwitch():
 	config.av.autores_2160p24 = ConfigSelection(choices={"2160p24": _("2160p 24Hz"), "2160p25": _("2160p 25Hz")}, default="2160p24")
 	config.av.autores_2160p25 = ConfigSelection(choices={"2160p25": _("2160p 25Hz"), "2160p50": _("2160p 50Hz")}, default="2160p25")
 	config.av.autores_2160p30 = ConfigSelection(choices={"2160p30": _("2160p 30Hz"), "2160p60": _("2160p 60Hz")}, default="2160p30")
+	config.av.smart1080p = ConfigSelection(choices={"false": _("off"), "true": _("1080p50: 24p/50p/60p"), "2160p50": _("2160p50: 24p/50p/60p"), "1080i50": _("1080i50: 24p/50i/60i"), "720p50": _("720p50: 24p/50p/60p")}, default="false")
 	config.av.colorformat = ConfigSelection(choices=colorformat_choices, default="rgb")
 	config.av.aspectratio = ConfigSelection(choices={
 			"4_3_letterbox": _("4:3 Letterbox"),
@@ -788,7 +841,6 @@ def InitAVSwitch():
 			open("/proc/stb/audio/multichannel_pcm", "w").write(configElement.value and "enable" or "disable")
 		config.av.pcm_multichannel = ConfigYesNo(default = False)
 		config.av.pcm_multichannel.addNotifier(setPCMMultichannel)
-
 	try:
 		f = open("/proc/stb/audio/ac3_choices", "r")
 		file = f.read()[:-1]
