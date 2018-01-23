@@ -24,7 +24,7 @@ public:
 
 	RESULT createSectionReader(eMainloop *context, ePtr<iDVBSectionReader> &reader);
 	RESULT createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reader);
-	RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder, unsigned int packetsize = 188, bool streaming=false);
+	RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder, int packetsize = 188, bool streaming=false);
 	RESULT getMPEGDecoder(ePtr<iTSMPEGDecoder> &reader, int index);
 	RESULT getSTC(pts_t &pts, int num);
 	RESULT getCADemuxID(uint8_t &id) { id = demux; return 0; }
@@ -49,10 +49,6 @@ private:
 	friend class eDVBTSRecorder;
 	friend class eDVBCAService;
 	friend class eTSMPEGDecoder;
-#ifdef HAVE_AMLOGIC
-	int m_pvr_fd;
-	friend class eAMLTSMPEGDecoder;
-#endif
 	sigc::signal1<void, int> m_event;
 
 	int openDemux(void);
@@ -118,7 +114,7 @@ protected:
 		unsigned char* buffer;
 		AsyncIO()
 		{
-			memset(&aio, 0, sizeof(struct aiocb));
+			memset(&aio, 0, sizeof(aiocb));
 			buffer = NULL;
 		}
 		int wait();
@@ -140,7 +136,6 @@ class eDVBRecordStreamThread: public eDVBRecordFileThread
 {
 public:
 	eDVBRecordStreamThread(int packetsize);
-
 protected:
 	int writeData(int len);
 	void flush();
@@ -188,7 +183,6 @@ private:
 	eDVBRecordFileThread *m_thread;
 	std::string m_target_filename;
 	int m_packetsize;
-	friend class eRTSPStreamClient;
 };
 
 #endif

@@ -18,7 +18,6 @@ class eDVBDB: public iDVBChannelList
 	friend class eDVBDBBouquetQuery;
 	friend class eDVBDBSatellitesQuery;
 	friend class eDVBDBProvidersQuery;
-	friend class eRTSPStreamClient;
 
 	struct channel
 	{
@@ -44,6 +43,7 @@ public:
 	RESULT removeServices(int dvb_namespace=-1, int tsid=-1, int onid=-1, unsigned int orb_pos=0xFFFFFFFF);
 	RESULT removeService(const eServiceReference &service);
 	PyObject *getFlag(const eServiceReference &service);
+	PyObject *getCachedPid(const eServiceReference &service, int id);
 	bool isCrypted(const eServiceReference &service);
 	bool hasCAID(const eServiceReference &service, unsigned int caid);
 	RESULT addCAID(const eServiceReference &service, unsigned int caid);
