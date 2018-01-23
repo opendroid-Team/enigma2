@@ -287,6 +287,45 @@ bool need_turn_fast(int turn_speed)
 			eDebug(x); \
 	} while(0)
 
+RESULT eDVBSatelliteEquipmentControl::prepareRFmagicCSS(iDVBFrontend &frontend, eDVBSatelliteLNBParameters &lnb_param, long band, int ifreq, int &tunerfreq, unsigned int &tuningword, int guard_offset)
+{
+	bool simulate = ((eDVBFrontend*)&frontend)-> is_simulate();
+	int vco = roundMulti(lnb_param.SatCRvco + guard_offset + ifreq, 1000);
+	tunerfreq = heterodyne(frontend, ifreq, vco);
+	unsigned int positions = lnb_param.SatCR_positions ? lnb_param.SatCR_positions : 1;
+	unsigned int posnum = (lnb_param.SatCR_positionnumber > 0)										// position == 0 -> use first position
+				&& (lnb_param.SatCR_positionnumber <= MAX_EN50607_POSITIONS) ?  lnb_param.SatCR_positionnumber - 1 : 0;
+
+	tuningword = (((roundMulti(vco - lnb_param.SatCRvco - 2*guard_offset - 100000, 1000)/1000)&0x07FF)<<8)
+			| (band & 0x3)						//Bit0:HighLow  Bit1:VertHor
+			| ((posnum & 0x3F) << 2)				//position number (0..63)
+			| ((lnb_param.SatCR_idx & 0x1F) << 19);			//addresse of SatCR (0..31)
+
+	eDebugNoSimulate("[eDVBSatelliteEquipmentControl] polarisation: %c band: %c position: %d satcr: %d tunerfreq: %dMHz vco: %dMHz tuningword 0x%06x" \
+		, (band & 2)?'H':'V', (band & 1)?'H':'L', posnum, lnb_param.SatCR_idx, tunerfreq/1000, vco /1000, tuningword);
+	return vco;
+}
+
+RESULT eDVBSatelliteEquipmentControl::prepareSTelectronicSatCR(iDVBFrontend &frontend, eDVBSatelliteLNBParameters &lnb_param, long band, int ifreq, int &tunerfreq, unsigned int &tuningword, int guard_offset)
+{
+	bool simulate = ((eDVBFrontend*)&frontend)->is_simulate();
+	int vco = roundMulti(lnb_param.SatCRvco + ifreq + guard_offset, 4000);
+	tunerfreq = heterodyne(frontend, ifreq, vco);
+	unsigned int positions = lnb_param.SatCR_positions ? lnb_param.SatCR_positions : 1;
+	unsigned int posnum = (lnb_param.SatCR_positionnumber > 0)							// position == 0 -> use position A
+				&& (lnb_param.SatCR_positionnumber <= MAX_FIXED_LNB_POSITIONS) 				// rotor with unicablelnb -> use only position A
+				&& (positions > 1)									// has only one position -> use only position A
+				&& ((lnb_param.SatCR_positionnumber - 1) % positions) ?  1 : 0;				// odd numbers use position A; even numbers use position B
+
+	tuningword = ((vco - 1400000)/4000)
+			|(posnum << 12)
+			|((band & 3) <<10)
+			|((lnb_param.SatCR_idx & 7) << 13);
+
+	eDebugNoSimulate("[eDVBSatelliteEquipmentControl] polarisation: %c band: %c position: %d satcr: %d tunerfreq: %dMHz vco: %dMHz tuningword 0x%04x" \
+		, (band & 2)?'H':'V', (band & 1)?'H':'L', posnum, lnb_param.SatCR_idx, tunerfreq/1000, vco /1000, tuningword);
+	return  vco;
+}
 RESULT eDVBSatelliteEquipmentControl::prepare(iDVBFrontend &frontend, const eDVBFrontendParametersSatellite &sat, int &frequency, int slot_id, unsigned int tunetimeout)
 {
 	bool simulate = ((eDVBFrontend*)&frontend)->is_simulate();

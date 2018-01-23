@@ -273,6 +273,9 @@ public:
 #define guard_offset_max 8000
 #define guard_offset_step 8000
 #define MAX_SATCR 32
+#define MAX_EN50607_POSITIONS 		64
+#define MAX_FIXED_LNB_POSITIONS		64
+#define MAX_MOVABLE_LNBS 		6
 #define MAX_LNBNUM (MAX_FIXED_LNB_POSITIONS + MAX_MOVABLE_LNBS)
 #define MAX_LNBNUM 32
 	SatCR_format_t SatCR_format;
@@ -371,6 +374,7 @@ public:
 	RESULT setUseInputpower(bool onoff);
 	RESULT setInputpowerDelta(int delta);  // delta between running and stopped rotor
 	RESULT setRotorTurningSpeed(int speed);  // set turning speed..
+	RESULT getMaxMovableLnbNum() {return MAX_MOVABLE_LNBS;}
 /* Unicable Specific Parameters */
 	RESULT setLNBSatCR(int SatCR_idx);
 	RESULT setLNBSatCRvco(int SatCRvco);
@@ -388,6 +392,7 @@ public:
 	RESULT setToneMode(int mode);
 	RESULT setRotorPosNum(int rotor_pos_num);
 	RESULT getMaxFixedLnbPositions() {return MAX_FIXED_LNB_POSITIONS;}
+	RESULT getMaxLnbNum() {return MAX_LNBNUM;}
 /* Tuner Specific Parameters */
 	RESULT setTunerLinked(int from, int to);
 	RESULT setTunerDepends(int from, int to);
