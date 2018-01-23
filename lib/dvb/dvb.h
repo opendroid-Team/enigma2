@@ -6,13 +6,13 @@
 #include <lib/base/ebase.h>
 #include <lib/base/elock.h>
 #include <lib/dvb/idvb.h>
-#include <lib/dvb/fbc.h>
 #include <lib/dvb/demux.h>
 #include <lib/dvb/frontend.h>
 #include <lib/dvb/tstools.h>
 #include <lib/dvb/esection.h>
 #include "filepush.h"
 #include <connection.h>
+#include <lib/dvb/fbc.h>
 
 #include <dvbsi++/service_description_section.h>
 
@@ -283,8 +283,13 @@ public:
 
 		/* only for managed channels - effectively tunes to the channelid. should not be used... */
 		/* cannot be used for PVR channels. */
+		/* RESULT == 0: succeeded */
+		/* RESULT != 0: failed */
 	RESULT setChannel(const eDVBChannelID &id, ePtr<iDVBFrontendParameters> &feparam);
 	eDVBChannelID getChannelID() { return m_channel_id; }
+#if defined(__sh__) //see filepush.h
+	int getSkipMode() { return m_skipmode_m; }
+#endif
 
 	RESULT connectStateChange(const sigc::slot1<void,iDVBChannel*> &stateChange, ePtr<eConnection> &connection);
 	RESULT connectEvent(const sigc::slot2<void,iDVBChannel*,int> &eventChange, ePtr<eConnection> &connection);

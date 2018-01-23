@@ -8,7 +8,6 @@
 #include <lib/base/eerror.h>
 
 #include "absdiff.h"
-
 #define SEC_DEBUG
 
 #ifdef SEC_DEBUG
@@ -52,6 +51,15 @@ eDVBSatelliteEquipmentControl::eDVBSatelliteEquipmentControl(eSmartPtrList<eDVBR
 		} \
 	} while(0)
 
+/**
+ * @brief find best possible lnb for the current tune request
+ *
+ * @param sat reference to current sattelite parameters
+ * @param fe reference to current frontend
+ * @param slot_id representation of the slotnumber as an bitmask ( 1 << slotnumber)
+ * @param highest_score_lnb index of lnb with highest score
+ * @return score of lnb stored in highest_score_lnb
+ */
 int eDVBSatelliteEquipmentControl::canTune(const eDVBFrontendParametersSatellite &sat, iDVBFrontend *fe, int slot_id, int *highest_score_lnb)
 {
 	bool simulate = ((eDVBFrontend*)fe)->is_simulate();
@@ -101,6 +109,7 @@ int eDVBSatelliteEquipmentControl::canTune(const eDVBFrontendParametersSatellite
 		*highest_score_lnb = -1;
 
 	eSecDebugNoSimulate("[eDVBSatelliteEquipmentControl] canTune %d", slot_id);
+
 
 	for (int idx=0; idx <= m_lnbidx; ++idx )
 	{

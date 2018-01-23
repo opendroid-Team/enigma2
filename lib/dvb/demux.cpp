@@ -6,6 +6,9 @@
 #include <signal.h>
 #include <sys/sysinfo.h>
 #include <sys/mman.h>
+#ifdef HAVE_AMLOGIC
+#include <lib/dvb/amldecoder.h>
+#endif
 
 #include <linux/dvb/dmx.h>
 
@@ -36,6 +39,7 @@ enum dmx_source {
 #define DMX_SET_SOURCE _IOW('o', 49, enum dmx_source)
 #endif
 
+
 //#define SHOW_WRITE_TIME
 static int determineBufferCount()
 {
@@ -63,6 +67,9 @@ eDVBDemux::eDVBDemux(int adapter, int demux):
 	adapter(adapter),
 	demux(demux),
 	source(-1),
+#ifdef HAVE_AMLOGIC
+	m_pvr_fd(-1),
+#endif
 	m_dvr_busy(0),
 	m_dvr_id(-1),
 	m_dvr_source_offset(DMX_SOURCE_DVR0)
@@ -86,12 +93,13 @@ int eDVBDemux::openDemux(void)
 
 int eDVBDemux::openDVR(int flags)
 {
-#ifdef HAVE_OLDPVR
-	return ::open("/dev/misc/pvr", flags);
-#else
 	char filename[32];
 	snprintf(filename, sizeof(filename), "/dev/dvb/adapter%d/dvr%d", adapter, demux);
 	eDebug("[eDVBDemux] open dvr %s", filename);
+#if HAVE_AMLOGIC
+	m_pvr_fd =  ::open(filename, flags);
+	return m_pvr_fd;
+#else
 	return ::open(filename, flags);
 #endif
 }
@@ -105,7 +113,16 @@ RESULT eDVBDemux::setSourceFrontend(int fenum)
 	int n = DMX_SOURCE_FRONT0 + fenum;
 	int res = ::ioctl(fd, DMX_SET_SOURCE, &n);
 	if (res)
+	{
 		eDebug("[eDVBDemux] DMX_SET_SOURCE Frontend%d failed: %m", fenum);
+#if HAVE_AMLOGIC
+		/** FIXME: gg begin dirty hack  */
+		eDebug("[eDVBDemux] Ignoring due to limitation to one frontend for each adapter and missing ioctl....");
+		source = fenum;
+		res = 0;
+		/** FIXME: gg end dirty hack  */
+#endif
+	}
 	else
 		source = fenum;
 	::close(fd);
@@ -144,7 +161,7 @@ RESULT eDVBDemux::createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reade
 	return res;
 }
 
-RESULT eDVBDemux::createTSRecorder(ePtr<iDVBTSRecorder> &recorder, int packetsize, bool streaming)
+RESULT eDVBDemux::createTSRecorder(ePtr<iDVBTSRecorder> &recorder, unsigned int packetsize, bool streaming)
 {
 	if (m_dvr_busy)
 		return -EBUSY;
@@ -154,7 +171,11 @@ RESULT eDVBDemux::createTSRecorder(ePtr<iDVBTSRecorder> &recorder, int packetsiz
 
 RESULT eDVBDemux::getMPEGDecoder(ePtr<iTSMPEGDecoder> &decoder, int index)
 {
+#ifdef HAVE_AMLOGIC
+	decoder = new eAMLTSMPEGDecoder(this, index);
+#else
 	decoder = new eTSMPEGDecoder(this, index);
+#endif
 	return 0;
 }
 
@@ -266,6 +287,7 @@ RESULT eDVBSectionReader::start(const eDVBSectionFilterMask &mask)
 	notifier->start();
 
 	dmx_sct_filter_params sct;
+	memset(&sct, 0, sizeof(sct));
 	sct.pid     = mask.pid;
 	sct.timeout = 0;
 	sct.flags   = DMX_IMMEDIATE_START;
@@ -378,6 +400,8 @@ RESULT eDVBPESReader::start(int pid)
 	m_notifier->start();
 
 	dmx_pes_filter_params flt;
+	memset(&flt, 0, sizeof(flt));
+
 	flt.pes_type = DMX_PES_OTHER;
 	flt.pid     = pid;
 	flt.input   = DMX_IN_FRONTEND;
@@ -414,8 +438,8 @@ RESULT eDVBPESReader::connectRead(const sigc::slot2<void,const uint8_t*,int> &r,
 
 eDVBRecordFileThread::eDVBRecordFileThread(int packetsize, int bufferCount):
 	eFilePushThreadRecorder(
-		/* buffer */ (unsigned char*) ::mmap(NULL, bufferCount * packetsize * 1024, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
-		/*buffersize*/ packetsize * 1024),
+		/* buffer */ (unsigned char*) ::mmap(NULL, bufferCount * packetsize * 1050, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
+		/*buffersize*/ packetsize * 1050),        // the buffer should be higher than the hardware buffer size, accounts for RTSP header
 	 m_ts_parser(packetsize),
 	 m_current_offset(0),
 	 m_fd_dest(-1),
@@ -523,7 +547,7 @@ int eDVBRecordFileThread::AsyncIO::poll()
 
 int eDVBRecordFileThread::AsyncIO::start(int fd, off_t offset, size_t nbytes, void* buffer)
 {
-	memset(&aio, 0, sizeof(aiocb)); // Documentation says "zero it before call".
+	memset(&aio, 0, sizeof(struct aiocb)); // Documentation says "zero it before call".
 	aio.aio_fildes = fd;
 	aio.aio_nbytes = nbytes;
 	aio.aio_offset = offset;   // Offset can be omitted with O_APPEND
@@ -539,8 +563,8 @@ int eDVBRecordFileThread::asyncWrite(int len)
 	suseconds_t diff;
 	gettimeofday(&starttime, NULL);
 #endif
-
-	m_ts_parser.parseData(m_current_offset, m_buffer, len);
+	if(!getProtocol())
+		m_ts_parser.parseData(m_current_offset, m_buffer, len);
 
 #ifdef SHOW_WRITE_TIME
 	gettimeofday(&now, NULL);
@@ -632,6 +656,7 @@ eDVBRecordStreamThread::eDVBRecordStreamThread(int packetsize) :
 {
 	eDebug("[eDVBRecordStreamThread] allocated %d buffers of %d kB", m_aio.size(), m_buffersize>>10);
 }
+
 
 int eDVBRecordStreamThread::writeData(int len)
 {
@@ -729,7 +754,11 @@ RESULT eDVBTSRecorder::start()
 	char filename[128];
 	snprintf(filename, 128, "/dev/dvb/adapter%d/demux%d", m_demux->adapter, m_demux->demux);
 
+#if HAVE_HISILICON
+	m_source_fd = ::open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
+#else
 	m_source_fd = ::open(filename, O_RDONLY | O_CLOEXEC);
+#endif
 
 	if (m_source_fd < 0)
 	{
@@ -740,6 +769,8 @@ RESULT eDVBTSRecorder::start()
 	setBufferSize(1024*1024);
 
 	dmx_pes_filter_params flt;
+	memset(&flt, 0, sizeof(flt));
+
 	flt.pes_type = DMX_PES_OTHER;
 	flt.output  = DMX_OUT_TSDEMUX_TAP;
 	flt.pid     = i->first;

@@ -13,13 +13,17 @@ class iFilePushScatterGather
 public:
 	virtual void getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size, int blocksize)=0;
 	virtual ~iFilePushScatterGather() {}
+#if defined(__sh__)
+	//Changes in this file are cause e2 doesnt tell the player to play reverse
+	virtual int getSkipMode() = 0;
+#endif
 };
 
 class eFilePushThread: public eThread, public sigc::trackable, public iObject
 {
 	DECLARE_REF(eFilePushThread);
 public:
-	eFilePushThread(int blocksize, size_t buffersize);
+	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=0, int blocksize=188, size_t buffersize=188*1024);
 	~eFilePushThread();
 	void thread();
 	void stop();
@@ -41,6 +45,8 @@ public:
 protected:
 	virtual void filterRecordData(const unsigned char *data, int len);
 private:
+	int prio_class;
+	int prio;
 	iFilePushScatterGather *m_sg;
 	int m_stop;
 	int m_fd_dest;
@@ -64,7 +70,11 @@ private:
 class eFilePushThreadRecorder: public eThread, public sigc::trackable
 {
 public:
-	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize);
+#if HAVE_AMLOGIC
+	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize=10*188*1024);
+#else
+	eFilePushThreadRecorder(unsigned char* buffer, size_t buffersize=188*1024);
+#endif
 	void thread();
 	void stop();
 	void start(int sourcefd);
@@ -72,7 +82,14 @@ public:
 	enum { evtEOF, evtReadError, evtWriteError, evtUser, evtStopped };
 	sigc::signal1<void,int> m_event;
 
+	int getProtocol() { return m_protocol;}
+        void setProtocol(int i){ m_protocol = i;}
+        void setSession(int se, int st) { m_session_id = se; m_stream_id = st;}
+	int read_dmx(int fd, void *m_buffer, int size);
+	int pushReply(void *buf, int len);	
 	void sendEvent(int evt);
+	static int64_t getTick();
+	static int read_ts(int fd, unsigned char *buf, int size);
 protected:
 	// This method should write the data out and return the number of bytes written.
 	// If result <0, set 'errno'. The simplest implementation is just "::write(m_buffer, ...)"
@@ -90,6 +107,8 @@ private:
 	int m_stop;
 	eFixedMessagePump<int> m_messagepump;
 	void recvEvent(const int &evt);
+	int m_protocol, m_session_id, m_stream_id, m_packet_no;
+	std::vector<unsigned char> m_reply;
 };
 
 #endif

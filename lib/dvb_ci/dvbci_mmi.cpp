@@ -26,6 +26,9 @@ eDVBCIMMISession::eDVBCIMMISession(eDVBCISlot *tslot)
 
 eDVBCIMMISession::~eDVBCIMMISession()
 {
+#ifdef __sh__
+	slot->mmiClosed();
+#endif
 	slot->setMMIManager(NULL);
 	if (is_mmi_active)
 		eDVBCI_UI::getInstance()->mmiSessionDestroyed(slot->getSlotID());
@@ -36,6 +39,7 @@ int eDVBCIMMISession::receivedAPDU(const unsigned char *tag, const void *data, i
 	eDebugNoNewLineStart("[CI MMI] SESSION(%d)/MMI %02x %02x %02x: ", session_nb, tag[0], tag[1],tag[2]);
 	for (int i=0; i<len; i++)
 		eDebugNoNewLine("%02x ", ((const unsigned char*)data)[i]);
+
 	eDebugNoNewLine("\n");
 
 	if ((tag[0]==0x9f) && (tag[1]==0x88))
