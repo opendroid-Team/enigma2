@@ -274,6 +274,7 @@ public:
 #define guard_offset_step 8000
 #define MAX_SATCR 32
 #define MAX_LNBNUM (MAX_FIXED_LNB_POSITIONS + MAX_MOVABLE_LNBS)
+#define MAX_LNBNUM 32
 	SatCR_format_t SatCR_format;
 	int SatCR_positions;
 	int SatCR_position;
