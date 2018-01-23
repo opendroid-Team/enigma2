@@ -273,8 +273,7 @@ public:
 #define guard_offset_max 8000
 #define guard_offset_step 8000
 #define MAX_SATCR 32
-#define MAX_LNBNUM 32
-
+#define MAX_LNBNUM (MAX_FIXED_LNB_POSITIONS + MAX_MOVABLE_LNBS)
 	SatCR_format_t SatCR_format;
 	int SatCR_positions;
 	int SatCR_position;
@@ -387,6 +386,7 @@ public:
 	RESULT setVoltageMode(int mode);
 	RESULT setToneMode(int mode);
 	RESULT setRotorPosNum(int rotor_pos_num);
+	RESULT getMaxFixedLnbPositions() {return MAX_FIXED_LNB_POSITIONS;}
 /* Tuner Specific Parameters */
 	RESULT setTunerLinked(int from, int to);
 	RESULT setTunerDepends(int from, int to);
