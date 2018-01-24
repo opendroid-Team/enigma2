@@ -321,33 +321,55 @@ def InitUsageConfig():
 		("5", "DVB-T/-S/-C"),
 		("127", _("No priority")) ])
 
-	config.usage.remote_fallback_enabled = ConfigYesNo(default = False)
-	config.usage.remote_fallback = ConfigText(default = "http://IP-ADRESS:8001", visible_width = 50, fixed_size = False)
+	def remote_fallback_changed(configElement):
+		if configElement.value:
+			configElement.value = "%s%s" % (not configElement.value.startswith("http://") and "http://" or "", configElement.value)
+			configElement.value = "%s%s" % (configElement.value, configElement.value.count(":") == 1 and ":8001" or "")
 
-	nims = [("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
-	rec_nims = [("-2", _("Disabled")), ("-1", _("auto")), ("expert_mode", _("Expert mode")), ("experimental_mode", _("Experimental mode"))]
+	config.usage.remote_fallback_enabled = ConfigYesNo(default = False)
+	config.usage.remote_fallback = ConfigText(default = "http://IP-ADRESS:8001", fixed_size = False)
+	config.usage.remote_fallback.addNotifier(remote_fallback_changed, immediate_feedback=False)
+
+	config.usage.show_timer_conflict_warning = ConfigYesNo(default = True)
+
+	dvbs_nims = [("-2", _("Disabled"))]
+	dvbt_nims = [("-2", _("Disabled"))]
+	dvbc_nims = [("-2", _("Disabled"))]
+	atsc_nims = [("-2", _("Disabled"))]
+
+	nims = [("-1", _("auto"))]
 	for x in nimmanager.nim_slots:
+		if x.isCompatible("DVB-S"):
+			dvbs_nims.append((str(x.slot), x.getSlotName()))
+		elif x.isCompatible("DVB-T"):
+			dvbt_nims.append((str(x.slot), x.getSlotName()))
+		elif x.isCompatible("DVB-C"):
+			dvbc_nims.append((str(x.slot), x.getSlotName()))
+		elif x.isCompatible("ATSC"):
+			atsc_nims.append((str(x.slot), x.getSlotName()))
 		nims.append((str(x.slot), x.getSlotName()))
-		rec_nims.append((str(x.slot), x.getSlotName()))
-	nims_multi = [("-1", _("auto"))]
-	rec_nims_multi = [("-2", _("Disabled")), ("-1", _("auto"))]
-	for i in xrange(1,2**min(12,len(nimmanager.nim_slots))):
-		slot_names = ""
-		for x in xrange(min(12,len(nimmanager.nim_slots))):
-			if (i & 2**x):
-				if slot_names != "": slot_names = slot_names + "+"
-				slot_names = slot_names + nimmanager.nim_slots[x].getSlotName()
-		nims_multi.append((str(i), slot_names))
-		rec_nims_multi.append((str(i), slot_names))
-	priority_strictly_choices = [("no", _("No")), ("yes", _("Yes")), ("while_available", _("While available"))]
-	config.usage.frontend_priority                       = ConfigSelection(default = "-1", choices = nims)
-	config.usage.frontend_priority_multiselect           = ConfigSelection(default = "-1", choices = nims_multi)
-	config.usage.frontend_priority_strictly              = ConfigSelection(default = "no", choices = priority_strictly_choices)
-	config.usage.frontend_priority_intval                = NoSave(ConfigInteger(default = 0, limits = (-99, maxint)))
-	config.usage.recording_frontend_priority             = ConfigSelection(default = "-2", choices = rec_nims)
-	config.usage.recording_frontend_priority_multiselect = ConfigSelection(default = "-2", choices = rec_nims_multi)
-	config.usage.recording_frontend_priority_strictly    = ConfigSelection(default = "no", choices = priority_strictly_choices)
-	config.usage.recording_frontend_priority_intval      = NoSave(ConfigInteger(default = 0, limits = (-99, maxint)))
+
+	config.usage.frontend_priority = ConfigSelection(default = "-1", choices = list(nims))
+	nims.insert(0,("-2", _("Disabled")))
+	config.usage.recording_frontend_priority = ConfigSelection(default = "-2", choices = nims)
+	config.usage.frontend_priority_dvbs = ConfigSelection(default = "-2", choices = list(dvbs_nims))
+	dvbs_nims.insert(1,("-1", _("auto")))
+	config.usage.recording_frontend_priority_dvbs = ConfigSelection(default = "-2", choices = dvbs_nims)
+	config.usage.frontend_priority_dvbt = ConfigSelection(default = "-2", choices = list(dvbt_nims))
+	dvbt_nims.insert(1,("-1", _("auto")))
+	config.usage.recording_frontend_priority_dvbt = ConfigSelection(default = "-2", choices = dvbt_nims)
+	config.usage.frontend_priority_dvbc = ConfigSelection(default = "-2", choices = list(dvbc_nims))
+	dvbc_nims.insert(1,("-1", _("auto")))
+	config.usage.recording_frontend_priority_dvbc = ConfigSelection(default = "-2", choices = dvbc_nims)
+	config.usage.frontend_priority_atsc = ConfigSelection(default = "-2", choices = list(atsc_nims))
+	atsc_nims.insert(1,("-1", _("auto")))
+	config.usage.recording_frontend_priority_atsc = ConfigSelection(default = "-2", choices = atsc_nims)
+
+	SystemInfo["DVB-S_priority_tuner_available"] = len(dvbs_nims) > 3 and any(len(i) > 2 for i in (dvbt_nims, dvbc_nims, atsc_nims))
+	SystemInfo["DVB-T_priority_tuner_available"] = len(dvbt_nims) > 3 and any(len(i) > 2 for i in (dvbs_nims, dvbc_nims, atsc_nims))
+	SystemInfo["DVB-C_priority_tuner_available"] = len(dvbc_nims) > 3 and any(len(i) > 2 for i in (dvbs_nims, dvbt_nims, atsc_nims))
+	SystemInfo["ATSC_priority_tuner_available"] = len(atsc_nims) > 3 and any(len(i) > 2 for i in (dvbs_nims, dvbc_nims, dvbt_nims))
+
 	config.misc.disable_background_scan = ConfigYesNo(default = False)
 
 	config.usage.jobtaksextensions = ConfigYesNo(default = True)
@@ -487,22 +509,8 @@ def InitUsageConfig():
 	config.usage.alternatives_priority.addNotifier(TunerTypePriorityOrderChanged, immediate_feedback=False)
 
 	def PreferredTunerChanged(configElement):
-		config.usage.frontend_priority_intval.setValue(calcFrontendPriorityIntval(config.usage.frontend_priority, config.usage.frontend_priority_multiselect, config.usage.frontend_priority_strictly))
-		debugstring = ""
-		elem2 = config.usage.frontend_priority_intval.value
-		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendBinaryMode):
-			elem2 = int(elem2) - eDVBFrontend.preferredFrontendBinaryMode
-			debugstring = debugstring + "Binary +"
-		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendPrioForced):
-			elem2 = int(elem2) - eDVBFrontend.preferredFrontendPrioForced
-			debugstring = debugstring + "Forced +"
-		if (int(elem2) > 0) and (int(elem2) & eDVBFrontend.preferredFrontendPrioHigh):
-			elem2 = int(elem2) - eDVBFrontend.preferredFrontendPrioHigh
-			debugstring = debugstring + "High +"
-		setPreferredTuner(int(config.usage.frontend_priority_intval.value))
+		setPreferredTuner(int(configElement.value))
 	config.usage.frontend_priority.addNotifier(PreferredTunerChanged)
-	config.usage.frontend_priority_multiselect.addNotifier(PreferredTunerChanged)
-	config.usage.frontend_priority_strictly.addNotifier(PreferredTunerChanged)
 	if not os.path.exists(resolveFilename(SCOPE_VOD)):
 	 try:
 	  os.mkdir(resolveFilename(SCOPE_VOD), 493)
@@ -1107,6 +1115,18 @@ def InitUsageConfig():
 		config.misc.zapmode = ConfigSelection(default = "mute", choices = zapoptions )
 		config.misc.zapmode.addNotifier(setZapmode, immediate_feedback = False)
 	config.usage.historymode = ConfigSelection(default = "1", choices = [("0", _("Just zap")), ("1", _("Show menu"))])
+	if SystemInfo["HasForceLNBOn"]:
+		def forceLNBPowerChanged(configElement):
+			open(SystemInfo["HasForceLNBOn"], "w").write(configElement.value)
+		config.misc.forceLnbPower = ConfigSelection(default = "on", choices = [ ("on", _("Yes")), ("off", _("No"))] )
+		config.misc.forceLnbPower.addNotifier(forceLNBPowerChanged)
+
+	if SystemInfo["HasForceToneburst"]:
+		def forceToneBurstChanged(configElement):
+			open(SystemInfo["HasForceToneburst"], "w").write(configElement.value)
+		config.misc.forceToneBurst = ConfigSelection(default = "enable", choices = [ ("enable", _("Yes")), ("disable", _("No"))] )
+		config.misc.forceToneBurst.addNotifier(forceToneBurstChanged)
+
 
 	config.subtitles = ConfigSubsection()
 	config.subtitles.ttx_subtitle_colors = ConfigSelection(default = "1", choices = [
