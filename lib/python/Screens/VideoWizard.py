@@ -165,7 +165,7 @@ class VideoWizard(WizardLanguage, Rc):
 			self.hw.setMode(port = self.port, mode = mode, rate = "multi")
 		else:
 			self.hw.setMode(port = self.port, mode = mode, rate = ratesList[0][0])
-'zgemmah9t','zgemmah9s',
+
 	def listRates(self, querymode = None):
 		if querymode is None:
 			querymode = self.mode
