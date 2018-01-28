@@ -43,9 +43,9 @@ def InitConfig():
 		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
 		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
 		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
-		'/etc/cron/crontabs/root', '/etc/cron/root', 
 		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
 		+eEnv_resolve_multi('/usr/bin/*cam*')\
+		+eEnv_resolve_multi('/etc/cron*')\
 		+eEnv_resolve_multi('/etc/*.emu')\
 		+eEnv_resolve_multi('/etc/init.d/softcam*')))
 	config.plugins.configurationbackup.backupdirs         = ConfigLocations(default=[]) # 'backupdirs_addon' is called 'backupdirs' for backwards compatibility, holding the user's old selection, duplicates are removed during backup

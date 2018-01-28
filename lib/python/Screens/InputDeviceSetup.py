@@ -286,6 +286,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("505", _("ODIN_M7"))
 				]
 		defaultRcList = [
+				("default", 0),
 				("et4000", 13),
 				("et5000", 7),
 				("et6000", 7),
@@ -355,6 +356,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7"))
 				]
 		defaultRcList = [
+				("default", 0),
 				("et4000", 13),
 				("et5000", 7),
 				("et6000", 7),
@@ -416,15 +418,31 @@ class RemoteControlType(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry(_("Remote control type"), self.rctype))
 		self["config"].list = self.list
 
-		self.defaultRcType = None
+		self.defaultRcType = 0
 		self.getDefaultRcType()
 
+	def getBoxTypeCompatible(self):
+		try:
+			with open('/proc/stb/info/boxtype', 'r') as fd:
+				boxType = fd.read()
+				return boxType
+		except:
+			return "Default"
+		return "Default"
+
 	def getDefaultRcType(self):
-		data = iRcTypeControl.getBoxType()
+		boxtype = getBoxType()
+		boxtypecompat = self.getBoxTypeCompatible() 
+		self.defaultRcType = 0
 		for x in self.defaultRcList:
-			if x[0] in data:
+			if x[0] in boxtype:
 				self.defaultRcType = x[1]
 				break
+		if (self.defaultRcType==0):    
+			for x in self.defaultRcList:
+				if x[0] in boxtypecompat:
+					self.defaultRcType = x[1]
+					break
 
 	def setDefaultRcType(self):
 		iRcTypeControl.writeRcType(self.defaultRcType)

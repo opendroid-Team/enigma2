@@ -115,6 +115,8 @@ class FrontendInfo(Converter, object):
 				return 1
 			elif type == 'DVB-T':
 				return 2
+			elif type == 'DVB-T2':
+				return 2
 			elif type == 'ATSC':
 				return 3
 			return -1
