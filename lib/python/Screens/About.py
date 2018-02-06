@@ -79,7 +79,7 @@ class About(Screen):
 		except:
 			BootLoaderVersion = 0
 
-		if getMachineBuild() in ('vusolo4k','vusolo4k','vuultimo4k'):
+		if getMachineBuild() in ('vusolo4k','vuzero4k','vuultimo4k'):
 			cpuMHz = "   (1,5 GHz)"
 	        elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
 			cpuMHz = "   (1,7 GHz)"
