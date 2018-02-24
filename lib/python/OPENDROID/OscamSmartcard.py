@@ -33,7 +33,7 @@ extrainfo=(architectures()[3] +' - ' + architectures()[0] + ' - ' + architecture
 
 
 config.OPENDROID_OscamSmartcard = ConfigSubsection()
-config.OPENDROID_OscamSmartcard.Camstart = ConfigSelection(default="openmips", choices = [
+config.OPENDROID_OscamSmartcard.Camstart = ConfigSelection(default="opendroid", choices = [
 				("openmips", "Script SoftCamstart (openMips)"),
 				("opendroid", "Python SoftCamstart (opendroid)")
 				])
@@ -853,7 +853,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			os.system('update-rc.d softcam stop 09 0 1 6 . start  60 2 3 4 5 .')
 			os.system('update-rc.d cardserver stop 09 0 1 6 . start  60 2 3 4 5 .')
 	def getIP(self):
-		return str(popen('ip route get 8.8.8.8 |cut -d " " -f8').read().strip())
+		return str(popen('hostname -i').read().strip())
 
 	def getdl(self):
 		info = 'aHR0cDovL3d3dy5naWdhYmx1ZS1zdXBwb3J0Lm9yZy9kb3dubG9hZC9vc2NhbXNtYXJ0Y2FyZC92ZXJzaW9uLmluZm8='
