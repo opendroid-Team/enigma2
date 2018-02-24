@@ -21,10 +21,12 @@ from Tools.Directories import *
 from os import system, popen, path, makedirs, listdir, access, stat, rename, remove, W_OK, R_OK
 from time import gmtime, strftime, localtime, sleep
 from datetime import date
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageDistro
+from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageVersion, getImageDistro
 
 boxtype = getBoxType()
 distro = getImageDistro()
+imagename = getImageDistro()
+imageversion = getImageVersion()
 
 def eEnv_resolve_multi(path):
 	resolve = eEnv.resolve(path)
@@ -57,9 +59,9 @@ config.plugins.configurationbackup=InitConfig()
 def getBackupPath():
 	backuppath = config.plugins.configurationbackup.backuplocation.value
 	if backuppath.endswith('/'):
-		return backuppath + 'backup_' + distro + '_'+ boxtype
+		return backuppath + 'backup_' + distro + '_'+ imagename + '_' + imageversion + '_' + boxtype
 	else:
-		return backuppath + '/backup_' + distro + '_'+ boxtype
+		return backuppath + 'backup_' + distro + '_'+ imagename + '_' + imageversion + '_' + boxtype
 
 def getOldBackupPath():
 	backuppath = config.plugins.configurationbackup.backuplocation.value

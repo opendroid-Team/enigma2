@@ -41,7 +41,6 @@ images = []
 global imagesCounter
 imagesCounter = 0
 images.append(["OPD 6.4", "http://images.opendroid.org/6.4"])
-
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
 flashTmp = '/media/hdd/images/tmp'
@@ -126,7 +125,6 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
-
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -140,7 +138,6 @@ class FlashOnline(Screen):
 
 	def quit(self):
 		self.close()
-
 	def yellow(self):
 		if self.check_hdd():
 			self.session.open(doFlashImage, online = False, list=self.list[self.selection], multi=self.multi, devrootfs=self.devrootfs)
@@ -222,7 +219,6 @@ class doFlashImage(Screen):
 		<widget name="key_blue" position="420,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		<widget name="imageList" position="10,10" zPosition="1" size="680,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />
 	</screen>"""
-
 	def __init__(self, session, online, list=None, multi=None, devrootfs=None ):
 		Screen.__init__(self, session)
 		self.session = session
@@ -303,8 +299,6 @@ class doFlashImage(Screen):
 			box = box[0:3] + 'x00'
 		elif box == "odinm9":
 			box = 'maram9'
-		elif box == "dm525":
-			box = 'dm520'
 		return box
 
 	def getSel(self):
@@ -347,13 +341,12 @@ class doFlashImage(Screen):
 			else:
 				url = self.feedurl + "/" + brand + "/" + box + "/" + sel
 			print "URL:", url
-			file_name = url.split('/')[-1]
 			u = urllib2.urlopen(url)
-			f = open(self.file_name, 'wb')
+			f = open(self.filename, 'wb')
 			meta = u.info()
 			file_size = int(meta.getheaders("Content-Length")[0])
 			print "Downloading: %s Bytes: %s" % (self.sel, file_size)
-			job = ImageDownloadJob(url, file_name, sel)
+			job = ImageDownloadJob(url, self.filename, self.sel)
 			job.afterEvent = "close"
 			job_manager.AddJob(job)
 			job_manager.failed_jobs = []
@@ -466,69 +459,61 @@ class doFlashImage(Screen):
 			self.show()
 
 	def unzip_image(self, filename, path):
-		if getBoxType() in "dm7080" "dm820" "dm520" "dm525":
-			print "Untaring %s to %s" %(filename,path)
-			os.system('mkdir /dbackup.new')
-			self.session.openWithCallback(self.cmdFinished, Console, title = _("Untaring files, Please wait ..."), cmdlist = ['tar -xJf ' + filename + ' -C ' + '/dbackup.new', "sleep 3"], closeOnSuccess = True)
-		else:
-			print "Unzip %s to %s" %(filename,path)
-			self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
+		print "Unzip %s to %s" %(filename,path)
+		self.session.openWithCallback(self.cmdFinished, Console, title = _("Unzipping files, Please wait ..."), cmdlist = ['unzip ' + filename + ' -o -d ' + path, "sleep 3"], closeOnSuccess = True)
 
 	def cmdFinished(self):
 		self.prepair_flashtmp(flashPath)
 		self.Start_Flashing()
 
 	def Start_Flashing(self):
-		if getBoxType() in "dm7080" "dm820" "dm520" "dm525":
-			os.system('/usr/lib/enigma2/python/Plugins/Extensions/dBackup/bin/swaproot 0')
-		else:
-			print "Start Flashing"
-			cmdlist = []
-			if os.path.exists(ofgwritePath):
-				text = _("Flashing: ")
-				if self.simulate:
-					text += _("Simulate (no write)")
-					if SystemInfo["HaveMultiBoot"]:
-						cmdlist.append("%s -n -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
-					elif getMachineBuild() in ("u5","u5pvr"):
-						cmdlist.append("%s -n -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
-					else:
-						cmdlist.append("%s -n -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
-					self.close()
-					message = "echo -e '\n"
-					message += _('Show only found image and mtd partitions.\n')
-					message += "'"
+		print "Start Flashing"
+		cmdlist = []
+		if os.path.exists(ofgwritePath):
+			text = _("Flashing: ")
+			if self.simulate:
+				text += _("Simulate (no write)")
+				if SystemInfo["HaveMultiBoot"]:
+					cmdlist.append("%s -n -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
+				elif getMachineBuild() in ("u5","u5pvr"):
+					cmdlist.append("%s -n -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
 				else:
-					text += _("root and kernel")
-					if SystemInfo["HaveMultiBoot"]:
-						if self.List not in ("STARTUP","cmdline.txt"):
-							os.system('mkfs.ext4 -F ' + self.devrootfs)
-						cmdlist.append("%s -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
-						if self.List not in ("STARTUP","cmdline.txt"):
-							cmdlist.append("umount -fl /oldroot_bind")
-							cmdlist.append("umount -fl /newroot")
-					elif getMachineBuild() in ("u5","u5pvr"):
-						cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
-					else:
-						cmdlist.append("%s -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
-					message = "echo -e '\n"
-					if self.List not in ("STARTUP","cmdline.txt") and SystemInfo["HaveMultiBoot"]:
-						message += _('ofgwrite flashing ready.\n')
-						message += _('please press exit to go back to the menu.\n')
-					else:
-						message += _('ofgwrite will stop enigma2 now to run the flash.\n')
-						message += _('Your STB will freeze during the flashing process.\n')
-						message += _('Please: DO NOT reboot your STB and turn off the power.\n')
-						message += _('The image or kernel will be flashing and auto booted in few minutes.\n')
-						if self.box() == 'gb800solo':
-							message += _('GB800SOLO takes about 20 mins !!\n')
-					message += "'"
-					cmdlist.append(message)
-					self.session.open(Console, title = text, cmdlist = cmdlist, finishedCallback = self.quit, closeOnSuccess = False)
-					if not self.simulate:
-						fbClass.getInstance().lock()
+					cmdlist.append("%s -n -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
+				self.close()
+				message = "echo -e '\n"
+				message += _('Show only found image and mtd partitions.\n')
+				message += "'"
+			else:
+				text += _("root and kernel")
+				if SystemInfo["HaveMultiBoot"]:
 					if self.List not in ("STARTUP","cmdline.txt"):
-						self.close()
+						os.system('mkfs.ext4 -F ' + self.devrootfs)
+					cmdlist.append("%s -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
+					if self.List not in ("STARTUP","cmdline.txt"):
+						cmdlist.append("umount -fl /oldroot_bind")
+						cmdlist.append("umount -fl /newroot")
+				elif getMachineBuild() in ("u5","u5pvr"):
+					cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
+				else:
+					cmdlist.append("%s -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
+				message = "echo -e '\n"
+				if self.List not in ("STARTUP","cmdline.txt") and SystemInfo["HaveMultiBoot"]:
+					message += _('ofgwrite flashing ready.\n')
+					message += _('please press exit to go back to the menu.\n')
+				else:
+					message += _('ofgwrite will stop enigma2 now to run the flash.\n')
+					message += _('Your STB will freeze during the flashing process.\n')
+					message += _('Please: DO NOT reboot your STB and turn off the power.\n')
+					message += _('The image or kernel will be flashing and auto booted in few minutes.\n')
+					if self.box() == 'gb800solo':
+						message += _('GB800SOLO takes about 20 mins !!\n')
+				message += "'"
+				cmdlist.append(message)
+				self.session.open(Console, title = text, cmdlist = cmdlist, finishedCallback = self.quit, closeOnSuccess = False)
+				if not self.simulate:
+					fbClass.getInstance().lock()
+				if self.List not in ("STARTUP","cmdline.txt"):
+					self.close()
 
 	def prepair_flashtmp(self, tmpPath):
 		if os.path.exists(flashTmp):
@@ -564,9 +549,8 @@ class doFlashImage(Screen):
 	def yellow(self):
 		if not self.Online:
 			self.session.openWithCallback(self.DeviceBrowserClosed, DeviceBrowser, None, matchingPattern="^.*\.(zip|bin|jffs2|img)", showDirectories=True, showMountpoints=True, inhibitMounts=["/autofs/sr0/"])
-		else:
-			from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen
-			self.session.openWithCallback(self.green,BackupScreen, runBackup = True)
+		elif self.getSel():
+			self.greenCB(True)
 
 	def startInstallLocal(self, ret = None):
 		if ret:
