@@ -300,7 +300,7 @@ def InitUsageConfig():
 	choicelist = [("standby", _("Standby")),("deepstandby", _("Deep Standby"))]
 	config.usage.sleep_timer_action = ConfigSelection(default = "deepstandby", choices = choicelist)
 	choicelist = [("0", _("Disabled")),("event_standby", _("Execute after current event"))]
-	for i in range(900, 7201, 900):
+	for i in range(900, 14401, 900):
 		m = abs(i / 60)
 		m = ngettext("%d minute", "%d minutes", m) % m
 		choicelist.append((str(i), _("Execute in ") + m))
@@ -844,7 +844,7 @@ def InitUsageConfig():
 		("2", _("yellow")) ])
 	config.subtitles.ttx_subtitle_original_position = ConfigYesNo(default = False)
 	config.subtitles.subtitle_position = ConfigSelection( choices = ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "150", "200", "250", "300", "350", "400", "450", "500"], default = "0")
-	config.subtitles.subtitle_alignment = ConfigSelection(choices = [("left", _("left")), ("center", _("center")), ("right", _("right"))], default = "left")
+	config.subtitles.subtitle_alignment = ConfigSelection(choices = [("left", _("left")), ("center", _("center")), ("right", _("right"))], default = "center")
 	config.subtitles.subtitle_rewrap = ConfigYesNo(default = False)
 	config.subtitles.colourise_dialogs = ConfigYesNo(default = False)
 	config.subtitles.subtitle_borderwidth = ConfigSelection(choices = ["1", "2", "3", "4", "5"], default = "3")
