@@ -40,7 +40,7 @@ MTDROOTFS = getMachineMtdRoot()
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 6.5", "http://images.opendroid.org/6.5"])
+images.append(["OPD 6.4", "http://images.opendroid.org/6.4"])
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
 flashTmp = '/media/hdd/images/tmp'

@@ -8,7 +8,7 @@ from Components.NimManager import nimmanager
 from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
-from enigma import eTimer, getEnigmaVersionString
+from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
 
 from Components.Pixmap import MultiPixmap
@@ -169,8 +169,10 @@ class About(Screen):
 		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " - Build " + getImageBuild() + "\n"
 		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
+		skinWidth = getDesktop(0).size().width()
+		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
-
+		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
 		fp_version = getFPVersion()
 		if fp_version is None:
 			fp_version = ""
