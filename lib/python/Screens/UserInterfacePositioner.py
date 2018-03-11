@@ -1,15 +1,33 @@
+from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
-from Components.config import config, configfile, getConfigListEntry
+from Components.config import config, configfile, ConfigSubsection, getConfigListEntry, ConfigSelectionNumber, ConfigSelection, ConfigSlider, ConfigYesNo, NoSave, ConfigNumber, ConfigText
 from Components.ConfigList import ConfigListScreen
 from Components.SystemInfo import SystemInfo
 from Components.Sources.StaticText import StaticText
 from Components.Pixmap import Pixmap
 from Components.Console import Console
 from Components.Label import Label
+from Components.Language import language
+from Tools.Directories import fileCheck, fileExists
 from enigma import getDesktop
 from os import access, R_OK
 from boxbranding import getBoxType, getBrandOEM
+
+def getFilePath(setting):
+	if getBrandOEM() in ('dreambox'):
+		return "/proc/stb/vmpeg/0/dst_%s" % (setting)
+	else:
+		return "/proc/stb/fb/dst_%s" % (setting)
+
+def setPositionParameter(parameter, configElement):
+	f = open(getFilePath(parameter), "w")
+	f.write('%08X\n' % configElement.value)
+	f.close()
+	if fileExists(getFilePath("apply")):
+		f = open(getFilePath("apply"), "w")
+		f.write('1')
+		f.close()
 
 def InitOsd():
 	SystemInfo["CanChange3DOsd"] = access('/proc/stb/fb/3dmode', R_OK) and True or False
@@ -30,42 +48,22 @@ def InitOsd():
 
 	def setOSDLeft(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_left", "w")
-			else:
-				f = open("/proc/stb/fb/dst_left", "w")
-			f.write('%X' % configElement.value)
-			f.close()
+			setPositionParameter("left", configElement)
 	config.osd.dst_left.addNotifier(setOSDLeft)
 
 	def setOSDWidth(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_width", "w")
-			else:
-				f = open("/proc/stb/fb/dst_width", "w")
-			f.write('%X' % configElement.value)
-			f.close()
+			setPositionParameter("width", configElement)
 	config.osd.dst_width.addNotifier(setOSDWidth)
 
 	def setOSDTop(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_top", "w")
-			else:
-				f = open("/proc/stb/fb/dst_top", "w")
-			f.write('%X' % configElement.value)
-			f.close()
+			setPositionParameter("top", configElement)
 	config.osd.dst_top.addNotifier(setOSDTop)
 
 	def setOSDHeight(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_height", "w")
-			else:
-				f = open("/proc/stb/fb/dst_height", "w")
-			f.write('%X' % configElement.value)
-			f.close()
+			setPositionParameter("height", configElement)
 	config.osd.dst_height.addNotifier(setOSDHeight)
 	print 'Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value)
 
@@ -117,7 +115,7 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		skin = """
 			<screen position="center,center" size="1920,1080" backgroundColor="#000000" title="OSD Adjustment" >
 
-				<widget source="text" render="Label" position="300,165" zPosition="1" size="1320,180" font="Regular;32" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
+				<widget name="text" position="300,165" zPosition="1" size="1320,180" font="Regular;32" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
 				<widget name="config" position="225,375" zPosition="1" size="1470,315" itemHeight="45" font="Regular;30" transparent="1" />
 				<widget source="status" render="Label" position="300,713" zPosition="1" size="1320,120" font="Regular;32" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
 				
@@ -152,7 +150,7 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		skin = """
 			<screen position="center,center" size="1280,720" backgroundColor="#000000" title="OSD Adjustment" >
 
-				<widget source="text" render="Label" position="200,110" zPosition="1" size="880,120" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
+				<widget name="text" position="200,110" zPosition="1" size="880,120" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
 				<widget name="config" position="150,250" zPosition="1" size="980,210" itemHeight="30" font="Regular;20" transparent="1" />
 				<widget source="status" render="Label" position="200,475" zPosition="1" size="880,80" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
 				
@@ -188,8 +186,8 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		skin = """
 			<screen position="center,center" size="1024,576" backgroundColor="#000000" title="OSD Adjustment" >
 
-				<widget source="text" render="Label" position="200,180" zPosition="1" size="624,100" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
-				<widget source="config" render="Label" position="100,180" zPosition="1" size="824,50" font="Regular;24" halign="center" valign="center" transparent="1" />
+				<widget name="text"  position="200,180" zPosition="1" size="624,100" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
+				<widget name="config" position="100,180" zPosition="1" size="824,50" font="Regular;24" halign="center" valign="center" transparent="1" />
 				<widget source="status" render="Label" position="200,450" zPosition="1" size="624,80" font="Regular;21" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#1f771f" transparent="1" />
 				
 				<eLabel backgroundColor="red" position="0,0" size="1024,1" zPosition="0" />
@@ -257,7 +255,7 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setup_title = _("Position Setup")
-#		self.Console = Console()
+		self.Console = Console()
 		self["status"] = StaticText()
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("save"))
@@ -292,10 +290,10 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		self["config"].l.setList(self.list)
 
 		self.onLayoutFinish.append(self.layoutFinished)
-		if not self.selectionChanged in self["config"].onSelectionChanged:
-			self["config"].onSelectionChanged.append(self.selectionChanged)
-		self.selectionChanged()
-
+		if self.welcomeWarning not in self.onShow:
+			self.onShow.append(self.welcomeWarning)
+		if self.selectionChanged not in self["config"].onSelectionChanged:
+			self.serviceRef = None
 	def selectionChanged(self):
 		if getBoxType().startswith('azbox'):
 			pass
@@ -306,6 +304,31 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		self.setTitle(_(self.setup_title))
 #		self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
 
+	def welcomeWarning(self):
+		if self.welcomeWarning in self.onShow:
+			self.onShow.remove(self.welcomeWarning)
+		popup = self.session.openWithCallback(self.welcomeAction, MessageBox, _("NOTE: This feature is intended for people who cannot disable overscan "
+			"on their television / display.  Please first try to disable overscan before using this feature.\n\n"
+			"USAGE: Adjust the screen size and position settings so that the shaded user interface layer *just* "
+			"covers the test pattern in the background.\n\n"
+			"Select Yes to continue or No to exit."), type=MessageBox.TYPE_YESNO, timeout=-1, default=False)
+		popup.setTitle(self.setup_title)
+
+	def welcomeAction(self, answer):
+		if answer:
+			self.serviceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			self.session.nav.stopService()
+			if self.restoreService not in self.onClose:
+				self.onClose.append(self.restoreService)
+			self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
+		else:
+			self.close()
+
+	def restoreService(self):
+		try:
+			self.session.nav.playService(self.serviceRef)
+		except:
+			pass
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
@@ -338,6 +361,7 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		config.osd.dst_width.setValue(720)
 		config.osd.dst_top.setValue(0)
 		config.osd.dst_height.setValue(576)
+		self["config"].l.setList(self.list)
 
 	def setPreviewPosition(self):
 		size_w = getDesktop(0).size().width()
@@ -397,7 +421,7 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setup_title = _("Position Setup")
-#		self.Console = Console()
+		self.Console = Console()
 		self["status"] = StaticText()
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("save"))
@@ -428,8 +452,11 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
+		self.serviceRef = None
 		self.onLayoutFinish.append(self.layoutFinished)
-		if not self.selectionChanged in self["config"].onSelectionChanged:
+		if self.welcomeWarning not in self.onShow:
+			self.onShow.append(self.welcomeWarning)
+		if self.selectionChanged not in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
@@ -441,7 +468,32 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 
 	def layoutFinished(self):
 		self.setTitle(_(self.setup_title))
-#		self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
+
+	def welcomeWarning(self):
+		if self.welcomeWarning in self.onShow:
+			self.onShow.remove(self.welcomeWarning)
+		popup = self.session.openWithCallback(self.welcomeAction, MessageBox, _("NOTE: This feature is intended for people who cannot disable overscan "
+			"on their television / display.  Please first try to disable overscan before using this feature.\n\n"
+			"USAGE: Adjust the screen size and position settings so that the shaded user interface layer *just* "
+			"covers the test pattern in the background.\n\n"
+			"Select Yes to continue or No to exit."), type=MessageBox.TYPE_YESNO, timeout=-1, default=False)
+		popup.setTitle(self.setup_title)
+
+	def welcomeAction(self, answer):
+		if answer:
+			self.serviceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			self.session.nav.stopService()
+			if self.restoreService not in self.onClose:
+				self.onClose.append(self.restoreService)
+			self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
+		else:
+			self.close()
+
+	def restoreService(self):
+		try:
+			self.session.nav.playService(self.serviceRef)
+		except:
+			pass
 
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
@@ -475,6 +527,7 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 		config.osd.dst_width.setValue(720)
 		config.osd.dst_top.setValue(0)
 		config.osd.dst_height.setValue(576)
+		self["config"].l.setList(self.list)
 
 	def setPreviewPosition(self):
 		size_w = getDesktop(0).size().width()

@@ -637,7 +637,7 @@ class Installer_Addons(Screen):
 		Screen.__init__(self, session)
 		self['infotext'] = ScrollLabel('') #testo log addons
 		self['info'] = Label() #testo mancata connessione
-		self['actions'] = ActionMap(['OkCancelActions'], 
+		self['actions'] = ActionMap(['OkCancelActions'],
 		{'ok': self.close, 
 		 'cancel': self.close,
 		 }, -1)
@@ -661,7 +661,7 @@ class Installer_Addons(Screen):
 		except:
 			self['info'].setText("Installation failed!\nPlease check internet connection.")
 			
-           
+
 	def viewLog(self):
 		strview = ''#testo del log vuoto
 		print 'In viewLog'

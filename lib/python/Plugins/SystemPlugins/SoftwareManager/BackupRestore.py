@@ -21,10 +21,12 @@ from Tools.Directories import *
 from os import system, popen, path, makedirs, listdir, access, stat, rename, remove, W_OK, R_OK
 from time import gmtime, strftime, localtime, sleep
 from datetime import date
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageDistro
+from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageVersion, getImageDistro
 
 boxtype = getBoxType()
 distro = getImageDistro()
+imagename = getImageDistro()
+imageversion = getImageVersion()
 
 def eEnv_resolve_multi(path):
 	resolve = eEnv.resolve(path)
@@ -43,9 +45,9 @@ def InitConfig():
 		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
 		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
 		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
-		'/etc/cron/crontabs/root', '/etc/cron/root', 
 		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
 		+eEnv_resolve_multi('/usr/bin/*cam*')\
+		+eEnv_resolve_multi('/etc/cron*')\
 		+eEnv_resolve_multi('/etc/*.emu')\
 		+eEnv_resolve_multi('/etc/init.d/softcam*')))
 	config.plugins.configurationbackup.backupdirs         = ConfigLocations(default=[]) # 'backupdirs_addon' is called 'backupdirs' for backwards compatibility, holding the user's old selection, duplicates are removed during backup
@@ -57,9 +59,9 @@ config.plugins.configurationbackup=InitConfig()
 def getBackupPath():
 	backuppath = config.plugins.configurationbackup.backuplocation.value
 	if backuppath.endswith('/'):
-		return backuppath + 'backup_' + distro + '_'+ boxtype
+		return backuppath + 'backup_' + distro + '_'+ imagename + '_' + imageversion + '_' + boxtype
 	else:
-		return backuppath + '/backup_' + distro + '_'+ boxtype
+		return backuppath + 'backup_' + distro + '_'+ imagename + '_' + imageversion + '_' + boxtype
 
 def getOldBackupPath():
 	backuppath = config.plugins.configurationbackup.backuplocation.value

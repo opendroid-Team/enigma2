@@ -76,28 +76,25 @@ def _(txt):
 		print "[OPD_panel] fallback to default translation for", txt
 		t = gettext.gettext(txt)
 	return t
-def command(comandline, strip = 1):
-	comandline = comandline + ' >/tmp/command.txt'
-	os.system(comandline)
-	text = ''
-	if os.path.exists('/tmp/command.txt') is True:
-		file = open('/tmp/command.txt', 'r')
-		if strip == 1:
-			for line in file:
-				text = text + line.strip() + '\n'
-
-		else:
-			for line in file:
-				text = text + line
-				if text[-1:] != '\n':
-					text = text + '\n'
-
-		file.close()
-	if text[-1:] == '\n':
-		text = text[:-1]
-	comandline = text
-	os.system('rm /tmp/command.txt')
-	return comandline
+def command(comandline, strip=1):
+  comandline = comandline + " >/tmp/command.txt"
+  os.system(comandline)
+  text = ""
+  if os.path.exists("/tmp/command.txt") is True:
+    file = open("/tmp/command.txt", "r")
+    if strip == 1:
+      for line in file:
+        text = text + line.strip() + '\n'
+    else:
+      for line in file:
+        text = text + line
+        if text[-1:] != '\n': text = text + "\n"
+    file.close()
+  # if one or last line then remove linefeed
+  if text[-1:] == '\n': text = text[:-1]
+  comandline = text
+  os.system("rm /tmp/command.txt")
+  return comandline
 
 
 boxversion = getBoxType()
@@ -105,33 +102,29 @@ machinename = getMachineName()
 machinebrand = getMachineBrand()
 OEMname = getBrandOEM()
 OPD_panel_Version = 'OPD PANEL V1.4 (By OPD-Team)'
-print '[OPD_panel] machinebrand: %s' % machinebrand
-print '[OPD_panel] machinename: %s' % machinename
-print '[OPD_panel] oem name: %s' % OEMname
-print '[OPD_panel] boxtype: %s' % boxversion
-panel = open('/tmp/OPD_panel.ver', 'w')
+print "[OPD_panel] machinebrand: %s"  % (machinebrand)
+print "[OPD_panel] machinename: %s"  % (machinename)
+print "[OPD_panel] oem name: %s"  % (OEMname)
+print "[OPD_panel] boxtype: %s"  % (boxversion)
+panel = open("/tmp/OPD_panel.ver", "w")
 panel.write(OPD_panel_Version + '\n')
-panel.write('Machinebrand: %s ' % machinebrand + '\n')
-panel.write('Machinename: %s ' % machinename + '\n')
-panel.write('oem name: %s ' % OEMname + '\n')
-panel.write('Boxtype: %s ' % boxversion + '\n')
+panel.write("Machinebrand: %s " % (machinebrand)+ '\n')
+panel.write("Machinename: %s " % (machinename)+ '\n')
+panel.write("oem name: %s " % (OEMname)+ '\n')
+panel.write("Boxtype: %s " % (boxversion)+ '\n')
 panel.close()
-ExitSave = '[Exit] = ' + _('Cancel') + '              [Ok] =' + _('Save')
+ExitSave = "[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save")
 
 class ConfigPORT(ConfigSequence):
 
 	def __init__(self, default):
-		ConfigSequence.__init__(self, seperator='.', limits=[(1, 65535)], default=default)
-
+		ConfigSequence.__init__(self, seperator = ".", limits = [(1,65535)], default = default)
 
 def main(session, **kwargs):
-	session.open(OPD_panel)
+		session.open(OPD_panel)
 def Apanel(menuid, **kwargs):
-	if menuid == 'mainmenu':
-		return [('OPD_panel',
-                         main,
-                 'OPD_panel',
-                 11)]
+	if menuid == "mainmenu":
+		return [(_("OPD_panel"), main, "OPD_panel", 3)]
 	else:
 		return []
 
@@ -139,10 +132,11 @@ def Apanel(menuid, **kwargs):
 
 
 def Plugins(**kwargs):
-	return [PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_MENU, fnc=Apanel),
-                PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=camstart),
-            PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=SwapAutostart),
-            PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
+	return [
+	PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_MENU, fnc=Apanel),
+	PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=camstart),
+	PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=SwapAutostart),
+	PluginDescriptor(name='OPD_panel', description='OPD_panel GUI 16/5/2016', where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
 
 
 MENU_SKIN = '<screen position="center,center" size="950,470" title="OPD Panel - Main Menu" >\n\t<ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/icons/redlogo.png" position="0,380" size="950,84" alphatest="on" zPosition="1"/>\n\t<ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/icons/opendroid_info.png" position="510,11" size="550,354" alphatest="on" zPosition="1"/>\n\t\t<widget source="global.CurrentTime" render="Label" position="450, 340" size="500,24" font="Regular;20" foregroundColor="#FFFFFF" halign="right" transparent="1" zPosition="5">\n\t\t<convert type="ClockToText">>Format%H:%M:%S</convert>\n\t</widget>\n\t<eLabel backgroundColor="#56C856" position="0,330" size="950,1" zPosition="0" />\n <widget name="Mlist" position="70,110" size="705,260" itemHeight="50" scrollbarMode="showOnDemand" transparent="1" zPosition="0" />\n\t<widget name="label1" position="10,340" size="490,25" font="Regular;20" transparent="1" foregroundColor="#f2e000" halign="left" />\n</screen>'

@@ -1283,4 +1283,4 @@ class CamStart(Screen):
 			else:
 				self.count = 0
 
-timerInstance = None			
+timerInstance = None
