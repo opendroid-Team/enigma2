@@ -79,13 +79,13 @@ class About(Screen):
 		except:
 			BootLoaderVersion = 0
 
-		if getMachineBuild() in ('vusolo4k','vusolo4k','vuultimo4k'):
+		if getMachineBuild() in ('vusolo4k','vuzero4k','vuultimo4k'):
 			cpuMHz = "   (1,5 GHz)"
 	        elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u5','u5pvr'):
+	        elif getMachineBuild() in ('u5','u5pvr','h9'):
 			cpuMHz = "   (1,6 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
@@ -210,9 +210,17 @@ class About(Screen):
 			f = open('/proc/stb/fp/temp_sensor_avs', 'r')
 			tempinfo = f.read()
 			f.close()
+		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
+			try:
+				f = open('/sys/devices/virtual/thermal/thermal_zone0/temp', 'r')
+				tempinfo = f.read()
+				tempinfo = tempinfo[:-4]
+				f.close()
+			except:
+				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("CPU Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("Processor Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)

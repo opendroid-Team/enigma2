@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2017-11-16 22:09+0100\n"
+"PO-Revision-Date: 2018-02-23 18:30+0100\n"
 "Last-Translator: Opendroid-Team <opendroid2013@gmail.com>\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -2811,6 +2811,9 @@ msgstr "Scansione automatica"
 msgid "Automatic settings backup"
 msgstr "Backup delle impostazioni automatiche"
 
+msgid "Its recommend to create a Fullbackup before update!"
+msgstr "Si consiglia di creare un backup completo prima dell'aggiornamento!"
+
 msgid "Automatically start timeshift after"
 msgstr "Avvia automaticamente timeshift dopo"
 
@@ -3842,6 +3845,9 @@ msgstr "Opzione per impostare il contrasto del display del ricevitore."
 
 msgid "Configure the duration in minutes for the screensaver."
 msgstr "Configurare la durata in minuti per lo screensaver."
+
+msgid "Configure the duration in minutes for the sleep timer."
+msgstr "Configurare la durata in minuti per il timer di spegnimento."
 
 msgid "Configure the first audio language (highest priority)."
 msgstr "Configurare la prima lingua audio (massima priorità)."
@@ -11359,8 +11365,8 @@ msgstr "Mi dispiace, Inadyn non configurato"
 msgid "Sorry MediaScanner is not installed!"
 msgstr "MediaScanner non è installato!"
 
-msgid "Sorry MiniDLNA Config is Missing"
-msgstr "Mi dispiace MiniDLNA non configurato"
+msgid "Sorry MiniDLNA Config is Missing\""
+msgstr "Spiacente MiniDLNA non configurato"
 
 msgid "Sorry feeds are down for maintenance"
 msgstr "Spiacente i Feed sono fuori servizio per manutenzione"
