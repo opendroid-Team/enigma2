@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-17 14:00+0100\n"
-"PO-Revision-Date: 2018-03-17 18:27+0100\n"
+"PO-Revision-Date: 2018-03-17 19:42+0100\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -542,6 +542,18 @@ msgstr "Start Timeshift"
 
 msgid "Show Movies"
 msgstr "Mostra Film"
+
+msgid "TarGz packages installer"
+msgstr "Programma di installazione dei pacchetti TarGz"
+
+msgid "Ipk packages installer"
+msgstr "Programma di installazione dei pacchetti di Ipk"
+
+msgid "Advanced ipk packages installer"
+msgstr "Programma di installazione avanzato dei pacchetti ipk"
+
+msgid "Ipk remove"
+msgstr "Ipk rimuovi"
 
 msgid "Main Menu"
 msgstr "Menù principale"
