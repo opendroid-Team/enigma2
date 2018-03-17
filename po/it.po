@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-17 14:00+0100\n"
-"PO-Revision-Date: 2018-03-17 15:39+0100\n"
+"PO-Revision-Date: 2018-03-17 18:27+0100\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -4608,9 +4608,6 @@ msgstr "Creazione di file system"
 msgid "Creating partition"
 msgstr "Creazione partizione"
 
-msgid "Creating start scripts and starting the cam"
-msgstr "Creando lo script d’avvio della cam"
-
 msgid "Croatian"
 msgstr "Croato"
 
@@ -6089,6 +6086,9 @@ msgstr "Tempo di ritardo"
 msgid "Force de-interlace"
 msgstr "Forza deinterlacciamento"
 
+msgid "Force UnInstall"
+msgstr "Forza UnInstall"
+
 msgid "Automatic resolution label"
 msgstr "Etichetta automatica risoluzione"
 
@@ -6673,6 +6673,9 @@ msgstr "IP:"
 msgid "IPK Installer"
 msgstr "Installatore IPK"
 
+msgid "Ipk Tools"
+msgstr "Strumenti Ipk"
+
 msgid "ISO file is too large for this filesystem!"
 msgstr "File ISO troppo grande per questo filesystem!"
 
@@ -6684,6 +6687,9 @@ msgstr "Icone"
 
 msgid "Idle Time:"
 msgstr "Tempo di inattività:"
+
+msgid "%s is UnInstalled"
+msgstr "%s è non installato"
 
 msgid ""
 "If logs are using the set maximum space used the eldest will be "
@@ -7064,9 +7070,6 @@ msgstr "Configurazione dispositivo di Ingresso"
 msgid "Input devices"
 msgstr "Dispositivi di Ingresso"
 
-msgid "Install"
-msgstr "Installare"
-
 msgid ""
 "Install a new image with a Umsgstr Scegliere ciò che deve "
 "essere attivSB stick"
@@ -7110,6 +7113,18 @@ msgstr "Installazione terminata."
 
 msgid "Install Failed !!"
 msgstr "Installazione Fallita !!"
+
+msgid "Install ipk"
+msgstr "Installa ipk"
+
+msgid "Install ipk packets"
+msgstr "Installa i pacchetti ipk"
+
+msgid "Install"
+msgstr "Installare"
+
+msgid "Install All"
+msgstr "Installa tutto"
 
 #, python-format
 msgid "Installed:\t%s"
@@ -8111,15 +8126,6 @@ msgid ""
 msgstr ""
 "Nessun /hdd trovato.\n"
 "Assicurati che la periferica sia stata montata correttamente."
-
-msgid ""
-"No Cam started !!\n"
-"\n"
-"Cam 1 must be different from Cam 2"
-msgstr ""
-"Nessuna cam avviata !! \n"
-"\n"
-"La CAM 1 deve essere differente dalla CAM2"
 
 msgid "No Connection"
 msgstr "Nessuna connessione"
@@ -11996,6 +12002,32 @@ msgstr ""
 msgid "Allow unstable (untested) updates"
 msgstr "Consenti aggiornamenti instabili (non testati)"
 
+msgid ""
+"No Cam started !!\n"
+"\n"
+"Cam 1 must be different from Cam 2"
+msgstr ""
+"No Cam started !!\n"
+"\n"
+"Cam 1 deve essere diverso da Cam 2"
+
+msgid "Creating start scripts and starting the cam"
+msgstr "Creazione di script di avvio e avvio della cam"
+
+msgid "Waiting..."
+msgstr "In attesa..."
+
+msgid ""
+" Not Started !!\n"
+"\n"
+"Cam binname must be in the start command line\n"
+"Check your emu config file"
+msgstr ""
+" Non iniziato !!\n"
+"\n"
+"Cam binname deve essere nella riga di comando di avvio\n"
+"Controlla il tuo file di configurazione emu"
+
 #, python-format
 msgid ""
 "Your image is out of date!\n"
@@ -14139,7 +14171,7 @@ msgid "Unicable Matrix"
 msgstr "Unicable Matrix"
 
 msgid "Uninstall"
-msgstr "Rimuovere"
+msgstr "Disinstallazione"
 
 msgid "Universal LNB"
 msgstr "LNB Universale"
@@ -18012,7 +18044,7 @@ msgid "BootLogo"
 msgstr "Bootlogo"
 
 msgid "OPD_panel"
-msgstr "OPD Panel"
+msgstr "OPD_pannello"
 
 msgid ""
 "When enabled, continue to the next bouquet when the last "
