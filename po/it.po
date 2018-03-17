@@ -4,16 +4,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-19 23:44+0100\n"
-"PO-Revision-Date: 2018-03-15 18:42+0100\n"
+"POT-Creation-Date: 2018-03-17 14:00+0100\n"
+"PO-Revision-Date: 2018-03-17 15:39+0100\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Loco-Source-Locale: it_IT\n"
 "X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
@@ -33,8 +33,8 @@ msgstr "%Y-%m-%d"
 #, python-format
 msgid "%d"
 msgid_plural "%d"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d"
+msgstr[1] "%d"
 
 msgid "%d.%m.   "
 msgstr "%d.%m.   "
@@ -56,7 +56,7 @@ msgid "CH%s"
 msgstr "CH%s"
 
 msgid "CI (Common Interface) Setup"
-msgstr "Configur. CI (Common Interface)"
+msgstr "Installazione CI (interfaccia comune)"
 
 msgid "Circular LNB"
 msgstr "LBN circolare"
@@ -165,7 +165,7 @@ msgstr "film/cinema"
 
 #: plugin.py:87
 msgid "8888"
-msgstr "8888 (standard)"
+msgstr "8888"
 
 #: plugin.py:91 plugin.py:95 plugin.py:99 plugin.py:210
 msgid "Yes"
@@ -440,7 +440,7 @@ msgstr "Download non disponibile"
 
 #: plugin.py:584
 msgid "file exists, but is not executable"
-msgstr "Il file esiste, ma non è eseguibile"
+msgstr "il file esiste, ma non è eseguibile"
 
 #: plugin.py:592
 msgid "no oscam_oscamsmartcard found"
@@ -475,7 +475,7 @@ msgstr ""
 "Tutti i file di configurazione vengono salvati automaticamente"
 
 msgid "Script SoftCamstart (openMips)"
-msgstr "Caricamento script"
+msgstr "Script SoftCamstart (openMips)"
 
 msgid "Python SoftCamstart opendroid"
 msgstr "Python SoftCamstart opendroid"
@@ -1234,73 +1234,59 @@ msgstr "%d Gb"
 msgid "%d KB"
 msgstr "%d KB"
 
-#, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#, python-format
 msgid "%d Min"
 msgid_plural "%d Mins"
 msgstr[0] "%d Minuto"
 msgstr[1] "%d Minuti"
 
-#, python-format
 msgid "%d Mins"
 msgstr "%d Minuti"
 
-#, python-format
 msgid "%d channel found"
 msgid_plural "%d channels found"
 msgstr[0] "%d canale trovato"
 msgstr[1] "%d canali trovati"
 
-#, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d ora"
 msgstr[1] "%d ore"
 
-#, python-format
 msgid "%d job is running in the background!"
 msgid_plural "%d jobs are running in the background!"
 msgstr[0] "%d processo attivo in background!"
 msgstr[1] "%d processi attivi in background!"
 
-#, python-format
 msgid "%d jobs are running in the background!"
 msgstr "%d processi attivi in background!"
 
-#, python-format
 msgid "%d kB"
 msgstr "%d kB"
 
-#, python-format
 msgid "%d min"
 msgstr "%d min"
 
-#, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minuti"
 
-#, python-format
 msgid "%d minutes"
 msgstr "%d minuti"
 
-#, python-format
 msgid "%d pixel wide"
 msgid_plural "%d pixels wide"
 msgstr[0] "%d pixel larghezza"
 msgstr[1] "%d pixel larghezza"
 
-#, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d secondo"
 msgstr[1] "%d secondi"
 
-#, python-format
 msgid "%d wireless network found!"
 msgid_plural "%d wireless networks found!"
 msgstr[0] "Rilevata %d rete wireless!"
@@ -1315,60 +1301,71 @@ msgstr "%d.%B %Y"
 msgid "%k:%M %e/%m"
 msgstr "%k:%M %e/%m"
 
-#, python-format
 msgid "%s %s advanced remote control (native)"
 msgstr "%s %s Controllo remoto avanzato (nativo)"
 
-#, python-format
-msgid "%s %s format data DVD (HDTV compatible)"
-msgstr "Formato DVD: dati %s %s (compatibile HDTV)"
+msgid "%s %s front panel"
+msgstr "%s %s pannello frontale"
 
-#, python-format
-msgid "%s %s frontpanel"
-msgstr "%s %s Display frontale"
-
-#, python-format
 msgid "%s %s ir keyboard"
 msgstr "%s %s tastiera infrarosso"
 
-#, python-format
 msgid "%s %s ir mouse"
 msgstr "%s %s mouse infrarosso"
 
-#, python-format
 msgid "%s %s remote control (native)"
 msgstr "%s %s controllo remoto (nativo)"
 
-#, python-format
 msgid "%s %s software because updates are available."
 msgstr ""
 "il software del %s %s perchè sono disponibili aggiornamenti."
 
-#, python-format
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
 
-#, python-format
 msgid "%s is no longer used. Should it be deleted?"
 msgstr "%s non  più utilizzato. Vuoi cancellarlo?"
 
-#, python-format
 msgid "%s updated package available"
 msgid_plural "%s updated packages available"
 msgstr[0] "%s aggiornamento disponibile"
 msgstr[1] "%s aggiornamenti disponibili"
 
-#, python-format
 msgid "%s%d min"
 msgstr "%s%d min"
 
-#, python-format
 msgid "%s/%s: %s"
 msgstr "%s/%s: %s"
 
-#, python-format
 msgid "'%s' contains %d file(s) and %d sub-directories.\n"
 msgstr "'%s'contiene %d file(s) e %d sub-directories.\n"
+
+msgid "%sMode for SD (up to 576p)"
+msgstr "%sModalità per SD (fino a 576p)"
+
+msgid "%sMode for FHD (up to 1080p)"
+msgstr "%sModalità per FHD (fino a 1080p)"
+
+msgid "%sMode for HD (up to 720p)"
+msgstr "%sModalità per HD (fino a 720p)"
+
+msgid "%sMode for UHD (up to 2160p)"
+msgstr "%sModalità per UHD (fino a 2160p)"
+
+msgid "%sRefresh rate for FHD"
+msgstr "%sFrequenza di aggiornamento per FHD"
+
+msgid "%sRefresh rate for HD"
+msgstr "%sFrequenza di aggiornamento per HD"
+
+msgid "%sRefresh rate for SD"
+msgstr "%sFrequenza di aggiornamento per SD"
+
+msgid "%sRefresh rate for UHD"
+msgstr "%sFrequenza di aggiornamento per UHD"
+
+msgid "%sShow 1080i as 1080p"
+msgstr "%sMostra 1080i come 1080p"
 
 msgid "(All readers)"
 msgstr "(Tutti i reader)"
@@ -1420,9 +1417,6 @@ msgstr "directory /usr/share/enigma2"
 
 msgid "/var directory"
 msgstr "directory /var"
-
-msgid "0"
-msgstr "0"
 
 msgid "0 (disabled)"
 msgstr "0 (disabilitato)"
@@ -1790,7 +1784,9 @@ msgstr "??"
 msgid "A"
 msgstr "A"
 
-#, python-format
+msgid "12bit 4:2:0/4:2:2 no PIP"
+msgstr "12bit 4:2:0/4:2:2 no PIP"
+
 msgid ""
 "A Recording, RecordTimer or PowerTimer is running or begins in "
 "15 minutes.\n"
@@ -2280,6 +2276,9 @@ msgstr "Modifica timer"
 msgid "Disable timer"
 msgstr "Disabilita timer"
 
+msgid "Disable the HDD Process on VFD"
+msgstr "Disabilita il processo HDD su VFD"
+
 #, python-format
 msgid "Add filter"
 msgstr "Aggiungere Filtro"
@@ -2479,7 +2478,7 @@ msgid "Allow subtitles for hearing impaired"
 msgstr "Abilitare sottotitoli per non udenti"
 
 msgid "Allow unstable (experimental) updates"
-msgstr "Consentire instabili aggiornamenti (sperimentale)"
+msgstr "Consenti aggiornamenti instabili (sperimentali)"
 
 msgid "Allow updates which are marked as faulty"
 msgstr "Consenti aggiornamenti contrassegnati come difettosi"
@@ -2860,7 +2859,7 @@ msgstr "Opzioni audio..."
 
 #, python-format
 msgid "Audio track (%s) format"
-msgstr "Formato traccia Audio (%s)"
+msgstr "Formato della traccia audio (% s)"
 
 #, python-format
 msgid "Audio track (%s) language"
@@ -2889,7 +2888,7 @@ msgid "Auto chapter split every ? minutes (0=never)"
 msgstr "Divisione automatica capitoli ogni x minuti (0=mai)"
 
 msgid "Auto flesh"
-msgstr "Correzione colore automatica (auto flesh)"
+msgstr "Auto flesh"
 
 msgid "Auto focus"
 msgstr "Messa a fuoco automatica"
@@ -3460,7 +3459,7 @@ msgid "Change pin code"
 msgstr "Cambiare codice PIN"
 
 msgid "Change recording (duration)"
-msgstr "Cambiare la durata della registrazione"
+msgstr "Cambia registrazione (durata)"
 
 msgid "Change recording (endtime)"
 msgstr "Cambiare la fine della registrazione (endtime)"
@@ -3836,7 +3835,6 @@ msgstr "Comunicazione"
 msgid "Complete"
 msgstr "Completo"
 
-# # Quick Launch Menu
 msgid "Complete Backup"
 msgstr "Backup completo"
 
@@ -4246,7 +4244,7 @@ msgstr ""
 "dal cestino."
 
 msgid "Configure the nameserver (DNS)."
-msgstr "Opzione per impostare i nameserver (DNS)"
+msgstr "Configura il server dei nomi (DNS)."
 
 msgid "Configure the netmask."
 msgstr "Opzione per impostare la netmask."
@@ -4806,6 +4804,12 @@ msgstr "Ritardo prima dell'avvio del tasto inizio:"
 msgid "Delay for external subtitles"
 msgstr "Ritardo per sottotitoli esterni"
 
+msgid ""
+"Delay in miliseconds before start of scrolling text on display."
+msgstr ""
+"Ritardo in millisecondi prima dell'avvio del testo scorrevole "
+"sul display."
+
 msgid "Channel zap delay mode"
 msgstr "Modalità di ritardo del canale"
 
@@ -4814,6 +4818,12 @@ msgstr "Ritardo altro pulsante al cabio canale"
 
 msgid "Channel zap delay first button"
 msgstr "Ritardo pulsante al cambio canale"
+
+msgid ""
+"Delay in miliseconds after finish scrolling text on display."
+msgstr ""
+"Ritardo in millisecondi dopo aver terminato lo scorrimento del "
+"testo sul display."
 
 msgid "Delay:"
 msgstr "Ritardo:"
@@ -4828,11 +4838,9 @@ msgstr "Cancellare %s?"
 msgid "Delete Confirmation"
 msgstr "Conferma cancellazione"
 
-# # Quick Launch Menu
 msgid "Delete Plugins"
 msgstr "Cancella plugins"
 
-# # Quick Launch Menu
 msgid ""
 "Delete and unstall Plugins. This will remove the Plugin from "
 "your box"
@@ -5008,7 +5016,7 @@ msgid "Disk space to reserve for recordings (in GB)"
 msgstr "Spazio disco da riservare alla registrazioni (in GB)"
 
 msgid "Display"
-msgstr "Display (VFD/LCD/CLOCK)"
+msgstr "Display"
 
 #, python-format
 msgid "Power LED State in Deep-Standby and Standby"
@@ -5017,6 +5025,9 @@ msgstr "Stato LED in Deep-Standby e Standby"
 #, python-format
 msgid "Power LED state during deep-standby and standby."
 msgstr "Stato LED di alimentazione durante profondo standby."
+
+msgid "Power On Display"
+msgstr "Accensione display"
 
 #, python-format
 msgid "LCD scroll speed"
@@ -5381,11 +5392,9 @@ msgstr "Download plugins"
 msgid "Download Softcams"
 msgstr "Scarica softcams"
 
-# # Quick Launch Menu
 msgid "Download and install Plugins"
 msgstr "Scarica ed installa i plugins"
 
-# # Quick Launch Menu
 msgid "Download and install cam"
 msgstr "Scarica ed installa cam"
 
@@ -5601,6 +5610,9 @@ msgid "Enable cut file support for non *.ts files. (e.g. mp4)"
 msgstr ""
 "Abilita il supporto per i file tagliati per i file non * .ts. "
 "(ad esempio, mp4)"
+
+msgid "Enable preview"
+msgstr "Abilita anteprima"
 
 msgid "Encrypted:"
 msgstr "Codificato:"
@@ -6139,6 +6151,17 @@ msgstr ""
 "Questa opzione consente di configurare l'area colori da Auto a "
 "RGB"
 
+msgid ""
+"This option allows you to choose how to display SD progressive "
+"24Hz on your TV. (as not all TV's support these resolutions)"
+msgstr ""
+"Questa opzione ti consente di scegliere come visualizzare i "
+"segnali progressivi SD 24Hz sulla tua TV. (come non tutte le TV "
+"supportano queste risoluzioni)"
+
+msgid "This option allows you to Power Off the display."
+msgstr "Questa opzione ti consente di spegnere il display."
+
 msgid "Allows you to setup the button to do what you choose."
 msgstr ""
 "Permette di impostare il pulsante per fare ciò che si sceglie."
@@ -6151,6 +6174,14 @@ msgid "Allows you to hide the extensions of known file types."
 msgstr ""
 "Consente di nascondere le estensioni dei tipi di file "
 "conosciuti."
+
+msgid ""
+"Allows you to adjust the amount of time the resolution "
+"infomation display on screen."
+msgstr ""
+"Consente di regolare la quantità di tempo in cui le "
+"informazioni sulla risoluzione vengono visualizzate sullo "
+"schermo."
 
 msgid "When enabled, network trash can's are probed for cleaning."
 msgstr ""
@@ -6460,7 +6491,6 @@ msgstr "Altezza"
 msgid "Helps setting up your dish"
 msgstr "Aiuta a impostare il vostro piatto"
 
-# #  OPD_panel
 msgid ""
 "Here you can select which files should be updated with a online "
 "update"
@@ -6745,6 +6775,9 @@ msgid ""
 "If set to yes it will show the WEBLINKS packages in browser."
 msgstr "Su sì mostrera i pacchetti WEBLINKS nel browser."
 
+msgid "If enabled the video will always be de-interlaced."
+msgstr "Se abilitato, il video sarà sempre de-interlacciato."
+
 msgid "drivers"
 msgstr "drivers"
 
@@ -7003,6 +7036,12 @@ msgstr "Qualità iniziale del segnale"
 
 msgid "Initial signal quality:"
 msgstr "Qualità iniziale del segnale:"
+
+msgid "Initial scroll delay"
+msgstr "Ritardo di scorrimento iniziale"
+
+msgid "Final scroll delay"
+msgstr "Ritardo di scorrimento finale"
 
 msgid "Initialization"
 msgstr "Formattazione"
@@ -7711,6 +7750,9 @@ msgstr "Premere OK per selezionare i satelliti"
 msgid "Extra motor options"
 msgstr "Opzioni Extra rotore"
 
+msgid "extra wide"
+msgstr "extra largo"
+
 msgid "Max memory positions"
 msgstr "Max Posizioni in memoria"
 
@@ -7759,7 +7801,6 @@ msgstr "Mount"
 msgid "Mount Manager"
 msgstr "Mount Manager"
 
-# # Quick Launch Menu
 msgid "Mount Setup"
 msgstr "Configura mounts"
 
@@ -7941,7 +7982,7 @@ msgid "Nameserver %d"
 msgstr "DNS %d"
 
 msgid "Nameserver settings"
-msgstr "Conf. nameserver (DNS)"
+msgstr "Impostazioni del server dei nomi"
 
 msgid "Namespace"
 msgstr "Namespace"
@@ -8509,6 +8550,9 @@ msgstr "Numero di righe"
 msgid "Number of digits in channel number"
 msgstr "Numero di cifre nel numero del canale"
 
+msgid "next higher Resolution"
+msgstr "prossima risoluzione più alta"
+
 msgid "Jump first press in channel selection"
 msgstr "Premi prima salta nella selezione dei canali"
 
@@ -8680,7 +8724,6 @@ msgstr "Apri la lista canali e seleziona il canale successivo"
 msgid "Open service list and select previous channel"
 msgstr "Apri lista canali e seleziona canale precedente"
 
-# # Quick Launch Menu
 msgid "Open the Plugin Browser"
 msgstr "Apri la lista dei plugin installati"
 
@@ -8910,6 +8953,22 @@ msgstr "Rimuovere definitivamente tutti gli elementi eliminati"
 
 msgid "Persian"
 msgstr "Persiano"
+
+msgid ""
+"Show unknown Videoresolution as next higher or as highest "
+"screen resolution."
+msgstr ""
+"Mostra risoluzione video sconosciuta come prossima più alta o "
+"come massima risoluzione dello schermo."
+
+msgid "highest Resolution"
+msgstr "massima risoluzione"
+
+msgid "Stretch nonlinear"
+msgstr "Stretch non lineare"
+
+msgid "Stretch linear"
+msgstr "Stretch lineare"
 
 msgid "Phone number"
 msgstr "Numero telefonico"
@@ -10022,6 +10081,12 @@ msgstr "Si consiglia un Backup completo prima!"
 msgid "Show default backup files"
 msgstr "Mostra file di backup predefiniti"
 
+msgid "Show HDMI-Output Res"
+msgstr "Mostra ris. Uscita HDMI"
+
+msgid "Show HDMI Output Resulution"
+msgstr "Mostra risoluzione di uscita HDMI"
+
 msgid "Select excluded backup files"
 msgstr "Seleziona file di backup esclusi"
 
@@ -10398,6 +10463,13 @@ msgid ""
 msgstr ""
 "Impostare la velocità di scorrimento del testo sul display "
 "anteriore, questo utilizza un sotware rendering in alcune skin."
+
+msgid ""
+"Set the time before checking video source for resolution "
+"infomation."
+msgstr ""
+"Impostare il tempo prima di controllare la sorgente video per "
+"informazioni sulla risoluzione."
 
 msgid "fast"
 msgstr "veloce"
@@ -11064,7 +11136,7 @@ msgid "Setup rotor"
 msgstr "Configura il motore/rotore"
 
 msgid "Setup tuner(s)"
-msgstr "Configura il/i tuner"
+msgstr "Setup tuner (s)"
 
 msgid "Setup uShare"
 msgstr "Configura uShare"
@@ -11190,6 +11262,35 @@ msgstr "Mostra 480/576p 24fps come"
 msgid "Show 720p 24fps as"
 msgstr "Mostra 720p 24fps come"
 
+msgid "Show 24p up to 720p / higher than 720p as"
+msgstr "Mostra 24p fino a 720p / superiore a 720p come"
+
+msgid ""
+"Show 24p up to resolution 720p or higher than 720p as a "
+"different Framerate."
+msgstr ""
+"Mostra 24p fino a una risoluzione di 720p o superiore a 720p "
+"come un Framerate diverso."
+
+msgid "Show 25p up to 720p / higher than 720p as"
+msgstr "Mostra 25p fino a 720p / superiore a 720p come"
+
+msgid ""
+"Show 25p up to resolution 720p or higher than 720p as a "
+"different Framerate."
+msgstr ""
+"Mostra 25p fino a una risoluzione di 720p o superiore a 720p "
+"come un Framerate diverso."
+
+msgid "Show 30p up to 720p / higher than 720p as"
+msgstr "Mostra da 30p a 720p / superiore a 720p come"
+
+msgid ""
+"Show 30p up to resolution 720p or higher than 720p as a "
+"different Framerate."
+msgstr ""
+"Mostra da 30p a 720p o superiore a 720p come diverso Framerate."
+
 msgid "Show Audioselection"
 msgstr "Mostra Audioselection"
 
@@ -11265,6 +11366,9 @@ msgstr "Mostra Oscam Info in Estensioni?"
 msgid "Show PVR status in MoviePlayer infobar"
 msgstr ""
 "Mostra stato nella barra delle informazioni PVR Movie Player"
+
+msgid "Show preview of current mode (*)."
+msgstr "Mostra l'anteprima della modalità corrente (*)."
 
 msgid ""
 "This option moves the PVR status from the seprate window into "
@@ -11478,7 +11582,7 @@ msgstr "Mostra solo immagine trovata e le partizioni mtd. \n"
 
 msgid "Show or hide the extended description, (skin dependent)."
 msgstr ""
-"Mostra o nascondi descrizioni estese, (dipende dalla skin)"
+"Mostra o nascondi descrizioni estese, (dipende dalla skin)."
 
 msgid "Show picon background colour"
 msgstr "Mostra colore di sfondo Picon"
@@ -11606,7 +11710,7 @@ msgid "Show drivers packages"
 msgstr "Mostra Pacchetti driver"
 
 msgid "Show extensions packages"
-msgstr "Mostra pacchetti estensioni (Plugins)"
+msgstr "Mostra pacchetti di estensioni"
 
 msgid "Show systemplugins packages"
 msgstr "Mostra pacchetti systemplugin"
@@ -11890,7 +11994,7 @@ msgstr ""
 "configurazione."
 
 msgid "Allow unstable (untested) updates"
-msgstr "Consentire aggiornamenti instabili (non testati!)"
+msgstr "Consenti aggiornamenti instabili (non testati)"
 
 #, python-format
 msgid ""
@@ -12032,8 +12136,6 @@ msgstr "Avvio"
 msgid "Start Mode"
 msgstr "Modalità d’avvio"
 
-# Start Attempts
-# Tentativi di avvio
 msgid "Start attempts"
 msgstr "Avvio"
 
@@ -12195,25 +12297,25 @@ msgid "Subservice mode"
 msgstr "Modalità Sottoservizio"
 
 msgid "EPG button mode"
-msgstr "assegnazione pulsante EPG"
+msgstr "Modalità pulsante EPG"
 
 msgid "INFO button mode"
-msgstr "assegnazione pulsante INFO"
+msgstr "Modalità pulsante INFO"
 
 msgid "FAV button mode"
-msgstr "assegnazione del tasto FAV"
+msgstr "Modalità pulsante FAV"
 
 msgid "Plugin button mode"
-msgstr "Assegnazione pulsante Plugin"
+msgstr "Modalità del pulsante Plugin"
 
 msgid "Web button mode"
-msgstr "assegnazione pulsante Web"
+msgstr "Modalità pulsante Web"
 
 msgid "Home button mode"
-msgstr "assegnazione pulsante Home"
+msgstr "Modalità pulsante Home"
 
 msgid "End button mode"
-msgstr "assegnazione pulsante End"
+msgstr "Pulsante di fine modalità"
 
 msgid "QuickEPG mode"
 msgstr "modalità QuickEPG"
@@ -12930,7 +13032,7 @@ msgstr ""
 "specifica) prima di un timer inizia. È il tempo reale di "
 "svegliarsi fuori di 10 minuti (alcune caselle non iniziano in "
 "modo puntuale) al timer successivo non sarà commutato in "
-"standby. (meno valore = sveglia al timer è più breve"
+"standby. (meno valore = sveglia al timer è più breve)"
 
 msgid ""
 "The default settings are 5 minutes earlier to wakeup from deep "
@@ -13494,7 +13596,7 @@ msgid "Timer List"
 msgstr "Elenco Timer"
 
 msgid "Timer action"
-msgstr "Azione [a timer scaduto]"
+msgstr "Azione del timer"
 
 msgid "Timer entry"
 msgstr "Voce timer"
@@ -14324,7 +14426,7 @@ msgid "Teletext base visibility"
 msgstr "Televideo visibilità di base"
 
 msgid "User name"
-msgstr "nome utente"
+msgstr "Nome utente"
 
 msgid "Username"
 msgstr "Nome utente"
@@ -16193,6 +16295,9 @@ msgstr "spazio libero su disco"
 msgid "full"
 msgstr "pieno"
 
+msgid "Full Range RGB"
+msgstr "Gamma completa RGB"
+
 msgid "further education"
 msgstr "perfezionamento"
 
@@ -16935,7 +17040,8 @@ msgid "this recording"
 msgstr "questa registrazione"
 
 msgid "this service is protected by a parental control pin"
-msgstr "canale protetto da codice pin (controllo parentale)"
+msgstr ""
+"questo servizio è protetto da un pin di controllo parentale"
 
 msgid "to the box you have to unplug it, press\n"
 msgstr "bisogna staccare la spina al ricevitore, premere\n"
@@ -17117,7 +17223,6 @@ msgstr "PTS-plugin: unione dei record non riuscita!"
 msgid "PTS-Plugin: Restarting Timeshift!"
 msgstr "PTS-Plugin: Riavviare Timeshift!"
 
-# SoftwareManager Translations
 msgid "Select Software Update"
 msgstr "Selezionare Aggiornamento software"
 
@@ -17272,7 +17377,6 @@ msgstr "ImageWizard"
 msgid "StartWizard"
 msgstr "StartWizard"
 
-# ******************************************************************************
 msgid "Please select an aspect ratio..."
 msgstr "Si prega di selezionare un rapporto ..."
 
@@ -17415,7 +17519,6 @@ msgstr "Il tuo %s %s si riavvierà in modalità ripristino"
 msgid "Really reboot into Recovery Mode?"
 msgstr "Davvero riavviare in modalità di ripristino?"
 
-# PowerLost
 #, python-format
 msgid ""
 "Your %s %s was not shutdown properly.\n"
@@ -17426,23 +17529,18 @@ msgstr ""
 "\n"
 "Vuoi metterlo %s?"
 
-# Powerlost usage.config
 msgid "just boot"
 msgstr "boot normale"
 
-# Powerlost usage.config
 msgid "goto standby"
 msgstr "mettere in standby"
 
-# Powerlost usage.config
 msgid "goto deep-standby"
 msgstr "mettere in deep-standby"
 
-# Powerlost setup.xml
 msgid "After PowerLost"
 msgstr "Dopo mancanza di corrente"
 
-# Powerlost setup.xml
 msgid ""
 "Select what should be done when the %s %s was shutdown "
 "incorrectly, or after the Power was lost."
@@ -17475,22 +17573,18 @@ msgstr "Mostra Live in MiniTV"
 msgid "Lower Framerate save CPU Time"
 msgstr "Il Frame rate basso riduce il carico della CPU"
 
-# python\Screens\LanguageSelection.py
 msgid "Do you want to delete all other languages?"
 msgstr "Vuoi eliminare tutte le altre lingue?"
 
 msgid " Except %s"
 msgstr " Ad eccezione %s"
 
-# python\Screens\LanguageSelection.py
 msgid "Do you want to delete %s language?"
 msgstr "Vuoi eliminare %s le altre lingue?"
 
-# python\Screens\LanguageSelection.py
 msgid "Delete Language"
 msgstr "Elimina Lingua"
 
-# Components/Language.py
 msgid "Default Language can not be deleted !!"
 msgstr "La Lingua di default non può essere cancellata !!"
 
@@ -17592,7 +17686,7 @@ msgid "Automatic load EPG"
 msgstr "Carica automaticamente l'EPG"
 
 msgid "Load every (in hours)"
-msgstr "Caricamento in quest'ora"
+msgstr "Carica ogni (in ore)"
 
 msgid "EPG cache path"
 msgstr "Percorso di salvataggio EPG"
@@ -17659,7 +17753,6 @@ msgstr "Directory per la registrazione automatica"
 msgid "Setup Usage"
 msgstr "Impostazioni"
 
-# hotkey translation
 #, python-format
 msgid "Deep-Standby"
 msgstr "Deep-Standby"
@@ -17939,28 +18032,21 @@ msgstr ""
 "mostrano sempre lo schermo del bouquet. Se impostato su 'no' il "
 "bouquet corrente verrà aperto."
 
-#: MultiBootStartup.py:29
 msgid "MultiBoot Selector"
 msgstr "Selettore MultiBoot"
 
-#: MultiBootStartup.py:33
 msgid "Select Image: STARTUP_1"
 msgstr "Selettore Image: STARTUP_1"
 
-#: MultiBootStartup.py:55
-#, python-format
 msgid "Select Image: %s"
 msgstr "Selettore Image: %s"
 
-#: MultiBootStartup.py
 msgid "no image found"
 msgstr "nessuna immagine trovata"
 
-#: MultiBootStartup.py
 msgid "Do you want to reboot now with selected image?"
 msgstr "Vuoi riavviare ora con l'immagine selezionata?"
 
-#: MultiBootStartup.py
 msgid ""
 "Your box needs Bootloaderversion(s)\n"
 "\n"
@@ -17974,95 +18060,73 @@ msgstr ""
 "\n"
 "per rendere compatibile con Bootoptions!"
 
-#: MultiBootStartup.py
 msgid "File not found - rename failed!"
 msgstr "File non trovato - rinomina non riuscita!"
 
-#: MultiBootStartup.py
 msgid "Name already exists - rename failed!"
 msgstr "Il nome esiste già - rinomina fallita!"
 
-#: MultiBootStartup.py
 msgid "2160p60 without PiP (Standard)"
 msgstr "2160p60 senza PiP (standard)"
 
-#: MultiBootStartup.py
 msgid "2160p50 with PiP (Experimental)"
 msgstr "2160p50 con PiP (sperimentale)"
 
-#: MultiBootStartup.py
 msgid " (unknown mode)"
 msgstr " (modalità sconosciuta)"
 
-#: MultiBootStartup.py
 msgid "Unable to read image number"
 msgstr "Impossibile leggere il numero dell'immagine"
 
-#: MultiBootStartup.py
 msgid "Current Bootsettings: %s (%s)%s"
 msgstr "Impostazioni di avvio correnti: %s (%s)%s"
 
-#: MultiBootStartup.py
 msgid "Select Bootoption: %s"
 msgstr "Seleziona l'opzione di avvio: %s"
 
-#: MultiBootStartup.py
 msgid "Select Bootoption: not supported - see info"
 msgstr ""
 "Seleziona l'opzione di avvio: non supportata - vedi informazioni"
 
-#: MultiBootStartup.py
 msgid "File '/boot/%s' copy to '/boot/STARTUP' failed!"
 msgstr "File '/boot/%s' copia su '/ boot / STARTUP' fallito!"
 
-#: MultiBootStartup.py
 msgid "Next boot will start from Image 1."
 msgstr "Il prossimo avvio inizierà da Immagine 1."
 
-#: MultiBootStartup.py
 msgid "Can not repair file %s"
 msgstr "Impossibile riparare il file %s"
 
-#: MultiBootStartup.py
 msgid "Caution, next boot is starts with these settings!"
 msgstr ""
 "Attenzione, il prossimo avvio inizia con queste impostazioni!"
 
-#: MultiBootStartup.py
 msgid "Alternative Image 1 partition for boot repair not found."
 msgstr ""
 "Partizione alternativa Image 1 per riparazione di avvio non "
 "trovata."
 
-#: MultiBootStartup.py
 msgid "Wrong Bootsettings detected!"
 msgstr "Rilevate impostazioni di avvio errate!"
 
-#: MultiBootStartup.py
 msgid "Do you want to reboot now?"
 msgstr "Vuoi riavviare ora?"
 
-#: MultiBootStartup.py
 msgid "Can not write file %s"
 msgstr "Impossibile scrivere il file %s"
 
-#: MultiBootStartup.py
 msgid "Write error!"
 msgstr "Schreibfehler!"
 
-#: MultiBootStartup.py
 msgid "Error in file %s"
 msgstr "Errore nel file %s"
 
-#: MultiBootStartup.py
 msgid "Command line error!"
 msgstr "Errore riga di comando!"
 
-#: Flash_online.py
 msgid "STARTUP"
 msgstr "Image"
 
-#: data/startwizard.xml - test
 msgid ""
 "Please set up tuner A\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right "
@@ -18072,7 +18136,6 @@ msgstr ""
 "Per i modelli Hybrid Tuner, selezionare il tipo di "
 "sintonizzatore con i tasti sinistro e destro"
 
-#: data/startwizard.xml - test
 msgid ""
 "Please set up tuner B\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right "
