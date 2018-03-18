@@ -8006,10 +8006,10 @@ msgstr "DNS"
 
 #, python-format
 msgid "Nameserver %d"
-msgstr "DNS %d"
+msgstr "Nomeserver %d"
 
 msgid "Nameserver settings"
-msgstr "Impostazioni del server dei nomi"
+msgstr "Impostazioni nome del server"
 
 msgid "Namespace"
 msgstr "Namespace"
@@ -9899,6 +9899,9 @@ msgstr "Usa indirizzo"
 
 msgid "Use IP"
 msgstr "Usa IP"
+
+msgid "Use Manual dns-nameserver"
+msgstr "Usa manuale dns-nameserver"
 
 msgid "Select a remote server IP first"
 msgstr "Selezionare un IP server remoto prima"
