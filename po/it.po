@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-17 14:00+0100\n"
-"PO-Revision-Date: 2018-03-17 19:42+0100\n"
+"PO-Revision-Date: 2018-03-19 15:18+0100\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -4644,6 +4644,9 @@ msgstr "Stato attuale:"
 msgid "Current device: "
 msgstr "Dispositivo attuale: "
 
+msgid "Device: "
+msgstr "Periferica:"
+
 msgid "Current location"
 msgstr "Destinazione attuale"
 
@@ -5846,6 +5849,21 @@ msgstr "Esterno (CF)"
 msgid "External subtitle color"
 msgstr "Colore sottotitoli esterni"
 
+msgid "ext2 - recommended for USB flash memory"
+msgstr "ext2 - consigliato per memorie USB"
+
+msgid "ext3 - recommended for HARD Disks"
+msgstr "ext3 - consigliato per Hard Disk"
+
+msgid "ext4 - recommended for Boot"
+msgstr "ext4 - consigliato per Boot"
+
+msgid "vfat - use only for media-files"
+msgstr "vfat - utilizzare solo per file multimediali"
+
+msgid "Choice filesystem."
+msgstr "Scelta Filesystem"
+
 msgid "FAILED"
 msgstr "FALLITA"
 
@@ -6198,6 +6216,16 @@ msgstr ""
 msgid "When enabled, network trash can's are probed for cleaning."
 msgstr ""
 "Quando abilitato, i cestini di rete possono essere puliti."
+
+msgid ""
+"When tuned to a service the system will normally scan the "
+"transponder for any changes and save them. Only set to 'yes' if "
+"you're absolutely sure what you're doing."
+msgstr ""
+"Quando si è sintonizzati su un servizio, il sistema esegue "
+"normalmente la scansione del transponder per eventuali "
+"modifiche e lo salva. Imposta solo su 'sì' se sei assolutamente "
+"sicuro di quello che stai facendo."
 
 msgid "Configure the skip time interval for the '1'/'3' buttons."
 msgstr ""
@@ -9026,6 +9054,13 @@ msgstr ""
 "Configurare la larghezza minima della 'i' simbolo '0' significa "
 "che non viene visualizzato."
 
+msgid ""
+"Configure which tuner for recordings will be preferred, when "
+"more than one tuner is available."
+msgstr ""
+"Configura quale sintonizzatore per le registrazioni sarà "
+"preferito, quando più di un sintonizzatore è disponibile."
+
 msgid "Picture in graphics"
 msgstr "Picture in grafica"
 
@@ -9461,6 +9496,9 @@ msgstr "Preferenza sottotitoli memorizzati dal servizio"
 
 msgid "Preferred tuner"
 msgstr "Preferenza tuner"
+
+msgid "Preferred tuners, multiple selection allowed"
+msgstr "Sintonizzatori preferiti, scelta multipla possibile"
 
 msgid "Prepare another USB stick for image flashing"
 msgstr "Preparare un'altra penna USB per il caricamento immagine"
@@ -11461,6 +11499,9 @@ msgstr "Visualizzare il numero di canale in TV"
 msgid "Hide number markers"
 msgstr "Hide number markers"
 
+msgid "hide"
+msgstr "nascondere"
+
 msgid "When enabled, number markers will be hidden."
 msgstr "Quando è abilitata, i marcatori numero saranno nascosti."
 
@@ -13197,6 +13238,67 @@ msgid "This allows you change the number of rows shown."
 msgstr ""
 "Questo consente di modificare il numero di righe riportate."
 
+msgid "This allows you to show drivers modules in downloads"
+msgstr "Ciò consente di mostrare i moduli driver nei download"
+
+msgid "This allows you to show extensions modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare moduli di estensioni nei download"
+
+msgid "This allows you to show softcams modules in downloads"
+msgstr "Ciò consente di mostrare i moduli Softcams nei download"
+
+msgid "This allows you to show languages in downloads"
+msgstr "Questo ti permette di mostrare le lingue nei download"
+
+msgid "This allows you to show skin modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli della skin nei download"
+
+msgid "This allows you to show systemplugins modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli di systemplugins nei "
+"download"
+
+msgid "This allows you to show lcd skins in downloads"
+msgstr "Questo ti permette di mostrare skin lcd nei download"
+
+msgid "This allows you to show picons modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli di Picons nei download"
+
+msgid "This allows you to show settings modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli delle impostazioni nei "
+"download"
+
+msgid "This allows you to show m2k modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli di m2k nei download"
+
+msgid "This allows you to show weblinks modules in downloads"
+msgstr ""
+"Ciò consente di mostrare i moduli dei collegamenti Web nei "
+"download"
+
+msgid "This allows you to show pli modules in downloads"
+msgstr "Questo ti permette di mostrare i moduli Pli nei download"
+
+msgid "This allows you to show vix modules in downloads"
+msgstr "Questo ti permette di mostrare i moduli vix nei download"
+
+msgid "This allows you to show security modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli di sicurezza nei "
+"download"
+
+msgid "This allows you to show kernel modules in downloads"
+msgstr ""
+"Questo ti permette di mostrare i moduli del kernel nei download"
+
+msgid "Please enter your personal feed URL"
+msgstr "Inserisci l'URL del tuo feed personale"
+
 msgid ""
 "This option allows to reduce the block-noise in the picture. "
 "Obviously this is at the cost of the picture's sharpness."
@@ -14502,14 +14604,6 @@ msgstr "Utilizzo del tuner %s"
 msgid "Preferred tuner for recordings"
 msgstr "Tuner preferito per le registrazioni"
 
-#, python-format
-msgid ""
-"Configure which tuner for recordings will be preferred, when "
-"more than one tuner is available."
-msgstr ""
-"Quale tuner è da preferire per la registrazione se più di un "
-"tuner è disponibile."
-
 msgid ""
 "Usually when the subtitle language is the same as the audio "
 "language, the subtitles will not be used. Enable this option to "
@@ -14879,6 +14973,13 @@ msgstr ""
 "configurazione di rete del %s %s e la sua connessione a "
 "Internet.Premere OK per iniziare la configurazione della rete."
 
+msgid ""
+"\n"
+"<This tuner is configured automatically>"
+msgstr ""
+"\n"
+"<Questo sintonizzatore è configurato automaticamente>"
+
 msgid "West"
 msgstr "Ovest"
 
@@ -14921,6 +15022,10 @@ msgid ""
 msgstr ""
 "Sperimentale: limitazione rigorosa ai sintonizzatori preferiti "
 "per le registrazioni"
+
+msgid "Experimental: strict limitation to preferred tuners"
+msgstr ""
+"Sperimentale: rigorosa limitazione ai sintonizzatori preferiti"
 
 msgid ""
 "When enabled, AIT data will be included in http streams. This "
@@ -15223,16 +15328,6 @@ msgid ""
 msgstr ""
 "Quando il contenuto ha un aspect ratio di 4:3, scegliere se "
 "scalare / allungare l'immagine."
-
-msgid ""
-"When tuned to a service the system will normally scan the "
-"transponder for any changes and save them. Only set to 'yes' if "
-"you're absolutely sure what you're doing."
-msgstr ""
-"Quando si è sintonizzati a un servizio il sistema normalmente "
-"la scansione del transponder per eventuali modifiche e "
-"salvarle. Solo impostato su 'si' se siete assolutamente sicuri "
-"di quello che stai facendo."
 
 #, python-format
 msgid ""
@@ -15839,6 +15934,12 @@ msgstr "[modifica preferiti]"
 msgid "[move mode]"
 msgstr "[modalità muovere]"
 
+msgid "Move mode off"
+msgstr "Sposta la modalità disattivata"
+
+msgid "Move mode on"
+msgstr "Sposta la modalità attiva"
+
 msgid ""
 "a gui to assign services/providers to common interface modules"
 msgstr ""
@@ -16138,6 +16239,12 @@ msgstr "economia/consulenza sociale"
 
 msgid "edit alternatives"
 msgstr "edit alternative"
+
+msgid "Edit mode on"
+msgstr "Modalità di modifica attiva"
+
+msgid "Edit mode off"
+msgstr "Modalità di modifica disattivata"
 
 msgid "education/science/factual topics (general)"
 msgstr "educazione/scienza/argomenti fattuali (generale)"

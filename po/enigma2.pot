@@ -1808,6 +1808,9 @@ msgstr ""
 msgid "Preferred tuners for recordings, multiple selection allowed"
 msgstr ""
 
+msgid "Preferred tuners, multiple selection allowed"
+msgstr ""
+
 msgid "Recordings abort pseudo recordings"
 msgstr ""
 
@@ -5527,6 +5530,12 @@ msgstr ""
 msgid "When enabled, network trash can's are probed for cleaning."
 msgstr ""
 
+msgid ""
+"When tuned to a service the system will normally scan the transponder for "
+"any changes and save them. Only set to 'yes' if you're absolutely sure what "
+"you're doing."
+msgstr ""
+
 msgid "Configure the skip time interval for the '1'/'3' buttons."
 msgstr ""
 
@@ -5830,6 +5839,9 @@ msgid "Network menu"
 msgstr ""
 
 msgid "Hide CI messages"
+msgstr ""
+
+msgid "hide"
 msgstr ""
 
 msgid "Infobar frontend data source"
@@ -9091,6 +9103,11 @@ msgid ""
 "recordings (e.g. EPGrefresh)."
 msgstr ""
 
+msgid ""
+"Configure which tuner for recordings will be preferred, when more than one "
+"tuner is available."
+msgstr ""
+
 msgid "Show recording symbol depending on recording type"
 msgstr ""
 
@@ -11859,6 +11876,54 @@ msgstr ""
 msgid "This allows you change the number of rows shown."
 msgstr ""
 
+msgid "This allows you to show drivers modules in downloads"
+msgstr ""
+
+msgid "This allows you to show extensions modules in downloads"
+msgstr ""
+
+msgid "This allows you to show languages in downloads"
+msgstr ""
+
+msgid "This allows you to show systemplugins modules in downloads"
+msgstr ""
+
+msgid "This allows you to show softcams modules in downloads"
+msgstr ""
+
+msgid "This allows you to show skin modules in downloads"
+msgstr ""
+
+msgid "This allows you to show picons modules in downloads"
+msgstr ""
+
+msgid "This allows you to show settings modules in downloads"
+msgstr ""
+
+msgid "This allows you to show m2k modules in downloads"
+msgstr ""
+
+msgid "This allows you to show weblinks modules in downloads"
+msgstr ""
+
+msgid "This allows you to show pli modules in downloads"
+msgstr ""
+
+msgid "This allows you to show vix modules in downloads"
+msgstr ""
+
+msgid "This allows you to show lcd skins in downloads"
+msgstr ""
+
+msgid "This allows you to show security modules in downloads"
+msgstr ""
+
+msgid "This allows you to show kernel modules in downloads"
+msgstr ""
+
+msgid "Please enter your personal feed URL"
+msgstr ""
+
 msgid ""
 "This option allows to reduce the block-noise in the picture. Obviously this "
 "is at the cost of the picture's sharpness."
@@ -12914,12 +12979,6 @@ msgstr ""
 msgid "Preferred tuner for recordings"
 msgstr ""
 
-#, python-format
-msgid ""
-"Configure which tuner for recordings will be preferred, when more than one "
-"tuner is available."
-msgstr ""
-
 msgid ""
 "Usually when the subtitle language is the same as the audio language, the "
 "subtitles will not be used. Enable this option to allow these subtitles to "
@@ -13269,6 +13328,9 @@ msgstr ""
 msgid "Experimental: strict limitation to preferred tuners for recordings"
 msgstr ""
 
+msgid "Experimental: strict limitation to preferred tuners"
+msgstr ""
+
 msgid ""
 "When enabled, AIT data will be included in http streams. This allows a "
 "client receiver to use HbbTV."
@@ -13457,12 +13519,6 @@ msgid ""
 "the picture."
 msgstr ""
 
-msgid ""
-"When tuned to a service the system will normally scan the transponder for "
-"any changes and save them. Only set to 'yes' if you're absolutely sure what "
-"you're doing."
-msgstr ""
-
 #, python-format
 msgid ""
 "When you do a factory reset, you will lose ALL your configuration data\n"
@@ -13511,6 +13567,9 @@ msgid "Where to save temporary timeshift recordings?"
 msgstr ""
 
 msgid "Which event do you want to save permanently?"
+msgstr ""
+
+msgid "\n<This tuner is configured automatically>"
 msgstr ""
 
 msgid "White"
@@ -13945,6 +14004,12 @@ msgstr ""
 msgid "[move mode]"
 msgstr ""
 
+msgid "Move mode off"
+msgstr ""
+
+msgid "Move mode on"
+msgstr ""
+
 msgid "a gui to assign services/providers to common interface modules"
 msgstr ""
 
@@ -14229,6 +14294,12 @@ msgid "economics/social advisory"
 msgstr ""
 
 msgid "edit alternatives"
+msgstr ""
+
+msgid "Edit mode off"
+msgstr ""
+
+msgid "Edit mode on"
 msgstr ""
 
 msgid "education/science/factual topics (general)"
