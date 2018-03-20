@@ -490,6 +490,18 @@ msgstr ""
 msgid "Show Movies"
 msgstr ""
 
+msgid "TarGz packages installer"
+msgstr ""
+
+msgid "Ipk packages installer"
+msgstr ""
+
+msgid "Advanced ipk packages installer"
+msgstr ""
+
+msgid "Ipk remove"
+msgstr ""
+
 msgid "Main Menu"
 msgstr ""
 
@@ -1806,9 +1818,6 @@ msgid ""
 msgstr ""
 
 msgid "Preferred tuners for recordings, multiple selection allowed"
-msgstr ""
-
-msgid "Preferred tuners, multiple selection allowed"
 msgstr ""
 
 msgid "Recordings abort pseudo recordings"
@@ -4079,9 +4088,6 @@ msgstr ""
 msgid "Creating partition"
 msgstr ""
 
-msgid "Creating start scripts and starting the cam"
-msgstr ""
-
 msgid "Croatian"
 msgstr ""
 
@@ -4104,6 +4110,9 @@ msgid "Current Status:"
 msgstr ""
 
 msgid "Current device: "
+msgstr ""
+
+msgid "Device: "
 msgstr ""
 
 msgid "Current location"
@@ -5222,6 +5231,21 @@ msgstr ""
 msgid "External subtitle color"
 msgstr ""
 
+msgid "ext2 - recommended for USB flash memory"
+msgstr ""
+
+msgid "ext3 - recommended for HARD Disks"
+msgstr ""
+
+msgid "ext4 - recommended for Boot"
+msgstr ""
+
+msgid "vfat - use only for media-files"
+msgstr ""
+
+msgid "Choice filesystem."
+msgstr ""
+
 msgid "FAILED"
 msgstr ""
 
@@ -5461,6 +5485,9 @@ msgid "Delay time"
 msgstr ""
 
 msgid "Force de-interlace"
+msgstr ""
+
+msgid "Force UnInstall"
 msgstr ""
 
 msgid "Automatic resolution label"
@@ -5841,9 +5868,6 @@ msgstr ""
 msgid "Hide CI messages"
 msgstr ""
 
-msgid "hide"
-msgstr ""
-
 msgid "Infobar frontend data source"
 msgstr ""
 
@@ -5986,6 +6010,9 @@ msgstr ""
 msgid "IPK Installer"
 msgstr ""
 
+msgid "Ipk Tools"
+msgstr ""
+
 msgid "ISO file is too large for this filesystem!"
 msgstr ""
 
@@ -5996,6 +6023,9 @@ msgid "Icons"
 msgstr ""
 
 msgid "Idle Time:"
+msgstr ""
+
+msgid "%s is UnInstalled"
 msgstr ""
 
 msgid ""
@@ -6292,9 +6322,6 @@ msgstr ""
 msgid "Input devices"
 msgstr ""
 
-msgid "Install"
-msgstr ""
-
 msgid ""
 "Install a new image with a Umsgstr Scegliere ciò che deve essere attivSB "
 "stick"
@@ -6337,6 +6364,18 @@ msgid "Installation finished."
 msgstr ""
 
 msgid "Install Failed !!"
+msgstr ""
+
+msgid "Install ipk"
+msgstr ""
+
+msgid "Install ipk packets"
+msgstr ""
+
+msgid "Install"
+msgstr ""
+
+msgid "Install All"
 msgstr ""
 
 #, python-format
@@ -7317,12 +7356,6 @@ msgid ""
 "Exit plugin."
 msgstr ""
 
-msgid ""
-"No Cam started !!\n"
-"\n"
-"Cam 1 must be different from Cam 2"
-msgstr ""
-
 msgid "No Connection"
 msgstr ""
 
@@ -8116,6 +8149,11 @@ msgid ""
 "showing the icon at all."
 msgstr ""
 
+msgid ""
+"Configure which tuner for recordings will be preferred, when more than one "
+"tuner is available."
+msgstr ""
+
 msgid "Picture in graphics"
 msgstr ""
 
@@ -8510,6 +8548,9 @@ msgid "Prefer subtitles stored by service"
 msgstr ""
 
 msgid "Preferred tuner"
+msgstr ""
+
+msgid "Preferred tuners, multiple selection allowed"
 msgstr ""
 
 msgid "Prepare another USB stick for image flashing"
@@ -8936,6 +8977,9 @@ msgstr ""
 msgid "Use IP"
 msgstr ""
 
+msgid "Use Manual dns-nameserver"
+msgstr ""
+
 msgid "Select a remote server IP first"
 msgstr ""
 
@@ -9101,11 +9145,6 @@ msgid ""
 "Configure whether the 'recording' symbol (in the display skin and LCD skin) "
 "is visible for real recordings only or also for streaming and pseuso "
 "recordings (e.g. EPGrefresh)."
-msgstr ""
-
-msgid ""
-"Configure which tuner for recordings will be preferred, when more than one "
-"tuner is available."
 msgstr ""
 
 msgid "Show recording symbol depending on recording type"
@@ -10372,6 +10411,9 @@ msgstr ""
 msgid "Hide number markers"
 msgstr ""
 
+msgid "hide"
+msgstr ""
+
 msgid "When enabled, number markers will be hidden."
 msgstr ""
 
@@ -10896,6 +10938,25 @@ msgid ""
 msgstr ""
 
 msgid "Allow unstable (untested) updates"
+msgstr ""
+
+msgid ""
+"No Cam started !!\n"
+"\n"
+"Cam 1 must be different from Cam 2"
+msgstr ""
+
+msgid "Creating start scripts and starting the cam"
+msgstr ""
+
+msgid "Waiting..."
+msgstr ""
+
+msgid ""
+" Not Started !!\n"
+"\n"
+"Cam binname must be in the start command line\n"
+"Check your emu config file"
 msgstr ""
 
 #, python-format
@@ -11882,16 +11943,19 @@ msgstr ""
 msgid "This allows you to show extensions modules in downloads"
 msgstr ""
 
+msgid "This allows you to show softcams modules in downloads"
+msgstr ""
+
 msgid "This allows you to show languages in downloads"
+msgstr ""
+
+msgid "This allows you to show skin modules in downloads"
 msgstr ""
 
 msgid "This allows you to show systemplugins modules in downloads"
 msgstr ""
 
-msgid "This allows you to show softcams modules in downloads"
-msgstr ""
-
-msgid "This allows you to show skin modules in downloads"
+msgid "This allows you to show lcd skins in downloads"
 msgstr ""
 
 msgid "This allows you to show picons modules in downloads"
@@ -11910,9 +11974,6 @@ msgid "This allows you to show pli modules in downloads"
 msgstr ""
 
 msgid "This allows you to show vix modules in downloads"
-msgstr ""
-
-msgid "This allows you to show lcd skins in downloads"
 msgstr ""
 
 msgid "This allows you to show security modules in downloads"
@@ -13297,6 +13358,36 @@ msgid ""
 "Press the OK button on your remote control to move to the next step."
 msgstr ""
 
+msgid ""
+"Welcome to OpenDroid!\n"
+"\n"
+"NOTE: This section of the wizard is intended for people who cannot disable "
+"overscan on their television / display.  Please first try to disable "
+"overscan before using this feature.\n"
+"\n"
+"USAGE: If you continue adjust the screen size and position settings so that "
+"the shaded user interface layer *just* covers the test pattern in the "
+"background.\n"
+"\n"
+"Select Yes to change these settings or No to skip this step."
+msgstr ""
+
+msgid ""
+"NOTE: This feature is intended for people who cannot disable overscan on "
+"their television / display.  Please first try to disable overscan before "
+"using this feature.\n"
+"\n"
+"USAGE: Adjust the screen size and position settings so that the shaded user "
+"interface layer *just* covers the test pattern in the background.\n"
+"\n"
+"Select Yes to continue or No to exit."
+msgstr ""
+
+msgid ""
+"\n"
+"<This tuner is configured automatically>"
+msgstr ""
+
 msgid "West"
 msgstr ""
 
@@ -13567,9 +13658,6 @@ msgid "Where to save temporary timeshift recordings?"
 msgstr ""
 
 msgid "Which event do you want to save permanently?"
-msgstr ""
-
-msgid "\n<This tuner is configured automatically>"
 msgstr ""
 
 msgid "White"
@@ -14296,10 +14384,10 @@ msgstr ""
 msgid "edit alternatives"
 msgstr ""
 
-msgid "Edit mode off"
+msgid "Edit mode on"
 msgstr ""
 
-msgid "Edit mode on"
+msgid "Edit mode off"
 msgstr ""
 
 msgid "education/science/factual topics (general)"
