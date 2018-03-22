@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-17 14:00+0100\n"
-"PO-Revision-Date: 2018-03-20 20:32+0100\n"
+"PO-Revision-Date: 2018-03-22 17:30+0100\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -56,7 +56,7 @@ msgid "CH%s"
 msgstr "CH%s"
 
 msgid "CI (Common Interface) Setup"
-msgstr "Installazione CI (interfaccia comune)"
+msgstr "CI (interfaccia comune) Installazione"
 
 msgid "Circular LNB"
 msgstr "LBN circolare"
@@ -262,7 +262,7 @@ msgid ""
 "Oscam Webif will be accessible on the selected port."
 msgstr ""
 "INFORMAZIONI: Selezionare OScam WebifPort\n"
-"Oscam Webif sarà accessibile nella porta selezionata"
+"Oscam Webif sarà accessibile nella porta selezionata."
 
 #: plugin.py:247
 msgid "Internal Reader /dev/sci0:"
@@ -580,6 +580,9 @@ msgstr "Mostra le estensioni installate"
 msgid "Extension Install"
 msgstr "Installa estensioni"
 
+msgid "List of plugins to uninstall"
+msgstr "Elenco di plugins da disinstallare"
+
 msgid ""
 "This option allows you to disable sorting of the Extensions "
 "list."
@@ -843,6 +846,21 @@ msgstr "Modalità video: 1080p non disponibile"
 
 msgid "Video mode: %s"
 msgstr "Modalità video: %s"
+
+msgid "Video Size: "
+msgstr "Dimensione video: "
+
+msgid "Provider: n/a"
+msgstr "Provider: n/a"
+
+msgid "Name: n/a"
+msgstr "Nome: n/a"
+
+msgid "Aspect Ratio: n/a"
+msgstr "Rapporto TV n/a"
+
+msgid "Video Size: n/a"
+msgstr "Dimensione del video: n/a"
 
 msgid "Eventname only"
 msgstr "Nome evento unico"
@@ -1854,7 +1872,7 @@ msgid ""
 msgstr ""
 "Configurare la dimensione del passo del volume audio in "
 "modalità rapida (limite 1-10). Attivato quando il tasto del "
-"volume è permanente, premere o premere velocemente di seguito"
+"volume è permanente, premere o premere velocemente di seguito."
 
 msgid "Configure the general audio volume step size (limit 1-10)."
 msgstr ""
@@ -2490,7 +2508,7 @@ msgid "Allow subtitles for hearing impaired"
 msgstr "Abilitare sottotitoli per non udenti"
 
 msgid "Allow unstable (experimental) updates"
-msgstr "Consenti aggiornamenti instabili (sperimentali)"
+msgstr "Consenti aggiornamenti instabili sperimentali"
 
 msgid "Allow updates which are marked as faulty"
 msgstr "Consenti aggiornamenti contrassegnati come difettosi"
@@ -2871,11 +2889,11 @@ msgstr "Opzioni audio..."
 
 #, python-format
 msgid "Audio track (%s) format"
-msgstr "Formato della traccia audio (% s)"
+msgstr "Traccia audio (%s) formato"
 
 #, python-format
 msgid "Audio track (%s) language"
-msgstr "Lingua traccia Audio (%s)"
+msgstr "Traccia audio (%s) linguaggio"
 
 msgid "Author: "
 msgstr "Autore: "
@@ -3144,6 +3162,93 @@ msgstr "Blu lungo"
 
 msgid "Blue Panel"
 msgstr "Blue Panel"
+
+msgid ""
+"*** boxmode=1 (Standard) ***\n"
+"\n"
+"+++ Features +++\n"
+"3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, 1920x1080p60 "
+"8-bit AVC,\n"
+"MAIN only (no PIP), Limited display usages, UHD only (no SD),\n"
+"No multi-PIP, No transcoding\n"
+"\n"
+"--- Restrictions ---\n"
+"Decoder 0: 3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, "
+"1920x1080p60 8-bit AVC\n"
+"OSD Grafic 0: 1080p60 32 bit ARGB\n"
+"Display 0 Encode Restrictions: 3840x2160p60 12-bit 4:2:0 "
+"(HDMI),\n"
+"3840x2160p60 12-bit 4:2:2 (HDMI), 3840x2160p60 8-bit 4:4:4 "
+"(HDMI),\n"
+"1920x1080p60 (component), Only one display format at a time\n"
+"\n"
+"If you want 1080p60 component, HDMI also needs to be 1080p60."
+msgstr ""
+"*** boxmode=1 (Standard) ***\n"
+"\n"
+"+++ Caratteristiche +++\n"
+"3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, 1920x1080p60 "
+"8-bit AVC,\n"
+"MAIN solo (no PIP), Usi di visualizzazione limitati, solo UHD "
+"(no SD),\n"
+"No multi-PIP, nessuna transcodifica\n"
+"\n"
+"--- restrizioni ---\n"
+"Decoder 0: 3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, "
+"1920x1080p60 8-bit AVC\n"
+"OSD Grafic 0: 1080p60 32 bit ARGB\n"
+"Visualizza 0 restrizioni di codifica: 3840x2160p60 12-bit 4:2:0 "
+"(HDMI),\n"
+"3840x2160p60 12-bit 4:2:2 (HDMI), 3840x2160p60 8-bit 4:4:4 "
+"(HDMI),\n"
+"1920x1080p60 (componente), Solo un formato di visualizzazione "
+"alla volta\n"
+"\n"
+"Se vuoi 1080p60 componente, HDMI anche deve essere 1080p60."
+
+msgid ""
+"*** boxmode=12 (Experimental) ***\n"
+"\n"
+"+++ Features +++\n"
+"3840x2160p50 10-bit decode for MAIN, 1080p25/50i PIP support, "
+"HDMI input (if available),\n"
+" UHD display only, No SD display, No transcoding\n"
+"\n"
+"--- Restrictions ---\n"
+"Decoder 0: 3840x2160p50 10-bit HEVC, 3840x2160p50 8-bit VP9,\n"
+"1920x1080p50 8-bit AVC/MPEG\n"
+"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit "
+"VP9/AVC/MPEG2,\n"
+"HDMI In (if available), 3840x2160p50\n"
+"OSD Graphic 0 (UHD): 1080p50 32-bit ARGB\n"
+"Window 0 (MAIN/UHD): Limited display capabilities, 1080i50 10-"
+"bit de-interlacing\n"
+"Multi-PIP mode (3x): Enigma2 supported no multi-PIP\n"
+"Window 1 (PIP/UHD) (Enigma2 PIP Mode): Up to 1/2 x 1/2 screen "
+"display, 576i50 de-interlacing\n"
+"Display 0 (UHD) Encode Restrictions: 3840x2160p50"
+msgstr ""
+"*** boxmode=12 (Sperimentale) ***\n"
+"\n"
+"+++ Caratteristiche+++\n"
+"3840x2160p50 10-bit decodificare per MAIN, 1080p25/50i Supporto "
+"PIP, ingresso HDMI (se disponibile),\n"
+" Solo visualizzazione UHD, Nessuna visualizzazione SD, Nessuna "
+"transcodifica\n"
+"\n"
+"--- Restrizioni ---\n"
+"Decoder 0: 3840x2160p50 10-bit HEVC, 3840x2160p50 8-bit VP9,\n"
+"1920x1080p50 8-bit AVC/MPEG\n"
+"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit "
+"VP9/AVC/MPEG2,\n"
+"HDMI In (if available), 3840x2160p50\n"
+"OSD Graphic 0 (UHD): 1080p50 32-bit ARGB\n"
+"Window 0 (MAIN/UHD): Funzionalità di visualizzazione limitate, "
+"deinterlacciamento 10-bit 1080i50\n"
+"Modalità Multi-PIP (3x): Enigma2 non supportava multi-PIP\n"
+"Finestra 1 (PIP / UHD) (Modalità PIP Enigma2): Visualizzazione "
+"schermo fino a 1/2 x 1/2, deinterlacciamento 576i50\n"
+"Display 0 (UHD) Encode Restrictions: 3840x2160p50"
 
 msgid "Green Panel"
 msgstr "Green Panel"
@@ -3415,6 +3520,12 @@ msgstr "Capacità: "
 
 msgid "Card infos (CCcam-Reader)"
 msgstr "Informazioni della carta (CCcam-Reader)"
+
+msgid "Infos"
+msgstr "informazioni"
+
+msgid "Service_Team"
+msgstr "Servizio_Team"
 
 msgid "Cards:"
 msgstr "Carte:"
@@ -3858,6 +3969,9 @@ msgstr "Struttura nomi dei file registrazione"
 
 msgid "Name - Date filenames"
 msgstr "Nome - Data nome file"
+
+msgid "Latest Commits"
+msgstr "Ultimi commit"
 
 #, python-format
 msgid "Configfile %s saved."
@@ -4645,7 +4759,7 @@ msgid "Current device: "
 msgstr "Dispositivo attuale: "
 
 msgid "Device: "
-msgstr "Periferica:"
+msgstr "Periferica: "
 
 msgid "Current location"
 msgstr "Destinazione attuale"
@@ -4775,19 +4889,19 @@ msgid "Debug Logs"
 msgstr "Log di debug"
 
 msgid "Deep Standby"
-msgstr "spegnimento (Deep-Standby)"
+msgstr "Modalità di spegnimento Deep Standby"
 
 msgid "Sleep Timer"
 msgstr "Sleep Timer"
 
 msgid "deep standby"
-msgstr "spegnimento (Deep-Standby)"
+msgstr "modalità di spegnimento Deep Standby"
 
 msgid "auto and deep standby"
 msgstr "auto e deep standby"
 
 msgid "Deep standby"
-msgstr "Spegnimento (Deep-Standby)"
+msgstr "Modalità di spegnimento Deep Standby"
 
 msgid "Default"
 msgstr "Predefinito"
@@ -4979,7 +5093,7 @@ msgstr "Modalità DiSEqC"
 
 #, python-format
 msgid "DiSEqC port %s: %s"
-msgstr "porta DiSEqC %s: %s"
+msgstr "Porta DiSEqC %s: %s"
 
 msgid "DiSEqC repeats"
 msgstr "Ripetizioni DiSEqC"
@@ -5268,9 +5382,6 @@ msgstr "Effettuare un'altra ricerca canali manuale?"
 #, python-format
 msgid "Do you want to download the image to %s ?"
 msgstr "Scaricare l'immagine in %s?"
-
-msgid "Do you want to install the package:\n"
-msgstr "Installare il pacchetto:\n"
 
 msgid "Do you want to play DVD in drive?"
 msgstr "Riprodurre il DVD inserito?"
@@ -5862,7 +5973,7 @@ msgid "vfat - use only for media-files"
 msgstr "vfat - utilizzare solo per file multimediali"
 
 msgid "Choice filesystem."
-msgstr "Scelta Filesystem"
+msgstr "Scelta Filesystem."
 
 msgid "FAILED"
 msgstr "FALLITA"
@@ -6416,7 +6527,7 @@ msgstr ""
 "Vai in Standby quando inizia una registrazione con il timer"
 
 msgid "Standby message screen timeout(sec.)"
-msgstr "Standby messaggio sullo schermo in pochi secondi"
+msgstr "Standby messaggio sullo schermo in pochi (sec.)"
 
 msgid "all,than to do 'nothing'"
 msgstr "tutto, che fare 'niente'"
@@ -6669,7 +6780,7 @@ msgid "Hostname:"
 msgstr "Hostname:"
 
 msgid "Hostname: "
-msgstr "Hostname: "
+msgstr "Hostnome: "
 
 msgid "Hour"
 msgstr "Ora"
@@ -7143,7 +7254,7 @@ msgid "Install picons on"
 msgstr "Installare picons su"
 
 msgid "Install plugins"
-msgstr "installare Plugins"
+msgstr "Installa plugin"
 
 msgid "Install settings, skins, software..."
 msgstr "Installa impostazioni, skin, programmi…"
@@ -7741,7 +7852,7 @@ msgid "Medium toolbox"
 msgstr "Toolbox supporto ottico"
 
 msgid "MemInfo"
-msgstr "MemInfo"
+msgstr "Memoria Info"
 
 msgid "Memory"
 msgstr "Memoria"
@@ -7794,7 +7905,7 @@ msgstr "Mancante"
 
 msgctxt "Satellite configuration mode"
 msgid "Mode"
-msgstr "Modalità [configurazione del satellite]"
+msgstr "Modalità"
 
 msgid "Positioner (selecting satellites)"
 msgstr "Rotore (Selezzionare satellite)"
@@ -7869,10 +7980,10 @@ msgid "MountManager"
 msgstr "MountManager"
 
 msgid "Mounts"
-msgstr "Mounts"
+msgstr "monta"
 
 msgid "Mounts Devices"
-msgstr "Dispositivi Mounts"
+msgstr "Monta dispositivi"
 
 msgid "Mounts Setup"
 msgstr "Impostazioni di Mounts"
@@ -7971,7 +8082,7 @@ msgid "Are you sure you want to delete the EPG data from:\n"
 msgstr "Sei sicuro di voler eliminare i dati EPG da::\n"
 
 msgid "MultiEPG settings"
-msgstr "impostazioni MultiEPG"
+msgstr "Impostazioni MultiEPG"
 
 msgid "Multimedia"
 msgstr "Multimedia"
@@ -8028,6 +8139,9 @@ msgstr "Nome"
 
 msgid "Name:"
 msgstr "Nome:"
+
+msgid "Name: "
+msgstr "Nome: "
 
 msgid "Nameserver"
 msgstr "DNS"
@@ -9960,7 +10074,7 @@ msgid "Download from remote failed"
 msgstr "Download non riuscito"
 
 msgid "Make your selection"
-msgstr "seleziona"
+msgstr "Fai la tua selezione"
 
 msgid "Remote Control"
 msgstr "Config. HotKey"
@@ -10611,6 +10725,9 @@ msgstr "CAM 1 selezionata"
 msgid "Select Cam 2"
 msgstr "CAM 2 selezionata"
 
+msgid "Wait time before start Cam 2"
+msgstr "Tempo di attesa prima dell'avvio Cam 2"
+
 msgid "Select Lan/Wlan"
 msgstr "Seleziona LAN/WLAN"
 
@@ -10712,7 +10829,9 @@ msgstr "Selezionare il dispositivo di input"
 msgid ""
 "Replace `- ` in dialogs with colored text per speaker (like "
 "teletext subtitles for the hearing impaired)"
-msgstr "Sostituisci `- ` nei dialoghi con testo colorato"
+msgstr ""
+"Sostituisci `- ` in dialogo con testo colorato per altoparlante "
+"(come i sottotitoli del teletext per i non udenti)"
 
 msgid "Select input device."
 msgstr "Selezionare il dispositivo di input."
@@ -10936,6 +11055,9 @@ msgstr "Larghezza di servizio"
 
 msgid "Services"
 msgstr "Canali"
+
+msgid "services"
+msgstr "servizi"
 
 msgid ""
 "Services may be grouped in bouquets. When enabled, you can use "
@@ -11265,8 +11387,7 @@ msgstr "Configura il posizionatore"
 
 msgid "Setup your positioner for your satellite system"
 msgstr ""
-"Memorizza le posizioni dei satelliti (utile in caso parabola "
-"motorizzata)"
+"Imposta il tuo posizionatore per il tuo sistema satellitare"
 
 msgid "Setup your recording config"
 msgstr "Configura le registrazioni"
@@ -11696,7 +11817,7 @@ msgid "Show single epg for current channel"
 msgstr "Mostra EPG singolo per l'evento attuale"
 
 msgid "Show source packages"
-msgstr "Visualizza sorgente Pacchetti (SRC)"
+msgstr "Visualizza sorgente Pacchetti"
 
 msgid "Show status icons in movielist"
 msgstr "Mostra icone di stato nella lista film"
@@ -12034,7 +12155,7 @@ msgid "Sorry MediaScanner is not installed!"
 msgstr "MediaScanner non è installato!"
 
 msgid "Sorry MiniDLNA Config is Missing\""
-msgstr "Spiacente MiniDLNA non configurato"
+msgstr "Spiacente MiniDLNA non configurato\""
 
 msgid "Sorry feeds are down for maintenance"
 msgstr "Spiacente i Feed sono fuori servizio per manutenzione"
@@ -12056,7 +12177,7 @@ msgstr ""
 "configurazione."
 
 msgid "Allow unstable (untested) updates"
-msgstr "Consenti aggiornamenti instabili (non testati)"
+msgstr "Consenti aggiornamenti instabili non testati"
 
 msgid ""
 "No Cam started !!\n"
@@ -12072,6 +12193,9 @@ msgstr "Creazione di script di avvio e avvio della cam"
 
 msgid "Waiting..."
 msgstr "In attesa..."
+
+msgid "Do you want to install the package:\n"
+msgstr "Installare il pacchetto:\n"
 
 msgid ""
 " Not Started !!\n"
@@ -12207,7 +12331,7 @@ msgid "Sports"
 msgstr "Sports"
 
 msgid "Standard list"
-msgstr "lista Predefinita"
+msgstr "Lista Predefinita"
 
 msgid "Standby"
 msgstr "Standby"
@@ -12267,6 +12391,18 @@ msgstr "Avvio CAM1: "
 
 msgid "Starting Cam 2: "
 msgstr "Avvio CAM 2: "
+
+msgid "active CAM 1: "
+msgstr "avviata CAM1: "
+
+msgid "active CAM 2: "
+msgstr "avviata CAM 2: "
+
+msgid "no CAM 2 active"
+msgstr "nessuna CAM 2 avviata"
+
+msgid "no CAM 1 active"
+msgstr "nessuna CAM 1 avviata"
 
 msgid "Starting on"
 msgstr "Avvio il"
@@ -12406,7 +12542,7 @@ msgid "End button mode"
 msgstr "Pulsante di fine modalità"
 
 msgid "QuickEPG mode"
-msgstr "modalità QuickEPG"
+msgstr "Modalità QuickEPG"
 
 msgid "Subservices"
 msgstr "Sottocanali"
@@ -12418,7 +12554,7 @@ msgid "Subtitle Quickmenu"
 msgstr "Selezione Sottotitoli"
 
 msgid "Subtitle alignment"
-msgstr "l'allineamento dei Sottotitoli"
+msgstr "Allineamento sottotitoli"
 
 msgid "Subtitle border width"
 msgstr "Larghezza del bordo Sottotitoli"
@@ -12445,16 +12581,16 @@ msgid "Subtitle language selection 4"
 msgstr "Selezione della lingua dei Sottotitoli 4"
 
 msgid "Subtitle position"
-msgstr "posizione dei Sottotitoli"
+msgstr "Posizione dei Sottotitoli"
 
 msgid "Subtitle selection"
-msgstr "selezione Sottotitoli"
+msgstr "Selezione Sottotitoli"
 
 msgid "Subtitle selection..."
-msgstr "selezione Sottotitoli..."
+msgstr "Selezione Sottotitoli..."
 
 msgid "Subtitle settings"
-msgstr "impostazioni Sottotitoli"
+msgstr "Impostazioni Sottotitoli"
 
 msgid "Subtitles"
 msgstr "Sottotitoli"
@@ -12496,13 +12632,13 @@ msgid "Red button mode"
 msgstr "Modalità pulsante rosso"
 
 msgid "Red button long mode"
-msgstr "Modalità pulsante rosso (Lungo)"
+msgstr "Modalità lungo pulsante rosso"
 
 msgid "Green button mode"
 msgstr "Modalità pulsante verde"
 
 msgid "Green button long mode"
-msgstr "Modalità pulsante verde (Lungo)"
+msgstr "Modalità lungo pulsante verde"
 
 msgid "Yellow button mode"
 msgstr "Modalità pulsante giallo"
@@ -12527,13 +12663,13 @@ msgstr ""
 "impostato su 'no' EPG si apre sul canale presente."
 
 msgid "Yellow button long mode"
-msgstr "Modalità pulsante giallo (Lungo)"
+msgstr "Modalità lungo pulsante giallo"
 
 msgid "Blue button mode"
 msgstr "Modalità pulsante blue"
 
 msgid "Blue button long mode"
-msgstr "Modalità pulsante blue (Lungo)"
+msgstr "Modalità lungo pulsante blu"
 
 msgid "show red button information..."
 msgstr "mostra le informazioni pulsante rosso ..."
@@ -12582,7 +12718,7 @@ msgid "Percent"
 msgstr "Percentuale"
 
 msgid "Decibel"
-msgstr "decibel"
+msgstr "Decibel"
 
 msgid "Swap services"
 msgstr "Servizi Swap"
@@ -12674,7 +12810,7 @@ msgid "System:"
 msgstr "Sistema:"
 
 msgid "SystemInfo"
-msgstr "Info sistema"
+msgstr "Informazioni sistema"
 
 msgid "TB"
 msgstr "TB"
@@ -12820,10 +12956,7 @@ msgstr ""
 
 msgid ""
 "The DVD standard doesn't support H.264 (HDTV) video streams."
-msgstr ""
-"Lo standard DVD non supporta stream video H.264 (HDTV). Creare "
-"un DVD in formato dati %s %s (NON sarà riproducibile su lettori "
-"DVD standard !)"
+msgstr "Lo standard DVD non supporta i flussi video H.264 (HDTV)."
 
 msgid ""
 "The DVD standard doesn't support H.264 (HDTV) video streams. Do "
@@ -13755,7 +13888,7 @@ msgid "Timer is activated: +%d min"
 msgstr "Timer attivo: +%d min"
 
 msgid "Timer is not activated"
-msgstr "Spegni decoder [quando]"
+msgstr "Il timer non è attivato"
 
 msgid "Timer log"
 msgstr "Log timer"
@@ -14282,7 +14415,7 @@ msgid "Unicable"
 msgstr "Unicable"
 
 msgid "Unicable LNB"
-msgstr "LNB Unicable (SCR)"
+msgstr "LNB Unicable"
 
 msgid "Unicable Matrix"
 msgstr "Unicable Matrix"
@@ -14460,8 +14593,8 @@ msgstr "Utilizzare rappresentazione minima"
 msgid ""
 "Use individual offset from waking up to starting a timer [min]"
 msgstr ""
-"Utilizzare l'offset individuale dal risveglio fino all'avvio di "
-"un timer"
+"Utilizzare l'offset individuale dal risveglio all'avvio di un "
+"timer [min]"
 
 msgid "Use extended List"
 msgstr "Utilizzare rappresentazione estesa"
@@ -14554,7 +14687,7 @@ msgid "Used service scan type"
 msgstr "Tipo ricerca canali in uso"
 
 msgid "Used:"
-msgstr "usato:"
+msgstr "Usato:"
 
 msgid "User - bouquets"
 msgstr "User - bouquets"
@@ -14778,7 +14911,7 @@ msgid "View list of available system extensions"
 msgstr "Elenco estensioni di sistema disponibili"
 
 msgid "View mode"
-msgstr "modalità di visualizzazione"
+msgstr "Modalità di visualizzazione"
 
 msgid "View photos..."
 msgstr "Visualizzare foto..."
@@ -14838,7 +14971,7 @@ msgid "Wake Up"
 msgstr "Accendere"
 
 msgid "Wake Up To Standby"
-msgstr "Spegnimento (Deep-Standby)"
+msgstr "Wake Up To Standby"
 
 msgid "Wakeup"
 msgstr "Accendere"
@@ -14879,7 +15012,7 @@ msgid ""
 "representation."
 msgstr ""
 "Quale telecomando viene mostrato. Influenza solo la "
-"rappresentazione grafica"
+"rappresentazione grafica."
 
 msgid "Watch recordings..."
 msgstr "Visualizzare Registrazione..."
@@ -15445,7 +15578,7 @@ msgid "White"
 msgstr "Bianco"
 
 msgid "Width"
-msgstr "larghezza"
+msgstr "Larghezza"
 
 msgid "Wireless LAN"
 msgstr "LAN Wireless"
@@ -16107,7 +16240,7 @@ msgid "auto"
 msgstr "auto"
 
 msgid "auto deepstandby"
-msgstr "spegnimento (deep standby)"
+msgstr "auto deep standby"
 
 msgid "auto standby"
 msgstr "sempre attivo"
@@ -16515,7 +16648,7 @@ msgid "get the cards' server"
 msgstr "ottenere Card Server"
 
 msgid "go to deep standby"
-msgstr "spegnimento (deep standby)"
+msgstr "andare in deep standby"
 
 msgid "go to standby"
 msgstr "andare in standby"
@@ -16590,7 +16723,7 @@ msgid ""
 msgstr "Qui puoi selezionare i file da escludere dal backup."
 
 msgid "Yellow key press around Skinparts to select"
-msgstr "premi il tasto Giallo SkinParts per selezionare"
+msgstr "Premere il tasto giallo per selezionare Skinparts"
 
 msgid "Enable OPD-Blue-Line pro:"
 msgstr "Attiva OPD-Blue-Line pro:"
@@ -16642,6 +16775,12 @@ msgstr "Security"
 
 msgid "Kernel Modules"
 msgstr "Moduli Kernel"
+
+msgid "Show OPD_panel Red-key"
+msgstr "Mostra tasto rosso OPD_panel"
+
+msgid "Show Softcam-Panel Red-key long"
+msgstr "Mostra il tasto rosso del pannello della Softcam"
 
 msgid "leave movie player..."
 msgstr "uscire da riproduzione registrazioni..."
@@ -16993,7 +17132,7 @@ msgid "Scan stop frequency"
 msgstr "Ferma scansione frequenza"
 
 msgid "Frequency stop"
-msgstr "stop Frequenza"
+msgstr "Stop Frequenza"
 
 msgid "Press OK to start scan"
 msgstr "\"Premere OK per avviare la scansione"
@@ -17643,7 +17782,10 @@ msgid "Auto(not available)"
 msgstr "Auto(non disponibile)"
 
 msgid "Aspect list..."
-msgstr "Aspect list..."
+msgstr "Aspetto lista..."
+
+msgid "Aspect Ratio: "
+msgstr "Proporzioni TV: "
 
 msgid ""
 "USB = Do you want to make a back-up on USB?\n"
