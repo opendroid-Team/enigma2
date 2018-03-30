@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Opendroid\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-17 16:32+0100\n"
-"PO-Revision-Date: 2018-03-17 16:54+0100\n"
+"POT-Creation-Date: 2018-03-30 09:24+0200\n"
+"PO-Revision-Date: 2018-03-30 09:24+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Poland <Mariusz1970@onet.eu>\n"
@@ -616,6 +616,25 @@ msgstr "Rozpocząć zapis timeshiftu"
 
 msgid "Show Movies"
 msgstr "Pokazać Filmy"
+
+msgid "TarGz packages installer"
+msgstr ""
+
+#, fuzzy
+#| msgid "packages selected."
+msgid "Ipk packages installer"
+msgstr "wybrane pakiety."
+
+#, fuzzy
+#| msgid "Update completed, %d package was installed."
+#| msgid_plural "Update completed, %d packages were installed."
+msgid "Advanced ipk packages installer"
+msgstr "Aktualizacja zakończona, zainstalowano %d pakiet."
+
+#, fuzzy
+#| msgid "Remove"
+msgid "Ipk remove"
+msgstr "Usuwanie"
 
 #, fuzzy
 #| msgid "Main menu"
@@ -1588,8 +1607,22 @@ msgid "%sShow 1080i as 1080p"
 msgstr "Tryb wideo: 1080p również nie dostępny"
 
 #, fuzzy
+#| msgid "%Y-%m-%d"
+msgid "%Y-%m-%d %H-%M"
+msgstr "%Y-%m-%d"
+
+msgid ""
+"'Buffer in hours' or 'number of last events'. For deleting "
+"older timeshift files, the condition which occurred first has "
+"priority."
+msgstr ""
+"'Bufor w godzinach' lub 'liczba ostatnich wydarzeń'. Usuwanie "
+"plików starszych timeshiftu, stan który wystąpił jako pierwszy "
+"ma priorytet."
+
+#, fuzzy
 #| msgid "( All readers)"
-msgid "(All readers)"
+msgid " (All readers)"
 msgstr "Pokazać Czytniki/Proxy"
 
 msgid "(Show only reader:"
@@ -1616,6 +1649,51 @@ msgid "* Only available if more than one interface is active."
 msgstr ""
 "* Dostępne tylko wtedy gdy więcej niż jeden interfejs jest "
 "aktywny."
+
+msgid ""
+"*** boxmode=1 (Standard) ***\n"
+"\n"
+"+++ Features +++\n"
+"3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, 1920x1080p60 "
+"8-bit AVC,\n"
+"MAIN only (no PIP), Limited display usages, UHD only (no SD),\n"
+"No multi-PIP, No transcoding\n"
+"\n"
+"--- Restrictions ---\n"
+"Decoder 0: 3840x2160p60 10-bit HEVC, 3840x2160p60 8-bit VP9, "
+"1920x1080p60 8-bit AVC\n"
+"OSD Grafic 0: 1080p60 32 bit ARGB\n"
+"Display 0 Encode Restrictions: 3840x2160p60 12-bit 4:2:0 "
+"(HDMI),\n"
+"3840x2160p60 12-bit 4:2:2 (HDMI), 3840x2160p60 8-bit 4:4:4 "
+"(HDMI),\n"
+"1920x1080p60 (component), Only one display format at a time\n"
+"\n"
+"If you want 1080p60 component, HDMI also needs to be 1080p60."
+msgstr ""
+
+msgid ""
+"*** boxmode=12 (Experimental) ***\n"
+"\n"
+"+++ Features +++\n"
+"3840x2160p50 10-bit decode for MAIN, 1080p25/50i PIP support, "
+"HDMI input (if available),\n"
+" UHD display only, No SD display, No transcoding\n"
+"\n"
+"--- Restrictions ---\n"
+"Decoder 0: 3840x2160p50 10-bit HEVC, 3840x2160p50 8-bit VP9,\n"
+"1920x1080p50 8-bit AVC/MPEG\n"
+"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit "
+"VP9/AVC/MPEG2,\n"
+"HDMI In (if available), 3840x2160p50\n"
+"OSD Graphic 0 (UHD): 1080p50 32-bit ARGB\n"
+"Window 0 (MAIN/UHD): Limited display capabilities, 1080i50 10-"
+"bit de-interlacing\n"
+"Multi-PIP mode (3x): Enigma2 supported no multi-PIP\n"
+"Window 1 (PIP/UHD) (Enigma2 PIP Mode): Up to 1/2 x 1/2 screen "
+"display, 576i50 de-interlacing\n"
+"Display 0 (UHD) Encode Restrictions: 3840x2160p50"
+msgstr ""
 
 msgid "+/-"
 msgstr ""
@@ -1645,6 +1723,9 @@ msgstr "pokaż karty z uphop 5"
 #, fuzzy
 msgid "/s"
 msgstr "Ten %s %s nie może zdekodować %s strumienia!"
+
+msgid "/sec]"
+msgstr ""
 
 msgid "/usr/share/enigma2 directory"
 msgstr "/usr/share/enigma2 katalog"
@@ -1890,6 +1971,16 @@ msgstr ""
 msgid "24"
 msgstr "Pokazać czas w formacie 24 godzinnym."
 
+#, fuzzy
+#| msgid "2 hours"
+msgid "24+ Hours"
+msgstr "2 godziny"
+
+#, fuzzy
+#| msgid "2 hours"
+msgid "24- Hours"
+msgstr "2 godziny"
+
 msgid "240"
 msgstr ""
 
@@ -2079,6 +2170,11 @@ msgstr "Domyślny"
 #, fuzzy
 msgid "< Default with Picon >"
 msgstr "Domyślny"
+
+#, fuzzy
+#| msgid "Alternative"
+msgid "< User Skin >"
+msgstr "Alternatywne"
 
 msgid "<Current movielist location>"
 msgstr "<Bieżąca lokalizacja nagrań>"
@@ -5101,9 +5197,6 @@ msgstr "Tworzenie systemu plików"
 msgid "Creating partition"
 msgstr "Tworzenie partycji"
 
-msgid "Creating start scripts and starting the cam"
-msgstr ""
-
 msgid "Croatian"
 msgstr "Chorwacki"
 
@@ -5127,6 +5220,14 @@ msgstr "Aktualny Status:"
 
 msgid "Current device: "
 msgstr "Aktualne urządzenie: "
+
+#, fuzzy
+#| msgid "Devices"
+msgid "Device: "
+msgstr ""
+"\n"
+"Wybierz lokalizację dla kopii.\n"
+"Aktualna lokalizacja: "
 
 #, fuzzy
 msgid "Current location"
@@ -6424,6 +6525,23 @@ msgstr "CF Sterowniki"
 msgid "External subtitle color"
 msgstr "Zewnętrzny kolor napisów"
 
+msgid "ext2 - recommended for USB flash memory"
+msgstr ""
+
+msgid "ext3 - recommended for HARD Disks"
+msgstr ""
+
+msgid "ext4 - recommended for Boot"
+msgstr ""
+
+msgid "vfat - use only for media-files"
+msgstr ""
+
+#, fuzzy
+#| msgid "Checking filesystem..."
+msgid "Choice filesystem."
+msgstr "Sprawdzanie plików systemowych..."
+
 #, fuzzy
 msgid "FAILED"
 msgstr "Błąd"
@@ -6694,6 +6812,11 @@ msgstr "Czas opóźnienia"
 msgid "Force de-interlace"
 msgstr "Siła przeplotu"
 
+#, fuzzy
+#| msgid "Uninstall"
+msgid "Force UnInstall"
+msgstr "Odinstaluj"
+
 msgid "Automatic resolution label"
 msgstr "Auto. etykieta rozdzielczości"
 
@@ -6784,6 +6907,15 @@ msgstr ""
 
 msgid "When enabled, network trash can's are probed for cleaning."
 msgstr ""
+
+msgid ""
+"When tuned to a service the system will normally scan the "
+"transponder for any changes and save them. Only set to 'yes' if "
+"you're absolutely sure what you're doing."
+msgstr ""
+"Gdy nastawiony na kanał będzie normalnie skanować zmiany na "
+"transponderze i zapisze je. Tylko ustawiony na 'tak', jeśli "
+"jesteś absolutnie pewien, co robisz."
 
 msgid "Configure the skip time interval for the '1'/'3' buttons."
 msgstr "Skonfiguruj czas przeskoku dla klawiszy '1'/'3' ."
@@ -7327,6 +7459,9 @@ msgstr "Skonfiguruj adres IP."
 msgid "IPK Installer"
 msgstr "Instalator IPK"
 
+msgid "Ipk Tools"
+msgstr ""
+
 msgid "ISO file is too large for this filesystem!"
 msgstr "Plik ISO jest za duży dla tego systemu plików!"
 
@@ -7343,6 +7478,11 @@ msgstr ""
 "Konfigurowanie dysku twardego, aby przejść do trybu gotowości "
 "po określonym czasie bezczynności, gdy odbiornik jest w trybie "
 "gotowości."
+
+#, fuzzy
+#| msgid "Uninstall"
+msgid "%s is UnInstalled"
+msgstr "Obecnie zainstalowane img."
 
 msgid ""
 "If logs are using the set maximum space used the eldest will be "
@@ -7746,9 +7886,6 @@ msgstr "Wybierz urządzenie wejściowe"
 msgid "Input devices"
 msgstr "Urządzenia wejściowe"
 
-msgid "Install"
-msgstr "Instalacja"
-
 #, fuzzy
 #| msgid "Install a new image with a USB stick"
 msgid ""
@@ -7795,6 +7932,24 @@ msgstr "Instalacja zakończona."
 
 #, fuzzy
 msgid "Install Failed !!"
+msgstr "Instalacja"
+
+#, fuzzy
+#| msgid "Install"
+msgid "Install ipk"
+msgstr "Instalacja"
+
+#, fuzzy
+#| msgid "Install picons on"
+msgid "Install ipk packets"
+msgstr "Instaluj pikony w"
+
+msgid "Install"
+msgstr "Instalacja"
+
+#, fuzzy
+#| msgid "Install"
+msgid "Install All"
 msgstr "Instalacja"
 
 #, fuzzy, python-format
@@ -8904,15 +9059,6 @@ msgstr ""
 "\n"
 "Wyjdź z wtyczki."
 
-msgid ""
-"No Cam started !!\n"
-"\n"
-"Cam 1 must be different from Cam 2"
-msgstr ""
-"Cam nie startuje!!\n"
-"\n"
-"Cam 1 musi się różnić od Cam 2!"
-
 msgid "No Connection"
 msgstr "Brak połączenia"
 
@@ -9702,7 +9848,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Toggle aspect ratio..."
 msgid "Toggle aspect ratio"
-msgstr "Przełącz proporcje..."
+msgstr "Przełącz proporcje"
 
 msgid "Parent directory"
 msgstr "Katalog nadrzędny"
@@ -9853,6 +9999,13 @@ msgid ""
 msgstr ""
 "Konfiguracja minimalnej szerokość przed wyświetleniem ikony \"i"
 "\", \"0\" oznacza ze ikona nie jest widoczna."
+
+msgid ""
+"Configure which tuner for recordings will be preferred, when "
+"more than one tuner is available."
+msgstr ""
+"Gdy jest więcej niż jeden tuner,skonfiguruj który tuner do "
+"nagrywania będzie preferowany."
 
 msgid "Picture in graphics"
 msgstr "Zdjęcie w grafice"
@@ -10147,7 +10300,7 @@ msgstr "Proszę czekać, podczas gdy 'feeds' jest sprawdzany."
 
 #, fuzzy
 msgid "Please wait."
-msgstr "Proszę czekać..."
+msgstr "Proszę czekać."
 
 msgid "Please wait..."
 msgstr "Proszę czekać..."
@@ -10321,6 +10474,11 @@ msgstr "Preferuj napisy zapamiętane dla kanału"
 
 msgid "Preferred tuner"
 msgstr "Tuner preferowany"
+
+#, fuzzy
+#| msgid "Preferred tuner for recordings"
+msgid "Preferred tuners, multiple selection allowed"
+msgstr "Tuner preferowany do nagrań"
 
 msgid "Prepare another USB stick for image flashing"
 msgstr "Przygotuj inny pen USB do flasowania"
@@ -10793,6 +10951,9 @@ msgstr "adres:"
 #| msgid "Use DHCP"
 msgid "Use IP"
 msgstr "Użyj"
+
+msgid "Use Manual dns-nameserver"
+msgstr ""
 
 msgid "Select a remote server IP first"
 msgstr ""
@@ -12459,6 +12620,10 @@ msgstr "Pokazać numery kanałów w wyborze kanału"
 msgid "Hide number markers"
 msgstr "Ukryj odtwarzacz"
 
+#, fuzzy
+msgid "hide"
+msgstr "Ukryj rozszerzenia znanych plików"
+
 msgid "When enabled, number markers will be hidden."
 msgstr ""
 
@@ -13114,6 +13279,32 @@ msgstr ""
 
 msgid "Allow unstable (untested) updates"
 msgstr "Pozwól na (nietestowane) aktualizacje"
+
+msgid ""
+"No Cam started !!\n"
+"\n"
+"Cam 1 must be different from Cam 2"
+msgstr ""
+"Cam nie startuje!!\n"
+"\n"
+"Cam 1 musi się różnić od Cam 2!"
+
+msgid "Creating start scripts and starting the cam"
+msgstr ""
+
+msgid "Waiting..."
+msgstr "Czekaj... "
+
+msgid ""
+" Not Started !!\n"
+"\n"
+"Cam binname must be in the start command line\n"
+"Check your emu config file"
+msgstr ""
+" nie startuje!!\n"
+"\n"
+"Nazwa Cam'u musi być w linii komend startu\n"
+"Sprawdź plik konfiguracyjny emu!"
 
 #, fuzzy, python-format
 #| msgid ""
@@ -14386,6 +14577,116 @@ msgstr ""
 msgid "This allows you change the number of rows shown."
 msgstr "To pozwala zmienić liczbę pokazanych wierszy."
 
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show drivers modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show extensions modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show softcams modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show languages in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show skin modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show systemplugins modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show lcd skins in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show picons modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show settings modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show m2k modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show weblinks modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show pli modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show vix modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show security modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid ""
+#| "This option allows you to disable show Restart Network in  "
+msgid "This allows you to show kernel modules in downloads"
+msgstr ""
+"Ta opcja pozwala ukryć 'Restart Sieci' w liście rozszerzeń."
+
+#, fuzzy
+#| msgid "Please enter a new filename"
+msgid "Please enter your personal feed URL"
+msgstr "Proszę wpisać nową nazwę pliku"
+
 msgid ""
 "This option allows to reduce the block-noise in the picture. "
 "Obviously this is at the cost of the picture's sharpness."
@@ -14992,15 +15293,6 @@ msgstr ""
 "Oprócz kontroli na początku wydarzenia,powtarzalna kontrola "
 "może być używana -warunki \"ograniczenie bufora godzin\"  lub "
 "\"sprawdzić ilość wolnego miejsca\" są wykrywane wcześniej."
-
-msgid ""
-"'Buffer in hours' or 'number of last events'. For deleting "
-"older timeshift files, the condition which occurred first has "
-"priority."
-msgstr ""
-"'Bufor w godzinach' lub 'liczba ostatnich wydarzeń'. Usuwanie "
-"plików starszych timeshiftu, stan który wystąpił jako pierwszy "
-"ma priorytet."
 
 msgid "Timeshift will get saved at end of event!"
 msgstr ""
@@ -15738,14 +16030,6 @@ msgstr "za pomocą:"
 msgid "Preferred tuner for recordings"
 msgstr "Tuner preferowany do nagrań"
 
-#, python-format
-msgid ""
-"Configure which tuner for recordings will be preferred, when "
-"more than one tuner is available."
-msgstr ""
-"Gdy jest więcej niż jeden tuner,skonfiguruj który tuner do "
-"nagrywania będzie preferowany."
-
 msgid ""
 "Usually when the subtitle language is the same as the audio "
 "language, the subtitles will not be used. Enable this option to "
@@ -16155,6 +16439,37 @@ msgstr ""
 "Twojego %s %s.\n"
 "Wciśnij 'OK', aby przejść do kolejnego kroku."
 
+msgid ""
+"Welcome to OpenDroid!\n"
+"\n"
+"NOTE: This section of the wizard is intended for people who "
+"cannot disable overscan on their television / display.  Please "
+"first try to disable overscan before using this feature.\n"
+"\n"
+"USAGE: If you continue adjust the screen size and position "
+"settings so that the shaded user interface layer *just* covers "
+"the test pattern in the background.\n"
+"\n"
+"Select Yes to change these settings or No to skip this step."
+msgstr ""
+
+msgid ""
+"NOTE: This feature is intended for people who cannot disable "
+"overscan on their television / display.  Please first try to "
+"disable overscan before using this feature.\n"
+"\n"
+"USAGE: Adjust the screen size and position settings so that the "
+"shaded user interface layer *just* covers the test pattern in "
+"the background.\n"
+"\n"
+"Select Yes to continue or No to exit."
+msgstr ""
+
+msgid ""
+"\n"
+"<This tuner is configured automatically>"
+msgstr ""
+
 msgid "West"
 msgstr "Zachód"
 
@@ -16193,6 +16508,11 @@ msgstr ""
 msgid ""
 "Experimental: strict limitation to preferred tuners for "
 "recordings"
+msgstr "Tuner preferowany do nagrań"
+
+#, fuzzy
+#| msgid "Preferred tuner for recordings"
+msgid "Experimental: strict limitation to preferred tuners"
 msgstr "Tuner preferowany do nagrań"
 
 msgid ""
@@ -16520,15 +16840,6 @@ msgid ""
 "scale/stretch the picture."
 msgstr ""
 "Wybierz czy skalować/rozciągać zawartość proporcji obrazu 4:3."
-
-msgid ""
-"When tuned to a service the system will normally scan the "
-"transponder for any changes and save them. Only set to 'yes' if "
-"you're absolutely sure what you're doing."
-msgstr ""
-"Gdy nastawiony na kanał będzie normalnie skanować zmiany na "
-"transponderze i zapisze je. Tylko ustawiony na 'tak', jeśli "
-"jesteś absolutnie pewien, co robisz."
 
 #, fuzzy, python-format
 #| msgid ""
@@ -17160,6 +17471,16 @@ msgstr "[edycja ulubionych]"
 msgid "[move mode]"
 msgstr "[tryb przenoszenia]"
 
+#, fuzzy
+#| msgid "[move mode]"
+msgid "Move mode off"
+msgstr "[tryb przenoszenia]"
+
+#, fuzzy
+#| msgid "Movement"
+msgid "Move mode on"
+msgstr "[tryb przenoszenia]"
+
 msgid ""
 "a gui to assign services/providers to common interface modules"
 msgstr ""
@@ -17236,7 +17557,7 @@ msgstr "Zaawansowane"
 #, fuzzy
 #| msgid "unavailable"
 msgid "not available"
-msgstr "Tryb wideo: %s nie dostępny"
+msgstr "Dostępne udziały:"
 
 #, fuzzy, python-format
 #| msgid "Updates Available:"
@@ -17472,6 +17793,16 @@ msgstr "porady ekonomiczne/społeczne"
 
 msgid "edit alternatives"
 msgstr "edytuj alternatywne"
+
+#, fuzzy
+#| msgid "List mode"
+msgid "Edit mode on"
+msgstr "Tryb listy"
+
+#, fuzzy
+#| msgid "List mode"
+msgid "Edit mode off"
+msgstr "Tryb listy"
 
 msgid "education/science/factual topics (general)"
 msgstr "edukacja/nauka/fakty"
@@ -19858,17 +20189,6 @@ msgstr ""
 #~ "Do you want to install the new settingslist?"
 #~ msgstr "Czy chcesz zainstalować listę kanałów?"
 
-#~ msgid ""
-#~ " Not Started !!\n"
-#~ "\n"
-#~ "Cam binname must be in the start command line\n"
-#~ "Check your emu config file"
-#~ msgstr ""
-#~ " nie startuje!!\n"
-#~ "\n"
-#~ "Nazwa Cam'u musi być w linii komend startu\n"
-#~ "Sprawdź plik konfiguracyjny emu!"
-
 #, fuzzy
 #~| msgid "Last update"
 #~ msgid " updated"
@@ -19893,21 +20213,6 @@ msgstr ""
 #~| msgid "16:9 always"
 #~ msgid "16_9_always"
 #~ msgstr "16:9 zawsze"
-
-#, fuzzy
-#~| msgid "2 hours"
-#~ msgid "24+ Hours"
-#~ msgstr "2 godziny"
-
-#, fuzzy
-#~| msgid "2 hours"
-#~ msgid "24- Hours"
-#~ msgstr "2 godziny"
-
-#, fuzzy
-#~| msgid "Alternative"
-#~ msgid "< Alternate Skin >"
-#~ msgstr "Alternatywne"
 
 #, fuzzy
 #~| msgid "Play"
@@ -20336,16 +20641,6 @@ msgstr ""
 #~ msgid "easyCIconfigMenu"
 #~ msgstr "Menu konfiguracji"
 
-#, fuzzy
-#~| msgid "List mode"
-#~ msgid "Edit mode off"
-#~ msgstr "Tryb listy"
-
-#, fuzzy
-#~| msgid "List mode"
-#~ msgid "Edit mode on"
-#~ msgstr "Tryb listy"
-
 #~ msgid "Edit new entry"
 #~ msgstr "Edycja nowego wpisu"
 
@@ -20660,16 +20955,6 @@ msgstr ""
 
 #~ msgid "MORE"
 #~ msgstr "Więcej"
-
-#, fuzzy
-#~| msgid "[move mode]"
-#~ msgid "Move mode off"
-#~ msgstr "[tryb przenoszenia]"
-
-#, fuzzy
-#~| msgid "Movement"
-#~ msgid "Move mode on"
-#~ msgstr "Przesunięcia"
 
 #, fuzzy
 #~| msgid "Exit Movieplayer?"
@@ -21630,9 +21915,6 @@ msgstr ""
 
 #~ msgid "Wait time before start Cam 2"
 #~ msgstr "Czas oczekiwania na uruchomienie Cam 2"
-
-#~ msgid "Waiting..."
-#~ msgstr "Czekaj... "
 
 #, fuzzy
 #~| msgid "Wakeup receiver from standby"

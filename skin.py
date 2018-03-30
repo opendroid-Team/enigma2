@@ -19,6 +19,7 @@ if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
 	config.vfd.show = ConfigNothing()
 colorNames = {}
 colorNamesHuman = {}
+switchPixmap = {}
 fonts = {
 	"Body": ("Regular", 18, 22, 16),
 	"ChoiceList": ("Regular", 20, 24, 18),
@@ -659,6 +660,21 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			if fileExists(skinfile):
 				print "[SKIN] loading include:", skinfile
 				loadSkin(skinfile)
+
+	for c in skin.findall('switchpixmap'):
+		for pixmap in c.findall('pixmap'):
+			get_attr = pixmap.attrib.get
+			name = get_attr('name')
+			if not name:
+				raise SkinError('[Skin] pixmap needs name attribute')
+			filename = get_attr('filename')
+			if not filename:
+				raise SkinError('[Skin] pixmap needs filename attribute')
+			resolved_png = resolveFilename(SCOPE_ACTIVE_SKIN, filename, path_prefix=path_prefix)
+			if fileExists(resolved_png):
+				switchPixmap[name] = resolved_png
+			else:
+				raise SkinError('[Skin] switchpixmap pixmap filename="%s" (%s) not found' % (filename, resolved_png))
 
 	for c in skin.findall("colors"):
 		for color in c.findall("color"):
