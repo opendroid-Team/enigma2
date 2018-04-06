@@ -591,7 +591,6 @@ fi
 
 if test "$BOXTYPE" == "g300" -o "$BOXTYPE" == "g100" -o "$BOXTYPE" == "sf4008" -o "$BOXTYPE" == "g101" -o "$BOXTYPE" == "et1x000"; then
 	AC_DEFINE(FORCE_ALPHABLENDING_ACCELERATION, 1,[define when the framebuffer acceleration has alphablending support, but detection slow down all])
-
 fi
 
 if test "$BOXTYPE" == "et13000"; then
