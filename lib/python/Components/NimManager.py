@@ -419,7 +419,7 @@ class SecConfigure:
 								sec.setLNBLOFL(manufacturer.lofl[product_name][position_idx].value * 1000)
 								sec.setLNBLOFH(manufacturer.lofh[product_name][position_idx].value * 1000)
 								sec.setLNBThreshold(manufacturer.loft[product_name][position_idx].value * 1000)
-								sec.setLNBSatCRTuningAlgo(currLnb.unicableTuningAlgo.value == "reliable" and 1 or 0)
+								sec.setLNBSatCRTuningAlgo(["traditional", "reliable", "traditional_retune", "reliable_retune"].index(currLnb.unicableTuningAlgo.value))
 								sec.setLNBBootupTime(manufacturer.bootuptime[product_name][0].value)
 								configManufacturer.save_forced = True
 								manufacturer.product.save_forced = True
@@ -711,7 +711,7 @@ class SecConfigure:
 		self.update()
 
 class NIM(object):
-	def __init__(self, slot, type, description, has_outputs=True, internally_connectable=None, multi_type=None, frontend_id=None, i2c=None, is_empty=False, input_name = None):
+	def __init__(self, slot, type, description, has_outputs=True, internally_connectable=None, multi_type=None, frontend_id=None, i2c=None, is_empty=False, input_name = None, supports_blind_scan = False):
 		if not multi_type: multi_type = {}
 		self.slot = slot
 
@@ -724,6 +724,7 @@ class NIM(object):
 		self.has_outputs = has_outputs
 		self.internally_connectable = internally_connectable
 		self.multi_type = multi_type
+		self.supports_blind_scan = supports_blind_scan
 		self.i2c = i2c
 		self.frontend_id = frontend_id
 		self.__is_empty = is_empty
@@ -842,6 +843,9 @@ class NIM(object):
 		if not multistream and "TBS" in self.description:
 			multistream = True
 		return multistream
+
+	def supportsBlindScan(self):
+		return self.supports_blind_scan
 
 	# returns dict {<slotid>: <type>}
 	def getMultiTypeList(self):
@@ -1201,6 +1205,9 @@ class NimManager:
 			elif line.startswith("Internally_Connectable:"):
 				input = int(line[len("Internally_Connectable:") + 1:])
 				entries[current_slot]["internally_connectable"] = input
+			elif line.startswith("Supports_Blind_Scan:"):
+				input = str(line[len("Supports_Blind_Scan:") + 1:])
+				entries[current_slot]["supports_blind_scan"] = (input == "yes")
 			elif line.startswith("Frontend_Device:"):
 				input = int(line[len("Frontend_Device:") + 1:])
 				entries[current_slot]["frontend_device"] = input
@@ -1246,7 +1253,9 @@ class NimManager:
 					entry["multi_type"] = {}
 			if not (entry.has_key("input_name")):
 				entry["input_name"] = chr(ord('A') + id)
-			self.nim_slots.append(NIM(slot = id, description = entry["name"], type = entry["type"], has_outputs = entry["has_outputs"], internally_connectable = entry["internally_connectable"], multi_type = entry["multi_type"], frontend_id = entry["frontend_device"], i2c = entry["i2c"], is_empty = entry["isempty"], input_name = entry.get("input_name", None)))
+			if "supports_blind_scan" not in entry:
+				entry["supports_blind_scan"] = False
+			self.nim_slots.append(NIM(slot = id, description = entry["name"], type = entry["type"], has_outputs = entry["has_outputs"], internally_connectable = entry["internally_connectable"], multi_type = entry["multi_type"], frontend_id = entry["frontend_device"], i2c = entry["i2c"], is_empty = entry["isempty"], input_name = entry.get("input_name", None), supports_blind_scan = entry["supports_blind_scan"]))
 
 	def hasNimType(self, chktype):
 		for slot in self.nim_slots:
@@ -1915,7 +1924,7 @@ def InitNimManager(nimmgr, update_slots = []):
 				txt = _("Misconfigured unicable connection from tuner %s to tuner %s!\nTuner %s option \"connected to\" are disabled now") % (chr(int(x) + ord('A')), chr(int(nim.advanced.unicableconnectedTo.saved_value) + ord('A')), chr(int(x) + ord('A')),)
 				AddPopup(txt, type = MessageBox.TYPE_ERROR, timeout = 0, id = "UnicableConnectionFailed")
 
-			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)"))], default="reliable")
+			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)")),("reliable_retune", _("reliable, retune")),("traditional_retune", _("traditional (fast), retune"))], default="reliable")
 
 	def configDiSEqCModeChanged(configElement):
 		section = configElement.section
