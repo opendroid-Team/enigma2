@@ -284,6 +284,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("503", _("MIRACLEBOX_TWINPLUS")),
 				("504", _("E3HD/XPEEDLX/GI")),
 				("505", _("ODIN_M7")),
+				("507", _("Beyonwiz U4")),
 				("511", _("OCTAGON SF5008"))
 				]
 		defaultRcList = [
@@ -334,6 +335,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("et1x000", 504),
 				("xpeedc.", 504),
 				("odinm7", 505),
+				("beyonwizu4", 507),
 				("sf5008", 511)
 				]
 	else:
@@ -354,7 +356,11 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("18", _("F1/F3/F4/F4-TURBO/TRIPLEX")),
 				("19", _("HD2400")),
 				("20", _("Zgemma Star S/2S/H1/H2")),
-				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7"))
+				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7")),
+				("22", _("Zgemma i55")),
+				("23", _("WWIO 4K")),
+				("24", _("Axas E4HD Ultra")),
+				("25", _("Zgemma H9"))
 				]
 		defaultRcList = [
 				("default", 0),
@@ -389,7 +395,11 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("sh1", 20),
 				("h3", 21),
 				("h5", 21),
-				("h7", 21)
+				("h7", 21),
+				("i55", 22),
+				("bre2ze4k", 23),
+				("e4hd", 24),
+				("h9", 25)
 				]
 
 	def __init__(self, session):

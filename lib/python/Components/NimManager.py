@@ -884,7 +884,6 @@ class NIM(object):
 	friendly_full_description = property(getFriendlyFullDescription)
 	config_mode_dvbs = property(lambda self: config.Nims[self.slot].dvbs.configMode.value)
 	config_mode_dvbt = property(lambda self: config.Nims[self.slot].dvbt.configMode.value)
-	config_mode_dvbt2 = property(lambda self: config.Nims[self.slot].dvbt2.configMode.value)
 	config_mode_dvbc = property(lambda self: config.Nims[self.slot].dvbc.configMode.value)
 	config_mode_atsc = property(lambda self: config.Nims[self.slot].atsc.configMode.value)
 
