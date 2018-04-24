@@ -454,6 +454,15 @@ def InitLcd():
 				f.write(configElement.value)
 				f.close()
 
+		def setXcoreVFD(configElement):
+			if fileExists("/sys/module/brcmstb_osmega/parameters/pt6302_cgram"):
+				f = open("/sys/module/brcmstb_osmega/parameters/pt6302_cgram", "w")
+				f.write(configElement.value)
+				f.close()
+
+		config.usage.vfd_xcorevfd = ConfigSelection(default = "0", choices = [("0", _("12 character")), ("1", _("8 character"))])
+		config.usage.vfd_xcorevfd.addNotifier(setXcoreVFD)
+
 		config.usage.lcd_standbypowerled = ConfigSelection(default = "on", choices = [("off", _("Off")), ("on", _("On"))])
 		config.usage.lcd_standbypowerled.addNotifier(setPowerLEDstanbystate)
 
@@ -530,6 +539,8 @@ def InitLcd():
 			choicelist = [("0", _("None")), ("1", _("1X")), ("2", _("2X")), ("3", _("3X")), ("4", _("4X")), ("500", _("Continues"))]
 			config.usage.vfd_scroll_repeats = ConfigSelection(default = "3", choices = choicelist)
 			config.usage.vfd_scroll_repeats.addNotifier(scroll_repeats, immediate_feedback = False)
+		else:
+			config.usage.vfd_scroll_repeats = ConfigNothing()
 
 		if SystemInfo["VFD_scroll_delay"] and getBoxType() not in ('ixussone', 'ixusszero'):
 			def scroll_delay(el):
