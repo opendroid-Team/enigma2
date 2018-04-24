@@ -290,7 +290,7 @@ class PliExtraInfo(Poll, Converter, object):
 				if int(caid_entry[0], 16) <= int(self.current_caid, 16) <= int(caid_entry[1], 16):
 					caid_name = caid_entry[2]
 					break
-			return caid_name + ":%04x:%04x:%04x:%04x" % (int(self.current_caid,16), int(self.current_provid,16), info.getInfo(iServiceInformation.sSID), int(self.current_ecmpid,16))
+			return caid_name + ":%04x:%04x:%04x" % (int(self.current_caid,16), int(self.current_provid,16), info.getInfo(iServiceInformation.sSID))
 		except:
 			pass
 		return ""
@@ -748,8 +748,6 @@ class PliExtraInfo(Poll, Converter, object):
 		feraw = self.feraw
 		if not feraw:
 			feraw = info.getInfoObject(iServiceInformation.sTransponderData)
-			if not feraw:
-				return ''
 			fedata = ConvertToHumanReadable(feraw)
 		else:
 			fedata = self.fedata
@@ -763,36 +761,7 @@ class PliExtraInfo(Poll, Converter, object):
 				return addspace(self.createProviderName(info)) + self.createTransponderInfo(fedata,feraw) + addspace(self.createTransponderName(feraw)) + "\n" \
 				+ addspace(self.createCryptoBar(info)) + self.current_source + "\n" \
 				+ addspace(self.createCryptoSpecial(info)) + addspace(self.createVideoCodec(info)) + self.createResolution(info)
-		if self.type == 'ServiceInfo':
-			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata)) + addspace(self.createSymbolRate(fedata, feraw)) + addspace(self.createFEC(fedata, feraw)) + addspace(self.createModulation(fedata)) + addspace(self.createOrbPos(feraw)) + addspace(self.createTransponderName(feraw)) + addspace(self.createVideoCodec(info)) + self.createResolution(info)
-		elif self.type == 'ServiceInfoFreq':
-			return addspace(self.createFrequency(feraw)) + ' POL : ' + addspace(self.createPolarization(fedata)) + ' FEC : ' + addspace(self.createFEC(fedata, feraw)) + ' SR : ' + addspace(self.createSymbolRate(fedata, feraw)) + ' MOD : ' + addspace(self.createModulation(fedata))
-		if self.type == 'ServiceInfoCrypt':
-			self.getCryptoInfo(info)
-		if int(config.usage.show_cryptoinfo.value) > 0:
-			return addspace(self.createCryptoBar(info)) + addspace(self.createCryptoSpecial(info))
-		else:
-			return "'Emu Info'"
-		if self.type == "EmuInfoCrypt":
-			self.getCryptoInfo(info)
-		if int(config.usage.show_cryptoinfo.value) > 0:
-			return addspace(self.createCryptoBar(info))
-		else:
-			return "'Emu Info'"
-		if self.type == "EmuInfoCryptSpecial":
-			self.getCryptoInfo(info)
-			if int(config.usage.show_cryptoinfo.value) > 0:
-				return addspace(self.createCryptoSpecial(info))
-			else:
-				return "'Emu Info'"
-		if self.type == "TransponderInfo2line":
-			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createTransponderName(feraw)) + '\n' + addspace(self.createFrequency(fedata)) + addspace(self.createPolarization(fedata)) + addspace(self.createSymbolRate(fedata, feraw)) + self.createModulation(fedata) + '-' + addspace(self.createFEC(fedata, feraw))
-		elif self.type == "ProviderName":
-			return self.createProviderName(info)
-		elif self.type == "TransponderName":
-			return self.createTransponderName(feraw)
-		elif self.type == "TunerSystem":
-			return self.createTunerSystem(fedata)
+
 		if self.type == "PIDInfo":
 			return self.createPIDInfo(info)
 
