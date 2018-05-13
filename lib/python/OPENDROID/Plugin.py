@@ -76,7 +76,7 @@ class ManualPanel(Screen):
 	def updateList(self):
 		for i in self.entrylist:
 				res = [i]
-				res.append(MultiContentEntryText(pos=(50, 5), size=(300, 32), font=0, text=i[0]))
+				res.append(MultiContentEntryText(pos=(50, 5), size=(800, 32), font=0, text=i[0]))
 				picture=LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, i[2]))
 				res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 1), size=(34, 34), png=picture))
 				self.list.append(res)
