@@ -37,11 +37,20 @@ class SetupSummary(Screen):
 		self["SetupValue"].text = self.parent.getCurrentValue()
 		if hasattr(self.parent,"getCurrentDescription"):
 			self.parent["description"].text = self.parent.getCurrentDescription()
+		if self.parent.has_key('footnote'):
+			if self.parent.getCurrentEntry().endswith('*'):
+				self.parent['footnote'].text = (_("* = Restart Required"))
+			else:
+				self.parent['footnote'].text = (_(" "))
 
 class RecordingSettings(Screen,ConfigListScreen):
 	def removeNotifier(self):
 		if config.usage.setup_level.notifiers:
 			config.usage.setup_level.notifiers.remove(self.levelChanged)
+
+	def removeNotifierRecordFrontendPriority(self):
+		if config.usage.recording_frontend_priority.notifiers:
+			config.usage.recording_frontend_priority.notifiers.remove(self.levelChanged)
 
 	def levelChanged(self, configElement):
 		list = []
@@ -141,6 +150,7 @@ class RecordingSettings(Screen,ConfigListScreen):
 		else:
 			self.default_entry = getConfigListEntry(_("Movie location"), self.default_dirname, _("Set the default location for your recordings. Press 'OK' to add new locations, select left/right to select an existing location."))
 			list.append(self.default_entry)
+			self.timer_entry = self.instantrec_entry = None
 
 		self.refill(list)
 		self["config"].setList(list)
@@ -273,12 +283,20 @@ class RecordingSettings(Screen,ConfigListScreen):
 				continue
 			if x.tag == 'item':
 				item_level = int(x.get("level", 0))
+				item_rectunerlevel = int(x.get("rectunerlevel", 0))
 
 				if not self.levelChanged in config.usage.setup_level.notifiers:
 					config.usage.setup_level.notifiers.append(self.levelChanged)
 					self.onClose.append(self.removeNotifier)
+				if not self.levelChanged in config.usage.recording_frontend_priority.notifiers:
+					config.usage.recording_frontend_priority.notifiers.append(self.levelChanged)
+					self.onClose.append(self.removeNotifierRecordFrontendPriority)
 
 				if item_level > config.usage.setup_level.index:
+					continue
+				if item_rectunerlevel == 1 and not config.usage.recording_frontend_priority.value in ("expert_mode", "experimental_mode"):
+					continue
+				if item_rectunerlevel == 2 and not config.usage.recording_frontend_priority.value == "experimental_mode":
 					continue
 
 				requires = x.get("requires")
