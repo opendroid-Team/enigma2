@@ -2,7 +2,7 @@
 
 > Ubuntu 16.04.1 LTS 
 
-## openDroid 6.5 is build using oe-alliance build-environment and several git repositories: ##
+## openDroid 6.4 is build using oe-alliance build-environment and several git repositories: ##
 
 > [https://github.com/oe-alliance/oe-alliance-core]
 > 

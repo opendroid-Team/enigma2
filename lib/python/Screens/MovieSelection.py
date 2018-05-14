@@ -1,7 +1,7 @@
 import os
 import time
 import cPickle as pickle
-from os import path
+
 from enigma import eServiceReference, eServiceCenter, eTimer, eSize, iPlayableService, iServiceInformation, getPrevAsciiCode, eRCInput, pNavigation
 
 from Screen import Screen
