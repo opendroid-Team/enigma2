@@ -10,7 +10,6 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
-from Components.SystemInfo import SystemInfo
 
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
@@ -174,11 +173,6 @@ class About(Screen):
 		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
-		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51'):
-			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
-	
-		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
-
 		fp_version = getFPVersion()
 		if fp_version is None:
 			fp_version = ""
@@ -209,15 +203,11 @@ class About(Screen):
 				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("System Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 	
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
 			f = open('/proc/stb/fp/temp_sensor_avs', 'r')
-			tempinfo = f.read()
-			f.close()
-		elif path.exists('/proc/stb/power/avs'):
-			f = open('/proc/stb/power/avs', 'r')
 			tempinfo = f.read()
 			f.close()
 		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
@@ -230,7 +220,7 @@ class About(Screen):
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("Processor Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
