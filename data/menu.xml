@@ -84,8 +84,9 @@ self.session.open(RemoteControlCode)
 			<item weight="10" level="0" text="Timeshift settings" entryID="timshift_setup"><screen module="Timershift" screen="TimeshiftSettings" /></item>
 			<item weight="15" level="0" text="Recording settings" entryID="recording_setup"><screen module="Recordings" screen="RecordingSettings" /></item>
 			<item weight="16" level="0" text="VOD settings" entryID="vod_setup"><setup id="vodsetup"/></item>
-		</menu>		
-		
+			<item weight="20" level="0" text="HDMI-IN Recording settings" entryID="hdmirecord_setup" requires="HDMIin"><setup id="HDMIRecord"/></item>
+		</menu>
+
 		<!-- Menu / Settings / EPG -->
 		<menu weight="20" level="2" text="EPG" entryID="epg_menu">
 			<id val="epg" />
