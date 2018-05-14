@@ -41,7 +41,12 @@ class DeviceManager(Screen):
         self.list = []
         self['list'] = List(self.list)
         self['list'].onSelectionChanged.append(self.selectionChanged)
-        self['actions'] = ActionMap(['WizardActions', 'ColorActions', 'MenuActions'], {'back': self.close, 'green': self.SetupMounts, 'red': self.saveMypoints, 'yellow': self.Unmount, 'blue': self.Mount, 'menu': self.close})
+        self['actions'] = ActionMap(['WizardActions', 'ColorActions', 'MenuActions'], {'back': self.close,
+         'green': self.SetupMounts,
+         'red': self.saveMypoints,
+         'yellow': self.Unmount,
+         'blue': self.Mount,
+         'menu': self.close})
         self.activityTimer = eTimer()
         self.activityTimer.timeout.get().append(self.updateList2)
         self.updateList()
@@ -86,7 +91,7 @@ class DeviceManager(Screen):
             device = parts[3]
             if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
                 continue
-	    if getMachineBuild() in ('u51','u52','u53','vuzero4k','u5','sf5008','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
+	    if getMachineBuild() in ('sf5008','et13000','et1x000','vuuno4k', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
 		continue
 	    if getMachineBuild() in ('xc7439') and search('mmcblk1p[1-9]',device):
                 continue
@@ -301,7 +306,9 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
         self['key_green'] = Label(_('Save'))
         self['key_red'] = Label(_('Cancel'))
         self['Linconn'] = Label(_('Wait please while scanning your %s %s devices...') % (getMachineBrand(), getMachineName()))
-        self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'green': self.saveMypoints, 'red': self.close, 'back': self.close})
+        self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'green': self.saveMypoints,
+         'red': self.close,
+         'back': self.close})
         self.updateList()
 
     def updateList(self):
@@ -325,7 +332,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
             device = parts[3]
             if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
                 continue
-	    if getMachineBuild() in ('u51','u52','u53','vuzero4k','u5','sf5008','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
+            if getMachineBuild() in ('sf5008','et13000','et1x000','vuuno4k', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
 		continue
 	    if getMachineBuild() in ('xc7439') and search('mmcblk1p[1-9]',device):
                 continue
@@ -585,7 +592,9 @@ class UsbFormat(Screen):
         self['key_red'] = Label(_('Continue ->'))
         self['key_green'] = Label(_('Cancel'))
         self['lab1'] = Label(msg)
-        self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'back': self.checkClose, 'red': self.step_Bump, 'green': self.checkClose})
+        self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'back': self.checkClose,
+         'red': self.step_Bump,
+         'green': self.checkClose})
         self.step = 1
         self.devices = []
         self.device = None

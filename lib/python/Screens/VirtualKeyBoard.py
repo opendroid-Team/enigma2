@@ -52,7 +52,6 @@ class VirtualKeyBoard(Screen):
 
 		self.keyImages =  {
 				"BACKSPACE": self.key_backspace,
-				"CLEAR": self.key_clr,
 				"ALL": self.key_all,
 				"EXIT": self.key_esc,
 				"OK": self.key_ok,
@@ -127,27 +126,13 @@ class VirtualKeyBoard(Screen):
 				[u"q", u"w", u"e", u"r", u"t", u"z", u"u", u"i", u"o", u"p", u"ü", u"+"],
 				[u"a", u"s", u"d", u"f", u"g", u"h", u"j", u"k", u"l", u"ö", u"ä", u"#"],
 				[u"<", u"y", u"x", u"c", u"v", u"b", u"n", u"m", u",", ".", u"-", u"ALL"],
-				[u"SHIFT", u"SPACE", u"@", u"ß", u"[", u"]", u"OK", u"LEFT", u"RIGHT"]]
+				[u"SHIFT", u"SPACE", u"@", u"ß", u"OK", u"LEFT", u"RIGHT"]]
 			self.shiftkeys_list = [
 				[u"EXIT", u"!", u'"', u"§", u"$", u"%", u"&", u"/", u"(", u")", u"=", u"BACKSPACE"],
 				[u"Q", u"W", u"E", u"R", u"T", u"Z", u"U", u"I", u"O", u"P", u"Ü", u"*"],
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"Ö", u"Ä", u"'"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"?", u"\\",u"|",u"^", u"OK", u"LEFT", u"RIGHT"]]
-			self.nextLang = 'hu_HU'
-		elif self.lang == 'hu_HU':
-			self.keys_list = [
-				[u"EXIT", u"0", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"BACKSPACE"],
-				[u"q", u"w", u"e", u"r", u"t", u"z", u"u", u"i", u"o", u"p", u"ő", u"ú"],
-				[u"a", u"s", u"d", u"f", u"g", u"h", u"j", u"k", u"l", u"é", u"á", u"ű"],
-				[u"í", u"y", u"x", u"c", u"v", u"b", u"n", u"m", u",", ".", u"-", u"ALL"],
-				[u"SHIFT", u"SPACE", u"ö", u"ü", u"ó", u"#", u"@", u"*", u"OK", u"LEFT", u"RIGHT", u"CLEAR"]]
-			self.shiftkeys_list = [
-				[u"EXIT", u"§", u"'", u'"', u"+", u"!", u"%", u"/", u"=", u"(", u")", u"BACKSPACE"],
-				[u"Q", u"W", u"E", u"R", u"T", u"Z", u"U", u"I", u"O", u"P", u"Ő", u"Ú"],
-				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"É", u"Á", u"Ű"],
-				[u"Í", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u"?", u":", u"_", u";"],
-				[u"SHIFT", u"Ö", u"Ü", u"Ó", u"&", u"<", u">", u"{", u"}", u"[", u"]", u"\\"]]
 			self.nextLang = 'es_ES'
 		elif self.lang == 'es_ES':
 			self.keys_list = [
@@ -176,20 +161,6 @@ class VirtualKeyBoard(Screen):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"Ö", u"Ä", u"'"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"?", u"\\", u"Ĺ", u"OK", u"LEFT", u"RIGHT"]]
-			self.nextLang = 'fr_FR'
-		elif self.lang == 'fr_FR':
-			self.keys_list = [
-				[u"EXIT", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"0", u"BACKSPACE"],
-				[u"a", u"z", u"e", u"r", u"t", u"y", u"u", u"i", u"o", u"p", u"é", u"è"],
-				[u"q", u"s", u"d", u"f", u"g", u"h", u"j", u"k", u"l", u"m", u"ê", u"ë"],
-				[u"<", u"w", u"x", u"c", u"v", u"b", u"n", u",", u";", u":", u"=", u"ALL"],
-				[u"SHIFT", u"SPACE", u"ù", u"â", u"ï", u"ô", u"ç", u"#", u"-", u"OK", u"LEFT", u"RIGHT"]]
-			self.shiftkeys_list = [
-				[u"EXIT", u"&", u'@', u'"', u"€", u"§", u"!", u"ç", u"(", u")", u"_", u"BACKSPACE"],
-				[u"A", u"Z", u"E", u"R", u"T", u"Y", u"U", u"I", u"O", u"P", u"É", u"È"],
-				[u"Q", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"M", u"Ê", u"Ë"],
-				[u">", u"W", u"X", u"C", u"V", u"B", u"N", u"?", u".", u"+", u"~", u"CLEAR"],
-				[u"SHIFT", u"SPACE", u"Ù", u"Â", u"Ï", u"Ô", u"°", u"/",u"\\", u"OK", u"LEFT", u"RIGHT"]]
 			self.nextLang = 'lv_LV'
 		elif self.lang == 'lv_LV':
 			self.keys_list = [
@@ -295,7 +266,7 @@ class VirtualKeyBoard(Screen):
 				[u"EXIT", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"0", u"BACKSPACE"],
 				[u"ض", u"ص", u"ث", u"ق", u"ف", u"غ", u"ع", u"ه", u"خ", u"ح", u"ج", u"د"],
 				[u"ش", u"س", u"ي", u"ب", u"ل", u"ا", u"ت", u"ن", u"م", u"ك", u"ط", u"#"],
-				[u"ئ", u"ء", u"ؤ", u"ر", u"لا", u"ى", u"ة", u"و", u"ز", "ظ", u"ذ", u"ALL"],
+				[u"ئ", u"ء", u"ؤ", u"ر", u"لا", u"ى", u"ة", u"و", u"ز", "ظ", u"ذ", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"+", u"-", u"*", u"/", u".", u",", u"@", u"%", u"&", u"OK"]]
 			self.shiftkeys_list = [
 				[u"EXIT", u"!", u'"', u"§", u"$", u"^", u"<", u">", u"(", u")", u"=", u"BACKSPACE"],

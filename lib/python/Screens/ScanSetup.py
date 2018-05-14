@@ -1423,7 +1423,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		if not answer or self.scan_nims.value == "":
 			return
 		tlist = []
-		flags = 0
+		flags = None
 		removeAll = True
 		action = START_SCAN
 		index_to_scan = int(self.scan_nims.value)
