@@ -40,7 +40,7 @@ MTDROOTFS = getMachineMtdRoot()
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 6.5", "http://images.opendroid.org/6.5"])
+images.append(["OPD 6.5", "http://images.opendroid.org/6.6"])
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
 flashTmp = '/media/hdd/images/tmp'
@@ -125,6 +125,7 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
+		
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -176,6 +177,7 @@ class FlashOnline(Screen):
 	def find_rootfs_dev(self, file):
 		startup_content = self.read_startup("/boot/" + file)
 		return startup_content[startup_content.find("root=")+5:].split()[0]
+
 	def list_files(self, PATH):
 		files = []
 		if SystemInfo["HaveMultiBoot"]:
@@ -475,11 +477,7 @@ class doFlashImage(Screen):
 				text += _("Simulate (no write)")
 				if SystemInfo["HaveMultiBoot"]:
 					cmdlist.append("%s -n -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
-
 				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr"):
-
-				elif getMachineBuild() in ("u52","u53","u5","u5pvr"):
-
 					cmdlist.append("%s -n -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
 				elif getMachineBuild() in ("h9"):
 					cmdlist.append("%s -n -f -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
@@ -498,11 +496,7 @@ class doFlashImage(Screen):
 					if self.List not in ("STARTUP","cmdline.txt"):
 						cmdlist.append("umount -fl /oldroot_bind")
 						cmdlist.append("umount -fl /newroot")
-
 				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr"):
-
-				elif getMachineBuild() in ("u52","u53","u5","u5pvr"):
-
 					cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
 				elif getMachineBuild() in ("h9"):
 					cmdlist.append("%s -f -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
