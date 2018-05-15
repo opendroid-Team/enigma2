@@ -59,6 +59,8 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.showPicon = False
 		self.showServiceTitle = True
 		self.screenwidth = getDesktop(0).size().width()
+		self.skinUsingForeColorByTime = False
+		self.skinUsingBackColorByTime = False
 
 		self.overjump_empty = overjump_empty
 		self.timer = timer
@@ -152,6 +154,10 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.foreColorNowSelected = 0xffffff
 		self.backColorNow = 0x00825F
 		self.backColorNowSelected = 0xd69600
+		self.foreColorPast = 0x808080
+		self.foreColorPastSelected = 0x808080
+		self.backColorPast = 0x2D455E
+		self.backColorPastSelected = 0xd69600
 		self.foreColorServiceNow = 0xffffff
 		self.backColorServiceNow = 0x00825F
 
@@ -772,7 +778,7 @@ class EPGList(HTMLComponent, GUIComponent):
 				begin = localtime(beginTime)
 				end = localtime(beginTime+duration)
 				res.extend((
-					(eListboxPythonMultiContent.TYPE_TEXT, r4.x, r4.y, r4.w, r4.h, 1, RT_HALIGN_CENTER|RT_VALIGN_CENTER, _("%02d.%02d - %02d.%02d")%(begin[3],begin[4],end[3],end[4])),
+					(eListboxPythonMultiContent.TYPE_TEXT, r4.x, r4.y, r4.w, r4.h, 1, RT_HALIGN_CENTER|RT_VALIGN_CENTER, _("%02d:%02d - %02d:%02d")%(begin[3],begin[4],end[3],end[4])),
 					(eListboxPythonMultiContent.TYPE_TEXT, r3.x, r3.y, fact1, r3.h, 1, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, _("%d min") % (duration / 60))
 				))
 			else:

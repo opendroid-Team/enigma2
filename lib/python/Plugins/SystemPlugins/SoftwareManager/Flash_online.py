@@ -40,7 +40,7 @@ MTDROOTFS = getMachineMtdRoot()
 images = []
 global imagesCounter
 imagesCounter = 0
-images.append(["OPD 6.5", "http://images.opendroid.org/6.6"])
+images.append(["OPD 6.6", "http://images.opendroid.org/6.6"])
 imagePath = '/media/hdd/images'
 flashPath = '/media/hdd/images/flash'
 flashTmp = '/media/hdd/images/tmp'
@@ -125,7 +125,6 @@ class FlashOnline(Screen):
 				os.mkdir(imagePath)
 			except:
 				pass
-		
 		if os.path.exists(flashPath):
 			try:
 				os.system('rm -rf ' + flashPath)
@@ -177,7 +176,6 @@ class FlashOnline(Screen):
 	def find_rootfs_dev(self, file):
 		startup_content = self.read_startup("/boot/" + file)
 		return startup_content[startup_content.find("root=")+5:].split()[0]
-
 	def list_files(self, PATH):
 		files = []
 		if SystemInfo["HaveMultiBoot"]:
