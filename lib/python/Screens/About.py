@@ -22,9 +22,20 @@ from Tools.StbHardware import getFPVersion
 from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 import skin, os
-
+import time
 from os import path, popen
 from re import search
+def parse_ipv4(ip):
+	ret = ""
+	idx = 0
+	if ip is not None:
+		for x in ip:
+			if idx == 0:
+				ret += str(x)
+			else:
+				ret += "." + str(x)
+			idx += 1
+	return ret
 
 class About(Screen):
 	def __init__(self, session):
@@ -86,11 +97,7 @@ class About(Screen):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-
 	        elif getMachineBuild() in ('u51','u5','u53','u52','u5pvr','h9'):
-
-	        elif getMachineBuild() in ('u5','u53','u52','u5pvr','h9'):
-
 			cpuMHz = "   (1,6 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
@@ -264,13 +271,13 @@ class About(Screen):
 						iface_list.append((_("DHCP") + " : " + _("No") + "\n"))
 					iface_list.append((_("MAC") + " : " + iNetwork.getAdapterAttribute(iface, "mac") + "\n"))
 					iface_list.append(("\n"))
-				my_txt += _("Network") + ":\n"
+				AboutText += _("Network") + ":\n"
 				for x in iface_list:
-					my_txt += "   " + x
-				my_txt += self.hdd_header + "\n"
+					AboutText += "   " + x
+				AboutText += self.hdd_header + "\n"
 				for x in self.hdd_list:
-					my_txt += "   " + x
-				my_txt += "\n"
+					AboutText += "   " + x
+				AboutText += "\n"
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 
 	def showTranslationInfo(self):
