@@ -1732,7 +1732,7 @@ msgstr "24"
 
 #| msgid "Hour"
 msgid "24+ Hours"
-msgstr "24+ Hours"
+msgstr "24+ Ore"
 
 #| msgid "Hour"
 msgid "24- Hours"
