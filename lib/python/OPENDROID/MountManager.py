@@ -46,6 +46,8 @@ class DeviceManager(Screen):
         self.activityTimer.timeout.get().append(self.updateList2)
         self.updateList()
 
+    def createSummary(self):
+	return DevicesPanelSummary
     def selectionChanged(self):
         if len(self.list) == 0:
             return
@@ -100,7 +102,87 @@ class DeviceManager(Screen):
         self['lab1'].hide()
 
     def buildMy_rec(self, device):
-        device2 = device[:-1]
+	device2 = ''
+	try:
+		if device.find('1') > 1:
+			device2 = device.replace('1', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('2') > 1:
+			device2 = device.replace('2', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('3') > 1:
+			device2 = device.replace('3', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('4') > 1:
+			device2 = device.replace('4', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('5') > 1:
+			device2 = device.replace('5', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('6') > 1:
+			device2 = device.replace('6', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('7') > 1:
+			device2 = device.replace('7', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('8') > 1:
+			device2 = device.replace('8', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p1') > 1:
+			device2 = device.replace('p1', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p2') > 1:
+			device2 = device.replace('p2', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p3') > 1:
+			device2 = device.replace('p3', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p4') > 1:
+			device2 = device.replace('p4', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p5') > 1:
+			device2 = device.replace('p5', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p6') > 1:
+			device2 = device.replace('p6', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p7') > 1:
+			device2 = device.replace('p7', '')
+	except:
+		device2 = ''
+	try:
+		if device.find('p8') > 1:
+			device2 = device.replace('p8', '')
+	except:
+		device2 = ''
         devicetype = path.realpath('/sys/block/' + device2 + '/device')
         d2 = device
         name = 'USB: '
@@ -198,11 +280,7 @@ class DeviceManager(Screen):
             png = LoadPixmap(mypixmap)
             mountP = d1
             deviceP = '/dev/' + device
-            res = (name,
-             des,
-             png,
-             mountP,
-             deviceP)
+            res = (name, des, png, mountP, deviceP)
             self.list.append(res)
 
     def SetupMounts(self):
@@ -264,9 +342,13 @@ class DeviceManager(Screen):
     def add_fstab(self, result = None, retval = None, extra_args = None):
         self.device = extra_args[0]
         self.mountp = extra_args[1]
-        self.device_uuid = 'UUID=' + result.split('UUID=')[1].split(' ')[0].replace('"', '')
+	self.device_uuid_tmp = result.split('UUID=')
+	self.device_uuid_tmp = self.device_uuid_tmp[1].replace('"',"")
+	self.device_uuid_tmp = self.device_uuid_tmp.replace('\n',"")
+	self.device_uuid_tmp = self.device_uuid_tmp.split()[0]
+	self.device_uuid = 'UUID=' + self.device_uuid_tmp
         if not path.exists(self.mountp):
-            mkdir(self.mountp, 493)
+            mkdir(self.mountp, 0755)
         file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if '/media/hdd' not in l ])
         rename('/etc/fstab.tmp', '/etc/fstab')
         file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if self.device not in l ])
@@ -342,7 +424,6 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
         self['Linconn'].hide()
 
     def buildMy_rec(self, device):
-        device2 = ''
         try:
             if device.find('1') > 1:
                 device2 = device.replace('1', '')
@@ -458,7 +539,8 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
             model = file('/sys/block/' + device2 + '/device/model').read()
         model = str(model).replace('\n', '')
         des = ''
-        if devicetype.find('/devices/pci') != -1:
+	print "test:" 
+        if devicetype.find('/devices/pci') != -1 or devicetype.find('ahci') != -1:
             name = _('HARD DISK: ')
             mypixmap = '/usr/lib/enigma2/python/OPENDROID/icons/dev_hdd.png'
         name = name + model
@@ -524,6 +606,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
             pass
 
     def saveMypoints(self):
+	self.Console = Console()
         mycheck = False
         for x in self['config'].list:
             self.device = x[2]
@@ -542,28 +625,60 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
         ybox.setTitle(_('Restart %s %s.') % (getMachineBrand(), getMachineName()))
 
     def add_fstab(self, result = None, retval = None, extra_args = None):
-        print '[DevicesManager] RESULT:', result
-        if result:
-            self.device = extra_args[0]
-            self.mountp = extra_args[1]
-            self.device_uuid = 'UUID=' + result.split('UUID=')[1].split(' ')[0].replace('"', '')
-            self.device_type = result.split('TYPE=')[1].split(' ')[0].replace('"', '')
-            if self.device_type.startswith('ext'):
-                self.device_type = 'auto'
-            elif self.device_type.startswith('ntfs') and result.find('ntfs-3g') != -1:
-                self.device_type = 'ntfs-3g'
-            elif self.device_type.startswith('ntfs') and result.find('ntfs-3g') == -1:
-                self.device_type = 'ntfs'
-            if not path.exists(self.mountp):
-                mkdir(self.mountp, 493)
-            file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if self.device not in l ])
-            rename('/etc/fstab.tmp', '/etc/fstab')
-            file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if self.device_uuid not in l ])
-            rename('/etc/fstab.tmp', '/etc/fstab')
-            out = open('/etc/fstab', 'a')
-            line = self.device_uuid + '\t' + self.mountp + '\t' + self.device_type + '\tdefaults\t0 0\n'
-            out.write(line)
-            out.close()
+	self.device = extra_args[0]
+	self.mountp = extra_args[1]
+	self.device_tmp = result.split(' ')
+	if self.device_tmp[0].startswith('UUID='):
+		self.device_uuid = self.device_tmp[0].replace('"',"")
+		self.device_uuid = self.device_uuid.replace('\n',"")
+	elif self.device_tmp[1].startswith('UUID='):
+		self.device_uuid = self.device_tmp[1].replace('"',"")
+		self.device_uuid = self.device_uuid.replace('\n',"")
+	elif self.device_tmp[2].startswith('UUID='):
+		self.device_uuid = self.device_tmp[2].replace('"',"")
+		self.device_uuid = self.device_uuid.replace('\n',"")
+	elif self.device_tmp[3].startswith('UUID='):
+		self.device_uuid = self.device_tmp[3].replace('"',"")
+		self.device_uuid = self.device_uuid.replace('\n',"")
+	try:
+		if self.device_tmp[0].startswith('TYPE='):
+			self.device_type = self.device_tmp[0].replace('TYPE=',"")
+			self.device_type = self.device_type.replace('"',"")
+			self.device_type = self.device_type.replace('\n',"")
+		elif self.device_tmp[1].startswith('TYPE='):
+			self.device_type = self.device_tmp[1].replace('TYPE=',"")
+			self.device_type = self.device_type.replace('"',"")
+			self.device_type = self.device_type.replace('\n',"")
+		elif self.device_tmp[2].startswith('TYPE='):
+			self.device_type = self.device_tmp[2].replace('TYPE=',"")
+			self.device_type = self.device_type.replace('"',"")
+			self.device_type = self.device_type.replace('\n',"")
+		elif self.device_tmp[3].startswith('TYPE='):
+			self.device_type = self.device_tmp[3].replace('TYPE=',"")
+			self.device_type = self.device_type.replace('"',"")
+			self.device_type = self.device_type.replace('\n',"")
+		elif self.device_tmp[4].startswith('TYPE='):
+			self.device_type = self.device_tmp[4].replace('TYPE=',"")
+			self.device_type = self.device_type.replace('"',"")
+			self.device_type = self.device_type.replace('\n',"")
+	except:
+		self.device_type = 'auto'
+	if self.device_type.startswith('ext'):
+		self.device_type = 'auto'
+	elif self.device_type.startswith('ntfs') and result.find('ntfs-3g') != -1:
+		self.device_type = 'ntfs-3g'
+	elif self.device_type.startswith('ntfs') and result.find('ntfs-3g') == -1:
+		self.device_type = 'ntfs'
+	if not path.exists(self.mountp):
+		mkdir(self.mountp, 0755)
+	file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if self.device not in l ])
+	rename('/etc/fstab.tmp', '/etc/fstab')
+	file('/etc/fstab.tmp', 'w').writelines([ l for l in file('/etc/fstab').readlines() if self.device_uuid not in l ])
+	rename('/etc/fstab.tmp', '/etc/fstab')
+	out = open('/etc/fstab', 'a')
+	line = self.device_uuid + '\t' + self.mountp + '\t' + self.device_type + '\tdefaults\t0 0\n'
+	out.write(line)
+	out.close()
 
     def restartBox(self, answer):
         if answer is True:
