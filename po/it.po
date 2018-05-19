@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-30 09:17+0200\n"
-"PO-Revision-Date: 2018-05-18 21:46+0200\n"
+"PO-Revision-Date: 2018-05-19 09:46+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -1730,11 +1730,9 @@ msgstr "23.976"
 msgid "24"
 msgstr "24"
 
-#| msgid "Hour"
 msgid "24+ Hours"
 msgstr "24+ Ore"
 
-#| msgid "Hour"
 msgid "24- Hours"
 msgstr "24- Ore"
 
@@ -1941,6 +1939,21 @@ msgstr ""
 "Un file di configurazione (% s) è stato modificato da quando è "
 "stato installato.\n"
 "Vuoi mantenere le modifiche?"
+
+msgid "Always include ECM in recordings"
+msgstr "Includere sempre ECM nelle registrazioni"
+
+msgid ""
+"Always include ECM messages in recordings. This overrides the "
+"individual timer settings globally. It allows recordings to be "
+"always decrypted afterwards (sometimes called offline "
+"decoding), if supported by your receiver. Default: off."
+msgstr ""
+"Includere sempre i messaggi ECM nelle registrazioni. Questo "
+"sovrascrive le singole impostazioni del timer a livello "
+"globale. Permette alle registrazioni di essere sempre "
+"decodificate in seguito (talvolta chiamate decodifica offline), "
+"se supportate dal ricevitore. Predefinito: spento."
 
 #, python-format
 msgid ""
@@ -4040,6 +4053,13 @@ msgstr "Configurazione tipo di telecomando"
 msgid "Configure the DiSEqC mode for this LNB."
 msgstr "Opzione per impostare la modalità DiSEqC per questo LNB."
 
+msgid ""
+"Configure default setting for new timers. Need a restart after "
+"changing."
+msgstr ""
+"Configura le impostazioni predefinite per i nuovi timer. Hai "
+"bisogno di un riavvio dopo aver cambiato."
+
 msgid "Configure the IP address."
 msgstr "Opzione per impostare l'indirizzo IP."
 
@@ -5482,6 +5502,13 @@ msgid ""
 msgstr ""
 "Se si desidera veramente eseguire l'aggiornamento senza "
 "eseguire il backup, premere Sì."
+
+msgid ""
+"If you have activated HDMI-CEC, you can specify here whether a "
+"'zap and record' timer also turns on the TV."
+msgstr ""
+"Se hai attivato HDMI-CEC, puoi specificare qui se a 'zap e "
+"registra' il timer accende anche la TV."
 
 #, python-format
 msgid "Done - Installed, upgraded or removed %d package (%s)"
@@ -14312,6 +14339,11 @@ msgstr "Attiva HDMI-IN in modalità tutto schermo"
 msgid "Turn on HDMI-IN PiP mode"
 msgstr "Attiva HDMI-IN in modalità PIP"
 
+msgid "Turn on the TV from standby with 'zap and record' timer"
+msgstr ""
+"Accendi la TV dalla modalità standby con 'zap e registra il "
+"timer"
+
 msgid "Turning step size"
 msgstr "Rotazione a intervalli"
 
@@ -16847,6 +16879,22 @@ msgstr "natura/animali/ambiente"
 msgid "never"
 msgstr "mai"
 
+msgid "Never decrypt while recording"
+msgstr "Non decrittografare mai durante la registrazione"
+
+msgid ""
+"Never decrypt the content while recording. This overrides the "
+"individual timer settings globally. If enabled, recordings are "
+"stored in crypted presentation and must be decrypted afterwards "
+"(sometimes called offline decoding). Default: off."
+msgstr ""
+"Non decrittografare mai il contenuto durante la registrazione. "
+"Questo sovrascrive le singole impostazioni del timer a livello "
+"globale. Se abilitato, le registrazioni vengono archiviate in "
+"una presentazione criptata e devono essere decodificate in "
+"seguito (talvolta chiamata decodifica offline). Predefinito: "
+"spento."
+
 msgid "new media"
 msgstr "nuovo media"
 
@@ -17891,6 +17939,12 @@ msgstr "Vuoi eliminare %s le altre lingue?"
 msgid "Delete Language"
 msgstr "Elimina Lingua"
 
+msgid "Default 'Timer type' *"
+msgstr "Predefinito 'Tipo di timer' *"
+
+msgid "Default 'After event' *"
+msgstr "Predefinito 'Dopo l'evento' *"
+
 msgid "Default Language can not be deleted !!"
 msgstr "La Lingua di default non può essere cancellata !!"
 
@@ -18456,60 +18510,3 @@ msgstr "Dimensione del volume audio"
 
 msgid "Audio volume step size fast mode"
 msgstr "Modalità volume audio in modalità veloce"
-
-#~ msgid "List of plugins to uninstall"
-#~ msgstr "Elenco di plugins da disinstallare"
-
-#~ msgid "Video Size: "
-#~ msgstr "Dimensione video: "
-
-#~ msgid "Provider: n/a"
-#~ msgstr "Provider: n/a"
-
-#~ msgid "Name: n/a"
-#~ msgstr "Nome: n/a"
-
-#~ msgid "Aspect Ratio: n/a"
-#~ msgstr "Rapporto TV n/a"
-
-#~ msgid "Video Size: n/a"
-#~ msgstr "Dimensione del video: n/a"
-
-#~ msgid "Infos"
-#~ msgstr "informazioni"
-
-#~ msgid "Service_Team"
-#~ msgstr "Servizio_Team"
-
-#~ msgid "Latest Commits"
-#~ msgstr "Ultimi commit"
-
-#~ msgid "Name: "
-#~ msgstr "Nome: "
-
-#~ msgid "Wait time before start Cam 2"
-#~ msgstr "Tempo di attesa prima dell'avvio Cam 2"
-
-#~ msgid "services"
-#~ msgstr "servizi"
-
-#~ msgid "active CAM 1: "
-#~ msgstr "avviata CAM1: "
-
-#~ msgid "active CAM 2: "
-#~ msgstr "avviata CAM 2: "
-
-#~ msgid "no CAM 2 active"
-#~ msgstr "nessuna CAM 2 avviata"
-
-#~ msgid "no CAM 1 active"
-#~ msgstr "nessuna CAM 1 avviata"
-
-#~ msgid "Show OPD_panel Red-key"
-#~ msgstr "Mostra tasto rosso OPD_panel"
-
-#~ msgid "Show Softcam-Panel Red-key long"
-#~ msgstr "Mostra il tasto rosso del pannello della Softcam"
-
-#~ msgid "Aspect Ratio: "
-#~ msgstr "Proporzioni TV: "
