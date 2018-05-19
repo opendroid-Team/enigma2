@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-30 09:17+0200\n"
-"PO-Revision-Date: 2018-05-19 09:46+0200\n"
+"PO-Revision-Date: 2018-05-19 11:19+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -3563,6 +3563,9 @@ msgstr "Centrare tempo e rimuovere la data"
 msgid "Change bouquets in quickzap"
 msgstr "Cambio di bouquet nello zapping veloce"
 
+msgid "Infos"
+msgstr "Informazioni"
+
 msgid "Extended NumberZap"
 msgstr "NumberZap estesa"
 
@@ -4757,7 +4760,7 @@ msgid "Croatian"
 msgstr "Croato"
 
 msgid "Cron Manager"
-msgstr "Cron Manager"
+msgstr "Gestore Cron"
 
 msgid "CronTimers"
 msgstr "CronTimers"
@@ -5208,7 +5211,7 @@ msgid "VFD Skin Selector"
 msgstr "Selezionare VFD Skin"
 
 msgid "LED Manager..."
-msgstr "Giga LED Manager..."
+msgstr "Gestore Giga LED ..."
 
 msgid "Giga LED Setup"
 msgstr "Impostare Giga LED"
@@ -7418,7 +7421,7 @@ msgid "Job View"
 msgstr "Vista processi"
 
 msgid "JobManager"
-msgstr "JobManager"
+msgstr "GestoreJob"
 
 msgid "Jump back 24 hours"
 msgstr "Torna indietro di 24 ore"
@@ -7726,13 +7729,16 @@ msgid "Lock ratio"
 msgstr "Rapporto di blocco"
 
 msgid "Log Manager"
-msgstr "Log Manager"
+msgstr "Gestore Log"
 
 msgid "Log results to harddisk"
 msgstr "Salvare log su harddisk"
 
 msgid "LogManager"
 msgstr "Log Manager"
+
+msgid "Log-Manager"
+msgstr "Gestore-Log"
 
 msgid "Logs"
 msgstr "Crash Logs Opendroid"
@@ -8006,7 +8012,7 @@ msgid "Mount: "
 msgstr "Mount: "
 
 msgid "MountManager"
-msgstr "MountManager"
+msgstr "Gestore mount periferiche"
 
 msgid "Mounts"
 msgstr "Monta"
@@ -9775,7 +9781,10 @@ msgid "Properties of current title"
 msgstr "Proprietà titolo attuale"
 
 msgid "Protect services"
-msgstr "Proteggere Canali"
+msgstr "Proteggi i servizi"
+
+msgid "Service_Team"
+msgstr "Team di assistenza"
 
 msgid "Protect setup"
 msgstr "Proteggere Configurazione"
@@ -11077,7 +11086,10 @@ msgid "Service width"
 msgstr "Larghezza di servizio"
 
 msgid "Services"
-msgstr "Canali"
+msgstr "Servizi"
+
+msgid "services"
+msgstr "servizi"
 
 msgid ""
 "Services may be grouped in bouquets. When enabled, you can use "
@@ -12133,7 +12145,10 @@ msgid "Software"
 msgstr "Software"
 
 msgid "Software Manager"
-msgstr "Software Manager"
+msgstr "Gestore Software"
+
+msgid "Software-Manager"
+msgstr "Gestore-Software"
 
 msgid "Software Manager Setup"
 msgstr "Software Manager Setup"
@@ -12729,7 +12744,7 @@ msgid "Swap services"
 msgstr "Servizi Swap"
 
 msgid "SwapManager"
-msgstr "SwapManager"
+msgstr "GestoreSwap"
 
 msgid "Swedish"
 msgstr "Svedese"
