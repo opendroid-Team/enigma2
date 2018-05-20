@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-30 09:17+0200\n"
-"PO-Revision-Date: 2018-05-19 11:19+0200\n"
+"PO-Revision-Date: 2018-05-20 10:04+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -1289,6 +1289,9 @@ msgstr[1] "%d minuti"
 msgid "%d minutes"
 msgstr "%d minuti"
 
+msgid "%d of %d kBytes"
+msgstr "%d di %d kBytes"
+
 msgid "%d pixel wide"
 msgid_plural "%d pixels wide"
 msgstr[0] "%d pixel larghezza"
@@ -1334,6 +1337,9 @@ msgstr ""
 
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
+
+msgid "%s additional screens"
+msgstr "%s schermi aggiuntivi"
 
 msgid "%s is no longer used. Should it be deleted?"
 msgstr "%s non  più utilizzato. Vuoi cancellarlo?"
@@ -2198,7 +2204,14 @@ msgstr ""
 "\n"
 "Disabilitare la seconda interfaccia di rete?"
 
-#, python-format
+msgid ""
+"A sleep timer wants to set your %s %s to standby.\n"
+"Do that now or set extend additional minutes?"
+msgstr ""
+"Un timer di spegnimento prevede di porre in standby il tuo %s "
+"%s\n"
+"Farlo adesso o ritardarlo di alcuni minuti?"
+
 msgid ""
 "A sleep timer wants to set your\n"
 "%s %s to standby. Do that now?"
@@ -2346,7 +2359,7 @@ msgid "Action on long powerbutton press"
 msgstr "Premendo a lungo il pulsante di acensione"
 
 msgid "Action on short powerbutton press"
-msgstr "Azione su pulsante a pulsante"
+msgstr "Azione su pressione breve del pulsante Power"
 
 msgid "Activate"
 msgstr "Attivare"
@@ -2624,6 +2637,12 @@ msgstr "Consenti aggiornamenti contrassegnati come difettosi"
 msgid "Allow IPK Upload"
 msgstr "Consenti il ​​caricamento IPK"
 
+msgid "Allow 10bit"
+msgstr "Consenti 10bit"
+
+msgid "Allow 12bit"
+msgstr "Consenti 12bit"
+
 msgid "Disable all updates*"
 msgstr "Disattivare tutti gli aggiornamenti*"
 
@@ -2728,6 +2747,11 @@ msgstr "Nome canale largo"
 
 msgid "Show record indicator"
 msgstr "Mostra indicatore di registrazione"
+
+msgid "Show blinking Clock in Standby on Display during recording"
+msgstr ""
+"Mostra lampeggiante Orologio in attesa sul display durante la "
+"registrazione"
 
 msgid "Red colored"
 msgstr "Colore rosso"
@@ -3566,6 +3590,9 @@ msgstr "Cambio di bouquet nello zapping veloce"
 msgid "Infos"
 msgstr "Informazioni"
 
+msgid "In the Standby blinking Clock on the LCD Display"
+msgstr "In Standby lampeggiante Orologio sul display LCD"
+
 msgid "Extended NumberZap"
 msgstr "NumberZap estesa"
 
@@ -3625,6 +3652,17 @@ msgstr "Cambia timer"
 
 msgid "Change to bouquet"
 msgstr "Cambia per bouquet"
+
+msgid ""
+"Change settings for your switch modes: single lnb, tonburst or "
+"diseqc"
+msgstr ""
+"Cambia le impostazioni per le tue modalità di commutazione: "
+"single lnb, tonburst o diseqc"
+
+msgid "Change Configuration mode simple to advanced"
+msgstr ""
+"Cambia la modalità di configurazione da semplice ad avanzata"
 
 msgid "Changelog"
 msgstr "Changelog"
@@ -6262,6 +6300,12 @@ msgstr "Forza deinterlacciamento"
 msgid "Force UnInstall"
 msgstr "Forza UnInstall"
 
+msgid "force enabled"
+msgstr "forza abilitata"
+
+msgid "force disabled"
+msgstr "forza disabilitata"
+
 msgid "Automatic resolution label"
 msgstr "Etichetta automatica risoluzione"
 
@@ -6334,6 +6378,32 @@ msgstr ""
 
 msgid "This option allows you to Power Off the display."
 msgstr "Questa opzione ti consente di spegnere il display."
+
+msgid ""
+"This option allows you can enable or disable the 10 Bit Color "
+"Mode"
+msgstr ""
+"Questa opzione consente di abilitare o disabilitare la Modalità "
+"colore a 10 bit"
+
+msgid ""
+"This option allows you can enable or disable the 12 Bit Color "
+"Mode"
+msgstr ""
+"Questa opzione consente di abilitare o disabilitare la Modalità "
+"colore 12 bit"
+
+msgid "This option allows you can force the HLG Modes for UHD"
+msgstr ""
+"Questa opzione ti consente di forzare le modalità HLG per UHD"
+
+msgid "This option allows you can force the HDR10 Modes for UHD"
+msgstr ""
+"Questa opzione ti consente di forzare le modalità HDR10 per UHD"
+
+msgid "This option allows you to use all HDMI Modes"
+msgstr ""
+"Questa opzione ti consente di utilizzare tutte le modalità HDMI"
 
 msgid "Allows you to setup the button to do what you choose."
 msgstr ""
@@ -6608,6 +6678,9 @@ msgstr ""
 msgid "HARD DISK: "
 msgstr "HARD DISK: "
 
+msgid "HLG Support"
+msgstr "Supporto HLG"
+
 msgid "HD list"
 msgstr "Lista HD"
 
@@ -6616,6 +6689,9 @@ msgstr "HD2400"
 
 msgid "HDMI"
 msgstr "HDMI"
+
+msgid "HDR10 Support"
+msgstr "Supporto HDR10"
 
 msgid "Downmix"
 msgstr "Downmix"
@@ -7547,6 +7623,9 @@ msgstr "Luminosità del LED durante lo standby."
 msgid "LNB"
 msgstr "LNB"
 
+msgid "LNB/Switch Bootup time [ms]"
+msgstr "LNB/Cambia il tempo di avvio [ms]"
+
 msgid "Label"
 msgstr "Etichetta"
 
@@ -7941,6 +8020,9 @@ msgstr "Mancante"
 msgctxt "Satellite configuration mode"
 msgid "Mode"
 msgstr "Modalità"
+
+msgid "Satellite configuration mode"
+msgstr "Modalità di configurazione satellitare"
 
 msgid "Positioner (selecting satellites)"
 msgstr "Rotore (Selezzionare satellite)"
@@ -10289,6 +10371,9 @@ msgstr "Si consiglia un Backup completo prima!"
 msgid "Show default backup files"
 msgstr "Mostra file di backup predefiniti"
 
+msgid "Show True/False as graphical switch"
+msgstr "Mostra Vero/Falso come opzione grafica"
+
 msgid "Show HDMI-Output Res"
 msgstr "Mostra ris. Uscita HDMI"
 
@@ -11684,6 +11769,14 @@ msgstr "Mostra informazioni sulla fonte"
 
 msgid "Enable zapping with UP/DOWN arrow buttons"
 msgstr "Abilita zapping con i pulsanti freccia SU/GIU"
+
+msgid ""
+"Enable to display all true/false, yes/no, on/off and enable/"
+"disable set up options as a graphical switch."
+msgstr ""
+"Abilita la visualizzazione di tutti i valori vero / falso, sì / "
+"no, on / off e abilita / disabilita le opzioni di "
+"configurazione come un interruttore grafico."
 
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
 msgstr ""
@@ -13101,6 +13194,13 @@ msgstr ""
 "Controllare di aver scelto una directory in cui sia possibile "
 "scrivere."
 
+msgid ""
+"The unicable connection setting is wrong.\n"
+" Maybe recursive connection of tuners."
+msgstr ""
+"L'impostazione di connessione non accettabile è errata.\n"
+" Forse la connessione ricorsiva dei sintonizzatori."
+
 #, python-format
 msgid ""
 "When you do a factory reset, you will lose ALL your "
@@ -14338,6 +14438,9 @@ msgstr "Tipo tuner"
 
 msgid "Tuning step size"
 msgstr "Ottimizzazione"
+
+msgid "Tuning algorithm"
+msgstr "Algoritmo di ottimizzazione"
 
 msgid "Turkish"
 msgstr "Turco"
@@ -17638,13 +17741,13 @@ msgstr ""
 "Per ulteriori informazioni consultare http://www.droidsat.org"
 
 msgid "But you have activated Install unstable updates"
-msgstr "Ma e stata attivata la  Installa aggiornamenti instabili"
+msgstr "Ma hai attivato Installa aggiornamenti instabili"
 
 msgid "Update anyway?"
 msgstr "Aggiornare comunque?"
 
 msgid "Select files folders to backup..."
-msgstr "Selezionare i file cartelle per il backup ..."
+msgstr "Seleziona le cartelle i file per il backup ..."
 
 msgid "Keymap Selection"
 msgstr "Selezione keymap"
