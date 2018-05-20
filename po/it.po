@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-30 09:17+0200\n"
-"PO-Revision-Date: 2018-05-20 10:04+0200\n"
+"PO-Revision-Date: 2018-05-20 11:23+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -1992,6 +1992,18 @@ msgid "Configure the general audio volume step size (limit 1-10)."
 msgstr ""
 "Configurare la dimensione del passaggio del volume audio "
 "generale (limite 1-10)."
+
+msgid ""
+"Configure how recording filenames are constructed. Standard: "
+"Date Time - Channel - Title Very very short: Title Very short: "
+"Title - Date Time Short with time: Date Time - Title Short: "
+"Date - Title Long: Date Time - Channel - Title - Info"
+msgstr ""
+"Configura come vengono creati i nomi dei file di registrazione. "
+"Standard: Data Ora - Canale - Titolo Molto molto breve: Titolo "
+"Molto breve: Titolo - Data Ora Breve con orario: Data Ora - "
+"Titolo Abbreviazione: Data - Titolo Lungo: Data Ora - Canale - "
+"Titolo - Informazioni"
 
 #, python-format
 msgid ""
@@ -4250,6 +4262,9 @@ msgstr "Configurare la funzione dei <  > tasti."
 msgid "Configure the function of the &lt;  &gt; buttons."
 msgstr ""
 "Configurare la funzione del &lt;  &gt; Per passare le chiavi."
+
+msgid "Configure the alignment of events."
+msgstr "Configura l'allineamento degli eventi."
 
 msgid "Select what you want the Bookmark button to activate:"
 msgstr ""
@@ -10581,6 +10596,18 @@ msgstr "Saturazione"
 msgid "Saturday"
 msgstr "Sabato"
 
+msgid "Very very short filenames - Warning"
+msgstr "Nomi di file molto molto brevi - Avviso"
+
+msgid "Very short filenames"
+msgstr "Nomi di file molto brevi"
+
+msgid "Short filenames"
+msgstr "Brevi nomi di file"
+
+msgid "Short filenames with time"
+msgstr "Brevi nomi di file con il tempo"
+
 msgid "Save"
 msgstr "Salvare"
 
@@ -11537,9 +11564,6 @@ msgstr "Condivisioni"
 
 msgid "Sharpness"
 msgstr "Nitidezza"
-
-msgid "Short filenames"
-msgstr "Nomi brevi"
 
 msgid "Show /tmp/ecm.info"
 msgstr "Mostra /tmp/ecm.info"
