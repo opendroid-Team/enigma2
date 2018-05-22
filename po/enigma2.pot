@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pot-Based-Opendroid-Images.\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-16 09:41+0100\n"
+"POT-Creation-Date: 2018-05-22 07:13+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail."
 "com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
-"PO-Revision-Date: \n"
+"POT-Revision-Date: 2018-05-22 07:13+0200\n"
 
 msgid "(higher than any auto)"
 msgstr ""
@@ -1150,6 +1150,9 @@ msgstr[1] ""
 msgid "%d minutes"
 msgstr ""
 
+msgid "%d of %d kBytes"
+msgstr ""
+
 msgid "%d pixel wide"
 msgid_plural "%d pixels wide"
 msgstr[0] ""
@@ -1194,6 +1197,9 @@ msgstr ""
 
 msgid ""
 "%s (%s)\n"
+msgstr ""
+
+msgid "%s additional screens"
 msgstr ""
 
 msgid "%s is no longer used. Should it be deleted?"
@@ -1740,6 +1746,16 @@ msgid ""
 "Do you want to keep your modifications?"
 msgstr ""
 
+msgid "Always include ECM in recordings"
+msgstr ""
+
+msgid ""
+"Always include ECM messages in recordings. This overrides the individual "
+"timer settings globally. It allows recordings to be always decrypted "
+"afterwards (sometimes called offline decoding), if supported by your "
+"receiver. Default: off."
+msgstr ""
+
 #, python-format
 msgid ""
 "A configuration file (%s) was modified since Installation.\n"
@@ -1760,6 +1776,13 @@ msgid ""
 msgstr ""
 
 msgid "Configure the general audio volume step size (limit 1-10)."
+msgstr ""
+
+msgid ""
+"Configure how recording filenames are constructed. Standard: Date Time - "
+"Channel - Title Very very short: Title Very short: Title - Date Time Short "
+"with time: Date Time - Title Short: Date - Title Long: Date Time - Channel - "
+"Title - Info"
 msgstr ""
 
 #, python-format
@@ -1923,7 +1946,11 @@ msgid ""
 "Do you want to disable the second network interface?"
 msgstr ""
 
-#, python-format
+msgid ""
+"A sleep timer wants to set your %s %s to standby.\n"
+"Do that now or set extend additional minutes?"
+msgstr ""
+
 msgid ""
 "A sleep timer wants to set your\n"
 "%s %s to standby. Do that now?"
@@ -2315,6 +2342,12 @@ msgstr ""
 msgid "Allow IPK Upload"
 msgstr ""
 
+msgid "Allow 10bit"
+msgstr ""
+
+msgid "Allow 12bit"
+msgstr ""
+
 msgid "Disable all updates*"
 msgstr ""
 
@@ -2395,6 +2428,9 @@ msgid "Channel name wide"
 msgstr ""
 
 msgid "Show record indicator"
+msgstr ""
+
+msgid "Show blinking Clock in Standby on Display during recording"
 msgstr ""
 
 msgid "Red colored"
@@ -3173,6 +3209,12 @@ msgstr ""
 msgid "Change bouquets in quickzap"
 msgstr ""
 
+msgid "Infos"
+msgstr ""
+
+msgid "In the Standby blinking Clock on the LCD Display"
+msgstr ""
+
 msgid "Extended NumberZap"
 msgstr ""
 
@@ -3231,6 +3273,12 @@ msgid "Change timer"
 msgstr ""
 
 msgid "Change to bouquet"
+msgstr ""
+
+msgid "Change settings for your switch modes: single lnb, tonburst or diseqc"
+msgstr ""
+
+msgid "Change Configuration mode simple to advanced"
 msgstr ""
 
 msgid "Changelog"
@@ -3601,6 +3649,10 @@ msgstr ""
 msgid "Configure the DiSEqC mode for this LNB."
 msgstr ""
 
+msgid ""
+"Configure default setting for new timers. Need a restart after changing."
+msgstr ""
+
 msgid "Configure the IP address."
 msgstr ""
 
@@ -3701,6 +3753,9 @@ msgid "Configure the function of the <  > buttons."
 msgstr ""
 
 msgid "Configure the function of the &lt;  &gt; buttons."
+msgstr ""
+
+msgid "Configure the alignment of events."
 msgstr ""
 
 msgid "Select what you want the Bookmark button to activate:"
@@ -4836,6 +4891,11 @@ msgstr ""
 msgid "If you really want to try the update without backup, press Yes."
 msgstr ""
 
+msgid ""
+"If you have activated HDMI-CEC, you can specify here whether a 'zap and "
+"record' timer also turns on the TV."
+msgstr ""
+
 #, python-format
 msgid "Done - Installed, upgraded or removed %d package (%s)"
 msgid_plural "Done - Installed, upgraded or removed %d packages (%s)"
@@ -5552,6 +5612,12 @@ msgstr ""
 msgid "Force UnInstall"
 msgstr ""
 
+msgid "force enabled"
+msgstr ""
+
+msgid "force disabled"
+msgstr ""
+
 msgid "Automatic resolution label"
 msgstr ""
 
@@ -5600,6 +5666,21 @@ msgid ""
 msgstr ""
 
 msgid "This option allows you to Power Off the display."
+msgstr ""
+
+msgid "This option allows you can enable or disable the 10 Bit Color Mode"
+msgstr ""
+
+msgid "This option allows you can enable or disable the 12 Bit Color Mode"
+msgstr ""
+
+msgid "This option allows you can force the HLG Modes for UHD"
+msgstr ""
+
+msgid "This option allows you can force the HDR10 Modes for UHD"
+msgstr ""
+
+msgid "This option allows you to use all HDMI Modes"
 msgstr ""
 
 msgid "Allows you to setup the button to do what you choose."
@@ -5852,6 +5933,9 @@ msgstr ""
 msgid "HARD DISK: "
 msgstr ""
 
+msgid "HLG Support"
+msgstr ""
+
 msgid "HD list"
 msgstr ""
 
@@ -5859,6 +5943,9 @@ msgid "HD2400"
 msgstr ""
 
 msgid "HDMI"
+msgstr ""
+
+msgid "HDR10 Support"
 msgstr ""
 
 msgid "Downmix"
@@ -6670,6 +6757,9 @@ msgstr ""
 msgid "LNB"
 msgstr ""
 
+msgid "LNB/Switch Bootup time [ms]"
+msgstr ""
+
 msgid "Label"
 msgstr ""
 
@@ -6849,6 +6939,9 @@ msgid "Log results to harddisk"
 msgstr ""
 
 msgid "LogManager"
+msgstr ""
+
+msgid "Log-Manager"
 msgstr ""
 
 msgid "Logs"
@@ -7047,6 +7140,9 @@ msgstr ""
 
 msgctxt "Satellite configuration mode"
 msgid "Mode"
+msgstr ""
+
+msgid "Satellite configuration mode"
 msgstr ""
 
 msgid "Positioner (selecting satellites)"
@@ -8744,6 +8840,9 @@ msgstr ""
 msgid "Protect services"
 msgstr ""
 
+msgid "Service_Team"
+msgstr ""
+
 msgid "Protect setup"
 msgstr ""
 
@@ -9221,6 +9320,9 @@ msgstr ""
 msgid "Show default backup files"
 msgstr ""
 
+msgid "Show True/False as graphical switch"
+msgstr ""
+
 msgid "Show HDMI-Output Res"
 msgstr ""
 
@@ -9427,6 +9529,18 @@ msgid "Saturation"
 msgstr ""
 
 msgid "Saturday"
+msgstr ""
+
+msgid "Very very short filenames - Warning"
+msgstr ""
+
+msgid "Very short filenames"
+msgstr ""
+
+msgid "Short filenames"
+msgstr ""
+
+msgid "Short filenames with time"
 msgstr ""
 
 msgid "Save"
@@ -9964,6 +10078,9 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
+msgid "services"
+msgstr ""
+
 msgid ""
 "Services may be grouped in bouquets. When enabled, you can use more than one "
 "bouquet."
@@ -10285,9 +10402,6 @@ msgstr ""
 msgid "Sharpness"
 msgstr ""
 
-msgid "Short filenames"
-msgstr ""
-
 msgid "Show /tmp/ecm.info"
 msgstr ""
 
@@ -10504,6 +10618,11 @@ msgid "Show Source Info"
 msgstr ""
 
 msgid "Enable zapping with UP/DOWN arrow buttons"
+msgstr ""
+
+msgid ""
+"Enable to display all true/false, yes/no, on/off and enable/disable set up "
+"options as a graphical switch."
 msgstr ""
 
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
@@ -10943,6 +11062,9 @@ msgid "Software"
 msgstr ""
 
 msgid "Software Manager"
+msgstr ""
+
+msgid "Software-Manager"
 msgstr ""
 
 msgid "Software Manager Setup"
@@ -11793,6 +11915,11 @@ msgstr ""
 msgid ""
 "The directory %s is not writable.\n"
 "Make sure you select a writable directory instead."
+msgstr ""
+
+msgid ""
+"The unicable connection setting is wrong.\n"
+" Maybe recursive connection of tuners."
 msgstr ""
 
 #, python-format
@@ -12724,6 +12851,9 @@ msgstr ""
 msgid "Tuning step size"
 msgstr ""
 
+msgid "Tuning algorithm"
+msgstr ""
+
 msgid "Turkish"
 msgstr ""
 
@@ -12737,6 +12867,9 @@ msgid "Turn on HDMI-IN Full screen mode"
 msgstr ""
 
 msgid "Turn on HDMI-IN PiP mode"
+msgstr ""
+
+msgid "Turn on the TV from standby with 'zap and record' timer"
 msgstr ""
 
 msgid "Turning step size"
@@ -14858,6 +14991,16 @@ msgstr ""
 msgid "never"
 msgstr ""
 
+msgid "Never decrypt while recording"
+msgstr ""
+
+msgid ""
+"Never decrypt the content while recording. This overrides the individual "
+"timer settings globally. If enabled, recordings are stored in crypted "
+"presentation and must be decrypted afterwards (sometimes called offline "
+"decoding). Default: off."
+msgstr ""
+
 msgid "new media"
 msgstr ""
 
@@ -15853,6 +15996,12 @@ msgid "Do you want to delete %s language?"
 msgstr ""
 
 msgid "Delete Language"
+msgstr ""
+
+msgid "Default 'Timer type' *"
+msgstr ""
+
+msgid "Default 'After event' *"
 msgstr ""
 
 msgid "Default Language can not be deleted !!"
