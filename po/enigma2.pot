@@ -57,6 +57,12 @@ msgstr ""
 msgid "CI (Common Interface) Setup"
 msgstr ""
 
+msgid "CI Legacy"
+msgstr ""
+
+msgid "Your Hardware can detect ci mode self or work only in legacy mode."
+msgstr ""
+
 msgid "Circular LNB"
 msgstr ""
 
@@ -533,6 +539,12 @@ msgid ""
 msgstr ""
 
 msgid "Choose whether DTS channel sound tracks should be downmixed to stereo."
+msgstr ""
+
+msgid "Choose dvb wait delay for ci response."
+msgstr ""
+
+msgid "Choose the CI protocol operation mode for standard ci or ciplus."
 msgstr ""
 
 msgid ""
@@ -4331,6 +4343,9 @@ msgstr ""
 msgid "DVB-T2"
 msgstr ""
 
+msgid "DVB CI Delay"
+msgstr ""
+
 msgid "DVD data format"
 msgstr ""
 
@@ -5189,6 +5204,9 @@ msgid "Enter main menu..."
 msgstr ""
 
 msgid "Enter pin code"
+msgstr ""
+
+msgid "Enter PIN"
 msgstr ""
 
 msgid "Enter the service pin"
@@ -11127,6 +11145,9 @@ msgid ""
 "enable 'Allow unstable updates' in online update setup."
 msgstr ""
 
+msgid "Sorry CIHelper Config is Missing"
+msgstr ""
+
 msgid "Allow unstable (untested) updates"
 msgstr ""
 
@@ -11985,6 +12006,12 @@ msgid "The saved PIN was cleared."
 msgstr ""
 
 msgid "The servicelist is reloaded."
+msgstr ""
+
+msgid "The PIN code has been saved successfully."
+msgstr ""
+
+msgid "The PIN codes you entered are different."
 msgstr ""
 
 msgid ""
@@ -13966,6 +13993,9 @@ msgid ""
 "\"%s\"?"
 msgstr ""
 
+msgid "Would you save the entered PIN %s persistent?"
+msgstr ""
+
 msgid "You can cancel the installation."
 msgstr ""
 
@@ -14620,6 +14650,9 @@ msgid "end favourites edit"
 msgstr ""
 
 msgid "enter number to jump to channel."
+msgstr ""
+
+msgid "Enter persistent PIN code"
 msgstr ""
 
 msgid ""

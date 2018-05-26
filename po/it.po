@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-26 08:25+0200\n"
-"PO-Revision-Date: 2018-05-26 08:30+0200\n"
+"POT-Creation-Date: 2018-05-26 09:38+0200\n"
+"PO-Revision-Date: 2018-05-26 09:46+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -57,6 +57,16 @@ msgstr "CH%s"
 
 msgid "CI (Common Interface) Setup"
 msgstr "CI (interfaccia comune) Installazione"
+
+msgid "CI Legacy"
+msgstr "CI Legacy"
+
+msgid ""
+"Your Hardware can detect ci mode self or work only in legacy "
+"mode."
+msgstr ""
+"Il tuo hardware può rilevare la modalità ci se stesso o "
+"lavorare solo in modalità legacy."
 
 msgid "Circular LNB"
 msgstr "LBN circolare"
@@ -600,6 +610,15 @@ msgid ""
 msgstr ""
 "Scegli se le tracce audio del canale DTS devono essere mixate "
 "in stereo."
+
+msgid "Choose dvb wait delay for ci response."
+msgstr "Scegli il ritardo di attesa del dvb per la risposta ci."
+
+msgid ""
+"Choose the CI protocol operation mode for standard ci or ciplus."
+msgstr ""
+"Scegliere la modalità operativa del protocollo CI per standard "
+"ci o ci plus."
 
 msgid ""
 "This option allows you to disable show Restart Network in "
@@ -4957,6 +4976,9 @@ msgstr "DVB-T"
 msgid "DVB-T2"
 msgstr "DVB-T2"
 
+msgid "DVB CI Delay"
+msgstr "Ritardo CI DVB"
+
 msgid "DVD data format"
 msgstr "Formato dati DVD"
 
@@ -5894,6 +5916,9 @@ msgstr "Accedi al menu principale..."
 
 msgid "Enter pin code"
 msgstr "Inserire il codice PIN"
+
+msgid "Enter PIN"
+msgstr "Inserisci il PIN"
 
 msgid "Enter the service pin"
 msgstr "Inserire il codice PIN canale"
@@ -12356,6 +12381,9 @@ msgstr ""
 "aggiornamenti unstable) a aggiornamento software di "
 "configurazione."
 
+msgid "Sorry CIHelper Config is Missing"
+msgstr "Spiacente La configurazione dell'helper è mancante"
+
 msgid "Allow unstable (untested) updates"
 msgstr "Consenti aggiornamenti instabili non testati"
 
@@ -13333,6 +13361,12 @@ msgstr "Il PIN è stato cancellato."
 
 msgid "The servicelist is reloaded."
 msgstr "L’elenco dei canali è stata ricaricata."
+
+msgid "The PIN code has been saved successfully."
+msgstr "Il codice PIN è stato salvato con successo."
+
+msgid "The PIN codes you entered are different."
+msgstr "Il codice PIN inserito è diverso."
 
 msgid ""
 "The setting 'without query' is the same as 'standard' without "
@@ -15868,6 +15902,9 @@ msgstr ""
 "volete rimuovere\n"
 "\"%s\"?"
 
+msgid "Would you save the entered PIN %s persistent?"
+msgstr "Vuoi salvare il PIN inserito %s persistente?"
+
 msgid "You can cancel the installation."
 msgstr "E' possibile annullare l'installazione."
 
@@ -16635,6 +16672,9 @@ msgstr "fine edit preferiti"
 
 msgid "enter number to jump to channel."
 msgstr "inserire il numero per passare al canale."
+
+msgid "Enter persistent PIN code"
+msgstr "Inserisci il codice PIN permanente"
 
 msgid ""
 "This allows you to set the number of digits to 5, if you have "
