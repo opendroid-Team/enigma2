@@ -2398,22 +2398,7 @@ class InfoBarSeek:
 			if self.session.nav.getCurrentlyPlayingServiceReference():
 				url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
 				name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
-			ext = ['.3g2',
-			       '.3gp',
-			       '.asf',
-		   '.asx',
-	     '.avi',
-	     '.flv',
-	     '.m2ts',
-	     '.mkv',
-	     '.mov',
-	     '.mp4',
-	     '.mpg',
-	     '.mpeg',
-	     '.rm',
-	     '.swf',
-	     '.vob',
-	     '.wmv']
+			ext = ['.3g2', '.3gp', '.asf', '.asx', '.avi', '.flv', '.m2ts', '.mkv', '.mov', '.mp4', '.mpg', '.mpeg', '.rm', '.swf', '.vob', '.wmv']
 			if self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled() and name == False and str(url).endswith(tuple(ext)):
 				return False
 		elif self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled():
@@ -2986,22 +2971,7 @@ class InfoBarTimeshiftState(InfoBarPVRState):
 	def _mayShow(self):
 		if config.usage.enableVodMode.value:
 			name = None
-			ext = ['.3g2',
-			       '.3gp',
-			       '.asf',
-		   '.asx',
-	     '.avi',
-	     '.flv',
-	     '.m2ts',
-	     '.mkv',
-	     '.mov',
-	     '.mp4',
-	     '.mpg',
-	     '.mpeg',
-	     '.rm',
-	     '.swf',
-	     '.vob',
-	     '.wmv']
+			ext = ['.3g2', '.3gp', '.asf', '.asx', '.avi', '.flv', '.m2ts', '.mkv', '.mov', '.mp4', '.mpg', '.mpeg', '.rm', '.swf', '.vob', '.wmv']
 			if self.session.nav.getCurrentlyPlayingServiceReference():
 				name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
 				url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
@@ -3036,22 +3006,7 @@ class InfoBarTimeshiftState(InfoBarPVRState):
 			readmetafile.close()
 			self.pvrStateDialog['eventname'].setText(eventname)
 		elif config.usage.enableVodMode.value:
-			ext = ['.3g2',
-			       '.3gp',
-			       '.asf',
-		   '.asx',
-	     '.avi',
-	     '.flv',
-	     '.m2ts',
-	     '.mkv',
-	     '.mov',
-	     '.mp4',
-	     '.mpg',
-	     '.mpeg',
-	     '.rm',
-	     '.swf',
-	     '.vob',
-	     '.wmv']
+			ext = ['.3g2', '.3gp', '.asf', '.asx', '.avi', '.flv', '.m2ts', '.mkv', '.mov', '.mp4', '.mpg', '.mpeg', '.rm', '.swf', '.vob', '.wmv']
 			if str(url).endswith(tuple(ext)):
 				self.pvrStateDialog['eventname'].setText(name)
 			else:
