@@ -686,6 +686,25 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
         else:
             self.close()
 
+class DevicesPanelSummary(Screen):
+	def __init__(self, session, parent):
+		Screen.__init__(self, session, parent = parent)
+		self["entry"] = StaticText("")
+		self["desc"] = StaticText("")
+		self.onShow.append(self.addWatcher)
+		self.onHide.append(self.removeWatcher)
+
+	def addWatcher(self):
+		self.parent.onChangedEntry.append(self.selectionChanged)
+		self.parent.selectionChanged()
+
+	def removeWatcher(self):
+		self.parent.onChangedEntry.remove(self.selectionChanged)
+
+	def selectionChanged(self, name, desc):
+		self["entry"].text = name
+		self["desc"].text = desc
+
 
 class UsbFormat(Screen):
     skin = '\n\t<screen position="center,center" size="580,350" title="Usb Format Wizard">\n\t\t<widget name="lab1" position="10,10" size="560,280" font="Regular;20" valign="top" transparent="1"/>\n\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="100,300" size="140,40" alphatest="on" />\n\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="340,300" size="140,40" alphatest="on" />\n\t\t<widget name="key_red" position="100,300" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t<widget name="key_green" position="340,300" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t</screen>'
