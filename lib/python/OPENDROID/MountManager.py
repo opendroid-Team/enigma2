@@ -331,7 +331,7 @@ class DeviceManager(Screen):
             if self.mountp.find('/media/hdd') < 0:
                 self.Console.ePopen('umount ' + self.device)
                 if not path.exists('/media/hdd'):
-                    mkdir('/media/hdd', 493)
+                    mkdir('/media/hdd', 0755)
                 else:
                     self.Console.ePopen('umount /media/hdd')
                 self.Console.ePopen('mount ' + self.device + ' /media/hdd')
