@@ -14,6 +14,10 @@ if VUULTIMO4K
 SUBDIRS += MiniTV QuadPip
 endif
 
+if HAVE_KODI
+SUBDIRS +=  StartKodi
+endif
+
 if VUUNO4K
 SUBDIRS += QuadPip
 endif
