@@ -1,5 +1,6 @@
 from Screens.Screen import Screen
-from Components.ConfigList import ConfigListScreen
+from Components.ConfigList import ConfigListScreen, ConfigList
+from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigSubsection, ConfigBoolean, getConfigListEntry, ConfigSelection, ConfigYesNo, ConfigIP
 from Components.Network import iNetwork
@@ -16,7 +17,7 @@ class InstallWizard(Screen, ConfigListScreen):
 
 	STATE_UPDATE = 0
 	STATE_CHOISE_CHANNELLIST = 1
-# 	STATE_CHOISE_SOFTCAM = 2
+	INSTALL_PLUGINS = 2
 
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
@@ -48,11 +49,9 @@ class InstallWizard(Screen, ConfigListScreen):
 			modes = {"opendroid": "opendroid default(13e-19e)", "19e": "Astra 1", "23e": "Astra 3", "19e-23e": "Astra 1 Astra 3", "19e-23e-28e": "Astra 1 Astra 2 Astra 3", "13e-19e-23e-28e": "Astra 1 Astra 2 Astra 3 Hotbird"}
 			self.channellist_type = ConfigSelection(choices = modes, default = "opendroid")
 			self.createMenu()
-# 		elif self.index == self.STATE_CHOISE_SOFTCAM:
-# 			self.enabled = ConfigYesNo(default = True)
-# 			modes = {"cccam": _("default") + " (CCcam)", "scam": "scam"}
-# 			self.softcam_type = ConfigSelection(choices = modes, default = "cccam")
-# 			self.createMenu()
+		elif self.index == self.INSTALL_PLUGINS:
+			self.enabled = ConfigYesNo(default = True)
+			self.createMenu()
 
 	def checkNetworkCB(self, data):
 		if data < 3:
@@ -80,10 +79,8 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Install channel list"), self.enabled))
 			if self.enabled.value:
 				self.list.append(getConfigListEntry(_("Channel list type"), self.channellist_type))
-# 		elif self.index == self.STATE_CHOISE_SOFTCAM:
-# 			self.list.append(getConfigListEntry(_("Install softcam"), self.enabled))
-# 			if self.enabled.value:
-# 				self.list.append(getConfigListEntry(_("Softcam type"), self.softcam_type))
+		elif self.index == self.INSTALL_PLUGINS:
+			self.list.append(getConfigListEntry(_("Do you want to install plugins"), self.enabled))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -100,18 +97,26 @@ class InstallWizard(Screen, ConfigListScreen):
 		self.createMenu()
 
 	def run(self):
-		if self.index == self.STATE_UPDATE:
-			if config.misc.installwizard.hasnetwork.value:
-				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), IpkgComponent.CMD_UPDATE)
-		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value and self.channellist_type.value != "opendroid":
-			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-henksat-' + self.channellist_type.value})
-# 		elif self.index == self.STATE_CHOISE_SOFTCAM and self.enabled.value:
-# 			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading softcam)'), IpkgComponent.CMD_INSTALL, {'package': 'enigma2-plugin-softcams-' + self.softcam_type.value})
+		if self.index == self.STATE_UPDATE and config.misc.installwizard.hasnetwork.value:
+			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), IpkgComponent.CMD_UPDATE)
+		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value:
+			if self.channellist_type.value == "opendroid":
+				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-henksat-' + self.channellist_type.value})
+			else:
+				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-hans-' + self.channellist_type.value})
+		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
+			from PluginBrowser import PluginDownloadBrowser
+			self.session.open(PluginDownloadBrowser, 0)
 		return
 
 
 class InstallWizardIpkgUpdater(Screen):
+	skin = """
+	<screen position="c-300,c-25" size="600,50" title=" ">
+		<widget source="statusbar" render="Label" position="10,5" zPosition="10" size="e-10,30" halign="center" valign="center" font="Regular;22" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
+	</screen>"""
 	def __init__(self, session, index, info, cmd, pkg = None):
+		self.skin = InstallWizardIpkgUpdater.skin
 		Screen.__init__(self, session)
 
 		self["statusbar"] = StaticText(info)

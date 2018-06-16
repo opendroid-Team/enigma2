@@ -1,4 +1,5 @@
 from Screen import Screen
+from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
@@ -14,11 +15,15 @@ from Components.SystemInfo import SystemInfo
 
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
-
+from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 
 from Tools.StbHardware import getFPVersion
+from enigma import ePicLoad, getDesktop, eSize, eTimer, eLabel, eConsoleAppContainer
+from Components.Pixmap import Pixmap
+from Tools.LoadPixmap import LoadPixmap
+from Components.AVSwitch import AVSwitch
 from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 import skin, os
@@ -51,10 +56,11 @@ class About(Screen):
 				"cancel": self.close,
 				"ok": self.close,
 				"log": self.showAboutReleaseNotes,
-				"blue": self.showMemoryInfo,
+				"blue": self.showModelPic,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown,
 				"green": self.showTranslationInfo,
+				"yellow": self.showMemoryInfo,
 			})
 
 	def populate(self):
@@ -67,7 +73,7 @@ class About(Screen):
 		#AboutText += _("Boxtype:\t%s\n") % getBoxType()
 
 		if path.exists('/proc/stb/info/chipset'):
-			AboutText += _("Chipset:\tBCM%s") % about.getChipSetString() + "\n"
+			AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
 
 		cmd = 'cat /proc/cpuinfo | grep "cpu MHz" -m 1 | awk -F ": " ' + "'{print $2}'"
 		cmd2 = 'cat /proc/cpuinfo | grep "BogoMIPS" -m 1 | awk -F ": " ' + "'{print $2}'"
@@ -246,6 +252,7 @@ class About(Screen):
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
+		AboutText += "\n" + _("Detected HDD:") + "\n"
 		hddlist = harddiskmanager.HDDList()
 		hdd = hddlist and hddlist[0][1] or None
 		if hdd is not None and hdd.model() != "":
@@ -280,10 +287,26 @@ class About(Screen):
 					AboutText += "   " + x
 				AboutText += "\n"
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
+#		self["key_red"] = Button(_("Devices"))
+		self["key_yellow"] = Button(_("Memory Info"))
+		self["key_blue"] = Button(_("%s ") % getMachineName() + _("picture"))
 
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions", "ChannelSelectEPGActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"info": self.showTranslationInfo,
+#				"red": self.showDevices,
+				"yellow": self.showMemoryInfo,
+				"blue": self.showModelPic,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown
+			})
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)
 
+	def showDevices(self):
+		self.session.open(Devices)
 	def showMemoryInfo(self):
 		self.session.open(MemoryInfo)
 
@@ -292,10 +315,73 @@ class About(Screen):
 
 	def createSummary(self):
 		return AboutSummary
+		
+	def showModelPic(self):
+		self.session.open(ModelPic)
+
+class ModelPic(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.skinName = ["ModelPic", "About"]
+		
+		self["key_green"] = Button(_(" "))
+		self["key_red"] = Button(_(" "))
+		self["key_yellow"] = Button(_(" "))
+		self["key_blue"] = Button(_("%s ") % (getMachineName()) + _("Info"))
+
+		self["model"] = Label(_("%s %s") % (getMachineBrand(), getMachineName()))
+		self["boxpic"] = Pixmap()
+		self.onFirstExecBegin.append(self.poster_resize)
+
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"blue": self.close
+			}, -2)
+		
+	def poster_resize(self):
+		if getBoxType() in ('sf108'):
+			model = "sf108.png"
+		elif getBoxType() in ('sf4008'):
+			model = "sf4008.png"
+		elif getBoxType() in ('sf3038'):
+			model = "sf3038.png"
+		elif getBoxType() in ('sf128'):
+			model = "sf128.png"
+		elif getBoxType() in ('sf138'):
+			model = "sf138.png"
+		elif getBoxType() in ('sf208'):
+			model = "sf208.png"
+		elif getBoxType() in ('sf228'):
+			model = "sf228.png"
+		elif getBoxType() in ('sf98'):
+			model = "sf98.png"
+		elif getBoxType() in ('zgemmah7'):
+			model = "zgemmah7.png"
+		elif getBoxType() in ('zgemmah7c'):
+			model = "zgemmah7c.png"
+		elif getBoxType() in ('zgemmah7s'):
+			model = "zgemmah7s.png"
+		else:
+			model = None
+
+		poster_path = "/usr/share/enigma2/%s" % model
+		self["boxpic"].hide()
+		sc = AVSwitch().getFramebufferScale()
+		self.picload = ePicLoad()
+		size = self["boxpic"].instance.size()
+		self.picload.setPara((size.width(), size.height(), sc[0], sc[1], False, 1, "#00000000"))
+		if self.picload.startDecode(poster_path, 0, 0, False) == 0:
+			ptr = self.picload.getData()
+			if ptr != None:
+				self["boxpic"].instance.setPixmap(ptr)
+				self["boxpic"].show()
 
 class Devices(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		self.skinName = ["Devices", "About"]
 		Screen.setTitle(self, _("Device Information"))
 		self["TunerHeader"] = StaticText(_("Detected NIMs:"))
 		self["HDDHeader"] = StaticText(_("Detected Devices:"))
@@ -765,7 +851,6 @@ class ViewGitLog(Screen):
 			'cancel': self.closeRecursive,
 			'green': self.closeRecursive,
 			"red": self.closeRecursive,
-			"blue": self.showMemoryInfo,
 			"yellow": self.changelogtype,
 			"left": self.pageUp,
 			"right": self.pageDown,
@@ -807,9 +892,6 @@ class ViewGitLog(Screen):
 		except:
 			self['title_summary'].setText("")
 			self['text_summary'].setText("")
-
-	def showMemoryInfo(self):
-		self.session.open(MemoryInfo)
 
 	def unattendedupdate(self):
 		self.close((_("Unattended upgrade without GUI and reboot system"), "cold"))
@@ -869,10 +951,15 @@ class CommitInfo(Screen):
 
 		self["key_red"] = Button(_("Cancel"))
 
+		try:
+			branch = "?sha=" + "-".join(about.getEnigmaVersionString().split("-")[3:])
+		except:
+			branch = ""
 		self.project = 0
 		self.projects = [
 			("https://api.github.com/repos/opendroid-Team/enigma2/commits", "enigma2"),
 			("https://api.github.com/repos/opendroid-Team/skins-oDreamy-FHD/commits", "oDreamy-FHD"),
+			("https://api.github.com/repos/stein17/OPD-Blue-Line/commits", "OPD-Blue-Line"),
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -943,7 +1030,9 @@ class MemoryInfo(Screen):
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
 
-		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not important."))
+		self["params"] = MemoryInfoSkinParams()
+
+		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not relevant.\nDon't panic please when you see values being displayed that you think look suspicious!"))
 
 		Typ = _("%s  ") % (getMachineName())
 		self.setTitle(Typ + "[" + (_("Memory Info"))+ "]")
@@ -1004,3 +1093,4 @@ class MemoryInfoSkinParams(HTMLComponent, GUIComponent):
 			self.skinAttributes = attribs
 		return GUIComponent.applySkin(self, desktop, screen)
 
+	GUI_WIDGET = eLabel
