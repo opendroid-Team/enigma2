@@ -429,9 +429,52 @@ class ModelPic(Screen):
 			model = "vuzero.png"
 		elif getBoxType() in ('vuzero4k'):
 		        model = "vuzero4k.png"
+		elif getBoxType() in ('gb800se'):
+			model = "gb800se.png "
+		elif getBoxType() in ('gb800seplus'):
+			model = "gb800seplus.png"
+		elif getBoxType() in ('gb800solo'):
+			model = "gb800solo.png"
+		elif getBoxType() in ('gb800ue'):
+			model = "gb800ue.png "
+		elif getBoxType() in ('gb800ueplus'):
+			model = "gb800ueplus.png"
+		elif getBoxType() in ('gbipbox'):
+			model = "gbipbox.png"
+		elif getBoxType() in ('gbquad'):
+			model = "gbquad.png"
+		elif getBoxType() in ('gbquad4k'):
+			model = "gbquad4k.png"
+		elif getBoxType() in ('gbquadplus'):
+			model = "gbquadplus.png"
+		elif getBoxType() in ('gbue4k'):
+			model = "gbue4k.png"
+		elif getBoxType() in ('gbultrase'):
+			model = "gbultrase.png"
+		elif getBoxType() in ('gbultraue'):
+			model = "gbultraue.png"
+		elif getBoxType() in ('gbx1'):
+			model = "gbx1.png"
+		elif getBoxType() in ('gbx2'):
+			model = "gbx2.png"
+		elif getBoxType() in ('gbx3'):
+			model = "gbx3.png"
+		elif getBoxType() in ('gbx3h'):
+			model = "gbx3h.png "
+		elif getBoxType() in ('dinobot4k'):
+			model = "dinobot4k.png"
+		elif getBoxType() in ('atemio5x00'):
+			model = "atemio5x00.png"
+		elif getBoxType() in ('atemio6000'):
+			model = "atemio6000.png"
+		elif getBoxType() in ('atemio6100'):
+			model = "atemio6100.png"
+		elif getBoxType() in ('atemio6200'):
+			model = "atemio6200.png"
+		elif getBoxType() in ('atemionemesis'):
+			model = "atemionemesis.png"	
 		else:
 			model = None
-
 		poster_path = "/usr/share/enigma2/%s" % model
 		self["boxpic"].hide()
 		sc = AVSwitch().getFramebufferScale()
