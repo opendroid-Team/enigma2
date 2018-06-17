@@ -473,6 +473,8 @@ class ModelPic(Screen):
 			model = "atemio6200.png"
 		elif getBoxType() in ('atemionemesis'):
 			model = "atemionemesis.png"
+		elif getBoxType() in ('mutant51'):
+			model = "mutant51.png"
 		elif getBoxType() in ('osmega'):
 			model = "osmega.png"
 		elif getBoxType() in ('osmini'):
