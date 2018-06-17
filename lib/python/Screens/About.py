@@ -363,6 +363,72 @@ class ModelPic(Screen):
 			model = "zgemmah7c.png"
 		elif getBoxType() in ('zgemmah7s'):
 			model = "zgemmah7s.png"
+		elif getBoxType() in ('zgemmah2h'):
+			model = "zgemmah2h.png"
+		elif getBoxType() in ('zgemmah2s'):
+			model = "zgemmah2s.png"
+		elif getBoxType() in ('zgemmah2splus'):
+			model = "zgemmah2splus.png"
+		elif getBoxType() in ('zgemmah32tc'):
+			model = "zgemmah32tc.png"
+		elif getBoxType() in ('zgemmah3ac'):
+			model = "zgemmah3ac.png"
+		elif getBoxType() in ('zgemmah4'):
+			model = "zgemmah4.png"
+		elif getBoxType() in ('zgemmah5'):
+			model = "zgemmah5.png"
+		elif getBoxType() in ('zgemmah52s'):
+			model = "zgemmah52s.png"
+		elif getBoxType() in ('zgemmah7'):
+			model = "zgemmah7.png"
+		elif getBoxType() in ('zgemmah7c'):
+			model = "zgemmah7c.png"
+		elif getBoxType() in ('zgemmah7s'):
+			model = "zgemmah7s.png"
+		elif getBoxType() in ('zgemmah52splus'):
+			model = "zgemmah52splus.png"
+		elif getBoxType() in ('zgemmah52tc'):
+			model = "zgemmah52tc.png"
+		elif getBoxType() in ('zgemmah5ac'):
+			model = "zgemmah5ac.png"
+		elif getBoxType() in ('zgemmah6'):
+			model = "zgemmah6.png"
+		elif getBoxType() in ('zgemmah9s'):
+			model = "zgemmah9s.png"
+		elif getBoxType() in ('zgemmah9splus'):
+			model = "zgemmah9splus.png"
+		elif getBoxType() in ('zgemmah9t'):
+			model = "zgemmah9t.png"
+		elif getBoxType() in ('zgemmahs'):
+			model = "zgemmahs.png"
+		elif getBoxType() in ('zgemmai55'):
+			model = "zgemmai55.png"
+		elif getBoxType() in ('vuduo'):
+			model = "vuduo.png "
+		elif getBoxType() in ('vuduo2'):
+			model = "vuduo2.png"
+		elif getBoxType() in ('vusolo'):
+			model = "vusolo.png"
+		elif getBoxType() in ('vusolo2'):
+			model = "vusolo2.png"
+		elif getBoxType() in ('vusolo4k'):
+			model = "vusolo4k.png"
+		elif getBoxType() in ('vusolose'):
+			model = "vusolose.png"
+		elif getBoxType() in ('vuultimo'):
+			model = "vuultimo.png"
+		elif getBoxType() in ('vuultimo4k'):
+			model = "vuultimo4k.png"
+		elif getBoxType() in ('vuuno'):
+			model = "vuuno.png"
+		elif getBoxType() in ('vuuno4k'):
+			model = "vuuno4k.png"
+		elif getBoxType() in ('vuuno4kse'):
+			model = "vuuno4kse.png"
+		elif getBoxType() in ('vuzero'):
+			model = "vuzero.png"
+		elif getBoxType() in ('vuzero4k'):
+		        model = "vuzero4k.png"
 		else:
 			model = None
 
