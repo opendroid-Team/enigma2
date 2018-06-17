@@ -472,7 +472,19 @@ class ModelPic(Screen):
 		elif getBoxType() in ('atemio6200'):
 			model = "atemio6200.png"
 		elif getBoxType() in ('atemionemesis'):
-			model = "atemionemesis.png"	
+			model = "atemionemesis.png"
+		elif getBoxType() in ('osmega'):
+			model = "osmega.png"
+		elif getBoxType() in ('osmini'):
+			model = "osmini.png"
+		elif getBoxType() in ('osminiplus'):
+			model = "osminiplus.png"
+		elif getBoxType() in ('osnino'):
+			model = "osnino.png"
+		elif getBoxType() in ('osninoplus'):
+			model = "osninoplus.png"
+		elif getBoxType() in ('osninopro'):
+			model = "osninopro.png"	
 		else:
 			model = None
 		poster_path = "/usr/share/enigma2/%s" % model
