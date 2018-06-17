@@ -339,7 +339,7 @@ class ModelPic(Screen):
 				"ok": self.close,
 				"blue": self.close
 			}, -2)
-		
+	
 	def poster_resize(self):
 		if getBoxType() in ('sf108'):
 			model = "sf108.png"
