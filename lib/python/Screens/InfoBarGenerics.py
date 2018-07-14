@@ -3561,10 +3561,14 @@ class InfoBarPiP:
 		elif "stop" == use:
 			self.showPiP()
 
-class InfoBarInstantRecord():
-
+class InfoBarInstantRecord:
+	"""Instant Record - handles the instantRecord action in order to
+	start/stop instant records"""
 	def __init__(self):
-		self['InstantRecordActions'] = HelpableActionMap(self, 'InfobarInstantRecord', {'instantRecord': (self.instantRecord, _('Instant recording...'))})
+		self["InstantRecordActions"] = HelpableActionMap(self, "InfobarInstantRecord",
+			{
+				"instantRecord": (self.instantRecord, _("Instant recording...")),
+			})
 		self.SelectedInstantServiceRef = None
 		if isStandardInfoBar(self):
 			self.recording = []
