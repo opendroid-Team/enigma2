@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-26 09:38+0200\n"
-"PO-Revision-Date: 2018-05-26 10:13+0200\n"
+"PO-Revision-Date: 2018-06-25 17:58+0200\n"
 "Last-Translator:  FULL NAME <Opendroid-Team "
 "<opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Loco-Source-Locale: it_IT\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "(higher than any auto)"
@@ -18723,3 +18723,495 @@ msgstr "Dimensione del volume audio"
 
 msgid "Audio volume step size fast mode"
 msgstr "Modalità volume audio in modalità veloce"
+
+msgid "Boot Image"
+msgstr "Boot Immagine"
+
+msgid "OPDBoot is running from:"
+msgstr "OPDBoot è in esecuzione da:"
+
+msgid "Available:"
+msgstr "A disposizione:"
+
+msgid "Number of installed images in OPDBoot:"
+msgstr "Numero di immagini installate in OPDBoot:"
+
+msgid ""
+"Here is the list of installed images in Your STB. Please choose "
+"an image to boot."
+msgstr ""
+"Ecco l'elenco delle immagini installate nel tuo STB. Si prega "
+"di scegliere un'immagine da avviare."
+
+msgid "Are you sure you want to Boot Image:\n"
+msgstr "Sei sicuro di voler avviare l'immagine:\n"
+
+msgid "Boot Confirmation"
+msgstr "Conferma Avvio"
+
+msgid "Image will be booted on the next STB boot!"
+msgstr "L'immagine verrà avviata nel prossimo avvio STB!"
+
+msgid "OPD MultiBoot_Client"
+msgstr "OPD MultiBoot_Cliente"
+
+msgid "E2 Light Multiboot"
+msgstr "E2 Multiboot Leggero"
+
+msgid "6.0"
+msgstr "6.0"
+
+msgid "6.1"
+msgstr "6.1"
+
+msgid "6.2"
+msgstr "6.2"
+
+msgid "5.3"
+msgstr "5.3"
+
+msgid "6.4"
+msgstr "6.4"
+
+msgid "5.5"
+msgstr "5.5"
+
+msgid "0.0"
+msgstr "0.0"
+
+msgid "opendroid Current"
+msgstr "corrente opendroid"
+
+msgid "Download latest opendroid Image"
+msgstr "Scarica l'ultima immagine opendroid"
+
+msgid "OpenVIX"
+msgstr "OpenVIX"
+
+msgid "Download latest OpenVIX Image"
+msgstr "Scarica l'ultima immagine di OpenVIX"
+
+msgid "Egami"
+msgstr "Egami"
+
+msgid "Download latest Egami Image"
+msgstr "Scarica l'ultima immagine di Egami"
+
+msgid "OpenATV-6.0"
+msgstr "OpenATV-6.0"
+
+msgid "Download latest OpenATV Image"
+msgstr "Scarica l'ultima immagine OpenATV"
+
+msgid "OpenPLi"
+msgstr "OpenPLi"
+
+msgid "Download latest OpenPLi Image"
+msgstr "Scarica l'ultima immagine OpenPli"
+
+msgid "OpenHDF"
+msgstr "OpenHDF"
+
+msgid "Download latest OpenHDF Image"
+msgstr "Scarica l'ultima immagine OpeHDF"
+
+msgid "OpenEight"
+msgstr "OpenEight"
+
+msgid "Download latest OpenEight Image"
+msgstr "Scarica l'ultima immagine di OpenEight"
+
+msgid "SatDreamgr"
+msgstr "SatDreamgr"
+
+msgid "Download latest SatDreamgr Image"
+msgstr "Scarica l'ultima immagine di SatDreamgr"
+
+msgid "Hdmu"
+msgstr "Hdmu"
+
+msgid "Download latest HDMU Image"
+msgstr "Scarica l'ultima immagine HDMU"
+
+msgid "PurE2"
+msgstr "PurE2"
+
+msgid "Download latest PurE2 Image"
+msgstr "Scarica l'ultima immagine di PurE2"
+
+msgid "opennfr"
+msgstr "opennfr"
+
+msgid "Download latest opennfr Image"
+msgstr "Scarica l'ultima immagine di Opennfr"
+
+msgid "OPDBoot - Download Image"
+msgstr "OPDBoot - Scarica immagine"
+
+msgid "The URL to this image is not correct !!"
+msgstr "L'URL di questa immagine non è corretto !!"
+
+msgid "Do you want to install this image now?"
+msgstr "Vuoi installare questa immagine ora?"
+
+msgid "Downloading"
+msgstr "Download"
+
+msgid "Devices Panel"
+msgstr "Pannello dei dispositivi"
+
+msgid "Welcome to OPDBoot %s MultiBoot Plugin installation."
+msgstr ""
+"Benvenuto in OPDBoot %s Installazione del plug-in MultiBoot."
+
+msgid ""
+"Here is the list of mounted devices in Your STB\n"
+"\n"
+"Please choose a device where You would like to install OPDBoot:"
+msgstr ""
+"Ecco l'elenco dei dispositivi montati nel tuo STB\n"
+"\n"
+"Si prega di scegliere un dispositivo in cui si desidera "
+"installare OPDBoot:"
+
+msgid ""
+"Sorry it seems that there are not Linux formatted devices "
+"mounted on your STB. To install OPDBoot you need a Linux "
+"formatted part1 device. Click on the blue button to open OPD "
+"Devices Panel"
+msgstr ""
+"Spiacente, sembra che non ci siano dispositivi formattati Linux "
+"montati sul tuo STB. Per installare OPDBoot è necessario un "
+"dispositivo part1 con formattazione Linux. Fare clic sul "
+"pulsante blu per aprire il pannello dei dispositivi OPD"
+
+msgid ""
+"You are not running opendroid Image. You must mount devices "
+"Your self."
+msgstr ""
+"Non stai usando l'immagine opendroid. Devi montare i "
+"dispositivi da solo."
+
+msgid ""
+"Sorry, there is not any connected devices in your STB.\n"
+"Please connect HDD or USB to install OPD Multiboot!"
+msgstr ""
+"Spiacenti, non ci sono dispositivi collegati nel tuo STB.\n"
+"Si prega di collegare HDD o USB per installare OPD Multiboot!"
+
+msgid ""
+"Do You really want to install OPDBoot in:\n"
+" "
+msgstr ""
+"Vuoi davvero installare OPDBoot in:\n"
+" "
+
+msgid "Install Confirmation"
+msgstr "Installa conferma"
+
+msgid ""
+"Do you want to use Bootmanager by booting?\n"
+"Box will reboot after choice "
+msgstr ""
+"Vuoi usare Boot Manager facendo il boot?\n"
+"IL Box si riavvierà dopo la scelta "
+
+msgid "Installation aborted !"
+msgstr "Installazione interrotta !"
+
+msgid "OPDBoot has been installed succesfully!"
+msgstr "OPDBoot è stato installato con successo!"
+
+msgid ""
+"OPDBoot has been installed succesfully, and Box rebooting now!"
+msgstr ""
+"OPDBoot è stato installato con successo e il Box si sta "
+"riavviato ora!"
+
+msgid "Install Image"
+msgstr "Installa immagine"
+
+msgid "Remove Image "
+msgstr "Rimuovi immagine "
+
+msgid "Bootsetup"
+msgstr "Bootsetup"
+
+msgid "OPDBoot is running image:"
+msgstr "OPDBoot sta girando l'immagine:"
+
+msgid "Use Bootmanager by Booting"
+msgstr "Use Bootmanager by Booting"
+
+msgid "Boot without Bootmanager"
+msgstr "Avvia senza Bootmanager"
+
+msgid "Setup Bootmanagertimeout"
+msgstr "Imposta il timeout del gestore di avvio"
+
+msgid "What would You like to do ?"
+msgstr "Cosa ti piacerebbe fare ?"
+
+msgid "OPDBoot work with Bootmanager by Booting!"
+msgstr "OPDBoot funziona con Boot Manager tramite Booting!"
+
+msgid "OPDBoot work without Bootmanager by Booting!"
+msgstr "OPDBoot funziona senza Boot Manager tramite Booting!"
+
+msgid ""
+"Sorry you cannot delete the image, is currently booted from or "
+"select for next booting"
+msgstr ""
+"Siamo spiacenti, non è possibile eliminare l'immagine, al "
+"momento è avviata o selezionata per il prossimo avvio"
+
+msgid "Sorry you cannot delete Flash image"
+msgstr "Spiacenti, non puoi eliminare l'immagine Flash"
+
+msgid ""
+"Are you sure you want to delete Image:\n"
+" "
+msgstr ""
+"Sei sicuro di voler eliminare l'immagine:\n"
+" "
+
+msgid "OPDBoot: Deleting Image"
+msgstr "OPDBoot: eliminazione dell'immagine"
+
+msgid "Removing canceled!"
+msgstr "Rimozione annullata!"
+
+msgid ""
+"The /media/opdboot/OPDBootUpload directory is EMPTY!\n"
+"\n"
+"Please upload a zip file to install"
+msgstr ""
+"La directory / media / opdboot / OPDBootUpload è VUOTA!n\n"
+"\n"
+"Si prega di caricare un file zip da installare"
+
+msgid "Sorry you can install a max of 10 images."
+msgstr "Spiacente, puoi installare un massimo di 10 immagini."
+
+msgid "Install from /media/opdboot/OPDBootUpload"
+msgstr "Installa da / media / opdboot / OPDBootUpload"
+
+msgid ""
+"Install from Internet (OpenPLi,OpenVix,OpenATV,Egami,OpenOPD,"
+"OpenHDF)"
+msgstr ""
+"Installa da Internet (OpenPLi,OpenVix,OpenATV,Egami,OpenOPD,"
+"OpenHDF)"
+
+msgid "Remove OPDBoot"
+msgstr "Rimuovere OPDBoot"
+
+msgid "Remove all installed images"
+msgstr "Rimuovi tutte le immagini installate"
+
+msgid "OPDBoot is removing..."
+msgstr "OPDBoot sta rimuovendo ..."
+
+msgid "OPDBoot: Deleting All Images"
+msgstr "OPDBoot: eliminazione di tutte le immagini"
+
+msgid "Source Image file"
+msgstr "File immagine sorgente"
+
+msgid "Image Name"
+msgstr "Nome dell'immagine"
+
+msgid "Copy Settings to the new Image"
+msgstr "Copia le impostazioni sulla nuova immagine"
+
+msgid "Boot new Image directly?"
+msgstr "Avviare direttamente la nuova immagine?"
+
+msgid "Delete Download Imagezip after Install?"
+msgstr "Elimina l'immagine di download dopo l'installazione?"
+
+msgid "Sorry, an Image with the name "
+msgstr "Scusa, un'immagine con il nome "
+
+msgid ""
+" is already installed.\n"
+" Please try another name."
+msgstr ""
+" è già installato.\n"
+"Per favore prova un altro nome."
+
+msgid ""
+"You have to select one Image to install.\n"
+"Please, upload your zip file in the folder: /media/opdboot/"
+"OPDBootUpload and select the image to install."
+msgstr ""
+"Devi selezionare un'immagine da installare.\n"
+"Per favore, carica il tuo file zip nella cartella: /media/"
+"opdboot/OPDBootUpload e selezionare l'immagine da installare."
+
+msgid "You have to provide a name for the new Image."
+msgstr "Devi fornire un nome per la nuova immagine."
+
+msgid ""
+"Sorry this name is reserved. Choose another name for the new "
+"Image."
+msgstr ""
+"Spiacente, questo nome è riservato. Scegli un altro nome per la "
+"nuova immagine."
+
+msgid "Sorry the name of the new Image is too long."
+msgstr "Spiacente, il nome della nuova immagine è troppo lungo."
+
+msgid ""
+"OPDBoot will install the new image.\n"
+"\n"
+msgstr ""
+"OPDBoot installerà la nuova immagine.\n"
+"\n"
+
+msgid ""
+"Please: DO NOT reboot your STB and turn off the power.\n"
+"\n"
+msgstr ""
+"Per favore: NON riavviare il tuo STB o spegnere la corrente.\n"
+"\n"
+
+msgid ""
+"The new image will be installed and auto booted in few "
+"minutes.\n"
+"\n"
+msgstr ""
+"La nuova immagine verrà installata e avviata automaticamente in "
+"pochi minuti.\n"
+"\n"
+
+msgid "OPDBoot: Install new image"
+msgstr "OPDBoot: installa nuova immagine"
+
+msgid ""
+"Not enough free space on /media/opdboot/ !!\n"
+"You need at least 300Mb free space.\n"
+"\n"
+"Exit plugin."
+msgstr ""
+"Spazio libero insufficiente su / media / opdboot / !!n\n"
+"Hai bisogno di almeno 300 MB di spazio libero.\n"
+"\n"
+"Esci dal plugin."
+
+msgid "Sorry: OPDBoot no work by this Box!"
+msgstr "Spiacente: OPDBoot non funziona con questo Box!"
+
+msgid ""
+"Sorry: Wrong image in flash found. You have to install in flash "
+"OPD Image"
+msgstr ""
+"Spiacenti: trovata un'immagine errata nel flash. Devi "
+"installare in Flash Opendroid Image"
+
+msgid "OPD MultiBoot"
+msgstr "OPD MultiBoot"
+
+msgid "usage: "
+msgstr "utilizzo: "
+
+msgid ".__call__() not defined"
+msgstr ".__chiamata__() non definito"
+
+msgid "unknown parser %r (choices: %s)"
+msgstr "error sconosciuto %r (scelte: %s)"
+
+msgid "argument \"-\" with mode %r"
+msgstr "discussione \"-\" con la modalità %r"
+
+msgid "can't open '%s': %s"
+msgstr "non posso aprire '%s': %s"
+
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+"non è possibile unire le azioni: vengono nominati due gruppi %r"
+
+msgid "'required' is an invalid argument for positionals"
+msgstr "'necessario' è un argomento non valido per i posizionali"
+
+msgid "invalid option string %r: must start with a character %r"
+msgstr ""
+"stringa di opzioni non valida %r: deve iniziare con un "
+"carattere %r"
+
+msgid "dest= is required for options like %r"
+msgstr "dest = è richiesto per opzioni come %r"
+
+msgid "invalid conflict_resolution value: %r"
+msgstr "conflitto invalido_valore di risoluzione: %r"
+
+msgid "conflicting option string(s): %s"
+msgstr "stringa di opzioni in conflitto(s): %s"
+
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+"gli argomenti che si escludono a vicenda devono essere "
+"facoltativi"
+
+msgid "positional arguments"
+msgstr "argomenti posizionali"
+
+msgid "optional arguments"
+msgstr "argomenti opzionali"
+
+msgid "show this help message and exit"
+msgstr "mostra questo messaggio di aiuto ed esci"
+
+msgid "show program's version number and exit"
+msgstr "mostra il numero di versione del programma ed esce"
+
+msgid "cannot have multiple subparser arguments"
+msgstr "non può avere più argomenti subparser"
+
+msgid "unrecognized arguments: %s"
+msgstr "unrecognized arguments: %s"
+
+msgid "not allowed with argument %s"
+msgstr "non consentito come argomento %s"
+
+msgid "ignored explicit argument %r"
+msgstr "argomento esplicito ignorato %r"
+
+msgid "too few arguments"
+msgstr "troppo pochi argomenti"
+
+msgid "argument %s is required"
+msgstr "discussione %s è obbligatorio"
+
+msgid "one of the arguments %s is required"
+msgstr "uno degli argomenti %s è obbligatorio"
+
+msgid "expected one argument"
+msgstr "previsto un argomento"
+
+msgid "expected at most one argument"
+msgstr "aspettato al massimo un argomento"
+
+msgid "expected at least one argument"
+msgstr "atteso almeno un argomento"
+
+msgid "expected %s argument(s)"
+msgstr "previsto %s discussione(s)"
+
+msgid "ambiguous option: %s could match %s"
+msgstr "opzione ambigua: %s potrebbe corrispondere %s"
+
+msgid "unexpected option string: %s"
+msgstr "stringa di opzioni inattese: %s"
+
+msgid "%r is not callable"
+msgstr "%r non è chiamabile"
+
+msgid "invalid %s value: %r"
+msgstr "non valido %s valore: %r"
+
+msgid "invalid choice: %r (choose from %s)"
+msgstr "scelta non valida: %r (scegli da %s)"
+
+msgid "%s: error: %s\n"
+msgstr "%s: error: %s\n"

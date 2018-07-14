@@ -482,6 +482,9 @@
 		<item level="2" text="Show translation packages" description="If set to 'yes' it will show the 'PO' packages in browser.">config.pluginbrowser.po</item>
 		<item level="2" text="Show source packages" description="If set to 'yes' it will show the 'SRC' packages in browser.">config.pluginbrowser.src</item>
 	</setup>
+	<setup key="multiboot" title="Setup Imageversion">
+		<item level="2" text="Show Imageversion" description="Select witch Imageversion to Download">config.usage.mbimageversion</item>
+	</setup>
 	<setup level="2" key="vodsetup" title="VOD Settings">
 		<item level="2" text="Enable VOD at channel list" description="If set to 'yes' it will enable PLAY,PAUSE, SEEK on channel list movies">config.usage.enableVodMode</item>
 		<item level="2" text="VOD download Directory" description="Choose where to save VOD movies">config.usage.vod_path</item>

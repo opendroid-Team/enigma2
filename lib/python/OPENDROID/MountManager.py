@@ -867,7 +867,7 @@ class UsbFormat(Screen):
         menu = []
         menu.append((_('ext2 - recommended for USB flash memory'), 'ext2'))
         menu.append((_('ext3 - recommended for HARD Disks'), 'ext3'))
-        menu.append((_('ext4 - recommended for Boot'), 'ext4'))
+        menu.append((_('ext4 - recommended for OPDBoot'), 'ext4'))
         menu.append((_('vfat - use only for media-files'), 'vfat'))
         self.session.openWithCallback(self.choiceBoxFstypeCB, ChoiceBox, title=_('Choice filesystem.'), list=menu)
 

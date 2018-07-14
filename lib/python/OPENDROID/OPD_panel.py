@@ -62,6 +62,7 @@ if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/p
 	except:
 		pass
 
+from OPENDROID.HddSetup import *
 from OPENDROID.BluePanel import *
 from Screens.CronTimer import *
 from OPENDROID.ScriptRunner import *
@@ -414,6 +415,8 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
 			self.session.open(DeviceManager)
+		elif menu == "HddSetup":
+			self.session.open(HddSetup)
 		elif menu == "OscamSmartcard":
 			self.session.open(OscamSmartcard)
 		elif menu == "SwapManager":
@@ -438,6 +441,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.oldmlist = self.Mlist
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Password-Change'), _("Password-Change"), 'Password-Change')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('MountManager'), _("MountManager"), 'MountManager')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('HddSetup'), _("HddSetup"), 'HddSetup')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('CronTimer'), _("CronManager"), 'CronTimer')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('JobManager'), _("JobManager"), 'JobManager')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('SwapManager'), _("SwapManager"), 'SwapManager')))

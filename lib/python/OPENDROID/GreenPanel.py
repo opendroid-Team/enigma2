@@ -6,11 +6,12 @@ from Components.Label import Label
 from Components.config import config, configfile
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
+from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 from Components.UsageConfig import *
+from Components.ConfigList import ConfigListScreen
 from AddonsPanel import * 
-from Plugin import *
+from Plugin import ManualPanel, InstallFeed
 import os
 from OPENDROID.OPD_panel import OPD_panel
 from Screens.Ipkg import Ipkg
