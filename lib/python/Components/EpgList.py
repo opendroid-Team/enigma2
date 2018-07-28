@@ -1,4 +1,4 @@
-from time import localtime, time, strftime
+from time import localtime, time, strftime, mktime
 
 from enigma import eEPGCache, eListbox, eListboxPythonMultiContent, loadPNG, gFont, getDesktop, eRect, eSize, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_VALIGN_TOP, RT_WRAP, BT_SCALE, BT_KEEP_ASPECT_RATIO
 
@@ -6,7 +6,7 @@ from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend, MultiContentEntryPixmapAlphaTest
 from Components.Renderer.Picon import getPiconName
-from skin import parseColor, parseFont
+from skin import parseColor, parseFont, parameters as skinparameter
 from Tools.Alternatives import CompareWithAlternatives
 from Tools.LoadPixmap import LoadPixmap
 from Components.config import config
@@ -21,9 +21,11 @@ EPG_TYPE_ENHANCED = 3
 EPG_TYPE_INFOBAR = 4
 EPG_TYPE_GRAPH = 5
 EPG_TYPE_INFOBARGRAPH = 7
+EPG_TYPE_VERTICAL = 8
 
 MAX_TIMELINES = 6
 
+sf = 1
 class Rect:
 	def __init__(self, x, y, width, height):
 		self.x = x
@@ -62,6 +64,7 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.showServiceNumber = False
 		self.skinUsingForeColorByTime = False
 		self.skinUsingBackColorByTime = False
+		self.days = (_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun"))
 
 		self.overjump_empty = overjump_empty
 		self.timer = timer
@@ -79,6 +82,8 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.l.setBuildFunc(self.buildMultiEntry)
 		elif type == EPG_TYPE_GRAPH or type == EPG_TYPE_INFOBARGRAPH:
 			self.l.setBuildFunc(self.buildGraphEntry)
+		elif type == EPG_TYPE_VERTICAL:
+			self.l.setBuildFunc(self.buildVerticalEntry)
 		else:
 			assert(type == EPG_TYPE_SIMILAR)
 			self.l.setBuildFunc(self.buildSimilarEntry)
@@ -117,6 +122,7 @@ class EPGList(HTMLComponent, GUIComponent):
 				LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, 'icons/epgclock_selpost.png'))]
 
 		self.autotimericon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, 'icons/epgclock_autotimer.png'))
+		self.primetimeicon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, 'icons/epgclock_primetime.png'))
 
 		self.nowEvPix = None
 		self.nowSelEvPix = None
@@ -161,6 +167,10 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.backColorPastSelected = 0xd69600
 		self.foreColorServiceNow = 0xffffff
 		self.backColorServiceNow = 0x00825F
+		self.foreColorTime = 0xF0A30A
+		self.backColorTime = 0x2D455E
+		self.foreColorPrimeTime = 0xffffff
+		self.backColorPrimeTime = 0x704A05
 
 		self.foreColorRecord = 0xffffff
 		self.backColorRecord = 0xd13333
@@ -177,6 +187,8 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.eventFontNameMulti = "Regular"
 		self.serviceFontNameInfobar = "Regular"
 		self.eventFontNameInfobar = "Regular"
+		self.eventFontNameVertical = "Regular"
+		self.timeFontNameVertical = "Regular"
 
 		if self.screenwidth and self.screenwidth == 1920:
 			self.serviceFontSizeGraph = 30
@@ -185,6 +197,9 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.eventFontSizeMulti = 33
 			self.serviceFontSizeInfobar = 30
 			self.eventFontSizeInfobar = 33
+			self.eventFontSizeVertical = int(30 * sf)
+			self.timeFontSizeVertical = int(32 * sf)
+
 		else:
 			self.serviceFontSizeGraph = 20
 			self.eventFontSizeGraph = 18
@@ -192,6 +207,9 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.eventFontSizeMulti = 22
 			self.serviceFontSizeInfobar = 20
 			self.eventFontSizeInfobar = 22
+			self.eventFontSizeVertical = int(18 * sf)
+			self.timeFontSizeVertical = int(20 * sf)
+
 
 		self.listHeight = None
 		self.listWidth = None
@@ -234,6 +252,14 @@ class EPGList(HTMLComponent, GUIComponent):
 					font = parseFont(value, ((1,1),(1,1)) )
 					self.eventFontNameMulti = font.family
 					self.eventFontSizeMulti = font.pointSize
+				elif attrib == "EventFontVertical":
+					font = parseFont(value, ((1,1),(1,1)) )
+					self.eventFontNameVertical = font.family
+					self.eventFontSizeVertical = font.pointSize
+				elif attrib == "TimeFontVertical":
+					font = parseFont(value, ((1,1),(1,1)) )
+					self.timeFontNameVertical = font.family
+					self.timeFontSizeVertical = font.pointSize
 				elif attrib == "EntryFontAlignment":
 					self.eventNameAlign = value
 				elif attrib == "EntryFontWrap":
@@ -280,6 +306,14 @@ class EPGList(HTMLComponent, GUIComponent):
 				elif attrib == "EntryForegroundColorPastSelected":
 					self.foreColorPastSelected = parseColor(value).argb()
 					self.skinUsingForeColorByTime = True
+				elif attrib == "TimeForegroundColor":
+					self.foreColorTime = parseColor(value).argb()
+				elif attrib == "TimeBackgroundColor":
+					self.backColorTime = parseColor(value).argb()
+				elif attrib == "PrimeTimeForegroundColor":
+					self.foreColorPrimeTime = parseColor(value).argb()
+				elif attrib == "PrimeTimeBackgroundColor":
+					self.backColorPrimeTime = parseColor(value).argb()
 
 				elif attrib == "ServiceBorderColor":
 					self.borderColorService = parseColor(value).argb()
@@ -479,14 +513,14 @@ class EPGList(HTMLComponent, GUIComponent):
 				if self.listHeight > 0:
 					itemHeight = self.listHeight / config.epgselection.graph_itemsperpage.value
 				else:
-					itemHeight = 54 # some default (270/5)
+					itemHeight = 54*sf # some default (270/5)
 				if config.epgselection.graph_heightswitch.value:
 					if ((self.listHeight / config.epgselection.graph_itemsperpage.value) / 3) >= 27:
 						tmp_itemHeight = ((self.listHeight / config.epgselection.graph_itemsperpage.value) / 3)
 					elif ((self.listHeight / config.epgselection.graph_itemsperpage.value) / 2) >= 27:
 						tmp_itemHeight = ((self.listHeight / config.epgselection.graph_itemsperpage.value) / 2)
 					else:
-						tmp_itemHeight = 27
+						tmp_itemHeight = 27*sf
 					if tmp_itemHeight < itemHeight:
 						itemHeight = tmp_itemHeight
 					else:
@@ -495,7 +529,7 @@ class EPGList(HTMLComponent, GUIComponent):
 						elif ((self.listHeight / config.epgselection.graph_itemsperpage.value) * 2) <= 45:
 							itemHeight = ((self.listHeight / config.epgselection.graph_itemsperpage.value) * 2)
 						else:
-							itemHeight = 45
+							itemHeight = 45*sf
 			elif self.type == EPG_TYPE_INFOBARGRAPH:
 				if self.listHeight > 0:
 					itemHeight = self.listHeight / config.epgselection.infobar_itemsperpage.value
@@ -503,8 +537,9 @@ class EPGList(HTMLComponent, GUIComponent):
 					itemHeight = 54 # some default (270/5)
 			if self.NumberOfRows:
 				itemHeight = self.listHeight / self.NumberOfRows
+			itemHeight = int(itemHeight)
 			self.l.setItemHeight(itemHeight)
-			self.instance.resize(eSize(self.listWidth, self.listHeight / itemHeight * itemHeight))
+			self.instance.resize(eSize(self.listWidth, int(self.listHeight / itemHeight * itemHeight)))
 			self.listHeight = self.instance.size().height()
 			self.listWidth = self.instance.size().width()
 			self.itemHeight = itemHeight
@@ -513,11 +548,12 @@ class EPGList(HTMLComponent, GUIComponent):
 			if self.listHeight > 0:
 				itemHeight = self.listHeight / config.epgselection.enhanced_itemsperpage.value
 			else:
-				itemHeight = 32
+				itemHeight = 32*sf
 			if itemHeight < 15:
-				itemHeight = 15
+				itemHeight = 15*sf
+			itemHeight = int(itemHeight)
 			self.l.setItemHeight(itemHeight)
-			self.instance.resize(eSize(self.listWidth, self.listHeight / itemHeight * itemHeight))
+			self.instance.resize(eSize(self.listWidth, int(self.listHeight / itemHeight * itemHeight)))
 			self.listHeight = self.instance.size().height()
 			self.listWidth = self.instance.size().width()
 			self.itemHeight = itemHeight
@@ -525,11 +561,12 @@ class EPGList(HTMLComponent, GUIComponent):
 			if self.listHeight > 0:
 				itemHeight = self.listHeight / config.epgselection.multi_itemsperpage.value
 			else:
-				itemHeight = 32
+				itemHeight = 32*sf
 			if itemHeight < 25:
-				itemHeight = 25
+				itemHeight = 25*sf
+			itemHeight = int(itemHeight)
 			self.l.setItemHeight(itemHeight)
-			self.instance.resize(eSize(self.listWidth, self.listHeight / itemHeight * itemHeight))
+			self.instance.resize(eSize(self.listWidth, int(self.listHeight / itemHeight * itemHeight)))
 			self.listHeight = self.instance.size().height()
 			self.listWidth = self.instance.size().width()
 			self.itemHeight = itemHeight
@@ -537,11 +574,23 @@ class EPGList(HTMLComponent, GUIComponent):
 			if self.listHeight > 0:
 				itemHeight = self.listHeight / config.epgselection.infobar_itemsperpage.value
 			else:
-				itemHeight = 32
+				itemHeight = 32*sf
 			if itemHeight < 25:
-				itemHeight = 20
-			self.l.setItemHeight(int(itemHeight))
-			self.instance.resize(eSize(self.listWidth, self.listHeight / itemHeight * itemHeight))
+				itemHeight = 20*sf
+			itemHeight = int(itemHeight)
+			self.l.setItemHeight(itemHeight)
+			self.instance.resize(eSize(self.listWidth, int(self.listHeight / itemHeight * itemHeight)))
+			self.listHeight = self.instance.size().height()
+			self.listWidth = self.instance.size().width()
+			self.itemHeight = itemHeight
+		elif self.type == EPG_TYPE_VERTICAL:
+			if self.listHeight > 0:
+				itemHeight = self.listHeight / config.epgselection.vertical_itemsperpage.value
+			else:
+				itemHeight = 90*sf
+			itemHeight = int(itemHeight)
+			self.l.setItemHeight(itemHeight)
+			self.instance.resize(eSize(self.listWidth, int(self.listHeight / itemHeight * itemHeight)))
 			self.listHeight = self.instance.size().height()
 			self.listWidth = self.instance.size().width()
 			self.itemHeight = itemHeight
@@ -560,6 +609,10 @@ class EPGList(HTMLComponent, GUIComponent):
 		elif self.type == EPG_TYPE_INFOBARGRAPH:
 			self.l.setFont(0, gFont(self.serviceFontNameInfobar, self.serviceFontSizeInfobar + config.epgselection.infobar_servfs.value))
 			self.l.setFont(1, gFont(self.eventFontNameInfobar, self.eventFontSizeInfobar + config.epgselection.infobar_eventfs.value))
+		elif self.type == EPG_TYPE_VERTICAL:
+			self.l.setFont(0, gFont(self.timeFontNameVertical, self.timeFontSizeVertical + config.epgselection.vertical_eventfs.value))
+			self.l.setFont(1, gFont(self.eventFontNameVertical, self.eventFontSizeVertical + config.epgselection.vertical_eventfs.value))
+
 
 	def postWidgetCreate(self, instance):
 		if self.type == EPG_TYPE_GRAPH or self.type == EPG_TYPE_INFOBARGRAPH:
@@ -629,6 +682,14 @@ class EPGList(HTMLComponent, GUIComponent):
 			if piconWidth > w - 2 * self.serviceBorderWidth:
 				piconWidth = w - 2 * self.serviceBorderWidth
 			self.picon_size = eSize(piconWidth, piconHeight)
+		elif self.type == EPG_TYPE_VERTICAL:
+			if self.picy > self.timeFontSizeVertical:
+				dh = self.picy
+			else:
+				dh = self.timeFontSizeVertical
+			self.line_rect = Rect(0, 0, width, int(config.epgselection.vertical_showlines.value))
+			self.datetime_rect = Rect(0, 0, width, dh)
+			self.descr_rect = Rect(0, dh, width, height-dh)
 		else:
 			self.weekday_rect = Rect(0, 0, float(width * 10) / 100, height)
 			self.datetime_rect = Rect(self.weekday_rect.width(), 0, float(width * 24) / 100, height)
@@ -1154,49 +1215,109 @@ class EPGList(HTMLComponent, GUIComponent):
 				if clock_types is not None and ewidth > 23:
 					if config.epgselection.graph_rec_icon_height.value != "hide":
 						if config.epgselection.graph_rec_icon_height.value == "middle":
-							RecIconHDheight = top+(height/2)-11
-							RecIconFHDheight = top+(height/2)-13
+							RecIconHeight = top+(height/2)-self.posy
 						elif config.epgselection.graph_rec_icon_height.value == "top":
-							RecIconHDheight = top+3
-							RecIconFHDheight = top+3
+							RecIconHeight = top + self.gap
 						else:
-							RecIconHDheight = top+height-22
-							RecIconFHDheight = top+height-26
+							RecIconHeight = top+height-self.picy - self.gap
 						if clock_types in (1,6,11):
-							if self.screenwidth and self.screenwidth == 1920:
-								pos = (left+xpos+ewidth-15, RecIconFHDheight)
-							else:
-								pos = (left+xpos+ewidth-13, RecIconHDheight)
+							pos = (left+xpos+ewidth-self.picx, RecIconHeight)
 						elif clock_types in (5,10,15):
-							if self.screenwidth and self.screenwidth == 1920:
-								pos = (left+xpos-26, RecIconFHDheight)
-							else:
-								pos = (left+xpos-22, RecIconHDheight)
+							pos = (left+xpos-self.picx - self.posx, RecIconHeight)
 						else:
-							if self.screenwidth and self.screenwidth == 1920:
-								pos = (left+xpos+ewidth-26, RecIconFHDheight)
-							else:
-								pos = (left+xpos+ewidth-22, RecIconHDheight)
-						if self.screenwidth and self.screenwidth == 1920:
-							res.append(MultiContentEntryPixmapAlphaBlend(
-								pos = pos, size = (25, 25),
-								png = clocks))
-						else:
-							res.append(MultiContentEntryPixmapAlphaBlend(
-								pos = pos, size = (21, 21),
-								png = clocks))
+							pos = (left+xpos+ewidth-self.picx - self.posx, RecIconHeight)
+						res.append(MultiContentEntryPixmapAlphaBlend(
+							pos = pos, size = (self.picx, self.picy),
+							png = clocks))
 						if self.wasEntryAutoTimer and clock_types in (2,7,12):
-							if self.screenwidth and self.screenwidth == 1920:
-								res.append(MultiContentEntryPixmapAlphaBlend(
-									pos = (pos[0]-25,pos[1]), size = (25, 25),
-									png = self.autotimericon))
-							else:
-								res.append(MultiContentEntryPixmapAlphaBlend(
-									pos = (pos[0]-21,pos[1]), size = (21, 21),
-									png = self.autotimericon))
+							res.append(MultiContentEntryPixmapAlphaBlend(
+								pos = (pos[0]-self.picx - self.gap,pos[1]), size = (self.picx, self.picy),
+								png = self.autotimericon))
 		return res
 
-	def getSelectionPosition(self,serviceref):
+	def buildVerticalEntry(self, service, eventId, beginTime, duration, EventName):
+		if self.listSizeWidth != self.l.getItemSize().width(): #recalc size if scrollbar is shown
+			self.recalcEntrySize()
+
+		if (beginTime is not None) and (beginTime+duration < time()):
+			foreColor = self.foreColorPast
+			backColor = self.backColorPast
+			foreColorSel = self.foreColorPastSelected
+			backColorSel = self.backColorPastSelected
+		elif (beginTime is not None) and (beginTime < time()):
+			foreColor = self.foreColorNow
+			backColor = self.backColorNow
+			foreColorSel = self.foreColorNowSelected
+			backColorSel = self.backColorNowSelected
+		else:
+			foreColor = self.foreColor
+			backColor = self.backColor
+			foreColorSel = self.foreColorSelected
+			backColorSel = self.backColorSelected
+
+		#don't apply new defaults to old skins:
+		if not self.skinUsingForeColorByTime:
+			foreColor = None
+			foreColorSel = None
+		if not self.skinUsingBackColorByTime:
+			backColor = None
+			backColorSel = None
+
+		foreColorTime = self.foreColorTime
+		foreColorPrimeTime = self.foreColorPrimeTime
+		backColorTime = self.backColorTime
+		backColorPrimeTime = self.backColorPrimeTime
+		borderColor = self.borderColor
+
+		r1=self.line_rect
+		r2=self.datetime_rect
+		r3=self.descr_rect
+
+		clock_types = self.getPixmapForEntry(service, eventId, beginTime, duration)
+
+		if beginTime is None:
+			beginTime = time()
+			duration = beginTime + 3600
+		elif duration is None:
+			duration = beginTime + 3600
+
+		t = localtime(beginTime)
+		primetime = mktime((t[0],t[1],t[2],config.epgselection.vertical_primetimehour.value,config.epgselection.vertical_primetimemins.value,0,t[6],t[7],t[8]))
+		pt = (primetime >= beginTime and primetime < beginTime+duration)
+		if pt:
+			foreColor = foreColorPrimeTime
+			backColor = backColorPrimeTime
+		res = [
+			None,
+			(eListboxPythonMultiContent.TYPE_TEXT, r3.x, r3.y, r3.w, r3.h, 0, RT_HALIGN_LEFT, ' ', foreColor, foreColorSel, backColor, backColorSel),			#//background event
+			(eListboxPythonMultiContent.TYPE_TEXT, r2.x, r2.y, r2.w, r2.h, 0, RT_HALIGN_LEFT, ' ', foreColorTime, foreColorSel, backColorTime, backColorSel),	#//background time
+			]
+		if pt:
+			res.extend((
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r2.x+self.posx, r2.h/2-self.posy, self.picx, self.picy, self.primetimeicon),
+				(eListboxPythonMultiContent.TYPE_TEXT, r2.x+self.posx*3+self.picx, r2.y, r2.w-(self.posx*3+self.picx), r2.h, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, ("%02d.%02d"%(t[2],t[1]) + " " + self.days[t[6]]) + " " + ("%02d:%02d"%(t[3],t[4])), foreColorTime, foreColorSel, backColorTime, backColorSel),
+			))
+		else:
+			res.extend((
+				(eListboxPythonMultiContent.TYPE_TEXT, r2.x+self.posx, r2.y, r2.w-self.posx, r2.h, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, ("%02d.%02d"%(t[2],t[1]) + " " + self.days[t[6]]) + " " + ("%02d:%02d"%(t[3],t[4])), foreColorTime, foreColorSel, backColorTime, backColorSel),
+			))
+		if clock_types:
+			if self.wasEntryAutoTimer and clock_types in (2,7,12):
+				res.extend((
+					(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r2.w-self.picx*2-self.posx*2, r2.h/2-self.posy, self.picx, self.picy, self.autotimericon),
+					(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r2.w-self.picx-self.posx, r2.h/2-self.posy, self.picx, self.picy, self.clocks[clock_types]),
+				))
+			else:
+				res.extend((
+					(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r2.w-self.picx-self.posx, r2.h/2-self.posy, self.picx, self.picy, self.clocks[clock_types]),
+				))
+		res.extend((
+				(eListboxPythonMultiContent.TYPE_TEXT, r1.x, r1.y, r1.w, r1.h, 0, RT_HALIGN_LEFT, ' ', foreColor, foreColorSel, borderColor, borderColor),		#//parting line
+				(eListboxPythonMultiContent.TYPE_TEXT, r3.x+self.posx, r3.y, r3.w-self.posx, r3.h, 1, RT_HALIGN_LEFT|RT_WRAP, EventName, foreColor, foreColorSel, backColor, backColorSel)
+				))
+		return res
+
+	def getSelectionPosition(self,serviceref, activeList = 1):
 		if self.type == EPG_TYPE_GRAPH:
 			indx = int(self.getIndexFromService(serviceref))
 			selx = self.select_rect.x+self.select_rect.w
@@ -1222,6 +1343,11 @@ class EPGList(HTMLComponent, GUIComponent):
 			selx = self.listWidth
 			while indx+1 > config.epgselection.infobar_itemsperpage.value:
 				indx = indx - config.epgselection.infobar_itemsperpage.value
+		elif self.type == EPG_TYPE_VERTICAL:
+			indx = int(self.l.getCurrentSelectionIndex())
+			selx = self.listWidth * activeList
+			while indx+1 > config.epgselection.vertical_itemsperpage.value:
+				indx = indx - config.epgselection.vertical_itemsperpage.value
 		pos = self.instance.position().y()
 		sely = int(pos)+(int(self.itemHeight)*int(indx))
 		temp = int(self.instance.position().y())+int(self.listHeight)
@@ -1263,6 +1389,10 @@ class EPGList(HTMLComponent, GUIComponent):
 			elif dir == -2: #prev
 				if self.offs > 0:
 					self.offs -= 1
+					self.fillGraphEPG(None) # refill
+					return True
+				elif self.time_base > time():
+					self.time_base -= self.time_epoch * 60
 					self.fillGraphEPG(None) # refill
 					return True
 			elif dir == +24:
@@ -1318,9 +1448,12 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.l.setList(self.list)
 		self.selectionChanged()
 
-	def fillSingleEPG(self, service):
-		t = time()
-		epg_time = t - config.epg.histminutes.value*60
+	def fillSingleEPG(self, service, stime = None):
+		if stime is not None:
+			t = epg_time = int(stime)
+		else:
+			t = time()
+			epg_time = t - config.epg.histminutes.value*60
 		test = [ 'RIBDT', (service.ref.toString(), 0, epg_time, -1) ]
 		self.list = self.queryEPG(test)
 		self.l.setList(self.list)
@@ -1331,6 +1464,8 @@ class EPGList(HTMLComponent, GUIComponent):
 				if t < x[2]+x[3]:
 					break
 			self.instance.moveSelectionTo(idx-1)
+		else:
+			self.instance.moveSelectionTo(0)
 		self.selectionChanged()
 
 	def fillMultiEPG(self, services, stime=None):
@@ -1387,6 +1522,8 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.time_base = int(stime)
 		if services is None:
 			time_base = self.time_base + self.offs * self.time_epoch * 60
+			self.time_base = time_base
+			self.offs = 0
 			test = [ (service[0], 0, time_base, self.time_epoch) for service in self.list ]
 			serviceList = self.list
 			piconIdx = 3
