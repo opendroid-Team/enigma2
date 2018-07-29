@@ -1,4 +1,4 @@
 installdir = $(pkglibdir)/python/OPENDROID
 
-SUBDIRS = icons bin
+SUBDIRS = icons
 install_PYTHON = *.py setup.xml
