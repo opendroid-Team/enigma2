@@ -260,6 +260,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		if Check_SysSoftcam() is "oscam":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("OScamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
+		self.Mlist.append(MenuEntryItem((InfoEntryComponent('opdBootLogoSelector'), _('opdBootLogo-Setup'), 'opdBootLogoSelector')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('LogManager'), _('Log-Manager'), 'LogManager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftwareManager'), _('Software-Manager'), 'software-manager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('services'), _('services'), 'services')))
@@ -384,6 +385,9 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "Decoding_Setup":
 			from OPENDROID.GreenPanel import DecodingSetup
 			self.session.open(DecodingSetup)
+		elif menu == "opdBootLogoSelector":
+			from OPENDROID.OPD_Bootlogo import opdBootLogoSelector
+			self.session.open(opdBootLogoSelector)
 		elif menu == "JobManager":
 			self.session.open(ScriptRunner)
 		elif menu == "software-manager":
