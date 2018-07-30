@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
-"POT-Revision-Date: 2018-05-22 07:13+0200\n"
+"POT-Revision-Date: 2018-07-30 09:42+0200\n"
 
 msgid "(higher than any auto)"
 msgstr ""
@@ -514,6 +514,9 @@ msgstr ""
 msgid "Stop Timeshift"
 msgstr ""
 
+msgid "Stop and delete recording:"
+msgstr ""
+
 msgid ""
 "If the free space is less than setting value, then an attempt is made to "
 "delete the old timeshift files."
@@ -740,7 +743,10 @@ msgstr ""
 msgid "Hard disk standby in box standby after"
 msgstr ""
 
-msgid "Use automatic mode detection.\n This option reads all supported modes from your TV.\n Please disable it only if you want to customize the preferred configuration."
+msgid ""
+"Use automatic mode detection.\n"
+" This option reads all supported modes from your TV.\n"
+" Please disable it only if you want to customize the preferred configuration."
 msgstr ""
 
 msgid "Use Harddisk Hardware Standby Timer"
@@ -780,7 +786,13 @@ msgstr ""
 msgid "Video mode: %s"
 msgstr ""
 
-msgid "Video input selection\n\nPlease press OK if you can see this page on your TV (or select a different input port).\n\nThe next input port will be automatically probed in 10 seconds."
+msgid ""
+"Video input selection\n"
+"\n"
+"Please press OK if you can see this page on your TV (or select a different "
+"input port).\n"
+"\n"
+"The next input port will be automatically probed in 10 seconds."
 msgstr ""
 
 msgid "Eventname only"
@@ -16436,6 +16448,9 @@ msgstr ""
 msgid "Protect timer menu"
 msgstr ""
 
+msgid "Protect OPD_panel"
+msgstr ""
+
 msgid "SCPC optimized search range"
 msgstr ""
 
@@ -16565,4 +16580,441 @@ msgid "Audio volume step size"
 msgstr ""
 
 msgid "Audio volume step size fast mode"
+msgstr ""
+
+msgid "Boot Image"
+msgstr ""
+
+msgid "OPDBoot is running from:"
+msgstr ""
+
+msgid "Available:"
+msgstr ""
+
+msgid "Number of installed images in OPDBoot:"
+msgstr ""
+
+msgid ""
+"Here is the list of installed images in Your STB. Please choose an image to "
+"boot."
+msgstr ""
+
+msgid ""
+"Are you sure you want to Boot Image:\n"
+msgstr ""
+
+msgid "Boot Confirmation"
+msgstr ""
+
+msgid "Image will be booted on the next STB boot!"
+msgstr ""
+
+msgid "OPD MultiBoot_Client"
+msgstr ""
+
+msgid "E2 Light Multiboot"
+msgstr ""
+
+msgid "6.0"
+msgstr ""
+
+msgid "6.1"
+msgstr ""
+
+msgid "6.2"
+msgstr ""
+
+msgid "5.3"
+msgstr ""
+
+msgid "6.4"
+msgstr ""
+
+msgid "5.5"
+msgstr ""
+
+msgid "0.0"
+msgstr ""
+
+msgid "opendroid Current"
+msgstr ""
+
+msgid "Download latest opendroid Image"
+msgstr ""
+
+msgid "OpenVIX"
+msgstr ""
+
+msgid "Download latest OpenVIX Image"
+msgstr ""
+
+msgid "Egami"
+msgstr ""
+
+msgid "Download latest Egami Image"
+msgstr ""
+
+msgid "OpenATV-6.0"
+msgstr ""
+
+msgid "Download latest OpenATV Image"
+msgstr ""
+
+msgid "OpenPLi"
+msgstr ""
+
+msgid "Download latest OpenPLi Image"
+msgstr ""
+
+msgid "OpenHDF"
+msgstr ""
+
+msgid "Download latest OpenHDF Image"
+msgstr ""
+
+msgid "OpenEight"
+msgstr ""
+
+msgid "Download latest OpenEight Image"
+msgstr ""
+
+msgid "SatDreamgr"
+msgstr ""
+
+msgid "Download latest SatDreamgr Image"
+msgstr ""
+
+msgid "Hdmu"
+msgstr ""
+
+msgid "Download latest HDMU Image"
+msgstr ""
+
+msgid "PurE2"
+msgstr ""
+
+msgid "Download latest PurE2 Image"
+msgstr ""
+
+msgid "opennfr"
+msgstr ""
+
+msgid "Download latest opennfr Image"
+msgstr ""
+
+msgid "OPDBoot - Download Image"
+msgstr ""
+
+msgid "The URL to this image is not correct !!"
+msgstr ""
+
+msgid "Do you want to install this image now?"
+msgstr ""
+
+msgid "Downloading"
+msgstr ""
+
+msgid "Devices Panel"
+msgstr ""
+
+msgid "Welcome to OPDBoot %s MultiBoot Plugin installation."
+msgstr ""
+
+msgid ""
+"Here is the list of mounted devices in Your STB\n"
+"\n"
+"Please choose a device where You would like to install OPDBoot:"
+msgstr ""
+
+msgid ""
+"OPDBoot is still installed!\n"
+"Now removing OPDBoot and reboot the box. After reboot FlashLocal is "
+"available.\n"
+"Your installed images are not deleted and available after re-installing "
+"OPDBoot again."
+msgstr ""
+
+msgid ""
+"Sorry it seems that there are not Linux formatted devices mounted on your "
+"STB. To install OPDBoot you need a Linux formatted part1 device. Click on "
+"the blue button to open OPD Devices Panel"
+msgstr ""
+
+msgid "You are not running opendroid Image. You must mount devices Your self."
+msgstr ""
+
+msgid ""
+"Sorry, there is not any connected devices in your STB.\n"
+"Please connect HDD or USB to install OPD Multiboot!"
+msgstr ""
+
+msgid ""
+"Do You really want to install OPDBoot in:\n"
+" "
+msgstr ""
+
+msgid "Install Confirmation"
+msgstr ""
+
+msgid ""
+"Do you want to use Bootmanager by booting?\n"
+"Box will reboot after choice "
+msgstr ""
+
+msgid "Installation aborted !"
+msgstr ""
+
+msgid "OPDBoot has been installed succesfully!"
+msgstr ""
+
+msgid "OPDBoot has been installed succesfully, and Box rebooting now!"
+msgstr ""
+
+msgid "Install Image"
+msgstr ""
+
+msgid "Remove Image "
+msgstr ""
+
+msgid "Bootsetup"
+msgstr ""
+
+msgid "OPDBoot is running image:"
+msgstr ""
+
+msgid "Use Bootmanager by Booting"
+msgstr ""
+
+msgid "Boot without Bootmanager"
+msgstr ""
+
+msgid "Setup Bootmanagertimeout"
+msgstr ""
+
+msgid "What would You like to do ?"
+msgstr ""
+
+msgid "OPDBoot work with Bootmanager by Booting!"
+msgstr ""
+
+msgid "OPDBoot work without Bootmanager by Booting!"
+msgstr ""
+
+msgid ""
+"Sorry you cannot delete the image, is currently booted from or select for "
+"next booting"
+msgstr ""
+
+msgid "Sorry you cannot delete Flash image"
+msgstr ""
+
+msgid ""
+"Are you sure you want to delete Image:\n"
+" "
+msgstr ""
+
+msgid "OPDBoot: Deleting Image"
+msgstr ""
+
+msgid "Removing canceled!"
+msgstr ""
+
+msgid ""
+"The /media/opdboot/OPDBootUpload directory is EMPTY!\n"
+"\n"
+"Please upload a zip file to install"
+msgstr ""
+
+msgid "Sorry you can install a max of 10 images."
+msgstr ""
+
+msgid "Install from /media/opdboot/OPDBootUpload"
+msgstr ""
+
+msgid "Install from Internet (OpenPLi,OpenVix,OpenATV,Egami,OpenOPD,OpenHDF)"
+msgstr ""
+
+msgid "Remove OPDBoot"
+msgstr ""
+
+msgid "Remove all installed images"
+msgstr ""
+
+msgid "OPDBoot is removing..."
+msgstr ""
+
+msgid "OPDBoot: Deleting All Images"
+msgstr ""
+
+msgid "Source Image file"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
+msgid "Copy Settings to the new Image"
+msgstr ""
+
+msgid "Boot new Image directly?"
+msgstr ""
+
+msgid "Delete Download Imagezip after Install?"
+msgstr ""
+
+msgid "Sorry, an Image with the name "
+msgstr ""
+
+msgid ""
+" is already installed.\n"
+" Please try another name."
+msgstr ""
+
+msgid ""
+"You have to select one Image to install.\n"
+"Please, upload your zip file in the folder: /media/opdboot/OPDBootUpload and "
+"select the image to install."
+msgstr ""
+
+msgid "You have to provide a name for the new Image."
+msgstr ""
+
+msgid "Sorry this name is reserved. Choose another name for the new Image."
+msgstr ""
+
+msgid "Sorry the name of the new Image is too long."
+msgstr ""
+
+msgid ""
+"OPDBoot will install the new image.\n"
+"\n"
+msgstr ""
+
+msgid ""
+"Please: DO NOT reboot your STB and turn off the power.\n"
+"\n"
+msgstr ""
+
+msgid ""
+"The new image will be installed and auto booted in few minutes.\n"
+"\n"
+msgstr ""
+
+msgid "OPDBoot: Install new image"
+msgstr ""
+
+msgid ""
+"Not enough free space on /media/opdboot/ !!\n"
+"You need at least 300Mb free space.\n"
+"\n"
+"Exit plugin."
+msgstr ""
+
+msgid "Sorry: OPDBoot no work by this Box!"
+msgstr ""
+
+msgid ""
+"Sorry: Wrong image in flash found. You have to install in flash OPD Image"
+msgstr ""
+
+msgid "OPD MultiBoot"
+msgstr ""
+
+msgid "usage: "
+msgstr ""
+
+msgid ".__call__() not defined"
+msgstr ""
+
+msgid "unknown parser %r (choices: %s)"
+msgstr ""
+
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+msgid "can't open '%s': %s"
+msgstr ""
+
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+msgid "invalid option string %r: must start with a character %r"
+msgstr ""
+
+msgid "dest= is required for options like %r"
+msgstr ""
+
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+msgid "conflicting option string(s): %s"
+msgstr ""
+
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+msgid "positional arguments"
+msgstr ""
+
+msgid "optional arguments"
+msgstr ""
+
+msgid "show this help message and exit"
+msgstr ""
+
+msgid "show program's version number and exit"
+msgstr ""
+
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+msgid "not allowed with argument %s"
+msgstr ""
+
+msgid "ignored explicit argument %r"
+msgstr ""
+
+msgid "too few arguments"
+msgstr ""
+
+msgid "argument %s is required"
+msgstr ""
+
+msgid "one of the arguments %s is required"
+msgstr ""
+
+msgid "expected one argument"
+msgstr ""
+
+msgid "expected at most one argument"
+msgstr ""
+
+msgid "expected at least one argument"
+msgstr ""
+
+msgid "expected %s argument(s)"
+msgstr ""
+
+msgid "ambiguous option: %s could match %s"
+msgstr ""
+
+msgid "unexpected option string: %s"
+msgstr ""
+
+msgid "%r is not callable"
+msgstr ""
+
+msgid "invalid %s value: %r"
+msgstr ""
+
+msgid "invalid choice: %r (choose from %s)"
+msgstr ""
+
+msgid ""
+"%s: error: %s\n"
 msgstr ""

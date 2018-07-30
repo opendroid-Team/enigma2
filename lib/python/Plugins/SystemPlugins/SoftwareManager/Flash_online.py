@@ -1,4 +1,5 @@
 from Plugins.SystemPlugins.Hotplug.plugin import hotplugNotifier
+from Plugins.Extensions.OPDBoot.plugin import *
 from Components.Button import Button
 from Components.config import config
 
@@ -110,6 +111,11 @@ class FlashOnline(Screen):
 			print "[Flash Online] MULTI:",self.multi
 
 	def check_hdd(self):
+		if os.path.exists("/media/opdboot"):
+			message = _('OPDBoot is still installed!\nNow removing OPDBoot and reboot the box. After reboot FlashLocal is available.\nYour installed images are not deleted and available after re-installing OPDBoot again.')
+			ybox = self.session.openWithCallback(self.removeopdboot, MessageBox, message, MessageBox.TYPE_YESNO)
+			ybox.setTitle(_('Remove OPDBoot'))
+			return False
 		if not os.path.exists("/media/hdd"):
 			self.session.open(MessageBox, _("No /hdd found !!\nPlease make sure you have a HDD mounted.\n\nExit plugin."), type = MessageBox.TYPE_ERROR)
 			return False
@@ -135,6 +141,31 @@ class FlashOnline(Screen):
 		except:
 			pass
 		return True
+
+	def removeopdboot(self, yesno):
+		if yesno:
+			f = file('/etc/fstab','r')
+			lines = f.readlines()
+			f.close()
+			for line in lines:
+				if "/media/opdboot" in line:
+					lines.remove(line)
+			os.system("rm /etc/fstab")
+			f = file('/etc/fstab','w')  
+			for l in lines:
+				f.write(l)
+			f.close()
+			os.system('rm /sbin/opdinit')
+			os.system('rm /sbin/init')
+			os.system('ln -sfn /sbin/init.sysvinit /sbin/init')
+			os.system('chmod 777 /sbin/init')
+			os.system('mv /etc/init.d/volatile-media.sh.back /etc/init.d/volatile-media.sh')
+			os.system('rm /media/opdboot/OPDBootI/.opdboot')
+			os.system('rm /media/opdboot/OPDBootI/.Flash')
+			os.system('rm /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location')
+			os.system('reboot -p')
+		else:
+			return
 
 	def quit(self):
 		self.close()
@@ -469,6 +500,7 @@ class doFlashImage(Screen):
 	def Start_Flashing(self):
 		print "Start Flashing"
 		cmdlist = []
+		os.system('rm /sbin/init;ln -sfn /sbin/init.sysvinit /sbin/init')		
 		if os.path.exists(ofgwritePath):
 			text = _("Flashing: ")
 			if self.simulate:
