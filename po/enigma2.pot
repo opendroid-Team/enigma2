@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pot-Based-Opendroid-Images.\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-16 09:41+0100\n"
+"POT-Creation-Date: 2018-05-22 07:13+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail."
 "com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
-"PO-Revision-Date: \n"
+"POT-Revision-Date: 2018-07-30 09:42+0200\n"
 
 msgid "(higher than any auto)"
 msgstr ""
@@ -55,6 +55,12 @@ msgid "CH%s"
 msgstr ""
 
 msgid "CI (Common Interface) Setup"
+msgstr ""
+
+msgid "CI Legacy"
+msgstr ""
+
+msgid "Your Hardware can detect ci mode self or work only in legacy mode."
 msgstr ""
 
 msgid "Circular LNB"
@@ -508,6 +514,9 @@ msgstr ""
 msgid "Stop Timeshift"
 msgstr ""
 
+msgid "Stop and delete recording:"
+msgstr ""
+
 msgid ""
 "If the free space is less than setting value, then an attempt is made to "
 "delete the old timeshift files."
@@ -533,6 +542,12 @@ msgid ""
 msgstr ""
 
 msgid "Choose whether DTS channel sound tracks should be downmixed to stereo."
+msgstr ""
+
+msgid "Choose dvb wait delay for ci response."
+msgstr ""
+
+msgid "Choose the CI protocol operation mode for standard ci or ciplus."
 msgstr ""
 
 msgid ""
@@ -728,6 +743,12 @@ msgstr ""
 msgid "Hard disk standby in box standby after"
 msgstr ""
 
+msgid ""
+"Use automatic mode detection.\n"
+" This option reads all supported modes from your TV.\n"
+" Please disable it only if you want to customize the preferred configuration."
+msgstr ""
+
 msgid "Use Harddisk Hardware Standby Timer"
 msgstr ""
 
@@ -763,6 +784,15 @@ msgid "Video mode: 1080p also not available"
 msgstr ""
 
 msgid "Video mode: %s"
+msgstr ""
+
+msgid ""
+"Video input selection\n"
+"\n"
+"Please press OK if you can see this page on your TV (or select a different "
+"input port).\n"
+"\n"
+"The next input port will be automatically probed in 10 seconds."
 msgstr ""
 
 msgid "Eventname only"
@@ -1150,6 +1180,9 @@ msgstr[1] ""
 msgid "%d minutes"
 msgstr ""
 
+msgid "%d of %d kBytes"
+msgstr ""
+
 msgid "%d pixel wide"
 msgid_plural "%d pixels wide"
 msgstr[0] ""
@@ -1194,6 +1227,9 @@ msgstr ""
 
 msgid ""
 "%s (%s)\n"
+msgstr ""
+
+msgid "%s additional screens"
 msgstr ""
 
 msgid "%s is no longer used. Should it be deleted?"
@@ -1740,6 +1776,16 @@ msgid ""
 "Do you want to keep your modifications?"
 msgstr ""
 
+msgid "Always include ECM in recordings"
+msgstr ""
+
+msgid ""
+"Always include ECM messages in recordings. This overrides the individual "
+"timer settings globally. It allows recordings to be always decrypted "
+"afterwards (sometimes called offline decoding), if supported by your "
+"receiver. Default: off."
+msgstr ""
+
 #, python-format
 msgid ""
 "A configuration file (%s) was modified since Installation.\n"
@@ -1760,6 +1806,13 @@ msgid ""
 msgstr ""
 
 msgid "Configure the general audio volume step size (limit 1-10)."
+msgstr ""
+
+msgid ""
+"Configure how recording filenames are constructed. Standard: Date Time - "
+"Channel - Title Very very short: Title Very short: Title - Date Time Short "
+"with time: Date Time - Title Short: Date - Title Long: Date Time - Channel - "
+"Title - Info"
 msgstr ""
 
 #, python-format
@@ -1923,7 +1976,11 @@ msgid ""
 "Do you want to disable the second network interface?"
 msgstr ""
 
-#, python-format
+msgid ""
+"A sleep timer wants to set your %s %s to standby.\n"
+"Do that now or set extend additional minutes?"
+msgstr ""
+
 msgid ""
 "A sleep timer wants to set your\n"
 "%s %s to standby. Do that now?"
@@ -2315,6 +2372,12 @@ msgstr ""
 msgid "Allow IPK Upload"
 msgstr ""
 
+msgid "Allow 10bit"
+msgstr ""
+
+msgid "Allow 12bit"
+msgstr ""
+
 msgid "Disable all updates*"
 msgstr ""
 
@@ -2395,6 +2458,9 @@ msgid "Channel name wide"
 msgstr ""
 
 msgid "Show record indicator"
+msgstr ""
+
+msgid "Show blinking Clock in Standby on Display during recording"
 msgstr ""
 
 msgid "Red colored"
@@ -3173,6 +3239,12 @@ msgstr ""
 msgid "Change bouquets in quickzap"
 msgstr ""
 
+msgid "Infos"
+msgstr ""
+
+msgid "In the Standby blinking Clock on the LCD Display"
+msgstr ""
+
 msgid "Extended NumberZap"
 msgstr ""
 
@@ -3231,6 +3303,12 @@ msgid "Change timer"
 msgstr ""
 
 msgid "Change to bouquet"
+msgstr ""
+
+msgid "Change settings for your switch modes: single lnb, tonburst or diseqc"
+msgstr ""
+
+msgid "Change Configuration mode simple to advanced"
 msgstr ""
 
 msgid "Changelog"
@@ -3601,6 +3679,10 @@ msgstr ""
 msgid "Configure the DiSEqC mode for this LNB."
 msgstr ""
 
+msgid ""
+"Configure default setting for new timers. Need a restart after changing."
+msgstr ""
+
 msgid "Configure the IP address."
 msgstr ""
 
@@ -3701,6 +3783,9 @@ msgid "Configure the function of the <  > buttons."
 msgstr ""
 
 msgid "Configure the function of the &lt;  &gt; buttons."
+msgstr ""
+
+msgid "Configure the alignment of events."
 msgstr ""
 
 msgid "Select what you want the Bookmark button to activate:"
@@ -4270,6 +4355,9 @@ msgstr ""
 msgid "DVB-T2"
 msgstr ""
 
+msgid "DVB CI Delay"
+msgstr ""
+
 msgid "DVD data format"
 msgstr ""
 
@@ -4836,6 +4924,11 @@ msgstr ""
 msgid "If you really want to try the update without backup, press Yes."
 msgstr ""
 
+msgid ""
+"If you have activated HDMI-CEC, you can specify here whether a 'zap and "
+"record' timer also turns on the TV."
+msgstr ""
+
 #, python-format
 msgid "Done - Installed, upgraded or removed %d package (%s)"
 msgid_plural "Done - Installed, upgraded or removed %d packages (%s)"
@@ -5123,6 +5216,9 @@ msgid "Enter main menu..."
 msgstr ""
 
 msgid "Enter pin code"
+msgstr ""
+
+msgid "Enter PIN"
 msgstr ""
 
 msgid "Enter the service pin"
@@ -5552,6 +5648,12 @@ msgstr ""
 msgid "Force UnInstall"
 msgstr ""
 
+msgid "force enabled"
+msgstr ""
+
+msgid "force disabled"
+msgstr ""
+
 msgid "Automatic resolution label"
 msgstr ""
 
@@ -5600,6 +5702,21 @@ msgid ""
 msgstr ""
 
 msgid "This option allows you to Power Off the display."
+msgstr ""
+
+msgid "This option allows you can enable or disable the 10 Bit Color Mode"
+msgstr ""
+
+msgid "This option allows you can enable or disable the 12 Bit Color Mode"
+msgstr ""
+
+msgid "This option allows you can force the HLG Modes for UHD"
+msgstr ""
+
+msgid "This option allows you can force the HDR10 Modes for UHD"
+msgstr ""
+
+msgid "This option allows you to use all HDMI Modes"
 msgstr ""
 
 msgid "Allows you to setup the button to do what you choose."
@@ -5852,6 +5969,9 @@ msgstr ""
 msgid "HARD DISK: "
 msgstr ""
 
+msgid "HLG Support"
+msgstr ""
+
 msgid "HD list"
 msgstr ""
 
@@ -5859,6 +5979,9 @@ msgid "HD2400"
 msgstr ""
 
 msgid "HDMI"
+msgstr ""
+
+msgid "HDR10 Support"
 msgstr ""
 
 msgid "Downmix"
@@ -6670,6 +6793,9 @@ msgstr ""
 msgid "LNB"
 msgstr ""
 
+msgid "LNB/Switch Bootup time [ms]"
+msgstr ""
+
 msgid "Label"
 msgstr ""
 
@@ -6849,6 +6975,9 @@ msgid "Log results to harddisk"
 msgstr ""
 
 msgid "LogManager"
+msgstr ""
+
+msgid "Log-Manager"
 msgstr ""
 
 msgid "Logs"
@@ -7047,6 +7176,9 @@ msgstr ""
 
 msgctxt "Satellite configuration mode"
 msgid "Mode"
+msgstr ""
+
+msgid "Satellite configuration mode"
 msgstr ""
 
 msgid "Positioner (selecting satellites)"
@@ -8744,6 +8876,9 @@ msgstr ""
 msgid "Protect services"
 msgstr ""
 
+msgid "Service_Team"
+msgstr ""
+
 msgid "Protect setup"
 msgstr ""
 
@@ -9221,6 +9356,9 @@ msgstr ""
 msgid "Show default backup files"
 msgstr ""
 
+msgid "Show True/False as graphical switch"
+msgstr ""
+
 msgid "Show HDMI-Output Res"
 msgstr ""
 
@@ -9427,6 +9565,18 @@ msgid "Saturation"
 msgstr ""
 
 msgid "Saturday"
+msgstr ""
+
+msgid "Very very short filenames - Warning"
+msgstr ""
+
+msgid "Very short filenames"
+msgstr ""
+
+msgid "Short filenames"
+msgstr ""
+
+msgid "Short filenames with time"
 msgstr ""
 
 msgid "Save"
@@ -9964,6 +10114,9 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
+msgid "services"
+msgstr ""
+
 msgid ""
 "Services may be grouped in bouquets. When enabled, you can use more than one "
 "bouquet."
@@ -10285,9 +10438,6 @@ msgstr ""
 msgid "Sharpness"
 msgstr ""
 
-msgid "Short filenames"
-msgstr ""
-
 msgid "Show /tmp/ecm.info"
 msgstr ""
 
@@ -10504,6 +10654,11 @@ msgid "Show Source Info"
 msgstr ""
 
 msgid "Enable zapping with UP/DOWN arrow buttons"
+msgstr ""
+
+msgid ""
+"Enable to display all true/false, yes/no, on/off and enable/disable set up "
+"options as a graphical switch."
 msgstr ""
 
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
@@ -10945,6 +11100,9 @@ msgstr ""
 msgid "Software Manager"
 msgstr ""
 
+msgid "Software-Manager"
+msgstr ""
+
 msgid "Software Manager Setup"
 msgstr ""
 
@@ -10997,6 +11155,9 @@ msgstr ""
 msgid ""
 "Sorry feeds seem be in an unstable state, if you wish to use them please "
 "enable 'Allow unstable updates' in online update setup."
+msgstr ""
+
+msgid "Sorry CIHelper Config is Missing"
 msgstr ""
 
 msgid "Allow unstable (untested) updates"
@@ -11795,6 +11956,11 @@ msgid ""
 "Make sure you select a writable directory instead."
 msgstr ""
 
+msgid ""
+"The unicable connection setting is wrong.\n"
+" Maybe recursive connection of tuners."
+msgstr ""
+
 #, python-format
 msgid ""
 "When you do a factory reset, you will lose ALL your configuration data\n"
@@ -11852,6 +12018,12 @@ msgid "The saved PIN was cleared."
 msgstr ""
 
 msgid "The servicelist is reloaded."
+msgstr ""
+
+msgid "The PIN code has been saved successfully."
+msgstr ""
+
+msgid "The PIN codes you entered are different."
 msgstr ""
 
 msgid ""
@@ -12724,6 +12896,9 @@ msgstr ""
 msgid "Tuning step size"
 msgstr ""
 
+msgid "Tuning algorithm"
+msgstr ""
+
 msgid "Turkish"
 msgstr ""
 
@@ -12737,6 +12912,9 @@ msgid "Turn on HDMI-IN Full screen mode"
 msgstr ""
 
 msgid "Turn on HDMI-IN PiP mode"
+msgstr ""
+
+msgid "Turn on the TV from standby with 'zap and record' timer"
 msgstr ""
 
 msgid "Turning step size"
@@ -13827,6 +14005,9 @@ msgid ""
 "\"%s\"?"
 msgstr ""
 
+msgid "Would you save the entered PIN %s persistent?"
+msgstr ""
+
 msgid "You can cancel the installation."
 msgstr ""
 
@@ -14483,6 +14664,9 @@ msgstr ""
 msgid "enter number to jump to channel."
 msgstr ""
 
+msgid "Enter persistent PIN code"
+msgstr ""
+
 msgid ""
 "This allows you to set the number of digits to 5, if you have more than 9999 "
 "channels."
@@ -14856,6 +15040,16 @@ msgid "nature/animals/environment"
 msgstr ""
 
 msgid "never"
+msgstr ""
+
+msgid "Never decrypt while recording"
+msgstr ""
+
+msgid ""
+"Never decrypt the content while recording. This overrides the individual "
+"timer settings globally. If enabled, recordings are stored in crypted "
+"presentation and must be decrypted afterwards (sometimes called offline "
+"decoding). Default: off."
 msgstr ""
 
 msgid "new media"
@@ -15855,6 +16049,12 @@ msgstr ""
 msgid "Delete Language"
 msgstr ""
 
+msgid "Default 'Timer type' *"
+msgstr ""
+
+msgid "Default 'After event' *"
+msgstr ""
+
 msgid "Default Language can not be deleted !!"
 msgstr ""
 
@@ -16248,6 +16448,9 @@ msgstr ""
 msgid "Protect timer menu"
 msgstr ""
 
+msgid "Protect OPD_panel"
+msgstr ""
+
 msgid "SCPC optimized search range"
 msgstr ""
 
@@ -16377,4 +16580,441 @@ msgid "Audio volume step size"
 msgstr ""
 
 msgid "Audio volume step size fast mode"
+msgstr ""
+
+msgid "Boot Image"
+msgstr ""
+
+msgid "OPDBoot is running from:"
+msgstr ""
+
+msgid "Available:"
+msgstr ""
+
+msgid "Number of installed images in OPDBoot:"
+msgstr ""
+
+msgid ""
+"Here is the list of installed images in Your STB. Please choose an image to "
+"boot."
+msgstr ""
+
+msgid ""
+"Are you sure you want to Boot Image:\n"
+msgstr ""
+
+msgid "Boot Confirmation"
+msgstr ""
+
+msgid "Image will be booted on the next STB boot!"
+msgstr ""
+
+msgid "OPD MultiBoot_Client"
+msgstr ""
+
+msgid "E2 Light Multiboot"
+msgstr ""
+
+msgid "6.0"
+msgstr ""
+
+msgid "6.1"
+msgstr ""
+
+msgid "6.2"
+msgstr ""
+
+msgid "5.3"
+msgstr ""
+
+msgid "6.4"
+msgstr ""
+
+msgid "5.5"
+msgstr ""
+
+msgid "0.0"
+msgstr ""
+
+msgid "opendroid Current"
+msgstr ""
+
+msgid "Download latest opendroid Image"
+msgstr ""
+
+msgid "OpenVIX"
+msgstr ""
+
+msgid "Download latest OpenVIX Image"
+msgstr ""
+
+msgid "Egami"
+msgstr ""
+
+msgid "Download latest Egami Image"
+msgstr ""
+
+msgid "OpenATV-6.0"
+msgstr ""
+
+msgid "Download latest OpenATV Image"
+msgstr ""
+
+msgid "OpenPLi"
+msgstr ""
+
+msgid "Download latest OpenPLi Image"
+msgstr ""
+
+msgid "OpenHDF"
+msgstr ""
+
+msgid "Download latest OpenHDF Image"
+msgstr ""
+
+msgid "OpenEight"
+msgstr ""
+
+msgid "Download latest OpenEight Image"
+msgstr ""
+
+msgid "SatDreamgr"
+msgstr ""
+
+msgid "Download latest SatDreamgr Image"
+msgstr ""
+
+msgid "Hdmu"
+msgstr ""
+
+msgid "Download latest HDMU Image"
+msgstr ""
+
+msgid "PurE2"
+msgstr ""
+
+msgid "Download latest PurE2 Image"
+msgstr ""
+
+msgid "opennfr"
+msgstr ""
+
+msgid "Download latest opennfr Image"
+msgstr ""
+
+msgid "OPDBoot - Download Image"
+msgstr ""
+
+msgid "The URL to this image is not correct !!"
+msgstr ""
+
+msgid "Do you want to install this image now?"
+msgstr ""
+
+msgid "Downloading"
+msgstr ""
+
+msgid "Devices Panel"
+msgstr ""
+
+msgid "Welcome to OPDBoot %s MultiBoot Plugin installation."
+msgstr ""
+
+msgid ""
+"Here is the list of mounted devices in Your STB\n"
+"\n"
+"Please choose a device where You would like to install OPDBoot:"
+msgstr ""
+
+msgid ""
+"OPDBoot is still installed!\n"
+"Now removing OPDBoot and reboot the box. After reboot FlashLocal is "
+"available.\n"
+"Your installed images are not deleted and available after re-installing "
+"OPDBoot again."
+msgstr ""
+
+msgid ""
+"Sorry it seems that there are not Linux formatted devices mounted on your "
+"STB. To install OPDBoot you need a Linux formatted part1 device. Click on "
+"the blue button to open OPD Devices Panel"
+msgstr ""
+
+msgid "You are not running opendroid Image. You must mount devices Your self."
+msgstr ""
+
+msgid ""
+"Sorry, there is not any connected devices in your STB.\n"
+"Please connect HDD or USB to install OPD Multiboot!"
+msgstr ""
+
+msgid ""
+"Do You really want to install OPDBoot in:\n"
+" "
+msgstr ""
+
+msgid "Install Confirmation"
+msgstr ""
+
+msgid ""
+"Do you want to use Bootmanager by booting?\n"
+"Box will reboot after choice "
+msgstr ""
+
+msgid "Installation aborted !"
+msgstr ""
+
+msgid "OPDBoot has been installed succesfully!"
+msgstr ""
+
+msgid "OPDBoot has been installed succesfully, and Box rebooting now!"
+msgstr ""
+
+msgid "Install Image"
+msgstr ""
+
+msgid "Remove Image "
+msgstr ""
+
+msgid "Bootsetup"
+msgstr ""
+
+msgid "OPDBoot is running image:"
+msgstr ""
+
+msgid "Use Bootmanager by Booting"
+msgstr ""
+
+msgid "Boot without Bootmanager"
+msgstr ""
+
+msgid "Setup Bootmanagertimeout"
+msgstr ""
+
+msgid "What would You like to do ?"
+msgstr ""
+
+msgid "OPDBoot work with Bootmanager by Booting!"
+msgstr ""
+
+msgid "OPDBoot work without Bootmanager by Booting!"
+msgstr ""
+
+msgid ""
+"Sorry you cannot delete the image, is currently booted from or select for "
+"next booting"
+msgstr ""
+
+msgid "Sorry you cannot delete Flash image"
+msgstr ""
+
+msgid ""
+"Are you sure you want to delete Image:\n"
+" "
+msgstr ""
+
+msgid "OPDBoot: Deleting Image"
+msgstr ""
+
+msgid "Removing canceled!"
+msgstr ""
+
+msgid ""
+"The /media/opdboot/OPDBootUpload directory is EMPTY!\n"
+"\n"
+"Please upload a zip file to install"
+msgstr ""
+
+msgid "Sorry you can install a max of 10 images."
+msgstr ""
+
+msgid "Install from /media/opdboot/OPDBootUpload"
+msgstr ""
+
+msgid "Install from Internet (OpenPLi,OpenVix,OpenATV,Egami,OpenOPD,OpenHDF)"
+msgstr ""
+
+msgid "Remove OPDBoot"
+msgstr ""
+
+msgid "Remove all installed images"
+msgstr ""
+
+msgid "OPDBoot is removing..."
+msgstr ""
+
+msgid "OPDBoot: Deleting All Images"
+msgstr ""
+
+msgid "Source Image file"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
+msgid "Copy Settings to the new Image"
+msgstr ""
+
+msgid "Boot new Image directly?"
+msgstr ""
+
+msgid "Delete Download Imagezip after Install?"
+msgstr ""
+
+msgid "Sorry, an Image with the name "
+msgstr ""
+
+msgid ""
+" is already installed.\n"
+" Please try another name."
+msgstr ""
+
+msgid ""
+"You have to select one Image to install.\n"
+"Please, upload your zip file in the folder: /media/opdboot/OPDBootUpload and "
+"select the image to install."
+msgstr ""
+
+msgid "You have to provide a name for the new Image."
+msgstr ""
+
+msgid "Sorry this name is reserved. Choose another name for the new Image."
+msgstr ""
+
+msgid "Sorry the name of the new Image is too long."
+msgstr ""
+
+msgid ""
+"OPDBoot will install the new image.\n"
+"\n"
+msgstr ""
+
+msgid ""
+"Please: DO NOT reboot your STB and turn off the power.\n"
+"\n"
+msgstr ""
+
+msgid ""
+"The new image will be installed and auto booted in few minutes.\n"
+"\n"
+msgstr ""
+
+msgid "OPDBoot: Install new image"
+msgstr ""
+
+msgid ""
+"Not enough free space on /media/opdboot/ !!\n"
+"You need at least 300Mb free space.\n"
+"\n"
+"Exit plugin."
+msgstr ""
+
+msgid "Sorry: OPDBoot no work by this Box!"
+msgstr ""
+
+msgid ""
+"Sorry: Wrong image in flash found. You have to install in flash OPD Image"
+msgstr ""
+
+msgid "OPD MultiBoot"
+msgstr ""
+
+msgid "usage: "
+msgstr ""
+
+msgid ".__call__() not defined"
+msgstr ""
+
+msgid "unknown parser %r (choices: %s)"
+msgstr ""
+
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+msgid "can't open '%s': %s"
+msgstr ""
+
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+msgid "invalid option string %r: must start with a character %r"
+msgstr ""
+
+msgid "dest= is required for options like %r"
+msgstr ""
+
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+msgid "conflicting option string(s): %s"
+msgstr ""
+
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+msgid "positional arguments"
+msgstr ""
+
+msgid "optional arguments"
+msgstr ""
+
+msgid "show this help message and exit"
+msgstr ""
+
+msgid "show program's version number and exit"
+msgstr ""
+
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+msgid "not allowed with argument %s"
+msgstr ""
+
+msgid "ignored explicit argument %r"
+msgstr ""
+
+msgid "too few arguments"
+msgstr ""
+
+msgid "argument %s is required"
+msgstr ""
+
+msgid "one of the arguments %s is required"
+msgstr ""
+
+msgid "expected one argument"
+msgstr ""
+
+msgid "expected at most one argument"
+msgstr ""
+
+msgid "expected at least one argument"
+msgstr ""
+
+msgid "expected %s argument(s)"
+msgstr ""
+
+msgid "ambiguous option: %s could match %s"
+msgstr ""
+
+msgid "unexpected option string: %s"
+msgstr ""
+
+msgid "%r is not callable"
+msgstr ""
+
+msgid "invalid %s value: %r"
+msgstr ""
+
+msgid "invalid choice: %r (choose from %s)"
+msgstr ""
+
+msgid ""
+"%s: error: %s\n"
 msgstr ""

@@ -18,7 +18,7 @@ from GlobalActions import globalActionMap
 from Screens.ChoiceBox import ChoiceBox
 from Tools.BoundFunction import boundFunction
 from Tools.LoadPixmap import LoadPixmap
-from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS, fileExists, pathExists
 from Components.MenuList import MenuList
 from Components.FileList import FileList
 from Components.Label import Label
@@ -38,6 +38,7 @@ from enigma import eConsoleAppContainer
 from Tools.Directories import fileExists
 from Tools.Downloader import downloadWithProgress
 from boxbranding import getBoxType, getMachineName, getMachineBrand, getBrandOEM
+from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
 from enigma import getDesktop
 from Screens.InputBox import PinInput
 import string
@@ -45,7 +46,7 @@ from random import Random
 import os
 import sys
 import re, string
-font = 'Regular;16'
+font = "Regular;16"
 import ServiceReference
 import time
 import datetime
@@ -61,14 +62,52 @@ if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/p
 	except:
 		pass
 
+from OPENDROID.HddSetup import *
 from OPENDROID.BluePanel import *
-from OPENDROID.CronManager import *
+from Screens.CronTimer import *
 from OPENDROID.ScriptRunner import *
 from OPENDROID.MountManager import *
 from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
 import gettext
+
+SystemInfo["SoftCam"] = Check_Softcam()
+
+config.softcam = ConfigSubsection()
+config.softcam.actCam = ConfigText(visible_width = 200)
+config.softcam.actCam2 = ConfigText(visible_width = 200)
+config.softcam.waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
+config.plugins.infopanel_redpanel = ConfigSubsection()
+
+def Check_Softcam():
+	found = False
+	if fileExists("/etc/enigma2/noemu"):
+		found = False
+	else:
+		for x in os.listdir('/etc'):
+			if x.find('.emu') > -1:
+				found = True
+				break;
+	return found
+
+def Check_SysSoftcam():
+	if os.path.isfile('/etc/init.d/softcam'):
+		if (os.path.islink('/etc/init.d/softcam') and not os.readlink('/etc/init.d/softcam').lower().endswith('none')):
+			try:
+				syscam = None
+				syscam = os.readlink('/etc/init.d/softcam').rsplit('.', 1)[1]
+				if syscam.lower().startswith('oscam'):
+					return "oscam"
+			except:
+				pass
+		if pathExists('/usr/bin/'):
+			softcams = os.listdir('/usr/bin/')
+			for softcam in softcams:
+				if softcam.lower().startswith('oscam'):
+					return "oscam"
+	return None
+
 
 def _(txt):
 	t = gettext.dgettext("OPD_panel", txt)
@@ -101,7 +140,7 @@ boxversion = getBoxType()
 machinename = getMachineName()
 machinebrand = getMachineBrand()
 OEMname = getBrandOEM()
-OPD_panel_Version = 'OPD PANEL V1.4 (By OPD-Team)'
+OPD_panel_Version = 'OPD PANEL V1.5 (By OPD-Team)'
 print "[OPD_panel] machinebrand: %s"  % (machinebrand)
 print "[OPD_panel] machinename: %s"  % (machinename)
 print "[OPD_panel] oem name: %s"  % (OEMname)
@@ -127,7 +166,6 @@ def Apanel(menuid, **kwargs):
 		return [(_("OPD_panel"), main, "OPD_panel", 3)]
 	else:
 		return []
-
 
 
 
@@ -199,7 +237,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.onShown.append(self.setWindowTitle)
 		self.service = None
 		INFOCONF = 0
-		pluginlist = 'False'
+		pluginlist="False"
 		try:
 			print '[OPD_panel] SHOW'
 			OPD_panel = self
@@ -217,17 +255,23 @@ class OPD_panel(Screen, InfoBarPiP):
                                                                                               'ok': self.ok}, 1)
 		self['label1'] = Label(OPD_panel_Version)
 		self.Mlist = []
+		if Check_Softcam():
+			self.Mlist.append(MenuEntryItem((InfoEntryComponent('BluePanel'), _("BluePanel"), 'BluePanel')))
+		if Check_SysSoftcam() is "oscam":
+			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("OScamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
+		self.Mlist.append(MenuEntryItem((InfoEntryComponent('opdBootLogoSelector'), _('opdBootLogo-Setup'), 'opdBootLogoSelector')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('LogManager'), _('Log-Manager'), 'LogManager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftwareManager'), _('Software-Manager'), 'software-manager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('services'), _('services'), 'services')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infos'), _('Infos'), 'Infos')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infobar_Setup'), _('Infobar_Setup'), 'Infobar_Setup')))
+		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Decoding_Setup'), _('Decoding_Setup'), 'Decoding_Setup')))
 		self.onChangedEntry = []
 		self["Mlist"] = PanelList([])
 		self["Mlist"].l.setList(self.Mlist)
 		menu = 0
-		self['Mlist'].onSelectionChanged.append(self.selectionChanged)
+		self["Mlist"].onSelectionChanged.append(self.selectionChanged)
 
 	def getCurrentEntry(self):
 		if self['Mlist'].l.getCurrentSelection():
@@ -240,7 +284,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		item = self.getCurrentEntry()
 
 	def setWindowTitle(self):
-		self.setTitle(_('OPD-Main Menu'))
+		self.setTitle(_("OPD-Main Menu"))
 
 	def up(self):
 		pass
@@ -255,7 +299,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		pass
 
 	def Red(self):
-		self.showExtensionSelection1(Parameter='run')
+		self.showExtensionSelection1(Parameter="run")
 
 	def Green(self):
 		pass
@@ -281,116 +325,132 @@ class OPD_panel(Screen, InfoBarPiP):
 
 			self.close()
 		elif menu == 1:
-			self['Mlist'].moveToIndex(0)
-			self['Mlist'].l.setList(self.oldmlist)
+			self["Mlist"].moveToIndex(0)
+			self["Mlist"].l.setList(self.oldmlist)
 			menu = 0
-			self['label1'].setText(OPD_panel_Version)
+			self["label1"].setText(OPD_panel_Version)
 		elif menu == 2:
-			self['Mlist'].moveToIndex(0)
-			self['Mlist'].l.setList(self.oldmlist1)
+			self["Mlist"].moveToIndex(0)
+			self["Mlist"].l.setList(self.oldmlist1)
 			menu = 1
-			self['label1'].setText('Infos')
+			self["label1"].setText("Infos")
 		return
 
 	def ok(self):
 		menu = self['Mlist'].l.getCurrentSelection()[0][2]
 		print '[OPD_panel] MenuItem: ' + menu
-		if menu == 'services':
+		if menu == "services":
 			self.services()
-		elif menu == 'Pluginbrowser':
+		elif menu == "Pluginbrowser":
 			self.session.open(PluginBrowser)
-		elif menu == 'Infos':
+		elif menu == "Infos":
 			self.Infos()
-		elif menu == 'Service_Team':
-			self.session.open(Info, 'Service_Team')
-		elif menu == 'Info':
-			self.session.open(Info, 'SystemInfo')
-		elif menu == 'ImageVersion':
-			self.session.open(Info, 'ImageVersion')
-		elif menu == 'FreeSpace':
-			self.session.open(Info, 'FreeSpace')
-		elif menu == 'Network':
-			self.session.open(Info, 'Network')
-		elif menu == 'Mounts':
-			self.session.open(Info, 'Mounts')
-		elif menu == 'Kernel':
-			self.session.open(Info, 'Kernel')
-		elif menu == 'Ram':
-			self.session.open(Info, 'Free')
-		elif menu == 'Cpu':
-			self.session.open(Info, 'Cpu')
-		elif menu == 'Top':
-			self.session.open(Info, 'Top')
-		elif menu == 'MemInfo':
-			self.session.open(Info, 'MemInfo')
-		elif menu == 'Module':
-			self.session.open(Info, 'Module')
-		elif menu == 'Mtd':
-			self.session.open(Info, 'Mtd')
-		elif menu == 'Partitions':
-			self.session.open(Info, 'Partitions')
-		elif menu == 'Swap':
-			self.session.open(Info, 'Swap')
-		elif menu == 'SystemInfo':
+		elif menu == "Service_Team":
+			self.session.open(Info, "Service_Team")
+		elif menu == "Info":
+			self.session.open(Info, "SystemInfo")
+		elif menu == "ImageVersion":
+			self.session.open(Info, "ImageVersion")
+		elif menu == "FreeSpace":
+			self.session.open(Info, "FreeSpace")
+		elif menu == "Network":
+			self.session.open(Info, "Network")
+		elif menu == "Mounts":
+			self.session.open(Info, "Mounts")
+		elif menu == "Kernel":
+			self.session.open(Info, "Kernel")
+		elif menu == "Ram":
+			self.session.open(Info, "Free")
+		elif menu == "Cpu":
+			self.session.open(Info, "Cpu")
+		elif menu == "Top":
+			self.session.open(Info, "Top")
+		elif menu == "MemInfo":
+			self.session.open(Info, "MemInfo")
+		elif menu == "Module":
+			self.session.open(Info, "Module")
+		elif menu == "Mtd":
+			self.session.open(Info, "Mtd")
+		elif menu == "Partitions":
+			self.session.open(Info, "Partitions")
+		elif menu == "Swap":
+			self.session.open(Info, "Swap")
+		elif menu == "SystemInfo":
 			self.System()
-		elif menu == 'CronManager':
-			self.session.open(CronManager)
-		elif menu == 'Infobar_Setup':
+		elif menu == "CronTimer":
+			self.session.open(CronTimers)
+		elif menu == "Infobar_Setup":
 			from OPENDROID.GreenPanel import InfoBarSetup
 			self.session.open(InfoBarSetup)
-		elif menu == 'Decoding_Setup':
+		elif menu == "Decoding_Setup":
 			from OPENDROID.GreenPanel import DecodingSetup
 			self.session.open(DecodingSetup)
-		elif menu == 'JobManager':
+		elif menu == "opdBootLogoSelector":
+			from OPENDROID.OPD_Bootlogo import opdBootLogoSelector
+			self.session.open(opdBootLogoSelector)
+		elif menu == "JobManager":
 			self.session.open(ScriptRunner)
-		elif menu == 'software-manager':
+		elif menu == "software-manager":
 			self.Software_Manager()
-		elif menu == 'software-update':
+		elif menu == "OScamInfo":
+			from Screens.OScamInfo import OscamInfoMenu
+			self.session.open(OscamInfoMenu)
+		elif menu == "BluePanel":
+			self.session.open(BluePanel)
+		elif menu == "software-manager":
+			self.Software_Manager()
+		elif menu == "software-update":
 			self.session.open(SoftwarePanel)
-		elif menu == 'backup-settings':
-			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup=True)
-		elif menu == 'restore-settings':
+		elif menu == "Password-Change":
+			self.session.open(PasswdScreen)
+		elif menu == "backup-settings":
+			self.session.openWithCallback(self.backupDone,BackupScreen, runBackup = True)
+		elif menu == "restore-settings":
 			self.backuppath = getBackupPath()
 			self.backupfile = getBackupFilename()
-			self.fullbackupfilename = self.backuppath + '/' + self.backupfile
+			self.fullbackupfilename = self.backuppath + "/" + self.backupfile
 			if os_path.exists(self.fullbackupfilename):
 				self.session.openWithCallback(self.startRestore, MessageBox, _('Are you sure you want to restore your STB backup?\nSTB will restart after the restore'))
 			else:
 				self.session.open(MessageBox, _('Sorry no backups found!'), MessageBox.TYPE_INFO, timeout=10)
-		elif menu == 'backup-files':
+		elif menu == "backup-files":
 			self.session.openWithCallback(self.backupfiles_choosen, BackupSelection)
-		elif menu == 'MultiQuickButton':
+		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
-		elif menu == 'MountManager':
+		elif menu == "MountManager":
 			self.session.open(DeviceManager)
-		elif menu == 'OscamSmartcard':
+		elif menu == "HddSetup":
+			self.session.open(HddSetup)
+		elif menu == "OscamSmartcard":
 			self.session.open(OscamSmartcard)
-		elif menu == 'SwapManager':
+		elif menu == "SwapManager":
 			self.session.open(Swap)
-		elif menu == 'RedPanel':
+		elif menu == "RedPanel":
 			self.session.open(RedPanel)
-		elif menu == 'Yellow-Key-Action':
+		elif menu == "Yellow-Key-Action":
 			self.session.open(YellowPanel)
-		elif menu == 'LogManager':
+		elif menu == "LogManager":
 			self.session.open(LogManager)
-		elif menu == 'ImageFlash':
+		elif menu == "ImageFlash":
 			self.session.open(FlashOnline)
-		elif menu == 'Samba':
+		elif menu == "Samba":
 			self.session.open(NetworkSamba)
 
 	def services(self):
 		global menu
 		menu = 1
-		self['label1'].setText(_('services'))
+		self["label1"].setText(_("services"))
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('MountManager'), _('MountManager'), 'MountManager')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('CronManager'), _('CronManager'), 'CronManager')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('JobManager'), _('JobManager'), 'JobManager')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('SwapManager'), _('SwapManager'), 'SwapManager')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('OscamSmartcard'), _('OscamSmartcard'), 'OscamSmartcard')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Samba'), _('Samba'), 'Samba')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Password-Change'), _("Password-Change"), 'Password-Change')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('MountManager'), _("MountManager"), 'MountManager')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('HddSetup'), _("HddSetup"), 'HddSetup')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('CronTimer'), _("CronManager"), 'CronTimer')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('JobManager'), _("JobManager"), 'JobManager')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('SwapManager'), _("SwapManager"), 'SwapManager')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('OscamSmartcard'), _("OscamSmartcard"), 'OscamSmartcard')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Samba'), _("Samba"), 'Samba')))
 
 		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/plugin.pyo') is True:
 			self.tlist.append(MenuEntryItem((InfoEntryComponent('MultiQuickButton'), _('MultiQuickButton'), 'MultiQuickButton')))
@@ -400,37 +460,37 @@ class OPD_panel(Screen, InfoBarPiP):
 	def Infos(self):
 		global menu
 		menu = 1
-		self['label1'].setText(_('Infos'))
+		self["label1"].setText(_("Infos"))
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist1 = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Service_Team'), _('Service_Team'), 'Service_Team')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('ImageVersion'), _('Image-Version'), 'ImageVersion')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('FreeSpace'), _('FreeSpace'), 'FreeSpace')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Kernel'), _('Kernel'), 'Kernel')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Mounts'), _('Mounts'), 'Mounts')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Network'), _('Network'), 'Network')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Ram'), _('Ram'), 'Ram')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('SystemInfo'), _('SystemInfo'), 'SystemInfo')))
-		self['Mlist'].moveToIndex(0)
-		self['Mlist'].l.setList(self.tlist)
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Service_Team'), _("Service_Team"), 'Service_Team')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('ImageVersion'), _("Image-Version"), 'ImageVersion')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('FreeSpace'), _("FreeSpace"), 'FreeSpace')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Kernel'), _("Kernel"), 'Kernel')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Mounts'), _("Mounts"), 'Mounts')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Network'), _("Network"), 'Network')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Ram'), _("Ram"), 'Ram')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('SystemInfo'), _("SystemInfo"), 'SystemInfo')))
+		self["Mlist"].moveToIndex(0)
+		self["Mlist"].l.setList(self.tlist)
 		self.oldmlist1 = self.tlist
 
 	def System(self):
 		global menu
 		menu = 2
-		self['label1'].setText(_('System Info'))
+		self["label1"].setText(_("System Info"))
 		self.tlist = []
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Cpu'), _('Cpu'), 'Cpu')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('MemInfo'), _('MemInfo'), 'MemInfo')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Mtd'), _('Mtd'), 'Mtd')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Module'), _('Module'), 'Module')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Partitions'), _('Partitions'), 'Partitions')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Swap'), _('Swap'), 'Swap')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Top'), _('Top'), 'Top')))
-		self['Mlist'].moveToIndex(0)
-		self['Mlist'].l.setList(self.tlist)
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Cpu'), _("Cpu"), 'Cpu')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('MemInfo'), _("MemInfo"), 'MemInfo')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Mtd'), _("Mtd"), 'Mtd')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Module'), _("Module"), 'Module')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Partitions'), _("Partitions"), 'Partitions')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Swap'), _("Swap"), 'Swap')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Top'), _("Top"), 'Top')))
+		self["Mlist"].moveToIndex(0)
+		self["Mlist"].l.setList(self.tlist)
 
 	def System_main(self):
 
@@ -447,27 +507,27 @@ class OPD_panel(Screen, InfoBarPiP):
 	def System_main(self):
 		global menu
 		menu = 1
-		self['label1'].setText(_('System'))
+		self["label1"].setText(_("System"))
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist = self.Mlist
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Info'), _('Info'), 'Info')))
-		self['Mlist'].moveToIndex(0)
-		self['Mlist'].l.setList(self.tlist)
+		self["Mlist"].moveToIndex(0)
+		self["Mlist"].l.setList(self.tlist)
 
 	def Software_Manager(self):
 		global menu
 		menu = 1
-		self['label1'].setText(_('Software Manager'))
+		self["label1"].setText(_("Software Manager"))
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('SoftwareManager'), _('Software update'), 'software-update')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('BackupSettings'), _('Backup Settings'), 'backup-settings')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('RestoreSettings'), _('Restore Settings'), 'restore-settings')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('BackupFiles'), _('Choose backup files'), 'backup-files')))
-		self['Mlist'].moveToIndex(0)
-		self['Mlist'].l.setList(self.tlist)
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("SoftwareManager" ), _("Software update"), ("software-update"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupSettings" ), _("Backup Settings"), ("backup-settings"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("RestoreSettings" ), _("Restore Settings"), ("restore-settings"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFiles" ), _("Show default backup files"), ("backup-files"))))
+		self["Mlist"].moveToIndex(0)
+		self["Mlist"].l.setList(self.tlist)
 
 	def backupfiles_choosen(self, ret):
 		config.plugins.configurationbackup.backupdirs.save()
@@ -476,9 +536,9 @@ class OPD_panel(Screen, InfoBarPiP):
 
 	def backupDone(self, retval = None):
 		if retval is True:
-			self.session.open(MessageBox, _('Backup done.'), MessageBox.TYPE_INFO, timeout=10)
+			self.session.open(MessageBox, _("Backup done."), MessageBox.TYPE_INFO, timeout = 10)
 		else:
-			self.session.open(MessageBox, _('Backup failed.'), MessageBox.TYPE_INFO, timeout=10)
+			self.session.open(MessageBox, _("Backup failed."), MessageBox.TYPE_INFO, timeout = 10)
 
 	def startRestore(self, ret = False):
 		if ret == True:
@@ -491,39 +551,43 @@ class RedPanel(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
-		self.skinName = 'Setup'
-		Screen.setTitle(self, _('RedPanel') + '...')
-		self.setup_title = _('RedPanel') + '...'
-		self['HelpWindow'] = Pixmap()
-		self['HelpWindow'].hide()
-		self['status'] = StaticText()
-		self['footnote'] = Label('')
-		self['description'] = Label(_(''))
-		self['labelExitsave'] = Label('[Exit] = ' + _('Cancel') + '              [Ok] =' + _('Save'))
+		self.skinName = "Setup"
+		Screen.setTitle(self, _("RedPanel") + "...")
+		self.setup_title = _("RedPanel") + "..."
+		self["HelpWindow"] = Pixmap()
+		self["HelpWindow"].hide()
+		self["status"] = StaticText()
+		self["footnote"] = Label()
+		self["description"] = Label("")
+		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
 		self.onChangedEntry = []
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 		self.createSetup()
-		self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.keySave,
-                                                                               'cancel': self.keyCancel,
-                                                                       'red': self.keyCancel,
-                                                                       'green': self.keySave,
-         'menu': self.keyCancel}, -2)
-		self['key_red'] = StaticText(_('Cancel'))
-		self['key_green'] = StaticText(_('OK'))
-		if self.selectionChanged not in self['config'].onSelectionChanged:
-			self['config'].onSelectionChanged.append(self.selectionChanged)
+		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
+		{
+			"ok": self.keySave,
+			"cancel": self.keyCancel,
+			"red": self.keyCancel,
+			"green": self.keySave,
+			"menu": self.keyCancel,
+		}, -2)
+
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
 	def createSetup(self):
 		self.editListEntry = None
 		self.list = []
-		self.list.append(getConfigListEntry(_('Show OPD_panel Red-key'), config.plugins.OPD_panel_redpanel.enabled))
-		self.list.append(getConfigListEntry(_('Show Softcam-Panel Red-key long'), config.plugins.OPD_panel_redpanel.enabledlong))
-		self['config'].list = self.list
-		self['config'].setList(self.list)
+		self.list.append(getConfigListEntry(_("Show OPD_panel Red-key"), config.plugins.OPD_panel_redpanel.enabled))
+		self.list.append(getConfigListEntry(_("Show BluePanel Red-key long"), config.plugins.OPD_panel_redpanel.enabledlong))
+		self["config"].list = self.list
+		self["config"].setList(self.list)
 		if config.usage.sort_settings.value:
-			self['config'].list.sort()
+			self["config"].list.sort()
 		return
 
 	def selectionChanged(self):
@@ -536,22 +600,21 @@ class RedPanel(ConfigListScreen, Screen):
 		self.selectionChanged()
 
 	def getCurrentEntry(self):
-		return self['config'].getCurrent()[0]
+		return self["config"].getCurrent()[0]
 
 	def getCurrentValue(self):
-		return str(self['config'].getCurrent()[1].getText())
+		return str(self["config"].getCurrent()[1].getText())
 
 	def getCurrentDescription(self):
-		return self['config'].getCurrent() and len(self['config'].getCurrent()) > 2 and self['config'].getCurrent()[2] or ''
+		return self["config"].getCurrent() and len(self["config"].getCurrent()) > 2 and self["config"].getCurrent()[2] or ""
 
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
 
 	def saveAll(self):
-		for x in self['config'].list:
+		for x in self["config"].list:
 			x[1].save()
-
 		configfile.save()
 
 	def keySave(self):
@@ -561,83 +624,82 @@ class RedPanel(ConfigListScreen, Screen):
 	def cancelConfirm(self, result):
 		if not result:
 			return
-		for x in self['config'].list:
+		for x in self["config"].list:
 			x[1].cancel()
-
 		self.close()
 
 	def keyCancel(self):
-		if self['config'].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving settings?'))
+		if self["config"].isChanged():
+			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
 		else:
 			self.close()
 
-
 class YellowPanel(ConfigListScreen, Screen):
-
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
-		self.skinName = 'Setup'
-		Screen.setTitle(self, _('Yellow Key Action') + '...')
-		self.setup_title = _('Yellow Key Action') + '...'
-		self['HelpWindow'] = Pixmap()
-		self['HelpWindow'].hide()
-		self['status'] = StaticText()
-		self['footnote'] = Label('')
-		self['description'] = Label('')
-		self['labelExitsave'] = Label('[Exit] = ' + _('Cancel') + '              [Ok] =' + _('Save'))
-		self.onChangedEntry = []
+		self.skinName = "Setup"
+		Screen.setTitle(self, _("Yellow Key Action") + "...")
+		self.setup_title = _("Yellow Key Action") + "..."
+		self["HelpWindow"] = Pixmap()
+		self["HelpWindow"].hide()
+		self["status"] = StaticText()
+		self['footnote'] = Label("")
+		self["description"] = Label("")
+		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
+
+		self.onChangedEntry = [ ]
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
 		self.createSetup()
-		self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.keySave,
-                                                                               'cancel': self.keyCancel,
-                                                                       'red': self.keyCancel,
-                                                                       'green': self.keySave,
-         'menu': self.keyCancel}, -2)
-		self['key_red'] = StaticText(_('Cancel'))
-		self['key_green'] = StaticText(_('OK'))
-		if self.selectionChanged not in self['config'].onSelectionChanged:
-			self['config'].onSelectionChanged.append(self.selectionChanged)
+
+		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
+		{
+			"ok": self.keySave,
+			"cancel": self.keyCancel,
+			"red": self.keyCancel,
+			"green": self.keySave,
+			"menu": self.keyCancel,
+		}, -2)
+
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
 	def createSetup(self):
 		self.editListEntry = None
 		self.list = []
-		self.list.append(getConfigListEntry(_('Yellow Key Action'), config.plugins.OPD_panel_yellowkey.list))
-		self['config'].list = self.list
-		self['config'].setList(self.list)
+		self.list.append(getConfigListEntry(_("Yellow Key Action"), config.plugins.OPD_panel_yellowkey.list))
+		self["config"].list = self.list
+		self["config"].setList(self.list)
 		if config.usage.sort_settings.value:
-			self['config'].list.sort()
-		return
+			self["config"].list.sort()
 
 	def selectionChanged(self):
-		self['status'].setText(self['config'].getCurrent()[0])
+		self["status"].setText(self["config"].getCurrent()[0])
 
 	def changedEntry(self):
 		for x in self.onChangedEntry:
 			x()
-
 		self.selectionChanged()
 
 	def getCurrentEntry(self):
-		return self['config'].getCurrent()[0]
+		return self["config"].getCurrent()[0]
 
 	def getCurrentValue(self):
-		return str(self['config'].getCurrent()[1].getText())
+		return str(self["config"].getCurrent()[1].getText())
 
 	def getCurrentDescription(self):
-		return self['config'].getCurrent() and len(self['config'].getCurrent()) > 2 and self['config'].getCurrent()[2] or ''
+		return self["config"].getCurrent() and len(self["config"].getCurrent()) > 2 and self["config"].getCurrent()[2] or ""
 
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
-
 	def saveAll(self):
-		for x in self['config'].list:
+		for x in self["config"].list:
 			x[1].save()
-
 		configfile.save()
 
 	def keySave(self):
@@ -647,14 +709,13 @@ class YellowPanel(ConfigListScreen, Screen):
 	def cancelConfirm(self, result):
 		if not result:
 			return
-		for x in self['config'].list:
+		for x in self["config"].list:
 			x[1].cancel()
-
 		self.close()
 
 	def keyCancel(self):
-		if self['config'].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving settings?'))
+		if self["config"].isChanged():
+			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
 		else:
 			self.close()
 
@@ -664,43 +725,46 @@ class Info(Screen):
 		self.service = None
 		Screen.__init__(self, session)
 		self.skin = INFO_SKIN
-		self['label2'] = Label('INFO')
-		self['label1'] = ScrollLabel()
-		if info == 'Service_Team':
+		self["label2"] = Label("INFO")
+		self["label1"] =  ScrollLabel()
+		if info == "Service_Team":
 			self.Service_Team()
-		if info == 'SystemInfo':
+		if info == "SystemInfo":
 			self.SystemInfo()
-		elif info == 'ImageVersion':
-			self.ImageVersion()
-		elif info == 'FreeSpace':
+		elif info == "Default":
+			self.Default()
+		elif info == "FreeSpace":
 			self.FreeSpace()
-		elif info == 'Mounts':
+		elif info == "Mounts":
 			self.Mounts()
-		elif info == 'Network':
+		elif info == "Network":
 			self.Network()
-		elif info == 'Kernel':
+		elif info == "Kernel":
 			self.Kernel()
-		elif info == 'Free':
+		elif info == "Free":
 			self.Free()
-		elif info == 'Cpu':
+		elif info == "Cpu":
 			self.Cpu()
-		elif info == 'Top':
+		elif info == "Top":
 			self.Top()
-		elif info == 'MemInfo':
+		elif info == "MemInfo":
 			self.MemInfo()
-		elif info == 'Module':
+		elif info == "Module":
 			self.Module()
-		elif info == 'Mtd':
+		elif info == "Mtd":
 			self.Mtd()
-		elif info == 'Partitions':
+		elif info == "Partitions":
 			self.Partitions()
-		elif info == 'Swap':
+		elif info == "Swap":
 			self.Swap()
-		self['actions'] = ActionMap(['OkCancelActions', 'DirectionActions'], {'cancel': self.Exit,
-                                                                                      'ok': self.ok,
-                                                                              'up': self.Up,
-                                                                              'down': self.Down}, -1)
-		return
+
+		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions"],
+		{
+			"cancel": self.Exit,
+			"ok": self.ok,
+			"up": self.Up,
+			"down": self.Down,
+		}, -1)
 
 	def Exit(self):
 		self.close()
@@ -709,309 +773,453 @@ class Info(Screen):
 		self.close()
 
 	def Down(self):
-		self['label1'].pageDown()
+		self["label1"].pageDown()
 
 	def Up(self):
-		self['label1'].pageUp()
+		self["label1"].pageUp()
 
 	def Service_Team(self):
 		try:
-			self['label2'].setText('INFO')
-			info1 = self.Do_cmd('cat', '/etc/motd', None)
+			self["label2"].setText("INFO")
+			info1 = self.Do_cmd("cat", "/etc/motd", None)
 			if info1.find('wElc0me') > -1:
-				info1 = info1[info1.find('wElc0me'):len(info1)] + '\n'
-				info1 = info1.replace('|', '')
+				info1 = info1[info1.find('wElc0me'):len(info1)] + "\n"
+				info1 = info1.replace('|','')
 			else:
-				info1 = info1[info1.find('INFO'):len(info1)] + '\n'
-			info2 = self.Do_cmd('cat', '/etc/image-version', None)
+				info1 = info1[info1.find('INFO'):len(info1)] + "\n"
+			info2 = self.Do_cmd("cat", "/etc/image-version", None)
 			info3 = self.Do_cut(info1 + info2)
-			self['label1'].setText(info3)
+			self["label1"].setText(info3)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
+			self["label1"].setText(_("an internal error has occured"))
 
-		return
-
-	def SystemInfo(self):
+	def Sytem_info(self):
 		try:
-			self['label2'].setText(_('Image Info'))
-			info1 = self.Do_cmd('cat', '/etc/version', None)
+			self["label2"].setText(_("Image Info"))
+			info1 = self.Do_cmd("cat", "/etc/version", None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
+			self["label1"].setText(_("an internal error has occured"))
 
-		return
+	def Default(self):
 
-	def ImageVersion(self):
 		try:
-			self['label2'].setText(_('Image Version'))
+			self["label2"].setText(_("Default"))
 			now = datetime.now()
-			info1 = 'Date = ' + now.strftime('%d-%B-%Y') + '\n'
-			info2 = 'Time = ' + now.strftime('%H:%M:%S') + '\n'
-			info3 = self.Do_cmd('uptime', None, None)
-			tmp = info3.split(',')
-			info3 = 'Uptime = ' + tmp[0].lstrip() + '\n'
-			info4 = self.Do_cmd('cat', '/etc/image-version', ' | head -n 1')
+			info1 = 'Date = ' + now.strftime("%d-%B-%Y") + "\n"
+			info2 = 'Time = ' + now.strftime("%H:%M:%S") + "\n"
+			info3 = self.Do_cmd("uptime", None, None)
+			tmp = info3.split(",")
+			info3 = 'Uptime = ' + tmp[0].lstrip() + "\n"
+			info4 = self.Do_cmd("cat", "/etc/image-version", " | head -n 1")
 			info4 = info4[9:]
-			info4 = 'Imagetype = ' + info4 + '\n'
-			info5 = 'Load = ' + self.Do_cmd('cat', '/proc/loadavg', None)
+			info4 = 'Boxtype = ' + info4 + "\n"
+			info5 = 'Load = ' + self.Do_cmd("cat", "/proc/loadavg", None)
 			info6 = self.Do_cut(info1 + info2 + info3 + info4 + info5)
-			self['label1'].setText(info6)
+			self["label1"].setText(info6)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def FreeSpace(self):
 		try:
-			self['label2'].setText(_('FreeSpace'))
-			info1 = self.Do_cmd('df', None, '-h')
+			self["label2"].setText(_("FreeSpace"))
+			info1 = self.Do_cmd("df", None, "-h")
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Mounts(self):
 		try:
-			self['label2'].setText(_('Mounts'))
-			info1 = self.Do_cmd('mount', None, None)
+			self["label2"].setText(_("Mounts"))
+			info1 = self.Do_cmd("mount", None, None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Network(self):
 		try:
-			self['label2'].setText(_('Network'))
-			info1 = self.Do_cmd('ifconfig', None, None) + '\n'
-			info2 = self.Do_cmd('route', None, '-n')
+			self["label2"].setText(_("Network"))
+			info1 = self.Do_cmd("ifconfig", None, None) + '\n'
+			info2 = self.Do_cmd("route", None, "-n")
 			info3 = self.Do_cut(info1 + info2)
-			self['label1'].setText(info3)
+			self["label1"].setText(info3)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Kernel(self):
 		try:
-			self['label2'].setText(_('Kernel'))
-			info0 = self.Do_cmd('cat', '/proc/version', None)
+			self["label2"].setText(_("Kernel"))
+			info0 = self.Do_cmd("cat", "/proc/version", None)
 			info = info0.split('(')
-			info1 = 'Name = ' + info[0] + '\n'
-			info2 = 'Owner = ' + info[1].replace(')', '') + '\n'
-			info3 = 'Mainimage = ' + info[2][0:info[2].find(')')] + '\n'
-			info4 = 'Date = ' + info[3][info[3].find('SMP') + 4:len(info[3])]
+			info1 = "Name = " + info[0] + "\n"
+			info2 =  "Owner = " + info[1].replace(')','') + "\n"
+			info3 =  "Mainimage = " + info[2][0:info[2].find(')')] + "\n"
+			info4 = "Date = " + info[3][info[3].find('SMP')+4:len(info[3])]
 			info5 = self.Do_cut(info1 + info2 + info3 + info4)
-			self['label1'].setText(info5)
+			self["label1"].setText(info5)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Free(self):
 		try:
-			self['label2'].setText(_('Ram'))
-			info1 = self.Do_cmd('free', None, None)
+			self["label2"].setText(_("Ram"))
+			info1 = self.Do_cmd("free", None, None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Cpu(self):
 		try:
-			self['label2'].setText(_('Cpu'))
-			info1 = self.Do_cmd('cat', '/proc/cpuinfo', None, " | sed 's/\t\t/\t/'")
+			self["label2"].setText(_("Cpu"))
+			info1 = self.Do_cmd("cat", "/proc/cpuinfo", None, " | sed 's/\t\t/\t/'")
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Top(self):
 		try:
-			self['label2'].setText(_('Top'))
-			info1 = self.Do_cmd('top', None, '-b -n1')
+			self["label2"].setText(_("Top"))
+			info1 = self.Do_cmd("top", None, "-b -n1")
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def MemInfo(self):
 		try:
-			self['label2'].setText(_('MemInfo'))
-			info1 = self.Do_cmd('cat', '/proc/meminfo', None)
+			self["label2"].setText(_("MemInfo"))
+			info1 = self.Do_cmd("cat", "/proc/meminfo", None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Module(self):
 		try:
-			self['label2'].setText(_('Module'))
-			info1 = self.Do_cmd('cat', '/proc/modules', None)
+			self["label2"].setText(_("Module"))
+			info1 = self.Do_cmd("cat", "/proc/modules", None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Mtd(self):
 		try:
-			self['label2'].setText(_('Mtd'))
-			info1 = self.Do_cmd('cat', '/proc/mtd', None)
+			self["label2"].setText(_("Mtd"))
+			info1 = self.Do_cmd("cat", "/proc/mtd", None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Partitions(self):
 		try:
-			self['label2'].setText(_('Partitions'))
-			info1 = self.Do_cmd('cat', '/proc/partitions', None)
+			self["label2"].setText(_("Partitions"))
+			info1 = self.Do_cmd("cat", "/proc/partitions", None)
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
-
-		return
+			self["label1"].setText(_("an internal error has occured"))
 
 	def Swap(self):
 		try:
-			self['label2'].setText(_('Swap'))
-			info0 = self.Do_cmd('cat', '/proc/swaps', None, " | sed 's/\t/ /g; s/[ ]* / /g'")
-			info0 = info0.split('\n')
-			info1 = ''
+			self["label2"].setText(_("Swap"))
+			info0 = self.Do_cmd("cat", "/proc/swaps", None, " | sed 's/\t/ /g; s/[ ]* / /g'")
+			info0 = info0.split("\n");
+			info1 = ""
 			for l in info0[1:]:
-				l1 = l.split(' ')
-				info1 = info1 + 'Name: ' + l1[0] + '\n'
-				info1 = info1 + 'Type: ' + l1[1] + '\n'
-				info1 = info1 + 'Size: ' + l1[2] + '\n'
-				info1 = info1 + 'Used: ' + l1[3] + '\n'
-				info1 = info1 + 'Prio: ' + l1[4] + '\n\n'
-
-			if info1[-1:] == '\n':
-				info1 = info1[:-1]
-			if info1[-1:] == '\n':
-				info1 = info1[:-1]
+				l1 = l.split(" ")
+				info1 = info1 + "Name: " + l1[0] + '\n'
+				info1 = info1 + "Type: " + l1[1] + '\n'
+				info1 = info1 + "Size: " + l1[2] + '\n'
+				info1 = info1 + "Used: " + l1[3] + '\n'
+				info1 = info1 + "Prio: " + l1[4] + '\n\n'
+			if info1[-1:] == '\n': info1 = info1[:-1]
+			if info1[-1:] == '\n': info1 = info1[:-1]
 			info1 = self.Do_cut(info1)
-			self['label1'].setText(info1)
+			self["label1"].setText(info1)
 		except:
-			self['label1'].setText(_('an internal error has occur'))
+			self["label1"].setText(_("an internal error has occured"))
 
-		return
 
 	def Do_find(self, text, search):
 		text = text + ' '
-		ret = ''
+		ret = ""
 		pos = text.find(search)
-		pos1 = text.find(' ', pos)
+		pos1 = text.find(" ", pos)
 		if pos > -1:
 			ret = text[pos + len(search):pos1]
 		return ret
 
 	def Do_cut(self, text):
-		text1 = text.split('\n')
-		text = ''
+		text1 = text.split("\n")
+		text = ""
 		for line in text1:
-			text = text + line[:95] + '\n'
-
-		if text[-1:] == '\n':
-			text = text[:-1]
+			text = text + line[:95] + "\n"
+		if text[-1:] == '\n': text = text[:-1]
 		return text
 
-	def Do_cmd(self, cmd, file, arg, pipe = ''):
+	def Do_cmd(self, cmd , file, arg , pipe = ""):
 		try:
 			if file != None:
 				if os.path.exists(file) is True:
 					o = command(cmd + ' ' + file + pipe, 0)
 				else:
-					o = 'File not found: \n' + file
-			elif arg == None:
-				o = command(cmd, 0)
+					o = "File not found: \n" + file
 			else:
-				o = command(cmd + ' ' + arg, 0)
+				if arg == None:
+					o = command(cmd, 0)
+				else:
+					o = command(cmd + ' ' + arg, 0)
 			return o
 		except:
 			o = ''
 			return o
 
-		return
 ####################################################################################################################################
+def getStbArch():
+    if about.getChipSetString() in ('7366', '7376', '5272s', '7252', '7251', '7251S', '7252', '7252S'):
+        return 'armv7ahf'
+    elif about.getChipSetString() in 'pnx8493':
+        return 'armv7a-vfp'
+    elif about.getChipSetString() in ('meson-6', 'meson-64'):
+        return 'cortexa9hf'
+    elif about.getChipSetString() in ('7162', '7111'):
+        return 'sh40'
+    else:
+        return 'mipsel'
+
+def runBackCmd(cmd):
+    eConsoleAppContainer().execute(cmd)
+
+
+def getRealName(string):
+    if string.startswith(' '):
+        while string.startswith(' '):
+            string = string[1:]
+
+    return string
+
+
+def hex_str2dec(str):
+    ret = 0
+    try:
+        ret = int(re.sub('0x', '', str), 16)
+    except:
+        pass
+
+    return ret
+
+
+def norm_hex(str):
+    return '%04x' % hex_str2dec(str)
+
+
+def loadcfg(plik, fraza, dlugosc):
+    wartosc = '0'
+    if fileExists(plik):
+        f = open(plik, 'r')
+        for line in f.readlines():
+            line = line.strip()
+            if line.find(fraza) != -1:
+                wartosc = line[dlugosc:]
+
+        f.close()
+    return wartosc
+
+
+def loadbool(plik, fraza, dlugosc):
+    wartosc = '0'
+    if fileExists(plik):
+        f = open(plik, 'r')
+        for line in f.readlines():
+            line = line.strip()
+            if line.find(fraza) != -1:
+                wartosc = line[dlugosc:]
+
+        f.close()
+    if wartosc == '1':
+        return True
+    else:
+        return False
+
+
+def unload_modules(name):
+    try:
+        from sys import modules
+        del modules[name]
+    except:
+        pass
+
+
+def wyszukaj_in(zrodlo, szukana_fraza):
+    wyrazenie = string.strip(szukana_fraza)
+    for linia in zrodlo.xreadlines():
+        if wyrazenie in linia:
+            return True
+
+    return False
+
+
+def wyszukaj_re(szukana_fraza):
+    wyrazenie = re.compile(string.strip(szukana_fraza), re.IGNORECASE)
+    zrodlo = open('/usr/share/enigma2/' + config.skin.primary_skin.value, 'r')
+    for linia in zrodlo.xreadlines():
+        if re.search(wyrazenie, linia) != None:
+            return True
+
+    zrodlo.close()
+    return False
+
+
 class FileDownloadJob(Job):
 
-	def __init__(self, url, filename, file):
-		Job.__init__(self, _('Downloading %s' % file))
-		FileDownloadTask(self, url, filename)
+    def __init__(self, url, filename, file):
+        Job.__init__(self, _('Downloading %s' % file))
+        FileDownloadTask(self, url, filename)
 
 
 class DownloaderPostcondition(Condition):
 
-	def check(self, task):
-		return task.returncode == 0
+    def check(self, task):
+        return task.returncode == 0
 
-	def getErrorMessage(self, task):
-		return self.error_message
+    def getErrorMessage(self, task):
+        return self.error_message
 
 
 class FileDownloadTask(Task):
 
-	def __init__(self, job, url, path):
-		Task.__init__(self, job, _('Downloading'))
-		self.postconditions.append(DownloaderPostcondition())
-		self.job = job
-		self.url = url
-		self.path = path
-		self.error_message = ''
-		self.last_recvbytes = 0
-		self.error_message = None
-		self.download = None
-		self.aborted = False
-		return
+    def __init__(self, job, url, path):
+        Task.__init__(self, job, _('Downloading'))
+        self.postconditions.append(DownloaderPostcondition())
+        self.job = job
+        self.url = url
+        self.path = path
+        self.error_message = ''
+        self.last_recvbytes = 0
+        self.error_message = None
+        self.download = None
+        self.aborted = False
+        return
 
-	def run(self, callback):
-		self.callback = callback
-		self.download = downloadWithProgress(self.url, self.path)
-		self.download.addProgress(self.download_progress)
-		self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
-		print '[FileDownloadTask] downloading', self.url, 'to', self.path
+    def run(self, callback):
+        self.callback = callback
+        self.download = downloadWithProgress(self.url, self.path)
+        self.download.addProgress(self.download_progress)
+        self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
+        print '[FileDownloadTask] downloading', self.url, 'to', self.path
 
-	def abort(self):
-		print '[FileDownloadTask] aborting', self.url
-		if self.download:
-			self.download.stop()
-		self.aborted = True
+    def abort(self):
+        print '[FileDownloadTask] aborting', self.url
+        if self.download:
+            self.download.stop()
+        self.aborted = True
 
-	def download_progress(self, recvbytes, totalbytes):
-		if recvbytes - self.last_recvbytes > 10000:
-			self.progress = int(100 * (float(recvbytes) / float(totalbytes)))
-			self.name = _('Downloading') + ' ' + '%d of %d kBytes' % (recvbytes / 1024, totalbytes / 1024)
-			self.last_recvbytes = recvbytes
+    def download_progress(self, recvbytes, totalbytes):
+        if recvbytes - self.last_recvbytes > 10000:
+            self.progress = int(100 * (float(recvbytes) / float(totalbytes)))
+            self.name = _('Downloading') + ' ' + '%d of %d kBytes' % (recvbytes / 1024, totalbytes / 1024)
+            self.last_recvbytes = recvbytes
 
-	def download_failed(self, failure_instance = None, error_message = ''):
-		self.error_message = error_message
-		if error_message == '' and failure_instance is not None:
-			self.error_message = failure_instance.getErrorMessage()
-		Task.processFinished(self, 1)
-		return
+    def download_failed(self, failure_instance = None, error_message = ''):
+        self.error_message = error_message
+        if error_message == '' and failure_instance is not None:
+            self.error_message = failure_instance.getErrorMessage()
+        Task.processFinished(self, 1)
+        return
 
-	def download_finished(self, string = ''):
-		if self.aborted:
-			self.finish(aborted=True)
-		else:
-			Task.processFinished(self, 0)
+    def download_finished(self, string = ''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            Task.processFinished(self, 0)
+class PasswdScreen(Screen):
 
+    def __init__(self, session, args = 0):
+        Screen.__init__(self, session)
+        self.title = _('Change Root Password')
+        try:
+            self['title'] = StaticText(self.title)
+        except:
+            print 'self["title"] was not found in skin'
 
+        self.user = 'root'
+        self.output_line = ''
+        self.list = []
+        self['passwd'] = ConfigList(self.list)
+        self['key_red'] = StaticText(_('Close'))
+        self['key_green'] = StaticText(_('Set Password'))
+        self['key_yellow'] = StaticText(_('new Random'))
+        self['key_blue'] = StaticText(_('virt. Keyboard'))
+        self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {'red': self.close,
+         'green': self.SetPasswd,
+         'yellow': self.newRandom,
+         'blue': self.bluePressed,
+         'cancel': self.close}, -1)
+        self.buildList(self.GeneratePassword())
+        self.onShown.append(self.setWindowTitle)
+
+    def newRandom(self):
+        self.buildList(self.GeneratePassword())
+
+    def buildList(self, password):
+        self.password = password
+        self.list = []
+        self.list.append(getConfigListEntry(_('Enter new Password'), ConfigText(default=self.password, fixed_size=False)))
+        self['passwd'].setList(self.list)
+
+    def GeneratePassword(self):
+        passwdChars = string.letters + string.digits
+        passwdLength = 8
+        return ''.join(Random().sample(passwdChars, passwdLength))
+
+    def SetPasswd(self):
+        print 'Changing password for %s to %s' % (self.user, self.password)
+        self.container = eConsoleAppContainer()
+        self.container.appClosed.append(self.runFinished)
+        self.container.dataAvail.append(self.dataAvail)
+        retval = self.container.execute('passwd %s' % self.user)
+        if retval == 0:
+            self.session.open(MessageBox, _('Sucessfully changed password for root user to:\n%s ' % self.password), MessageBox.TYPE_INFO)
+        else:
+            self.session.open(MessageBox, _('Unable to change/reset password for root user'), MessageBox.TYPE_ERROR)
+
+    def dataAvail(self, data):
+        self.output_line += data
+        while True:
+            i = self.output_line.find('\n')
+            if i == -1:
+                break
+            self.processOutputLine(self.output_line[:i + 1])
+            self.output_line = self.output_line[i + 1:]
+
+    def processOutputLine(self, line):
+        if line.find('password: '):
+            self.container.write('%s\n' % self.password)
+
+    def runFinished(self, retval):
+        del self.container.dataAvail[:]
+        del self.container.appClosed[:]
+        del self.container
+        self.close()
+
+    def bluePressed(self):
+        self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
+
+    def VirtualKeyBoardTextEntry(self, callback = None):
+        if callback is not None and len(callback):
+            self.buildList(callback)
+
+    def setWindowTitle(self, title = None):
+        if not title:
+            title = self.title
+        try:
+            self['title'] = StaticText(title)
+        except:
+		print 'self["title"] was not found in skin'

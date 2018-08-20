@@ -1,4 +1,5 @@
 from Screen import Screen
+from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
@@ -10,20 +11,37 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
+from Components.SystemInfo import SystemInfo
 
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
-
+from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 
 from Tools.StbHardware import getFPVersion
+from enigma import ePicLoad, getDesktop, eSize, eTimer, eLabel, eConsoleAppContainer
+from Components.Pixmap import Pixmap
+from Tools.LoadPixmap import LoadPixmap
+from Components.AVSwitch import AVSwitch
 from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 import skin, os
-
+import time
 from os import path, popen
 from re import search
+def parse_ipv4(ip):
+	ret = ""
+	idx = 0
+	if ip is not None:
+		for x in ip:
+			if idx == 0:
+				ret += str(x)
+			else:
+				ret += "." + str(x)
+			idx += 1
+	return ret
+
 
 class About(Screen):
 	def __init__(self, session):
@@ -38,10 +56,11 @@ class About(Screen):
 				"cancel": self.close,
 				"ok": self.close,
 				"log": self.showAboutReleaseNotes,
-				"blue": self.showMemoryInfo,
+				"blue": self.showModelPic,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown,
 				"green": self.showTranslationInfo,
+				"yellow": self.showMemoryInfo,
 			})
 
 	def populate(self):
@@ -54,7 +73,7 @@ class About(Screen):
 		#AboutText += _("Boxtype:\t%s\n") % getBoxType()
 
 		if path.exists('/proc/stb/info/chipset'):
-			AboutText += _("Chipset:\tBCM%s") % about.getChipSetString() + "\n"
+			AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
 
 		cmd = 'cat /proc/cpuinfo | grep "cpu MHz" -m 1 | awk -F ": " ' + "'{print $2}'"
 		cmd2 = 'cat /proc/cpuinfo | grep "BogoMIPS" -m 1 | awk -F ": " ' + "'{print $2}'"
@@ -173,6 +192,11 @@ class About(Screen):
 		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
+		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51'):
+			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
+	
+		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
+
 		fp_version = getFPVersion()
 		if fp_version is None:
 			fp_version = ""
@@ -203,11 +227,15 @@ class About(Screen):
 				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("System Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 	
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
 			f = open('/proc/stb/fp/temp_sensor_avs', 'r')
+			tempinfo = f.read()
+			f.close()
+		elif path.exists('/proc/stb/power/avs'):
+			f = open('/proc/stb/power/avs', 'r')
 			tempinfo = f.read()
 			f.close()
 		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
@@ -220,10 +248,11 @@ class About(Screen):
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("Processor Temp:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
+		AboutText += "\n" + _("Detected HDD:") + "\n"
 		hddlist = harddiskmanager.HDDList()
 		hdd = hddlist and hddlist[0][1] or None
 		if hdd is not None and hdd.model() != "":
@@ -250,18 +279,34 @@ class About(Screen):
 						iface_list.append((_("DHCP") + " : " + _("No") + "\n"))
 					iface_list.append((_("MAC") + " : " + iNetwork.getAdapterAttribute(iface, "mac") + "\n"))
 					iface_list.append(("\n"))
-				my_txt += _("Network") + ":\n"
+				AboutText += _("Network") + ":\n"
 				for x in iface_list:
-					my_txt += "   " + x
-				my_txt += self.hdd_header + "\n"
+					AboutText += "   " + x
+				AboutText += self.hdd_header + "\n"
 				for x in self.hdd_list:
-					my_txt += "   " + x
-				my_txt += "\n"
+					AboutText += "   " + x
+				AboutText += "\n"
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
+#		self["key_red"] = Button(_("Devices"))
+		self["key_yellow"] = Button(_("Memory Info"))
+		self["key_blue"] = Button(_("%s ") % getMachineName() + _("picture"))
 
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions", "ChannelSelectEPGActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"info": self.showTranslationInfo,
+#				"red": self.showDevices,
+				"yellow": self.showMemoryInfo,
+				"blue": self.showModelPic,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown
+			})
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)
 
+	def showDevices(self):
+		self.session.open(Devices)
 	def showMemoryInfo(self):
 		self.session.open(MemoryInfo)
 
@@ -270,10 +315,196 @@ class About(Screen):
 
 	def createSummary(self):
 		return AboutSummary
+		
+	def showModelPic(self):
+		self.session.open(ModelPic)
+
+class ModelPic(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.skinName = ["ModelPic", "About"]
+		
+		self["key_green"] = Button(_(" "))
+		self["key_red"] = Button(_(" "))
+		self["key_yellow"] = Button(_(" "))
+		self["key_blue"] = Button(_("%s ") % (getMachineName()) + _("Info"))
+
+		self["model"] = Label(_("%s %s") % (getMachineBrand(), getMachineName()))
+		self["boxpic"] = Pixmap()
+		self.onFirstExecBegin.append(self.poster_resize)
+
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"blue": self.close
+			}, -2)
+	
+	def poster_resize(self):
+		if getBoxType() in ('sf108'):
+			model = "sf108.png"
+		elif getBoxType() in ('sf4008'):
+			model = "sf4008.png"
+		elif getBoxType() in ('sf3038'):
+			model = "sf3038.png"
+		elif getBoxType() in ('sf128'):
+			model = "sf128.png"
+		elif getBoxType() in ('sf138'):
+			model = "sf138.png"
+		elif getBoxType() in ('sf208'):
+			model = "sf208.png"
+		elif getBoxType() in ('sf228'):
+			model = "sf228.png"
+		elif getBoxType() in ('sf98'):
+			model = "sf98.png"
+		elif getBoxType() in ('zgemmah7'):
+			model = "zgemmah7.png"
+		elif getBoxType() in ('zgemmah7c'):
+			model = "zgemmah7c.png"
+		elif getBoxType() in ('zgemmah7s'):
+			model = "zgemmah7s.png"
+		elif getBoxType() in ('zgemmah2h'):
+			model = "zgemmah2h.png"
+		elif getBoxType() in ('zgemmah2s'):
+			model = "zgemmah2s.png"
+		elif getBoxType() in ('zgemmah2splus'):
+			model = "zgemmah2splus.png"
+		elif getBoxType() in ('zgemmah32tc'):
+			model = "zgemmah32tc.png"
+		elif getBoxType() in ('zgemmah3ac'):
+			model = "zgemmah3ac.png"
+		elif getBoxType() in ('zgemmah4'):
+			model = "zgemmah4.png"
+		elif getBoxType() in ('zgemmah5'):
+			model = "zgemmah5.png"
+		elif getBoxType() in ('zgemmah52s'):
+			model = "zgemmah52s.png"
+		elif getBoxType() in ('zgemmah7'):
+			model = "zgemmah7.png"
+		elif getBoxType() in ('zgemmah7c'):
+			model = "zgemmah7c.png"
+		elif getBoxType() in ('zgemmah7s'):
+			model = "zgemmah7s.png"
+		elif getBoxType() in ('zgemmah52splus'):
+			model = "zgemmah52splus.png"
+		elif getBoxType() in ('zgemmah52tc'):
+			model = "zgemmah52tc.png"
+		elif getBoxType() in ('zgemmah5ac'):
+			model = "zgemmah5ac.png"
+		elif getBoxType() in ('zgemmah6'):
+			model = "zgemmah6.png"
+		elif getBoxType() in ('zgemmah9s'):
+			model = "zgemmah9s.png"
+		elif getBoxType() in ('zgemmah9splus'):
+			model = "zgemmah9splus.png"
+		elif getBoxType() in ('zgemmah9t'):
+			model = "zgemmah9t.png"
+		elif getBoxType() in ('zgemmahs'):
+			model = "zgemmahs.png"
+		elif getBoxType() in ('zgemmai55'):
+			model = "zgemmai55.png"
+		elif getBoxType() in ('vuduo'):
+			model = "vuduo.png "
+		elif getBoxType() in ('vuduo2'):
+			model = "vuduo2.png"
+		elif getBoxType() in ('vusolo'):
+			model = "vusolo.png"
+		elif getBoxType() in ('vusolo2'):
+			model = "vusolo2.png"
+		elif getBoxType() in ('vusolo4k'):
+			model = "vusolo4k.png"
+		elif getBoxType() in ('vusolose'):
+			model = "vusolose.png"
+		elif getBoxType() in ('vuultimo'):
+			model = "vuultimo.png"
+		elif getBoxType() in ('vuultimo4k'):
+			model = "vuultimo4k.png"
+		elif getBoxType() in ('vuuno'):
+			model = "vuuno.png"
+		elif getBoxType() in ('vuuno4k'):
+			model = "vuuno4k.png"
+		elif getBoxType() in ('vuuno4kse'):
+			model = "vuuno4kse.png"
+		elif getBoxType() in ('vuzero'):
+			model = "vuzero.png"
+		elif getBoxType() in ('vuzero4k'):
+		        model = "vuzero4k.png"
+		elif getBoxType() in ('gb800se'):
+			model = "gb800se.png "
+		elif getBoxType() in ('gb800seplus'):
+			model = "gb800seplus.png"
+		elif getBoxType() in ('gb800solo'):
+			model = "gb800solo.png"
+		elif getBoxType() in ('gb800ue'):
+			model = "gb800ue.png "
+		elif getBoxType() in ('gb800ueplus'):
+			model = "gb800ueplus.png"
+		elif getBoxType() in ('gbipbox'):
+			model = "gbipbox.png"
+		elif getBoxType() in ('gbquad'):
+			model = "gbquad.png"
+		elif getBoxType() in ('gbquad4k'):
+			model = "gbquad4k.png"
+		elif getBoxType() in ('gbquadplus'):
+			model = "gbquadplus.png"
+		elif getBoxType() in ('gbue4k'):
+			model = "gbue4k.png"
+		elif getBoxType() in ('gbultrase'):
+			model = "gbultrase.png"
+		elif getBoxType() in ('gbultraue'):
+			model = "gbultraue.png"
+		elif getBoxType() in ('gbx1'):
+			model = "gbx1.png"
+		elif getBoxType() in ('gbx2'):
+			model = "gbx2.png"
+		elif getBoxType() in ('gbx3'):
+			model = "gbx3.png"
+		elif getBoxType() in ('gbx3h'):
+			model = "gbx3h.png "
+		elif getBoxType() in ('dinobot4k'):
+			model = "dinobot4k.png"
+		elif getBoxType() in ('atemio5x00'):
+			model = "atemio5x00.png"
+		elif getBoxType() in ('atemio6000'):
+			model = "atemio6000.png"
+		elif getBoxType() in ('atemio6100'):
+			model = "atemio6100.png"
+		elif getBoxType() in ('atemio6200'):
+			model = "atemio6200.png"
+		elif getBoxType() in ('atemionemesis'):
+			model = "atemionemesis.png"
+		elif getBoxType() in ('mutant51'):
+			model = "mutant51.png"
+		elif getBoxType() in ('osmega'):
+			model = "osmega.png"
+		elif getBoxType() in ('osmini'):
+			model = "osmini.png"
+		elif getBoxType() in ('osminiplus'):
+			model = "osminiplus.png"
+		elif getBoxType() in ('osnino'):
+			model = "osnino.png"
+		elif getBoxType() in ('osninoplus'):
+			model = "osninoplus.png"
+		elif getBoxType() in ('osninopro'):
+			model = "osninopro.png"	
+		else:
+			model = None
+		poster_path = "/usr/share/enigma2/%s" % model
+		self["boxpic"].hide()
+		sc = AVSwitch().getFramebufferScale()
+		self.picload = ePicLoad()
+		size = self["boxpic"].instance.size()
+		self.picload.setPara((size.width(), size.height(), sc[0], sc[1], False, 1, "#00000000"))
+		if self.picload.startDecode(poster_path, 0, 0, False) == 0:
+			ptr = self.picload.getData()
+			if ptr != None:
+				self["boxpic"].instance.setPixmap(ptr)
+				self["boxpic"].show()
 
 class Devices(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		self.skinName = ["Devices", "About"]
 		Screen.setTitle(self, _("Device Information"))
 		self["TunerHeader"] = StaticText(_("Detected NIMs:"))
 		self["HDDHeader"] = StaticText(_("Detected Devices:"))
@@ -743,7 +974,6 @@ class ViewGitLog(Screen):
 			'cancel': self.closeRecursive,
 			'green': self.closeRecursive,
 			"red": self.closeRecursive,
-			"blue": self.showMemoryInfo,
 			"yellow": self.changelogtype,
 			"left": self.pageUp,
 			"right": self.pageDown,
@@ -785,9 +1015,6 @@ class ViewGitLog(Screen):
 		except:
 			self['title_summary'].setText("")
 			self['text_summary'].setText("")
-
-	def showMemoryInfo(self):
-		self.session.open(MemoryInfo)
 
 	def unattendedupdate(self):
 		self.close((_("Unattended upgrade without GUI and reboot system"), "cold"))
@@ -847,10 +1074,15 @@ class CommitInfo(Screen):
 
 		self["key_red"] = Button(_("Cancel"))
 
+		try:
+			branch = "?sha=" + "-".join(about.getEnigmaVersionString().split("-")[3:])
+		except:
+			branch = ""
 		self.project = 0
 		self.projects = [
 			("https://api.github.com/repos/opendroid-Team/enigma2/commits", "enigma2"),
 			("https://api.github.com/repos/opendroid-Team/skins-oDreamy-FHD/commits", "oDreamy-FHD"),
+			("https://api.github.com/repos/stein17/OPD-Blue-Line/commits", "OPD-Blue-Line"),
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -921,7 +1153,9 @@ class MemoryInfo(Screen):
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
 
-		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not important."))
+		self["params"] = MemoryInfoSkinParams()
+
+		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not relevant.\nDon't panic please when you see values being displayed that you think look suspicious!"))
 
 		Typ = _("%s  ") % (getMachineName())
 		self.setTitle(Typ + "[" + (_("Memory Info"))+ "]")
@@ -982,3 +1216,4 @@ class MemoryInfoSkinParams(HTMLComponent, GUIComponent):
 			self.skinAttributes = attribs
 		return GUIComponent.applySkin(self, desktop, screen)
 
+	GUI_WIDGET = eLabel

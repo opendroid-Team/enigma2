@@ -19,7 +19,7 @@ class MovieInfo(Converter, object):
 			self.type = self.MOVIE_REC_SERVICE_NAME
 		elif type == "FileSize":
 			self.type = self.MOVIE_REC_FILESIZE
-		elif type == "RecordServiceRef":
+		elif type in ("RecordServiceRef", "Reference"):
 			self.type = self.MOVIE_REC_SERVICE_REF
 		else:
 			raise ElementError("'%s' is not <ShortDescription|MetaDescription|RecordServiceName|FileSize> for MovieInfo converter" % type)
@@ -55,6 +55,8 @@ class MovieInfo(Converter, object):
 				if filesize is not None:
 					if filesize >= 100000*1024*1024:
 						return _("%.0f GB") % (filesize / (1024.0*1024.0*1024.0))
+					elif filesize >= 100000*1024:
+						return _("%.2f GB") % (filesize / (1024.0*1024.0*1024.0))
 					else:
 						return _("%.0f MB") % (filesize / (1024.0*1024.0))
 		return ""

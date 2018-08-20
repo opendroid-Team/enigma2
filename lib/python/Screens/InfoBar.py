@@ -361,6 +361,18 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					self.session.open(MainMenu, x)
 					return
 
+	def showInformation(self):
+		from Screens.Menu import MainMenu, mdom
+		root = mdom.getroot()
+		for x in root.findall("menu"):
+			y = x.find("id")
+			if y is not None:
+				id = y.get("val")
+				if id and id == "information":
+					self.session.infobar = self
+					self.session.open(MainMenu, x)
+					return
+
 	def showFormat(self):
 		try:
 			from Plugins.SystemPlugins.Videomode.plugin import videoSetupMain

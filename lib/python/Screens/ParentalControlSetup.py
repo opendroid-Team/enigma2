@@ -88,8 +88,8 @@ class ParentalControlSetup(Screen, ConfigListScreen, ProtectedScreen):
 				self.list.append(getConfigListEntry(_("Protect standby menu"), config.ParentalControl.config_sections.standby_menu))
 			self.list.append(getConfigListEntry(_("Protect movie list"), config.ParentalControl.config_sections.movie_list))
 			self.list.append(getConfigListEntry(_("Protect context menus"), config.ParentalControl.config_sections.context_menus))
-			self.list.append(getConfigListEntry(_("Protect Quickmenu"), config.ParentalControl.config_sections.quickmenu))
-			self.list.append(getConfigListEntry(_("Protect InfoPanel"), config.ParentalControl.config_sections.infopanel))
+			self.list.append(getConfigListEntry(_("Protect BluePanel"), config.ParentalControl.config_sections.BluePanel))
+			self.list.append(getConfigListEntry(_("Protect OPD_panel"), config.ParentalControl.config_sections.OPD_panel))
 		self["config"].list = self.list
 		self["config"].setList(self.list)
 

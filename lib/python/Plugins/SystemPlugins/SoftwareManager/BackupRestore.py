@@ -461,7 +461,7 @@ class RestoreScreen(Screen, ConfigListScreen):
 			if path.exists(SH):
 				startSH = SH
 				break
-		
+
 		if startSH:
 			self.session.openWithCallback(self.restartGUI, Console, title = _("Running Myrestore script, Please wait ..."), cmdlist = [startSH], closeOnSuccess = True)
 		else:

@@ -1,4 +1,4 @@
-AC_INIT([enigma2],[6.5],[http://www.droidsat.org])
+AC_INIT([enigma2],[6.6],[http://www.droidsat.org])
 AM_INIT_AUTOMAKE([dist-bzip2 no-define tar-pax -Wno-portability])
 AC_CONFIG_HEADERS([enigma2_config.h])
 
@@ -37,7 +37,7 @@ AM_CONDITIONAL(HAVE_FAKE_GIT_DIR, test -f "$srcdir/.git/last_commit_info")
 dnl versions of gstreamer and plugins-base
 AC_ARG_WITH(gstversion,
 	AS_HELP_STRING([--with-gstversion],[use gstreamer version (major.minor)]),
-	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=0.10])
+	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=1.0])
 
 PKG_CHECK_MODULES(GSTREAMER, gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR)
 PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 sigc++-2.0 libssl libcrypto])
@@ -190,8 +190,10 @@ AM_CONDITIONAL(VUDUO2, test "$BOXTYPE" == vuduo2)
 AM_CONDITIONAL(VUZERO, test "$BOXTYPE" == vuzero)
 AM_CONDITIONAL(VENTONHDX, test "$BOXTYPE" == ventonhdx)
 AM_CONDITIONAL(XP1000, test "$BOXTYPE" == xp1000)
+AM_CONDITIONAL(HAVE_KODI, test "$BOXTYPE" == gb7252)
 AM_CONDITIONAL(HAVE_COLORLCD3, test "$BOXTYPE" == dm7080)
 AM_CONDITIONAL(HAVE_COLORLCD2, test "$BOXTYPE" == dm800se -o "$BOXTYPE" == dm800sev2 -o "$BOXTYPE" == dm820)
+AM_CONDITIONAL(HAVE_MB4K, test "$BOXTYPE" == vusolo4k -o "$BOXTYPE" == vuuno4k -o "$BOXTYPE" == vuultimo4k -o "$BOXTYPE" == hd51 -o "$BOXTYPE" == sf4008 -o "$BOXTYPE" == sf5008 -o "$BOXTYPE" == gb7252 -o "$BOXTYPE" == 8100s -o "$BOXTYPE" == u5 -o "$BOXTYPE" == u5pvr -o "$BOXTYPE" == u51 -o "$BOXTYPE" == u52 -o "$BOXTYPE" == u53)
 AM_CONDITIONAL(HAVE_COLORLCD1, test "$BOXTYPE" == dm8000 -o "$BOXTYPE" == dm800 -o "$BOXTYPE" == dm7020hd -o "$BOXTYPE" == dm7020hdv2)
 AM_CONDITIONAL(HAVE_GRAUTEC8000, test "$BOXTYPE" == dm8000)
 AM_CONDITIONAL(HAVE_GRAUTEC70X0, test "$BOXTYPE" == dm7020hd -o "$BOXTYPE" == dm7020hdv2 -o "$BOXTYPE" == dm7080)
@@ -865,6 +867,20 @@ lib/python/Plugins/Extensions/MediaPlayer/meta/Makefile
 lib/python/Plugins/Extensions/MediaScanner/Makefile
 lib/python/Plugins/Extensions/MediaScanner/meta/Makefile
 lib/python/Plugins/Extensions/MiniTV/Makefile
+lib/python/Plugins/Extensions/OPDBoot/Makefile
+lib/python/Plugins/Extensions/OPDBoot/bin/Makefile
+lib/python/Plugins/Extensions/OPDBoot/images/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubi/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubi/volume/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubi/headers/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubi/block/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubifs/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubifs/nodes/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ubi_io/Makefile
+lib/python/Plugins/Extensions/OPDBoot/ubi_reader/ui/Makefile
+lib/python/Plugins/Extensions/OPDBoot/OPDBoot_client/Makefile
+lib/python/Plugins/Extensions/OPDBoot/OPDBoot_client/images/Makefile
 lib/python/Plugins/Extensions/PicturePlayer/Makefile
 lib/python/Plugins/Extensions/PicturePlayer/meta/Makefile
 lib/python/Plugins/Extensions/QuadPip/Makefile
@@ -874,6 +890,7 @@ lib/python/Plugins/Extensions/SocketMMI/src/Makefile
 lib/python/Plugins/Extensions/TuxboxPlugins/Makefile
 lib/python/Plugins/Extensions/TuxboxPlugins/meta/Makefile
 lib/python/Plugins/Extensions/Volume_adjust/Makefile
+lib/python/Plugins/Extensions/StartKodi/Makefile
 lib/python/Plugins/SystemPlugins/Makefile
 lib/python/Plugins/SystemPlugins/AnimationSetup/Makefile
 lib/python/Plugins/SystemPlugins/CableScan/Makefile

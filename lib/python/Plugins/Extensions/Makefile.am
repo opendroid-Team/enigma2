@@ -1,6 +1,6 @@
 installdir = $(pkglibdir)/python/Plugins/Extensions
 
-SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer SocketMMI DVDBurn Volume_adjust AtileHD
+SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer SocketMMI DVDBurn Volume_adjust AtileHD OPDBoot
 
 if HAVE_LIBDDVD
 SUBDIRS += DVDPlayer
@@ -14,12 +14,16 @@ if VUULTIMO4K
 SUBDIRS += MiniTV QuadPip
 endif
 
+if HAVE_KODI
+SUBDIRS +=  StartKodi
+endif
+
 if VUUNO4K
 SUBDIRS += QuadPip
 endif
 
 if VUUNO4KSE
-SUBDIRS += QuadPip
+SUBDIRS += MiniTV QuadPip
 endif
 
 if S8100

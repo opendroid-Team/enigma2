@@ -56,7 +56,6 @@ def setProgressiveRate(vid_rate, new_rate, new_res, config_res, config_rate):
 class VideoSetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		# for the skin: first try VideoSetup, then Setup, this allows individual skinning
 		self.skinName = ["VideoSetup", "Setup" ]
 		self.setup_title = _("Video settings")
 		self["HelpWindow"] = Pixmap()
@@ -67,7 +66,6 @@ class VideoSetup(Screen, ConfigListScreen):
 		self.hw = iAVSwitch
 		self.onChangedEntry = [ ]
 
-		# handle hotplug by re-creating setup
 		self.onShow.append(self.startHotplug)
 		self.onHide.append(self.stopHotplug)
 
@@ -176,7 +174,6 @@ class VideoSetup(Screen, ConfigListScreen):
 				self.list.append(getConfigListEntry(_("Delay time"), config.av.autores_delay,_("Set the time before checking video source for resolution infomation.")))
 				self.list.append(getConfigListEntry(_("Automatic resolution label"), config.av.autores_label_timeout,_("Allows you to adjust the amount of time the resolution infomation display on screen.")))
 
-		# if we have modes for this port:
 		if (config.av.videoport.value in config.av.videomode and config.av.autores.value == 'disabled') or config.av.videoport.value == 'Scart':
 			# add mode- and rate-selection:
 			self.list.append(getConfigListEntry(pgettext(_("Video output mode"), _("Mode")), config.av.videomode[config.av.videoport.value], _("This option configures the video output mode (or resolution).")))
@@ -191,7 +188,6 @@ class VideoSetup(Screen, ConfigListScreen):
 		else:
 			mode = config.av.videomode[port].value
 
-		# some modes (720p, 1080i) are always widescreen. Don't let the user select something here, "auto" is not what he wants.
 		force_wide = self.hw.isWidescreenMode(port, mode)
 
 		if not force_wide:
@@ -205,8 +201,8 @@ class VideoSetup(Screen, ConfigListScreen):
 		elif config.av.aspect.value == "4:3":
 			self.list.append(getConfigListEntry(_("Display 16:9 content as"), config.av.policy_169, _("When the content has an aspect ratio of 16:9, choose whether to scale/stretch the picture.")))
 
-#		if config.av.videoport.value == "HDMI":
-#			self.list.append(getConfigListEntry(_("Allow unsupported modes"), config.av.edid_override))
+		if config.av.videoport.value == "HDMI":
+			self.list.append(getConfigListEntry(_("Allow unsupported modes"), config.av.edid_override,_("This option allows you to use all HDMI Modes")))
 		if config.av.videoport.value == "Scart":
 			self.list.append(getConfigListEntry(_("Color format"), config.av.colorformat, _("Configure which color format should be used on the SCART output.")))
 			if level >= 1:
@@ -226,11 +222,20 @@ class VideoSetup(Screen, ConfigListScreen):
 		if SystemInfo["havehdmicolordepth"]:
 			self.list.append(getConfigListEntry(_("HDMI Colordepth"), config.av.hdmicolordepth,_("This option allows you can config the Colordepth for UHD")))
 
+		if SystemInfo["havehdmihdrtype"]:
+			self.list.append(getConfigListEntry(_("HDMI HDR Type"), config.av.hdmihdrtype,_("This option allows you can force the HDR Modes for UHD")))
+
 		if SystemInfo["Canedidchecking"]:
 			self.list.append(getConfigListEntry(_("Bypass HDMI EDID Check"), config.av.bypass_edid_checking,_("This option allows you to bypass HDMI EDID check")))
 
 		if SystemInfo["haveboxmode"]:
 			self.list.append(getConfigListEntry(_("Change Boxmode to control Hardware Chip Modes*"), config.av.boxmode,_("Switch Mode to enable HDR Modes or PIP Functions")))
+
+		if SystemInfo["HDRSupport"]:
+			self.list.append(getConfigListEntry(_("HLG Support"), config.av.hlg_support,_("This option allows you can force the HLG Modes for UHD")))
+			self.list.append(getConfigListEntry(_("HDR10 Support"), config.av.hdr10_support,_("This option allows you can force the HDR10 Modes for UHD")))
+			self.list.append(getConfigListEntry(_("Allow 12bit"), config.av.allow_12bit,_("This option allows you can enable or disable the 12 Bit Color Mode")))
+			self.list.append(getConfigListEntry(_("Allow 10bit"), config.av.allow_10bit,_("This option allows you can enable or disable the 10 Bit Color Mode")))
 
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
@@ -246,7 +251,7 @@ class VideoSetup(Screen, ConfigListScreen):
 
 		if int(res) > int(config_res) or (int(res) == int(config_res) and ((pol == 'p' and config_pol == 'i') or (config_mode == '2160p30' and mode == '2160p'))):
 			setmode[config_port].setValue(config_mode)
-		if config_rate != 'multi' and (rate == 'multi' or int(config_rate) < int(rate)):
+		if config_rate not in ("auto","multi") and (rate in ("auto","multi") or int(config_rate) < int(rate)):
 			setrate[config_mode].setValue(config_rate)
 
 	def keyLeft(self):
@@ -419,7 +424,6 @@ class VideoSetup(Screen, ConfigListScreen):
 class AudioSetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		# for the skin: first try AudioSetup, then Setup, this allows individual skinning
 		self.skinName = ["AudioSetup", "Setup" ]
 		self.setup_title = _("Audio settings")
 		self["HelpWindow"] = Pixmap()
@@ -430,7 +434,6 @@ class AudioSetup(Screen, ConfigListScreen):
 		self.hw = iAVSwitch
 		self.onChangedEntry = [ ]
 
-		# handle hotplug by re-creating setup
 		self.onShow.append(self.startHotplug)
 		self.onHide.append(self.stopHotplug)
 
@@ -520,7 +523,6 @@ class AudioSetup(Screen, ConfigListScreen):
 	def apply(self):
 		self.keySave()
 
-	# for summary:
 	def changedEntry(self):
 		for x in self.onChangedEntry:
 			x()
@@ -592,9 +594,6 @@ class AutoVideoMode(Screen):
 					iPlayableService.evVideoSizeChanged: self.VideoChanged,
 					iPlayableService.evVideoProgressiveChanged: self.VideoChanged,
 					iPlayableService.evVideoFramerateChanged: self.VideoChanged,
-					#iPlayableService.evBuffering: self.BufferInfo, # currently disabled, does this really need? - with some streams will this permanently called (e.g. #SERVICE 4097:0:1:0:0:0:0:0:0:0:rtmp%3a//62.113.210.250/medienasa-live playpath=ok-wernigerode_high swfUrl=http%3a//www.blitzvideoserver06.de/blitzvideoplayer6.swf live=1 pageUrl=http%3a//iphonetv.in/#stream-id=45:Offener Kanal Wernigerode rtmp)
-					#iPlayableService.evStopped: self.BufferInfoStop # sometimes not called or called before evBuffering -> if bufferfull = False (when evBuffering permanetly called and buffer < 98%) will autoresolution not longer working
-					#iPlayableService.evEnd: self.BufferInfoStop # alternative for 'evStopped'
 				})
 
 		self.firstrun = True
@@ -633,15 +632,12 @@ class AutoVideoMode(Screen):
 			self.VideoChanged()
 		else:
 			self.bufferfull = False
-		#print '+'*50, 'BufferInfo',bufferInfo[0],self.bufferfull
 
 	def BufferInfoStop(self):
 		self.bufferfull = True
-		#print '-'*50, 'BufferInfoStop'
 
 	def VideoChanged(self):
 		if config.av.autores.value == 'disabled' or getAutoresPlugin_enabled():
-			#print "[VideoMode] autoresolution is disabled - resolution not changed !"
 			return
 		if self.session.nav.getCurrentlyPlayingServiceReference() and not self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:'):
 			delay = config.av.autores_delay.value
@@ -656,7 +652,6 @@ class AutoVideoMode(Screen):
 			self.detecttimer.start(delay)
 
 	def VideoChangeDetect(self):
-		# info: autoresolution preview or save settings call this function with session = None / ~338, ~374
 		global resolutionlabel
 		config_port, config_mode, config_res, config_pol, config_rate = getConfig_videomode(config.av.videomode, config.av.videorate)
 		config_mode = config_mode.replace('p30','p')
@@ -769,19 +764,19 @@ class AutoVideoMode(Screen):
 				autorestyp = 'simple'
 				new_rate = (video_rate + 500) / 1000
 				if video_height <= 576 and int(config_res) >= 576: #sd
-					if config.av.autores_rate_sd[config.av.autores_mode_sd[config.av.videoport.value].value].value == 'multi':
+					if config.av.autores_rate_sd[config.av.autores_mode_sd[config.av.videoport.value].value].value in ("auto","multi"):
 						if video_pol == 'i': new_rate *= 2
 					else:
 						new_rate = config.av.autores_rate_sd[config.av.autores_mode_sd[config.av.videoport.value].value].value.replace('Hz','')
 					new_mode = config.av.autores_mode_sd[config_port].value.replace('p30','p')
 				elif video_height <= 720 and int(config_res) >= 720: #hd
-					if config.av.autores_rate_hd[config.av.autores_mode_hd[config.av.videoport.value].value].value == 'multi':
+					if config.av.autores_rate_hd[config.av.autores_mode_hd[config.av.videoport.value].value].value in ("auto","multi"):
 						if video_pol == 'i': new_rate *= 2
 					else:
 						new_rate = config.av.autores_rate_hd[config.av.autores_mode_hd[config.av.videoport.value].value].value.replace('Hz','')
 					new_mode = config.av.autores_mode_hd[config_port].value.replace('p30','p')
 				elif video_height <= 1080 and int(config_res) >= 1080: #fhd
-					if config.av.autores_rate_fhd[config.av.autores_mode_fhd[config.av.videoport.value].value].value == 'multi':
+					if config.av.autores_rate_fhd[config.av.autores_mode_fhd[config.av.videoport.value].value].value in ("auto","multi"):
 						if video_pol == 'i': new_rate *= 2
 					else:
 						new_rate = config.av.autores_rate_fhd[config.av.autores_mode_fhd[config.av.videoport.value].value].value.replace('Hz','')
@@ -789,13 +784,13 @@ class AutoVideoMode(Screen):
 					if new_mode == '1080p' and not config.av.autores_1080i_deinterlace.value and video_height == 1080 and video_pol == 'i':
 						new_mode = '1080i'
 				elif video_height <= 2160 and int(config_res) >= 2160: #uhd
-					if config.av.autores_rate_uhd[config.av.autores_mode_uhd[config.av.videoport.value].value].value == 'multi':
+					if config.av.autores_rate_uhd[config.av.autores_mode_uhd[config.av.videoport.value].value].value in ("auto","multi"):
 						if video_pol == 'i': new_rate *= 2
 					else:
 						new_rate = config.av.autores_rate_uhd[config.av.autores_mode_uhd[config.av.videoport.value].value].value.replace('Hz','')
 					new_mode = config.av.autores_mode_uhd[config_port].value.replace('p30','p')
 				else:
-					if config_rate != 'multi': new_rate = config_rate
+					if config_rate not in ("auto","multi"): new_rate = config_rate
 					new_mode = config_mode
 				new_rate = str(new_rate)
 
@@ -807,7 +802,7 @@ class AutoVideoMode(Screen):
 				elif new_mode in iAVSwitch.modes_available:
 					write_mode = new_mode
 				else:
-					if config_rate != 'multi' and int(new_rate) > int(config_rate): new_rate = config_rate
+					if config_rate not in ("auto","multi") and int(new_rate) > int(config_rate): new_rate = config_rate
 					if config_mode+new_rate in iAVSwitch.modes_available:
 						write_mode = config_mode+new_rate
 					else:
@@ -824,12 +819,12 @@ class AutoVideoMode(Screen):
 
 				if video_height <= int(min_res):
 					if new_pol == 'i' and min_pol == 'p': new_pol = min_pol
-					if min_rate != 'multi' and new_rate < int(min_rate): new_rate = min_rate
+					if min_rate not in ("auto","multi") and new_rate < int(min_rate): new_rate = min_rate
 					new_res = min_res
 				if video_height >= int(config_res) or int(new_res) >= int(config_res):
 					new_res = config_res
 					if video_pol == 'p' and config_pol == 'i': new_pol = config_pol
-					if config_rate != 'multi' and int(config_rate) < new_rate: new_rate = config_rate
+					if config_rate not in ("auto","multi") and int(config_rate) < new_rate: new_rate = config_rate
 				new_rate = str(new_rate)
 
 				if new_pol == 'p':
@@ -866,7 +861,7 @@ class AutoVideoMode(Screen):
 					elif new_res+min_pol in iAVSwitch.modes_available:
 						write_mode = new_res+min_pol
 					else:
-						if config_rate != 'multi' and int(new_rate) > int(config_rate): new_rate = config_rate
+						if config_rate not in ("auto","multi") and int(new_rate) > int(config_rate): new_rate = config_rate
 						if config_mode+new_rate in iAVSwitch.modes_available:
 							write_mode = config_mode+new_rate
 						else:
@@ -916,7 +911,7 @@ class AutoVideoMode(Screen):
 				write_mode = new_mode
 			else:
 				autorestyp = 'no match'
-				if path.exists('/proc/stb/video/videomode_%shz' % new_rate) and config_rate == 'multi':
+				if path.exists('/proc/stb/video/videomode_%shz' % new_rate) and config_rate in ("auto","multi"):
 					f = open("/proc/stb/video/videomode_%shz" % new_rate, "r")
 					multi_videomode = f.read().replace('\n','')
 					f.close()
@@ -925,9 +920,6 @@ class AutoVideoMode(Screen):
 					else:
 						write_mode = config_mode+new_rate
 
-			# workaround for bug, see http://www.droidsat.org/forum/showthread.php?1642-Autoresolution-Plugin&p=38836&viewfull=1#post38836
-			# always use a fixed resolution and frame rate   (e.g. 1080p50 if supported) for TV or .ts files
-			# always use a fixed resolution and correct rate (e.g. 1080p24/p50/p60 for all other videos
 			if config.av.smart1080p.value != 'false' and config.av.autores.value in ('all', 'hd'):
 				autorestyp = 'smart1080p mode'
 				ref = self.session and self.session.nav.getCurrentlyPlayingServiceReference()
@@ -938,8 +930,6 @@ class AutoVideoMode(Screen):
 						mypath = ''
 				else:
 					mypath = ''
-				# no frame rate information available, check if filename (or directory name) contains a hint
-				# (allow user to force a frame rate this way):
 				if   (mypath.find('p24.') >= 0) or (mypath.find('24p.') >= 0):
 					new_rate = '24'
 				elif (mypath.find('p25.') >= 0) or (mypath.find('25p.') >= 0):
@@ -950,7 +940,7 @@ class AutoVideoMode(Screen):
 					new_rate = '50'
 				elif (mypath.find('p60.') >= 0) or (mypath.find('60p.') >= 0):
 					new_rate = '60'
-				elif new_rate == 'multi':
+				elif new_rate in ("auto","multi"):
 					new_rate = '' # omit frame rate specifier, e.g. '1080p' instead of '1080p50' if there is no clue
 				if mypath != '':
 					if mypath.endswith('.ts'):
@@ -958,7 +948,6 @@ class AutoVideoMode(Screen):
 						new_rate = '50' # for .ts files
 					else:
 						print "DEBUG VIDEOMODE/ playing other (non .ts) file"
-						# new_rate from above for all other videos
 				else:
 					print "DEBUG VIDEOMODE/ no path or no service reference, presumably live TV"
 					new_rate = '50' # for TV / or no service reference, then stay at 1080p50
@@ -977,11 +966,8 @@ class AutoVideoMode(Screen):
 						write_mode = '1080i' + new_rate
 				elif config.av.smart1080p.value == '720p50':
 					write_mode = '720p' + new_rate
-				#print "[VideoMode] smart1080p mode, selecting ",write_mode
 
 			if write_mode and current_mode != write_mode and self.bufferfull or self.firstrun:
-				# first we read now the real available values for every stb,
-				# before we try to write the new mode
 				changeResolution = False
 				try:
 					if path.exists("/proc/stb/video/videomode_choices"):
@@ -1000,10 +986,7 @@ class AutoVideoMode(Screen):
 						if not changeResolution:
 							print "[VideoMode] setMode - port: %s, mode: %s is not available" % (config_port, write_mode)
 							resolutionlabel["restxt"].setText(_("Video mode: %s not available") % write_mode)
-							# we try to go for not available 1080p24/1080p30/1080p60 to change to 1080p from 60hz_choices if available
 							# TODO: can we make it easier, or more important --> smaller ?
-							# should we outsourced that way, like two new "def ..."
-							# or some other stuff, not like this?
 							if (write_mode == "1080p24") or (write_mode == "1080p30") or (write_mode == "1080p60"):
 								for x in values:
 									if x == "1080p":
@@ -1045,7 +1028,6 @@ class AutoVideoMode(Screen):
 				except Exception, e:
 					print("[VideoMode] read videomode_choices exception:" + str(e))
 			elif write_mode and current_mode != write_mode:
-				# the resolution remained stuck at a wrong setting after streaming when self.bufferfull was False (should be fixed now after adding BufferInfoStop)
 				print "[VideoMode] not changing from",current_mode,"to",write_mode,"as self.bufferfull is",self.bufferfull
 
 		if write_mode and write_mode != current_mode or self.firstrun:
