@@ -38,8 +38,15 @@ def setFPWakeuptime(wutime):
 			print "setFPWakeupTime failed!"
 
 def setRTCoffset():
-	forsleep = (localtime(time()).tm_hour-gmtime(time()).tm_hour)*3600
-	print "[RTC] set RTC offset to %s sec." % (forsleep)
+	import time
+	if time.localtime().tm_isdst == 0:
+		forsleep = 7200+time.timezone
+	else:
+		forsleep = 3600-time.timezone
+
+	t_local = time.localtime(int(time.time()))
+
+	print "[StbHardware] Set RTC to %s (rtc_offset = %s sec.)" % (time.strftime(config.usage.date.daylong.value + "  " + config.usage.time.short.value, t_local), forsleep)
 	try:
 		open("/proc/stb/fp/rtc_offset", "w").write(str(forsleep))
 	except IOError:
