@@ -104,7 +104,7 @@ class About(Screen):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u51','u5','u53','u52','u5pvr','h9'):
+	        elif getMachineBuild() in ('u51','u5','u53','u52','u5pvr','h9','sf8008'):
 			cpuMHz = "   (1,6 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
@@ -158,7 +158,7 @@ class About(Screen):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
 			f.close()
-	
+	if getMachineBuild() in ('sf8008'):
 		if path.exists('/boot/STARTUP'):
 			f = open('/boot/STARTUP', 'r')
 			f.seek(22)
@@ -192,7 +192,7 @@ class About(Screen):
 		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
-		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51'):
+		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51','sf8008'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
 	
 		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
@@ -343,6 +343,8 @@ class ModelPic(Screen):
 	def poster_resize(self):
 		if getBoxType() in ('sf108'):
 			model = "sf108.png"
+		if getBoxType() in ('sf8008'):
+			model = "sf8008.png"
 		elif getBoxType() in ('sf4008'):
 			model = "sf4008.png"
 		elif getBoxType() in ('sf3038'):

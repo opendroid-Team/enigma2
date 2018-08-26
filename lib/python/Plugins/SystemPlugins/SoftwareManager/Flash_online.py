@@ -211,7 +211,7 @@ class FlashOnline(Screen):
 		files = []
 		if SystemInfo["HaveMultiBoot"]:
 			path = PATH
-			if getMachineBuild() in ("hd51","vs1500","h7","8100s","gb7252"):
+			if getMachineBuild() in ("hd51","vs1500","h7","8100s","gb7252","sf8008"):
 				for name in os.listdir(path):
 					if name != 'bootname' and os.path.isfile(os.path.join(path, name)):
 						try:
@@ -506,8 +506,11 @@ class doFlashImage(Screen):
 			if self.simulate:
 				text += _("Simulate (no write)")
 				if SystemInfo["HaveMultiBoot"]:
+					if getMachineBuild() in ("sf8008"):
+						cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, self.MTDROOTFS, self.MTDKERNEL, flashTmp))
+					else:
 					cmdlist.append("%s -n -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
-				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr"):
+				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr","sf8008"):
 					cmdlist.append("%s -n -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
 				elif getMachineBuild() in ("h9"):
 					cmdlist.append("%s -n -f -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
@@ -522,11 +525,14 @@ class doFlashImage(Screen):
 				if SystemInfo["HaveMultiBoot"]:
 					if self.List not in ("STARTUP","cmdline.txt"):
 						os.system('mkfs.ext4 -F ' + self.devrootfs)
+					if getMachineBuild() in ("sf8008"):
+						cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, self.MTDROOTFS, self.MTDKERNEL, flashTmp))
+					else:
 					cmdlist.append("%s -r -k -m%s %s > /dev/null 2>&1" % (ofgwritePath, self.multi, flashTmp))
 					if self.List not in ("STARTUP","cmdline.txt"):
 						cmdlist.append("umount -fl /oldroot_bind")
 						cmdlist.append("umount -fl /newroot")
-				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr"):
+				elif getMachineBuild() in ("u51","u52","u53","u5","u5pvr","sf8008"):
 					cmdlist.append("%s -r%s -k%s %s > /dev/null 2>&1" % (ofgwritePath, MTDROOTFS, MTDKERNEL, flashTmp))
 				elif getMachineBuild() in ("h9"):
 					cmdlist.append("%s -f -r -k %s > /dev/null 2>&1" % (ofgwritePath, flashTmp))
@@ -717,7 +723,7 @@ class ImageDownloadTask(Task):
 
 	def run(self, callback):
 		self.callback = callback
-		self.download = downloadWithProgress(self.url,self.path)
+		self.download = downlo,"sf8008","sf8008"adWithProgress(self.url,self.path)
 		self.download.addProgress(self.download_progress)
 		self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
 		print "[ImageDownloadTask] downloading", self.url, "to", self.path
@@ -746,7 +752,7 @@ class ImageDownloadTask(Task):
 		else:
 			Task.processFinished(self, 0)
 
-class DeviceBrowser(Screen, HelpableScreen):
+class DeviceBrowser(Screen, HelpableSc,"sf8008","sf8008"reen):
 	skin = """
 		<screen name="DeviceBrowser" position="center,center" size="520,430" >
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
@@ -781,7 +787,7 @@ class DeviceBrowser(Screen, HelpableScreen):
 		hotplugNotifier.append(self.hotplugCB)
 		self.onShown.append(self.updateButton)
 		self.onClose.append(self.removeHotplug)
-
+,"sf8008"
 	def hotplugCB(self, dev, action):
 		print "[hotplugCB]", dev, action
 		self.updateButton()
