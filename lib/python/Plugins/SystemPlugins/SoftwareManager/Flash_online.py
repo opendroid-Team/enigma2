@@ -717,7 +717,7 @@ class ImageDownloadTask(Task):
 
 	def run(self, callback):
 		self.callback = callback
-		self.download = downlo,"sf8008","sf8008"adWithProgress(self.url,self.path)
+		self.download = downloadWithProgress(self.url,self.path)
 		self.download.addProgress(self.download_progress)
 		self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
 		print "[ImageDownloadTask] downloading", self.url, "to", self.path
@@ -746,7 +746,7 @@ class ImageDownloadTask(Task):
 		else:
 			Task.processFinished(self, 0)
 
-class DeviceBrowser(Screen, HelpableSc,"sf8008","sf8008"reen):
+class DeviceBrowser(Screen, HelpableScreen):
 	skin = """
 		<screen name="DeviceBrowser" position="center,center" size="520,430" >
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
@@ -781,7 +781,7 @@ class DeviceBrowser(Screen, HelpableSc,"sf8008","sf8008"reen):
 		hotplugNotifier.append(self.hotplugCB)
 		self.onShown.append(self.updateButton)
 		self.onClose.append(self.removeHotplug)
-,"sf8008"
+
 	def hotplugCB(self, dev, action):
 		print "[hotplugCB]", dev, action
 		self.updateButton()
