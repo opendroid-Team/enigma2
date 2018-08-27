@@ -4,10 +4,11 @@
 
 ## openDroid 6.6 is build using oe-alliance build-environment and several git repositories: ##
 
-> [https://github.com/oe-alliance/oe-alliance-core]
+> [https://github.com/oe-alliance/oe-alliance-core/tree/4.2](https://github.com/oe-alliance/oe-alliance-core/tree/4.2 "OE-Alliance")
 > 
 > [https://github.com/opendroid-Team/enigma2]  (https://github.com/opendroid-Team/enigma2 "openDroid Enigma2")
 > 
+> [https://github.com/stein17/OPD-Blue-Line](https://github.com/stein17/OPD-Blue-Line "openDroid Skin")
 
 > and a lot more...
 
@@ -54,7 +55,7 @@
 ----------
 8 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b 4.1
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 4.2
 
 ----------
 9 - Switch to folder build-enviroment
