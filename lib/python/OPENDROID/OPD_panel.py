@@ -78,15 +78,14 @@ config.softcam = ConfigSubsection()
 config.softcam.actCam = ConfigText(visible_width = 200)
 config.softcam.actCam2 = ConfigText(visible_width = 200)
 config.softcam.waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
-config.plugins.infopanel_redpanel = ConfigSubsection()
 
 def Check_Softcam():
 	found = False
 	if fileExists("/etc/enigma2/noemu"):
 		found = False
 	else:
-		for x in os.listdir('/etc'):
-			if x.find('.emu') > -1:
+		for x in os.listdir('/usr/softcams/'):
+			if x.find('emu') > -1:
 				found = True
 				break;
 	return found
@@ -101,8 +100,8 @@ def Check_SysSoftcam():
 					return "oscam"
 			except:
 				pass
-		if pathExists('/usr/bin/'):
-			softcams = os.listdir('/usr/bin/')
+		if pathExists('/usr/softcams/'):
+			softcams = os.listdir('/usr/softcams/')
 			for softcam in softcams:
 				if softcam.lower().startswith('oscam'):
 					return "oscam"
@@ -644,7 +643,7 @@ class YellowPanel(ConfigListScreen, Screen):
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["status"] = StaticText()
-		self['footnote'] = Label("")
+		self["footnote"] = Label()
 		self["description"] = Label("")
 		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
 
@@ -697,6 +696,7 @@ class YellowPanel(ConfigListScreen, Screen):
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
+
 	def saveAll(self):
 		for x in self["config"].list:
 			x[1].save()

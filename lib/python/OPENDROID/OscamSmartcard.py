@@ -18,6 +18,7 @@ from os import environ, listdir, remove, rename, system, popen
 from Tools.Directories import fileExists, resolveFilename, SCOPE_LANGUAGE, SCOPE_PLUGINS
 from boxbranding import *
 from OPENDROID.BluePanel import BluePanel
+from datetime import datetime
 plugin='[OscamSmartcard] '
 null =' >/dev/null 2>&1'
 
@@ -73,6 +74,8 @@ cardlist = [
 	("V14_fast", "Sky V14 Fastmode"),
 	("HD01", "HD+ HD01 white"),
 	("HD02", "HD+ HD02 black"),
+	("HD03", "HD+ HD03"),
+	("HD04", "HD+ HD04"),
 	("I02-Beta", "I02 Beta"),
 	("I12-Beta", "I12 Beta"),
 	("I12-Nagra", "I12 Nagra"),
@@ -80,6 +83,7 @@ cardlist = [
 	("ORF_ICE_crypto", "ORF ICE Cryptoworks 0D95"),
 	("ORF_ICE_p410", "ORF p410 Cryptoworks 0D98"),
 	("ORF_ICE_irdeto", "ORF ICE Irdeto 0648"),
+	("ORF_ICE_irdeto650", "ORF ICE Irdeto 0650"),
 	("SRG-V2", "SRG V2"),
 	("SRG-V4", "SRG V4"),
 	("SRG-V5", "SRG V5"),
@@ -122,7 +126,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
   <widget name="HELPTEXT" position="670,518" size="544,110" zPosition="1" font="Regular; 20" halign="left" backgroundColor="black" transparent="1" />
   <widget name="HEADER" position="60,114" size="590,180" zPosition="1" font="Regular; 20" halign="left" backgroundColor="black" transparent="1" />
   <widget name="INFOTXT" position="60,518" size="590,110" zPosition="1" font="Regular; 20" halign="left" backgroundColor="black" transparent="1" />
-  <eLabel text="OscamSmartcard 2.2 by arn354 and Undertaker" position="874,45" size="360,20" zPosition="1" font="Regular; 15" halign="right" backgroundColor="black" transparent="1" />
+  <eLabel text="OscamSmartcard 2.4 by arn354 and Undertaker Mod team OPD" position="874,45" size="360,20" zPosition="1" font="Regular; 15" halign="right" backgroundColor="black" transparent="1" />
 <ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/OscamSmartcard/icons/oscamsmartcard.png" position="958,75" size="275,250" alphatest="blend" zPosition="2" />
 </screen>"""
 	def __init__(self, session, args = None, picPath = None):
@@ -150,8 +154,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self["INFOTXT"] = Label()
 		self["INFOTXT"].setText(_("INFORMATION: make your selection and press GREEN\nAll config files are backed up automatically"))
 		self.headers = (getMachineBrand() + ' - '+  getMachineName()+ ' - ' + getImageDistro().title() + ' ' + getImageVersion()) + " - " + extrainfo + "\n"
+		self.online = self.onlinecheck()
+		self.createoscamsmartcarddata()
+		self.oscamsmartcarddata = "/tmp/data/"
+		self.downloadurl()
 
-		if  self.onlinecheck() == False:
+		if self.online == False:
 			list = []
 			self.headers = _("Error") + "\n"
 			self.headers += _("Your STB is not connected to the Internet") + "\n" + _("press color button or lame for exit")
@@ -173,6 +181,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 				self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], {"red": self.exit,"yellow": self.exit,"blue": self.exit,"green":self.exit,"ok": self.exit,"cancel": self.exit}, -1)
 				self.exit
 			else:
+				self.installedversion = self.getaktuell()
 				a=self.checkallcams()
 				anzahl = len(a)
 				if len(a)>0:
@@ -328,13 +337,16 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			else:
 				msginfo += "Oscam EMU\t" + _("no") + "\n"
 		mm = ""
-		if self.currentversion()[0:5] == "oscam":
-			mm = "Binary\t" + _("file already exists and use it")
-			if config.OPENDROID_OscamSmartcard.oscambinary.value == "yes_binary_install":
-				if self.newversion(arch) > self.currentversion():
-					mm = "Binary\t" + _("file exists, becomes upgrade")
+		if self.hd34check() == True:
+			msginfo += "Binary\t" + "oscam r11400 special HD03/04" + "\n"
 		else:
-			mm = "Binary\t" + str( self.newversion(arch)).replace('-1.20-unstable_svn','') + " " + _("will be installed")	+ "\n"
+			if self.installedversion[0:5] == "oscam":
+				mm = "Binary\t" + _("file already exists and use it")
+				if config.OPENDROID_OscamSmartcard.oscambinary.value == "yes_binary_install":
+					if self.newversion(arch) > self.installedversion:
+						mm = "Binary\t" + _("file exists, becomes upgrade")
+			else:
+				mm = "Binary\t" + str( self.newversion(arch)).replace('-1.20-unstable_svn','') + " " + _("will be installed")	+ "\n"
 		if mm != "":
 			msginfo += mm + "\n" 
 		msginfo += "\n"
@@ -366,7 +378,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			if len(x) > 1:
 					x[1].save()
 			else:
-					pass
+				pass
 		try:
 			system('mkdir ' + config.OPENDROID_OscamSmartcard.ConfigPath.value + ' > /dev/null 2>&1')
 		except:
@@ -382,25 +394,35 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self.oscambinaryupdate()
 		self.savecamstart()
 		if getImageDistro() == 'opendroid':
-			system ('/usr/bin/oscam_oscamsmartcard -b -c /usr/keys > /dev/null 2>&1')
+			system ('/usr/softcams/oscam_emu -b -c /usr/keys > /dev/null 2>&1')
 		elif getImageDistro() == 'openmips':
 			system ('/etc/init.d/softcam start')
 		else:
 			self.session.open(MessageBox, _("Oscam is not running\nunknown OS"), MessageBox.TYPE_INFO,10)
 			self.close()
-		config.OPENDROID_OscamSmartcard.save()        
+		config.OPENDROID_OscamSmartcard.save()
 		configfile.save()
 		self.rmoscamsmartcarddata()
 		self.session.open(MessageBox, _("oscam install finished\nhave fun"), MessageBox.TYPE_INFO, 10).setTitle(_("done"))
 		self.close()
 
 	def configcheck(self):
-		if not os.path.exists('/usr/bin/oscam_oscamsmartcard') and config.OPENDROID_OscamSmartcard.oscambinary.value == "no_binary_install":
+		if not os.path.exists('/usr/softcams/oscam_emu') and config.OPENDROID_OscamSmartcard.oscambinary.value == "no_binary_install":
 			self.session.open(MessageBox,(_("Oscam Binary is not installed\nYou must this install") + "\n\n\tOK"  ), MessageBox.TYPE_ERROR,).setTitle(_("wrong Settings detected"))
 			return False
 
+	def getaktuell(self):
+		aktuell = _("no")
+		if os.path.exists("/usr/softcams/oscam_emu"):
+			aktuell = popen("chmod 775 /usr/softcams/oscam_emu && /usr/softcams/oscam_emu -V | grep Version |awk '{print $2}'").read().strip()
+		if aktuell ==_("no"):
+			return aktuell
+		if "oscam" in aktuell:
+			return str(aktuell)
+		else:
+			self.getaktuell()
 	def createoscamsmartcarddata(self):
-		data = 'wget -O /tmp/data.zip '+ base64.b64decode(self.getdl()[1]) + 'data.zip ' + null
+		data = 'wget -T5 --no-check-certificate -O /tmp/data.zip '+ base64.b64decode(self.getdl()[1]) + 'data.zip ' + null
 		popen(data)
 		popen('unzip -o -q -d /tmp /tmp/data.zip')
 		popen('rm /tmp/data.zip')
@@ -539,12 +561,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def oscambinaryupdate(self):
 		if self.newversion(arch) != _("Download not avaible"):
-			system('killall -9 oscam_oscamsmartcard' + null)
-			system('wget -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
+			system('killall -9 oscam_emu' + null)
+			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
 			system('tar -xzf /tmp/oscam.tar.gz -C /tmp' + null)
-			system('rm -f /usr/bin/oscam_oscamsmartcard' + null)
-			system('mv /tmp/oscam /usr/bin/oscam_oscamsmartcard' + null)
-			system('chmod 755 /usr/bin/oscam_oscamsmartcard')
+			system('rm -f /usr/softcams/oscam_emu' + null)
+			system('mv /tmp/oscam /usr/softcams/oscam_emu' + null)
+			system('chmod 755 /usr/softcams/oscam_emu')
 			system('rm -f /tmp/oscam.tar.gz')
 
 	def downloadurl(self):
@@ -563,31 +585,45 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			#overwrite if Box is a WeTeKPLAY
 			if getMachineBrand() =='WeTeK':
 				downloadurl = base64.b64decode(self.getdl()[1]) + binary + '_' + 'wetekplay' + suffix
+			if self.hd34check():
+				downloadurl = base64.b64decode(self.getdl()[1]) + binary + '_' + arch + '_hd34' + suffix
 		else:
 			downloadurl = 'unknown_' + arch
 		return downloadurl
 
+	def hd34check(self):
+		hd34 = ['HD03','HD04']
+		if config.OPENDROID_OscamSmartcard.internalReader0.value in hd34:
+			return True
+		if config.OPENDROID_OscamSmartcard.internalReader1.value in hd34:
+			return True
+		if config.OPENDROID_OscamSmartcard.externalReader0.value in hd34:
+			return True
+		if config.OPENDROID_OscamSmartcard.externalReader1.value in hd34:
+			return True
+		return False
 	def newversion(self,arch):
 		upgradeinfo = _("Download not avaible")
-		if self.onlinecheck() == True:
-			upgfile = '/tmp/upgrade.log'
-			system('touch ' + upgfile)
-			system('wget -O ' + upgfile + ' ' + base64.b64decode(self.getdl()[0]) + null )
-			file = open(upgfile, "r")
+		if self.online == True:
+			upgfile = '/tmp/version.zip'
+			system('wget -T5 --no-check-certificate -O ' + upgfile + ' ' + base64.b64decode(self.getdl()[2]) + ' ' + null )
+			popen('unzip -o -q -d /tmp ' + upgfile)
+			file = open("/tmp/version.info", "r")
 			for line in file.readlines():
 				line = line.strip().split(',')
 				if line[0] == arch:
 					upgradeinfo = line[1]
 			file.close()
+			os.remove("/tmp/version.info")
 			os.remove(upgfile)
 			return upgradeinfo
 		return upgradeinfo
 
 	def currentversion(self):
 		try:
-			if os.path.exists('/usr/bin/oscam_oscamsmartcard'):
-				system('chmod 755 /usr/bin/oscam_oscamsmartcard')
-				f = popen('/usr/bin/oscam_oscamsmartcard -V')
+			if os.path.exists('/usr/softcams/oscam_emu'):
+				system('chmod 755 oscam')
+				f = popen('/usr/softcams/oscam_emu -V')
 				for line in f:
 					if 'Version:' in line:
 						line=line.strip().split()
@@ -609,8 +645,9 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		'enigma2-plugin-softcams-mgcamd.config',
 		'enigma2-plugin-systemplugins-softcamstartup',
 		'enigma2-plugin-systemplugins-softcamstartup-src',
-		'softcam-feed-mipsel', #atv feed
+		'softcam-feed-mipsel'
 		'om-softcam-support'
+		'softcam-feed-universal'
 		]
 		liste=[]
 		f = popen('opkg list-installed |grep -i softcam')
@@ -646,7 +683,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		if getImageDistro() =='opendroid':
 			x = glob.glob("/usr/keys/oscam.*")
 			if len(x) >0:
-				system('tar -czf /usr/keys/backup-oscamsmartcard-'+ dd +'.tar.gz /usr/keys/oscam.*')
+				system('tar -czf /usr/keys/backup-oscam-'+ dd +'.tar.gz /usr/keys/oscam.*')
 				system('rm -f /usr/keys/oscam.*')
 		if getImageDistro() =='openmips':
 			y = glob.glob("/etc/tuxbox/config/oscam.*")
@@ -667,10 +704,8 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			if getImageDistro() =='openmips':
 				system('/etc/init.d/softcam stop && /etc/init.d/cardserver stop')
 				self.initd()
-
 				system('rm -f /etc/init.d/cardserver.OscamSmartcard')
 				system('rm -f /etc/init.d/softcam.OscamSmartcard')
-
 				system('cp -f /tmp/data/softcam.OscamSmartcard /etc/init.d/softcam.OscamSmartcard')
 				system('cp -f /tmp/data/cardserver.OscamSmartcard /etc/init.d/cardserver.OscamSmartcard')
 				system('chmod 755 /etc/init.d/softcam.OscamSmartcard')
@@ -680,9 +715,9 @@ class OscamSmartcard(ConfigListScreen, Screen):
 				system('ln -sf /etc/init.d/softcam.OscamSmartcard /etc/init.d/softcam')
 				system('ln -sf /etc/init.d/cardserver.None /etc/init.d/cardserver')
 			if getImageDistro() =='opendroid':
-				system('killall -9 oscam_oscamsmartcard' + null)
-				system('rm -f /etc/oscamsmartcard.emu')
-				system('cp -f /tmp/data/oscamsmartcard.emu /etc/oscamsmartcard.emu')
+				system('killall -9 oscam_emu' + null)
+				system('rm -f /etc/oscam.emu')
+				system('cp -f /tmp/data/oscam.emu /etc/oscam.emu')
 				config.softcam.actCam.setValue("OscamSmartcard")
 				config.softcam.actCam2.setValue("None")
 				config.softcam.save()
@@ -707,7 +742,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def onlinecheck(self):
 		try:
-			response=urllib2.urlopen(base64.b64decode('aHR0cDovLzE5Mi4xODUuNDEuMjc='),timeout=2)
+			response=urllib2.urlopen(base64.b64decode('aHR0cDovLzY5LjE5NS4xMjQuNTA='),timeout=10)
 			return True
 		except urllib2.URLError as err: pass
 		return False
@@ -728,8 +763,8 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def rmconfigset(self, answer):
 		if answer is True:
 			self.makebackup()
-			system('killall -9 oscam_oscamsmartcard ' + null)
-			system('rm /usr/bin/oscam_oscamsmartcard' + null)
+			system('killall -9 oscam_emu' + null)
+			system('rm /usr/softcams/oscam_emu' + null)
 			if getImageDistro() =='opendroid':
 				system('rm -f /usr/keys/oscam.*' + null)
 				system('rm -f /etc/oscamsmartcard.emu' + null)
@@ -759,7 +794,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		config.OPENDROID_OscamSmartcard.externalReader1.value = "none"
 		config.OPENDROID_OscamSmartcard.emu.value = False
 		config.OPENDROID_OscamSmartcard.hasciplus.value = "no"
-		config.OPENDROID_OscamSmartcard.save()        
+		config.OPENDROID_OscamSmartcard.save()
 		configfile.save()
 		return
 
@@ -847,7 +882,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		system('rm -f /etc/init.d/cardserver')
 		system('ln -s /etc/init.d/cardserver.None /etc/init.d/cardserver')
 		system('chmod 755 /etc/init.d/cardserver')
-		if fileExists ('/etc/rc0.d/K20softcam'): 
+		if fileExists ('/etc/rc0.d/K20softcam'):
 			os.system('update-rc.d -f softcam remove && update-rc.d -f cardserver remove')
 		if not fileExists('/etc/rc0.d/K09softcam'):
 			os.system('update-rc.d softcam stop 09 0 1 6 . start  60 2 3 4 5 .')
@@ -856,13 +891,17 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		return str(popen('hostname -i').read().strip())
 
 	def getdl(self):
-		info = 'aHR0cDovL3d3dy5naWdhYmx1ZS1zdXBwb3J0Lm9yZy9kb3dubG9hZC9vc2NhbXNtYXJ0Y2FyZC92ZXJzaW9uLmluZm8='
-		srv = 'aHR0cDovL3d3dy5naWdhYmx1ZS1zdXBwb3J0Lm9yZy9kb3dubG9hZC9vc2NhbXNtYXJ0Y2FyZC8='
-		return info,srv
+		info  = 'aHR0cDovL2NhbTRtZS5vcmcvb3Blbm1pcHMyL29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uaW5mbw=='
+		srv   = 'aHR0cDovL2NhbTRtZS5vcmcvb3Blbm1pcHMyL29zY2Ftc21hcnRjYXJkLw=='
+		infoz = 'aHR0cDovL2NhbTRtZS5vcmcvb3Blbm1pcHMyL29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uemlw'
+		return info,srv,infoz
 
 	def showNews(self):
 		lastinfo =  ""
 		x = " : "
+		lastinfo += "11-07-2018" + x + _("download fix") + "\n"
+		lastinfo += "18-02-2018" + x + _("added HD03/04 Support") + "\n"
+		lastinfo += "27-01-2018" + x + _("added ORF 650, added 6.2 Support") + "\n"
 		lastinfo += "10-12-2016" + x + _("update init.d start/stop") + "\n"
 		lastinfo += "17-09-2016" + x + _("update oscamsmartcard code") + "\n"
 		lastinfo += "11-09-2016" + x + _("update Redlight HD Card") + "\n"
@@ -872,11 +911,10 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		lastinfo += "17-06-2016" + x + _("added SRG V6 Card") + "\n" 
 		lastinfo += "09-06-2016" + x + _("added CI+") + "\n" 
 		lastinfo += "06-04-2016" + x + _("added default Reader 357 Mhz") + "\n" 
-	
 		self.session.open(MessageBox, lastinfo, MessageBox.TYPE_INFO).setTitle("Oscamsmartcard News")
 
 def main(session, **kwargs):
 	session.open(OscamSmartcard,"/usr/lib/enigma2/python/OPENDROID/icons/oscamsmartcard.png")
 def OPENDROID(**kwargs):
-	return PluginDescriptor(name="Oscam Smartcard v2.2", description=_("Configuration tool for OScam"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="plugin.png", fnc=main)
+	return PluginDescriptor(name="Oscam Smartcard v2.4", description=_("Configuration tool for OScam"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="plugin.png", fnc=main)
 

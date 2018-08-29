@@ -104,7 +104,7 @@ class About(Screen):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u51','u5','u53','u52','u5pvr','h9'):
+	        elif getMachineBuild() in ('u51','u5','u53','u52','u5pvr','h9','sf8008'):
 			cpuMHz = "   (1,6 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7'):
 			try:
@@ -150,7 +150,7 @@ class About(Screen):
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"
 		AboutText += _("Cores:\t%s") % about.getCpuCoresString() + "\n"
-		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
+		AboutText += _("image Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
 		AboutText += _("Kernel (Box):\t%s") % about.getKernelVersionString() + " (" + getBoxType() + ")" + "\n"
 		imagestarted = ""
 		bootname = ''
@@ -158,8 +158,28 @@ class About(Screen):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
 			f.close()
-	
-		if path.exists('/boot/STARTUP'):
+		if getMachineBuild() in ('cc1','sf8008'):
+			if path.exists('/boot/STARTUP'):
+				f = open('/boot/STARTUP', 'r')
+				f.seek(5)
+				image = f.read(4)
+				if image == "emmc":
+					image = "1"
+				elif image == "usb0":
+					f.seek(13)
+					image = f.read(1)
+					if image == "1":
+						image = "2"
+					elif image == "3":
+						image = "3"
+					elif image == "5":
+						image = "4"
+					elif image == "7":
+						image = "5"
+				f.close()
+				if bootname: bootname = "   (%s)" %bootname 
+				AboutText += _("Selected Image:\t\t%s") % "STARTUP_" + image + bootname + "\n"
+		elif path.exists('/boot/STARTUP'):
 			f = open('/boot/STARTUP', 'r')
 			f.seek(22)
 			image = f.read(1) 
@@ -192,7 +212,7 @@ class About(Screen):
 		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
-		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51'):
+		if getMachineBuild() not in ('h9','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u51','sf8008'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
 	
 		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
@@ -279,6 +299,7 @@ class About(Screen):
 						iface_list.append((_("DHCP") + " : " + _("No") + "\n"))
 					iface_list.append((_("MAC") + " : " + iNetwork.getAdapterAttribute(iface, "mac") + "\n"))
 					iface_list.append(("\n"))
+
 				AboutText += _("Network") + ":\n"
 				for x in iface_list:
 					AboutText += "   " + x
