@@ -113,7 +113,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 <screen name="OscamSmartcard" position="center,center" size="1280,720" flags="wfNoBorder" backgroundColor="#90000000">
   <eLabel name="bg" position="40,40" zPosition="-2" size="1200,640" backgroundColor="black" transparent="0" />
   <widget name="config" position="55,299" size="595,210" scrollbarMode="showOnDemand" transparent="1" backgroundColor="black" zPosition="1" />
-  <widget name="Title" position="60,48" size="590,50" zPosition="1" font="Regular; 40" halign="left" backgroundColor="black" transparent="1" />
+  <widget name="Title" position="60,50" size="590,50" zPosition="1" font="Regular; 40" halign="left" backgroundColor="black" transparent="1" />
   <eLabel font="Regular; 20" zPosition="1" foregroundColor="black" halign="center" position="375,648" size="200,33" text="Cancel" transparent="1" backgroundColor="red" />
   <eLabel font="Regular; 20" zPosition="1" foregroundColor="white" halign="center" position="60,648" size="200,33" text="Start" transparent="1" backgroundColor="green" />
   <eLabel font="Regular; 20" zPosition="1" foregroundColor="black" halign="center" position="670,648" size="200,33" text="Info" transparent="1" backgroundColor="yellow" />
@@ -181,7 +181,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 				self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], {"red": self.exit,"yellow": self.exit,"blue": self.exit,"green":self.exit,"ok": self.exit,"cancel": self.exit}, -1)
 				self.exit
 			else:
-				self.installedversion = self.getaktuell()
+				self.installedversion = self.getcurrent()
 				a=self.checkallcams()
 				anzahl = len(a)
 				if len(a)>0:
@@ -411,16 +411,16 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self.session.open(MessageBox,(_("Oscam Binary is not installed\nYou must this install") + "\n\n\tOK"  ), MessageBox.TYPE_ERROR,).setTitle(_("wrong Settings detected"))
 			return False
 
-	def getaktuell(self):
-		aktuell = _("no")
+	def getcurrent(self):
+		current = _("no")
 		if os.path.exists("/usr/softcams/oscam_emu"):
-			aktuell = popen("chmod 775 /usr/softcams/oscam_emu && /usr/softcams/oscam_emu -V | grep Version |awk '{print $2}'").read().strip()
-		if aktuell ==_("no"):
-			return aktuell
-		if "oscam" in aktuell:
-			return str(aktuell)
+			current = popen("chmod 775 /usr/softcams/oscam_emu && /usr/softcams/oscam_emu -V | grep Version |awk '{print $2}'").read().strip()
+		if current ==_("no"):
+			return current
+		if "oscam" in current:
+			return str(current)
 		else:
-			self.getaktuell()
+			self.getcurrent()
 	def createoscamsmartcarddata(self):
 		data = 'wget -T5 --no-check-certificate -O /tmp/data.zip '+ base64.b64decode(self.getdl()[1]) + 'data.zip ' + null
 		popen(data)
