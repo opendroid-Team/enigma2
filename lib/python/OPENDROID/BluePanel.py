@@ -85,7 +85,7 @@ class BluePanel(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		screentitle =  _("Emu Manager")
-		self.menu_path = _('Main menu')+' / '+_('Setup')+' / '+_('SoftCam and CI')+' / '
+		self.menu_path = _('Main menu')+' / '+_('Setup')+' / '+_('Softcam')+' / '
 		if config.usage.show_menupath.value == 'large':
 			self.menu_path += screentitle
 			title = self.menu_path
@@ -264,7 +264,7 @@ class BluePanel(Screen):
 			active.append(x[0][0])
 		activelist = ",".join(active)
 		if activelist:
-			self.Console.ePopen("ps -C " + activelist + " | grep -v 'CMD' | sed 's/</ /g' | awk '{print $4}' | awk '{a[$1] = $0} END { for (x in a) { print a[x] } }'", self.showActivecam2)
+			self.Console.ePopen("ps.procps -C " + activelist + " | grep -v 'CMD' | sed 's/</ /g' | awk '{print $4}' | awk '{a[$1] = $0} END { for (x in a) { print a[x] } }'", self.showActivecam2)
 		else:
 			self['activecam'].setText('')
 			self['activecam'].show()
@@ -293,28 +293,32 @@ class BluePanel(Screen):
 			self.sel = self['list'].getCurrent()[0]
 			selcam = self.sel[0]
 			if self.currentactivecam.find(selcam) < 0:
-				if selcam.lower().startswith('cccam') and path.exists('/etc/CCcam.cfg') == True:
-					if self.currentactivecam.lower().find('mgcam') < 0:
+				if selcam.lower().startswith('cccam'):
+					if not path.exists('/etc/CCcam.cfg'):
+						self.session.open(MessageBox, _("No config files found, please setup CCcam first\nin /etc/CCcam.cfg"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+					else:
+						if self.currentactivecam.lower().find('mgcam') < 0:
+							self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
+						else:
+							self.session.open(MessageBox, _("CCcam can't run whilst MGcamd is running"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+				elif selcam.lower().startswith('hypercam'):
+					if not path.exists('/etc/hypercam.cfg'):
+						self.session.open(MessageBox, _("No config files found, please setup Hypercam first\nin /etc/hypercam.cfg"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+					else:
 						self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
+				elif selcam.lower().startswith('oscam'):
+					if not path.exists('/usr/keys/oscam.conf') and not path.exists('/usr/keys/oscam.conf'):
+						self.session.open(MessageBox, _("No config files found, please setup Oscam first\nin /usr/keys/config or /usr/keys/oscam"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 					else:
-						self.session.open(MessageBox, _("CCcam can't run whilst MGcamd is running"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-				elif selcam.lower().startswith('cccam') and path.exists('/etc/CCcam.cfg') == False:
-					self.session.open(MessageBox, _("No config files found, please setup CCcam first\nin /etc/CCcam.cfg"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-				elif selcam.lower().startswith('hypercam') and path.exists('/etc/hypercam.cfg') == True:
-					self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
-				elif selcam.lower().startswith('hypercam') and path.exists('/etc/hypercam.cfg') == False:
-					self.session.open(MessageBox, _("No config files found, please setup Hypercam first\nin /etc/hypercam.cfg"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-				elif selcam.lower().startswith('oscam') and path.exists('/usr/keys/oscam.conf') == True:
-					self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
-				elif selcam.lower().startswith('oscam') and path.exists('/usr/keys/oscam.conf') == False:
-					self.session.open(MessageBox, _("No config files found, please setup Oscam first\nin /usr/keys"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-				elif selcam.lower().startswith('mgcam') and path.exists('/var/keys/mg_cfg') == True:
-					self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
-				elif selcam.lower().startswith('mgcam') and path.exists('/var/keys/mg_cfg') == False:
-					if self.currentactivecam.lower().find('cccam') < 0:
-						self.session.open(MessageBox, _("No config files found, please setup MGcamd first\nin /usr/keys"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+						self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
+				elif selcam.lower().startswith('mgcam'):
+					if not path.exists('/var/keys/mg_cfg'):
+						if self.currentactivecam.lower().find('cccam') < 0:
+							self.session.open(MessageBox, _("No config files found, please setup MGcamd first\nin /usr/keys"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+						else:
+							self.session.open(MessageBox, _("MGcamd can't run whilst CCcam is running"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 					else:
-						self.session.open(MessageBox, _("MGcamd can't run whilst CCcam is running"), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+						self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
 				elif selcam.lower().startswith('scam'):
 					self.session.openWithCallback(self.showActivecam, StartCam, self.sel[0])
 				else:
@@ -381,7 +385,7 @@ class BluePanel(Screen):
 
 class StartCam(Screen):
 	skin = """
-class StartCam(Screen):
+	<screen name="StartCam" position="center,center" size="484, 150" title="Starting Softcam">
 		<widget name="connect" position="217, 0" size="64,64" zPosition="2" pixmaps="/usr/share/enigma2/oDreamy-FHD/opendroid/sc1.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc2.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc3.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc4.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc5.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc6.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc7.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc8.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc9.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc10.png,/usr/share/enigma2/oDreamy-FHD/opendroid/sc11.png"  transparent="1" alphatest="blend"/>
 		<widget name="lab1" position="10, 80" halign="center" size="460, 60" zPosition="1" font="Regular;20" valign="top" transparent="1"/>
 	</screen>"""
@@ -788,7 +792,11 @@ class SoftcamAutoPoller:
 							if path.exists('/tmp/status.html'):
 								remove('/tmp/status.html')
 							port = ''
-							f = open('/usr/keys/oscam.conf', 'r')
+							if path.exists('/usr/keys/oscam.conf'):
+								oscamconf = '/usr/keys/oscam.conf'
+							elif path.exists('/usr/keys/oscam.conf'):
+								oscamconf = '/usr/keys/oscam.conf'
+							f = open(oscamconf, 'r')
 							for line in f.readlines():
 								if line.find('httpport') != -1:
 									port = re.sub("\D", "", line)
@@ -820,7 +828,7 @@ class SoftcamAutoPoller:
 								output.close()
 								self.Console.ePopen("killall -9 " + softcamcheck)
 								sleep(1)
-								self.Console.ePopen("ps | grep softcams | grep -v grep | awk 'NR==1' | awk '{print $5}'| awk  -F'[/]' '{print $4}' > /tmp/oscamRuningCheck.tmp")
+								self.Console.ePopen("ps.procps | grep softcams | grep -v grep | awk 'NR==1' | awk '{print $5}'| awk  -F'[/]' '{print $4}' > /tmp/oscamRuningCheck.tmp")
 								sleep(2)
 								file = open('/tmp/oscamRuningCheck.tmp')
 								cccamcheck_process = file.read()
@@ -908,7 +916,7 @@ class SoftcamAutoPoller:
 						output.write(now.strftime("%Y-%m-%d %H:%M") + ": Couldn't find " + softcamcheck + " running, Starting " + softcamcheck + "\n")
 						output.close()
 						if softcamcheck.lower().startswith('oscam'):
-							self.Console.ePopen("ps | grep softcams | grep -v grep | awk 'NR==1' | awk '{print $5}'| awk  -F'[/]' '{print $4}' > /tmp/softcamRuningCheck.tmp")
+							self.Console.ePopen("ps.procps | grep softcams | grep -v grep | awk 'NR==1' | awk '{print $5}'| awk  -F'[/]' '{print $4}' > /tmp/softcamRuningCheck.tmp")
 							sleep(2)
 							file = open('/tmp/softcamRuningCheck.tmp')
 							cccamcheck_process = file.read()
