@@ -15,6 +15,15 @@ class AutoDiseqc(Screen, ConfigListScreen):
 	]
 
 	sat_frequencies = [
+		# hotbird 130 rai
+		( 10992, 27500, \
+		eDVBFrontendParametersSatellite.Polarisation_Vertical, eDVBFrontendParametersSatellite.FEC_2_3, \
+		eDVBFrontendParametersSatellite.Inversion_Off, 130, \
+		eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.Modulation_Auto, \
+		eDVBFrontendParametersSatellite.RollOff_auto, eDVBFrontendParametersSatellite.Pilot_Unknown, \
+		-1, 0, 0,
+		12400, 318, _("Hotbird 13.0e")),
+
 		# astra 192 zdf
 		( 11953, 27500, \
 		eDVBFrontendParametersSatellite.Polarisation_Horizontal, eDVBFrontendParametersSatellite.FEC_3_4, \
@@ -41,15 +50,6 @@ class AutoDiseqc(Screen, ConfigListScreen):
 		eDVBFrontendParametersSatellite.RollOff_auto, eDVBFrontendParametersSatellite.Pilot_Unknown, \
 		-1, 0, 0,
 		2045, 2, _("Astra 2 28.2e")),
-
-		# hotbird 130 rai
-		( 10992, 27500, \
-		eDVBFrontendParametersSatellite.Polarisation_Vertical, eDVBFrontendParametersSatellite.FEC_2_3, \
-		eDVBFrontendParametersSatellite.Inversion_Off, 130, \
-		eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.Modulation_Auto, \
-		eDVBFrontendParametersSatellite.RollOff_auto, eDVBFrontendParametersSatellite.Pilot_Unknown, \
-		-1, 0, 0,
-		12400, 318, _("Hotbird 13.0e")),
 
 		# hispasat 300 tsa
 		( 10890, 27500, \
