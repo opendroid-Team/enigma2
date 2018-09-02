@@ -24,7 +24,7 @@ class AutoDiseqc(Screen, ConfigListScreen):
 		-1, 0, 0,
 		12400, 318, _("Hotbird 13.0e")),
 
-                                        # astra 192 zdf
+		# astra 192 zdf
 		( 11953, 27500, \
 		eDVBFrontendParametersSatellite.Polarisation_Horizontal, eDVBFrontendParametersSatellite.FEC_3_4, \
 		eDVBFrontendParametersSatellite.Inversion_Off, 192, \
