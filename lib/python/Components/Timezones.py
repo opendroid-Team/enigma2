@@ -139,7 +139,7 @@ class Timezones:
 		return sorttzChoices((tzname, self.getUserFriendlyTZName(area, tzname)) for tzname in self.timezones[area] if self.getUserFriendlyTZName(area, tzname))
 
 	default_for_area = {
-		'Europe': 'Rome,
+		'Europe': 'Rome'
 		'Generic': 'UTC',
 	}
 	def getTimezoneDefault(self, area=None, choices=None):
