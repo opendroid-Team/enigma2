@@ -132,6 +132,7 @@ class SymbolsCheckPoller:
 					open("/proc/stb/fp/standbyled", "w").write("off")
 					self.led = "0"
 			elif not Screens.Standby.inStandby:
+			else:
 				open("/proc/stb/fp/poweronled", "w").write("on")
 		else:
 			if not fileExists("/proc/stb/lcd/symbol_recording") or not fileExists("/proc/stb/lcd/symbol_record_1") or not fileExists("/proc/stb/lcd/symbol_record_2"):

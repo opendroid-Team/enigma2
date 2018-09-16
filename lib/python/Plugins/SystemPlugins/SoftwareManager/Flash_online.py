@@ -247,6 +247,7 @@ class FlashOnline(Screen):
 		if SystemInfo["HaveMultiBoot"]:
 			path = PATH
 			if getMachineBuild() in ("hd51","vs1500","h7","8100s","gb7252","cc1","sf8008","osmio4k"):
+			if getMachineBuild() in ("hd51","vs1500","h7","8100s","gb7252","cc1","sf8008"):
 				for name in os.listdir(path):
 					if name != 'bootname' and os.path.isfile(os.path.join(path, name)):
 						try:
