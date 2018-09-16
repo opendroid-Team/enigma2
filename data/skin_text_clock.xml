@@ -19,14 +19,11 @@
 		<!-- pick a funky name for the font, so we don't conflict  -->
 		<font filename="nmsbd.ttf" name="FdLcD" scale="100"/>
 	</fonts>
-	<parameters>
-		<parameter name="AllowUserDatesAndTimesDisplay" value="1,1" />
-	</parameters>
 
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="132,64">
 		<widget source="global.CurrentTime" render="Label" position="0,0" size="120,25" halign="center" noWrap="1" >
-			<convert type="ClockToText">VFD12</convert>
+			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,30" zPosition="1" size="120,34">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -123,7 +120,7 @@
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="132,64">
 		<widget source="global.CurrentTime" render="Label" position="0,0" size="120,64" font="Regular;48" halign="center" valign="center">
-			<convert type="ClockToText">VFD12</convert>
+			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="0,4" zPosition="1" size="120,64" text=" ">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>

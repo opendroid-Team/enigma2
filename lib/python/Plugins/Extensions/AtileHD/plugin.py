@@ -169,8 +169,8 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		else:
 			self["key_yellow"].setText("")
 	def config(self):
-		self.session.open(MSNWeatherPlugin)
-
+		self.session.open(MSNWeatherPlugin)	
+			
 
 	def changedEntry(self):
 		if self["config"].getCurrent() == self.set_color:

@@ -753,13 +753,6 @@ import Components.InputDevice
 Components.InputDevice.InitInputDevices()
 import Components.InputHotplug
 
-profile("TimeZones")
-import Components.Timezones
-Components.Timezones.InitTimeZones()
-
-profile("SetupDevices")
-import Components.SetupDevices
-Components.SetupDevices.InitSetupDevices()
 profile("AVSwitch")
 import Components.AVSwitch
 Components.AVSwitch.InitAVSwitch()

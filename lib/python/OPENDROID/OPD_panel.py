@@ -87,8 +87,6 @@ def Check_Softcam():
 	else:
 		for x in os.listdir('/etc'):
 			if x.find('.emu') > -1:
-		for x in os.listdir('/usr/softcams/'):
-			if x.find('emu') > -1:
 				found = True
 				break;
 	return found
@@ -105,8 +103,6 @@ def Check_SysSoftcam():
 				pass
 		if pathExists('/usr/bin/'):
 			softcams = os.listdir('/usr/bin/')
-		if pathExists('/usr/softcams/'):
-			softcams = os.listdir('/usr/softcams/')
 			for softcam in softcams:
 				if softcam.lower().startswith('oscam'):
 					return "oscam"
@@ -403,14 +399,6 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.session.open(BluePanel)
 		elif menu == "software-manager":
 			self.Software_Manager()
-			self.Software_Manager()
-		elif menu == "OScamInfo":
-			from Screens.OScamInfo import OscamInfoMenu
-			self.session.open(OscamInfoMenu)
-		elif menu == "BluePanel":
-			self.session.open(BluePanel)
-		elif menu == "software-manager":
-			self.Software_Manager()
 		elif menu == "software-update":
 			self.session.open(SoftwarePanel)
 		elif menu == "Password-Change":
@@ -657,7 +645,6 @@ class YellowPanel(ConfigListScreen, Screen):
 		self["HelpWindow"].hide()
 		self["status"] = StaticText()
 		self['footnote'] = Label("")
-		self["footnote"] = Label()
 		self["description"] = Label("")
 		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
 
