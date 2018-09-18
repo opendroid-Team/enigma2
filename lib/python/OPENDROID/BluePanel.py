@@ -946,25 +946,25 @@ class SoftcamAutoPoller:
 							self.Console.ePopen('ulimit -s 512;/usr/softcams/' + softcamcheck)
 							
 class SoftCamInfo(Screen):
-	skin = '<screen name="SoftCamInfo" position="center,center" size="400,310" title="Softcam Info" >\n      \t\t\t<widget name="menu" position="10,10" size="340,280" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+    skin = '<screen name="SoftCamInfo" position="center,center" size="400,310" title="Softcam Info" >\n      \t\t\t<widget name="menu" position="10,10" size="340,280" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
-	def __init__(self, session, args = 0):
-		Screen.__init__(self, session)
+    def __init__(self, session, args = 0):
+        Screen.__init__(self, session)
         self.menu = args
         list = []
         if pathExists('/usr/softcams/'):
-		softcams = listdir('/usr/softcams/')
-		for softcam in softcams:
-			if 'cccam' in softcam.lower():
-				list.append((_('CCcam Info'), '1'))
-			break
+            softcams = listdir('/usr/softcams/')
+            for softcam in softcams:
+                if 'cccam' in softcam.lower():
+                    list.append((_('CCcam Info'), '1'))
+                    break
 
         if pathExists('/usr/softcams/'):
-		softcams = listdir('/usr/softcams/')
-		for softcam in softcams:
-			if 'oscam' in softcam.lower():
-				list.append((_('OScam Info'), '2'))
-			break
+            softcams = listdir('/usr/softcams/')
+            for softcam in softcams:
+                if 'oscam' in softcam.lower():
+                    list.append((_('OScam Info'), '2'))
+                    break
 
 
         self['menu'] = MenuList(list)
@@ -972,13 +972,14 @@ class SoftCamInfo(Screen):
          'back': self.close,
          'exit': self.close}, -1)
 
-	def go(self):
-		returnValue = self['menu'].l.getCurrentSelection()[1]
+    def go(self):
+        returnValue = self['menu'].l.getCurrentSelection()[1]
         if returnValue is not None:
-		if returnValue is '1':
-			from Screens.CCcamInfo import CCcamInfoMain
+            if returnValue is '1':
+                from Screens.CCcamInfo import CCcamInfoMain
                 self.session.open(CCcamInfoMain)
-	elif returnValue is '2':
+            elif returnValue is '2':
                 from Screens.OScamInfo import OscamInfoMenu
                 self.session.open(OscamInfoMenu)
 
+        return
