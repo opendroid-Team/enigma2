@@ -105,25 +105,25 @@ class BluePanel(Screen):
 		self['activecam'] = Label()
 		self.ecmtel = 0
 		try:
-		    service = self.session.nav.getCurrentService()
-		    info = service and service.info()
-		    videosize = str(info.getInfo(iServiceInformation.sVideoWidth)) + 'x' + str(info.getInfo(iServiceInformation.sVideoHeight))
-		    aspect = info.getInfo(iServiceInformation.sAspect)
-		    if aspect in (1, 2, 5, 6, 9, 10, 13, 14):
-		        aspect = '4:3'
-		    else:
-		        aspect = '16:9'
-		    provider = info.getInfoString(iServiceInformation.sProvider)
-		    chname = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
-		    self['lb_provider'] = Label(_('Provider: ') + provider)
-		    self['lb_channel'] = Label(_('Name: ') + chname)
-		    self['lb_aspectratio'] = Label(_('Aspect Ratio: ') + aspect)
-		    self['lb_videosize'] = Label(_('Video Size: ') + videosize)
+			service = self.session.nav.getCurrentService()
+			info = service and service.info()
+			videosize = str(info.getInfo(iServiceInformation.sVideoWidth)) + 'x' + str(info.getInfo(iServiceInformation.sVideoHeight))
+			aspect = info.getInfo(iServiceInformation.sAspect)
+			if aspect in (1, 2, 5, 6, 9, 10, 13, 14):
+				aspect = '4:3'
+			else:
+				aspect = '16:9'
+			provider = info.getInfoString(iServiceInformation.sProvider)
+			chname = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
+			self['lb_provider'] = Label(_('Provider: ') + provider)
+			self['lb_channel'] = Label(_('Name: ') + chname)
+			self['lb_aspectratio'] = Label(_('Aspect Ratio: ') + aspect)
+			self['lb_videosize'] = Label(_('Video Size: ') + videosize)
 		except:
-		    self['lb_provider'] = Label(_('Provider: n/a'))
-		    self['lb_channel'] = Label(_('Name: n/a'))
-		    self['lb_aspectratio'] = Label(_('Aspect Ratio: n/a'))
-		    self['lb_videosize'] = Label(_('Video Size: n/a'))
+			self['lb_provider'] = Label(_('Provider: n/a'))
+			self['lb_channel'] = Label(_('Name: n/a'))
+			self['lb_aspectratio'] = Label(_('Aspect Ratio: n/a'))
+			self['lb_videosize'] = Label(_('Video Size: n/a'))
 		self.onChangedEntry = []
 
 		self.sentsingle = ""
@@ -946,25 +946,25 @@ class SoftcamAutoPoller:
 							self.Console.ePopen('ulimit -s 512;/usr/softcams/' + softcamcheck)
 							
 class SoftCamInfo(Screen):
-    skin = '<screen name="SoftCamInfo" position="center,center" size="400,310" title="Softcam Info" >\n      \t\t\t<widget name="menu" position="10,10" size="340,280" scrollbarMode="showOnDemand" />\n\t\t</screen>'
+	skin = '<screen name="SoftCamInfo" position="center,center" size="400,310" title="Softcam Info" >\n      \t\t\t<widget name="menu" position="10,10" size="340,280" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
-    def __init__(self, session, args = 0):
-        Screen.__init__(self, session)
+	def __init__(self, session, args = 0):
+		Screen.__init__(self, session)
         self.menu = args
         list = []
         if pathExists('/usr/softcams/'):
-            softcams = listdir('/usr/softcams/')
-            for softcam in softcams:
-                if 'cccam' in softcam.lower():
-                    list.append((_('CCcam Info'), '1'))
-                    break
+		softcams = listdir('/usr/softcams/')
+		for softcam in softcams:
+			if 'cccam' in softcam.lower():
+				list.append((_('CCcam Info'), '1'))
+			break
 
         if pathExists('/usr/softcams/'):
-            softcams = listdir('/usr/softcams/')
-            for softcam in softcams:
-                if 'oscam' in softcam.lower():
-                    list.append((_('OScam Info'), '2'))
-                    break
+		softcams = listdir('/usr/softcams/')
+		for softcam in softcams:
+			if 'oscam' in softcam.lower():
+				list.append((_('OScam Info'), '2'))
+			break
 
 
         self['menu'] = MenuList(list)
@@ -972,14 +972,13 @@ class SoftCamInfo(Screen):
          'back': self.close,
          'exit': self.close}, -1)
 
-    def go(self):
-        returnValue = self['menu'].l.getCurrentSelection()[1]
+	def go(self):
+		returnValue = self['menu'].l.getCurrentSelection()[1]
         if returnValue is not None:
-            if returnValue is '1':
-                from Screens.CCcamInfo import CCcamInfoMain
+		if returnValue is '1':
+			from Screens.CCcamInfo import CCcamInfoMain
                 self.session.open(CCcamInfoMain)
-            elif returnValue is '2':
+	elif returnValue is '2':
                 from Screens.OScamInfo import OscamInfoMenu
                 self.session.open(OscamInfoMenu)
 
-        return
