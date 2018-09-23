@@ -384,6 +384,10 @@ class ModelPic(Screen):
 			model = "sf108.png"
 		elif getBoxType() in ('sf4008'):
 			model = "sf4008.png"
+		elif getBoxType() in ('sf5008'):
+			model = "sf5008.png"
+		elif getBoxType() in ('sf8008'):
+			model = "sf8008.png"
 		elif getBoxType() in ('sf3038'):
 			model = "sf3038.png"
 		elif getBoxType() in ('sf128'):
@@ -502,6 +506,10 @@ class ModelPic(Screen):
 			model = "gbx3h.png "
 		elif getBoxType() in ('dinobot4k'):
 			model = "dinobot4k.png"
+		elif getBoxType() in ('dinobot4kplus'):
+			model = "dinobot4kplus.png"
+		elif getBoxType() in ('dinobot4kmini'):
+			model = "dinobot4kmini.png"
 		elif getBoxType() in ('atemio5x00'):
 			model = "atemio5x00.png"
 		elif getBoxType() in ('atemio6000'):
