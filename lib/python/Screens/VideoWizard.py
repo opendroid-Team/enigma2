@@ -1,4 +1,3 @@
-from boxbranding import getBoxType, getMachineName
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
@@ -15,7 +14,6 @@ from Tools.HardwareInfo import HardwareInfo
 
 config.misc.showtestcard = ConfigBoolean(default = False)
 
-boxtype = getBoxType()
 has_rca = False
 has_dvi = False
 has_jack = False
