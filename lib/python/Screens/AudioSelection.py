@@ -158,7 +158,7 @@ class AudioSelection(Screen, ConfigListScreen):
 				self.settings.transcodeac3plus.addNotifier(self.setAC3plusTranscode, initial_call = False)
 				conflist.append(getConfigListEntry(_("AC3plus transcoding"), self.settings.transcodeac3plus, None))
 
-			if SystemInfo["HasMultichannelPCM"]:
+			if SystemInfo["CanPcmMultichannel"]:
 				if getBoxType() in ('dm900', 'dm920', 'dm7080', 'dm800'):
 					choice_list = [("downmix",  _("Downmix")), ("passthrough", _("Passthrough")), ("multichannel",  _("convert to multi-channel PCM")), ("hdmi_best",  _("use best / controlled by HDMI"))]
 					self.settings.pcm_multichannel = ConfigSelection(choices = choice_list, default = config.av.pcm_multichannel.value)
@@ -188,7 +188,7 @@ class AudioSelection(Screen, ConfigListScreen):
 					choicelist = [("0",_("left")), ("1",_("stereo")), ("2", _("right"))]
 					self.settings.channelmode = ConfigSelection(choices = choicelist, default = str(self.audioChannel.getCurrentChannel()))
 					self.settings.channelmode.addNotifier(self.changeMode, initial_call = False)
-					conflist.append(getConfigListEntry(_("Channel"), self.settings.channelmode, None))
+					conflist.append(getConfigListEntry(_("Audio Channel"), self.settings.channelmode, None))
 				selectedAudio = self.audioTracks.getCurrentTrack()
 				for x in range(n):
 					number = str(x + 1)
