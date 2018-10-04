@@ -24,7 +24,7 @@ import os
 from Screens.CCcamInfo import CCcamInfoMain
 from Screens.OScamInfo import OscamInfoMenu
 from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo
-config.OPENDROID_Bluepanel = ConfigSubsection()
+config.OPENDROID_BluePanel = ConfigSubsection()
 config.softcam = ConfigSubsection()
 config.softcam_actCam = ConfigText(visible_width = 200)
 config.softcam_actCam2 = ConfigText(visible_width = 200)
@@ -1099,7 +1099,7 @@ campoller = None
 ##################################################################
 
 config.softcam = ConfigSubsection()
-config.OPENDROID_Bluepanel = ConfigSubsection()
+config.OPENDROID_BluePanel = ConfigSubsection()
 config.softcam_actCam = ConfigText(visible_width = 200)
 config.softcam_actCam2 = ConfigText(visible_width = 200)
 config.softcam_restartRunning = ConfigYesNo(default=True)
