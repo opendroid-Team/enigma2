@@ -394,7 +394,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self.oscambinaryupdate()
 		self.savecamstart()
 		if getImageDistro() == 'opendroid':
-			system ('/usr/softcams/oscam_emu -b -c /usr/keys > /dev/null 2>&1')
+			system ('/usr/bin/oscam_oscamsmartcard -b -c /usr/keys > /dev/null 2>&1')
 		elif getImageDistro() == 'openmips':
 			system ('/etc/init.d/softcam start')
 		else:
@@ -407,14 +407,14 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self.close()
 
 	def configcheck(self):
-		if not os.path.exists('/usr/softcams/oscam_emu') and config.OPENDROID_OscamSmartcard.oscambinary.value == "no_binary_install":
+		if not os.path.exists('/usr/bin/oscam_oscamsmartcard') and config.OPENDROID_OscamSmartcard.oscambinary.value == "no_binary_install":
 			self.session.open(MessageBox,(_("Oscam Binary is not installed\nYou must this install") + "\n\n\tOK"  ), MessageBox.TYPE_ERROR,).setTitle(_("wrong Settings detected"))
 			return False
 
 	def getcurrent(self):
 		current = _("no")
-		if os.path.exists("/usr/softcams/oscam_emu"):
-			current = popen("chmod 775 /usr/softcams/oscam_emu && /usr/softcams/oscam_emu -V | grep Version |awk '{print $2}'").read().strip()
+		if os.path.exists("/usr/bin/oscam_oscamsmartcard"):
+			current = popen("chmod 775 /usr/bin/oscam_oscamsmartcard && /usr/bin/oscam_oscamsmartcard -V | grep Version |awk '{print $2}'").read().strip()
 		if current ==_("no"):
 			return current
 		if "oscam" in current:
@@ -561,12 +561,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def oscambinaryupdate(self):
 		if self.newversion(arch) != _("Download not avaible"):
-			system('killall -9 oscam_emu' + null)
-			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
+			system('killall -9 oscam_oscamsmartcard' + null)
+			system('wget -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
 			system('tar -xzf /tmp/oscam.tar.gz -C /tmp' + null)
-			system('rm -f /usr/softcams/oscam_emu' + null)
-			system('mv /tmp/oscam /usr/softcams/oscam_emu' + null)
-			system('chmod 755 /usr/softcams/oscam_emu')
+			system('rm -f /usr/bin/oscam_oscamsmartcard' + null)
+			system('mv /tmp/oscam /usr/bin/oscam_oscamsmartcard' + null)
+			system('chmod 755 /usr/bin/oscam_oscamsmartcard')
 			system('rm -f /tmp/oscam.tar.gz')
 
 	def downloadurl(self):
@@ -621,9 +621,9 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def currentversion(self):
 		try:
-			if os.path.exists('/usr/softcams/oscam_emu'):
-				system('chmod 755 oscam')
-				f = popen('/usr/softcams/oscam_emu -V')
+			if os.path.exists('/usr/bin/oscam_oscamsmartcard'):
+				system('chmod 755 /usr/bin/oscam_oscamsmartcard')
+				f = popen('/usr/bin/oscam_oscamsmartcard -V')
 				for line in f:
 					if 'Version:' in line:
 						line=line.strip().split()
@@ -683,7 +683,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		if getImageDistro() =='opendroid':
 			x = glob.glob("/usr/keys/oscam.*")
 			if len(x) >0:
-				system('tar -czf /usr/keys/backup-oscam-'+ dd +'.tar.gz /usr/keys/oscam.*')
+				system('tar -czf /usr/keys/backup-oscamsmartcard-'+ dd +'.tar.gz /usr/keys/oscam.*')
 				system('rm -f /usr/keys/oscam.*')
 		if getImageDistro() =='openmips':
 			y = glob.glob("/etc/tuxbox/config/oscam.*")
@@ -715,11 +715,11 @@ class OscamSmartcard(ConfigListScreen, Screen):
 				system('ln -sf /etc/init.d/softcam.OscamSmartcard /etc/init.d/softcam')
 				system('ln -sf /etc/init.d/cardserver.None /etc/init.d/cardserver')
 			if getImageDistro() =='opendroid':
-				system('killall -9 oscam_emu' + null)
-				system('rm -f /etc/oscam.emu')
-				system('cp -f /tmp/data/oscam.emu /etc/oscam.emu')
-				config.softcam.actCam.setValue("OscamSmartcard")
-				config.softcam.actCam2.setValue("None")
+				system('killall -9 oscam_oscamsmartcard' + null)
+				system('rm -f /etc/oscamsmartcard.emu')
+				system('cp -f /tmp/data/oscamsmartcard.emu /etc/oscamsmartcard.emu')
+				config.softcam_actCam.setValue("OscamSmartcard")
+				config.softcam_actCam2.setValue("None")
 				config.softcam.save()
 			self.config_lines = []
 		except:
@@ -763,8 +763,8 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def rmconfigset(self, answer):
 		if answer is True:
 			self.makebackup()
-			system('killall -9 oscam_emu' + null)
-			system('rm /usr/softcams/oscam_emu' + null)
+			system('killall -9 oscam_oscamsmartcard ' + null)
+			system('rm /usr/bin/oscam_oscamsmartcard' + null)
 			if getImageDistro() =='opendroid':
 				system('rm -f /usr/keys/oscam.*' + null)
 				system('rm -f /etc/oscamsmartcard.emu' + null)
