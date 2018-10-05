@@ -1098,12 +1098,7 @@ campoller = None
 
 ##################################################################
 
-config.softcam = ConfigSubsection()
-config.OPENDROID_BluePanel = ConfigSubsection()
-config.softcam_actCam = ConfigText(visible_width = 200)
-config.softcam_actCam2 = ConfigText(visible_width = 200)
 config.softcam_restartRunning = ConfigYesNo(default=True)
-config.softcam_waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
 config.softcam_restartAttempts =  ConfigSelection(
                     [
                     ("0", _("0 (disabled)")),
