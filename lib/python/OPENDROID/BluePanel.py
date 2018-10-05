@@ -857,6 +857,7 @@ class ShowSoftcamPackages(Screen):
 ##################################################################
 isBusy = None
 CFG = "/usr/keys/CCcam.cfg"
+CFG = "/var/etc/CCcam.cfg"
 
 def CamCheck():
     global campoller, POLLTIME
