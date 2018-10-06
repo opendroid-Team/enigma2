@@ -84,8 +84,8 @@ def Check_Softcam():
 	if fileExists("/etc/enigma2/noemu"):
 		found = False
 	else:
-		for x in os.listdir('/usr/softcams/'):
-			if x.find('emu') > -1:
+		for x in os.listdir('/etc'):
+			if x.find('.emu') > -1:
 				found = True
 				break;
 	return found
@@ -100,8 +100,8 @@ def Check_SysSoftcam():
 					return "oscam"
 			except:
 				pass
-		if pathExists('/usr/softcams/'):
-			softcams = os.listdir('/usr/softcams/')
+		if pathExists('/usr/bin/'):
+			softcams = os.listdir('/usr/bin/')
 			for softcam in softcams:
 				if softcam.lower().startswith('oscam'):
 					return "oscam"
