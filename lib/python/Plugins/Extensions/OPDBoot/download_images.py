@@ -74,7 +74,7 @@ class OPDChooseOnLineImage(Screen):
         mypath = mypath + 'Extensions/OPDBoot/images/'
         mypixmap = mypath + 'opendroid.png'
         png = LoadPixmap(mypixmap)
-        name = _('Opendroid')
+        name = _('OpenDroid')
         desc = _('Download latest opendroid Image')
         idx = 'opendroid'
         res = (name,
