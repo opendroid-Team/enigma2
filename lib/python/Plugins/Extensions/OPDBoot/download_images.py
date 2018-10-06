@@ -74,7 +74,7 @@ class OPDChooseOnLineImage(Screen):
         mypath = mypath + 'Extensions/OPDBoot/images/'
         mypixmap = mypath + 'opendroid.png'
         png = LoadPixmap(mypixmap)
-        name = _('opendroid Current')
+        name = _('Opendroid')
         desc = _('Download latest opendroid Image')
         idx = 'opendroid'
         res = (name,
@@ -583,9 +583,9 @@ class DownloadOnLineImage(Screen):
                     stb = '1'
 	       elif box in ('h7'):
                     box = 'h7'
-                    urlbox = 'zgemma/H7.S/'
+                    urlbox = 'zgemma/H7.C/'
                     stb = '1'
-               elif box in ('hd51', 'h7'):
+               elif box in ('hd51'):
                     box = 'hd51'
                     urlbox = 'mutant/hd51/'
 		    stb = '1'
@@ -611,7 +611,7 @@ class DownloadOnLineImage(Screen):
 		    stb = '1'
                elif box in ('h7'):
                     box = 'h7'
-                    urlbox = 'zgemma/h7/'
+                    urlbox = 'zgemma/h7.AC/'
 		    stb = '1'
                elif box in ('spycat4kmini', 'mbmini4k'):
                     box = 'spycat4kmini'

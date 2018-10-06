@@ -16673,7 +16673,7 @@ msgstr ""
 msgid "0.0"
 msgstr ""
 
-msgid "opendroid Current"
+msgid "Opendroid"
 msgstr ""
 
 msgid "Download latest opendroid Image"
