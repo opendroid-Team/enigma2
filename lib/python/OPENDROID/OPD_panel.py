@@ -78,6 +78,7 @@ config.softcam = ConfigSubsection()
 config.softcam.actCam = ConfigText(visible_width = 200)
 config.softcam.actCam2 = ConfigText(visible_width = 200)
 config.softcam.waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
+config.OPENDROID_BluePanel = ConfigSubsection()
 
 def Check_Softcam():
 	found = False
@@ -133,7 +134,6 @@ def command(comandline, strip=1):
   comandline = text
   os.system("rm /tmp/command.txt")
   return comandline
-
 
 boxversion = getBoxType()
 machinename = getMachineName()
@@ -321,7 +321,6 @@ class OPD_panel(Screen, InfoBarPiP):
 				inOPD_panel = None
 			except:
 				print '[OPD_panel] Error Hide'
-
 			self.close()
 		elif menu == 1:
 			self["Mlist"].moveToIndex(0)
@@ -347,7 +346,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "Service_Team":
 			self.session.open(Info, "Service_Team")
 		elif menu == "Info":
-			self.session.open(Info, "SystemInfo")
+			self.session.open(Info, "Sytem_info")
 		elif menu == "ImageVersion":
 			self.session.open(Info, "ImageVersion")
 		elif menu == "FreeSpace":
@@ -510,7 +509,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Info'), _('Info'), 'Info')))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent('Info'), _("Info"), 'Info')))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 
@@ -643,7 +642,7 @@ class YellowPanel(ConfigListScreen, Screen):
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["status"] = StaticText()
-		self["footnote"] = Label()
+		self['footnote'] = Label("")
 		self["description"] = Label("")
 		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
 
@@ -729,10 +728,10 @@ class Info(Screen):
 		self["label1"] =  ScrollLabel()
 		if info == "Service_Team":
 			self.Service_Team()
-		if info == "SystemInfo":
-			self.SystemInfo()
-		elif info == "Default":
-			self.Default()
+		if info == "Sytem_info":
+			self.Sytem_info()
+		elif info == "ImageVersion":
+			self.ImageVersion()
 		elif info == "FreeSpace":
 			self.FreeSpace()
 		elif info == "Mounts":
@@ -802,22 +801,18 @@ class Info(Screen):
 		except:
 			self["label1"].setText(_("an internal error has occured"))
 
-	def Default(self):
-
+	def ImageVersion(self):
 		try:
-			self["label2"].setText(_("Default"))
-			now = datetime.now()
-			info1 = 'Date = ' + now.strftime("%d-%B-%Y") + "\n"
-			info2 = 'Time = ' + now.strftime("%H:%M:%S") + "\n"
-			info3 = self.Do_cmd("uptime", None, None)
-			tmp = info3.split(",")
-			info3 = 'Uptime = ' + tmp[0].lstrip() + "\n"
-			info4 = self.Do_cmd("cat", "/etc/image-version", " | head -n 1")
-			info4 = info4[9:]
-			info4 = 'Boxtype = ' + info4 + "\n"
-			info5 = 'Load = ' + self.Do_cmd("cat", "/proc/loadavg", None)
-			info6 = self.Do_cut(info1 + info2 + info3 + info4 + info5)
-			self["label1"].setText(info6)
+			self["label2"].setText("INFO")
+			info1 = self.Do_cmd("cat", "/etc/motd", None)
+			if info1.find('wElc0me') > -1:
+				info1 = info1[info1.find('wElc0me'):len(info1)] + "\n"
+				info1 = info1.replace('|','')
+			else:
+				info1 = info1[info1.find('INFO'):len(info1)] + "\n"
+			info2 = self.Do_cmd("cat", "/etc/image-version", None)
+			info3 = self.Do_cut(info1 + info2)
+			self["label1"].setText(info3)
 		except:
 			self["label1"].setText(_("an internal error has occured"))
 
@@ -1180,10 +1175,9 @@ class PasswdScreen(Screen):
         return ''.join(Random().sample(passwdChars, passwdLength))
 
     def SetPasswd(self):
-        print 'Changing password for %s to %s' % (self.user, self.password)
         self.container = eConsoleAppContainer()
         self.container.appClosed.append(self.runFinished)
-        self.container.dataAvail.append(self.dataAvail)
+        self.container.dataAvail.append(self.processOutputLine)
         retval = self.container.execute('passwd %s' % self.user)
         if retval == 0:
             self.session.open(MessageBox, _('Sucessfully changed password for root user to:\n%s ' % self.password), MessageBox.TYPE_INFO)
@@ -1192,16 +1186,16 @@ class PasswdScreen(Screen):
 
     def dataAvail(self, data):
         self.output_line += data
-        while True:
-            i = self.output_line.find('\n')
-            if i == -1:
-                break
-            self.processOutputLine(self.output_line[:i + 1])
-            self.output_line = self.output_line[i + 1:]
+        if self.output_line.find('password changed.') == -1:
+            if self.output_line.endswith('new UNIX password: '):
+                print '1password:%s\n' % self.password
+                self.processOutputLine(self.output_line[:1])
 
     def processOutputLine(self, line):
-        if line.find('password: '):
+        if line.find('new UNIX password: '):
+            print '2password:%s\n' % self.password
             self.container.write('%s\n' % self.password)
+            self.output_line = ''
 
     def runFinished(self, retval):
         del self.container.dataAvail[:]
@@ -1213,8 +1207,9 @@ class PasswdScreen(Screen):
         self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
 
     def VirtualKeyBoardTextEntry(self, callback = None):
-        if callback is not None and len(callback):
+        if callback is not None:
             self.buildList(callback)
+        return
 
     def setWindowTitle(self, title = None):
         if not title:
@@ -1222,4 +1217,4 @@ class PasswdScreen(Screen):
         try:
             self['title'] = StaticText(title)
         except:
-		print 'self["title"] was not found in skin'
+            pass   
