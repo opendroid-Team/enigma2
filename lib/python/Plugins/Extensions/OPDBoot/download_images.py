@@ -228,7 +228,7 @@ class DownloadOnLineImage(Screen):
         elif boxname in ('xpeedlx3'):
             BRANDOEMDROID = 'GoldenInterstar'
             MASCHINEBUILD = boxname
-        elif boxname in ('sf98', 'sf108', 'sf128', 'sf138', 'sf208', 'sf228', 'sf3038', 'sf4008'):
+        elif boxname in ('sf98', 'sf108', 'sf128', 'sf138', 'sf208', 'sf228', 'sf3038', 'sf4008', 'sf5008', 'sf8008'):
             BRANDOEMDROID = 'Octagon'
             MASCHINEBUILD = boxname
         elif boxname in ('mutant51', 'ax51'):
