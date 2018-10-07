@@ -42,7 +42,7 @@ class OPDChooseOnLineImage(Screen):
         global mbimageValue
         self.sel = self['list'].getCurrent()
         returnValue = self.sel[2]
-	if returnValue in ('opennfr', 'openhdf', 'openatv-6.0', 'opendroid'): 
+	if returnValue in ('opennfr', 'openhdf', 'openatv', 'opendroid'): 
             from Screens.Setup import Setup
 	    MBImagelist = [("6.0", _("6.0")), ("6.1", _("6.1")), ("6.2", _("6.2"))]
 	    if returnValue ==  'opennfr':
@@ -107,9 +107,9 @@ class OPDChooseOnLineImage(Screen):
         self.list.append(res)
         mypixmap = mypath + 'openatv.png'
         png = LoadPixmap(mypixmap)
-        name = _('OpenATV-6.0')
+        name = _('OpenATV')
         desc = _('Download latest OpenATV Image')
-        idx = 'openatv-6.0'
+        idx = 'openatv'
         res = (name,
          png,
          idx,
@@ -249,7 +249,7 @@ class DownloadOnLineImage(Screen):
         elif self.distro == 'opennfr':
             self.feed = 'opennfr'
             self.feedurl = 'http://dev.nachtfalke.biz/nfr/feeds/%s/images' %ImageVersion
-        elif self.distro == 'openatv-6.0':
+        elif self.distro == 'openatv':
             self.feed = 'openatv'
             self.feedurl = 'http://images.mynonpublic.com/openatv/%s' %ImageVersion
         elif self.distro == 'openmips':
@@ -308,7 +308,7 @@ class DownloadOnLineImage(Screen):
         urlbox = getBoxType()
 	if urlbox == "twinboxlcdci5":
 	    urlbox = "twinboxlcd" 	
-        if self.distro == 'openatv-6.0' or self.distro == 'opennfr' or self.distro == 'egami' or self.distro == 'openhdf' or self.distro == 'satdreamgr':
+        if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'egami' or self.distro == 'openhdf' or self.distro == 'satdreamgr':
             if box in ('xpeedlx1', 'xpeedlx2'):
                     box = 'xpeedlx'
             req = urllib2.Request(self.feedurl)
@@ -596,7 +596,7 @@ class DownloadOnLineImage(Screen):
         self.imagelist = []
         if stb != '1':
             url = self.feedurl
-        if self.distro in ('openatv-6.0', 'openeight'):
+        if self.distro in ('openatv', 'openeight'):
             url = '%s/index.php?open=%s' % (self.feedurl, box)
         elif self.distro == 'egami':
             url = '%s/index.php?open=%s' % (self.feedurl, urlbox)			
