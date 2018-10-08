@@ -1843,6 +1843,8 @@ class EPGSelection(Screen, HelpableScreen):
 		self.close(True)
 
 	def zap(self):
+		if self.session.nav.getCurrentlyPlayingServiceOrGroup() and '0:0:0:0:0:0:0:0:0' in self.session.nav.getCurrentlyPlayingServiceOrGroup().toString():
+			return
 		if self.zapFunc:
 			self.zapSelectedService()
 			self.closeEventViewDialog()
@@ -1896,8 +1898,9 @@ class EPGSelection(Screen, HelpableScreen):
 
 	def zapTo(self):
 		if self.session.nav.getCurrentlyPlayingServiceOrGroup() and '0:0:0:0:0:0:0:0:0' in self.session.nav.getCurrentlyPlayingServiceOrGroup().toString():
-			from Screens.InfoBarGenerics import setResumePoint
-			setResumePoint(self.session)
+			#from Screens.InfoBarGenerics import setResumePoint
+			#setResumePoint(self.session)
+			return
 		if self.zapFunc:
 			self.zapSelectedService(True)
 			self.refreshTimer.start(2000)
