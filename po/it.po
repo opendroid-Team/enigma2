@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2018-10-04 15:32+0200\n"
-"PO-Revision-Date: 2018-10-06 18:58+0200\n"
+"PO-Revision-Date: 2018-10-11 13:27+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -738,6 +738,9 @@ msgstr "Cambiare HDMI in PIP"
 
 msgid "HDMI HDR Type"
 msgstr "HDMI HDR Mode"
+
+msgid "HDMI HDR Mode"
+msgstr "Modalità HDR HDMI"
 
 msgid "This option allows you can force the HDR Modes for UHD"
 msgstr "Questa opzione ti consente di forzare le modalità HDR per UHD"
@@ -17440,8 +17443,11 @@ msgstr "Aiuto lungo"
 msgid "HDMI Rx long"
 msgstr "HDMI Rx lungo"
 
-msgid "HDMI colorspace"
+msgid "HDMI Colorspace"
 msgstr "HDMI Spazio colore"
+
+msgid "HDMI Colorimetry"
+msgstr "HDMI Profili colore"
 
 msgid "Home long"
 msgstr "Home lungo"

@@ -16317,6 +16317,12 @@ msgstr ""
 msgid "HDMI colorspace"
 msgstr ""
 
+msgid "HDMI Colorimetry"
+msgstr ""
+
+msgid "HDMI HDR Mode"
+msgstr ""
+
 msgid "Home long"
 msgstr ""
 
