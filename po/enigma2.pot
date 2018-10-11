@@ -16874,7 +16874,7 @@ msgstr ""
 msgid "Install from /media/opdboot/OPDBootUpload"
 msgstr ""
 
-msgid "Install from Internet (OpenPLi,OpenVix,OpenATV,Egami,OpenOPD,OpenHDF)"
+msgid "Install from Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)"
 msgstr ""
 
 msgid "Remove OPDBoot"
