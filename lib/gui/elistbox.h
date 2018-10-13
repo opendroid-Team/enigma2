@@ -84,7 +84,7 @@ struct eListboxStyle
 	int m_valign, m_halign, m_border_size, m_sliderborder_size, m_scrollbarsliderborder_size;
 	ePtr<gFont> m_font, m_secondfont;
 	ePoint m_text_offset;
-	bool m_use_vti_workaround;
+	bool m_use_opd_workaround;
 };
 #endif
 
