@@ -30,6 +30,7 @@ constant_widgets = {}
 variables = {}
 DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
+isOPDSkin = False
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -402,6 +403,9 @@ class AttributeParser:
 				"disable_onhide": 0x01,
 			}[value])
 	def title(self, value):
+		global isOPDSkin
+		if value[:3].lower() == "opd":
+			isOPDSkin = True
 		self.guiObject.setTitle(_(value))
 	def text(self, value):
 		self.guiObject.setText(_(value))
@@ -538,6 +542,7 @@ class AttributeParser:
 			print "[Skin] Halign must be either left, center, right or block!, not %s. Please contact the skin's author!" % value
 
 	def textOffset(self, value):
+		global isOPDSkin
 		if value in variables:
 			value = variables[value]
 		x, y = value.split(',')
@@ -855,8 +860,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 
 dom_screens = {}
 def loadSkin(name, scope = SCOPE_SKIN):
-	global display_skin_id
-	global dom_screens
+	global dom_screens, display_skin_id, isOPDSkin
 	filename = resolveFilename(scope, name)
 	if fileExists(filename):
 		path = os.path.dirname(filename) + "/"
@@ -864,6 +868,8 @@ def loadSkin(name, scope = SCOPE_SKIN):
 		for elem in xml.etree.cElementTree.parse(file).getroot():
 			if elem.tag == 'screen':
 				name = elem.attrib.get('name', None)
+				if name[:3].lower() == "opd":
+					isOPDSkin = True
 				if name:
 					sid = elem.attrib.get('id', None)
 					if sid and (sid != display_skin_id):
@@ -879,7 +885,8 @@ def loadSkin(name, scope = SCOPE_SKIN):
 		file.close()
 
 def loadSkinData(desktop):
-	global dom_skins, dom_screens, display_skin_id
+	global isOPDSkin
+	global dom_skins
 	skins = dom_skins[:]
 	skins.reverse()
 	for (path, dom_skin) in skins:
@@ -888,6 +895,8 @@ def loadSkinData(desktop):
 			if elem.tag == 'screen':
 				name = elem.attrib.get('name', None)
 				if name:
+					if name[:3].lower() == "opd":
+						isOPDSkin = True
 					sid = elem.attrib.get('id', None)
 					if sid and (sid != display_skin_id):
 						elem.clear()
