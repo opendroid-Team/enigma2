@@ -12,6 +12,7 @@ from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
 from Components.SystemInfo import SystemInfo
+from skin import isOPDSkin
 
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
@@ -51,12 +52,14 @@ class About(Screen):
 		self.populate()
 
 		self["key_green"] = Button(_("Translations"))
+                self["key_info"] = StaticText(_("Contact Info"))
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "TimerEditActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,
 				"log": self.showAboutReleaseNotes,
 				"blue": self.showModelPic,
+                                "info": self.showContactInfo,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown,
 				"green": self.showTranslationInfo,
@@ -290,7 +293,6 @@ class About(Screen):
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
-		AboutText += "\n" + _("Detected HDD:") + "\n"
 		hddlist = harddiskmanager.HDDList()
 		hdd = hddlist and hddlist[0][1] or None
 		if hdd is not None and hdd.model() != "":
@@ -325,6 +327,7 @@ class About(Screen):
 				for x in self.hdd_list:
 					AboutText += "   " + x
 				AboutText += "\n"
+				AboutText = getAboutText()[0]
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
@@ -334,8 +337,7 @@ class About(Screen):
 			{
 				"cancel": self.close,
 				"ok": self.close,
-				"info": self.showTranslationInfo,
-#				"red": self.showDevices,
+				"info": self.showContactInfo,
 				"yellow": self.showMemoryInfo,
 				"blue": self.showModelPic,
 				"up": self["AboutScrollLabel"].pageUp,
@@ -346,6 +348,8 @@ class About(Screen):
 
 	def showDevices(self):
 		self.session.open(Devices)
+	def showContactInfo(self):
+		self.session.open(ContactInfo)
 	def showMemoryInfo(self):
 		self.session.open(MemoryInfo)
 
@@ -354,9 +358,19 @@ class About(Screen):
 
 	def createSummary(self):
 		return AboutSummary
-		
+
 	def showModelPic(self):
 		self.session.open(ModelPic)
+
+	def pageUp(self):
+		if isOPDSkin:
+			self["FullAbout"].pageUp()
+		else:
+			self["AboutScrollLabel"].pageUp()
+
+	def pageDown(self):
+		if isOPDSkin:
+			self["FullAbout"].pageDown()
 
 class ModelPic(Screen):
 	def __init__(self, session):
@@ -1073,8 +1087,6 @@ class TranslationInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Translation Information"))
-		# don't remove the string out of the _(), or it can't be "translated" anymore.
-		# TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 		info = _("TRANSLATOR_INFO")
 		if info == "TRANSLATOR_INFO":
 			info = "(N/A)"
@@ -1087,21 +1099,39 @@ class TranslationInfo(Screen):
 				continue
 			(type, value) = l
 			infomap[type] = value
-		print infomap
-
-		self["key_red"] = Button(_("Cancel"))
-		self["TranslationInfo"] = StaticText(info)
+		self["actions"] = ActionMap(["SetupActions"],{"cancel": self.close,"ok": self.close})
 
 		translator_name = infomap.get("Language-Team", "none")
 		if translator_name == "none":
 			translator_name = infomap.get("Last-Translator", "")
 		self["TranslatorName"] = StaticText(translator_name)
+		linfo= ""
+		linfo += _("Translations Info")		+ ":" + "\n\n"
+		linfo += _("Project")				+ ":" + infomap.get("Project-Id-Version", "") + "\n"
+		linfo += _("Language")				+ ":" + infomap.get("Language", "") + "\n"
+		print infomap.get("Language-Team", "")
+		if infomap.get("Language-Team", "") == "" or infomap.get("Language-Team", "") == "none":
+			linfo += _("Language Team") 	+ ":" + "n/a"  + "\n"
+		else:
+			linfo += _("Language Team") 	+ ":" + infomap.get("Language-Team", "")  + "\n"
+		linfo += _("Last Translator") 		+ ":" + translator_name + "\n"
+		linfo += "\n"
+		linfo += _("Source Charset")		+ ":" + infomap.get("X-Poedit-SourceCharset", "") + "\n"
+		linfo += _("Content Type")			+ ":" + infomap.get("Content-Type", "") + "\n"
+		linfo += _("Content Encoding")		+ ":" + infomap.get("Content-Transfer-Encoding", "") + "\n"
+		linfo += _("MIME Version")			+ ":" + infomap.get("MIME-Version", "") + "\n"
+		linfo += "\n"
+		linfo += _("POT-Creation Date")		+ ":" + infomap.get("POT-Creation-Date", "") + "\n"
+		linfo += _("Revision Date")			+ ":" + infomap.get("PO-Revision-Date", "") + "\n"
+		linfo += "\n"
+		linfo += _("Generator")				+ ":" + infomap.get("X-Generator", "") + "\n"
 
-		self["actions"] = ActionMap(["SetupActions"],
-			{
-				"cancel": self.close,
-				"ok": self.close,
-			})
+		if infomap.get("Report-Msgid-Bugs-To", "") != "":
+			linfo += _("Report Msgid Bugs To")	+ ":" + infomap.get("Report-Msgid-Bugs-To", "") + "\n"
+		else:
+			linfo += _("Report Msgid Bugs To")	+ ":" + "opendroid2013@gmail.com" + "\n"
+		self["AboutScrollLabel"] = ScrollLabel(linfo)
+
 
 class CommitInfo(Screen):
 	def __init__(self, session):
@@ -1116,20 +1146,20 @@ class CommitInfo(Screen):
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown,
 				"left": self.left,
-				"right": self.right
+				"right": self.right,
+				"deleteBackward": self.left,
+				"deleteForward": self.right
 			})
 
 		self["key_red"] = Button(_("Cancel"))
 
-		try:
-			branch = "?sha=" + "-".join(about.getEnigmaVersionString().split("-")[3:])
-		except:
-			branch = ""
 		self.project = 0
 		self.projects = [
-			("https://api.github.com/repos/opendroid-Team/enigma2/commits", "enigma2"),
-			("https://api.github.com/repos/opendroid-Team/skins-oDreamy-FHD/commits", "oDreamy-FHD"),
-			("https://api.github.com/repos/stein17/OPD-Blue-Line/commits", "OPD-Blue-Line"),
+			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "6.7", "github"),
+			("opendroid-Team",      "OPD-Blue-Line",             "opendroid-Team Skin OPD-Blue-Line",   "master", "github"),
+			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.2", "github"),
+			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
+			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -1137,35 +1167,58 @@ class CommitInfo(Screen):
 		self.Timer.start(50, True)
 
 	def readGithubCommitLogs(self):
-		url = self.projects[self.project][0]
+		if self.projects[self.project][4] == "github":
+			url = 'https://api.github.com/repos/%s/%s/commits?sha=%s' % (self.projects[self.project][0], self.projects[self.project][1], self.projects[self.project][3])
+		if self.projects[self.project][4] == "gitlab":
+			url1 = 'https://gitlab.com/api/v4/projects/%s' % (self.projects[self.project][0])
+			url2 = '%2F'
+			url3 = '%s/repository/commits?ref_name=%s' % (self.projects[self.project][1], self.projects[self.project][3])
+			url = url1 + url2 + url3
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
 		from urllib2 import urlopen
-		try:
-			commitlog += 80 * '-' + '\n'
-			commitlog += url.split('/')[-2] + '\n'
-			commitlog += 80 * '-' + '\n'
+		if self.projects[self.project][4] == "github":
 			try:
-				
-				from ssl import _create_unverified_context
-				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				commitlog += 80 * '-' + '\n'
+				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
+				commitlog += 'URL: https://github.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
+				commitlog += 80 * '-' + '\n'
+				for c in loads(urlopen(url, timeout=5).read()):
+					creator = c['commit']['author']['name']
+					title = c['commit']['message']
+					date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
+					if title.startswith ("Merge "):
+						pass
+					else:
+						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
+				commitlog = commitlog.encode('utf-8')
+				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
-				log = loads(urlopen(url, timeout=5).read())
-			for c in log:
-				creator = c['commit']['author']['name']
-				title = c['commit']['message']
-				date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
-				commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
-			commitlog = commitlog.encode('utf-8')
-			self.cachedProjects[self.projects[self.project][1]] = commitlog
-		except:
-			commitlog += _("Currently the commit log cannot be retrieved - please try later again")
+				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
+		if self.projects[self.project][4] == "gitlab":
+			try:
+				commitlog += 80 * '-' + '\n'
+				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
+				commitlog += 'URL: https://gitlab.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
+				commitlog += 80 * '-' + '\n'
+				for c in loads(urlopen(url, timeout=5).read()):
+					creator = c['author_name']
+					title = c['message']
+					date = datetime.strptime(c['committed_date'], '%Y-%m-%dT%H:%M:%S.000+02:00').strftime('%x %X')
+					if title.startswith ("Merge "):
+						pass
+					else:
+						commitlog += date + ' ' + creator + '\n' + title + '\n'
+				commitlog = commitlog.encode('utf-8')
+				self.cachedProjects[self.projects[self.project][2]] = commitlog
+			except:
+				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
 		self["AboutScrollLabel"].setText(commitlog)
 
 	def updateCommitLogs(self):
-		if self.cachedProjects.has_key(self.projects[self.project][1]):
-			self["AboutScrollLabel"].setText(self.cachedProjects[self.projects[self.project][1]])
+		if self.projects[self.project][2] in self.cachedProjects:
+			self["AboutScrollLabel"].setText(self.cachedProjects[self.projects[self.project][2]])
 		else:
 			self["AboutScrollLabel"].setText(_("Please wait"))
 			self.Timer.start(50, True)
@@ -1178,6 +1231,17 @@ class CommitInfo(Screen):
 		self.project = self.project != len(self.projects) - 1 and self.project + 1 or 0
 		self.updateCommitLogs()
 
+class ContactInfo(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self["actions"] = ActionMap(["SetupActions"],{"cancel": self.close,"ok": self.close})
+		self.setTitle(_("Contact info"))
+		self["manufacturerinfo"] = StaticText(self.getManufacturerinfo())
+
+	def getManufacturerinfo(self):
+		minfo = "Opendroid Team\n"
+		minfo += "https://droidsat.org/forum\n"
+		return minfo
 class MemoryInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -1199,7 +1263,6 @@ class MemoryInfo(Screen):
 		self['pused'] = Label()
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
-
 		self["params"] = MemoryInfoSkinParams()
 
 		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not relevant.\nDon't panic please when you see values being displayed that you think look suspicious!"))
