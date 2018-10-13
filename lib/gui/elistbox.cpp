@@ -587,9 +587,9 @@ void eListbox::setTextOffset(const ePoint &textoffset)
 	m_style.m_text_offset = textoffset;
 }
 
-void eListbox::setUseVTIWorkaround(void)
+void eListbox::setUseOPDWorkaround(void)
 {
-	m_style.m_use_vti_workaround = 1;
+	m_style.m_use_opd_workaround = 1;
 }
 
 void eListbox::setBackgroundColor(gRGB &col)
