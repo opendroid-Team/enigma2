@@ -1,25 +1,45 @@
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
+import struct, socket, fcntl, re, sys, os, time
 from sys import modules
-import socket, fcntl, struct, time, os
 
-def getImageVersionString():
-	return getImageVersion()
+from boxbranding import getBoxType, getMachineBuild
 
 def getVersionString():
 	return getImageVersion()
 
+def getImageVersionString():
+	try:
+		if os.path.isfile('/var/lib/opkg/status'):
+			st = os.stat('/var/lib/opkg/status')
+		else:
+			st = os.stat('/usr/lib/ipkg/status')
+		tm = time.localtime(st.st_mtime)
+		if tm.tm_year >= 2011:
+			return time.strftime("%Y-%m-%d %H:%M:%S", tm)
+	except:
+		pass
+	return _("unavailable")
+
 def getFlashDateString():
 	try:
-		return time.strftime(_("%Y-%m-%d"), time.localtime(os.stat("/boot").st_ctime))
+		return time.strftime(_("%Y-%m-%d %H:%M:%S"), time.localtime(os.path.getatime("/bin")))
 	except:
 		return _("unknown")
 
 def getEnigmaVersionString():
-	return getImageVersion()
+	from boxbranding import getImageVersion
+	enigma_version = getImageVersion()
+	if '-(no branch)' in enigma_version:
+		enigma_version = enigma_version [:-12]
+	return enigma_version
 
 def getGStreamerVersionString():
-	import enigma
-	return enigma.getGStreamerVersionString()
+	try:
+		from glob import glob
+		gst = [x.split("Version: ") for x in open(glob("/var/lib/opkg/info/gstreamer[0-9].[0-9].control")[0], "r") if x.startswith("Version:")][0]
+		return "%s" % gst[1].split("+")[0].replace("\n","")
+	except:
+		return _("unknown")
 
 def getKernelVersionString():
 	try:
@@ -53,7 +73,7 @@ def getChipSetString():
 			f = open('/proc/stb/info/chipset', 'r')
 			chipset = f.read()
 			f.close()
-			return str(chipset.lower().replace('\n','').replace('bcm','').replace('brcm','').replace('sti',''))
+			return str(chipset.lower().replace('\n','').replace('bcm','BCM').replace('brcm','BRCM').replace('sti',''))
 		except IOError:
 			return "unavailable"
 
@@ -137,6 +157,13 @@ def getCpuCoresString():
 	except IOError:
 		return "unavailable"
 
+def getImageTypeString():
+	try:
+		image_type = open("/etc/issue").readlines()[-2].strip()[:-6]
+		return image_type.capitalize()
+	except:
+		return _("undefined")
+
 def _ifinfo(sock, addr, ifname):
 	iface = struct.pack('256s', ifname[:15])
 	info  = fcntl.ioctl(sock.fileno(), addr, iface)
@@ -155,9 +182,12 @@ def getIfConfig(ifname):
 	infos['hwaddr']  = 0x8927 # SIOCSIFHWADDR
 	infos['netmask'] = 0x891b # SIOCGIFNETMASK
 	try:
+		print "in TRYYYYYYY", ifname
 		for k,v in infos.items():
+			print infos.items()
 			ifreq[k] = _ifinfo(sock, v, ifname)
 	except:
+		print "IN EXCEEEEEEEEPT", ifname
 		pass
 	sock.close()
 	return ifreq
@@ -171,6 +201,18 @@ def getIfTransferredData(ifname):
 			f.close()
 			return rx_bytes, tx_bytes
 
+def getDriverInstalledDate():
+	try:
+		from glob import glob
+		try:
+			driver = [x.split("-")[-2:-1][0][-8:] for x in open(glob("/var/lib/opkg/info/*-dvb-modules-*.control")[0], "r") if x.startswith("Version:")][0]
+			return  "%s-%s-%s" % (driver[:4], driver[4:6], driver[6:])
+		except:
+			driver = [x.split("Version:") for x in open(glob("/var/lib/opkg/info/*-dvb-proxy-*.control")[0], "r") if x.startswith("Version:")][0]
+			return  "%s" % driver[1].replace("\n","")
+	except:
+		return _("unknown")
+
 def getPythonVersionString():
 	try:
 		import commands
@@ -179,5 +221,33 @@ def getPythonVersionString():
 	except:
 		return _("unknown")
 
+def GetIPsFromNetworkInterfaces():
+	import socket, fcntl, struct, array, sys
+	is_64bits = sys.maxsize > 2**32
+	struct_size = 40 if is_64bits else 32
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	max_possible = 8 # initial value
+	while True:
+		_bytes = max_possible * struct_size
+		names = array.array('B')
+		for i in range(0, _bytes):
+			names.append(0)
+		outbytes = struct.unpack('iL', fcntl.ioctl(
+			s.fileno(),
+			0x8912,  # SIOCGIFCONF
+			struct.pack('iL', _bytes, names.buffer_info()[0])
+		))[0]
+		if outbytes == _bytes:
+			max_possible *= 2
+		else:
+			break
+	namestr = names.tostring()
+	ifaces = []
+	for i in range(0, outbytes, struct_size):
+		iface_name = bytes.decode(namestr[i:i+16]).split('\0', 1)[0].encode('ascii')
+		if iface_name != 'lo':
+			iface_addr = socket.inet_ntoa(namestr[i+20:i+24])
+			ifaces.append((iface_name, iface_addr))
+	return ifaces
 # For modules that do "from About import about"
-about = modules[__name__]
+about = sys.modules[__name__]
