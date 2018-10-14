@@ -19,7 +19,7 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists
 import os
 from skin import parseColor
-PLUGINVERSION = '3.0 - 2.03.2018 OPDBoot'
+PLUGINVERSION = 'V.3.0 - OPD Team'
 OPDBootInstallation_Skin = '\n\t\t<screen name="OPDBootInstallation" position="center,center" size="902,380" title="OPDBoot - Installation" >\n\t\t      <widget name="label1" position="10,10" size="840,30" zPosition="1" halign="center" font="Regular;25" backgroundColor="#9f1313" transparent="1"/>\n\t\t      <widget name="label2" position="10,80" size="840,290" zPosition="1" halign="center" font="Regular;20" backgroundColor="#9f1313" transparent="1"/>\n\t\t      <widget name="config" position="10,160" size="840,200" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t      <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t      <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t      <ePixmap pixmap="skin_default/buttons/blue.png" position="300,290" size="140,40" alphatest="on" />\n\t\t      <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t      <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t      <widget name="key_blue" position="300,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t</screen>'
 OPDBootImageChoose_Skin = '\n\t\t<screen name="OPDBootImageChoose" position="center,center" size="902,380" title="OPDBoot - Menu">\n\t\t\t<widget name="label2" position="145,10" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label3" position="145,35" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label4" position="145,60" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label5" position="145,85" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label6" position="420,10" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label7" position="420,35" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label8" position="420,60" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label9" position="420,85" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label10" position="145,110" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label11" position="420,110" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label1" position="25,145" size="840,22" zPosition="1" halign="center" font="Regular;18" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="device_icon" position="25,20" size="80,80" alphatest="on" />\n\t\t\t<widget name="free_space_progressbar" position="265,42" size="500,13" borderWidth="1" zPosition="3" />\n\t\t\t<widget name="config" position="25,180" size="840,150" scrollbarMode="showOnDemand" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="10,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="185,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/yellow.png" position="360,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/blue.png" position="535,340" size="150,40" alphatest="on" />\n\t\t\t<widget name="key_red" position="5,center" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_green" position="180,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_yellow" position="355,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t\t<widget name="key_blue" position="530,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t<widget name="key_menu" position="705,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" /><ePixmap pixmap="skin_default/buttons/menu.png" position="710,340" size="150,40" alphatest="on" /></screen>'
 OPDBootImageInstall_Skin = '\n\t\t    <screen name="OPDBootImageInstall" position="center,center" size="770,340" title="OPDBoot - Image Installation" >\n\t\t\t      <widget name="config" position="10,10" size="750,220" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t\t      <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t\t      <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t\t      <ePixmap pixmap="skin_default/buttons/yellow.png" position="290,290" size="140,40" alphatest="on" />\n\t\t\t      <widget name="HelpWindow" position="330,310" zPosition="5" size="1,1" transparent="1" alphatest="on" />      \n\t\t\t      <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t      <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t      <widget name="key_yellow" position="290,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t    </screen>'
@@ -29,7 +29,6 @@ def Freespace(dev):
     space = statdev.f_bavail * statdev.f_frsize / 1024
     print '[OPDBoot] Free space on %s = %i kilobytes' % (dev, space)
     return space
-
 
 class OPDBootInstallation(Screen):
 
@@ -206,7 +205,7 @@ class OPDBootInstallation(Screen):
 
     def install2(self, yesno):
 	config.OPDBootmanager = ConfigSubsection()
-	config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')	
+	config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')
         if getMachineBuild() in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
             self.install3(False)
         elif yesno:
@@ -217,7 +216,7 @@ class OPDBootInstallation(Screen):
             ybox = self.session.openWithCallback(self.install3, MessageBox, message, MessageBox.TYPE_YESNO)
             ybox.setTitle(_('Install Confirmation'))
         else:
-            self.session.open(MessageBox, _('Installation aborted !'), MessageBox.TYPE_INFO)                
+            self.session.open(MessageBox, _('Installation aborted !'), MessageBox.TYPE_INFO)
 
     def install3(self, yesno):
         print "yesno:", yesno
@@ -240,7 +239,7 @@ class OPDBootInstallation(Screen):
                 fstabuuidwrite = 'UUID=' + fstabuuid.strip() + '        /media/opdboot        auto        defaults	       1        1'
                 fileHandle = open ('/etc/fstab', 'a')
                 fileHandle.write(fstabuuidwrite)
-                fileHandle.close()                
+                fileHandle.close()
             cmd = 'mkdir ' + self.mysel + 'OPDBootI;mkdir ' + self.mysel + 'OPDBootUpload'
             os.system(cmd)
             os.system('cp /sbin/opd_multiboot /sbin/opdinit')
@@ -350,7 +349,7 @@ class OPDBootImageChoose(Screen):
 
     def bootsetup(self):
         menulist = []
-        if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u5pvr"):
+        if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
             menulist.append((_('Use Bootmanager by Booting'), 'withopdboot'))
             menulist.append((_('Boot without Bootmanager'), 'withoutopdboot'))
 	    menulist.append((_('Setup Bootmanagertimeout'), 'bootmanagertimeout'))
@@ -359,7 +358,7 @@ class OPDBootImageChoose(Screen):
         self.session.openWithCallback(self.menuBootsetupCallback, ChoiceBox, title=_('What would You like to do ?'), list=menulist)
     def menuBootsetupCallback(self, choice):
 	config.OPDBootmanager = ConfigSubsection()
-	config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')	
+	config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')
         self.show()
         if choice is None:
             return
@@ -387,7 +386,7 @@ class OPDBootImageChoose(Screen):
             config.OPDBootmanager.bootmanagertimeout.save()
             out3 = open('/media/opdboot/OPDBootI/.timer', 'w')
             out3.write(config.OPDBootmanager.bootmanagertimeout.value)
-            out3.close()   
+            out3.close()
 
     def updateList(self):
         self.list = []
@@ -653,7 +652,6 @@ class OPDBootImageChoose(Screen):
                 cmd1 = 'rm -rf /media/opdboot/OPDBootI/*'
                 self.session.openWithCallback(self.updateList, Console, _('OPDBoot: Deleting All Images'), [cmd, cmd1])
             return
-
 
 class OPDBootImageInstall(Screen, ConfigListScreen):
 
