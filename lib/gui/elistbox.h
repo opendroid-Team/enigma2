@@ -157,7 +157,7 @@ public:
 	void setVAlign(int align);
 	void setHAlign(int align);
 	void setTextOffset(const ePoint &textoffset);
-	void setUseVTIWorkaround(void);
+	void setUseOPDWorkaround(void);
 
 	void setSliderBorderColor(const gRGB &col);
 	void setSliderBorderWidth(int size);
