@@ -6832,9 +6832,9 @@ msgstr "VOD scarica Directory"
 msgid "If set to 'yes' it will show the 'PO' packages in browser."
 msgstr "Se impostato su yes mostrera i pacchetti del PO nel browser."
 
-msgid "if set to 'no', only an debug message is written to the Debug log"
+msgid "if set to 'no', only an debug message is written to the Debug log "
 msgstr ""
-"se impostato su \"no\", solo un messaggio di debug viene scritto nel "
+"se impostato su 'no', solo un messaggio di debug viene scritto nel "
 "registro di debug"
 
 msgid "If set to 'yes' it will show the 'SRC' packages in browser."
