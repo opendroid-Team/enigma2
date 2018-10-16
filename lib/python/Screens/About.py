@@ -343,6 +343,20 @@ class About(Screen):
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown
 			})
+	def populate_opd(self):
+		pass
+
+	def showID(self):
+		if SystemInfo["HaveID"]:
+			try:
+				f = open("/etc/.id")
+				id = f.read()[:-1].split('=')
+				f.close()
+				from Screens.MessageBox import MessageBox
+				self.session.open(MessageBox,id[1], type = MessageBox.TYPE_INFO)
+			except:
+				pass
+
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)
 
