@@ -13351,6 +13351,9 @@ msgstr ""
 msgid "Video fine-tuning"
 msgstr ""
 
+msgid "VideoFinetune"
+msgstr ""
+
 msgid ""
 "Video input selection\n"
 "\n"
