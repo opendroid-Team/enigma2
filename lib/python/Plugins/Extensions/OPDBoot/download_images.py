@@ -54,11 +54,9 @@ class OPDChooseOnLineImage(Screen):
 	        MBImagelist.remove(("6.1", _("6.1")))
 	        MBImagelist.remove(("6.2", _("6.2")))
 	    elif returnValue ==  'openhdf':
-		MBImagelist.append(("6.2", _("6.2")))
-                MBImagelist.append(("6.3", _("6.3")))
-		MBImagelist.remove(("6.0", _("6.0")))
 	        MBImagelist.remove(("6.1", _("6.1")))
-	        MBImagelist.remove(("6.2", _("6.2")))
+                MBImagelist.append(("6.2", _("6.2")))
+                MBImagelist.append(("6.3", _("6.3")))
 	    if returnValue ==  'opendroid':
                 config.usage.mbimageversion = ConfigSelection(default="6.7", choices = MBImagelist)	    
 	    else:
@@ -374,7 +372,7 @@ class DownloadOnLineImage(Screen):
                     response = urllib2.urlopen(req)
                     tmp = response.readlines()
                     for line in tmp:
-                        if '<a href="' in line:
+                        if '/OU/images/index.php?dir=6.2' in line:
                             if box in line:
                                 stb = '1'
                                 break
@@ -681,7 +679,7 @@ class DownloadOnLineImage(Screen):
                     t4 = line.find('file=' + box)
                     t5 = line.find('.zip" class="')
                     self.imagelist.append(line[t4 + len(box) + 6:t5 + 4])
-                elif line.find('<a href="6.2/' + BRANDOEM + "/" + box) > -1:
+                elif line.find('<a class="autoindex_a" href="/OU/images/index.php?dir=6.2/' + BRANDOEM + "/&amp;file=" + box) > -1:
                         t4 = line.find(box + '-PurE2')
                         t5 = line.find('.zip"')
                         self.imagelist.append(line[t4 :t5+4])

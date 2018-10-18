@@ -132,6 +132,8 @@ def OPDBootExtract(source, target, zipdelete, getimagefolder, getMachineRootFile
     sourcefile = media_nf + '/OPDBootUpload/%s.zip' % source
     if os.path.exists(sourcefile):
         os.chdir(media_nf + '/OPDBootUpload')
+        if os.path.exists(media_nf + '/OPDBootUpload/usb_update.bin'):
+           os.system('rm -rf ' + media_nf + '/OPDBootUpload/usb_update.bin')
         os.system('echo "[OPDBoot] Extracking ZIP image file"')
         os.system('unzip ' + sourcefile)
         if zipdelete == "True":
