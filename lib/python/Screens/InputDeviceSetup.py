@@ -360,7 +360,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("22", _("Zgemma i55")),
 				("23", _("WWIO 4K")),
 				("24", _("Axas E4HD Ultra")),
-				("25", _("Zgemma H9/I55Plus")),
+				("25", _("Zgemma H9/I55Plus"))
 				]
 		defaultRcList = [
 				("default", 0),
@@ -400,7 +400,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("bre2ze4k", 23),
 				("e4hd", 24),
 				("h9", 25),
-				("i55plus", 25),
+				("i55plus", 25)
 				]
 
 	def __init__(self, session):
