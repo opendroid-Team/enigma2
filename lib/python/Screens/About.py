@@ -76,7 +76,14 @@ class About(Screen):
 		#AboutText += _("Boxtype:\t%s\n") % getBoxType()
 
 		if path.exists('/proc/stb/info/chipset'):
-			AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
+			if SystemInfo["HasHiSi"]:
+				AboutText += _("Chipset:\tHiSilicon %s\n") % about.getChipSetString().upper()
+			elif about.getIsBroadcom():
+				AboutText += _("Chipset:\tBroadcom %s\n") % about.getChipSetString().upper()
+			else:
+
+				AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
+				AboutText += _("CPU:\t%s %s %s\n") % (about.getCPUArch(), about.getCPUSpeedString(), about.getCpuCoresString())
 
 		cmd = 'cat /proc/cpuinfo | grep "cpu MHz" -m 1 | awk -F ": " ' + "'{print $2}'"
 		cmd2 = 'cat /proc/cpuinfo | grep "BogoMIPS" -m 1 | awk -F ": " ' + "'{print $2}'"

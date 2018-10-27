@@ -1,6 +1,6 @@
 from os import path
 from enigma import eDVBResourceManager, Misc_Options
-from Tools.Directories import fileExists, fileCheck
+from Tools.Directories import fileExists, fileCheck, pathExists
 from Tools.HardwareInfo import HardwareInfo
 from boxbranding import getBoxType, getMachineBuild, getDisplayType, getHaveRCA, getHaveDVI, getHaveYUV, getHaveSCART, getHaveAVJACK
 
@@ -95,3 +95,4 @@ SystemInfo["HaveRCA"] = getHaveRCA() in ('True')
 SystemInfo["HaveDVI"] = getHaveDVI() in ('True')
 SystemInfo["HaveAVJACK"] = getHaveAVJACK() in ('True')
 SystemInfo["HAVE_SCART"] = getHaveSCART() in ('True')
+SystemInfo["HasHiSi"] = pathExists('/proc/hisi')
