@@ -1,7 +1,6 @@
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
 import struct, socket, fcntl, re, sys, os, time
 from sys import modules
-
 from boxbranding import getBoxType, getMachineBuild
 
 def getVersionString():
@@ -113,6 +112,10 @@ def getCPUSpeedString():
 			return mhz
 		except IOError:
 			return "unavailable"
+def getCPUArch():
+	if "ARM" in getCPUString():
+		return getCPUString()
+	return _("Mipsel")
 
 def getCPUString():
 	if getMachineBuild() in ('osmio4k','vuuno4kse','vuuno4k', 'vuultimo4k','vusolo4k', 'vuzero4k', 'hd51', 'hd52', 'sf4008', 'dm900','dm920', 'gb7252', 'dags7252', 'vs1500', 'et1x000', 'xc7439','h7','8100s','et13000','sf5008'):
@@ -220,6 +223,27 @@ def getPythonVersionString():
 		return output.split(' ')[1]
 	except:
 		return _("unknown")
+
+def getIsBroadcom():
+	try:
+		file = open('/proc/cpuinfo', 'r')
+		lines = file.readlines()
+		for x in lines:
+			splitted = x.split(': ')
+			if len(splitted) > 1:
+				splitted[1] = splitted[1].replace('\n','')
+				if splitted[0].startswith("Hardware"):
+					system = splitted[1].split(' ')[0]
+				elif splitted[0].startswith("system type"):
+					if splitted[1].split(' ')[0].startswith('BCM'):
+						system = 'Broadcom'
+		file.close()
+		if 'Broadcom' in system:
+			return True
+		else:
+			return False
+	except:
+		return False
 
 def GetIPsFromNetworkInterfaces():
 	import socket, fcntl, struct, array, sys
