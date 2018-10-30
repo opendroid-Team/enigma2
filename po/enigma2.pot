@@ -8588,6 +8588,9 @@ msgstr ""
 msgid "Please wait while scanning is in progress..."
 msgstr ""
 
+msgid "Please wait while scan is in progress."
+msgstr ""
+
 msgid "Please wait while we configure your network..."
 msgstr ""
 
@@ -9635,6 +9638,9 @@ msgid "Scaler sharpness"
 msgstr ""
 
 msgid "This option configures the picture sharpness."
+msgstr ""
+
+msgid "This operation may take a while."
 msgstr ""
 
 msgid "Scaler vertical dejagging"
@@ -13612,6 +13618,13 @@ msgid ""
 "Press the OK button on your remote control to move to the next step."
 msgstr ""
 
+#, python-format
+msgid ""
+"Welcome.\n"
+"\n"
+"This Wizard will help you to configure your ipbox."
+msgstr ""
+
 msgid ""
 "Welcome to OpenDroid!\n"
 "\n"
@@ -14374,6 +14387,9 @@ msgid "a gui to assign services/providers to common interface modules"
 msgstr ""
 
 msgid "a gui to assign services/providers/caids to common interface modules"
+msgstr ""
+
+msgid "Abort this Wizard"
 msgstr ""
 
 msgid "abort alternatives edit"
@@ -15945,6 +15961,9 @@ msgid "Info = show tuner informations"
 msgstr ""
 
 msgid "Bouquet -= scan for IPTV server addresses"
+msgstr ""
+
+msgid "Scan for a server"
 msgstr ""
 
 msgid "Remote"
