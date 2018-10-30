@@ -206,7 +206,7 @@ class OPDBootInstallation(Screen):
     def install2(self, yesno):
 	config.OPDBootmanager = ConfigSubsection()
 	config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')
-        if getMachineBuild() in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
+        if getMachineBuild() in ("u5", "u51", "u52", "u53", "u5pvr"):
             self.install3(False)
         elif yesno:
             self.MACHINEBRAND = getMachineBrand()
@@ -349,7 +349,7 @@ class OPDBootImageChoose(Screen):
 
     def bootsetup(self):
         menulist = []
-        if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
+        if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u5pvr"):
             menulist.append((_('Use Bootmanager by Booting'), 'withopdboot'))
             menulist.append((_('Boot without Bootmanager'), 'withoutopdboot'))
 	    menulist.append((_('Setup Bootmanagertimeout'), 'bootmanagertimeout'))
