@@ -24,6 +24,10 @@ if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/plugin
 
 from traceback import print_exc
 
+profile("ClientMode")
+import Components.ClientMode
+Components.ClientMode.InitClientMode()
+
 profile("SetupDevices")
 import Components.SetupDevices
 Components.SetupDevices.InitSetupDevices()
@@ -40,7 +44,8 @@ config.misc.load_unlinked_userbouquets = ConfigYesNo(default=False)
 def setLoadUnlinkedUserbouquets(configElement):
 	enigma.eDVBDB.getInstance().setLoadUnlinkedUserbouquets(configElement.value)
 config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
-enigma.eDVBDB.getInstance().reloadBouquets()
+if config.clientmode.enabled.value == False:
+	enigma.eDVBDB.getInstance().reloadBouquets()
 
 profile("ParentalControl")
 import Components.ParentalControl
@@ -853,6 +858,10 @@ Screens.Ci.InitCiConfig()
 
 profile("RcModel")
 import Components.RcModel
+
+if config.clientmode.enabled.value:
+	import Components.ChannelsImporter
+	Components.ChannelsImporter.autostart()
 
 #from enigma import dump_malloc_stats
 #t = eTimer()

@@ -960,8 +960,9 @@ class NimSelection(Screen):
 
 		self.setResultClass()
 
-		self["key_red"] = StaticText(_("Close"))
-		self["key_green"] = StaticText(_("Select"))
+		self["key_red"] = Label(_("Close"))
+		self["key_green"] = Label(_("Select"))
+		self["key_yellow"] = Label(_("Client mode"))
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions", "ChannelSelectEPGActions"],
 		{
@@ -972,8 +973,13 @@ class NimSelection(Screen):
 			"red": self.close,
 			"green": self.okbuttonClick,
 			"menu": self.exit,
+			"yellow": self.clientmode,
 		}, -2)
 		self.setTitle(_("Choose Tuner"))
+	def clientmode(self):
+		from Screens.ClientMode import ClientModeScreen
+		self.session.open(ClientModeScreen)
+
 
 	def loadFBCLinks(self):
 		for x in nimmanager.nim_slots:
