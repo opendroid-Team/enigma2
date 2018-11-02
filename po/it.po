@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-11-02 21:52+0100\n"
+"PO-Revision-Date: 2018-11-02 22:28+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -19,35 +19,29 @@ msgstr ""
 msgid "Routing request"
 msgstr "Richiesta di routing"
 
-msgid "Put from standby to deep standby"
-msgstr "Passa dalla modalità standby alla modalità Deep Standby"
+msgid "Check state from TV"
+msgstr "Controlla lo stato della TV"
 
-msgid "If the receiver in standby, then switch to deep standby?"
-msgstr "Se il ricevitore è in modalità standby, andare in modalità standby profonda?"
+msgid "An attempt is made to capture the current TV status. If this is not possible due to incorrect or missing status messages, it may cause the receiver to respond unexpectedly."
+msgstr "Viene effettuato un tentativo di registrare lo stato corrente della TV. Se ciò non è possibile a causa di messaggi di stato errati o mancanti, il ricevitore potrebbe rispondere in modo imprevisto."
 
 msgid "Wait for timesync at startup"
 msgstr "Attendere la sincronizzazione dell'ora all'avvio del sistema"
 
-msgid "If the 'deep standby workaround' is enabled, it waits until the system time is syncronised before the TV is turned on. This way, switching on can be prevented if a timer follows. Syncronization takes a maximum of 2 minutes."
-msgstr "Se è attivata la Soluzione Deep Standby, attende che l'ora del sistema sia sincronizzata prima che la TV sia accesa. In questo modo, l'accensione può essere prevenuta se segue un timer. La sincronizzazione richiede un massimo di 2 minuti."
+msgid "If the 'deep standby workaround' is enabled, it waits until the system time is syncronised. If necessary, the devices wakeup will start after a maximum of 2 minutes."
+msgstr "Se è attivata la Soluzione Deep Standby, attende che l'ora del sistema sia sincronizzata. Se necessario, il wakeup del dispositivo viene avviato dopo un massimo di 2 minuti."
 
-msgid "TV was not in standby mode at startup"
-msgstr "La TV non era in standby all'avvio"
+msgid "Even if TV has another input active?"
+msgstr "Anche se la TV ha attivato un altro ingresso?"
 
-msgid "TV was already on powered"
-msgstr "La TV era già accesa"
+msgid "Even if a 'zap' recording timer starting?"
+msgstr "Anche se inizia un timer di registrazione di commutazione?"
 
-msgid "TV has another input active"
-msgstr "La TV ha un altro ingresso attivo"
+msgid "Even if a 'zap and record' recording timer starting?"
+msgstr "Anche se inizia un timer di commutazione e registrazione?"
 
-msgid "Start a 'zap' recording timer"
-msgstr "Quando si avvia un timer di commutazione"
-
-msgid "Start a 'zap and record' recording timer"
-msgstr "Quando si avvia un timer di commutazione e registrazione"
-
-msgid "Start a 'wakeup' power timer"
-msgstr "Quando si avvia un timer di accensione della sveglia"
+msgid "Even if a 'wakeup' power timer starting?"
+msgstr "Anche se si avvia un timer di accensione 'wakeup'?"
 
 msgid "Try to send more messages if not all commands are executed.\n"
 msgstr "Prova a inviare più messaggi se non vengono eseguiti tutti i comandi.\n"
@@ -55,23 +49,23 @@ msgstr "Prova a inviare più messaggi se non vengono eseguiti tutti i comandi.\n
 msgid "(e.g. TV wakeup, but not switched to correct input)"
 msgstr "(ad es. TV sveglia, ma non passerà all'ingresso corretto)"
 
-msgid "If the power state is reached, the repeated messages are stopped."
-msgstr "Se viene raggiunta la condizione operativa prevista, la ripetizione dei messaggi viene interrotta."
-
-msgid "Send repeated standby and wakeup messages"
-msgstr "Invia messaggi di sveglia e standby ripetuti"
-
 msgid "Check power state from TV"
-msgstr "Controllare le condizioni operative del televisore"
+msgstr "Controllare lo stato di alimentazione dalla TV"
 
 msgid "Handle input from TV"
 msgstr "Gestisci gli input TV"
 
+msgid "Try to send repeated commands if not all are executed. This is done at a slower send interval.\n"
+msgstr "Prova a inviare comandi ripetuti se non tutti vengono eseguiti. Questo viene fatto in un intervallo di trasmissione più lento.\n"
+
 msgid "Try to slow down the send interval if not all commands are executed.\n"
 msgstr "Prova a rallentare l'intervallo di invio se non vengono eseguiti tutti i comandi.\n"
 
-msgid "Time delay to handle the TV event"
-msgstr "Tempo di attesa per l'esecuzione dell'evento TV"
+msgid "Time delay until standby or deep standby"
+msgstr "Ritardo fino allo standby o al deep standby"
+
+msgid "Repeat the sent standby and wakeup commands"
+msgstr "Ripeti i comandi di attesa e di attivazione inviati"
 
 msgid "'Handle standby from TV' has a higher priority as 'Handle input from TV'"
 msgstr "'Gestisci TV Standby 'ha una priorità più alta di' Gestisci ingressi TV'"
