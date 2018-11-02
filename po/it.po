@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-11-02 22:52+0100\n"
+"PO-Revision-Date: 2018-11-03 00:36+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -21,6 +21,12 @@ msgstr "È possibile saltare questa funzione e spegnere il televisore quando si 
 
 msgid "Switch off the TV to correct input"
 msgstr "Spegni il televisore per correggere l'ingresso"
+
+msgid "Put your AV Receiver in standby"
+msgstr "Metti il ricevitore AV in standby"
+
+msgid "Wakeup your AV Receiver from standby"
+msgstr "Riattivare il ricevitore AV dalla modalità standby"
 
 msgid ""
 "Some TV devices can't swich to correct input if a another hdmi port active. This setting set the TV to standby before.\n"
