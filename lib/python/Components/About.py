@@ -48,7 +48,7 @@ def getKernelVersionString():
 		return kernelversion
 	except:
 		return _("unknown")
-	
+
 def getModelString():
 	try:
 		file = open("/proc/stb/info/boxtype", "r")
@@ -63,7 +63,7 @@ def getChipSetString():
 		return "7435"
 	elif getMachineBuild() in ('dm520','dm525'):
 		return "73625"
-	elif getMachineBuild() in ('dm900','dm920','et13000','sf5008'):
+	elif getMachineBuild() in ('dm900','dm920','et13000','sf5008','sf8008'):
 		return "7252S"
 	elif getMachineBuild() in ('hd51','vs1500','h7'):
 		return "7251S"

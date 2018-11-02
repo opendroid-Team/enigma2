@@ -81,6 +81,7 @@ class About(Screen):
 			elif about.getIsBroadcom():
 				AboutText += _("Chipset:\tBroadcom %s\n") % about.getChipSetString().upper()
 			else:
+				AboutText += _("Chipset:\t%s\n") % about.getChipSetString().upper()
 
 				AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
 				AboutText += _("CPU:\t%s %s %s\n") % (about.getCPUArch(), about.getCPUSpeedString(), about.getCpuCoresString())
