@@ -670,7 +670,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			NavigationInstance.instance.RecordTimer.saveTimer()
 
 			box_instandby = Screens.Standby.inStandby
-			tv_notactive = Screens.Standby.TVinStandby.getTVstate('notactive')
+#			tv_notactive = Screens.Standby.TVinStandby.getTVstate('notactive')
 			isRecordTime = abs(NavigationInstance.instance.RecordTimer.getNextRecordingTime() - time()) <= 900 or NavigationInstance.instance.RecordTimer.getStillRecording()
 
 			if debug: print "[RECORDTIMER] box_instandby=%s" % box_instandby, "tv_notactive=%s" % tv_notactive, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent, "isRecordTime=%s" % isRecordTime
