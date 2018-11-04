@@ -5462,6 +5462,9 @@ msgstr "Vuoi davvero Riprendere il plugin  \"%s\"?"
 msgid "Do you want to add any additional information ?"
 msgstr "Vuoi aggiungere qualsiasi ulteriore informazione?"
 
+msgid "Droidsat forum user name"
+msgstr "Nome utente del forum Droidsat"
+
 msgid ""
 "Do you want to also install samba client ?\n"
 "This allows you to mount your windows shares on this device."
@@ -5920,8 +5923,7 @@ msgstr "Inserisci il tuo indirizzo email per inviare una copia del log."
 
 msgid "Enter your forum user name, to make it easier to trace logs."
 msgstr ""
-"Inserisci il tuo username forum, per rendere più facile rintracciare i "
-"registri."
+"Inserisci il nome utente del forum, per rendere più facile tracciare i log."
 
 msgid "Enter the size in Megabyte of the first partition:"
 msgstr "Imposta la dimensione in Mb della prima partizione:"
@@ -16346,6 +16348,9 @@ msgstr "fatto!"
 msgid "e-mail address"
 msgstr "indirizzo IP"
 
+msgid "e-mail address"
+msgstr "indirizzo email"
+
 msgid "east"
 msgstr "muovere a est"
 
@@ -16422,6 +16427,9 @@ msgstr ""
 
 msgid "Enter the FTP port of the host receiver (normally '21')."
 msgstr "Inserire la porta FTP del ricevitore host (normalmente '21')."
+
+msgid "Enter your e-mail address to send a copy of the log to."
+msgstr "Inserisci il tuo indirizzo e-mail per inviare una copia del registro a."
 
 msgid ""
 "This allows you to set the number of digits to 5, if you have more than 9999 "
