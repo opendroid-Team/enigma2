@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-11-04 22:07+0100\n"
+"PO-Revision-Date: 2018-11-04 22:22+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -18666,7 +18666,7 @@ msgid ""
 "\n"
 "Please upload a zip file to install"
 msgstr ""
-"La directory / media / opdboot / OPDBootUpload è VUOTA!n\n"
+"La directory /media/opdboot/OPDBootUpload è VUOTA!n\n"
 "\n"
 "Si prega di caricare un file zip da installare"
 
@@ -18674,7 +18674,7 @@ msgid "Sorry you can install a max of 10 images."
 msgstr "Spiacente, puoi installare un massimo di 10 immagini."
 
 msgid "Install from /media/opdboot/OPDBootUpload"
-msgstr "Installa da / media / opdboot / OPDBootUpload"
+msgstr "Installa da /media/opdboot/OPDBootUpload"
 
 msgid "Install from Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)"
 msgstr "Installa da Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)"
@@ -18683,10 +18683,10 @@ msgid "Remove OPDBoot"
 msgstr "Rimuovere OPDBoot"
 
 msgid "Remove all installed images"
-msgstr "Rimuovi tutte le immagini installate"
+msgstr "Rimuovere tutte le immagini installate"
 
 msgid "OPDBoot is removing..."
-msgstr "OPDBoot sta rimuovendo ..."
+msgstr "OPDBoot sta rimuovendo..."
 
 msgid "OPDBoot: Deleting All Images"
 msgstr "OPDBoot: eliminazione di tutte le immagini"
@@ -18759,7 +18759,7 @@ msgstr ""
 "\n"
 
 msgid "OPDBoot: Install new image"
-msgstr "OPDBoot: installa nuova immagine"
+msgstr "OPDBoot: installare nuova immagine"
 
 msgid ""
 "Not enough free space on /media/opdboot/ !!\n"
@@ -18767,7 +18767,7 @@ msgid ""
 "\n"
 "Exit plugin."
 msgstr ""
-"Spazio libero insufficiente su / media / opdboot / !!n\n"
+"Spazio libero insufficiente su/media/OPDboot / !!n\n"
 "Hai bisogno di almeno 300 MB di spazio libero.\n"
 "\n"
 "Esci dal plugin."
@@ -18785,61 +18785,61 @@ msgid "OPD MultiBoot"
 msgstr "OPD MultiBoot"
 
 msgid "usage: "
-msgstr "utilizzo: "
+msgstr "Utilizzo: "
 
 msgid ".__call__() not defined"
 msgstr ".__chiamata__() non definito"
 
 msgid "unknown parser %r (choices: %s)"
-msgstr "error sconosciuto %r (scelte: %s)"
+msgstr "Errore sconosciuto %r (scelte: %s)"
 
 msgid "argument \"-\" with mode %r"
-msgstr "discussione \"-\" con la modalità %r"
+msgstr "Discussione \"-\" con la modalità %r"
 
 msgid "can't open '%s': %s"
-msgstr "non posso aprire '%s': %s"
+msgstr "Non posso aprire '%s': %s"
 
 msgid "cannot merge actions - two groups are named %r"
-msgstr "non è possibile unire le azioni: vengono nominati due gruppi %r"
+msgstr "Non è possibile unire le azioni: vengono nominati due gruppi %r"
 
 msgid "'required' is an invalid argument for positionals"
-msgstr "'necessario' è un argomento non valido per i posizionali"
+msgstr "'Necessario' è un argomento non valido per i posizionali"
 
 msgid "invalid option string %r: must start with a character %r"
-msgstr "stringa di opzioni non valida %r: deve iniziare con un carattere %r"
+msgstr "Stringa di opzioni non valida %r: deve iniziare con un carattere %r"
 
 msgid "dest= is required for options like %r"
 msgstr "dest = è richiesto per opzioni come %r"
 
 msgid "invalid conflict_resolution value: %r"
-msgstr "conflitto invalido_valore di risoluzione: %r"
+msgstr "Conflitto invalido_valore di risoluzione: %r"
 
 msgid "conflicting option string(s): %s"
-msgstr "stringa di opzioni in conflitto(s): %s"
+msgstr "Stringa di opzioni in conflitto(s): %s"
 
 msgid "mutually exclusive arguments must be optional"
-msgstr "gli argomenti che si escludono a vicenda devono essere facoltativi"
+msgstr "Gli argomenti che si escludono a vicenda devono essere facoltativi"
 
 msgid "positional arguments"
-msgstr "argomenti posizionali"
+msgstr "Argomenti posizionali"
 
 msgid "optional arguments"
-msgstr "argomenti opzionali"
+msgstr "Argomenti opzionali"
 
 msgid "show this help message and exit"
-msgstr "mostra questo messaggio di aiuto ed esci"
+msgstr "Mostra questo messaggio di aiuto ed esci"
 
 msgid "show program's version number and exit"
-msgstr "mostra il numero di versione del programma ed esce"
+msgstr "Mostra il numero di versione del programma ed esci"
 
 msgid "cannot have multiple subparser arguments"
-msgstr "non può avere più argomenti subparser"
+msgstr "Non può avere più argomenti subparser"
 
 msgid "unrecognized arguments: %s"
-msgstr "unrecognized arguments: %s"
+msgstr "Argomenti non riconosciuti: %s"
 
 msgid "not allowed with argument %s"
-msgstr "non consentito come argomento %s"
+msgstr "Non consentito come argomento %s"
 
 msgid "ignored explicit argument %r"
 msgstr "Argomento esplicito ignorato %r"
