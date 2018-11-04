@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-11-04 15:01+0100\n"
+"PO-Revision-Date: 2018-11-04 19:16+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -18977,3 +18977,299 @@ msgid ""
 "%s: error: %s\n"
 msgstr ""
 "%s: error: %s\n"
+
+#: ButtonSetup.py:25
+msgid "Info (EPG)"
+msgstr "Info (EPG)"
+
+#: ButtonSetup.py:26
+msgid "Info (EPG) Long"
+msgstr "Info (EPG) Lungo"
+
+#: ButtonSetup.py:35
+msgid "TV"
+msgstr ""
+
+#: ButtonSetup.py:38
+msgid "Teletext"
+msgstr "Teletext"
+
+#: ButtonSetup.py:41 ButtonSetup.py:42
+msgid "List/PVR"
+msgstr "Lista/PVR"
+
+#: ButtonSetup.py:42 ButtonSetup.py:44 ButtonSetup.py:57 ButtonSetup.py:82
+msgid "long"
+msgstr "lungo"
+
+#: ButtonSetup.py:45
+msgid "File"
+msgstr "File"
+
+#: ButtonSetup.py:48
+msgid "Media"
+msgstr "Media"
+
+#: ButtonSetup.py:52
+msgid "Www"
+msgstr "Www"
+
+#: ButtonSetup.py:53
+msgid "Www long"
+msgstr "Www lungo"
+
+#: ButtonSetup.py:59
+msgid "End"
+msgstr "Fine"
+
+#: ButtonSetup.py:60
+msgid "Next"
+msgstr "Il prossimo"
+
+#: ButtonSetup.py:61
+msgid "Previous"
+msgstr "Precedente"
+
+#: ButtonSetup.py:62
+msgid "Audio"
+msgstr "Audio"
+
+#: ButtonSetup.py:64
+msgid "Playpause"
+msgstr "Play pausa"
+
+#: ButtonSetup.py:67
+msgid "Rewind"
+msgstr "Riavvolgere"
+
+#: ButtonSetup.py:69
+msgid "Skip back"
+msgstr "Salta indietro"
+
+#: ButtonSetup.py:70
+msgid "Skip forward"
+msgstr "Salta in avanti"
+
+#: ButtonSetup.py:71
+msgid "activatePiP"
+msgstr "attivare PiP"
+
+#: ButtonSetup.py:72
+msgid "Timer"
+msgstr "Timer"
+
+#: ButtonSetup.py:73
+msgid "Playlist"
+msgstr "Elenco di riproduzione"
+
+#: ButtonSetup.py:77
+msgid "Mark/Portal/Playlist"
+msgstr "Marchio / Portale/ Elenco di riproduzione"
+
+#: ButtonSetup.py:78
+msgid "Sleep"
+msgstr "Sleep"
+
+#: ButtonSetup.py:79
+msgid "Power"
+msgstr "Power"
+
+#: ButtonSetup.py:81 ButtonSetup.py:82
+msgid "HDMIin"
+msgstr "HDMIin"
+
+#: ButtonSetup.py:85
+msgid "Context"
+msgstr "Contesto"
+
+#: ButtonSetup.py:86
+msgid "F1/LAN"
+msgstr ""
+
+#: ButtonSetup.py:87
+msgid "F1/LAN long"
+msgstr "F1/LAN lungo"
+
+#: ButtonSetup.py:88
+msgid "F2"
+msgstr "F2"
+
+#: ButtonSetup.py:90
+msgid "F3"
+msgstr "F3"
+
+#: ButtonSetup.py:92
+msgid "F4"
+msgstr "F4"
+
+#: ButtonSetup.py:127
+msgid "Show help"
+msgstr "Mostra aiuto"
+
+#: ButtonSetup.py:134
+msgid "Show service list"
+msgstr "Mostra l'elenco dei servizi"
+
+#: ButtonSetup.py:135
+msgid "Show satellites list"
+msgstr "Mostra l'elenco dei satelliti"
+
+#: ButtonSetup.py:136
+msgid "Show service list or movies"
+msgstr "Mostra elenco di servizi o film"
+
+#: ButtonSetup.py:137
+msgid "Show movies"
+msgstr "Mostra film"
+
+#: ButtonSetup.py:138
+msgid "Show favourites list"
+msgstr "Mostra la lista dei preferiti"
+
+#: ButtonSetup.py:139
+msgid "Show current bouquet channel list"
+msgstr "Mostra l'elenco dei canali bouquet corrente"
+
+#: ButtonSetup.py:142
+msgid "Show event info plugins"
+msgstr "Mostra i plugin e informazioni sull'evento"
+
+#: ButtonSetup.py:145
+msgid "Show multi EPG"
+msgstr "Mostra multi EPG"
+
+#: ButtonSetup.py:146
+msgid "Show select audio track"
+msgstr "Mostra traccia audio selezionata"
+
+#: ButtonSetup.py:147
+msgid "Show subtitle selection"
+msgstr "Mostra la selezione dei sottotitoli"
+
+#: ButtonSetup.py:152
+msgid "Activate timeshift end"
+msgstr "Attiva la fine del timeshift"
+
+#: ButtonSetup.py:153
+msgid "Activate timeshift end and pause"
+msgstr ""
+
+#: ButtonSetup.py:157
+msgid "Show subservice selection"
+msgstr "Mostra la selezione del servizio secondario"
+
+#: ButtonSetup.py:159
+msgid "Aspect selection"
+msgstr "Selezione dell'aspetto"
+
+#: ButtonSetup.py:161
+msgid "Show PIP"
+msgstr "Mostra PIP"
+
+#: ButtonSetup.py:163
+msgid "Move PIP"
+msgstr "Sposta PIP"
+
+#: ButtonSetup.py:164
+msgid "Toggle PIP-ZAP"
+msgstr "Attiva / disattiva PIP-ZAP"
+
+#: ButtonSetup.py:171
+msgid "Button setup"
+msgstr "Button setup"
+
+#: ButtonSetup.py:181
+msgid "Plugin browser"
+msgstr "Plugin browser"
+
+#: ButtonSetup.py:182
+msgid "Channel info"
+msgstr "Channel info"
+
+#: ButtonSetup.py:193
+msgid "SleepTimer"
+msgstr "SleepTimer"
+
+#: ButtonSetup.py:195
+msgid "Usage setup"
+msgstr "Impostazione di utilizzo"
+
+#: ButtonSetup.py:196
+msgid "User interface settings"
+msgstr "Impostazioni dell'interfaccia utente"
+
+#: ButtonSetup.py:197
+msgid "Recording and playback settings"
+msgstr "Impostazioni di registrazione e riproduzione"
+
+#: ButtonSetup.py:199
+msgid "Harddisk setup"
+msgstr "Configurazione Harddisk"
+
+#: ButtonSetup.py:200
+msgid "Subtitles settings"
+msgstr "Impostazioni dei sottotitoli"
+
+#: ButtonSetup.py:208
+msgid "EnhancedMovieCenter"
+msgstr "EnhancedMovieCenter"
+
+#: ButtonSetup.py:210
+msgid "Kodi MediaCenter"
+msgstr "Kodi MediaCenter"
+
+#: ButtonSetup.py:211
+msgid "OPD BluePanel"
+msgstr "OPD BluePanel"
+
+#: ButtonSetup.py:212
+msgid "OPD Green Panel"
+msgstr "OPD Green Panel"
+
+#: ButtonSetup.py:213
+msgid "OPD Download Panel"
+msgstr "OPD Download Panel"
+
+#: ButtonSetup.py:214
+msgid "OPD OPD_panel"
+msgstr "OPD OPD_panel"
+
+#: ButtonSetup.py:215
+msgid "OPD ScriptRunner"
+msgstr "OPD ScriptRunner"
+
+#: ButtonSetup.py:216
+msgid "OPD SwapManager"
+msgstr "OPD SwapManager"
+
+#: ButtonSetup.py:217
+msgid "OPD SoftwarePanel"
+msgstr "OPD SoftwarePanel"
+
+#: ButtonSetup.py:218
+msgid "OPD MountManager"
+msgstr "OPD MountManager"
+
+#: ButtonSetup.py:219
+msgid "OPD CronManager"
+msgstr "OPD CronManager"
+
+#: ButtonSetup.py:220
+msgid "Disable this button"
+msgstr "Disable this button"
+
+#: ButtonSetup.py:231
+msgid "Quick button setup"
+msgstr "Quick button setup"
+
+#: ButtonSetup.py:233
+msgid "Mode"
+msgstr "Mode"
+
+#: ButtonSetup.py:341
+msgid "Quick button setup for"
+msgstr "Configurazione rapida dei pulsanti per"
+
+#: ButtonSetup.py:479
+msgid "are you sure you want to cancel all the changes"
+msgstr "sei sicuro di voler cancellare tutte le modifiche"
