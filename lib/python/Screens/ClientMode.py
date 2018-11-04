@@ -6,7 +6,6 @@ from Components.Sources.StaticText import StaticText
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
-
 # for VKeyIcon
 from Components.Sources.Boolean import Boolean
 
@@ -34,7 +33,6 @@ class ClientModeScreen(ConfigListScreen, Screen):
 
 		self["key_red"] = StaticText(_("Exit"))
 		self["key_green"] = StaticText(_("Save"))
-
 		self["description"] = Label("")
 
 		# VKeyIcon is the automatic "text" button on buttonbar. HelpWindow is remote control helper image.

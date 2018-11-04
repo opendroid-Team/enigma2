@@ -31,7 +31,6 @@ self.session.open(GreenPanel)
 			<item weight="15" level="1" entryID="autolanguage_setup"><setup id="autolanguagesetup" /></item>
 		</menu>	
 	
-
 		<!-- Menu / Settings / Service Searching -->
 		<menu weight="5" level="0" text="Service searching" entryID="service_searching_selection">
 			<id val="scan" />

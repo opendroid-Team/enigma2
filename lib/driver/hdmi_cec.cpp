@@ -374,7 +374,6 @@ void eHdmiCEC::hdmiEvent(int what)
 			static unsigned char pressedkey = 0;
 
 			eDebugNoNewLineStart("[eHdmiCEC] received message");
-		struct cec_caps caps = {};
 			for (int i = 0; i < rxmessage.length; i++)
 			{
 				eDebugNoNewLine(" %02X", rxmessage.data[i]);
@@ -528,7 +527,6 @@ void eHdmiCEC::sendMessage(struct cec_message &message)
 	if (hdmiFd >= 0)
 	{
 		eDebugNoNewLineStart("[eHdmiCEC] send message");
-		eDebugNoNewLine(" %02X", message.address);
 		for (int i = 0; i < message.length; i++)
 		{
 			eDebugNoNewLine(" %02X", message.data[i]);

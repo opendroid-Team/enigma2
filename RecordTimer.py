@@ -663,13 +663,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					self.record_service = None
 
 			NavigationInstance.instance.RecordTimer.saveTimer()
-<<<<<<< 6.8
-
-			box_instandby = Screens.Standby.inStandby
-#			tv_notactive = Screens.Standby.TVinStandby.getTVstate('notactive')
-=======
 			self.autostate = Screens.Standby.inStandby
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 			isRecordTime = abs(NavigationInstance.instance.RecordTimer.getNextRecordingTime() - time()) <= 900 or NavigationInstance.instance.RecordTimer.getStillRecording()
 			if debug: print "[RECORDTIMER] self.autostate=%s" % self.autostate, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent
 
