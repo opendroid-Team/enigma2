@@ -5,11 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-<<<<<<< 6.8
-"PO-Revision-Date: 2018-11-03 00:53+0100\n"
-=======
 "PO-Revision-Date: 2018-11-01 13:11+0100\n"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -20,7 +16,6 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
-<<<<<<< 6.8
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
 msgstr "È possibile saltare questa funzione e spegnere il televisore quando si riattiva il ricevitore dalla modalità standby e si passa immediatamente alla modalità standby."
 
@@ -125,8 +120,6 @@ msgstr "%d sec"
 msgid "%d times"
 msgstr "%d volte"
 
-=======
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgid "(higher than any auto)"
 msgstr "(superiore a qualsiasi auto)"
 
@@ -748,25 +741,16 @@ msgid "Start instant recording"
 msgstr "Iniziare registrazione istantanea"
 
 msgid ""
-<<<<<<< 6.8
-"Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be "
-"influenced any applicable skin."
-=======
 "Choose the front panel display formatting style for times. 'H' / 'HH' is the "
 "hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' "
 "is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) "
 "The front panel display will be based on your choice but can be influenced "
 "any applicable skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Scegli lo stile di formattazione del display del pannello anteriore per i tempi. 'H' / 'HH' è l'ora per un orologio da 24 ore, 'h' / 'hh' è l'ora per un orologio da 12 ore, 'mm' è il minuto. ('HH' e 'hh' hanno zeri iniziali per valori a cifra singola.) Il display del pannello frontale si baserà "
-=======
 "Scegli lo stile di formattazione del display del pannello anteriore per i "
 "tempi. 'H' / 'HH' è l'ora per un orologio da 24 ore, 'h' / 'hh' è l'ora per "
 "un orologio da 12 ore, 'mm' è il minuto. ('HH' e 'hh' hanno zeri iniziali "
 "per valori a cifra singola.) Il display del pannello frontale si baserà "
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "sulla tua scelta, ma può essere influenzato da qualsiasi skin applicabile."
 
 msgid "Hotkey Setup"
@@ -2105,10 +2089,9 @@ msgstr ""
 msgid "Always include ECM in recordings"
 msgstr "Includere sempre ECM nelle registrazioni"
 
-<<<<<<< 6.8
 msgid "Always include ECM messages in recordings. This overrides the individual timer settings globally. It allows recordings to be always decrypted afterwards (sometimes called offline decoding), if supported by your receiver. Default: off."
 msgstr "Includere sempre i messaggi ECM nelle registrazioni. Questo sovrascrive le singole impostazioni del timer a livello globale. Permette alle registrazioni di essere sempre decodificate in seguito (talvolta chiamate decodifica offline), se supportate dal ricevitore. Predefinito: spento."
-=======
+
 msgid ""
 "Always include ECM messages in recordings. This overrides the individual "
 "timer settings globally. It allows recordings to be always decrypted "
@@ -2119,7 +2102,6 @@ msgstr ""
 "singole impostazioni del timer a livello globale. Permette alle "
 "registrazioni di essere sempre decodificate in seguito (talvolta chiamate "
 "decodifica offline), se supportate dal ricevitore. Predefinito: spento."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 #, python-format
 msgid ""
@@ -2147,12 +2129,6 @@ msgstr ""
 "premere velocemente di seguito."
 
 msgid "Configure the general audio volume step size (limit 1-10)."
-<<<<<<< 6.8
-msgstr "Configurare la dimensione del passaggio del volume audio generale (limite 1-10)."
-
-msgid "Configure how recording filenames are constructed. Standard: Date Time - Channel - Title Very very short: Title Very short: Title - Date Time Short with time: Date Time - Title Short: Date - Title Long: Date Time - Channel - Title - Info"
-msgstr "Configura come vengono creati i nomi dei file di registrazione. Standard: Data Ora - Canale - Titolo Molto molto breve: Titolo Molto breve: Titolo - Data Ora Breve con orario: Data Ora - Titolo Abbreviazione: Data - Titolo Lungo: Data Ora - Canale - Titolo - Informazioni"
-=======
 msgstr ""
 "Configurare la dimensione del passaggio del volume audio generale (limite 1-"
 "10)."
@@ -2167,7 +2143,6 @@ msgstr ""
 "Data Ora - Canale - Titolo Molto molto breve: Titolo Molto breve: Titolo - "
 "Data Ora Breve con orario: Data Ora - Titolo Abbreviazione: Data - Titolo "
 "Lungo: Data Ora - Canale - Titolo - Informazioni"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 #, python-format
 msgid ""
@@ -2427,24 +2402,16 @@ msgstr ""
 "In modalità esperta, configurare quali schede saranno preferite per le "
 "registrazioni, quando è disponibile più di un sintonizzatore."
 
-<<<<<<< 6.8
-msgid "The setting 'without query' is the same as 'standard' without additional confirmation query. So can the receiver shutdown also if you not watch tv (e.g. video, hbbtv) -  only recommended for sleep timer. All other dependencies (e.g. recordings, time range) stay persist."
-=======
 msgid ""
 "The setting 'without query' is the same as 'standard' without additional "
 "confirmation query. So can the receiver shutdown also if you not watch tv (e."
 "g. video, hbbtv) -  only recommended for sleep timer. All other dependencies "
 "(e.g. recordings, time range) stay persist."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"L'impostazione 'senza consultazione' è lo stesso 'Standard' senza richiesta di conferma aggiuntiva. Così può il ricevitore chiudere quando non si sta guardando la TV (z.B. Video, HbbTV) - solo per Sleep-Timer consigliato. Tutte le altre dipendenze (z.B. Registrazione, intervallo di tempo) "
-=======
 "L'impostazione 'senza consultazione' è lo stesso 'Standard' senza richiesta "
 "di conferma aggiuntiva. Così può il ricevitore chiudere quando non si sta "
 "guardando la TV (z.B. Video, HbbTV) - solo per Sleep-Timer consigliato. "
 "Tutte le altre dipendenze (z.B. Registrazione, intervallo di tempo) "
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "rimangono."
 
 msgid "A small overview of the available icon states and actions."
@@ -2717,20 +2684,12 @@ msgstr "Indirizzo"
 msgid "Adjust 3D settings"
 msgstr "Regola i settaggi 3D"
 
-<<<<<<< 6.8
-msgid "Adjust the color settings so that all the color shades are distinguishable, but appear as saturated as possible. If you are happy with the result, press OK to close the video fine-tuning, or use the number keys to select other test screens."
-=======
 msgid ""
 "Adjust the color settings so that all the color shades are distinguishable, "
 "but appear as saturated as possible. If you are happy with the result, press "
 "OK to close the video fine-tuning, or use the number keys to select other "
 "test screens."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Regolare il colore in modo che tutte le sfumature risultino visibili, ma appaiano le più sature possibili. Se il risultato appare soddisfacente, premere OK per uscire dalla configurazione avanzata video, o usare i tasti numerici per accedere alle altre schermate Se soddisfatto del risultato, "
-"premere OK per terminare le regolazioni di precisione. Usare i tasti numerici più immagini di prova possono essere selezionati. chiudere il video messa a punto , o utilizzare i tasti numerici per selezionare altre schermate di test ."
-=======
 "Regolare il colore in modo che tutte le sfumature risultino visibili, ma "
 "appaiano le più sature possibili. Se il risultato appare soddisfacente, "
 "premere OK per uscire dalla configurazione avanzata video, o usare i tasti "
@@ -2739,7 +2698,6 @@ msgstr ""
 "numerici più immagini di prova possono essere selezionati. chiudere il video "
 "messa a punto , o utilizzare i tasti numerici per selezionare altre "
 "schermate di test ."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Advanced options"
 msgstr "Opzioni avanzate"
@@ -2953,46 +2911,29 @@ msgstr "%s pixel di larghezza"
 msgid "Enable fallback remote receiver"
 msgstr "Abilita ricevitore remoto"
 
-<<<<<<< 6.8
-msgid "Enable remote enigma2 receiver to be tried to tune into services that cannot be tuned into locally (e.g. tuner is occupied or service type is unavailable on the local tuner. Specify complete URL including http:// and port number (normally ...:8001), e.g. http://second_box:8001."
-=======
 msgid ""
 "Enable remote enigma2 receiver to be tried to tune into services that cannot "
 "be tuned into locally (e.g. tuner is occupied or service type is unavailable "
 "on the local tuner. Specify complete URL including http:// and port number "
 "(normally ...:8001), e.g. http://second_box:8001."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Abilita ricevitore enigma2 remoto per essere processato per entrare in sintonia con i servizi che non possono essere regolati in loco (ad esempio il sintonizzatore è occupato o il tipo di servizio non è disponibile col sintonizzatore locale Specificare URL inclusi http://. E numero di porta "
-=======
 "Abilita ricevitore enigma2 remoto per essere processato per entrare in "
 "sintonia con i servizi che non possono essere regolati in loco (ad esempio "
 "il sintonizzatore è occupato o il tipo di servizio non è disponibile col "
 "sintonizzatore locale Specificare URL inclusi http://. E numero di porta "
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "(normalmente ...:8001 ), ad esempio http://second_box:8001."
 
-<<<<<<< 6.8
-msgid "When enabled enigma2 will load unlinked userbouquets. This means that userbouquets that are available, but not included in the bouquets.tv or bouquets.radio files, will still be loaded. This allows you for example to keep your own user bouquet while installed settings are upgraded"
-=======
 msgid ""
 "When enabled enigma2 will load unlinked userbouquets. This means that "
 "userbouquets that are available, but not included in the bouquets.tv or "
 "bouquets.radio files, will still be loaded. This allows you for example to "
 "keep your own user bouquet while installed settings are upgraded"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Quando abilitato enigma2 caricherà utenti bouquets non collegati. Il che significa che gli utenti bouquets disponibili, ma non inclusi nei file bouquets.tv o bouquets.radio, continueranno a essere caricati. Ad esempio per mantenere il proprio bouquet dell'utente durante le impostazioni installate "
-"sono aggiornate"
-=======
 "Quando abilitato enigma2 caricherà utenti bouquets non collegati. Il che "
 "significa che gli utenti bouquets disponibili, ma non inclusi nei file "
 "bouquets.tv o bouquets.radio, continueranno a essere caricati. Ad esempio "
 "per mantenere il proprio bouquet dell'utente durante le impostazioni "
 "installate sono aggiornate"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Fallback remote receiver URL"
 msgstr "Indietreggia URL ricevitore remoto"
@@ -3015,10 +2956,6 @@ msgstr "Porta di streaming del ricevitore di fallback"
 msgid "Fallback tuner setup"
 msgstr "Impostazione del sintonizzatore di fallback"
 
-<<<<<<< 6.8
-msgid "Configure which tuner will be preferred for recordings, when more than one tuner is available. 'Disabled' would select a tuner based on preferred tuner in customise screen. 'Auto' would choose based on E2's default rules, ignoring preferred tuner in customise screen."
-msgstr "Configurare che il tuner è da preferire per la registrazione se più di un tuner è disponibile. 'Disabled' usa il sintonizzatore preferito è impostarlo su Personalizza. 'Auto' seleziona il tuner dopo le regole E2 e ignora l'impostazione nel customizing."
-=======
 msgid ""
 "Configure which tuner will be preferred for recordings, when more than one "
 "tuner is available. 'Disabled' would select a tuner based on preferred tuner "
@@ -3029,7 +2966,6 @@ msgstr ""
 "tuner è disponibile. 'Disabled' usa il sintonizzatore preferito è impostarlo "
 "su Personalizza. 'Auto' seleziona il tuner dopo le regole E2 e ignora "
 "l'impostazione nel customizing."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 #, python-format
 msgid "%d pixels wide"
@@ -4129,10 +4065,6 @@ msgstr "Premi il tasto del telecomando da personalizzare"
 msgid "Clients"
 msgstr "Clienti"
 
-<<<<<<< 6.8
-msgid "Client mode sets up this receiver to stream from another receiver. In this mode no local tuners will be available and channel lists, EPG, etc, will come from the remote receiver. All tuner settings will be cleared."
-msgstr "La modalità client imposta questo ricevitore per lo streaming da un altro ricevitore. In questa modalità non saranno disponibili sintonizzatori locali e gli elenchi dei canali, EPG, ecc. Verranno dal ricevitore remoto. Tutte le impostazioni del sintonizzatore verranno cancellate."
-=======
 msgid ""
 "Client mode sets up this receiver to stream from another receiver. In this "
 "mode no local tuners will be available and channel lists, EPG, etc, will "
@@ -4142,7 +4074,6 @@ msgstr ""
 "ricevitore. In questa modalità non saranno disponibili sintonizzatori locali "
 "e gli elenchi dei canali, EPG, ecc. Verranno dal ricevitore remoto. Tutte le "
 "impostazioni del sintonizzatore verranno cancellate."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Close"
 msgstr "Chiudere"
@@ -5210,10 +5141,6 @@ msgstr "Rimozione files in corso"
 msgid "Depth"
 msgstr "Profondità"
 
-<<<<<<< 6.8
-msgid "When enabled, Enigma2 will load unlinked bouquets. This means that bouquets that are available, but not included in the bouquets.tv or bouquets.radio files, will still be loaded. This allows you for example to keep your own user bouquet while installed settings are upgraded"
-msgstr "Quando abilitato, Enigma2 caricherà i gruppi non collegati. Ciò significa che i gruppi disponibili, ma non inclusi nei file bouquets.tv o bouquets.radio, verranno ancora caricati. Ciò consente ad esempio di mantenere il tuo bouquet utente mentre le impostazioni installate vengono aggiornate"
-=======
 msgid ""
 "When enabled, Enigma2 will load unlinked bouquets. This means that bouquets "
 "that are available, but not included in the bouquets.tv or bouquets.radio "
@@ -5224,15 +5151,10 @@ msgstr ""
 "che i gruppi disponibili, ma non inclusi nei file bouquets.tv o bouquets."
 "radio, verranno ancora caricati. Ciò consente ad esempio di mantenere il tuo "
 "bouquet utente mentre le impostazioni installate vengono aggiornate"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Descramble http streams"
 msgstr "Decodificare flussi http"
 
-<<<<<<< 6.8
-msgid "When enabled, always descramble receiving http streams. This takes up more resources (descrambling demuxers), only enable if necessary. Individual streams are always descrambled if 0x100 is added to the service type, regardless of this setting."
-msgstr "Se abilitato, decodifica sempre la ricezione di flussi http. Questo richiede più risorse (demochir per decodificare), abilitare solo se necessario. I singoli flussi vengono sempre decodificati se 0x100 viene aggiunto al tipo di servizio, indipendentemente da questa impostazione."
-=======
 msgid ""
 "When enabled, always descramble receiving http streams. This takes up more "
 "resources (descrambling demuxers), only enable if necessary. Individual "
@@ -5243,7 +5165,6 @@ msgstr ""
 "più risorse (demochir per decodificare), abilitare solo se necessario. I "
 "singoli flussi vengono sempre decodificati se 0x100 viene aggiunto al tipo "
 "di servizio, indipendentemente da questa impostazione."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Require authentication for http streams"
 msgstr "Richiedere l autenticazione per i flussi http"
@@ -6455,24 +6376,16 @@ msgstr ""
 "Se abilitata la risoluzione di uscita del box cercherà di corrispondere alla "
 "risoluzione della risoluzione contenuti video"
 
-<<<<<<< 6.8
-msgid "If enabled, will checks for the time after the start of the receiver is within the time window and optionally switched to standby. If disabled, must additional be available a signal for the successful wakeup detection. (some receiver send a false or none signal)"
-=======
 msgid ""
 "If enabled, will checks for the time after the start of the receiver is "
 "within the time window and optionally switched to standby. If disabled, must "
 "additional be available a signal for the successful wakeup detection. (some "
 "receiver send a false or none signal)"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Se abilitato, verificherà che il tempo dopo l'avvio del ricevitore sia all'interno della finestra temporale e facoltativamente commutato in standby. Se disattivato, deve essere disponibile un segnale per il rilevamento di sveglia riuscito (alcuni riceventi inviano un segnale falso o nessuno)"
-=======
 "Se abilitato, verificherà che il tempo dopo l'avvio del ricevitore sia "
 "all'interno della finestra temporale e facoltativamente commutato in standby."
 " Se disattivato, deve essere disponibile un segnale per il rilevamento di "
 "sveglia riuscito (alcuni riceventi inviano un segnale falso o nessuno)"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "All resolutions"
 msgstr "Tutte le risoluzioni"
@@ -7262,12 +7175,7 @@ msgstr ""
 
 msgid "If set to 'yes' you can preview channels in the EPG list."
 msgstr ""
-<<<<<<< 6.8
-"Se impostato su 'sì' è possibile visualizzare i canali nella lista dei canali. Premere 'OK' per visualizzare in anteprima il canale selezionato, premere un secondo 'OK' per uscire e zap a quel canale, premendo 'EXIT' per tornare al canale hai iniziato a.canale selezionato con EXIT Vai al "
-"trasmettitore prima di chiamare l'EPG."
-=======
 "Se impostato su 'sì' è possibile visualizzare i canali nella lista EPG."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid ""
 "If set to 'yes' you can preview channels in the channel list. Press 'OK' to "
@@ -7320,11 +7228,6 @@ msgid ""
 "step.\n"
 "If you are happy with the result, press OK."
 msgstr ""
-<<<<<<< 6.8
-"Se la TV dispone di un controllo per il miglioramento del contrasto, disattivarlo. Se dispone di un controllo definito [Dinamico], impostarlo a standard. Regolare la retro-illuminazione ad un livello di gradimento. Abbassare il più possibile il contrasto.\n"
-"Abbassare al minimo la luminosità, assicurandosi tuttavia che le due sfumature più scure di grigio rimangano distinguibili.\n"
-"Per il momento non preoccuparsi delle sfumature chiare: saranno regolate successivamente.\n"
-=======
 "Se la TV dispone di un controllo per il miglioramento del contrasto, "
 "disattivarlo. Se dispone di un controllo definito [Dinamico], impostarlo a "
 "standard. Regolare la retro-illuminazione ad un livello di gradimento. "
@@ -7333,7 +7236,6 @@ msgstr ""
 "sfumature più scure di grigio rimangano distinguibili.\n"
 "Per il momento non preoccuparsi delle sfumature chiare: saranno regolate "
 "successivamente.\n"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "Quando il risultato appare soddisfacente, premere OK."
 
 msgid ""
@@ -9021,10 +8923,6 @@ msgid "OSD settings"
 msgstr "Impostazioni OSD"
 
 msgid ""
-<<<<<<< 6.8
-"Settings / Operation and Interface / OSD - 2.Infobar Change transmission information in -2.Infobar INFO. From System Plugins we download the WeatherComponentHandler. WeatherComponentHandler / Menu, then Add Green. If you have entered the place, go down to location code. Yellow for code search, "
-"confirm with green OK important again OK. More importantly with red, otherwise you have to start again. Now exit with exit, restart user interface, possibly complete restart."
-=======
 "Settings / Operation and Interface / OSD - 2.Infobar Change transmission "
 "information in -2.Infobar INFO. From System Plugins we download the "
 "WeatherComponentHandler. WeatherComponentHandler / Menu, then Add Green. If "
@@ -9032,12 +8930,7 @@ msgid ""
 " confirm with green OK important again OK. More importantly with red, "
 "otherwise you have to start again. Now exit with exit, restart user "
 "interface, possibly complete restart."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Impostazioni / Funzionamento e Interfaccia / OSD - 2.Infobar Modificare le informazioni di trasmissione in -2.Infobar INFO. Dal Sistema Plugins scarichiamo il WheatherComponentHandler. WheatherComponentHandler / Menu, Aggiungi con il tasto Verde. Se sei entrato nell'impostazioni, vai al codice di "
-"posizione. Giallo per la ricerca di codice, confermare con OK verde OK ancora OK. Attenzio a non premere il tasto rosso, altrimenti devi ricominciare. Per uscire premi il tasto indietro, Per applicare riavvia l'interfaccia utente, eventualmente riavviare completamente."
-=======
 "Impostazioni / Funzionamento e Interfaccia / OSD - 2.Infobar Modificare le "
 "informazioni di trasmissione in -2.Infobar INFO. Dal Sistema Plugins "
 "scarichiamo il WheatherComponentHandler. WheatherComponentHandler / Menu, "
@@ -9046,7 +8939,6 @@ msgstr ""
 "ancora OK. Attenzio a non premere il tasto rosso, altrimenti devi "
 "ricominciare. Per uscire premi il tasto indietro, Per applicare riavvia "
 "l'interfaccia utente, eventualmente riavviare completamente."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid ""
 "Some steps are necessary for the Weather announcement in the Secondinfobar."
@@ -11892,10 +11784,6 @@ msgstr ""
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
 msgstr "Abilita il controllo del volume con i pulsanti freccia DESTRA/SINISTRA"
 
-<<<<<<< 6.8
-msgid "Enable usage of tuners from another Enigma2 receiver on the local network. Remote tuners will be used when tuners are not available on this receiver. (No free tuner or service type is not available.)"
-msgstr "Abilitare l'uso di sintonizzatori da un altro ricevitore Enigma2 sulla rete locale. I sintonizzatori remoti verranno utilizzati quando i sintonizzatori non sono disponibili su questo ricevitore. (Nessun sintonizzatore o tipo di servizio gratuito non è disponibile.)"
-=======
 msgid ""
 "Enable usage of tuners from another Enigma2 receiver on the local network. "
 "Remote tuners will be used when tuners are not available on this receiver. "
@@ -11905,7 +11793,6 @@ msgstr ""
 "locale. I sintonizzatori remoti verranno utilizzati quando i sintonizzatori "
 "non sono disponibili su questo ricevitore. (Nessun sintonizzatore o tipo di "
 "servizio gratuito non è disponibile.)"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "Show PVR status in Movie Player"
 msgstr "Mostra lo stato PVR in Movie Player"
@@ -13087,6 +12974,9 @@ msgstr "Selezionare il pulsante OK che porterà a:"
 msgid "Select what you want the Up/Down button to activate:"
 msgstr "Selezionate quello che farà sì che i pulsanti Su/Giu:"
 
+msgid "TV physical address report"
+msgstr "TV rapporto indirizzo fisico"
+
 msgid "TXT PID"
 msgstr "TXT PID"
 
@@ -13467,10 +13357,6 @@ msgstr ""
 "La procedura guidata tenterà ora di identificare il dispositivo USB "
 "collegato."
 
-<<<<<<< 6.8
-msgid "The standard wakeup time is 5 minutes (or box specific) before a timer starts. Is the real wake up time outside 10 mins (some boxes starts not punctually) to the next timer will not switched to standby. (minus value = wake up to timer is shorter)"
-msgstr "Il tempo di sveglia standard è di 5 minuti (o scatola specifica) prima di un timer inizia. È il tempo reale di svegliarsi fuori di 10 minuti (alcune caselle non iniziano in modo puntuale) al timer successivo non sarà commutato in standby. (meno valore = sveglia al timer è più breve)"
-=======
 msgid ""
 "The standard wakeup time is 5 minutes (or box specific) before a timer "
 "starts. Is the real wake up time outside 10 mins (some boxes starts not "
@@ -13481,15 +13367,7 @@ msgstr ""
 "timer inizia. È il tempo reale di svegliarsi fuori di 10 minuti (alcune "
 "caselle non iniziano in modo puntuale) al timer successivo non sarà "
 "commutato in standby. (meno valore = sveglia al timer è più breve)"
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
-<<<<<<< 6.8
-msgid "The default settings are 5 minutes earlier to wakeup from deep standby. It possibly may be necessary to change this. (e.g.: the actual wake-up time is inaccurate or to late, waiting to a network-drive, etc.)"
-msgstr "Le impostazioni predefinite sono 5 minuti prima di svegliarsi dal riavvio. Forse potrebbe essere necessario cambiarlo. (ad esempio: il tempo di sveglia attuale è inaccurato o in ritardo, in attesa di un'unità di rete ecc.)"
-
-msgid "The default settings are wakeup time - 5 minutes and timer begin time + 5 minutes. This setting changed the time window before the wakeup time. So can be detected a wakeup by a timer even at very early starting receivers."
-msgstr "Le impostazioni predefinite sono il tempo di sveglia - 5 minuti e il tempo di inizio del timer + 5 minuti. Questa impostazione ha modificato la finestra temporale prima del tempo di sveglia. Quindi può essere rilevato un risveglio da un timer anche nei primi ricevitori di avvio."
-=======
 msgid ""
 "The default settings are 5 minutes earlier to wakeup from deep standby. It "
 "possibly may be necessary to change this. (e.g.: the actual wake-up time is "
@@ -13508,7 +13386,6 @@ msgstr ""
 "di inizio del timer + 5 minuti. Questa impostazione ha modificato la "
 "finestra temporale prima del tempo di sveglia. Quindi può essere rilevato un "
 "risveglio da un timer anche nei primi ricevitori di avvio."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 #, python-format
 msgid ""
@@ -15181,14 +15058,10 @@ msgid ""
 "the firmware of your %s %s by providing a backup facility for your current "
 "settings and a short explanation of how to upgrade your firmware."
 msgstr ""
-<<<<<<< 6.8
-"Benvenuto nella guida per l'aggiornamento dell'Immagine. Questo wizard prevede una guida sull'aggiornamento del firmware del %s %s attraverso un backup assistito della configurazione e fornendo informazioni sintetiche sulla procedura.impostazioni essere sostenuto e c'è un piccolo briefing del "
-=======
 "Benvenuto nella guida per l'aggiornamento dell'Immagine. Questo wizard "
 "prevede una guida sull'aggiornamento del firmware del %s %s attraverso un "
 "backup assistito della configurazione e fornendo informazioni sintetiche "
 "sulla procedura.impostazioni essere sostenuto e c'è un piccolo briefing del "
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "genere Il firmware può essere aggiornato."
 
 #, python-format
@@ -15396,10 +15269,6 @@ msgid "Choose whether AC3 Plus sound tracks should be transcoded to AC3."
 msgstr ""
 "Scegliere se le tracce audio AC3 Plus devono essere trascodificate in AC3."
 
-<<<<<<< 6.8
-msgid "Choose the display formatting style for dates. 'D' / 'DD' is the date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
-msgstr "Scegli lo stile di formattazione del display per le date. 'D' / 'DD' è la data e'M' / 'MM' è il mese in cifre.  ('DD' e 'MM' avere zeri iniziali per valori a cifra singola.) Lo schermo sarà basato sulla tua scelta ma può essere influenzato dalla skin."
-=======
 msgid ""
 "Choose the display formatting style for dates. 'D' / 'DD' is the date and "
 "'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for "
@@ -15410,53 +15279,34 @@ msgstr ""
 "data e'M' / 'MM' è il mese in cifre.  ('DD' e 'MM' avere zeri iniziali per "
 "valori a cifra singola.) Lo schermo sarà basato sulla tua scelta ma può "
 "essere influenzato dalla skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid ""
-<<<<<<< 6.8
-"Choose the display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes and 'ss' is the seconds.  ('HH' and 'hh' have leading zeros for single digit values.) The screen display will be based on your choice but can "
-"be influenced by the skin."
-=======
 "Choose the display formatting style for times. 'H' / 'HH' is the hour for a "
 "24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the "
 "minutes and 'ss' is the seconds.  ('HH' and 'hh' have leading zeros for "
 "single digit values.) The screen display will be based on your choice but "
 "can be influenced by the skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Scegli lo stile di formattazione del display per i tempi. 'H' / 'HH' è l'ora per un orologio di 24 ore, 'h' / 'hh' è l'ora per un orologio da 12 ore, 'mm' i minuti e 'ss' sono i secondi.  ('HH' e 'hh' avere zeri iniziali per valori a cifra singola.) La visualizzazione dello schermo si baserà "
-"sulla vostra scelta ma può essere influenzata dal skin."
-=======
 "Scegli lo stile di formattazione del display per i tempi. 'H' / 'HH' è l'ora "
 "per un orologio di 24 ore, 'h' / 'hh' è l'ora per un orologio da 12 ore, "
 "'mm' i minuti e 'ss' sono i secondi.  ('HH' e 'hh' avere zeri iniziali per "
 "valori a cifra singola.) La visualizzazione dello schermo si baserà sulla "
 "vostra scelta ma può essere influenzata dal skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "When enabled, the receveir will select an AC3 track (when available)."
 msgstr ""
 "Quando abilitato, il ricevitore selezionerà una traccia AC3 (se disponibile)."
 
-<<<<<<< 6.8
-msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is the date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
-=======
 msgid ""
 "Choose the front panel display formatting style for dates. 'D' / 'DD' is the "
 "date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading "
 "zeros for single digit values.) The screen display will be based on your "
 "choice but can be influenced by the skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Scegli lo stile di formattazione del display del pannello anteriore per le date. 'D' / 'DD' è la data e 'M' / 'MM' è il mese in cifre. ('DD' e 'MM' hanno zeri iniziali per valori a cifra singola.) La visualizzazione dello schermo sarà basata sulla tua scelta ma può essere influenzata dalla skin."
-=======
 "Scegli lo stile di formattazione del display del pannello anteriore per le "
 "date. 'D' / 'DD' è la data e 'M' / 'MM' è il mese in cifre. ('DD' e 'MM' "
 "hanno zeri iniziali per valori a cifra singola.) La visualizzazione dello "
 "schermo sarà basata sulla tua scelta ma può essere influenzata dalla skin."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid ""
 "When enabled, graphical DVB subtitles are preferred over teletext subtitles, "
@@ -16451,24 +16301,16 @@ msgstr "rimuovere taglio"
 msgid "descramble and record ecm"
 msgstr "decodificare e registrare ecm"
 
-<<<<<<< 6.8
-msgid "Descramble & record ECM' gives the option to descramble afterwards if descrambling on recording failed. 'Don't descramble, record ECM' save a scramble recording that can be descrambled on playback. 'Normal' means descramble the recording and don't record ECM."
-=======
 msgid ""
 "Descramble & record ECM' gives the option to descramble afterwards if "
 "descrambling on recording failed. 'Don't descramble, record ECM' save a "
 "scramble recording that can be descrambled on playback. 'Normal' means "
 "descramble the recording and don't record ECM."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 msgstr ""
-<<<<<<< 6.8
-"Decodificare & registrare ECM' dà la possibilità di decodificare in seguito se il decodificatore in registrazione non è riuscito. 'Non' decodificare, registrare ECM' salvare una registrazione codificata che può essere decodificata durante la riproduzione. 'Normale' significa decodificare la "
-=======
 "Decodificare & registrare ECM' dà la possibilità di decodificare in seguito "
 "se il decodificatore in registrazione non è riuscito. 'Non' decodificare, "
 "registrare ECM' salvare una registrazione codificata che può essere "
 "decodificata durante la riproduzione. 'Normale' significa decodificare la "
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 "registrazione e non registrare ECM."
 
 msgid "detective/thriller"
@@ -16991,16 +16833,11 @@ msgid ""
 "presentation and must be decrypted afterwards (sometimes called offline "
 "decoding). Default: off."
 msgstr ""
-<<<<<<< 6.8
-"Non decrittografare mai il contenuto durante la registrazione. Questo sovrascrive le singole impostazioni del timer a livello globale. Se abilitato, le registrazioni vengono archiviate in una presentazione criptata e devono essere decodificate in seguito (talvolta chiamata decodifica offline). "
-"Predefinito: spento."
-=======
 "Non decrittografare mai il contenuto durante la registrazione. Questo "
 "sovrascrive le singole impostazioni del timer a livello globale. Se "
 "abilitato, le registrazioni vengono archiviate in una presentazione criptata "
 "e devono essere decodificate in seguito (talvolta chiamata decodifica "
 "offline). Predefinito: spento."
->>>>>>> a05ba1e [HDMI-CEC update] first step 
 
 msgid "new media"
 msgstr "nuovo media"
