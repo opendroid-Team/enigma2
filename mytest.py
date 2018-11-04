@@ -405,10 +405,9 @@ class PowerKey:
 		self.doAction(action = config.usage.on_long_powerpress.value)
 
 	def doAction(self, action):
-		if Screens.Standby.TVinStandby.getTVstate('standby'):
-			Screens.Standby.TVinStandby.setTVstate('on')
+		if Screens.Standby.TVinStandby:
+			Screens.Standby.setTVstate('on')
 			return
-
 		self.standbyblocked = 1
 		if action == "shutdown":
 			self.shutdown()
@@ -425,10 +424,16 @@ class PowerKey:
 						menu_screen.setTitle(_("Standby / restart"))
 						return
 		elif action == "standby":
-			Screens.Standby.TVinStandby.skipHdmiCecNow(False)
+			try:
+				config.hdmicec.control_tv_standby_skipnow.setValue(False)
+			except:
+				pass # no HdmiCec
 			self.standby()
 		elif action == "standby_noTVshutdown":
-			Screens.Standby.TVinStandby.skipHdmiCecNow(True)
+			try:
+				config.hdmicec.control_tv_standby_skipnow.setValue(True)
+			except:
+				pass # no HdmiCec
 			self.standby()
 		elif action == "powertimerStandby":
 			val = 3
