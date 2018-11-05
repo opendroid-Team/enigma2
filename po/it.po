@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-11-04 22:22+0100\n"
+"PO-Revision-Date: 2018-11-05 00:29+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid ""
@@ -130,7 +130,8 @@ msgstr "Controllare l'alimentazione e lo stato di ingresso dalla TV"
 msgid "Handle input from TV"
 msgstr "Gestisci gli input TV"
 
-msgid "Try to slow down the send interval if not all commands are executed.\n"
+msgid ""
+"Try to slow down the send interval if not all commands are executed.\n"
 msgstr ""
 "Prova a rallentare l'intervallo di invio se non vengono eseguiti tutti i "
 "comandi.\n"
@@ -924,6 +925,9 @@ msgstr "Modalità HDR HDMI"
 msgid "This option allows you can force the HDR Modes for UHD"
 msgstr "Questa opzione ti consente di forzare le modalità HDR per UHD"
 
+msgid "This option allows you can config the Colorimetry for HDR"
+msgstr "Questa opzione ti consente di configurare Colorimetry per HDR"
+
 msgid "Zap to"
 msgstr "Passa a"
 
@@ -1528,8 +1532,10 @@ msgstr "%s %s controllo remoto (nativo)"
 msgid "%s %s software because updates are available."
 msgstr "il software del %s %s perchè sono disponibili aggiornamenti."
 
-msgid "%s (%s)\n"
-msgstr "%s (%s)\n"
+msgid ""
+"%s (%s)\n"
+msgstr ""
+"%s (%s)\n"
 
 msgid "%s additional screens"
 msgstr "%s schermi aggiuntivi"
@@ -1548,8 +1554,10 @@ msgstr "%s%d min"
 msgid "%s/%s: %s"
 msgstr "%s/%s: %s"
 
-msgid "'%s' contains %d file(s) and %d sub-directories.\n"
-msgstr "'%s'contiene %d file(s) e %d sub-directories.\n"
+msgid ""
+"'%s' contains %d file(s) and %d sub-directories.\n"
+msgstr ""
+"'%s'contiene %d file(s) e %d sub-directories.\n"
 
 msgid "%sMode for SD (up to 576p)"
 msgstr "%sModalità per SD (fino a 576p)"
@@ -1659,8 +1667,8 @@ msgid ""
 "--- Restrictions ---\n"
 "Decoder 0: 3840x2160p50 10-bit HEVC, 3840x2160p50 8-bit VP9,\n"
 "1920x1080p50 8-bit AVC/MPEG\n"
-"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit VP9/AVC/"
-"MPEG2,\n"
+"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit "
+"VP9/AVC/MPEG2,\n"
 "HDMI In (if available), 3840x2160p50\n"
 "OSD Graphic 0 (UHD): 1080p50 32-bit ARGB\n"
 "Window 0 (MAIN/UHD): Limited display capabilities, 1080i50 10-bit de-"
@@ -1681,8 +1689,8 @@ msgstr ""
 "--- Restrizioni ---\n"
 "Decoder 0: 3840x2160p50 10-bit HEVC, 3840x2160p50 8-bit VP9,\n"
 "1920x1080p50 8-bit AVC/MPEG\n"
-"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit VP9/AVC/"
-"MPEG2,\n"
+"Decoder 1: 1920x1080p25/50i 10-bit HEVC, 1920x1080p25/50i 8-bit "
+"VP9/AVC/MPEG2,\n"
 "HDMI In (if available), 3840x2160p50\n"
 "OSD Graphic 0 (UHD): 1080p50 32-bit ARGB\n"
 "Window 0 (MAIN/UHD): Funzionalità di visualizzazione limitate, "
@@ -2168,8 +2176,8 @@ msgstr ""
 
 msgid "Configure the general audio volume step size (limit 1-10)."
 msgstr ""
-"Configurare la dimensione del passaggio del volume audio generale (limite "
-"1-10)."
+"Configurare la dimensione del passaggio del volume audio generale (limite 1-"
+"10)."
 
 msgid ""
 "Configure how recording filenames are constructed. Standard: Date Time - "
@@ -2229,8 +2237,10 @@ msgstr ""
 "Il termine di una registrazione programmata vuole\n"
 "porre in standby il %s %s. Farlo ora?"
 
-msgid "No tuner is available for recording a timer!\n"
-msgstr "Una registrazione con il timer non può essere avviata.\n"
+msgid ""
+"No tuner is available for recording a timer!\n"
+msgstr ""
+"Una registrazione con il timer non può essere avviata.\n"
 
 msgid ""
 "No tuner is available for recording a timer!\n"
@@ -2354,8 +2364,8 @@ msgid ""
 "When enabled, a recording is allowed to abort streaming, when there are no "
 "free tuners."
 msgstr ""
-"Quando è abilitata, la registrazione è permesso di interrompere lo "
-"streaming, quando non ci sono tuner liberi."
+"Quando è abilitata, la registrazione è permesso di interrompere lo streaming,"
+" quando non ci sono tuner liberi."
 
 msgid "ask user"
 msgstr "domanda"
@@ -2513,11 +2523,15 @@ msgstr "Aspetto AV è %s."
 msgid "Abort"
 msgstr "Annullare"
 
-msgid "Aborted a pseudo recording.\n"
-msgstr "Annullata una pseudo registrazione.\n"
+msgid ""
+"Aborted a pseudo recording.\n"
+msgstr ""
+"Annullata una pseudo registrazione.\n"
 
-msgid "Aborted a streaming service.\n"
-msgstr "Annullato un servizio streaming.\n"
+msgid ""
+"Aborted a streaming service.\n"
+msgstr ""
+"Annullato un servizio streaming.\n"
 
 msgid "Aborting updateprogress"
 msgstr "Annullamento del processo di aggiornamento"
@@ -2555,8 +2569,10 @@ msgstr "Attivare PiP"
 msgid "Activate current configuration"
 msgstr "Attivare configurazione corrente"
 
-msgid "Current mode: %s \n"
-msgstr "Modalità corrente: %s \n"
+msgid ""
+"Current mode: %s \n"
+msgstr ""
+"Modalità corrente: %s \n"
 
 msgid "Press '0' to toggle PiP mode"
 msgstr "Premere '0' per attivare la modalità PiP"
@@ -2887,9 +2903,9 @@ msgid ""
 "Allows you to set a schedule to import the EPG and channels list. The EPG "
 "and channels list will always be imported on reboot or GUI restart."
 msgstr ""
-"Consente di impostare un programma per importare l'EPG e l'elenco dei "
-"canali. L'elenco EPG e canali verrà sempre importato al riavvio o al riavvio "
-"della GUI."
+"Consente di impostare un programma per importare l'EPG e l'elenco dei canali."
+" L'elenco EPG e canali verrà sempre importato al riavvio o al riavvio della "
+"GUI."
 
 msgid "Alpha"
 msgstr "Trasparenza"
@@ -3064,11 +3080,15 @@ msgstr ""
 "Sei sicuro di voler cancellare\n"
 "il seguente backup:\n"
 
-msgid "Are you sure you want to delete all selected logs:\n"
-msgstr "Sei sicuro di voler cancellare tutti i log selezionati:\n"
+msgid ""
+"Are you sure you want to delete all selected logs:\n"
+msgstr ""
+"Sei sicuro di voler cancellare tutti i log selezionati:\n"
 
-msgid "Are you sure you want to delete this log:\n"
-msgstr "Sei sicuro di voler cancellare questo log:\n"
+msgid ""
+"Are you sure you want to delete this log:\n"
+msgstr ""
+"Sei sicuro di voler cancellare questo log:\n"
 
 msgid ""
 "Are you sure you want to delete this:\n"
@@ -3080,8 +3100,10 @@ msgstr ""
 msgid "Are you sure you want to exit this wizard?"
 msgstr "Sei sicuro di voler uscire dalla procedura guidata?"
 
-msgid "Are you sure you want to reload the EPG data from:\n"
-msgstr "Sei sicuro di voler ricaricare i dati EPG da:\n"
+msgid ""
+"Are you sure you want to reload the EPG data from:\n"
+msgstr ""
+"Sei sicuro di voler ricaricare i dati EPG da:\n"
 
 msgid ""
 "Are you sure you want to restart your network interfaces?\n"
@@ -3133,11 +3155,15 @@ msgstr ""
 "Confermare il ripristino del backup? \n"
 "Il ricevitore sarà riavviato dopo il ripristino"
 
-msgid "Are you sure you want to save the EPG Cache to:\n"
-msgstr "Sei sicuro di voler salvare la cache EPG in:\n"
+msgid ""
+"Are you sure you want to save the EPG Cache to:\n"
+msgstr ""
+"Sei sicuro di voler salvare la cache EPG in:\n"
 
-msgid "Are you sure you want to send this log:\n"
-msgstr "Sei sicuro di voler inviare questo log:\n"
+msgid ""
+"Are you sure you want to send this log:\n"
+msgstr ""
+"Sei sicuro di voler inviare questo log:\n"
 
 #, python-format
 msgid "Are you sure you want to update your %s %s ?"
@@ -3315,8 +3341,10 @@ msgid "Back, upper USB"
 msgstr "USB posteriore superiore"
 
 #, python-format
-msgid "Back-up Tool for a %s\n"
-msgstr "Back-up Tool per  %s\n"
+msgid ""
+"Back-up Tool for a %s\n"
+msgstr ""
+"Back-up Tool per  %s\n"
 
 msgid "Back/Recall"
 msgstr "Indietro/Richiama"
@@ -3340,8 +3368,10 @@ msgid "Backup"
 msgstr "Backup"
 
 #, python-format
-msgid "Backup Date: %s\n"
-msgstr "Data Backup: %s\n"
+msgid ""
+"Backup Date: %s\n"
+msgstr ""
+"Data Backup: %s\n"
 
 msgid "Backup Image"
 msgstr "Backup immagine"
@@ -3702,8 +3732,8 @@ msgid "Can be used for different fps between external subtitles and video."
 msgstr "Può essere usato per diversi fps tra i sottotitoli e il video esterne."
 
 msgid ""
-"Can't unmount partiton, make sure it is not being used for swap or record/"
-"timeshift paths"
+"Can't unmount partiton, make sure it is not being used for swap or "
+"record/timeshift paths"
 msgstr ""
 "Non è possibile eseguire l’unmount. Assicurati che il dispositivo non sia "
 "usato swap, registrazioni o timeshift"
@@ -4202,8 +4232,8 @@ msgstr ""
 
 msgid ""
 "Configure for how many minutes finished events should remain visible in the "
-"EPG. Useful when you need information about an event which has just "
-"finished, or has been delayed."
+"EPG. Useful when you need information about an event which has just finished,"
+" or has been delayed."
 msgstr ""
 "Configurare per quanti minuti gli eventi devono restare visibili nella EPG. "
 "Utile quando avete bisogno di informazioni su un evento che si è appena "
@@ -4702,8 +4732,10 @@ msgstr ""
 "Configurare le impostazioni di rete e premere OK per avviare la scansione"
 
 #, python-format
-msgid "Do you want to enter a username and password for this host?\n"
-msgstr "Vuoi inserire un nome utente e una password per questo host?\n"
+msgid ""
+"Do you want to enter a username and password for this host?\n"
+msgstr ""
+"Vuoi inserire un nome utente e una password per questo host?\n"
 
 msgid "Configure your wireless LAN again"
 msgstr "Configurare di nuovo la rete locale wireless"
@@ -5523,8 +5555,10 @@ msgstr "Effettuare un'altra ricerca canali manuale?"
 msgid "Do you want to download the image to %s ?"
 msgstr "Scaricare l'immagine in %s?"
 
-msgid "Do you want to install the package:\n"
-msgstr "Installare il pacchetto:\n"
+msgid ""
+"Do you want to install the package:\n"
+msgstr ""
+"Installare il pacchetto:\n"
 
 msgid "Do you want to play DVD in drive?"
 msgstr "Riprodurre il DVD inserito?"
@@ -5546,8 +5580,10 @@ msgstr "Riavviare il tuo %s %s ora?"
 msgid "Do you want to reboot your receiver?"
 msgstr "Vuoi riavviare il ricevitore?"
 
-msgid "Do you want to remove the package:\n"
-msgstr "Rimuovere il pacchetto?\n"
+msgid ""
+"Do you want to remove the package:\n"
+msgstr ""
+"Rimuovere il pacchetto?\n"
 
 msgid "Do you want to restore your settings?"
 msgstr "Ripristinare la configurazione?"
@@ -5578,8 +5614,10 @@ msgstr "Mostrare nuovi pacchetti"
 msgid "Upgrade and ask to reboot"
 msgstr "Aggiornamento e chiedere di riavviare"
 
-msgid "Do you want to upgrade the package:\n"
-msgstr "Aggiornare il pacchetto:\n"
+msgid ""
+"Do you want to upgrade the package:\n"
+msgstr ""
+"Aggiornare il pacchetto:\n"
 
 msgid "Don't save"
 msgstr "Non salvare"
@@ -5773,12 +5811,16 @@ msgid "Edit settings"
 msgstr "Mod. configurazione"
 
 #, python-format
-msgid "Edit the Nameserver configuration of your %s %s.\n"
-msgstr "Modificare configurazione nameserver del %s %s.\n"
+msgid ""
+"Edit the Nameserver configuration of your %s %s.\n"
+msgstr ""
+"Modificare configurazione nameserver del %s %s.\n"
 
 #, python-format
-msgid "Edit the network configuration of your %s %s.\n"
-msgstr "Modificare la configurazione di rete del %s %s.\n"
+msgid ""
+"Edit the network configuration of your %s %s.\n"
+msgstr ""
+"Modificare la configurazione di rete del %s %s.\n"
 
 msgid "Edit title"
 msgstr "Modifica titolo"
@@ -6207,8 +6249,10 @@ msgstr "Avanti veloce velocità"
 msgid "Favourites"
 msgstr "Preferiti"
 
-msgid "File appears to be busy.\n"
-msgstr "Il file sembra occupato.\n"
+msgid ""
+"File appears to be busy.\n"
+msgstr ""
+"Il file sembra occupato.\n"
 
 msgid ""
 "File oscam.conf not found.\n"
@@ -6387,10 +6431,9 @@ msgid ""
 "receiver send a false or none signal)"
 msgstr ""
 "Se abilitato, verificherà che il tempo dopo l'avvio del ricevitore sia "
-"all'interno della finestra temporale e facoltativamente commutato in "
-"standby. Se disattivato, deve essere disponibile un segnale per il "
-"rilevamento di sveglia riuscito (alcuni riceventi inviano un segnale falso o "
-"nessuno)"
+"all'interno della finestra temporale e facoltativamente commutato in standby."
+" Se disattivato, deve essere disponibile un segnale per il rilevamento di "
+"sveglia riuscito (alcuni riceventi inviano un segnale falso o nessuno)"
 
 msgid "All resolutions"
 msgstr "Tutte le risoluzioni"
@@ -6420,11 +6463,11 @@ msgid "Always use smart1080p mode"
 msgstr "Utilizzare sempre la modalità smart1080p"
 
 msgid ""
-"This option allows you to always use e.g. 1080p50 for TV/.ts, and 1080p24/"
-"p50/p60 for videos"
+"This option allows you to always use e.g. 1080p50 for TV/.ts, and "
+"1080p24/p50/p60 for videos"
 msgstr ""
-"Questa opzione consente di utilizzare sempre per esempio 1080p50 per TV/ ."
-"Ts, e 1080p24/p50/p60 per i video"
+"Questa opzione consente di utilizzare sempre per esempio 1080p50 per TV/ .Ts,"
+" e 1080p24/p50/p60 per i video"
 
 msgid "Show SD as"
 msgstr "Mostra SD"
@@ -6536,8 +6579,10 @@ msgstr "Configura l'intervallo di tempo di salto per i pulsanti '7'/'9'."
 msgid "GB"
 msgstr "GB"
 
-msgid "GB800SOLO takes about 20 mins !!\n"
-msgstr "GB800SOLO attendere circa 20 mins !! \n"
+msgid ""
+"GB800SOLO takes about 20 mins !!\n"
+msgstr ""
+"GB800SOLO attendere circa 20 mins !! \n"
 
 msgid ""
 "GUI needs a restart to apply a new skin\n"
@@ -7627,8 +7672,8 @@ msgstr "Configurazione Pulsante per"
 msgid ""
 "Click on your remote on the button you want to change, then click on \"OK\""
 msgstr ""
-"Fai clic sul telecomando sul pulsante da modificare, quindi fai clic su \"OK"
-"\""
+"Fai clic sul telecomando sul pulsante da modificare, quindi fai clic su "
+"\"OK\""
 
 #, python-format
 msgid ""
@@ -7808,8 +7853,8 @@ msgid ""
 msgstr ""
 "Configurare il comportamento cursore nella lista di selezione dei canali. "
 "Quando si apre la lista di selezione dei canali è possibile mantenere il "
-"servizio attuale o già selezionate su/giù e si è in grado di ripristinare i B"
-"+/B- Tasti."
+"servizio attuale o già selezionate su/giù e si è in grado di ripristinare i "
+"B+/B- Tasti."
 
 msgid "Keep service"
 msgstr "Canale selezionato"
@@ -8099,15 +8144,19 @@ msgid "Audio Auto Volume Level"
 msgstr "Regolazione automatica del volume"
 
 #, python-format
-msgid "Model:\t%s %s\n"
-msgstr "Modello:\t%s %s\n"
+msgid ""
+"Model:\t%s %s\n"
+msgstr ""
+"Modello:\t%s %s\n"
 
 msgid "Model:"
 msgstr "Modello:"
 
 #, python-format
-msgid "Model: %s %s\n"
-msgstr "Modello: %s %s\n"
+msgid ""
+"Model: %s %s\n"
+msgstr ""
+"Modello: %s %s\n"
 
 msgid "Modulation"
 msgstr "Modulazione"
@@ -8247,8 +8296,10 @@ msgstr "Carica EPG/Salva/Cancella"
 msgid "Delete EPG"
 msgstr "Cancellare EPG"
 
-msgid "Are you sure you want to delete the EPG data from:\n"
-msgstr "Sei sicuro di voler eliminare i dati EPG da::\n"
+msgid ""
+"Are you sure you want to delete the EPG data from:\n"
+msgstr ""
+"Sei sicuro di voler eliminare i dati EPG da::\n"
 
 msgid "MultiEPG settings"
 msgstr "Impostazioni MultiEPG"
@@ -8391,8 +8442,10 @@ msgstr "Reti:"
 msgid "Network MAC settings"
 msgstr "Impostazioni di rete MAC"
 
-msgid "Set the MAC-adress of your %s %s.\n"
-msgstr "Impostare l indirizzo MAC del vostro %s %s.\n"
+msgid ""
+"Set the MAC-adress of your %s %s.\n"
+msgstr ""
+"Impostare l indirizzo MAC del vostro %s %s.\n"
 
 msgid ""
 "'Network peer' automatically detects other Enigma2 receivers on the local "
@@ -8472,8 +8525,9 @@ msgid ""
 "system restart in order to take effect.\n"
 "Restart your %s %s now?"
 msgstr ""
-"Risolto montato prima inizializzato dispositivo di immagazzinamento/media/"
-"hdd. Ha bisogno di un riavvio del sistema al fine di avere effetto.\n"
+"Risolto montato prima inizializzato dispositivo di "
+"immagazzinamento/media/hdd. Ha bisogno di un riavvio del sistema al fine di "
+"avere effetto.\n"
 "Riavviare il %s %s adesso?"
 
 #, python-format
@@ -8609,8 +8663,8 @@ msgid ""
 "No fast winding possible yet.. but you can use the number buttons to skip "
 "forward/backward!"
 msgstr ""
-"FFW/REW non ancora disponibile... Utilizzare i tasti numerici per avanzare/"
-"arretrare nella riproduzione!"
+"FFW/REW non ancora disponibile... Utilizzare i tasti numerici per "
+"avanzare/arretrare nella riproduzione!"
 
 msgid "No free index available"
 msgstr "Nessun indice libero disponibile"
@@ -8920,8 +8974,8 @@ msgid ""
 "Settings / Operation and Interface / OSD - 2.Infobar Change transmission "
 "information in -2.Infobar INFO. From System Plugins we download the "
 "WeatherComponentHandler. WeatherComponentHandler / Menu, then Add Green. If "
-"you have entered the place, go down to location code. Yellow for code "
-"search, confirm with green OK important again OK. More importantly with red, "
+"you have entered the place, go down to location code. Yellow for code search,"
+" confirm with green OK important again OK. More importantly with red, "
 "otherwise you have to start again. Now exit with exit, restart user "
 "interface, possibly complete restart."
 msgstr ""
@@ -9147,11 +9201,15 @@ msgstr "Lista pacchetti"
 msgid "Package list update"
 msgstr "Aggiornamento elenco pacchetti"
 
-msgid "Package removal failed.\n"
-msgstr "Rimozione del pacchetto non riuscita.\n"
+msgid ""
+"Package removal failed.\n"
+msgstr ""
+"Rimozione del pacchetto non riuscita.\n"
 
-msgid "Package removed successfully.\n"
-msgstr "Pacchetto disinstallato con successo\n"
+msgid ""
+"Package removed successfully.\n"
+msgstr ""
+"Pacchetto disinstallato con successo\n"
 
 msgid "Packages"
 msgstr "Pacchetti"
@@ -9385,8 +9443,10 @@ msgstr "Riprodurre registrazioni..."
 msgid "Please add titles to the compilation."
 msgstr "Aggiungere titoli alla collezione."
 
-msgid "Please be patient, a backup will now be made,\n"
-msgstr "Attendere prego. Sta per avviarsi la creazione di un backup, \n"
+msgid ""
+"Please be patient, a backup will now be made,\n"
+msgstr ""
+"Attendere prego. Sta per avviarsi la creazione di un backup, \n"
 
 msgid "Please change recording endtime"
 msgstr "Cambiare orario fine registrazione"
@@ -9415,8 +9475,8 @@ msgstr ""
 "Quando pronti, premere OK per continuare."
 
 msgid ""
-"Please configure your internet connection by filling out the required "
-"values.\n"
+"Please configure your internet connection by filling out the required values."
+"\n"
 "When you are ready press OK to continue."
 msgstr ""
 "Configurare la connessione a Internet inserendo i parametri richiesti.\n"
@@ -9596,8 +9656,10 @@ msgstr "Attendere..."
 msgid "Please wait... Loading list..."
 msgstr "Elenco in caricamento. Attendere..."
 
-msgid "Please: DO NOT reboot your STB and turn off the power.\n"
-msgstr "Si raccomanda di NON RIAVVIARE o SPEGNERE il tuo ricevitore. \n"
+msgid ""
+"Please: DO NOT reboot your STB and turn off the power.\n"
+msgstr ""
+"Si raccomanda di NON RIAVVIARE o SPEGNERE il tuo ricevitore. \n"
 
 msgid "Plugin Filter"
 msgstr "Filtra plugin"
@@ -9723,8 +9785,8 @@ msgstr ""
 
 msgid "When enabled, the receiver will select an AC3 track (when available)."
 msgstr ""
-"Quando è abilitato, il ricevitore seleziona una traccia AC3 (ove "
-"disponibili)."
+"Quando è abilitato, il ricevitore seleziona una traccia AC3 (ove disponibili)"
+"."
 
 msgid "Prefer audio track stored by service"
 msgstr "Preferenza traccia audio memorizzati dal servizio"
@@ -9935,7 +9997,8 @@ msgstr "Python Camstarter (default)"
 msgid "Python frontend for /tmp/mmi.socket"
 msgstr "Frontend python per /tmp/mmi.socket"
 
-msgid "Python:\t%s\n"
+msgid ""
+"Python:\t%s\n"
 msgstr ""
 "Python:\t%s\n"
 "\n"
@@ -10402,14 +10465,20 @@ msgstr "Riavviare la rete"
 msgid "Restart test"
 msgstr "Ripetere il test"
 
-msgid "Restart your network connection and interfaces.\n"
-msgstr "Riavviare connessioni di rete e relative interfacce.\n"
+msgid ""
+"Restart your network connection and interfaces.\n"
+msgstr ""
+"Riavviare connessioni di rete e relative interfacce.\n"
 
-msgid "Use the network wizard to configure your Network\n"
-msgstr "Utilizzare la procedura guidata per configurare la rete.\n"
+msgid ""
+"Use the network wizard to configure your Network\n"
+msgstr ""
+"Utilizzare la procedura guidata per configurare la rete.\n"
 
-msgid "Set the MAC-address of your %s %s.\n"
-msgstr "Impostare l'indirizzo MAC della vostra %s %s.\n"
+msgid ""
+"Set the MAC-address of your %s %s.\n"
+msgstr ""
+"Impostare l'indirizzo MAC della vostra %s %s.\n"
 
 msgid "Set the position of the recording icons"
 msgstr "Imposta la posizione delle icone di registrazione"
@@ -10995,8 +11064,8 @@ msgid ""
 "to de-assign it. Use \"Next/Previous\" to change the order of the assigned "
 "functions."
 msgstr ""
-"Selezionare la funzione desiderata e cliccare su \"OK \". Utilizzare \"CH "
-"+/- \" per scegliere tra le liste. Selezionare la funzione da assegnare e "
+"Selezionare la funzione desiderata e cliccare su \"OK \". Utilizzare \"CH +/-"
+" \" per scegliere tra le liste. Selezionare la funzione da assegnare e "
 "cliccare su \"OK \" per confermare la scelta."
 
 msgid "Select the movie path"
@@ -11873,8 +11942,10 @@ msgstr "Mostra lunghezze filmato in lista di film"
 msgid "Show network mounts"
 msgstr "Mostra i mounts di rete"
 
-msgid "Show only found image and mtd partitions.\n"
-msgstr "Mostra solo immagine trovata e le partizioni mtd. \n"
+msgid ""
+"Show only found image and mtd partitions.\n"
+msgstr ""
+"Mostra solo immagine trovata e le partizioni mtd. \n"
 
 msgid "Show or hide the extended description, (skin dependent)."
 msgstr "Mostra o nascondi descrizioni estese, (dipende dalla skin)."
@@ -12053,8 +12124,10 @@ msgstr "Mostra avviso quando timeshift è fermo"
 msgid "Shows the icons when new/unseen, else will not show an icon."
 msgstr "Mostra le icone quando nuove/non viste, altrimenti non mostrare."
 
-msgid "Shows the state of your wireless LAN connection.\n"
-msgstr "Mostrare lo stato della connessione di rete wireless.\n"
+msgid ""
+"Shows the state of your wireless LAN connection.\n"
+msgstr ""
+"Mostrare lo stato della connessione di rete wireless.\n"
 
 msgid "Shows the watched status of the movie"
 msgstr "Mostra lo stato di visione del film"
@@ -12255,8 +12328,10 @@ msgstr "Aggiornamento software"
 msgid "Softwaremanager information"
 msgstr "Informazioni su software manager"
 
-msgid "Some plugins are not available:\n"
-msgstr "Alcuni plugin non sono disponibili:\n"
+msgid ""
+"Some plugins are not available:\n"
+msgstr ""
+"Alcuni plugin non sono disponibili:\n"
 
 msgid "Sorry Inadyn Config is Missing"
 msgstr "Mi dispiace, Inadyn non configurato"
@@ -12990,8 +13065,10 @@ msgid "Test mode"
 msgstr "Modalità test"
 
 #, python-format
-msgid "Test the network configuration of your %s %s.\n"
-msgstr "Verifica la configurazione rete del %s %s.\n"
+msgid ""
+"Test the network configuration of your %s %s.\n"
+msgstr ""
+"Verifica la configurazione rete del %s %s.\n"
 
 msgid "Test type"
 msgstr "Tipo test"
@@ -13201,8 +13278,10 @@ msgstr ""
 msgid "The following files were found..."
 msgstr "Trovati i seguenti file..."
 
-msgid "The image or kernel will be flashing and auto booted in few minutes.\n"
-msgstr "L’immagine o il kernel saranno installati in pochi minuti.\n"
+msgid ""
+"The image or kernel will be flashing and auto booted in few minutes.\n"
+msgstr ""
+"L’immagine o il kernel saranno installati in pochi minuti.\n"
 
 #, python-format
 msgid ""
@@ -13271,8 +13350,8 @@ msgstr ""
 "Provvedere a installarla."
 
 msgid ""
-"The status of the current update could not be checked because https://"
-"droidsat.org/forum could not be reached for some reason"
+"The status of the current update could not be checked because https:"
+"//droidsat.org/forum could not be reached for some reason"
 msgstr ""
 "Impossibile verificare la disponibilità di nuovi aggiornamenti perché il "
 "sito non è raggiungibile"
@@ -13502,8 +13581,8 @@ msgstr ""
 "dell'immagine."
 
 msgid ""
-"This option allows you choose how to display remaining time, or elapsed "
-"time, or both."
+"This option allows you choose how to display remaining time, or elapsed time,"
+" or both."
 msgstr ""
 "Questa opzione permette di scegliere come visualizzare il tempo rimanente o "
 "il tempo trascorso, o entrambi."
@@ -13512,22 +13591,22 @@ msgid ""
 "This option allows you choose how to display the remaining/elapsed time for "
 "live tv."
 msgstr ""
-"Questa opzione permette di scegliere come visualizzare il tempo rimanente/"
-"trascorso per la tv in diretta."
+"Questa opzione permette di scegliere come visualizzare il tempo "
+"rimanente/trascorso per la tv in diretta."
 
 msgid ""
 "This option allows you choose how to display the remaining/elapsed time for "
 "Media playback."
 msgstr ""
-"Questa opzione consente di scegliere come visualizzare il tempo rimanente/"
-"trascorso per la riproduzione Multimediale."
+"Questa opzione consente di scegliere come visualizzare il tempo "
+"rimanente/trascorso per la riproduzione Multimediale."
 
 msgid ""
 "This option allows you choose how to display the remaining/elapsed time for "
 "media playback."
 msgstr ""
-"Questa opzione consente di scegliere come visualizzare il tempo rimanente/"
-"trascorso per la riproduzione multimediale."
+"Questa opzione consente di scegliere come visualizzare il tempo "
+"rimanente/trascorso per la riproduzione multimediale."
 
 msgid "Disable Animations"
 msgstr "Disabilitare Animazioni"
@@ -13740,8 +13819,8 @@ msgstr ""
 "avviabile.\n"
 "Nel passo successivo, un'immagine .NFI può essere scaricata dal server degli "
 "aggiornamenti e salvata sulla penna USB.\n"
-"Se si dispone di una penna USB già configurata come avviabile, inserirla "
-"ora. In caso contrario inserire una penna USB dalla capacità di almeno 64 MB!"
+"Se si dispone di una penna USB già configurata come avviabile, inserirla ora."
+" In caso contrario inserire una penna USB dalla capacità di almeno 64 MB!"
 
 msgid "This plugin is installed."
 msgstr "Questo plugin è installato."
@@ -13785,8 +13864,8 @@ msgid ""
 "- no valid IP address was found\n"
 "- please check your DHCP, cabling and adapter setup"
 msgstr ""
-"Questo test verifica che alla scheda venga assegnato un indirizzo IP "
-"valido.\n"
+"Questo test verifica che alla scheda venga assegnato un indirizzo IP valido."
+"\n"
 "Se si ottiene il messaggio [non confermato]:\n"
 "- Non è stato trovato un indirizzo valido;\n"
 "- Controllare il servizio DHCP, i cavi e la configurazione della scheda"
@@ -14224,8 +14303,10 @@ msgstr "Cestino"
 msgid "Trashcan:"
 msgstr "Cestino:"
 
-msgid "Tried to disable PIP, suddenly found no InfoBar.instance.\n"
-msgstr "Ho cercato di disattivare PIP, nessuna istanza trovata in Barra Info\n"
+msgid ""
+"Tried to disable PIP, suddenly found no InfoBar.instance.\n"
+msgstr ""
+"Ho cercato di disattivare PIP, nessuna istanza trovata in Barra Info\n"
 
 msgid "Tries left:"
 msgstr "Tentativi residui:"
@@ -14592,8 +14673,8 @@ msgstr ""
 "l'interfaccia utente su/giù"
 
 msgid ""
-"Use the Left/Right buttons on your remote to move the user inyterface left/"
-"right"
+"Use the Left/Right buttons on your remote to move the user inyterface "
+"left/right"
 msgstr ""
 "Utilizzare i pulsanti Sinistra/Destra sul telecomando per spostare il "
 "inyterface utente sinistra/destra"
@@ -14607,8 +14688,10 @@ msgstr "Utilizzare la schermata alternativa"
 msgid "Use the network wizard to configure selected network adapter"
 msgstr "Usare NetworkWizard per configurare l'adattatore di rete selezionato"
 
-msgid "Use the networkwizard to configure your Network\n"
-msgstr "Utilizzare la procedura guidata per configurare la rete\n"
+msgid ""
+"Use the networkwizard to configure your Network\n"
+msgstr ""
+"Utilizzare la procedura guidata per configurare la rete\n"
 
 msgid ""
 "Use the up/down keys on your remote control to select an option. After that, "
@@ -14941,8 +15024,10 @@ msgstr "Accendere segnale dalla TV"
 msgid "Wakeup your %s %s from standby"
 msgstr "Accendere il tuo %s %s da Standby"
 
-msgid "Warning: If your usb is already connected\n"
-msgstr "Attenzione: Se il vostro USB è già collegata\n"
+msgid ""
+"Warning: If your usb is already connected\n"
+msgstr ""
+"Attenzione: Se il vostro USB è già collegata\n"
 
 msgid "Warning: no LNB; using factory defaults."
 msgstr "Attenzione: nessun LNB; utilizzando le impostazioni predefinite."
@@ -15427,11 +15512,11 @@ msgstr ""
 "Quando è impostato il PIG tornerà a vivere dopo un film ha smesso di suonare."
 
 msgid ""
-"When the content has an aspect ratio of 16:9, choose whether to scale/"
-"stretch the picture."
+"When the content has an aspect ratio of 16:9, choose whether to "
+"scale/stretch the picture."
 msgstr ""
-"Quando il contenuto ha un aspect ratio di 16:9, scegliere se scalare/"
-"allungare l'immagine."
+"Quando il contenuto ha un aspect ratio di 16:9, scegliere se "
+"scalare/allungare l'immagine."
 
 msgid ""
 "When the content has an aspect ratio of 4:3, choose whether to scale/stretch "
@@ -15529,8 +15614,10 @@ msgstr ""
 "Con questa opzione si può nascondere Attività processo dallo schermo interno "
 "(breve pressione del pulsante blu)."
 
-msgid "Write error while recording. Disk full?\n"
-msgstr "Errore di scrittura in registrazione! Disco pieno?\n"
+msgid ""
+"Write error while recording. Disk full?\n"
+msgstr ""
+"Errore di scrittura in registrazione! Disco pieno?\n"
 
 #, python-format
 msgid ""
@@ -15677,8 +15764,8 @@ msgstr ""
 "cancellati."
 
 msgid ""
-"You have chosen to restore your settings. Enigma2 will restart after "
-"restore. Please press OK to start the restore now."
+"You have chosen to restore your settings. Enigma2 will restart after restore."
+" Please press OK to start the restore now."
 msgstr ""
 "Si è scelto di ripristinare la configurazione. Enigma2 verrà riavviato dopo "
 "il ripristino. Premere OK per iniziare ora."
@@ -17297,8 +17384,10 @@ msgstr "file modello"
 msgid "tennis/squash"
 msgstr "tennis/sqash"
 
-msgid "the Green button and restart the wizard.\n"
-msgstr "il tasto Verde e riavviare la procedura guidata.\n"
+msgid ""
+"the Green button and restart the wizard.\n"
+msgstr ""
+"il tasto Verde e riavviare la procedura guidata.\n"
 
 msgid "this recording"
 msgstr "questa registrazione"
@@ -17306,8 +17395,10 @@ msgstr "questa registrazione"
 msgid "this service is protected by a parental control pin"
 msgstr "questo servizio è protetto da un pin di controllo parentale"
 
-msgid "to the box you have to unplug it, press\n"
-msgstr "bisogna staccare la spina al ricevitore, premere\n"
+msgid ""
+"to the box you have to unplug it, press\n"
+msgstr ""
+"bisogna staccare la spina al ricevitore, premere\n"
 
 msgid "toggle time, chapter, audio, subtitle info"
 msgstr "info tempo, capitolo, audio, sottotitoli -> on/off"
@@ -18419,8 +18510,10 @@ msgstr ""
 "Ecco l'elenco delle immagini installate nel tuo STB. Si prega di scegliere "
 "un'immagine da avviare."
 
-msgid "Are you sure you want to Boot Image:\n"
-msgstr "Sei sicuro di voler avviare l'immagine:\n"
+msgid ""
+"Are you sure you want to Boot Image:\n"
+msgstr ""
+"Sei sicuro di voler avviare l'immagine:\n"
 
 msgid "Boot Confirmation"
 msgstr "Conferma Avvio"
@@ -18666,7 +18759,7 @@ msgid ""
 "\n"
 "Please upload a zip file to install"
 msgstr ""
-"La directory /media/opdboot/OPDBootUpload è VUOTA!n\n"
+"La directory / media / opdboot / OPDBootUpload è VUOTA!n\n"
 "\n"
 "Si prega di caricare un file zip da installare"
 
@@ -18674,7 +18767,7 @@ msgid "Sorry you can install a max of 10 images."
 msgstr "Spiacente, puoi installare un massimo di 10 immagini."
 
 msgid "Install from /media/opdboot/OPDBootUpload"
-msgstr "Installa da /media/opdboot/OPDBootUpload"
+msgstr "Installa da / media / opdboot / OPDBootUpload"
 
 msgid "Install from Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)"
 msgstr "Installa da Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)"
@@ -18683,10 +18776,10 @@ msgid "Remove OPDBoot"
 msgstr "Rimuovere OPDBoot"
 
 msgid "Remove all installed images"
-msgstr "Rimuovere tutte le immagini installate"
+msgstr "Rimuovi tutte le immagini installate"
 
 msgid "OPDBoot is removing..."
-msgstr "OPDBoot sta rimuovendo..."
+msgstr "OPDBoot sta rimuovendo ..."
 
 msgid "OPDBoot: Deleting All Images"
 msgstr "OPDBoot: eliminazione di tutte le immagini"
@@ -18722,8 +18815,8 @@ msgid ""
 "select the image to install."
 msgstr ""
 "Devi selezionare un'immagine da installare.\n"
-"Per favore, carica il tuo file zip nella cartella: /media/opdboot/"
-"OPDBootUpload e selezionare l'immagine da installare."
+"Per favore, carica il tuo file zip nella cartella: "
+"/media/opdboot/OPDBootUpload e selezionare l'immagine da installare."
 
 msgid "You have to provide a name for the new Image."
 msgstr "Devi fornire un nome per la nuova immagine."
@@ -18754,12 +18847,12 @@ msgid ""
 "The new image will be installed and auto booted in few minutes.\n"
 "\n"
 msgstr ""
-"La nuova immagine verrà installata e avviata automaticamente in pochi "
-"minuti.\n"
+"La nuova immagine verrà installata e avviata automaticamente in pochi minuti."
+"\n"
 "\n"
 
 msgid "OPDBoot: Install new image"
-msgstr "OPDBoot: installare nuova immagine"
+msgstr "OPDBoot: installa nuova immagine"
 
 msgid ""
 "Not enough free space on /media/opdboot/ !!\n"
@@ -18767,7 +18860,7 @@ msgid ""
 "\n"
 "Exit plugin."
 msgstr ""
-"Spazio libero insufficiente su/media/OPDboot / !!n\n"
+"Spazio libero insufficiente su / media / opdboot / !!n\n"
 "Hai bisogno di almeno 300 MB di spazio libero.\n"
 "\n"
 "Esci dal plugin."
@@ -18785,106 +18878,108 @@ msgid "OPD MultiBoot"
 msgstr "OPD MultiBoot"
 
 msgid "usage: "
-msgstr "Utilizzo: "
+msgstr "utilizzo: "
 
 msgid ".__call__() not defined"
 msgstr ".__chiamata__() non definito"
 
 msgid "unknown parser %r (choices: %s)"
-msgstr "Errore sconosciuto %r (scelte: %s)"
+msgstr "error sconosciuto %r (scelte: %s)"
 
 msgid "argument \"-\" with mode %r"
-msgstr "Discussione \"-\" con la modalità %r"
+msgstr "discussione \"-\" con la modalità %r"
 
 msgid "can't open '%s': %s"
-msgstr "Non posso aprire '%s': %s"
+msgstr "non posso aprire '%s': %s"
 
 msgid "cannot merge actions - two groups are named %r"
-msgstr "Non è possibile unire le azioni: vengono nominati due gruppi %r"
+msgstr "non è possibile unire le azioni: vengono nominati due gruppi %r"
 
 msgid "'required' is an invalid argument for positionals"
-msgstr "'Necessario' è un argomento non valido per i posizionali"
+msgstr "'necessario' è un argomento non valido per i posizionali"
 
 msgid "invalid option string %r: must start with a character %r"
-msgstr "Stringa di opzioni non valida %r: deve iniziare con un carattere %r"
+msgstr "stringa di opzioni non valida %r: deve iniziare con un carattere %r"
 
 msgid "dest= is required for options like %r"
 msgstr "dest = è richiesto per opzioni come %r"
 
 msgid "invalid conflict_resolution value: %r"
-msgstr "Conflitto invalido_valore di risoluzione: %r"
+msgstr "conflitto invalido_valore di risoluzione: %r"
 
 msgid "conflicting option string(s): %s"
-msgstr "Stringa di opzioni in conflitto(s): %s"
+msgstr "stringa di opzioni in conflitto(s): %s"
 
 msgid "mutually exclusive arguments must be optional"
-msgstr "Gli argomenti che si escludono a vicenda devono essere facoltativi"
+msgstr "gli argomenti che si escludono a vicenda devono essere facoltativi"
 
 msgid "positional arguments"
-msgstr "Argomenti posizionali"
+msgstr "argomenti posizionali"
 
 msgid "optional arguments"
-msgstr "Argomenti opzionali"
+msgstr "argomenti opzionali"
 
 msgid "show this help message and exit"
-msgstr "Mostra questo messaggio di aiuto ed esci"
+msgstr "mostra questo messaggio di aiuto ed esci"
 
 msgid "show program's version number and exit"
-msgstr "Mostra il numero di versione del programma ed esci"
+msgstr "mostra il numero di versione del programma ed esce"
 
 msgid "cannot have multiple subparser arguments"
-msgstr "Non può avere più argomenti subparser"
+msgstr "non può avere più argomenti subparser"
 
 msgid "unrecognized arguments: %s"
-msgstr "Argomenti non riconosciuti: %s"
+msgstr "unrecognized arguments: %s"
 
 msgid "not allowed with argument %s"
-msgstr "Non consentito come argomento %s"
+msgstr "non consentito come argomento %s"
 
 msgid "ignored explicit argument %r"
-msgstr "Argomento esplicito ignorato %r"
+msgstr "argomento esplicito ignorato %r"
 
 msgid "too few arguments"
-msgstr "Troppo pochi argomenti"
+msgstr "troppo pochi argomenti"
 
 msgid "argument %s is required"
-msgstr "Discussione %s è obbligatorio"
+msgstr "discussione %s è obbligatorio"
 
 msgid "one of the arguments %s is required"
-msgstr "Uno degli argomenti %s è obbligatorio"
+msgstr "uno degli argomenti %s è obbligatorio"
 
 msgid "expected one argument"
-msgstr "Previsto un argomento"
+msgstr "previsto un argomento"
 
 msgid "expected at most one argument"
-msgstr "Aspettato al massimo un argomento"
+msgstr "aspettato al massimo un argomento"
 
 msgid "expected at least one argument"
-msgstr "Atteso almeno un argomento"
+msgstr "atteso almeno un argomento"
 
 msgid "expected %s argument(s)"
-msgstr "Previsto %s discussione(s)"
+msgstr "previsto %s discussione(s)"
 
 msgid "ambiguous option: %s could match %s"
-msgstr "Opzione ambigua: %s potrebbe corrispondere %s"
+msgstr "opzione ambigua: %s potrebbe corrispondere %s"
 
 msgid "unexpected option string: %s"
-msgstr "Stringa di opzioni inattese: %s"
+msgstr "stringa di opzioni inattese: %s"
 
 msgid "%r is not callable"
 msgstr "%r non è chiamabile"
 
 msgid "invalid %s value: %r"
-msgstr "Non valido %s valore: %r"
+msgstr "non valido %s valore: %r"
 
 msgid "invalid choice: %r (choose from %s)"
-msgstr "Scelta non valida: %r (scegli da %s)"
+msgstr "scelta non valida: %r (scegli da %s)"
 
 msgid "Do you want to use this bootlogo as the default?"
 msgstr "Vuoi usare questo bootlogo come predefinito?"
 
-msgid "%s: error: %s\n"
-msgstr "%s: error: %s\n"
+msgid ""
+"%s: error: %s\n"
+msgstr ""
+"%s: error: %s\n"
 
 #: ButtonSetup.py:25
 msgid "Info (EPG)"
@@ -18908,7 +19003,7 @@ msgstr "Lista/PVR"
 
 #: ButtonSetup.py:42 ButtonSetup.py:44 ButtonSetup.py:57 ButtonSetup.py:82
 msgid "long"
-msgstr "Lungo"
+msgstr "lungo"
 
 #: ButtonSetup.py:45
 msgid "File"
@@ -18932,7 +19027,7 @@ msgstr "Fine"
 
 #: ButtonSetup.py:60
 msgid "Next"
-msgstr "Prossimo"
+msgstr "Il prossimo"
 
 #: ButtonSetup.py:61
 msgid "Previous"
@@ -18960,7 +19055,7 @@ msgstr "Salta in avanti"
 
 #: ButtonSetup.py:71
 msgid "activatePiP"
-msgstr "Attivare PiP"
+msgstr "attivare PiP"
 
 #: ButtonSetup.py:72
 msgid "Timer"
@@ -18972,7 +19067,7 @@ msgstr "Elenco di riproduzione"
 
 #: ButtonSetup.py:77
 msgid "Mark/Portal/Playlist"
-msgstr "Marchio/Portale/Elenco di riproduzione"
+msgstr "Marchio / Portale/ Elenco di riproduzione"
 
 #: ButtonSetup.py:78
 msgid "Sleep"
@@ -18984,7 +19079,7 @@ msgstr "Power"
 
 #: ButtonSetup.py:81 ButtonSetup.py:82
 msgid "HDMIin"
-msgstr "HDMI in"
+msgstr "HDMIin"
 
 #: ButtonSetup.py:85
 msgid "Context"
@@ -19060,7 +19155,7 @@ msgstr "Attiva la fine del timeshift"
 
 #: ButtonSetup.py:153
 msgid "Activate timeshift end and pause"
-msgstr "Attiva il timeshift e metti in pausa"
+msgstr ""
 
 #: ButtonSetup.py:157
 msgid "Show subservice selection"
@@ -19080,19 +19175,19 @@ msgstr "Sposta PIP"
 
 #: ButtonSetup.py:164
 msgid "Toggle PIP-ZAP"
-msgstr "Attiva/disattiva PIP-ZAP"
+msgstr "Attiva / disattiva PIP-ZAP"
 
 #: ButtonSetup.py:171
 msgid "Button setup"
-msgstr "Impostazione del pulsante"
+msgstr "Button setup"
 
 #: ButtonSetup.py:181
 msgid "Plugin browser"
-msgstr "Browser plugin"
+msgstr "Plugin browser"
 
 #: ButtonSetup.py:182
 msgid "Channel info"
-msgstr "Informazioni sul canale"
+msgstr "Channel info"
 
 #: ButtonSetup.py:193
 msgid "SleepTimer"
@@ -19140,7 +19235,7 @@ msgstr "OPD Download Panel"
 
 #: ButtonSetup.py:214
 msgid "OPD OPD_panel"
-msgstr "OPD Panel"
+msgstr "OPD OPD_panel"
 
 #: ButtonSetup.py:215
 msgid "OPD ScriptRunner"
@@ -19164,20 +19259,721 @@ msgstr "OPD CronManager"
 
 #: ButtonSetup.py:220
 msgid "Disable this button"
-msgstr "Disabilita questo pulsante"
+msgstr "Disable this button"
 
 #: ButtonSetup.py:231
 msgid "Quick button setup"
-msgstr "Impostazione rapida del pulsante"
+msgstr "Quick button setup"
 
 #: ButtonSetup.py:233
 msgid "Mode"
-msgstr "Modalità"
+msgstr "Mode"
 
 #: ButtonSetup.py:341
 msgid "Quick button setup for"
-msgstr "Impostazione rapida dei pulsanti per"
+msgstr "Configurazione rapida dei pulsanti per"
 
 #: ButtonSetup.py:479
 msgid "are you sure you want to cancel all the changes"
-msgstr "Sei sicuro di voler cancellare tutte le modifiche"
+msgstr "sei sicuro di voler cancellare tutte le modifiche"
+
+msgid "Picons-HDD"
+msgstr "Picons-HDD"
+
+msgid "Back / Now"
+msgstr "Indietro / Adesso"
+
+msgid "Time Forward"
+msgstr "Tempo in avanti"
+
+msgid "Page for / back"
+msgstr "Pagina / indietro"
+
+msgid "Line doubly"
+msgstr "Linea doppia"
+
+msgid "Jump 24 Hours"
+msgstr "Salta 24 ore"
+
+msgid "Favorites List"
+msgstr "Salta 24 ore"
+
+msgid "Picons-USB"
+msgstr "Picons-USB"
+
+msgid "Skin"
+msgstr "Skin"
+
+msgid "Free"
+msgstr "Free"
+
+msgid "Downloading plugin information complete."
+msgstr "Download delle informazioni del plugin complete."
+
+msgid "dont wait"
+msgstr "non aspettare"
+
+msgid "no CAM 1 active"
+msgstr "nessuna CAM 1 attiva"
+
+msgid "no CAM 2 active"
+msgstr "nessuna CAM 2 attiva"
+
+msgid "Emu Manager"
+msgstr "Emu Manager"
+
+msgid "no cam"
+msgstr "no cam"
+
+msgid "Name: "
+msgstr "Name: "
+
+msgid "Aspect Ratio: "
+msgstr "Rapporto TV: "
+
+msgid "Video Size: "
+msgstr "Dimensioni video: "
+
+msgid "Provider: n/a"
+msgstr "Provider: n/a"
+
+msgid "Name: n/a"
+msgstr "Nome: n/a"
+
+msgid "Aspect Ratio: n/a"
+msgstr "Proporzioni: n/a"
+
+msgid "Video Size: n/a"
+msgstr "Dimensione del video: n/a"
+
+msgid "active CAM 1: "
+msgstr "attivo CAM 1: "
+
+msgid "active CAM 2: "
+msgstr "attivo CAM 2: "
+
+msgid "Init.d"
+msgstr "Init.d"
+
+msgid "Softcam-Setup"
+msgstr "Softcam-Setup"
+
+msgid "You must set at least one Command"
+msgstr "Devi impostare almeno un comando"
+
+msgid "Addons "
+msgstr "Addons "
+
+msgid "Decoding Setup"
+msgstr "Decodifica programma di installazione"
+
+msgid "Include CI assignment"
+msgstr "Include CI assignment"
+
+msgid "Infobar Setup"
+msgstr "Setup Infobar"
+
+msgid "1st infobar timeout"
+msgstr "1st infobar timeout"
+
+msgid "Partitions"
+msgstr "partizioni"
+
+msgid ""
+"Fixed mounted first initialized Storage Device to /media/hdd. It needs a "
+"system restart in order to take effect.\n"
+"Restart your STB now?"
+msgstr ""
+"Primo dispositivo di archiviazione inizializzato montato fisso su / media / "
+"hdd. Ha bisogno di un riavvio del sistema per avere effetto.\n"
+"Riavvia il tuo STB ora?"
+
+msgid "No - simple"
+msgstr "No - semplice"
+
+msgid "Yes - fstab entry as /media/hdd"
+msgstr "Sì - voce fstab come / media / hdd"
+
+msgid " as HDD ?"
+msgstr " come HDD?"
+
+msgid "Or use standard 'Harddisk Setup' to initialize your drive in ext4."
+msgstr ""
+"Oppure usa la 'Hard Disk Setup' standard per inizializzare l'unità in ext4."
+
+msgid "Check disk terminated with success"
+msgstr "Controllare il disco terminato con successo"
+
+msgid ""
+"Cannot umount current drive.\n"
+"A record in progress, timeshift or some external tools (like samba, swapfile "
+"and nfsd) may cause this problem.\n"
+"Please stop this actions/applications and try again"
+msgstr ""
+"Impossibile smontare l'unità corrente.\n"
+"Un record in corso, timeshift o alcuni strumenti esterni (come samba, "
+"swapfile e nfsd) possono causare questo problema.\n"
+"Si prega di interrompere queste azioni / applicazioni e riprovare"
+
+msgid "Error checking disk. The disk may be damaged"
+msgstr "Errore nel controllo del disco. Il disco potrebbe essere danneggiato"
+
+msgid "Format terminated with success"
+msgstr "Formato terminato con successo"
+
+msgid ""
+"Cannot format current drive.\n"
+"A record in progress, timeshift or some external tools (like samba, swapfile "
+"and nfsd) may cause this problem.\n"
+"Please stop this actions/applications and try again"
+msgstr ""
+"Impossibile formattare l'unità corrente.\n"
+"Un record in corso, timeshift o alcuni strumenti esterni (come samba, "
+"swapfile e nfsd) possono causare questo problema.\n"
+"Si prega di interrompere queste azioni / applicazioni e riprovare"
+
+msgid "Error formatting disk. The disk may be damaged"
+msgstr ""
+"Errore nella formattazione del disco. Il disco potrebbe essere danneggiato"
+
+msgid "Formatting disk %s"
+msgstr "Disco di formattazione %s"
+
+msgid "Formatting disk"
+msgstr "Disco di formattazione"
+
+msgid "Checking disk %s"
+msgstr "Controllo del disco %s"
+
+msgid "Checking disk"
+msgstr "Controllo del disco"
+
+msgid "P. %d - %s (Fixed: %s)"
+msgstr "P. %d - %s (Fixed: %s)"
+
+msgid "P. %d - %s (Fast: %s)"
+msgstr "P. %d - %s (Fast: %s)"
+
+msgid "Mount as main hdd"
+msgstr "Montare come hdd principale"
+
+msgid "Mount as /media/hdd1"
+msgstr "Monta come / media / hdd1"
+
+msgid "Mount as /media/hdd2"
+msgstr "Monta come / media / hdd2"
+
+msgid "Mount as /media/hdd3"
+msgstr "Monta come / media / hdd3"
+
+msgid "Mount as /media/hdd4"
+msgstr "Monta come / media / hdd4"
+
+msgid "Mount as /media/hdd5"
+msgstr "Monta come / media / hdd5"
+
+msgid "Mount as /media/usb"
+msgstr "Montare come / media / usb"
+
+msgid "Mount as /media/usb1"
+msgstr "Montare come / media / usb1"
+
+msgid "Mount as /media/usb2"
+msgstr "Montare come / media / usb2"
+
+msgid "Mount as /media/usb3"
+msgstr "Montare come / media / usb3"
+
+msgid "Mount as /media/usb4"
+msgstr "Montare come / media / usb4"
+
+msgid "Mount as /media/usb5"
+msgstr "Montare come / media / usb5"
+
+msgid "Mount on custom path"
+msgstr "Monta su percorso personalizzato"
+
+msgid "Fixed mount"
+msgstr "Montaggio fisso"
+
+msgid "Fast mount"
+msgstr "Montaggio veloce"
+
+msgid "Mountpoints"
+msgstr "Punti di mount"
+
+msgid "Insert mount point:"
+msgstr "Inserisci punto di montaggio:"
+
+msgid "/media/custom"
+msgstr "/ Media / custom"
+
+msgid "Selected mount point is already used by another drive."
+msgstr "Il punto di montaggio selezionato è già utilizzato da un'altra unità."
+
+msgid "Mount point exist!"
+msgstr "Il punto di montaggio esiste!"
+
+msgid "Change old drive with this new drive"
+msgstr "Cambia la vecchia unità con questa nuova unità"
+
+msgid "Keep old drive"
+msgstr "Mantieni il vecchio drive"
+
+msgid ""
+"Cannot mount new drive.\n"
+"Please check filesystem or format it and try again"
+msgstr ""
+"Impossibile montare la nuova unità.\n"
+"Controlla il filesystem o formattalo e riprova"
+
+msgid ""
+"Device Fixed Mount Point change needs a system restart in order to take "
+"effect.\n"
+"Restart your STB now?"
+msgstr ""
+"La modifica del punto di montaggio fisso del dispositivo richiede un riavvio "
+"del sistema per avere effetto.\n"
+"Riavvia il tuo STB ora?"
+
+msgid "Fast Mounted Remove"
+msgstr "Rimuovere rapidamente"
+
+msgid ""
+"Fast mounted Media unmounted.\n"
+"You can safely remove the Device now, if no further Partitions (displayed as "
+"P.x on Devicelist - where x >=2) are mounted on the same Device.\n"
+"Please unmount Fixed Mounted Devices with Device Manager Panel!"
+msgstr ""
+"Supporto montato velocemente smontato.\n"
+"Ora puoi rimuovere il dispositivo in sicurezza, se non ci sono ulteriori "
+"partizioni (visualizzate come P.x nell'elenco dispositivi - dove x> = 2) "
+"sono montate sullo stesso dispositivo.\n"
+"Smontare i dispositivi fissi montati con il pannello di Device Manager!"
+
+msgid "P.%s (Fixed: %s)"
+msgstr "P.%s (Fixed: %s)"
+
+msgid "P.%s (Fast: %s)"
+msgstr "P.%s (Fast: %s)"
+
+msgid "Harddisk standby after"
+msgstr "Harddisk standby dopo"
+
+msgid "Model: unknown"
+msgstr "Modello: sconosciuto"
+
+msgid "Serial: unknown"
+msgstr "Seriale: sconosciuto"
+
+msgid "Firmware: unknown"
+msgstr "Firmware: sconosciuto"
+
+msgid "Cylinders: unknown"
+msgstr "Cilindri: sconosciuti"
+
+msgid "Heads: unknown"
+msgstr "Teste: sconosciuto"
+
+msgid "Sectors: unknown"
+msgstr "Settori: sconosciuti"
+
+msgid "Read disk speed: unknown"
+msgstr "Leggi la velocità del disco: sconosciuta"
+
+msgid "Read disk cache speed: unknown"
+msgstr "Leggi la velocità della cache del disco: sconosciuta"
+
+msgid "Disk temperature: unknown"
+msgstr "Temperatura del disco: sconosciuta"
+
+msgid "Device Details"
+msgstr "Dettagli del dispositivo"
+
+msgid "Model: %s"
+msgstr "Modello: %s"
+
+msgid "Serial: %s"
+msgstr "Seriale:%s"
+
+msgid "Firmware: %s"
+msgstr "Firmware: %s"
+
+msgid "Cylinders: %s (max) %s (attuale)"
+msgstr "Cylinders: %s (max) %s (attuale)"
+
+msgid "Heads: %s (max) %s (attuale)"
+msgstr "Heads: %s (max) %s (attuale)"
+
+msgid "Sectors: %s (max) %s (attuale)"
+msgstr "settori: %s (max) %s (attuale)"
+
+msgid "Read speed: %s"
+msgstr "Leggi la velocità: %s"
+
+msgid "Read cache speed: %s"
+msgstr "Leggi la velocità della cache: %s"
+
+msgid "Disk temperature: %s"
+msgstr "Temperatura del disco: %s"
+
+msgid "Devices Manager"
+msgstr "Gestore dispositivi"
+
+msgid "saveMypoints"
+msgstr "salva punti"
+
+msgid "Use as HDD"
+msgstr "Utilizzare come HDD"
+
+msgid "Size: "
+msgstr "Dimensione: "
+
+msgid "Type: "
+msgstr "Genere: "
+
+msgid "Devices Manager - Setup"
+msgstr "Gestione dispositivi - Configurazione"
+
+msgid "Choose where to mount your devices to:"
+msgstr "Scegli dove montare i tuoi dispositivi:"
+
+msgid "Wait please while scanning your %s %s devices..."
+msgstr "Aspetta per favore mentre scannerizzi il tuo %s %s dispositivo..."
+
+msgid "Updating mount locations."
+msgstr "Aggiornamento delle posizioni di montaggio."
+
+msgid "USB Disk Format Wizard"
+msgstr "USB Disk Format Wizard"
+
+msgid "Partition size"
+msgstr "Dimensione della partizione"
+
+msgid "Sorry, your partition(s) sizes are bigger than total device size."
+msgstr "Spiacente, la tua partizione (le dimensioni sono maggiori delle dimensioni totali del dispositivo."
+
+msgid "ext4 - recommended for OPDBoot"
+msgstr "ext4 - raccomandato per OPDBoot"
+
+msgid "Formatting..."
+msgstr "Formattazione..."
+
+msgid "Model: "
+msgstr "Modello: "
+
+msgid "OPD BootLogo settings"
+msgstr "Impostazioni OPD BootLogo"
+
+msgid "BluePanel"
+msgstr "BluePanel"
+
+msgid "OScamInfo"
+msgstr "OScamInfo"
+
+msgid "Image-Flasher"
+msgstr "Immagine-Flasher"
+
+msgid "opdBootLogo-Setup"
+msgstr "opdBootLogo-Setup"
+
+msgid "Infobar_Setup"
+msgstr "Infobar_Setup"
+
+msgid "Decoding_Setup"
+msgstr "Decoding_Setup"
+
+msgid "OPD-Main Menu"
+msgstr "OPD-Main Menu"
+
+msgid "Sorry no backups found!"
+msgstr "Spiacente, nessun backup trovato!"
+
+msgid "Password-Change"
+msgstr "Cambio di password"
+
+msgid "HddSetup"
+msgstr "HddSetup"
+
+msgid "CronManager"
+msgstr "CronManager"
+
+msgid "OscamSmartcard"
+msgstr "OscamSmartcard"
+
+msgid "MultiQuickButton"
+msgstr "MultiQuickButton"
+
+msgid "Ram"
+msgstr "Ram"
+
+msgid "System Info"
+msgstr "System Info"
+
+msgid "Module"
+msgstr "Modulo"
+
+msgid "Image/Remote Setup"
+msgstr "Immagine / Impostazione remota"
+
+msgid "Red Panel"
+msgstr "Red Panel"
+
+msgid "Restore Settings"
+msgstr "Ripristina impostazioni"
+
+msgid "RedPanel"
+msgstr "RedPanel"
+
+msgid "Show OPD_panel Red-key"
+msgstr "Show OPD_panel Red-key"
+
+msgid "Show BluePanel Red-key long"
+msgstr "Mostra BluePanel Tasto rosso lungo"
+
+msgid "Yellow Key Action"
+msgstr "Azione tasto gialla"
+
+msgid "an internal error has occured"
+msgstr "Si è verificato un errore interno"
+
+msgid "Image Info"
+msgstr "Informazioni sull'immagine"
+
+msgid "Change Root Password"
+msgstr "Cambia password di root"
+
+msgid "Set Password"
+msgstr "Impostare la password"
+
+msgid "new Random"
+msgstr "nuovo casuale"
+
+msgid "virt. Keyboard"
+msgstr "virt. Keyboard"
+
+msgid "Enter new Password"
+msgstr "Inserire una nuova password"
+
+msgid ""
+"Sucessfully changed password for root user to:\n"
+"%s "
+msgstr ""
+"Password modificata con successo per utente root:\n"
+"%s "
+
+msgid "Unable to change/reset password for root user"
+msgstr "Impossibile modificare / reimpostare la password per l'utente root"
+
+msgid "Enter your password here:"
+msgstr "Inserisci la tua password qui:"
+
+msgid "83"
+msgstr "83"
+
+msgid ""
+"Remove all first.\n"
+"otherwise Oscamsmartcard will not start"
+msgstr ""
+"Rimuovi tutto per primo.\n"
+"altrimenti la Smartcard Oscam non si avvia"
+
+msgid "or"
+msgstr "or"
+
+msgid "Oscamsmartcard found "
+msgstr "Trovata la Smartcard Oscam "
+
+msgid " Server and "
+msgstr " Server and "
+
+msgid "online"
+msgstr "online"
+
+msgid "Oscam will be installed with the following settings"
+msgstr "Oscam verrà installato con le seguenti impostazioni"
+
+msgid "no PayTV Card"
+msgstr "no PayTV Card"
+
+msgid "file already exists and use it"
+msgstr "il file esiste già ed e in uso"
+
+msgid "file exists, becomes upgrade"
+msgstr "il file esiste, diventa aggiornamento"
+
+msgid "will be installed"
+msgstr "sarà installato"
+
+msgid "Are the settings correct ?"
+msgstr "Le impostazioni sono corrette ?"
+
+msgid "check your settings"
+msgstr "controlla le tue impostazioni"
+
+msgid ""
+"oscam install finished\n"
+"have fun"
+msgstr ""
+"oscam install finito\n"
+"divertiti"
+
+msgid "done"
+msgstr "fatto"
+
+msgid "wrong Settings detected"
+msgstr "Impostazioni errate rilevate"
+
+msgid "no installed oscamsmartcard found"
+msgstr "nessuna installazione trovata su smart card oscam"
+
+msgid "download fix"
+msgstr "download fix"
+
+msgid "added HD03/04 Support"
+msgstr "added HD03/04 Support"
+
+msgid "added ORF 650, added 6.2 Support"
+msgstr "aggiunto ORF 650, aggiunto 6.2 Supporto"
+
+msgid "update init.d start/stop"
+msgstr "aggiorna init.d start / stop"
+
+msgid "update oscamsmartcard code"
+msgstr "aggiornare il codice di oscamsmartcard"
+
+msgid "update Redlight HD Card"
+msgstr "aggiornare la scheda HD di Redlight"
+
+msgid "added ORF ICE p410 Card"
+msgstr "aggiunta scheda ORF ICE p410"
+
+msgid "remove reboot from oscamsmartcard"
+msgstr "rimuovere il riavvio dalla smartcard oscam"
+
+msgid "this info added"
+msgstr "queste informazioni aggiunte"
+
+msgid "added SRG V6 Card"
+msgstr "added SRG V6 Card"
+
+msgid "added CI+"
+msgstr "added CI+"
+
+msgid "added default Reader 357 Mhz"
+msgstr "aggiunto il Reader predefinito 357 Mhz"
+
+msgid "Error command '%s'"
+msgstr "Comando di errore '%s'"
+
+msgid "partition(s)"
+msgstr "partizione(s)"
+
+msgid "add partition"
+msgstr "aggiungi partizione"
+
+msgid "size in %s (max %d %s):"
+msgstr "dimensione in %s (max %d %s):"
+
+msgid "filesystem:"
+msgstr "filesystem:"
+
+msgid "cancel"
+msgstr "Annulla"
+
+msgid "ok"
+msgstr "ok"
+
+msgid "Nr"
+msgstr "Nr"
+
+msgid "Size"
+msgstr "Dimensione"
+
+msgid "add"
+msgstr "Inserisci"
+
+msgid "create partition %s"
+msgstr "creare partizione %s"
+
+msgid "make filesystem '%s' on partition %s (%d %s)"
+msgstr "creare un filesystem '%s' sulla partizione %s (%d %s)"
+
+msgid "delete partition %s"
+msgstr "elimina la partizione %s"
+
+msgid "execute"
+msgstr "eseguire"
+
+msgid "quit"
+msgstr "smettere"
+
+msgid "Please Wait"
+msgstr "Attendere prego"
+
+msgid "Install Tgz"
+msgstr "Installare Tgz"
+
+msgid "UnInstall"
+msgstr "UnInstall"
+
+msgid "Addons"
+msgstr "Addons"
+
+msgid "Format/Partition your Devices and manage Mountpoints"
+msgstr ""
+"Formatta / Partiziona i tuoi dispositivi e gestisci i punti di montaggio"
+
+msgid "Device Manager - Fast Mounted Remove"
+msgstr "Gestione periferiche - Rimuovere rapidamente"
+
+msgid "Quick and safe remove for your mounted devices "
+msgstr "Rimozione rapida e sicura per i dispositivi montatis "
+
+msgid "Run Confirmation"
+msgstr "Esegui conferma"
+
+msgid "Updates Available:"
+msgstr "Aggiornamenti disponibili:"
+
+msgid "feed status"
+msgstr "stato di avanzamento"
+
+msgid ""
+"There are to many update packages !!\n"
+"\n"
+"There is a risk that your %s %s will not\n"
+"boot after online-update, or will show disfunction in running Image.\n"
+"\n"
+"You need to flash new !!\n"
+"\n"
+"Do you want to flash-online ?"
+msgstr ""
+"Ci sono molti pacchetti di aggiornamento !!\n"
+"\n"
+"C'è il rischio che il tuo %s %s non farà\n"
+"l'avvia dopo l'aggiornamento online o mostrerà la disfunzione nell'esecuzione dell'immagine.\n"
+"\n"
+"Devi flashare di nuovo !!\n"
+"\n"
+"Vuoi flash-online ?"
+
+msgid "Wait please while scanning..."
+msgstr "Aspetta per favore durante la scansione..."
+
+msgid "Please select device to use as swapfile location"
+msgstr "Seleziona il dispositivo da utilizzare come posizione del file di scambio"
+
+msgid ""
+"Sorry, no physical devices that supports SWAP attached. Can't create "
+"Swapfile on network or fat32 filesystems"
+msgstr ""
+"Spiacenti, nessun dispositivo fisico che supporta SWAP collegato. Impossibile creare "
+"Swapfile su filesystem di rete o fat32"
+
+msgid "Wait please while creating swapfile..."
+msgstr "Aspetta per favore mentre crei lo swapfile..."
+
+msgid "You have to create a Swap File before to activate the autostart."
+msgstr "Devi creare un file di scambio prima di attivare l'avvio automatico."
+
