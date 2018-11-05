@@ -23,7 +23,7 @@
 
 static const char *crash_emailaddr =
 #ifndef CRASH_EMAILADDR
-	"the Forum at www.droidsat.org";
+	"the Forum at https://droidsat.org/forum/";
 #else
 	CRASH_EMAILADDR;
 #endif
