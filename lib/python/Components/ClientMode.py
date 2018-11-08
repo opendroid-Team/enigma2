@@ -19,7 +19,7 @@ def InitClientMode():
 	config.clientmode.enableSchedule = ConfigYesNo(False)
 	config.clientmode.scheduleRepeatInterval = ConfigSelection(default = "360", choices = [("60", _("Every hour")), ("120", _("Every 2 hours")), ("180", _("Every 3 hours")), ("360", _("Every 6 hours")), ("720", _("Every 12 hours")), ("daily", _("Daily"))])
 	config.clientmode.scheduletime = ConfigClock(default = 0) # 1:00
-	# to reinstate normal mode settings
 	config.clientmode.nim_cache = ConfigText(default = "", fixed_size = False)
 	config.clientmode.remote_fallback_enabled_cache = ConfigYesNo(default = False)
 	config.clientmode.remote_fallback_cache = ConfigText(default = "", fixed_size = False)
+        config.clientmode.timer_sanity_check_enabled_cache = ConfigYesNo(default=True)
