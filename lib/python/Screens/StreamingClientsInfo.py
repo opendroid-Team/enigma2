@@ -10,32 +10,19 @@ import skin
 
 
 class StreamingClientsInfo(Screen):
-	def __init__(self, session, menu_path = ""):
+	def __init__(self, session,):
 		Screen.__init__(self, session)
+                Screen.setTitle(self, _("Streaming clients info"))
 		self.timer = eTimer()
-		screentitle = _("Streaming clients info")
-		menu_path += screentitle
-		if config.usage.show_menupath.value == 'large':
-			title = menu_path
-			self["menu_path_compressed"] = StaticText("")
-		elif config.usage.show_menupath.value == 'small':
-			title = screentitle
-			self["menu_path_compressed"] = StaticText(menu_path + " >" if not menu_path.endswith(' / ') else menu_path[:-3] + " >" or "")
-		else:
-			title = screentitle
-			self["menu_path_compressed"] = StaticText("")
-		Screen.setTitle(self, title)
-
 		self["ScrollLabel"] = ScrollLabel()
-
 		self["key_red"] = Button(_("Close"))
-		self["key_blue"] = Button()
+		self["key_green"] = StaticText()
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
 			{
 				"cancel": self.exit,
 				"ok": self.exit,
 				"red": self.exit,
-				"blue": self.stopStreams,
+				"green": self.stopStreams,
 				"up": self["ScrollLabel"].pageUp,
 				"down": self["ScrollLabel"].pageDown
 			})
@@ -60,7 +47,7 @@ class StreamingClientsInfo(Screen):
 		clients = ClientsStreaming("INFO_RESOLVE")
 		text = clients.getText()
 		self["ScrollLabel"].setText(text or _("No clients streaming"))
-		self["key_blue"].setText(text and _("Stop Streams") or "")
+		self["key_green"].setText(text and _("Stop Streams") or "")
 		self.timer.startLongTimer(5)
 
 	def stopStreams(self):

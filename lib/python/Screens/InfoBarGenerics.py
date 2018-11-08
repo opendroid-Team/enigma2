@@ -2533,31 +2533,30 @@ class InfoBarSeek:
 	def okButton(self):
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			return 0
-		elif self.seekstate == self.SEEK_STATE_PAUSE:
+		if self.seekstate == self.SEEK_STATE_PAUSE:
 			self.pauseService()
 		else:
 			self.unPauseService()
 
 	def playpauseService(self):
-		if self.seekAction <> 0:
+		global seek_withjumps_muted
+		if self.seekAction != 0:
 			self.seekAction = 0
 			self.doPause(False)
-			global seek_withjumps_muted
 			seek_withjumps_muted = False
 			return
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			self.pauseService()
-		else:
-			if self.seekstate == self.SEEK_STATE_PAUSE:
-				if config.seek.on_pause.value == "play":
-					self.unPauseService()
-				elif config.seek.on_pause.value == "step":
-					self.doSeekRelative(1)
-				elif config.seek.on_pause.value == "last":
-					self.setSeekState(self.lastseekstate)
-					self.lastseekstate = self.SEEK_STATE_PLAY
-			else:
+		elif self.seekstate == self.SEEK_STATE_PAUSE:
+			if config.seek.on_pause.value == 'play':
 				self.unPauseService()
+			elif config.seek.on_pause.value == 'step':
+				self.doSeekRelative(1)
+			elif config.seek.on_pause.value == 'last':
+				self.setSeekState(self.lastseekstate)
+				self.lastseekstate = self.SEEK_STATE_PLAY
+		else:
+			self.unPauseService()
 
 	def pauseService(self):
 		if self.seekstate != self.SEEK_STATE_EOF:
@@ -2573,27 +2572,26 @@ class InfoBarSeek:
 
 	def unPauseService(self):
 		if self.seekstate == self.SEEK_STATE_PLAY:
-			if self.seekAction <> 0: self.playpauseService()
+			if self.seekAction != 0:
+				self.playpauseService()
 			return
 		self.doPause(False)
 		self.setSeekState(self.SEEK_STATE_PLAY)
-		if config.usage.show_infobar_on_skip.value and not config.usage.show_infobar_locked_on_pause.value:
-			self.showAfterSeek()
-		self.skipToggleShow = True # skip 'break' action (toggleShow) after 'make' action (unPauseService)
 
 	def doPause(self, pause):
 		if pause:
 			if not eDVBVolumecontrol.getInstance().isMuted():
 				eDVBVolumecontrol.getInstance().volumeMute()
-		else:
-			if eDVBVolumecontrol.getInstance().isMuted():
-				eDVBVolumecontrol.getInstance().volumeUnMute()
+		elif eDVBVolumecontrol.getInstance().isMuted():
+			eDVBVolumecontrol.getInstance().volumeUnMute()
 
 	def doSeek(self, pts):
 		seekable = self.getSeek()
 		if seekable is None:
 			return
-		seekable.seekTo(pts)
+		else:
+			seekable.seekTo(pts)
+			return
 
 	def doSeekRelativeAvoidStall(self, pts):
 		global jump_pts_adder
@@ -2625,9 +2623,8 @@ class InfoBarSeek:
 						return
 					if position + pts >= length:
 						InfoBarTimeshift.evEOF(self, position + pts - length)
-						self.showAfterSeek()
 						return
-					elif position + pts < 0:
+					if position + pts < 0:
 						InfoBarTimeshift.evSOF(self, position + pts)
 						self.showAfterSeek()
 						return
@@ -2638,18 +2635,27 @@ class InfoBarSeek:
 		seekable = self.getSeek()
 		if seekable is None or int(seekable.getLength()[1]) < 1:
 			return
-		prevstate = self.seekstate
-
-		if self.seekstate == self.SEEK_STATE_EOF:
-			if prevstate == self.SEEK_STATE_PAUSE:
-				self.setSeekState(self.SEEK_STATE_PAUSE)
-			else:
+		else:
+			prevstate = self.seekstate
+			setpause = getMachineBuild() in ('hd51','vs1500') and 1 # 0/1 enable workaround for some boxes these in pause mode not seek to new position
+			if self.seekstate == self.SEEK_STATE_EOF:
+				if prevstate == self.SEEK_STATE_PAUSE:
+					self.setSeekState(self.SEEK_STATE_PAUSE)
+				else:
+					self.setSeekState(self.SEEK_STATE_PLAY)
+			elif setpause and self.seekstate == self.SEEK_STATE_PAUSE:
+				print '[InfoBarGenerics] workaround jump in pause mode'
+				setpause = 2
 				self.setSeekState(self.SEEK_STATE_PLAY)
-		seekable.seekRelative(pts<0 and -1 or 1, abs(pts))
-		if (abs(pts) > 100 or not config.usage.show_infobar_locked_on_pause.value) and config.usage.show_infobar_on_skip.value:
-			self.showAfterSeek()
+			seekable.seekRelative(pts < 0 and -1 or 1, abs(pts))
+			if setpause == 2:
+				self.setSeekState(self.SEEK_STATE_PAUSE)
+			if abs(pts) > 100 and config.usage.show_infobar_on_skip.value:
+				self.showAfterSeek()
+			return
 
 	def DoSeekAction(self):
+		global seek_withjumps_muted
 		if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
 			self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_forwards_ms.getValue()) * 90)
 		elif self.seekAction < 0:
@@ -2663,7 +2669,6 @@ class InfoBarSeek:
 		if self.seekAction == 0:
 			self.LastseekAction = False
 			self.doPause(False)
-			global seek_withjumps_muted
 			seek_withjumps_muted = False
 			self.setSeekState(self.SEEK_STATE_PLAY)
 
@@ -2689,9 +2694,9 @@ class InfoBarSeek:
 			self.seekBack_old()
 
 	def seekFwd_new(self):
+		global seek_withjumps_muted
 		self.LastseekAction = True
 		self.doPause(True)
-		global seek_withjumps_muted
 		seek_withjumps_muted = True
 		if self.seekAction >= 0:
 			self.seekAction = self.getHigher(abs(self.seekAction), config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
@@ -2805,22 +2810,6 @@ class InfoBarSeek:
 		if not config.seek.baractivation.value == "leftright":
 			self.session.open(Seekbar, fwd)
 		else:
-			self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
-
-	def seekFwdVod(self, fwd=True):
-		seekable = self.getSeek()
-		if seekable is None:
-			return
-		else:
-			if config.seek.baractivation.value == "leftright":
-				self.session.open(Seekbar, fwd)
-			else:
-				self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
-
-	def seekFwdSeekbar(self, fwd=True):
-		if not config.seek.baractivation.value == "leftright":
-			self.session.open(Seekbar, fwd)
-		else:
 			self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
 
 	def fwdSeekTo(self, minutes):
@@ -2839,11 +2828,6 @@ class InfoBarSeek:
 		if self.seekstate == self.SEEK_STATE_PLAY or self.seekstate == self.SEEK_STATE_EOF:
 			self.lockedBecauseOfSkipping = False
 			self.unlockShow()
-		elif self.seekstate == self.SEEK_STATE_PAUSE and not config.usage.show_infobar_locked_on_pause.value:
-			if config.usage.show_infobar_on_skip.value:
-				self.lockedBecauseOfSkipping = False
-				self.unlockShow()
-				self.showAfterSeek()
 		else:
 			wantlock = self.seekstate != self.SEEK_STATE_PLAY
 			if config.usage.show_infobar_on_skip.value:
@@ -2870,33 +2854,32 @@ class InfoBarSeek:
 			if not len[0] and not pos[0]:
 				if len[1] <= pos[1]:
 					return 0
-				time = (len[1] - pos[1])*speedden/(90*speednom)
+				time = (len[1] - pos[1]) * speedden / (90 * speednom)
 				return time
 		return False
 
 	def __evEOF(self):
+		global seek_withjumps_muted
 		if self.seekstate == self.SEEK_STATE_EOF:
 			return
-
-		global seek_withjumps_muted
-		if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
-			print "STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute"
-			seek_withjumps_muted = False
-			eDVBVolumecontrol.getInstance().volumeUnMute()
-
-		seekstate = self.seekstate
-		if self.seekstate != self.SEEK_STATE_PAUSE:
-			self.setSeekState(self.SEEK_STATE_EOF)
-
-		if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE): # if we are seeking
-			seekable = self.getSeek()
-			if seekable is not None:
-				seekable.seekTo(-1)
-				self.doEofInternal(True)
-		if seekstate == self.SEEK_STATE_PLAY: # regular EOF
-			self.doEofInternal(True)
 		else:
-			self.doEofInternal(False)
+			if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
+				print 'STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute'
+				seek_withjumps_muted = False
+				eDVBVolumecontrol.getInstance().volumeUnMute()
+			seekstate = self.seekstate
+			if self.seekstate != self.SEEK_STATE_PAUSE:
+				self.setSeekState(self.SEEK_STATE_EOF)
+			if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
+				seekable = self.getSeek()
+				if seekable is not None:
+					seekable.seekTo(-1)
+					self.doEofInternal(True)
+			if seekstate == self.SEEK_STATE_PLAY:
+				self.doEofInternal(True)
+			else:
+				self.doEofInternal(False)
+			return
 
 	def doEofInternal(self, playing):
 		pass
