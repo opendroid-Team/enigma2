@@ -1600,14 +1600,9 @@ class InfoBarMenu:
 		self.session.infobar = None
 
 	def mainMenu(self):
-		# print "loading mainmenu XML..."
 		menu = mdom.getroot()
 		assert menu.tag == "menu", "root element in menu must be 'menu'!"
-
 		self.session.infobar = self
-		# so we can access the currently active infobar from screens opened from within the mainmenu
-		# at the moment used from the SubserviceSelection
-
 		self.session.openWithCallback(self.mainMenuClosed, MainMenu, menu)
 
 	def mainMenuClosed(self, *val):
@@ -2292,19 +2287,19 @@ class InfoBarSeek:
 				HelpableActionMap.__init__(self, screen, *args, **kwargs)
 				self.screen = screen
 
-			def action(self, contexts, action):
-				if action[:5] == "seek:":
-					time = int(action[5:])
-					self.screen.doSeekRelative(time * 90000)
-					return 1
-				elif action[:8] == "seekdef:":
-					key = int(action[8:])
-					time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
-						-config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
-						-config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key-1]
-					self.screen.doSeekRelative(time * 90000)
-					return 1
-				else:
+                        def action(self, contexts, action):
+                                if action[:5] == "seek:":
+                                        time = int(action[5:])
+                                        self.screen.doSeekRelative(time * 90000)
+                                        return 1
+                                else:
+                                        if action[:8] == "seekdef:":
+                                                key = int(action[8:])
+                                                time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
+                                -config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
+                         -config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key - 1]
+                                                self.screen.doSeekRelative(time * 90000)
+                                                return 1
 					return HelpableActionMap.action(self, contexts, action)
 
 		self["SeekActions"] = InfoBarSeekActionMap(self, actionmap,
@@ -2314,12 +2309,10 @@ class InfoBarSeek:
 				"pauseServiceYellow": (self.pauseServiceYellow, _("Pause playback")),
 				"unPauseService": (self.unPauseService, _("Continue playback")),
 				"okButton": (self.okButton, _("Continue playback")),
-
 				"seekFwd": (self.seekFwd, _("Seek forward")),
 				"seekFwdManual": (self.seekFwdManual, _("Seek forward (enter time)")),
 				"seekBack": (self.seekBack, _("Seek backward")),
 				"seekBackManual": (self.seekBackManual, _("Seek backward (enter time)")),
-
 				"SeekbarFwd": self.seekFwdSeekbar,
 				"SeekbarBack": self.seekBackSeekbar
 			}, prio=-1)
@@ -2572,18 +2565,21 @@ class InfoBarSeek:
 
 	def unPauseService(self):
 		if self.seekstate == self.SEEK_STATE_PLAY:
-			if self.seekAction != 0:
-				self.playpauseService()
+			if self.seekAction <> 0: self.playpauseService()
 			return
 		self.doPause(False)
 		self.setSeekState(self.SEEK_STATE_PLAY)
+		if config.usage.show_infobar_on_skip.value and not config.usage.show_infobar_locked_on_pause.value:
+			self.showAfterSeek()
+		self.skipToggleShow = True
 
 	def doPause(self, pause):
 		if pause:
 			if not eDVBVolumecontrol.getInstance().isMuted():
 				eDVBVolumecontrol.getInstance().volumeMute()
-		elif eDVBVolumecontrol.getInstance().isMuted():
-			eDVBVolumecontrol.getInstance().volumeUnMute()
+		else:
+			if eDVBVolumecontrol.getInstance().isMuted():
+				eDVBVolumecontrol.getInstance().volumeUnMute()
 
 	def doSeek(self, pts):
 		seekable = self.getSeek()
@@ -2623,8 +2619,9 @@ class InfoBarSeek:
 						return
 					if position + pts >= length:
 						InfoBarTimeshift.evEOF(self, position + pts - length)
+						self.showAfterSeek()
 						return
-					if position + pts < 0:
+					elif position + pts < 0:
 						InfoBarTimeshift.evSOF(self, position + pts)
 						self.showAfterSeek()
 						return
@@ -2650,12 +2647,11 @@ class InfoBarSeek:
 			seekable.seekRelative(pts < 0 and -1 or 1, abs(pts))
 			if setpause == 2:
 				self.setSeekState(self.SEEK_STATE_PAUSE)
-			if abs(pts) > 100 and config.usage.show_infobar_on_skip.value:
+			if (abs(pts) > 100 or not config.usage.show_infobar_locked_on_pause.value) and config.usage.show_infobar_on_skip.value:
 				self.showAfterSeek()
 			return
 
 	def DoSeekAction(self):
-		global seek_withjumps_muted
 		if self.seekAction > int(config.seek.withjumps_after_ff_speed.getValue()):
 			self.doSeekRelativeAvoidStall(self.seekAction * long(config.seek.withjumps_forwards_ms.getValue()) * 90)
 		elif self.seekAction < 0:
@@ -2669,6 +2665,7 @@ class InfoBarSeek:
 		if self.seekAction == 0:
 			self.LastseekAction = False
 			self.doPause(False)
+			global seek_withjumps_muted
 			seek_withjumps_muted = False
 			self.setSeekState(self.SEEK_STATE_PLAY)
 
@@ -2694,9 +2691,9 @@ class InfoBarSeek:
 			self.seekBack_old()
 
 	def seekFwd_new(self):
-		global seek_withjumps_muted
 		self.LastseekAction = True
 		self.doPause(True)
+		global seek_withjumps_muted
 		seek_withjumps_muted = True
 		if self.seekAction >= 0:
 			self.seekAction = self.getHigher(abs(self.seekAction), config.seek.speeds_forward.value) or config.seek.speeds_forward.value[-1]
@@ -2828,6 +2825,11 @@ class InfoBarSeek:
 		if self.seekstate == self.SEEK_STATE_PLAY or self.seekstate == self.SEEK_STATE_EOF:
 			self.lockedBecauseOfSkipping = False
 			self.unlockShow()
+		elif self.seekstate == self.SEEK_STATE_PAUSE and not config.usage.show_infobar_locked_on_pause.value:
+			if config.usage.show_infobar_on_skip.value:
+				self.lockedBecauseOfSkipping = False
+				self.unlockShow()
+				self.showAfterSeek()
 		else:
 			wantlock = self.seekstate != self.SEEK_STATE_PLAY
 			if config.usage.show_infobar_on_skip.value:
@@ -2854,17 +2856,17 @@ class InfoBarSeek:
 			if not len[0] and not pos[0]:
 				if len[1] <= pos[1]:
 					return 0
-				time = (len[1] - pos[1]) * speedden / (90 * speednom)
+				time = (len[1] - pos[1])*speedden/(90*speednom)
 				return time
 		return False
 
 	def __evEOF(self):
-		global seek_withjumps_muted
 		if self.seekstate == self.SEEK_STATE_EOF:
 			return
 		else:
+			global seek_withjumps_muted
 			if seek_withjumps_muted and eDVBVolumecontrol.getInstance().isMuted():
-				print 'STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute'
+				print "STILL MUTED AFTER FFWD/FBACK !!!!!!!! so we unMute"
 				seek_withjumps_muted = False
 				eDVBVolumecontrol.getInstance().volumeUnMute()
 			seekstate = self.seekstate
@@ -2907,6 +2909,8 @@ class InfoBarPVRState:
 			self["statusicon"].setPixmapNum(6)
 			self["speed"].setText("")
 		if self.shown and self.seekstate != self.SEEK_STATE_EOF and not config.usage.movieplayer_pvrstate.value:
+			self.DimmingTimer.stop()
+			self.doWriteAlpha(config.av.osd_alpha.value)
 			self.pvrStateDialog.show()
 			self.startHideTimer()
 
@@ -3018,8 +3022,8 @@ class InfoBarTimeshiftState(InfoBarPVRState):
 		if self.session.nav.getCurrentlyPlayingServiceReference():
 			name = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
 			url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
-		if self.timeshiftEnabled() and os.path.exists("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value, self.pts_currplaying)):
-			readmetafile = open("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value, self.pts_currplaying), "r")
+		if self.timeshiftEnabled() and os.path.exists("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value,self.pts_currplaying)):
+			readmetafile = open("%spts_livebuffer_%s.meta" % (config.usage.timeshift_path.value,self.pts_currplaying), "r")
 			servicerefname = readmetafile.readline()[0:-1]
 			eventname = readmetafile.readline()[0:-1]
 			readmetafile.close()
@@ -3812,10 +3816,9 @@ class InfoBarInstantRecord:
 	def setEndtime(self, entry):
 		if entry is not None and entry >= 0:
 			self.selectedEntry = entry
-			self.endtime = ConfigClock(default=self.recording[self.selectedEntry].end)
+			self.endtime=ConfigClock(default = self.recording[self.selectedEntry].end)
 			dlg = self.session.openWithCallback(self.TimeDateInputClosed, TimeDateInput, self.endtime)
-			dlg.setTitle(_('Please change the recording end time'))
-		return
+			dlg.setTitle(_("Please change recording endtime"))
 
 	def TimeDateInputClosed(self, ret):
 		if len(ret) > 1:

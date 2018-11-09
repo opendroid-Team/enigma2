@@ -207,7 +207,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 		if res is not None:
 			import os.path
 			import Components.Harddisk
-			supported_filesystems = frozenset(('ext4', 'ext3', 'ext2', 'nfs', 'cifs'))
+			supported_filesystems = frozenset(('ext4', 'ext3', 'ext2', 'nfs', 'cifs', 'fuseblk'))
 			candidates = []
 			mounts = Components.Harddisk.getProcMounts()
 			for partition in Components.Harddisk.harddiskmanager.getMountedPartitions(False, mounts):
@@ -258,7 +258,7 @@ class TimeshiftSettings(Screen,ConfigListScreen):
 	def keySave(self):
 		import os.path
 		import Components.Harddisk
-		supported_filesystems = frozenset(('ext4', 'ext3', 'ext2', 'nfs', 'cifs'))
+		supported_filesystems = frozenset(('ext4', 'ext3', 'ext2', 'nfs', 'cifs', 'fuseblk'))
 		candidates = []
 		mounts = Components.Harddisk.getProcMounts()
 		for partition in Components.Harddisk.harddiskmanager.getMountedPartitions(False, mounts):
