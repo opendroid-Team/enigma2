@@ -89,7 +89,6 @@ if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/CoolTVGuide/plugin.pyo
 else:
 	COOLTVGUIDE = False
 
-maxint = 2147483647
 def isStandardInfoBar(self):
 	return self.__class__.__name__ == "InfoBar"
 
