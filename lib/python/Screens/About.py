@@ -31,6 +31,7 @@ import skin, os
 import time
 from os import path, popen
 from re import search
+
 def parse_ipv4(ip):
 	ret = ""
 	idx = 0
@@ -43,6 +44,25 @@ def parse_ipv4(ip):
 			idx += 1
 	return ret
 
+def parseFile(filename):
+	ret = "N/A"
+	try:
+		f = open(filename, "rb")
+		ret = f.read().strip()
+		f.close()
+	except IOError:
+		print "[ERROR] failed to open file %s" % filename
+	return ret
+
+def parseLines(filename):
+	ret = ["N/A"]
+	try:
+		f = open(filename, "rb")
+		ret = f.readlines()
+		f.close()
+	except IOError:
+		print "[ERROR] failed to open file %s" % filename
+	return ret
 
 class About(Screen):
 	def __init__(self, session):
@@ -213,7 +233,8 @@ class About(Screen):
 			if bootname: bootname = "   (%s)" %bootname 
 			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 
-		AboutText += _("Version:\t%s") % getImageVersion() + "\n"
+		AboutText += _("Version:\t\t%s") % getImageVersion() + "\n"
+		self.image_version = _("Image") + ": " + about.getImageVersionString()
 		AboutText += _("Build:\t%s") % getImageBuild() + "\n"
 		AboutText += _("Kernel:\t%s") % about.getKernelVersionString() + "\n"
 	
@@ -301,6 +322,7 @@ class About(Screen):
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
+		AboutText += "\n"
 		hddlist = harddiskmanager.HDDList()
 		hdd = hddlist and hddlist[0][1] or None
 		if hdd is not None and hdd.model() != "":
@@ -335,7 +357,8 @@ class About(Screen):
 				for x in self.hdd_list:
 					AboutText += "   " + x
 				AboutText += "\n"
-				AboutText = getAboutText()[0]
+				self["FullAbout"] = ScrollLabel(AboutText)
+#				AboutText = getAboutText()[0]
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
@@ -1095,8 +1118,12 @@ class ViewGitLog(Screen):
 		except:
 			print "there is a problem with reading log file"
 		try:
-			self['title_summary'].setText(summarytext[0] + ':')
-			self['text_summary'].setText(summarytext[1])
+			if self.logtype == 'e2':
+				self['title_summary'].setText(_("E2 Log"))
+				self['text_summary'].setText(_("Enigma2 Changes"))
+			else:
+				self['title_summary'].setText(_("OE Log"))
+				self['text_summary'].setText(_("OE Changes"))
 		except:
 			self['title_summary'].setText("")
 			self['text_summary'].setText("")
