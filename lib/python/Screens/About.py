@@ -477,6 +477,10 @@ class ModelPic(Screen):
 			model = "zgemmah9splus.png"
 		elif getBoxType() in ('zgemmah9t'):
 			model = "zgemmah9t.png"
+		elif getBoxType() in ('zgemmah92h'):
+			model = "zgemmah92h.png"
+		elif getBoxType() in ('zgemmah92s'):
+			model = "zgemmah92s.png"
 		elif getBoxType() in ('zgemmahs'):
 			model = "zgemmahs.png"
 		elif getBoxType() in ('zgemmai55'):
@@ -559,6 +563,8 @@ class ModelPic(Screen):
 			model = "atemionemesis.png"
 		elif getBoxType() in ('mutant51'):
 			model = "mutant51.png"
+		elif getBoxType() in ('osmio4k'):
+			model = "osmio4k.png"
 		elif getBoxType() in ('osmega'):
 			model = "osmega.png"
 		elif getBoxType() in ('osmini'):
