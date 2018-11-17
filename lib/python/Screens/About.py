@@ -587,6 +587,8 @@ class ModelPic(Screen):
 			model = "atemionemesis.png"
 		elif getBoxType() in ('mutant51'):
 			model = "mutant51.png"
+		elif getBoxType() in ('osmio4k'):
+			model = "osmio4k.png"
 		elif getBoxType() in ('osmega'):
 			model = "osmega.png"
 		elif getBoxType() in ('osmini'):
