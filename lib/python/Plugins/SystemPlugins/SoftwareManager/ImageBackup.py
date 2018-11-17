@@ -24,7 +24,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 from Components.Button import Button
 VERSION = "Version 6.7 openDROID"
 HaveGZkernel = True
-if getMachineBuild() in ('osmio4k','sf8008','u51','u52','u53','h9','vuzero4k','u5','u5pvr','sf5008','et13000','et1x000',"vuuno4k","vuuno4kse", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s','i55plus'):
+if getMachineBuild() in ('osmio4k','sf8008','u51','u52','u53','h9','h9combo','vuzero4k','u5','u5pvr','sf5008','et13000','et1x000',"vuuno4k","vuuno4kse", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s','i55plus'):
 	HaveGZkernel = False
 
 def Freespace(dev):
