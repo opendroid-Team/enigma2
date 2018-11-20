@@ -18,6 +18,7 @@ class InstallWizard(Screen, ConfigListScreen):
 	STATE_UPDATE = 0
 	STATE_CHOISE_CHANNELLIST = 1
 	INSTALL_PLUGINS = 2
+	INSTALL_SKINS = 3
 
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
@@ -38,7 +39,7 @@ class InstallWizard(Screen, ConfigListScreen):
 					if iNetwork.getAdapterAttribute(x[1], 'up'):
 						self.ipConfigEntry = ConfigIP(default = iNetwork.getAdapterAttribute(x[1], "ip"))
 						iNetwork.checkNetworkState(self.checkNetworkCB)
-						if_found = True
+						is_found = True
 					else:
 						iNetwork.restartNetwork(self.checkNetworkLinkCB)
 					break
@@ -50,6 +51,9 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.channellist_type = ConfigSelection(choices = modes, default = "opendroid")
 			self.createMenu()
 		elif self.index == self.INSTALL_PLUGINS:
+			self.enabled = ConfigYesNo(default = True)
+			self.createMenu()
+		elif self.index == self.INSTALL_SKINS:
 			self.enabled = ConfigYesNo(default = True)
 			self.createMenu()
 
@@ -81,6 +85,8 @@ class InstallWizard(Screen, ConfigListScreen):
 				self.list.append(getConfigListEntry(_("Channel list type"), self.channellist_type))
 		elif self.index == self.INSTALL_PLUGINS:
 			self.list.append(getConfigListEntry(_("Do you want to install plugins"), self.enabled))
+		elif self.index == self.INSTALL_SKINS:
+			self.list.append(getConfigListEntry(_("Do you want to change the default skin"), self.enabled))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -97,26 +103,21 @@ class InstallWizard(Screen, ConfigListScreen):
 		self.createMenu()
 
 	def run(self):
-		if self.index == self.STATE_UPDATE and config.misc.installwizard.hasnetwork.value:
-			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), IpkgComponent.CMD_UPDATE)
+		if self.index == self.STATE_UPDATE:
+			if config.misc.installwizard.hasnetwork.value:
+				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), IpkgComponent.CMD_UPDATE)
 		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value:
-			if self.channellist_type.value == "opendroid":
-				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-henksat-' + self.channellist_type.value})
-			else:
-				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-hans-' + self.channellist_type.value})
+			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
 		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
 			from PluginBrowser import PluginDownloadBrowser
 			self.session.open(PluginDownloadBrowser, 0)
+		elif self.index == self.INSTALL_SKINS and self.enabled.value:
+			from SkinSelector import SkinSelector
+			self.session.open(SkinSelector)
 		return
 
-
 class InstallWizardIpkgUpdater(Screen):
-	skin = """
-	<screen position="c-300,c-25" size="600,50" title=" ">
-		<widget source="statusbar" render="Label" position="10,5" zPosition="10" size="e-10,30" halign="center" valign="center" font="Regular;22" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
-	</screen>"""
 	def __init__(self, session, index, info, cmd, pkg = None):
-		self.skin = InstallWizardIpkgUpdater.skin
 		Screen.__init__(self, session)
 
 		self["statusbar"] = StaticText(info)
