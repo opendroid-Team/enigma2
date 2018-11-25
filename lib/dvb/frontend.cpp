@@ -2188,8 +2188,7 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 					{
 						dvb_frontend_event event;
 						int res;
-#if HAVE_ALIEN5
-						usleep(20000);
+#if HAVE_AMLOGIC
 						if((res = ::ioctl(m_fd, FE_READ_STATUS, &event.status)) != 0)
 						{
 							break;
