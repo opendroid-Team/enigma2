@@ -987,6 +987,23 @@ class NimManager:
 		self.transpondersatsc = { }
 		db = eDVBDB.getInstance()
 
+		try:
+			for slot in self.nim_slots:
+				if slot.frontend_id is not None:
+					types = [type for type in ["DVB-C", "DVB-T", "DVB-T2", "DVB-S", "DVB-S2", "ATSC"] if eDVBResourceManager.getInstance().frontendIsCompatible(slot.frontend_id, type)]
+					if "DVB-T2" in types:
+						# DVB-T2 implies DVB-T support
+						types.remove("DVB-T")
+					if "DVB-S2" in types:
+						# DVB-S2 implies DVB-S support
+						types.remove("DVB-S")
+					if len(types) > 1:
+						slot.multi_type = {}
+						for type in types:
+							slot.multi_type[str(types.index(type))] = type
+		except:
+			pass
+
 		if self.hasNimType("DVB-S"):
 			print "Reading satellites.xml"
 			if db.readSatellites(self.satList, self.satellites, self.transponders):
@@ -1927,7 +1944,7 @@ def InitNimManager(nimmgr, update_slots = []):
 				txt = _("Misconfigured unicable connection from tuner %s to tuner %s!\nTuner %s option \"connected to\" are disabled now") % (chr(int(x) + ord('A')), chr(int(nim.advanced.unicableconnectedTo.saved_value) + ord('A')), chr(int(x) + ord('A')),)
 				AddPopup(txt, type = MessageBox.TYPE_ERROR, timeout = 0, id = "UnicableConnectionFailed")
 
-			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)")),("reliable_retune", _("reliable, retune")),("traditional_retune", _("traditional (fast), retune"))], default="reliable")
+			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)")),("reliable_retune", _("reliable, retune")),("traditional_retune", _("traditional (fast), retune"))], default="reliable_retune")
 
 	def configDiSEqCModeChanged(configElement):
 		section = configElement.section
@@ -2096,10 +2113,8 @@ def InitNimManager(nimmgr, update_slots = []):
 		except:
 			list = [(x[0], x[0]) for x in nimmgr.cablesList]
 			nim.scan_networkid = ConfigInteger(default = 0, limits = (0, 99999))
-			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps"))]
-			if list:
-				possible_scan_types.append(("provider", _("Provider")))
-				nim.scan_provider = ConfigSelection(default = "0", choices = list)
+			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps")), ("provider", _("Provider"))]
+			nim.scan_provider = ConfigSelection(default = "0", choices = list)
 			nim.scan_type = ConfigSelection(default = "provider", choices = possible_scan_types)
 			nim.scan_band_EU_VHF_I = ConfigYesNo(default = True)
 			nim.scan_band_EU_MID = ConfigYesNo(default = True)

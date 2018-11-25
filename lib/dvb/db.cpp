@@ -92,7 +92,7 @@ RESULT eBouquet::removeService(const eServiceReference &ref, bool renameBouquet)
 
 RESULT eBouquet::moveService(const eServiceReference &ref, unsigned int pos)
 {
-	if ( pos < 0 || pos >= m_services.size() )
+	if (pos >= m_services.size())
 		return -1;
 	++pos;
 	list::iterator source=m_services.end();
@@ -1567,6 +1567,7 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 					else if (name == "inversion") dest = &inversion;
 					else if (name == "system") dest = &system;
 					else continue;
+
 					if (dest)
 					{
 						tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
