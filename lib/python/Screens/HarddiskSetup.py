@@ -9,7 +9,6 @@ from Screens.MessageBox import MessageBox
 from Tools.BoundFunction import boundFunction
 import Screens.InfoBar
 
-
 class HarddiskSetup(Screen):
 	def __init__(self, session, hdd, action, text, question):
 		self.setTitle(_("Setup Harddisk"))
@@ -20,8 +19,8 @@ class HarddiskSetup(Screen):
 		self["model"] = Label(_("Model: ") + hdd.model())
 		self["capacity"] = Label(_("Capacity: ") + hdd.capacity())
 		self["bus"] = Label(_("Bus: ") + hdd.bus())
-		self["initialize"] = Pixmap()
-		self["initializetext"] = Label(text)
+		self["key_red"] = Label(_("Cancel"))
+		self["key_green"] = Label(text)
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"ok": self.hddQuestion,
@@ -29,7 +28,8 @@ class HarddiskSetup(Screen):
 		})
 		self["shortcuts"] = ActionMap(["ShortcutActions"],
 		{
-			"red": self.hddQuestion
+			"red": self.close,
+			"green": self.hddQuestion
 		})
 
 	def hddQuestion(self, answer=False):
@@ -84,7 +84,7 @@ class HarddiskSelection(Screen):
 			self["hddlist"] = MenuList(tlist)
 		else:
 			self["hddlist"] = MenuList(harddiskmanager.HDDList())
-
+		self["key_red"] = Label(_("Cancel"))
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"ok": self.okbuttonClick,
