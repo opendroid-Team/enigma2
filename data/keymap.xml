@@ -247,49 +247,30 @@
 		<key id="KEY_F5" mapto="openTimerList" flags="b" />
 		<key id="KEY_TIME" mapto="openTimerList" flags="b" />
 		<key id="KEY_PROGRAM" mapto="openAutoTimerList" flags="l" />
+		<key id="KEY_CALENDAR" mapto="openAutoTimerList" flags="b" />
 		<key id="KEY_SEARCH" mapto="openEPGSearch" flags="b" />
 		<key id="KEY_SEARCH" mapto="openIMDB" flags="l" />
 		<key id="KEY_SLEEP" mapto="openSleepTimer" flags="b" />
+		<key id="KEY_SLEEP" mapto="openPowerTimerList" flags="l" />
 		<key id="KEY_ZOOM" mapto="ZoomInOut" flags="b" />
 		<key id="KEY_ZOOM" mapto="ZoomOff" flags="l" />
 		<key id="KEY_CONNECT" mapto="HarddiskSetup" flags="b" />
 		<key id="KEY_WWW" mapto="showWWW" flags="b" />
 		<key id="KEY_SETUP" mapto="showSetup" flags="m" />
+		<key id="KEY_QUESTION" mapto="showInformation" flags="m" />
 		<key id="KEY_DIRECTORY" mapto="showPluginBrowser" flags="b" />
 		<key id="KEY_PVR" mapto="showMovies" flags="b" />
 		<key id="KEY_PROG1" mapto="HarddiskSetup" flags="b" />
 		<key id="KEY_OPEN" mapto="showMovies" flags="b" />
 		<key id="KEY_F1" mapto="showWWW" flags="b" />
 		<key id="KEY_F2" mapto="showMC" flags="b" />
+		<key id="KEY_F6" mapto="showBoxPortal" flags="b" />
 	</map>
 
 	<map context="InfobarAudioSelectionActions">
-		<device name="dreambox advanced remote control (native)">
-		<key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>
-		<device name="dreambox remote control (native)">
-		<key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>
-		<device name="gigablue remote control">
-    <key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-    <key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>
-		<device name="OPTIMUSS OS2+ remote control (native)">
-		<key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>
-		<device name="OPTIMUSS OS1+ remote control (native)">
-		<key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>
-		<device name="remote control">
-		<key id="KEY_AUDIO" mapto="audioSelection" flags="b"/>
-		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l"/>
-		</device>		
-		<key id="KEY_AUDIO" mapto="audio_key" flags="l" />
-		<key id="KEY_OPTION" mapto="audioSelection" flags="m" />
+		<key id="KEY_AUDIO" mapto="audioSelection" flags="b" />
+		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l" />
+		<key id="KEY_OPTION" mapto="audioSelection" flags="b" />
 	</map>
 
 	<map context="InfobarAspectSelectionActions">
@@ -311,15 +292,12 @@
 	</map>
 
 	<map context="InfobarTimerButtonActions">
-			<key id="KEY_PROGRAM" mapto="timerSelection" flags="m" />
+			<key id="KEY_PROGRAM" mapto="timerSelection" flags="b" />
+			<key id="KEY_CALENDAR" mapto="openAutoTimerList" flags="b" />
 	</map>
 
 	<map context="InfobarVmodeButtonActions">
 			<key id="KEY_VMODE" mapto="vmodeSelection" flags="m" />
-	</map>
-
-	<map context="InfobarTimerButtonActions">
-			<key id="KEY_PROGRAM" mapto="timerSelection" flags="m" />
 	</map>
 
 	<map context="InfobarPiPActions">
@@ -842,10 +820,10 @@
 	</map>
 
 	<map context="PiPSetupActions">
-		<key id="KEY_UP" mapto="up" flags="m" />
-		<key id="KEY_DOWN" mapto="down" flags="m" />
-		<key id="KEY_LEFT" mapto="left" flags="m" />
-		<key id="KEY_RIGHT" mapto="right" flags="m" />
+		<key id="KEY_UP" mapto="up" flags="mr" />
+		<key id="KEY_DOWN" mapto="down" flags="mr" />
+		<key id="KEY_LEFT" mapto="left" flags="mr" />
+		<key id="KEY_RIGHT" mapto="right" flags="mr" />
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
