@@ -36,6 +36,8 @@ class Navigation:
 		self.currentlyPlayingServiceOrGroup = None
 		self.currentlyPlayingService = None
 
+		Screens.Standby.TVstate()
+		self.skipWakeup = False
 		self.RecordTimer = None
 		self.isRecordTimerImageStandard = False
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_RECORDTIMER):
@@ -115,6 +117,8 @@ class Navigation:
 				return
 
 		if hasFakeTime and self.wakeuptime > 0: # check for NTP-time sync, if no sync, wait for transponder time
+			if Screens.Standby.TVinStandby.getTVstandby('waitfortimesync') and not wasTimerWakeup:
+				Screens.Standby.TVinStandby.setTVstate('power')
 			self.savedOldTime = now
 			self.timesynctimer = eTimer()
 			self.timesynctimer.callback.append(self.TimeSynctimer)
@@ -162,9 +166,14 @@ class Navigation:
 				if not self.forcerecord:
 					print "[NAVIGATION] timer starts at %s" % ctime(self.timertime)
 			#check for standby
-			if not self.getstandby and ((self.wakeuptyp < 3 and self.timertime - now > 60 + stbytimer) or (not config.recording.switchTVon.value and self.wakeuptyp == 0)):
+			cec =  ((self.wakeuptyp == 0 and (Screens.Standby.TVinStandby.getTVstandby('zapandrecordtimer'))) or 
+					(self.wakeuptyp == 1 and (Screens.Standby.TVinStandby.getTVstandby('zaptimer'))) or
+					(self.wakeuptyp == 2 and (Screens.Standby.TVinStandby.getTVstandby('wakeuppowertimer'))))
+			if self.getstandby != 1 and ((self.wakeuptyp < 3 and self.timertime - now > 60 + stbytimer) or cec):
 				self.getstandby = 1
-				print "[NAVIGATION] more than 60 seconds to wakeup or not TV turn on - go in standby"
+				txt = ""
+				if cec: txt = "... or special hdmi-cec settings"
+				print "[NAVIGATION] more than 60 seconds to wakeup%s - go in standby now" %txt
 			print "="*100
 			#go in standby
 			if self.getstandby == 1:
@@ -192,7 +201,7 @@ class Navigation:
 			self.getstandby = 0
 
 		#workaround for normal operation if no time sync after e2 start - box is in standby
-		if self.getstandby != 1:
+		if self.getstandby != 1 and not self.skipWakeup:
 			self.gotopower()
 
 	def wasTimerWakeup(self):
@@ -222,6 +231,8 @@ class Navigation:
 		self.wakeupCheck()
 
 	def gotopower(self):
+		if not Screens.Standby.TVinStandby.getTVstate('on'):
+			Screens.Standby.TVinStandby.setTVstate('power')
 		if Screens.Standby.inStandby:
 			print '[NAVIGATION] now entering normal operation'
 			Screens.Standby.inStandby.Power()
@@ -243,10 +254,8 @@ class Navigation:
 	def dispatchRecordEvent(self, rec_service, event):
 #		print "record_event", rec_service, event
 		for x in self.record_event:
-			try:
-				x(rec_service, event)
-			except:
-				pass
+			x(rec_service, event)
+
 
 	def playService(self, ref, checkParentalControl=True, forceRestart=False, adjust=True):
 		oldref = self.currentlyPlayingServiceOrGroup
