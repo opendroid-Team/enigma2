@@ -6,13 +6,13 @@
 <code>
 from OPENDROID.BluePanel import BluePanel
 self.session.open(BluePanel)
-</code>  
+</code>
 		</item>	
 		<item weight="0" level="1" text="Green Panel" entryID="Green Panel">
 <code>
 from OPENDROID.GreenPanel import GreenPanel
 self.session.open(GreenPanel)
-</code>  
+</code>
 		</item>
 	<menu weight="1" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" >
 		<id val="setup" />
@@ -49,14 +49,13 @@ self.session.open(GreenPanel)
 			<item weight="5" level="0" entryID="channelselection_setup"><setup id="channelselection" /></item>
 			<item weight="10" level="0" entryID="usage_setup"><setup id="usage" /></item>
 			<item weight="15" level="0" entryID="remote_setup"><setup id="remotesetup"/></item>
-			<menu weight="20" level="0" text="Front Panel Display" entryID="display_selection" requires="Display">
-				<id val="display" />
-				<item weight="0" level="0" entryID="display_setup"><setup id="display" /></item>
-				
-    <item requires="LCDSKINSetup" level="0" text="VFD Skin Selector" entryID="vfd_skin"><screen module="VfdSkinSelector" screen="VFDSkinSelector"/></item>
-			</menu>
 			<item weight="25" level="0" text="Skin Setup" entryID="skin_setup"><screen module="SkinSelector" screen="SkinSelector"/></item>
-
+			<menu weight="20" level="0" text="Front Panel Display" entryID="display_selection" requires="Display">
+			<id val="display" />
+			<item weight="0" level="0" entryID="display_setup"><setup id="display" /></item>
+			<item weight="5" level="0" text="VFD Skin" entryID="lcd_skin_setup" requires="LCDSKINSetup"><screen module="SkinSelector" screen="LcdSkinSelector"/></item>
+			<item requires="LCDSKINSetup" level="0" text="VFD Skin Default" entryID="vfd_skin"><screen module="VfdSkinSelector" screen="VFDSkinSelector"/></item>
+			</menu>
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
 			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
@@ -164,7 +163,7 @@ self.session.openWithCallback(msgClosed, EpgDeleteMsg)
 <code>
 from OPENDROID.MountManager import UsbFormat
 self.session.open(UsbFormat)
-</code>  
+</code>
 				</item>
 				<item weight="15" level="0" text="Convert ext3 filesystem to ext4" entryID="harddisk_convert" requires="ext4"><screen module="HarddiskSetup" screen="HarddiskConvertExt4Selection"/></item>
 			</menu>
@@ -236,7 +235,7 @@ self.session.open(HdmiCECSetupScreen)
 		<item weight="5" level="0" text="PowerTimers" entryID="powertimer_edit"><screen module="PowerTimerEdit" screen="PowerTimerEditList" /></item>
                 <item weight="20" level="0" text="Sleep Timer" requires="DeepstandbySupport" entryID="sleep"><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
 		<item weight="10" level="0" text="CronTimers" entryID="crontimer_edit"><screen module="CronTimer" screen="CronTimers" /></item>
-	</menu>	
+	</menu>
 	<!-- Menu / VCR -->
 	<item weight="20" level="1" text="VCR scart" entryID="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 	<item weight="10" level="1" text="Plugins" entryID="plugin_selection"><screen module="PluginBrowser" screen="PluginBrowser" /></item>
