@@ -551,6 +551,10 @@ class ModelPic(Screen):
 			model = "dinobot4kplus.png"
 		elif getBoxType() in ('dinobot4kmini'):
 			model = "dinobot4kmini.png"
+		elif getBoxType() in ('dinobot4kse'):
+			model = "dinobot4kse.png"
+		elif getBoxType() in ('dinobot4kpro'):
+			model = "dinobot4kpro.png"
 		elif getBoxType() in ('atemio5x00'):
 			model = "atemio5x00.png"
 		elif getBoxType() in ('atemio6000'):
