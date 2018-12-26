@@ -85,6 +85,8 @@ def getCPUSpeedString():
 		return "1,6 GHz"
 	elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
 		return "1,7 GHz"
+	elif getMachineBuild() in ('vuduo4k'):
+		return "2,1 GHz"
 	elif getMachineBuild() in ('hd51','hd52','sf4008','vs1500','et1x000','h7','et13000','sf5008','osmio4k'):
 		try:
 			import binascii
@@ -118,7 +120,7 @@ def getCPUArch():
 	return _("Mipsel")
 
 def getCPUString():
-	if getMachineBuild() in ('osmio4k','vuuno4kse','vuuno4k', 'vuultimo4k','vusolo4k', 'vuzero4k', 'hd51', 'hd52', 'sf4008', 'dm900','dm920', 'gb7252', 'dags7252', 'vs1500', 'et1x000', 'xc7439','h7','8100s','et13000','sf5008'):
+	if getMachineBuild() in ('vuduo4k','osmio4k','vuuno4kse','vuuno4k', 'vuultimo4k','vusolo4k', 'vuzero4k', 'hd51', 'hd52', 'sf4008', 'dm900','dm920', 'gb7252', 'dags7252', 'vs1500', 'et1x000', 'xc7439','h7','8100s','et13000','sf5008'):
 		return "Broadcom"
 	elif getMachineBuild() in ('u51','u52','u53','u54','u5','u5pvr','h9','h9combo','sf8008','i55plus'):
 		return "Hisilicon"
@@ -149,7 +151,7 @@ def getCpuCoresString():
 			if len(splitted) > 1:
 				splitted[1] = splitted[1].replace('\n','')
 				if splitted[0].startswith("processor"):
-					if getMachineBuild() in ('u51','u52','u53','u54','vuultimo4k','u5','u5pvr','h9','h9combo','sf8008','i55plus'):
+					if getMachineBuild() in ('u51','u52','u53','u54','vuultimo4k','u5','u5pvr','h9','h9combo','sf8008','i55plus','vuduo4k'):
 						cores = 4
 					elif int(splitted[1]) > 0:
 						cores = 2
