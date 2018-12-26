@@ -86,9 +86,9 @@ class DeviceManager(Screen):
             if not parts:
                 continue
             device = parts[3]
-            if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
+            if not search('sd[a-z][1-9]',device) and not search('mmcblk[0-9]p[1-9]',device):
                 continue
-	    if getMachineBuild() in ('h9combo','sf8008','u51','u52','u53','u54','vuzero4k','u5','sf5008','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
+	    if getMachineBuild() in ('h9combo','sf8008','u51','u52','u53','u54','vuzero4k','u5','sf5008','sf8008s','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
 		continue
 	    if getMachineBuild() in ('xc7439','osmio4k') and search('mmcblk1p[1-9]',device):
                 continue
@@ -405,9 +405,9 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
             if not parts:
                 continue
             device = parts[3]
-            if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
+            if not search('sd[a-z][1-9]',device) and not search('mmcblk[0-9]p[1-9]',device):
                 continue
-	    if getMachineBuild() in ('h9combo','sf8008','u51','u52','u53','u54','vuzero4k','u5','sf5008','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
+	    if getMachineBuild() in ('h9combo','sf8008','u51','u52','u53','u54','vuzero4k','u5','sf5008','sf8008s','et13000','et1x000','vuuno4k','vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'dags7252', 'vs1500','h7','8100s') and search('mmcblk0p[1-9]',device):
 		continue
 	    if getMachineBuild() in ('xc7439','osmio4k') and search('mmcblk1p[1-9]',device):
                 continue

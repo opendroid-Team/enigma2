@@ -31,7 +31,6 @@ import skin, os
 import time
 from os import path, popen
 from re import search
-
 def parse_ipv4(ip):
 	ret = ""
 	idx = 0
@@ -135,7 +134,7 @@ class About(Screen):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u51','u5','u53','u54','u52','u5pvr','h9','h9combo','sf8008','i55plus'):
+	        elif getMachineBuild() in ('u51','u5','u53','u54','u52','u5pvr','h9','h9combo','sf8008','sf8008s','i55plus'):
 			cpuMHz = "   (1,6 GHz)"
 		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7','osmio4k'):
 			try:
@@ -189,7 +188,7 @@ class About(Screen):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
 			f.close()
-		if getMachineBuild() in ('cc1','sf8008'):
+		if getMachineBuild() in ('cc1','sf8008','sf8008s'):
 			if path.exists('/boot/STARTUP'):
 				f = open('/boot/STARTUP', 'r')
 				f.seek(5)
@@ -252,7 +251,7 @@ class About(Screen):
 		skinHeight = getDesktop(0).size().height()
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
-		if getMachineBuild() not in ('osmio4k','h9','h9combo','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u54','u51','sf8008','i55plus'):
+		if getMachineBuild() not in ('osmio4k','h9','h9combo','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u54','u51','sf8008','i55plus','sf8008s'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
 	
 		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
@@ -421,7 +420,7 @@ class ModelPic(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = ["ModelPic", "About"]
-		
+
 		self["key_green"] = Button(_(" "))
 		self["key_red"] = Button(_(" "))
 		self["key_yellow"] = Button(_(" "))
@@ -437,7 +436,7 @@ class ModelPic(Screen):
 				"ok": self.close,
 				"blue": self.close
 			}, -2)
-	
+
 	def poster_resize(self):
 		if getBoxType() in ('sf108'):
 			model = "sf108.png"
@@ -447,6 +446,8 @@ class ModelPic(Screen):
 			model = "sf5008.png"
 		elif getBoxType() in ('sf8008'):
 			model = "sf8008.png"
+		elif getBoxType() in ('sf8008s'):
+		        model = "sf8008s.png"
 		elif getBoxType() in ('sf3038'):
 			model = "sf3038.png"
 		elif getBoxType() in ('sf128'):

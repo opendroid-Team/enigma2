@@ -120,7 +120,7 @@ class SymbolsCheckPoller:
 					self.led = "0"
 			elif self.led == "1":
 				open("/proc/stb/lcd/symbol_rec", "w").write("0")
-		elif getBoxType() in ('sf8008'):
+		elif getBoxType() in ('sf8008','sf8008s'):
 			import Screens.Standby
 			recordings = len(NavigationInstance.instance.getRecordings(False,Components.RecordingConfig.recType(config.recording.show_rec_symbol_for_rec_types.getValue())))
 			if recordings > 0:
