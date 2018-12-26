@@ -511,6 +511,8 @@ class ModelPic(Screen):
 			model = "vuuno4k.png"
 		elif getBoxType() in ('vuuno4kse'):
 			model = "vuuno4kse.png"
+		elif getBoxType() in ('vuduo4k'):
+		        model = "vuduo4k.png"
 		elif getBoxType() in ('vuzero'):
 			model = "vuzero.png"
 		elif getBoxType() in ('vuzero4k'):
