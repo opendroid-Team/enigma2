@@ -336,7 +336,7 @@ class About(Screen):
 				for x in self.hdd_list:
 					AboutText += "   " + x
 				AboutText += "\n"
-				AboutText = getAboutText()[0]
+#				AboutText = getAboutText()[0]
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
