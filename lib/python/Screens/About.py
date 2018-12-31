@@ -43,6 +43,25 @@ def parse_ipv4(ip):
 			idx += 1
 	return ret
 
+def parseFile(filename):
+	ret = "N/A"
+	try:
+		f = open(filename, "rb")
+		ret = f.read().strip()
+		f.close()
+	except IOError:
+		print "[ERROR] failed to open file %s" % filename
+	return ret
+
+def parseLines(filename):
+	ret = ["N/A"]
+	try:
+		f = open(filename, "rb")
+		ret = f.readlines()
+		f.close()
+	except IOError:
+		print "[ERROR] failed to open file %s" % filename
+	return ret
 
 class About(Screen):
 	def __init__(self, session):
@@ -399,7 +418,7 @@ class ModelPic(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = ["ModelPic", "About"]
-		
+
 		self["key_green"] = Button(_(" "))
 		self["key_red"] = Button(_(" "))
 		self["key_yellow"] = Button(_(" "))
@@ -415,7 +434,7 @@ class ModelPic(Screen):
 				"ok": self.close,
 				"blue": self.close
 			}, -2)
-	
+
 	def poster_resize(self):
 		if getBoxType() in ('sf108'):
 			model = "sf108.png"
@@ -1108,8 +1127,12 @@ class ViewGitLog(Screen):
 		except:
 			print "there is a problem with reading log file"
 		try:
-			self['title_summary'].setText(summarytext[0] + ':')
-			self['text_summary'].setText(summarytext[1])
+			if self.logtype == 'e2':
+				self['title_summary'].setText(_("E2 Log"))
+				self['text_summary'].setText(_("Enigma2 Changes"))
+			else:
+				self['title_summary'].setText(_("OE Log"))
+				self['text_summary'].setText(_("OE Changes"))
 		except:
 			self['title_summary'].setText("")
 			self['text_summary'].setText("")
