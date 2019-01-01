@@ -44,6 +44,7 @@ from Screens.ButtonSetup import InfoBarButtonSetup, ButtonSetupActionMap, getBut
 profile("ChannelSelection.py 4")
 from Screens.PictureInPicture import PictureInPicture
 from Screens.RdsDisplay import RassInteractive
+from Screens.EventView import EventViewEPGSelect
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
 from Tools import Notifications
@@ -543,7 +544,7 @@ class ChannelContextMenu(Screen):
 		if int(xres) <= 720 or not getMachineBuild() == 'blackbox7405':
 			if self.session.pipshown:
 				del self.session.pip
-				if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
+				if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 					print '[LCDMiniTV] disable PIP'
 					f = open("/proc/stb/lcd/mode", "w")
 					f.write(config.lcd.modeminitv.value)
@@ -558,7 +559,7 @@ class ChannelContextMenu(Screen):
 					self.session.pipshown = True
 					self.session.pip.servicePath = self.csel.getCurrentServicePath()
 					self.session.pip.servicePath[1] = currentBouquet
-					if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
+					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
 						print '[LCDMiniTV] enable PIP'
 						f = open("/proc/stb/lcd/mode", "w")
 						f.write(config.lcd.modepip.value)
@@ -759,9 +760,10 @@ class ChannelSelectionEPG(InfoBarButtonSetup):
 		self.currentSavedPath = []
 		self.onExecBegin.append(self.clearLongkeyPressed)
 
-		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],
+		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectInfoActions", "ChannelSelectEPGActions"],
 			{
 				"showEPGList": self.showEPGList,
+				"showEventInfo": self.showEventInfo
 			})
 		self["recordingactions"] = HelpableActionMap(self, "InfobarInstantRecord",
 			{
@@ -1329,7 +1331,7 @@ class ChannelSelectionEdit:
 
 	def removeCurrentEntry(self, bouquet=False):
 		if self.confirmRemove:
-			list = [(_("yes"), True), (_("no"), False), (_("yes") + " " + _("and never ask again this session again"), "never")]
+			list = [(_("yes"), True), (_("no"), False), (_("yes") + ", " + _("and never ask again this session again"), "never")]
 			self.session.openWithCallback(boundFunction(self.removeCurrentEntryCallback, bouquet), MessageBox, _("Are you sure to remove this entry?"), list=list)
 		else:
 			self.removeCurrentEntryCallback(bouquet, True)

@@ -63,20 +63,20 @@ from Screens.Setup import Setup
 import Screens.Standby
 
 class bcolors:
-	HEADER = '\033[95m'
-	OKBLUE = '\033[94m'
-	OKGREEN = '\033[92m'
-	WARNING = '\033[93m'
-	FAIL = '\033[91m'
-	ENDC = '\033[0m'
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
 
-	def disable(self):
-		self.HEADER = ''
-		self.OKBLUE = ''
-		self.OKGREEN = ''
-		self.WARNING = ''
-		self.FAIL = ''
-		self.ENDC = ''
+    def disable(self):
+        self.HEADER = ''
+        self.OKBLUE = ''
+        self.OKGREEN = ''
+        self.WARNING = ''
+        self.FAIL = ''
+        self.ENDC = ''
 
 AUDIO = False
 seek_withjumps_muted = False
@@ -519,7 +519,10 @@ class SecondInfoBar(Screen):
 			description += '\n'
 		elif description and not extended:
 			extended = description
-		text = description + extended
+		if description == extended:
+			text = description
+		else:
+			text = description + extended
 		self.setTitle(event.getEventName())
 		self["epg_description"].setText(text)
 		self["FullDescription"].setText(extended)
@@ -619,16 +622,16 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			except:
 				self.toggleShow()
 		elif config.usage.okbutton_mode.value == "2" and COOLTVGUIDE:
-				self.showCoolInfoGuide()
+			self.showCoolInfoGuide()
 		elif config.usage.okbutton_mode.value == "3" and COOLTVGUIDE:
-				self.showCoolSingleGuide()
+			self.showCoolSingleGuide()
 		elif config.usage.okbutton_mode.value == "4" and COOLTVGUIDE:
-				if self.isInfo:
-					self.showCoolTVGuide()
+			if self.isInfo:
+				self.showCoolTVGuide()
 		elif config.usage.okbutton_mode.value == "5" and COOLTVGUIDE:
-				self.showCoolEasyGuide()
+			self.showCoolEasyGuide()
 		elif config.usage.okbutton_mode.value == "6" and COOLTVGUIDE:
-				self.showCoolChannelGuide()
+			self.showCoolChannelGuide()
 
 	def SwitchSecondInfoBarScreen(self):
 		if self.lastSecondInfoBar == int(config.usage.show_second_infobar.value):
@@ -1656,7 +1659,7 @@ class InfoBarMenu:
 class InfoBarSimpleEventView:
 	""" Opens the Eventview for now/next """
 	def __init__(self):
-		self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+		self["EventViewActions"] = HelpableActionMap(self, "InfobarEPGActions",
 			{
 				"showEventInfo": (self.openEventView, _("show event details")),
 				"InfoPressed": (self.openEventView, _("show event details")),
@@ -1774,6 +1777,7 @@ class InfoBarEPG:
 		if pluginlist:
 			pluginlist.append((_("Event Info"), self.openEventView))
 			pluginlist.append((_("Graphical EPG"), self.openGraphEPG))
+			pluginlist.append((_("Vertical EPG"), self.openVerticalEPG))
 			pluginlist.append((_("Infobar EPG"), self.openInfoBarEPG))
 			pluginlist.append((_("Multi EPG"), self.openMultiServiceEPG))
 			pluginlist.append((_("Show EPG for current channel..."), self.openSingleServiceEPG))
@@ -1885,8 +1889,8 @@ class InfoBarEPG:
 				self.openMultiServiceEPG()
 			elif config.plisettings.PLIEPG_mode.value == "single":
 				self.openSingleServiceEPG()
-			elif config.plisettings.PLIEPG_mode.value == "merlinepgcenter":
-				self.openMerlinEPGCenter()	
+			elif config.plisettings.PLIEPG_mode.value == "vertical":
+				self.openVerticalEPG()
 			elif config.plisettings.PLIEPG_mode.value == "cooltvguide" and COOLTVGUIDE:
 				if self.isInfo:
 					self.showCoolTVGuide()
@@ -1994,6 +1998,20 @@ class InfoBarEPG:
 		self.EPGtype = "enhanced"
 		self.SingleServiceEPG()
 
+	def openVerticalEPG(self, reopen=False):
+		if self.servicelist is None:
+			return
+		if not reopen:
+			self.StartBouquet = self.servicelist.getRoot()
+			self.StartRef = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+		self.EPGtype = "vertical"
+		self.VerticalEPG()
+
+	def VerticalEPG(self):
+		#self.StartBouquet = self.servicelist.getRoot()
+		#self.StartRef = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+		bouquets = self.servicelist.getBouquetList()
+		self.dlg_stack.append(self.session.openWithCallback(self.closed, EPGSelection, self.servicelist, zapFunc=self.zapToService, EPGtype=self.EPGtype, StartBouquet=self.StartBouquet, StartRef=self.StartRef, bouquets = bouquets))
 	def openInfoBarEPG(self, reopen=False):
 		if self.servicelist is None:
 			return
@@ -2048,6 +2066,8 @@ class InfoBarEPG:
 	def reopen(self, answer):
 		if answer == 'reopengraph':
 			self.openGraphEPG(True)
+		elif answer == 'reopenvertical':
+			self.openVerticalEPG(True)
 		elif answer == 'reopeninfobargraph' or answer == 'reopeninfobar':
 			self.openInfoBarEPG(True)
 		elif answer == 'close' and isMoviePlayerInfoBar(self):

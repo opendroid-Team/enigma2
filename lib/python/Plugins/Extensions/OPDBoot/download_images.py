@@ -48,9 +48,8 @@ class OPDChooseOnLineImage(Screen):
 	    if returnValue ==  'opennfr':
 	        MBImagelist.append(("5.3", _("5.3")))
 	    elif returnValue ==  'opendroid':
-	        MBImagelist.append(("6.6", _("6.6")))
 	        MBImagelist.append(("6.7", _("6.7")))
-	        MBImagelist.remove(("6.0", _("6.0")))
+	        MBImagelist.append(("6.8", _("6.8")))
 	        MBImagelist.remove(("6.1", _("6.1")))
 	        MBImagelist.remove(("6.2", _("6.2")))
 	    elif returnValue ==  'openhdf':
@@ -58,13 +57,13 @@ class OPDChooseOnLineImage(Screen):
                 MBImagelist.append(("6.2", _("6.2")))
                 MBImagelist.append(("6.3", _("6.3")))
 	    if returnValue ==  'opendroid':
-                config.usage.mbimageversion = ConfigSelection(default="6.7", choices = MBImagelist)	    
+                config.usage.mbimageversion = ConfigSelection(default="6.8", choices = MBImagelist)	    
 	    else:
-                config.usage.mbimageversion = ConfigSelection(default="6.6", choices = MBImagelist)
+                config.usage.mbimageversion = ConfigSelection(default="6.7", choices = MBImagelist)
 	    self.session.openWithCallback(self.KeyOk1, Setup, "multiboot")
             mbimageValue = config.usage.mbimageversion.value
         else:
-            config.usage.mbimageversion = ConfigSelection(default="6.6", choices = [("0.0", _("0.0"))]) 
+            config.usage.mbimageversion = ConfigSelection(default="6.7", choices = [("0.0", _("0.0"))]) 
             config.usage.mbimageversion.value = "0.0"
             config.usage.mbimageversion.save()
             self.KeyOk1() 

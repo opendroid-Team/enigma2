@@ -50,14 +50,14 @@ self.session.open(GreenPanel)
 			<item weight="10" level="0" entryID="usage_setup"><setup id="usage" /></item>
 			<item weight="15" level="0" entryID="remote_setup"><setup id="remotesetup"/></item>
 			<item weight="25" level="0" text="Skin Setup" entryID="skin_setup"><screen module="SkinSelector" screen="SkinSelector"/></item>
-			<menu weight="20" level="0" text="Front Panel Display" entryID="display_selection" requires="Display">
+		<menu weight="20" level="0" text="Front Panel Display" entryID="display_selection" requires="Display">
 			<id val="display" />
 			<item weight="0" level="0" entryID="display_setup"><setup id="display" /></item>
 			<item weight="5" level="0" text="VFD Skin" entryID="lcd_skin_setup" requires="LCDSKINSetup"><screen module="SkinSelector" screen="LcdSkinSelector"/></item>
 			<item requires="LCDSKINSetup" level="0" text="VFD Skin Default" entryID="vfd_skin"><screen module="VfdSkinSelector" screen="VFDSkinSelector"/></item>
-			</menu>
+		</menu>
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
-			<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
+		<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
 				<item weight="10" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner2"/></item>
 				<item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item>

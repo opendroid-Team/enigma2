@@ -705,7 +705,7 @@ def InitAVSwitch():
 				f.close()
 			except:
 				pass
-		if getBoxType() in ('vusolo4k','vuuno4k','vuuno4kse','vuultimo4k'):
+		if getBoxType() in ('vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','vuduo4k'):
 			config.av.hdmicolorspace = ConfigSelection(choices={
 					"Edid(Auto)": _("Auto"),
 					"Hdmi_Rgb": _("RGB"),

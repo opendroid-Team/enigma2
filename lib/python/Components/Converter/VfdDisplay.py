@@ -28,14 +28,14 @@ class VfdDisplay(Poll, Converter, object):
 						break
 				if 'loop' in self.type and self.delay:
 					self.loop = self.delay
-			if '12h' in self.type and 'nozero' in self.type:
-				self.hour = '%l'
-			elif '12h' in self.type:
-				self.hour = '%I'
-			elif 'nozero' in self.type:
-				self.hour = '%k'
+			if 'nozero' in self.type:
+				self.hour = '%'
 			else:
-				self.hour = '%H'
+				self.hour = '%02'
+			if '12h' in self.type:
+				self.hour = self.hour + 'I'
+			else:
+				self.hour = self.hour + 'H'
 
 	@cached
 	def getText(self):
