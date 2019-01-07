@@ -180,6 +180,8 @@ class SecConfigure:
 					if "DVB-S2" in types:
 						# DVB-S2 implies DVB-S support
 						types.remove("DVB-S")
+					if "DVB-S2X" in types:
+						types.remove("DVB-S2")
 					if len(types) > 1:
 						slot.multi_type = {}
 						for type in types:
@@ -195,8 +197,9 @@ class SecConfigure:
 					(slot.canBeCompatible("ATSC") and (slot.config.atsc.configMode.value != "nothing" and True or False)) or
 					(slot.canBeCompatible("DVB-S") and (slot.config.dvbs.configMode.value != "nothing" and True or False)) or
 					(slot.canBeCompatible("DVB-C") and (slot.config.dvbc.configMode.value != "nothing" and True or False)) or
-					(slot.canBeCompatible("DVB-T") and (slot.config.dvbt.configMode.value != "nothing" and True or False)),
-					slot.canBeCompatible("DVB-S2") and (slot.config.dvbs.configMode.value != "nothing" and True or False),
+					(slot.canBeCompatible("DVB-T") and (slot.config.dvbt.configMode.value != "nothing" and True or False)) or
+					(slot.canBeCompatible("DVB-S2") and (slot.config.dvbs.configMode.value != "nothing" and True or False)),
+					slot.canBeCompatible("DVB-S2X") and (slot.config.dvbs.configMode.value != "nothing" and True or False),
 					slot.frontend_id is None and -1 or slot.frontend_id))
 		eDVBResourceManager.getInstance().setFrontendSlotInformations(used_nim_slots)
 
@@ -715,7 +718,7 @@ class NIM(object):
 		if not multi_type: multi_type = {}
 		self.slot = slot
 
-		if type not in ("DVB-S", "DVB-C", "DVB-T", "DVB-S2", "DVB-T2", "DVB-C2", "ATSC", None):
+		if type not in ("DVB-S", "DVB-C", "DVB-T", "DVB-S2", "DVB-S2X", "DVB-T2", "DVB-C2", "ATSC", None):
 			print "warning: unknown NIM type %s, not using." % type
 			type = None
 
@@ -736,6 +739,7 @@ class NIM(object):
 				"DVB-C": ("DVB-C", None),
 				"DVB-T": ("DVB-T", None),
 				"DVB-S2": ("DVB-S", "DVB-S2", None),
+				"DVB-S2X": ("DVB-S", "DVB-S2", "DVB-S2X", None),
 				"DVB-C2": ("DVB-C", "DVB-C2", None),
 				"DVB-T2": ("DVB-T", "DVB-T2", None),
 				"ATSC": ("ATSC", None),
@@ -775,6 +779,7 @@ class NIM(object):
 				"DVB-C": ("DVB-C", "DVB-C2"),
 				"DVB-T": ("DVB-T","DVB-T2"),
 				"DVB-S2": ("DVB-S", "DVB-S2"),
+				"DVB-S2X": ("DVB-S", "DVB-S2", "DVB-S2X"),
 				"DVB-C2": ("DVB-C", "DVB-C2"),
 				"DVB-T2": ("DVB-T", "DVB-T2"),
 				"ATSC": "ATSC",
@@ -859,6 +864,7 @@ class NIM(object):
 			"DVB-T": "DVB-T",
 			"DVB-C": "DVB-C",
 			"DVB-S2": "DVB-S2",
+			"DVB-S2X": "DVB-S2X",
 			"DVB-T2": "DVB-T2",
 			"DVB-C2": "DVB-C2",
 			"ATSC": "ATSC",
@@ -987,6 +993,22 @@ class NimManager:
 		self.transpondersatsc = { }
 		db = eDVBDB.getInstance()
 
+		try:
+			for slot in self.nim_slots:
+				if slot.frontend_id is not None:
+					types = [type for type in ["DVB-C", "DVB-T", "DVB-T2", "DVB-S", "DVB-S2", "DVB-S2X", "ATSC"] if eDVBResourceManager.getInstance().frontendIsCompatible(slot.frontend_id, type)]
+					if "DVB-T2" in types:
+						# DVB-T2 implies DVB-T support
+						types.remove("DVB-T")
+					if "DVB-S2" in types:
+						# DVB-S2 implies DVB-S support
+						types.remove("DVB-S")
+					if len(types) > 1:
+						slot.multi_type = {}
+						for type in types:
+							slot.multi_type[str(types.index(type))] = type
+		except:
+			pass
 		if self.hasNimType("DVB-S"):
 			print "Reading satellites.xml"
 			if db.readSatellites(self.satList, self.satellites, self.transponders):
@@ -1190,8 +1212,6 @@ class NimManager:
 				entries[current_slot] = {}
 			elif line.startswith("Type:"):
 				entries[current_slot]["type"] = str(line[6:])
-				if entries[current_slot]["type"] == "DVB-S2X":
-					entries[current_slot]["type"] = "DVB-S2"
 				entries[current_slot]["isempty"] = False
 			elif line.strip().startswith("Input_Name:"):
 				entries[current_slot]["input_name"] = str(line.strip()[12:])
@@ -1923,7 +1943,7 @@ def InitNimManager(nimmgr, update_slots = []):
 				txt = _("Misconfigured unicable connection from tuner %s to tuner %s!\nTuner %s option \"connected to\" are disabled now") % (chr(int(x) + ord('A')), chr(int(nim.advanced.unicableconnectedTo.saved_value) + ord('A')), chr(int(x) + ord('A')),)
 				AddPopup(txt, type = MessageBox.TYPE_ERROR, timeout = 0, id = "UnicableConnectionFailed")
 
-			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)")),("reliable_retune", _("reliable, retune")),("traditional_retune", _("traditional (fast), retune"))], default="reliable")
+			section.unicableTuningAlgo = ConfigSelection([("reliable", _("reliable")),("traditional", _("traditional (fast)")),("reliable_retune", _("reliable, retune")),("traditional_retune", _("traditional (fast), retune"))], default="reliable_retune")
 
 	def configDiSEqCModeChanged(configElement):
 		section = configElement.section
@@ -2034,6 +2054,13 @@ def InitNimManager(nimmgr, update_slots = []):
 			f.write(configElement.value)
 			f.close()
 
+	def t2miRawModeChanged(configElement):
+		fe_id = configElement.fe_id
+		slot_id = configElement.slot_id
+		if path.exists("/proc/stb/frontend/%d/t2mirawmode" % fe_id):
+			f = open("/proc/stb/frontend/%d/t2mirawmode" % fe_id, "w")
+			f.write(configElement.value)
+			f.close()
 	def connectedToChanged(slot_id, nimmgr, configElement):
 		configMode = nimmgr.getNimConfig(slot_id).dvbs.configMode
 		if configMode.value == 'loopthrough':
@@ -2056,6 +2083,10 @@ def InitNimManager(nimmgr, update_slots = []):
 			nim.scpcSearchRange.fe_id = x - empty_slots
 			nim.scpcSearchRange.slot_id = x
 			nim.scpcSearchRange.addNotifier(scpcSearchRangeChanged)
+			nim.t2miRawMode = ConfigSelection([("disable", _("disabled")), ("enable", _("enabled"))], "disable")
+			nim.t2miRawMode.fe_id = x - empty_slots
+			nim.t2miRawMode.slot_id = x
+			nim.t2miRawMode.addNotifier(t2miRawModeChanged)
 			nim.diseqc13V = ConfigYesNo(False)
 			nim.diseqcMode = ConfigSelection(diseqc_mode_choices, "single")
 			nim.connectedTo = ConfigSelection([(str(id), nimmgr.getNimDescription(id)) for id in nimmgr.getNimListOfType("DVB-S") if id != x])
@@ -2092,10 +2123,8 @@ def InitNimManager(nimmgr, update_slots = []):
 		except:
 			list = [(x[0], x[0]) for x in nimmgr.cablesList]
 			nim.scan_networkid = ConfigInteger(default = 0, limits = (0, 99999))
-			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps"))]
-			if list:
-				possible_scan_types.append(("provider", _("Provider")))
-				nim.scan_provider = ConfigSelection(default = "0", choices = list)
+			possible_scan_types = [("bands", _("Frequency bands")), ("steps", _("Frequency steps")), ("provider", _("Provider"))]
+			nim.scan_provider = ConfigSelection(default = "0", choices = list)
 			nim.scan_type = ConfigSelection(default = "provider", choices = possible_scan_types)
 			nim.scan_band_EU_VHF_I = ConfigYesNo(default = True)
 			nim.scan_band_EU_MID = ConfigYesNo(default = True)
@@ -2138,13 +2167,15 @@ def InitNimManager(nimmgr, update_slots = []):
 	try:
 		for slot in nimmgr.nim_slots:
 			if slot.frontend_id is not None:
-				types = [type for type in ["DVB-C", "DVB-T", "DVB-T2", "DVB-S", "DVB-S2", "ATSC"] if eDVBResourceManager.getInstance().frontendIsCompatible(slot.frontend_id, type)]
+				types = [type for type in ["DVB-C", "DVB-T", "DVB-T2", "DVB-S", "DVB-S2", "DVB-S2X", "ATSC"] if eDVBResourceManager.getInstance().frontendIsCompatible(slot.frontend_id, type)]
 				if "DVB-T2" in types:
 					# DVB-T2 implies DVB-T support
 					types.remove("DVB-T")
 				if "DVB-S2" in types:
 					# DVB-S2 implies DVB-S support
 					types.remove("DVB-S")
+				if "DVB-S2X" in types:
+					types.remove("DVB-S2")
 				if len(types) > 1:
 					slot.multi_type = {}
 					for type in types:
