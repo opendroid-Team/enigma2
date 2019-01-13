@@ -24,7 +24,7 @@ from boxbranding import getBoxType, getMachineBrand, getMachineName, getDriverDa
 from Components.Button import Button
 VERSION = "Version 6.7 openDROID"
 HaveGZkernel = True
-if getMachineBuild() in ('vuduo4k','osmio4k','sf8008','u51','u52','u53','u54','h9','h9combo','vuzero4k','u5','u5pvr','sf5008','et13000','et1x000',"vuuno4k","vuuno4kse", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s','i55plus'):
+if getMachineBuild() in ('vuduo4k','osmio4k','sf8008','u51','u52','u53','u54','h9','h9combo','vuzero4k','u5','u5pvr','sf5008','sf8008s','sf8008t','et13000','et1x000',"vuuno4k","vuuno4kse", "vuultimo4k", "vusolo4k", "spark", "spark7162", "hd51", "hd52", "sf4008", "dags7252", "gb7252", "vs1500","h7",'xc7439','8100s','i55plus'):
 	HaveGZkernel = False
 
 def Freespace(dev):
@@ -72,6 +72,12 @@ class ImageBackup(Screen):
 		elif self.MACHINEBUILD in ("xc7439","osmio4k"):
 			self.MTDBOOT = "mmcblk1p1"
 			self.EMMCIMG = "emmc.img"
+		elif self.MACHINEBUILD in ("sf8008","sf8008s","sf8008t"):
+			self.MTDBOOT = "none"
+			self.EMMCIMG = "usb_update.bin"
+		elif self.MACHINEBUILD in ("h9combo"):
+			self.MTDBOOT = "none"
+			self.EMMCIMG = "rootfs.fastboot.gz"
 		else:
 			self.MTDBOOT = "none"
 			self.EMMCIMG = "none"
@@ -167,7 +173,7 @@ class ImageBackup(Screen):
 				cmdline = self.read_startup("/boot/STARTUP").split("=",4)[4].split(" ",1)[0]
 			else:
 				cmdline = self.read_startup("/boot/" + self.list[self.selection]).split("=",4)[4].split(" ",1)[0]
-		elif self.MACHINEBUILD in ("cc1","sf8008"):
+		elif self.MACHINEBUILD in ("sf8008","sf8008s","sf8008t"):
 			if self.list[self.selection] == "Recovery":
 				cmdline = self.read_startup("/boot/STARTUP").split("=",1)[1].split(" ",1)[0]
 			else:
@@ -213,7 +219,7 @@ class ImageBackup(Screen):
 					except IndexError:
 						print '[ImageBackup] - IndexError in file: %s' %name
 						self.error_files += '/boot/' + name + ', ' 
-			if getMachineBuild() not in ("gb7252","cc1","sf8008"):
+			if getMachineBuild() not in ("gb7252"):
 				files.append("Recovery")
 		return files
 
@@ -236,7 +242,7 @@ class ImageBackup(Screen):
 		self.IMAGEVERSION = self.imageInfo()
 		if "ubi" in self.ROOTFSTYPE.split():
 			self.MKFS = "/usr/sbin/mkfs.ubifs"
-		elif "tar.bz2" in self.ROOTFSTYPE.split() or SystemInfo["HaveMultiBoot"] or self.MACHINEBUILD in ("u51","u52","u53","u54","u5","u5pvr","sf8008"):
+		elif "tar.bz2" in self.ROOTFSTYPE.split() or SystemInfo["HaveMultiBoot"] or self.MACHINEBUILD in ("u51","u52","u53","u54","u5","u5pvr","sf8008","sf8008s","sf8008t","h9combo"):
 			self.MKFS = "/bin/tar"
 			self.BZIP2 = "/usr/bin/bzip2"
 		else:
@@ -244,6 +250,7 @@ class ImageBackup(Screen):
 
 		self.UBINIZE = "/usr/sbin/ubinize"
 		self.NANDDUMP = "/usr/sbin/nanddump"
+		self.FASTBOOT = "/usr/bin/ext2simg"
 		self.WORKDIR= "%s/bi" %self.DIRECTORY
 		self.TARGET="XX"
 
@@ -300,7 +307,7 @@ class ImageBackup(Screen):
 			cmd1 = "%s --root=/tmp/bi/root --faketime --output=%s/root.jffs2 %s" % (self.MKFS, self.WORKDIR, self.MKUBIFS_ARGS)
 			cmd2 = None
 			cmd3 = None
-		elif "tar.bz2" in self.ROOTFSTYPE.split() or SystemInfo["HaveMultiBoot"] or self.MACHINEBUILD in ("u51","u52","u53","u54","u5","u5pvr","sf8008"):
+		elif "tar.bz2" in self.ROOTFSTYPE.split() or SystemInfo["HaveMultiBoot"] or self.MACHINEBUILD in ("u51","u52","u53","u54","u5","u5pvr","sf8008","sf8008s","sf8008t","h9combo"):
 			cmd1 = "%s -cf %s/rootfs.tar -C /tmp/bi/root --exclude ./var/nmbd --exclude ./var/lib/samba/private/msg.sock ." % (self.MKFS, self.WORKDIR)
 			cmd2 = "%s %s/rootfs.tar" % (self.BZIP2, self.WORKDIR)
 			cmd3 = None
@@ -350,8 +357,48 @@ class ImageBackup(Screen):
 			cmdlist.append('echo "Create: logo dump"')
 			cmdlist.append("dd if=/dev/mtd4 of=%s/logo.bin" % self.WORKDIR)
 
+		if self.MACHINEBUILD  in ("h9combo"):
+			cmdlist.append('echo " "')
+			cmdlist.append('echo "' + _("Create:") + " fastboot dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p1 of=%s/fastboot.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " bootargs dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p2 of=%s/bootargs.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " bootoptions dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p5 of=%s/bootoptions.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " baseparam dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p6 of=%s/baseparam.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " pq_param dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p7 of=%s/pq_param.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " logo dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p8 of=%s/logo.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " rootfs dump" + '"')
+			cmdlist.append("dd if=/dev/zero of=%s/rootfs.ext4 seek=1048576 count=0 bs=1024" % (self.WORKDIR))
+			cmdlist.append("mkfs.ext4 -F -i 4096 %s/rootfs.ext4 -d /tmp/bi/root" % (self.WORKDIR))
+
+		if self.MACHINEBUILD  in ("cc1","sf8008","sf8008s","sf8008t","ustym4kpro"):
+			cmdlist.append('echo " "')
+			cmdlist.append('echo "' + _("Create:") + " fastboot dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p1 of=%s/fastboot.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " bootargs dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p2 of=%s/bootargs.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " boot dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p3 of=%s/boot.img" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " baseparam dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p4 of=%s/baseparam.img" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " pq_param dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p5 of=%s/pq_param.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " logo dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p6 of=%s/logo.img" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " deviceinfo dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p7 of=%s/deviceinfo.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " apploader dump" + '"')
+			cmdlist.append("dd if=/dev/mmcblk0p8 of=%s/apploader.bin" % self.WORKDIR)
+			cmdlist.append('echo "' + _("Create:") + " rootfs dump" + '"')
+			cmdlist.append("dd if=/dev/zero of=%s/rootfs.ext4 seek=524288 count=0 bs=1024" % (self.WORKDIR))
+			cmdlist.append("mkfs.ext4 -F -i 4096 %s/rootfs.ext4 -d /tmp/bi/root" % (self.WORKDIR))
+
 		cmdlist.append('echo " "')
-		cmdlist.append('echo "Create: kerneldump"')
+		cmdlist.append('echo "' + _("Create:") + " kerneldump" + '"')
 		cmdlist.append('echo " "')
 		if SystemInfo["HaveMultiBoot"]:
 			cmdlist.append("dd if=/dev/%s of=%s/kernel.bin" % (self.MTDKERNEL ,self.WORKDIR))
@@ -413,6 +460,11 @@ class ImageBackup(Screen):
 			cmdlist.append('dd if=/dev/%s of=%s seek=%s' % (self.MTDKERNEL, EMMC_IMAGE, KERNAL_IMAGE_SEEK ))
 			ROOTFS_IMAGE_SEEK = int(ROOTFS_PARTITION_OFFSET) * int(BLOCK_SECTOR)
 			cmdlist.append('dd if=/dev/%s of=%s seek=%s ' % (self.MTDROOTFS, EMMC_IMAGE, ROOTFS_IMAGE_SEEK ))
+		elif self.MACHINEBUILD  in ("h9combo"):
+			cmdlist.append('echo " "')
+			cmdlist.append('echo "' + _("Create: Recovery Fullbackup %s")% (self.EMMCIMG) + '"')
+			cmdlist.append('echo " "')
+			cmdlist.append('%s -zv %s/rootfs.ext4 %s/%s' % (self.FASTBOOT,self.WORKDIR,self.WORKDIR,self.EMMCIMG))
 		self.session.open(Console, title = self.TITLE, cmdlist = cmdlist, finishedCallback = self.doFullBackupCB, closeOnSuccess = True)
 
 	def doFullBackupCB(self):
@@ -455,7 +507,7 @@ class ImageBackup(Screen):
 		else:
 			system('mv %s/vmlinux.gz %s/%s' %(self.WORKDIR, self.MAINDEST, self.KERNELBIN))
 
-		if SystemInfo["HaveMultiBoot"] and self.list[self.selection] == "Recovery":
+		if SystemInfo["HaveMultiBoot"] and self.list[self.selection] == "Recovery" or self.MACHINEBUILD  in ("h9combo"):
 			system('mv %s/%s %s/%s' %(self.WORKDIR,self.EMMCIMG, self.MAINDEST,self.EMMCIMG))
 		elif self.MODEL in ("vuultimo4k","vusolo4k", "vuduo2", "vusolo2", "vusolo", "vuduo", "vuultimo", "vuuno"):
 			cmdlist.append('echo "This file forces a reboot after the update." > %s/reboot.update' %self.MAINDEST)
@@ -471,12 +523,15 @@ class ImageBackup(Screen):
 			system('mv %s/rescue.bin %s/rescue.bin' %(self.WORKDIR, self.MAINDEST))
 			system('cp -f /usr/share/gpt.bin %s/gpt.bin' %(self.MAINDEST))
 
-		if self.MACHINEBUILD in ("h9","i55plus"):
+		if self.MACHINEBUILD in ("h9","i55plus","h9combo"):
 			system('mv %s/fastboot.bin %s/fastboot.bin' %(self.WORKDIR, self.MAINDEST))
 			system('mv %s/pq_param.bin %s/pq_param.bin' %(self.WORKDIR, self.MAINDEST))
 			system('mv %s/bootargs.bin %s/bootargs.bin' %(self.WORKDIR, self.MAINDEST))
 			system('mv %s/baseparam.bin %s/baseparam.bin' %(self.WORKDIR, self.MAINDEST))
 			system('mv %s/logo.bin %s/logo.bin' %(self.WORKDIR, self.MAINDEST))
+
+		if self.MACHINEBUILD in ("h9combo"):
+			system('mv %s/baseparam.bin %s/bootoptions.bin' %(self.WORKDIR, self.MAINDEST))
 
 		if self.MODEL in ("gbquad", "gbquadplus", "gb800ue", "gb800ueplus", "gbultraue", "gbultraueh", "twinboxlcd", "twinboxlcdci", "singleboxlcd", "sf208", "sf228"):
 			lcdwaitkey = '/usr/share/lcdwaitkey.bin'
@@ -499,6 +554,9 @@ class ImageBackup(Screen):
 		if self.MACHINEBUILD in ("h9","i55plus"):
 			cmdlist.append('cp -f /usr/share/fastboot.bin %s/fastboot.bin' %(self.EXTRAROOT))
 			cmdlist.append('cp -f /usr/share/bootargs.bin %s/bootargs.bin' %(self.EXTRAROOT))
+
+		if self.MACHINEBUILD in ("h9combo"):
+			cmdlist.append('cp -f /usr/share/update_bootargs_%s.bin %s/update_bootargs_%s.bin' %(self.MACHINEBUILD,self.EXTRAROOT,self.MACHINEBUILD))
 
 		cmdlist.append("sync")
 		file_found = True
@@ -567,6 +625,8 @@ class ImageBackup(Screen):
 				if self.MACHINEBUILD in ("h9","i55plus"):
 					cmdlist.append('cp -f /usr/share/fastboot.bin %s/fastboot.bin' %(self.TARGET))
 					cmdlist.append('cp -f /usr/share/bootargs.bin %s/bootargs.bin' %(self.TARGET))
+				if self.MACHINEBUILD in ("h9combo"):
+					cmdlist.append('cp -f /usr/share/update_bootargs_%s.bin %s/update_bootargs_%s.bin' %(self.MACHINEBUILD,self.TARGET,self.MACHINEBUILD))
 
 				cmdlist.append("sync")
 				cmdlist.append('echo "Backup finished and copied to your USB-flash drive"')
