@@ -300,8 +300,10 @@ class AVSwitch:
 	def getModeList(self, port):
 		res = [ ]
 		for mode in self.modes[port]:
+			# list all rates which are completely valid
 			rates = [rate for rate in self.rates[mode] if self.isModeAvailable(port, mode, rate)]
 
+			# if at least one rate is ok, add this mode
 			if len(rates):
 				res.append( (mode, rates) )
 		return res

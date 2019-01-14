@@ -267,6 +267,7 @@ RESULT eAMLTSMPEGDecoder::setSyncMaster(int who)
 RESULT eAMLTSMPEGDecoder::set()
 {
 	TRACE__
+
 	return 0;
 }
 
@@ -586,3 +587,11 @@ int eAMLTSMPEGDecoder::getVideoAspect()
 
 	return m_aspect == 1 ? 2 : 3;
 }
+int eAMLTSMPEGDecoder::getVideoGamma()
+{
+	//if (m_video)
+	//	return m_video->getGamma();
+	return -1;
+}
+
+

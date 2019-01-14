@@ -40,7 +40,8 @@ class pliExpertInfo(Poll, Converter, object):
 			( "0xB00", "0xBFF","Conax"  ,"Co"),
 			( "0xD00", "0xDFF","CryptoW","Cw"),
 			("0x1700","0x17FF","Beta"   ,"B" ),
-			("0x1800","0x18FF","Nagra"  ,"N" ))
+			("0x1800","0x18FF","Nagra"  ,"N" ),
+			("0x2600","0x26FF","BISS"   ,"Bi"))
 		self.ecmdata = GetEcmInfo()
 
 	@cached
@@ -340,7 +341,8 @@ class pliExpertInfo(Poll, Converter, object):
 					Ret_Text += sep + "DVB-T" + sep + "Frequency:" + sep + frequency + " MHz"
 
 			if (feinfo is not None) and (xresol > 0):
-				Res_Text += ("MPEG2 ", "MPEG4 ", "MPEG1 ", "MPEG4-II ", "VC1 ", "VC1-SM ", "")[info.getInfo(iServiceInformation.sVideoType)]
+				from Components.Converter.PliExtraInfo import codec_data
+				Res_Text += codec_data.get(self.info.getInfo(iServiceInformation.sVideoType), "N/A")
 				Res_Text += str(xresol) + "x" + str(yresol)
 				Res_Text += ("i", "p", "")[info.getInfo(iServiceInformation.sProgressive)]
 				Res_Text += str((info.getInfo(iServiceInformation.sFrameRate) + 500) / 1000)

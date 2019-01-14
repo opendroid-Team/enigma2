@@ -161,6 +161,7 @@ public:
 		: type(type), flags(flags), path(path)
 	{
 		memset(data, 0, sizeof(data));
+		number = 0;
 	}
 	eServiceReference(const std::string &string);
 	std::string toString() const;
@@ -391,6 +392,8 @@ public:
 		sIsDedicated3D,
 		sHideVBI,
 		sCenterDVBSubs,
+
+		sGamma,
 
 		sUser = 0x100
 	};
@@ -681,12 +684,12 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iCueSheet>, iCueSheetPtr);
 
 class PyList;
 
-class eDVBTeletextSubtitlePage;
-class eDVBSubtitlePage;
+struct eDVBTeletextSubtitlePage;
+struct eDVBSubtitlePage;
 struct ePangoSubtitlePage;
 class eRect;
-struct gRegion;
-struct gPixmap;
+class gRegion;
+class gPixmap;
 
 SWIG_IGNORE(iSubtitleUser);
 class iSubtitleUser
@@ -930,6 +933,8 @@ public:
 		evStopped,
 
 		evHBBTVInfo,
+
+		evVideoGammaChanged,
 
 		evUser = 0x100
 	};
