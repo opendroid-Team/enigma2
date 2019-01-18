@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2018-10-31 00:39+0100\n"
+"PO-Revision-Date: 2019-01-18 21:49+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "(higher than any auto)"
@@ -4879,12 +4879,18 @@ msgid "Display"
 msgstr "Display"
 
 #, python-format
-msgid "Power LED State in Deep-Standby and Standby"
-msgstr "Stato LED in Deep-Standby e Standby"
+msgid "Power LED State in Standby"
+msgstr "Stato LED di alimentazione in standby"
 
 #, python-format
-msgid "Power LED state during deep-standby and standby."
-msgstr "Stato LED di alimentazione durante profondo standby."
+msgid "Power LED State in Deep-Standby"
+msgstr "Stato LED di alimentazione in Deep-Standby"
+
+msgid "Power LED state during standby."
+msgstr "Qui è possibile impostare se il LED di alimentazione deve essere acceso o spento in modalità standby."
+
+msgid "Power LED state during deep-standby."
+msgstr "Qui è possibile impostare se il LED di alimentazione deve essere acceso o spento in Deep Standby."
 
 msgid "Power On Display"
 msgstr "Accensione display"
