@@ -2306,19 +2306,20 @@ class InfoBarSeek:
 				HelpableActionMap.__init__(self, screen, *args, **kwargs)
 				self.screen = screen
 
-                        def action(self, contexts, action):
-                                if action[:5] == "seek:":
-                                        time = int(action[5:])
-                                        self.screen.doSeekRelative(time * 90000)
-                                        return 1
-                                else:
-                                        if action[:8] == "seekdef:":
-                                                key = int(action[8:])
-                                                time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
-                                -config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
-                         -config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key - 1]
-                                                self.screen.doSeekRelative(time * 90000)
-                                                return 1
+			def action(self, contexts, action):
+				# print "action:", action
+				if action[:5] == "seek:":
+					time = int(action[5:])
+					self.screen.doSeekRelative(time * 90000)
+					return 1
+				elif action[:8] == "seekdef:":
+					key = int(action[8:])
+					time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
+						-config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
+						-config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key-1]
+					self.screen.doSeekRelative(time * 90000)
+					return 1
+				else:
 					return HelpableActionMap.action(self, contexts, action)
 
 		self["SeekActions"] = InfoBarSeekActionMap(self, actionmap,
