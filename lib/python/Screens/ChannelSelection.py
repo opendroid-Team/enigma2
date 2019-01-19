@@ -378,7 +378,7 @@ class ChannelContextMenu(Screen):
 		ref = self.csel.servicelist.getCurrent()
 		if self.removeFunction and ref and ref.valid():
 			if self.csel.confirmRemove:
-				list = [(_("yes"), True), (_("no"), False), (_("yes") + " " + _("and never ask again this session again"), "never")]
+				list = [(_("yes"), True), (_("no"), False), (_("yes") + ", " + _("and never ask again this session again"), "never")]
 				self.session.openWithCallback(self.removeFunction, MessageBox, _("Are you sure to remove this entry?") + "\n%s" % self.getCurrentSelectionName(), list=list)
 			else:
 				self.removeFunction(True)
@@ -760,9 +760,10 @@ class ChannelSelectionEPG(InfoBarButtonSetup):
 		self.currentSavedPath = []
 		self.onExecBegin.append(self.clearLongkeyPressed)
 
-		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectEPGActions"],
+		self["ChannelSelectEPGActions"] = ActionMap(["ChannelSelectInfoActions", "ChannelSelectEPGActions"],
 			{
 				"showEPGList": self.showEPGList,
+				"showEventInfo": self.showEventInfo
 			})
 		self["recordingactions"] = HelpableActionMap(self, "InfobarInstantRecord",
 			{
@@ -958,6 +959,31 @@ class ChannelSelectionEPG(InfoBarButtonSetup):
 			self.savedService = ref
 			self.session.openWithCallback(self.SingleServiceEPGClosed, EPGSelection, ref, serviceChangeCB=self.changeServiceCB, EPGtype="single")
 
+	def showEventInfo(self):
+		if config.usage.servicelist_infokey.value == 'epg':
+			self.showEPGList()
+			return
+		ref=self.getCurrentSelection()
+		if ref:
+			epglist = []
+			epg = eEPGCache.getInstance()
+			ptr = ref and ref.valid() and epg.lookupEventTime(ref, -1)
+			if ptr:
+				epglist.append(ptr)
+				ptr = epg.lookupEventTime(ref, ptr.getBeginTime(), +1)
+				if ptr:
+					epglist.append(ptr)
+				if epglist:
+					self.epglist = epglist
+					self.session.open(EventViewEPGSelect, epglist[0], ServiceReference(ref), self.eventViewCallback)
+
+	def eventViewCallback(self, setEvent, setService, val):
+		epglist = self.epglist
+		if len(epglist) > 1:
+			tmp = epglist[0]
+			epglist[0] = epglist[1]
+			epglist[1] = tmp
+			setEvent(epglist[0])
 	def SingleServiceEPGClosed(self, ret=False):
 		if ret:
 			service = self.getCurrentSelection()

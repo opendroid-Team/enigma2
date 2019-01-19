@@ -234,8 +234,7 @@ class About(Screen):
 			if bootname: bootname = "   (%s)" %bootname 
 			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 
-		AboutText += _("Version:\t\t%s") % getImageVersion() + "\n"
-		self.image_version = _("Image") + ": " + about.getImageVersionString()
+		AboutText += _("Version:\t%s") % getImageVersion() + "\n"
 		AboutText += _("Build:\t%s") % getImageBuild() + "\n"
 		AboutText += _("Kernel:\t%s") % about.getKernelVersionString() + "\n"
 	
@@ -323,7 +322,6 @@ class About(Screen):
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
-		AboutText += "\n"
 		hddlist = harddiskmanager.HDDList()
 		hdd = hddlist and hddlist[0][1] or None
 		if hdd is not None and hdd.model() != "":
@@ -358,7 +356,6 @@ class About(Screen):
 				for x in self.hdd_list:
 					AboutText += "   " + x
 				AboutText += "\n"
-				self["FullAbout"] = ScrollLabel(AboutText)
 #				AboutText = getAboutText()[0]
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
