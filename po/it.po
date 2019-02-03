@@ -5322,12 +5322,18 @@ msgid "Display"
 msgstr "Display"
 
 #, python-format
-msgid "Power LED State in Deep-Standby and Standby"
-msgstr "Stato LED in Deep-Standby e Standby"
+msgid "Power LED State in Standby"
+msgstr "Stato LED di alimentazione in standby"
 
 #, python-format
-msgid "Power LED state during deep-standby and standby."
-msgstr "Stato LED di alimentazione durante profondo standby."
+msgid "Power LED State in Deep-Standby"
+msgstr "Stato LED di alimentazione in Deep-Standby"
+
+msgid "Power LED state during standby."
+msgstr "Qui è possibile impostare se il LED di alimentazione deve essere acceso o spento in modalità standby."
+
+msgid "Power LED state during deep-standby."
+msgstr "Qui è possibile impostare se il LED di alimentazione deve essere acceso o spento in Deep Standby."
 
 msgid "Power On Display"
 msgstr "Accensione display"
