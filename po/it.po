@@ -18361,7 +18361,7 @@ msgid "BootLogo"
 msgstr "Bootlogo"
 
 msgid "OPD_panel"
-msgstr "OPD_pannello"
+msgstr "Pannello OPD"
 
 msgid ""
 "When enabled, continue to the next bouquet when the last channel of the "
