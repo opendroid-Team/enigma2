@@ -236,7 +236,7 @@ class DownloadOnLineImage(Screen):
             MASCHINEBUILD = boxname
         elif boxname in ('vusolo4k'):
             BRANDOEMDROID = 'VU+'
-        elif boxname in ('zgemmahs', 'zgemmah2s', 'zgemmah2splus', 'zgemmah2h', 'zgemmah3ac', 'zgemmah32tc', 'zgemmah5', 'zgemmah52s', 'zgemmah52splus', 'zgemmah5ac', 'ozgemmah52tc', 'zgemmah6', 'zgemmah7', 'zgemmah9s', 'zgemmah9t', 'zgemmai55'):
+        elif boxname in ('zgemmahs', 'zgemmah2s', 'zgemmah2splus', 'zgemmah2h', 'zgemmah3ac', 'zgemmah32tc', 'zgemmah5', 'zgemmah52s', 'zgemmah52splus', 'zgemmah5ac', 'ozgemmah52tc', 'zgemmah6', 'zgemmah7', 'zgemmah9s', 'zgemmah9t', 'zgemmai55', 'zgemmah92h', 'zgemmah92s', 'zgemmacombo'):
             BRANDOEMDROID = 'Zgemma'
             MASCHINEBUILD = boxname
         self.distro = distro
