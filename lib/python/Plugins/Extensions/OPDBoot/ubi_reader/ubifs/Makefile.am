@@ -3,4 +3,6 @@ SUBDIRS = nodes
 install_PYTHON = *.py
 if HAVE_MB4K
 install_DATA = *.txt
+else
+install_DATA = *.so
 endif
