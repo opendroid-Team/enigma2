@@ -209,7 +209,7 @@ class DownloadOnLineImage(Screen):
             BRANDOEM = 'gigablue'
         elif boxname in ('mutant51'):
             BRANDOEM = 'mutant'
-        elif boxname in ('sf128', 'sf208', 'sf3038', 'sf4008'):
+        elif boxname in ('sf128', 'sf208', 'sf3038', 'sf4008', 'sf8008'):
             BRANDOEM = 'octagon'
         elif boxname in ('osmega'):
             BRANDOEM = 'xcore' 
