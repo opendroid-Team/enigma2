@@ -447,6 +447,8 @@ class ModelPic(Screen):
 			model = "sf8008.png"
 		elif getBoxType() in ('sf8008s'):
 		        model = "sf8008s.png"
+		elif getBoxType() in ('sf8008t'):
+		        model = "sf8008t.png"
 		elif getBoxType() in ('sf3038'):
 			model = "sf3038.png"
 		elif getBoxType() in ('sf128'):
@@ -505,6 +507,8 @@ class ModelPic(Screen):
 			model = "zgemmah92h.png"
 		elif getBoxType() in ('zgemmah92s'):
 			model = "zgemmah92s.png"
+		elif getBoxType() in ('zgemmah9combo'):
+			model = "zgemmah9combo.png"
 		elif getBoxType() in ('zgemmahs'):
 			model = "zgemmahs.png"
 		elif getBoxType() in ('zgemmai55'):
