@@ -110,8 +110,8 @@ class ImageBackup(Screen):
 		else:
 			self["key_yellow"] = Button("")
 			self["info-multi"] = Label(" ")
-		self["info-usb"] = Label(_("USB = Do you want to make a back-up on USB?\nThis will take between 4 and 15 minutes depending on the used filesystem and is fully automatic.\nMake sure you first insert an USB flash drive before you select USB."))
-		self["info-hdd"] = Label(_("HDD = Do you want to make an USB-back-up image on HDD? \nThis only takes 2 or 10 minutes and is fully automatic."))
+		self["info-usb"] = Label(_("USB = Do you want to make a back-up on USB?\nThis will take between 4 and 15 minutes depending on the used filesystem and is fully automatic.\nMake sure you first insert a USB flash drive before you select USB."))
+		self["info-hdd"] = Label(_("HDD = Do you want to make a USB-back-up image on HDD? \nThis only takes 2 or 10 minutes and is fully automatic."))
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"], 
 		{
 			"blue": self.quit,
@@ -467,6 +467,26 @@ class ImageBackup(Screen):
 			cmdlist.append('dd if=/dev/%s of=%s seek=%s' % (self.MTDKERNEL, EMMC_IMAGE, KERNAL_IMAGE_SEEK ))
 			ROOTFS_IMAGE_SEEK = int(ROOTFS_PARTITION_OFFSET) * int(BLOCK_SECTOR)
 			cmdlist.append('dd if=/dev/%s of=%s seek=%s ' % (self.MTDROOTFS, EMMC_IMAGE, ROOTFS_IMAGE_SEEK ))
+		elif SystemInfo["HaveMultiBootDS"] and self.list[self.selection] == "Recovery":
+			cmdlist.append('echo " "')
+			cmdlist.append('echo "' + _("Create: Recovery Fullbackup %s")% (self.EMMCIMG) + '"')
+			cmdlist.append('echo " "')
+			f = open("%s/emmc_partitions.xml" %self.WORKDIR, "w")
+			f.write('<?xml version="1.0" encoding="GB2312" ?>\n')
+			f.write('<Partition_Info>\n')
+			f.write('<Part Sel="1" PartitionName="fastboot" FlashType="emmc" FileSystem="none" Start="0" Length="1M" SelectFile="fastboot.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="bootargs" FlashType="emmc" FileSystem="none" Start="1M" Length="1M" SelectFile="bootargs.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="bootimg" FlashType="emmc" FileSystem="none" Start="2M" Length="1M" SelectFile="boot.img"/>\n')
+			f.write('<Part Sel="1" PartitionName="baseparam" FlashType="emmc" FileSystem="none" Start="3M" Length="3M" SelectFile="baseparam.img"/>\n')
+			f.write('<Part Sel="1" PartitionName="pqparam" FlashType="emmc" FileSystem="none" Start="6M" Length="4M" SelectFile="pq_param.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="logo" FlashType="emmc" FileSystem="none" Start="10M" Length="4M" SelectFile="logo.img"/>\n')
+			f.write('<Part Sel="1" PartitionName="deviceinfo" FlashType="emmc" FileSystem="none" Start="14M" Length="4M" SelectFile="deviceinfo.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="loader" FlashType="emmc" FileSystem="none" Start="26M" Length="32M" SelectFile="apploader.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="kernel" FlashType="emmc" FileSystem="none" Start="66M" Length="32M" SelectFile="kernel.bin"/>\n')
+			f.write('<Part Sel="1" PartitionName="rootfs" FlashType="emmc" FileSystem="ext3/4" Start="98M" Length="7000M" SelectFile="rootfs.ext4"/>\n')
+			f.write('</Partition_Info>\n')
+			f.close()
+			cmdlist.append('mkupdate -s 00000003-00000001-01010101 -f %s/emmc_partitions.xml -d %s/%s' % (self.WORKDIR,self.WORKDIR,self.EMMCIMG))
 		elif self.MACHINEBUILD  in ("h9combo"):
 			cmdlist.append('echo " "')
 			cmdlist.append('echo "' + _("Create: Recovery Fullbackup %s")% (self.EMMCIMG) + '"')
@@ -478,8 +498,8 @@ class ImageBackup(Screen):
 		if HaveGZkernel:
 			ret = commands.getoutput(' gzip -d %s/vmlinux.gz -c > /tmp/vmlinux.bin' % self.WORKDIR)
 			if ret:
-				text = "Kernel dump error\n"
-				text += "Please Flash your Kernel new and Backup again"
+				text = _("Kernel dump error\n")
+				text += _("Please Flash your Kernel new and Backup again")
 				system('rm -rf /tmp/vmlinux.bin')
 				self.session.open(MessageBox, _(text), type = MessageBox.TYPE_ERROR)
 				return
@@ -693,7 +713,7 @@ class ImageBackup(Screen):
 						AboutText += userbouqet.replace('#NAME ','')
 						f.close()
 		except:
-			AboutText += "Error reading bouquets.tv"
+			AboutText += _("Error reading bouquets.tv")
 			
 		AboutText += _("\n[User - bouquets (RADIO)]\n")
 		try:
@@ -710,7 +730,7 @@ class ImageBackup(Screen):
 						AboutText += userbouqet.replace('#NAME ','')
 						f.close()
 		except:
-			AboutText += "Error reading bouquets.radio"
+			AboutText += _("Error reading bouquets.radio")
 
 		AboutText += _("\n[Installed Plugins]\n")
 		AboutText += commands.getoutput("opkg list_installed | grep enigma2-plugin-")

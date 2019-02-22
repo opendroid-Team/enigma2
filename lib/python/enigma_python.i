@@ -453,6 +453,7 @@ extern void dump_malloc_stats(void);
 #ifndef HAVE_OSDANIMATION
 extern void setAnimation_current(int a);
 extern void setAnimation_speed(int speed);
+extern void setAnimation_current_listbox(int a);
 #endif
 extern void pauseInit(void);
 extern void resumeInit(void);
@@ -469,6 +470,7 @@ extern void dump_malloc_stats(void);
 #ifndef HAVE_OSDANIMATION
 extern void setAnimation_current(int a);
 extern void setAnimation_speed(int speed);
+extern void setAnimation_current_listbox(int a);
 #endif
 extern void pauseInit(void);
 extern void resumeInit(void);

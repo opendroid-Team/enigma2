@@ -3942,11 +3942,11 @@ class InfoBarInstantRecord:
 						 "\n" + _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
 			return
 		if isStandardInfoBar(self):
-			commonVOD = ((_("Download (remember to switch to a channel DVB-S2/T/T2/C)"), "downloadvod"), (_("Add recording (stop after current event)"), "event"),
-				(_("Add recording (indefinitely)"), "indefinitely"),
-				(_("Add recording (enter recording duration)"), "manualduration"),
-				(_("Add recording (enter recording endtime)"), "manualendtime"),)
-
+			commonVOD = ((_('Download (remember to switch to a channel DVB-S2/T/T2/C)'), 'downloadvod'), (_('Add recording (stop after current event)'), 'event'))
+			common = ((_('Add recording (stop after current event)'), 'event'),
+			          (_('Add recording (indefinitely)'), 'indefinitely'),
+			          (_('Add recording (enter recording duration)'), 'manualduration'),
+		      (_('Add recording (enter recording endtime)'), 'manualendtime'))
 			timeshiftcommon = ((_("Timeshift save recording (stop after current event)"), "savetimeshift"),
 				(_("Timeshift save recording (Select event)"), "savetimeshiftEvent"),)
 		else:

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pot-Based-Opendroid-Images.\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-22 07:13+0200\n"
+"POT-Revision-Date: 2018-10-04 15:32+0200\n"
 "POT-Revision-Date: 2018-10-04 15:32+0200\n"
 "Last-Translator: FULL NAME <opendroid2013@gmail.com>\n"
 "Language-Opendroid-Team: Gimsy,Formiano,erminio\n"
@@ -14,6 +14,127 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
+
+msgid ""
+"You can skip this function and turn off the TV when you wake the receiver "
+"from standby and immediately switch back to standby."
+msgstr ""
+
+msgid "Switch off the TV to correct input"
+msgstr ""
+
+msgid "Put your AV Receiver in standby"
+msgstr ""
+
+msgid "Wakeup your AV Receiver from standby"
+msgstr ""
+
+msgid ""
+"Some TV devices can't swich to correct input if a another hdmi port active. "
+"This setting set the TV to standby before.\n"
+"(If the TV does not turn back on, may require a slower transmission interval "
+"or the repetition of wake-up commands.)"
+msgstr ""
+
+msgid ""
+"Activation takes place immediately. If this feature is not supported, the "
+"volume keys has no function!"
+msgstr ""
+
+msgid ""
+"Activation takes place immediately. If it does feature not work, then try "
+"again with a slower send interval."
+msgstr ""
+
+msgid "Choose a setting where your receiver wakes up from standby."
+msgstr ""
+
+msgid ""
+"With this setting, you can probably improve the signal quality or eliminate "
+"problems that can occur with longer HDMI cables."
+msgstr ""
+
+msgid "Routing request"
+msgstr ""
+
+msgid "TV physical address report"
+msgstr ""
+
+msgid ""
+"An attempt is made to capture the current TV status. If this is not possible "
+"due to incorrect or missing status messages, it may cause the receiver to "
+"respond unexpectedly.\n"
+"On the other hand, tries to respond better to different operating conditions."
+msgstr ""
+
+msgid "Wait for timesync at startup"
+msgstr ""
+
+msgid ""
+"If the 'deep standby workaround' is enabled, it waits until the system time "
+"is syncronised. Depending on the requirement, the devices wake up will "
+"continuing after a maximum of 2 minutes."
+msgstr ""
+
+msgid "Even if TV has another input active?"
+msgstr ""
+
+msgid "Even if a 'zap' recording timer starting?"
+msgstr ""
+
+msgid "Even if a 'zap and record' recording timer starting?"
+msgstr ""
+
+msgid "Even if a 'wakeup' power timer starting?"
+msgstr ""
+
+msgid ""
+"Try to send repeated commands if not all commands are executed. This is done "
+"at a slower send interval."
+msgstr ""
+
+msgid "(e.g. TV wakeup, but not switched to correct input)"
+msgstr ""
+
+msgid "Repeat the sent standby and wakeup commands"
+msgstr ""
+
+msgid "Check power and input state from TV"
+msgstr ""
+
+msgid "Handle input from TV"
+msgstr ""
+
+msgid ""
+"Try to slow down the send interval if not all commands are executed.\n"
+msgstr ""
+
+msgid "Time delay until standby or deep standby"
+msgstr ""
+
+msgid ""
+"'Handle standby from TV' has a higher priority as 'Handle input from TV'"
+msgstr ""
+
+msgid "Slowing down for the send interval"
+msgstr ""
+
+msgid "Repeat the standby commands?"
+msgstr ""
+
+msgid "Is not necessary in most cases."
+msgstr ""
+
+msgid ""
+"The time is multiplied by the repeat counter and added to the minimum send "
+"interval."
+msgstr ""
+
+msgid "%d sec"
+msgstr ""
+
+msgid "%d times"
+msgstr ""
 
 msgid "(higher than any auto)"
 msgstr ""
@@ -85,6 +206,9 @@ msgstr ""
 msgid "Enable Startup"
 msgstr ""
 
+msgid "Enable client mode"
+msgstr ""
+
 msgid "Disable Startup"
 msgstr ""
 
@@ -100,6 +224,9 @@ msgid "Default files/folders to backup"
 msgstr ""
 
 msgid "Don't add this recording"
+msgstr ""
+
+msgid "Date style"
 msgstr ""
 
 msgid "E2 Log"
@@ -576,6 +703,14 @@ msgstr ""
 msgid "Start instant recording"
 msgstr ""
 
+msgid ""
+"Choose the front panel display formatting style for times. 'H' / 'HH' is the "
+"hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' "
+"is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) "
+"The front panel display will be based on your choice but can be influenced "
+"any applicable skin."
+msgstr ""
+
 msgid "Hotkey Setup"
 msgstr ""
 
@@ -693,7 +828,13 @@ msgstr ""
 msgid "HDMI HDR Type"
 msgstr ""
 
+msgid "HDMI HDR Mode"
+msgstr ""
+
 msgid "This option allows you can force the HDR Modes for UHD"
+msgstr ""
+
+msgid "This option allows you can config the Colorimetry for HDR"
 msgstr ""
 
 msgid "Zap to"
@@ -2437,6 +2578,11 @@ msgstr ""
 msgid "Allows you to show/hide OScam Info in extensions (blue button)."
 msgstr ""
 
+msgid ""
+"Allows you to set a schedule to import the EPG and channels list. The EPG "
+"and channels list will always be imported on reboot or GUI restart."
+msgstr ""
+
 msgid "Alpha"
 msgstr ""
 
@@ -2507,6 +2653,18 @@ msgid "Load unlinked userbouquets"
 msgstr ""
 
 msgid "URL of fallback remote receiver"
+msgstr ""
+
+msgid "Fallback configuration"
+msgstr ""
+
+msgid "Fallback receiver IP address"
+msgstr ""
+
+msgid "Fallback receiver streaming port"
+msgstr ""
+
+msgid "Fallback tuner setup"
 msgstr ""
 
 msgid ""
@@ -3554,6 +3712,12 @@ msgstr ""
 msgid "Clients"
 msgstr ""
 
+msgid ""
+"Client mode sets up this receiver to stream from another receiver. In this "
+"mode no local tuners will be available and channel lists, EPG, etc, will "
+"come from the remote receiver. All tuner settings will be cleared."
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
@@ -3850,6 +4014,11 @@ msgid "Select number of partitions:"
 msgstr ""
 
 msgid "Select of the number"
+msgstr ""
+
+msgid ""
+"Select a receiver to use for fallback tuners. If the host receiver is not "
+"listed, manually enter the URL or IP address"
 msgstr ""
 
 msgid "Configure the gateway."
@@ -4209,6 +4378,9 @@ msgid "Cpu"
 msgstr ""
 
 msgid "Crash Logs"
+msgstr ""
+
+msgid "Crash at skin error for debug reasons ?"
 msgstr ""
 
 msgid "Create"
@@ -4636,11 +4808,23 @@ msgid "Display"
 msgstr ""
 
 #, python-format
-msgid "Power LED State in Deep-Standby and Standby"
+msgid "Power LED State in Standby"
 msgstr ""
 
 #, python-format
-msgid "Power LED state during deep-standby and standby."
+msgid "Power LED State in Deep-Standby"
+msgstr ""
+
+msgid "Power LED state during standby."
+msgstr ""
+
+msgid "Power LED state during deep-standby."
+msgstr ""
+
+msgid "Turn on the power LED."
+msgstr ""
+
+msgid "Power LED can be turned on or off here."
 msgstr ""
 
 msgid "Power On Display"
@@ -4809,6 +4993,9 @@ msgid "Do you really want to unhold the plugin \"%s\"?"
 msgstr ""
 
 msgid "Do you want to add any additional information ?"
+msgstr ""
+
+msgid "Droidsat forum user name"
 msgstr ""
 
 msgid ""
@@ -5249,6 +5436,23 @@ msgstr ""
 msgid "Enter the size in Megabyte of the third partition:"
 msgstr ""
 
+msgid "Enter the IP address of the host receiver."
+msgstr ""
+
+msgid ""
+"Enter the domain of the host receiver. Do not include 'http://' or port "
+"number."
+msgstr ""
+
+msgid "Enter the IP address of the receiver to use for fallback tuners."
+msgstr ""
+
+msgid ""
+"Enter the URL/IP of the fallback remote receiver, e.g. '192.168.0.1'. The "
+"other details such as 'http://' and port number will be filled in "
+"automatically when you select save."
+msgstr ""
+
 msgid "Entitlements"
 msgstr ""
 
@@ -5295,6 +5499,24 @@ msgid "Event font size (relative to skin size)"
 msgstr ""
 
 msgid "Everywhere"
+msgstr ""
+
+msgid "Every 12 hours"
+msgstr ""
+
+msgid "Every 2 hours"
+msgstr ""
+
+msgid "Every 3 hours"
+msgstr ""
+
+msgid "Every 6 hours"
+msgstr ""
+
+msgid "Every hour"
+msgstr ""
+
+msgid "Everyday"
 msgstr ""
 
 msgid "Exceeds Bludisc medium!"
@@ -5430,6 +5652,12 @@ msgid "FTP Setup"
 msgstr ""
 
 msgid "FTP setup"
+msgstr ""
+
+msgid "FTP passive mode"
+msgstr ""
+
+msgid "FTP connection failure"
 msgstr ""
 
 msgid "Factory reset"
@@ -5775,6 +6003,11 @@ msgstr ""
 
 msgid ""
 "GUI needs a restart to apply a new skin\n"
+"Do you want to restart the GUI now?"
+msgstr ""
+
+msgid ""
+"GUI needs a restart to switch modes\n"
 "Do you want to restart the GUI now?"
 msgstr ""
 
@@ -6163,6 +6396,21 @@ msgstr ""
 msgid "Hostname: "
 msgstr ""
 
+msgid "Host domain"
+msgstr ""
+
+msgid "Host receiver streaming port"
+msgstr ""
+
+msgid "Host receiver FTP username"
+msgstr ""
+
+msgid "Host receiver FTP password"
+msgstr ""
+
+msgid "Host receiver FTP port"
+msgstr ""
+
 msgid "Hour"
 msgstr ""
 
@@ -6182,6 +6430,12 @@ msgid "Hue"
 msgstr ""
 
 msgid "Hungarian"
+msgstr ""
+
+msgid "Host receiver address type"
+msgstr ""
+
+msgid "Host receiver IP address"
 msgstr ""
 
 msgid "IMDB search for current event"
@@ -6242,6 +6496,9 @@ msgstr ""
 msgid "If set to 'yes' it will show the 'PO' packages in browser."
 msgstr ""
 
+msgid "if set to 'no', only an debug message is written to the Debug log "
+msgstr ""
+
 msgid "If set to 'yes' it will show the 'SRC' packages in browser."
 msgstr ""
 
@@ -6285,6 +6542,11 @@ msgid "If set to 'yes' it will show the 'KERNEL' packages in browser."
 msgstr ""
 
 msgid "If set to yes it will show the WEBLINKS packages in browser."
+msgstr ""
+
+msgid ""
+"If set to 'yes; the infobar will remain shown permanently in 'paused' state "
+"(no timeout)."
 msgstr ""
 
 msgid "If enabled the video will always be de-interlaced."
@@ -6779,6 +7041,11 @@ msgstr ""
 msgid "LAN connection"
 msgstr ""
 
+msgid ""
+"Connection using the supplied FTP parameters failed. Please recheck the "
+"details and try again."
+msgstr ""
+
 msgid "LED Blinking"
 msgstr ""
 
@@ -6991,6 +7258,9 @@ msgid "Log-Manager"
 msgstr ""
 
 msgid "Logs"
+msgstr ""
+
+msgid "Log python stack trace on spinner ?"
 msgstr ""
 
 msgid "Logs location"
@@ -7509,6 +7779,11 @@ msgstr ""
 
 msgid ""
 "Set the MAC-adress of your %s %s.\n"
+msgstr ""
+
+msgid ""
+"'Network peer' automatically detects other Enigma2 receivers on the local "
+"network. You can also manually enter the URL or IP address."
 msgstr ""
 
 msgid "MAC-adress Setup"
@@ -8628,6 +8903,16 @@ msgstr ""
 msgid "Plugin manager activity information"
 msgstr ""
 
+msgid ""
+"Menu/Operation and Interface/OSD - 2.Infobar Change transmission information "
+"in -2.Infobar INFO. From System Plugins we download the "
+"WeatherComponentHandler. WeatherComponentHandler / Menu, then Add Green. If "
+"you have entered the place, go down to location code. Yellow for code search,"
+" confirm with green OK important again OK. More importantly with red, "
+"otherwise you have to start again. Now exit with exit, restart user "
+"interface, possibly complete restart."
+msgstr ""
+
 msgid "Plugin manager help"
 msgstr ""
 
@@ -9178,6 +9463,9 @@ msgstr ""
 msgid "Set server IP"
 msgstr ""
 
+msgid "Set to yes for debugging the root cause of a spinner."
+msgstr ""
+
 msgid "Use address"
 msgstr ""
 
@@ -9289,6 +9577,9 @@ msgid "Repeat Display Message"
 msgstr ""
 
 msgid "Repeat type"
+msgstr ""
+
+msgid "Repeat how often"
 msgstr ""
 
 msgid "Repeating event currently recording... What do you want to do?"
@@ -9403,6 +9694,9 @@ msgid ""
 msgstr ""
 
 msgid "Set the position of the recording icons"
+msgstr ""
+
+msgid "Set the repeat interval of the schedule."
 msgstr ""
 
 msgid "MAC-address settings"
@@ -9992,6 +10286,9 @@ msgid "Select wireless network"
 msgstr ""
 
 msgid "Select your provider, and press OK to start the scan"
+msgstr ""
+
+msgid "Select between entering an IP address or a domain."
 msgstr ""
 
 msgid "Selecting satellites 1 (USALS)"
@@ -10674,6 +10971,12 @@ msgstr ""
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
 msgstr ""
 
+msgid ""
+"Enable usage of tuners from another Enigma2 receiver on the local network. "
+"Remote tuners will be used when tuners are not available on this receiver. "
+"(No free tuner or service type is not available.)"
+msgstr ""
+
 msgid "Show PVR status in Movie Player"
 msgstr ""
 
@@ -10746,6 +11049,9 @@ msgstr ""
 msgid "Show infobar on skip forward/backward"
 msgstr ""
 
+msgid "Show infobar permanently while paused"
+msgstr ""
+
 msgid "Show job tasks in extensions"
 msgstr ""
 
@@ -10762,6 +11068,12 @@ msgid "This option allows you to show menu number quick links."
 msgstr ""
 
 msgid "Show message when recording starts"
+msgstr ""
+
+msgid "Preparation time for recording (seconds)"
+msgstr ""
+
+msgid "Mount '%s' has not enough free space to record."
 msgstr ""
 
 msgid "Show movie lengths in movielist"
@@ -11751,6 +12063,14 @@ msgstr ""
 msgid "SystemInfo"
 msgstr ""
 
+msgid ""
+"Should the FTP connection to the remote receiver be established in passive "
+"mode (normally 'no')?"
+msgstr ""
+
+msgid "Schedule EPG and channel list import"
+msgstr ""
+
 msgid "TB"
 msgstr ""
 
@@ -11783,9 +12103,6 @@ msgid "Select what you want the OK button to activate:"
 msgstr ""
 
 msgid "Select what you want the Up/Down button to activate:"
-msgstr ""
-
-msgid "TV physical address report"
 msgstr ""
 
 msgid "TXT PID"
@@ -12498,6 +12815,9 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
+msgid "Time style"
+msgstr ""
+
 msgid "Time Update in Minutes"
 msgstr ""
 
@@ -12661,6 +12981,9 @@ msgid "Timeshift-save action on zap"
 msgstr ""
 
 msgid "Timezone"
+msgstr ""
+
+msgid "Time import should start"
 msgstr ""
 
 msgid "Title"
@@ -13026,13 +13349,11 @@ msgstr ""
 msgid "Update channel list only"
 msgstr ""
 
-#, python-format
 msgid "Update completed, %d package was installed."
 msgid_plural "Update completed, %d packages were installed."
 msgstr[0] ""
 msgstr[1] ""
 
-#, python-format
 msgid "Update failed. Your %s %s does not have a working internet connection."
 msgstr ""
 
@@ -13051,14 +13372,12 @@ msgstr ""
 msgid "Updating software catalog"
 msgstr ""
 
-#, python-format
 msgid "Upgrade and reboot system"
 msgstr ""
 
 msgid "Upgrade finished."
 msgstr ""
 
-#, python-format
 msgid ""
 "Upgrade in progress\n"
 "Please wait until your %s %s reboots\n"
@@ -13270,7 +13589,6 @@ msgstr ""
 msgid "Username:"
 msgstr ""
 
-#, python-format
 msgid "Using LNB %d"
 msgstr ""
 
@@ -13280,11 +13598,9 @@ msgstr ""
 msgid "Using old profile: "
 msgstr ""
 
-#, python-format
 msgid "Using tuner %s"
 msgstr ""
 
-#, python-format
 msgid "Preferred tuner for recordings"
 msgstr ""
 
@@ -13300,7 +13616,6 @@ msgstr ""
 msgid "VMGM (intro trailer)"
 msgstr ""
 
-#, python-format
 msgid "VOD Settings"
 msgstr ""
 
@@ -13316,7 +13631,6 @@ msgstr ""
 msgid "Version:"
 msgstr ""
 
-#, python-format
 msgid "Version: %s"
 msgstr ""
 
@@ -13332,7 +13646,6 @@ msgstr ""
 msgid "Video Enhancement Settings"
 msgstr ""
 
-#, python-format
 msgid "Record Infobar"
 msgstr ""
 
@@ -13381,7 +13694,6 @@ msgstr ""
 msgid "Video wizard"
 msgstr ""
 
-#, python-format
 msgid "Video: %s fps"
 msgstr ""
 
@@ -13523,7 +13835,6 @@ msgstr ""
 msgid "Wakeup signal from TV"
 msgstr ""
 
-#, python-format
 msgid "Wakeup your %s %s from standby"
 msgstr ""
 
@@ -13587,14 +13898,12 @@ msgid ""
 "Then seek to the end, press OK, select 'end cut'. That's it."
 msgstr ""
 
-#, python-format
 msgid ""
 "Welcome to the image upgrade wizard. The wizard will assist you in upgrading "
 "the firmware of your %s %s by providing a backup facility for your current "
 "settings and a short explanation of how to upgrade your firmware."
 msgstr ""
 
-#, python-format
 msgid ""
 "Welcome.\n"
 "\n"
@@ -13604,7 +13913,6 @@ msgid ""
 "Press OK to start configuring your network"
 msgstr ""
 
-#, python-format
 msgid ""
 "Welcome.\n"
 "\n"
@@ -13753,6 +14061,13 @@ msgid "When enabled, the receveir will select an AC3 track (when available)."
 msgstr ""
 
 msgid ""
+"Choose the front panel display formatting style for dates. 'D' / 'DD' is the "
+"date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading "
+"zeros for single digit values.) The screen display will be based on your "
+"choice but can be influenced by the skin."
+msgstr ""
+
+msgid ""
 "When enabled, graphical DVB subtitles are preferred over teletext subtitles, "
 "when both types are available."
 msgstr ""
@@ -13847,7 +14162,6 @@ msgstr ""
 msgid "When enabled use DHCP for the IP configuration."
 msgstr ""
 
-#, python-format
 msgid "When enabled your receiver will detect activity on the VCR SCART input."
 msgstr ""
 
@@ -13879,7 +14193,6 @@ msgid ""
 "the picture."
 msgstr ""
 
-#, python-format
 msgid ""
 "When you do a factory reset, you will lose ALL your configuration data\n"
 "(including bouquets, services, satellite data ...)\n"
@@ -13891,32 +14204,26 @@ msgstr ""
 msgid "Where do you want to backup your settings?"
 msgstr ""
 
-#: Backup/restore
 msgid "Restore Plugins"
 msgstr ""
 
-#: Backup/restore
 msgid ""
 "Backup plugins found\n"
 "do you want to install now?"
 msgstr ""
 
-#: Backup/restore
 msgid "Install Plugins"
 msgstr ""
 
-#: Backup/restore
 msgid "install Plugins..."
 msgstr ""
 
 msgid "Installing Software..."
 msgstr ""
 
-#: Backup/restore
 msgid "Please wait while we check your installed plugins..."
 msgstr ""
 
-#: Backup/restore
 msgid "Restart Network Adapter"
 msgstr ""
 
@@ -13962,7 +14269,6 @@ msgid ""
 "Write error while recording. Disk full?\n"
 msgstr ""
 
-#, python-format
 msgid ""
 "Write error while recording. Disk full?\n"
 "%s"
@@ -14701,6 +15007,22 @@ msgstr ""
 msgid "Enter persistent PIN code"
 msgstr ""
 
+msgid "Enter the streaming port of the host receiver (normally '8001')."
+msgstr ""
+
+msgid "Enter the FTP username of the host receiver (normally 'root')."
+msgstr ""
+
+msgid ""
+"Enter the FTP password of the host receiver (normally just leave empty)."
+msgstr ""
+
+msgid "Enter the FTP port of the host receiver (normally '21')."
+msgstr ""
+
+msgid "Enter your e-mail address to send a copy of the log to."
+msgstr ""
+
 msgid ""
 "This allows you to set the number of digits to 5, if you have more than 9999 "
 "channels."
@@ -14727,6 +15049,9 @@ msgstr ""
 msgid ""
 "Set the scrolling speed of text on the menus, this uses a software render in "
 "some skins."
+msgstr ""
+
+msgid "Set the time of day to perform the import."
 msgstr ""
 
 msgid ""
@@ -15862,6 +16187,9 @@ msgstr ""
 msgid "Default  (keymap.xml)"
 msgstr ""
 
+msgid "Default port is '%d'. Change if required."
+msgstr ""
+
 msgid "User  (keymap.usr)"
 msgstr ""
 
@@ -16317,7 +16645,7 @@ msgstr ""
 msgid "HDMI Rx long"
 msgstr ""
 
-msgid "HDMI colorspace"
+msgid "HDMI Colorspace"
 msgstr ""
 
 msgid "HDMI Colorimetry"
@@ -16682,7 +17010,7 @@ msgstr ""
 msgid "0.0"
 msgstr ""
 
-msgid "Opendroid"
+msgid "OpenDroid"
 msgstr ""
 
 msgid "Download latest opendroid Image"
@@ -17066,4 +17394,992 @@ msgstr ""
 
 msgid ""
 "%s: error: %s\n"
+msgstr ""
+
+#: ButtonSetup.py:25
+msgid "Info (EPG)"
+msgstr ""
+
+#: ButtonSetup.py:26
+msgid "Info (EPG) Long"
+msgstr ""
+
+#: ButtonSetup.py:35
+msgid "TV"
+msgstr ""
+
+#: ButtonSetup.py:38
+msgid "Teletext"
+msgstr ""
+
+#: ButtonSetup.py:41 ButtonSetup.py:42
+msgid "List/PVR"
+msgstr ""
+
+#: ButtonSetup.py:42 ButtonSetup.py:44 ButtonSetup.py:57 ButtonSetup.py:82
+msgid "long"
+msgstr ""
+
+#: ButtonSetup.py:45
+msgid "File"
+msgstr ""
+
+#: ButtonSetup.py:48
+msgid "Media"
+msgstr ""
+
+#: ButtonSetup.py:52
+msgid "Www"
+msgstr ""
+
+#: ButtonSetup.py:53
+msgid "Www long"
+msgstr ""
+
+#: ButtonSetup.py:59
+msgid "End"
+msgstr ""
+
+#: ButtonSetup.py:60
+msgid "Next"
+msgstr ""
+
+#: ButtonSetup.py:61
+msgid "Previous"
+msgstr ""
+
+#: ButtonSetup.py:62
+msgid "Audio"
+msgstr ""
+
+#: ButtonSetup.py:64
+msgid "Playpause"
+msgstr ""
+
+#: ButtonSetup.py:67
+msgid "Rewind"
+msgstr ""
+
+#: ButtonSetup.py:69
+msgid "Skip back"
+msgstr ""
+
+#: ButtonSetup.py:70
+msgid "Skip forward"
+msgstr ""
+
+#: ButtonSetup.py:71
+msgid "activatePiP"
+msgstr ""
+
+#: ButtonSetup.py:72
+msgid "Timer"
+msgstr ""
+
+#: ButtonSetup.py:73
+msgid "Playlist"
+msgstr ""
+
+#: ButtonSetup.py:77
+msgid "Mark/Portal/Playlist"
+msgstr ""
+
+#: ButtonSetup.py:78
+msgid "Sleep"
+msgstr ""
+
+#: ButtonSetup.py:79
+msgid "Power"
+msgstr ""
+
+#: ButtonSetup.py:81 ButtonSetup.py:82
+msgid "HDMIin"
+msgstr ""
+
+#: ButtonSetup.py:85
+msgid "Context"
+msgstr ""
+
+#: ButtonSetup.py:86
+msgid "F1/LAN"
+msgstr ""
+
+#: ButtonSetup.py:87
+msgid "F1/LAN long"
+msgstr ""
+
+#: ButtonSetup.py:88
+msgid "F2"
+msgstr ""
+
+#: ButtonSetup.py:90
+msgid "F3"
+msgstr ""
+
+#: ButtonSetup.py:92
+msgid "F4"
+msgstr ""
+
+#: ButtonSetup.py:127
+msgid "Show help"
+msgstr ""
+
+#: ButtonSetup.py:134
+msgid "Show service list"
+msgstr ""
+
+#: ButtonSetup.py:135
+msgid "Show satellites list"
+msgstr ""
+
+#: ButtonSetup.py:136
+msgid "Show service list or movies"
+msgstr ""
+
+#: ButtonSetup.py:137
+msgid "Show movies"
+msgstr ""
+
+#: ButtonSetup.py:138
+msgid "Show favourites list"
+msgstr ""
+
+#: ButtonSetup.py:139
+msgid "Show current bouquet channel list"
+msgstr ""
+
+#: ButtonSetup.py:142
+msgid "Show event info plugins"
+msgstr ""
+
+#: ButtonSetup.py:145
+msgid "Show multi EPG"
+msgstr ""
+
+#: ButtonSetup.py:146
+msgid "Show select audio track"
+msgstr ""
+
+#: ButtonSetup.py:147
+msgid "Show subtitle selection"
+msgstr ""
+
+#: ButtonSetup.py:152
+msgid "Activate timeshift end"
+msgstr ""
+
+#: ButtonSetup.py:153
+msgid "Activate timeshift end and pause"
+msgstr ""
+
+#: ButtonSetup.py:157
+msgid "Show subservice selection"
+msgstr ""
+
+#: ButtonSetup.py:159
+msgid "Aspect selection"
+msgstr ""
+
+#: ButtonSetup.py:161
+msgid "Show PIP"
+msgstr ""
+
+#: ButtonSetup.py:163
+msgid "Move PIP"
+msgstr ""
+
+#: ButtonSetup.py:164
+msgid "Toggle PIP-ZAP"
+msgstr ""
+
+#: ButtonSetup.py:171
+msgid "Button setup"
+msgstr ""
+
+#: ButtonSetup.py:181
+msgid "Plugin browser"
+msgstr ""
+
+#: ButtonSetup.py:182
+msgid "Channel info"
+msgstr ""
+
+#: ButtonSetup.py:193
+msgid "SleepTimer"
+msgstr ""
+
+#: ButtonSetup.py:195
+msgid "Usage setup"
+msgstr ""
+
+#: ButtonSetup.py:196
+msgid "User interface settings"
+msgstr ""
+
+#: ButtonSetup.py:197
+msgid "Recording and playback settings"
+msgstr ""
+
+#: ButtonSetup.py:199
+msgid "Harddisk setup"
+msgstr ""
+
+#: ButtonSetup.py:200
+msgid "Subtitles settings"
+msgstr ""
+
+#: ButtonSetup.py:208
+msgid "EnhancedMovieCenter"
+msgstr ""
+
+#: ButtonSetup.py:210
+msgid "Kodi MediaCenter"
+msgstr ""
+
+#: ButtonSetup.py:211
+msgid "OPD BluePanel"
+msgstr ""
+
+#: ButtonSetup.py:212
+msgid "OPD Green Panel"
+msgstr ""
+
+#: ButtonSetup.py:213
+msgid "OPD Download Panel"
+msgstr ""
+
+#: ButtonSetup.py:214
+msgid "OPD OPD_panel"
+msgstr ""
+
+#: ButtonSetup.py:215
+msgid "OPD ScriptRunner"
+msgstr ""
+
+#: ButtonSetup.py:216
+msgid "OPD SwapManager"
+msgstr ""
+
+#: ButtonSetup.py:217
+msgid "OPD SoftwarePanel"
+msgstr ""
+
+#: ButtonSetup.py:218
+msgid "OPD MountManager"
+msgstr ""
+
+#: ButtonSetup.py:219
+msgid "OPD CronManager"
+msgstr ""
+
+#: ButtonSetup.py:220
+msgid "Disable this button"
+msgstr ""
+
+#: ButtonSetup.py:231
+msgid "Quick button setup"
+msgstr ""
+
+#: ButtonSetup.py:233
+msgid "Mode"
+msgstr ""
+
+#: ButtonSetup.py:341
+msgid "Quick button setup for"
+msgstr ""
+
+#: ButtonSetup.py:479
+msgid "are you sure you want to cancel all the changes"
+msgstr ""
+
+msgid "Picons-HDD"
+msgstr ""
+
+msgid "Back / Now"
+msgstr ""
+
+msgid "Time Forward"
+msgstr ""
+
+msgid "Page for / back"
+msgstr ""
+
+msgid "Line doubly"
+msgstr ""
+
+msgid "Jump 24 Hours"
+msgstr ""
+
+msgid "Favorites List"
+msgstr ""
+
+msgid "Picons-USB"
+msgstr ""
+
+msgid "Skin"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "Downloading plugin information complete."
+msgstr ""
+
+msgid "dont wait"
+msgstr ""
+
+msgid "no CAM 1 active"
+msgstr ""
+
+msgid "no CAM 2 active"
+msgstr ""
+
+msgid "Emu Manager"
+msgstr ""
+
+msgid "no cam"
+msgstr ""
+
+msgid "Name: "
+msgstr ""
+
+msgid "Aspect Ratio: "
+msgstr ""
+
+msgid "Video Size: "
+msgstr ""
+
+msgid "Provider: n/a"
+msgstr ""
+
+msgid "Name: n/a"
+msgstr ""
+
+msgid "Aspect Ratio: n/a"
+msgstr ""
+
+msgid "Video Size: n/a"
+msgstr ""
+
+msgid "active CAM 1: "
+msgstr ""
+
+msgid "active CAM 2: "
+msgstr ""
+
+msgid "Init.d"
+msgstr ""
+
+msgid "Softcam-Setup"
+msgstr ""
+
+msgid "You must set at least one Command"
+msgstr ""
+
+msgid "Addons "
+msgstr ""
+
+msgid "Decoding Setup"
+msgstr ""
+
+msgid "Include CI assignment"
+msgstr ""
+
+msgid "Infobar Setup"
+msgstr ""
+
+msgid "1st infobar timeout"
+msgstr ""
+
+msgid "Partitions"
+msgstr ""
+
+msgid ""
+"Fixed mounted first initialized Storage Device to /media/hdd. It needs a "
+"system restart in order to take effect.\n"
+"Restart your STB now?"
+msgstr ""
+
+msgid "No - simple"
+msgstr ""
+
+msgid "Yes - fstab entry as /media/hdd"
+msgstr ""
+
+msgid " as HDD ?"
+msgstr ""
+
+msgid "Or use standard 'Harddisk Setup' to initialize your drive in ext4."
+msgstr ""
+
+msgid "Check disk terminated with success"
+msgstr ""
+
+msgid ""
+"Cannot umount current drive.\n"
+"A record in progress, timeshift or some external tools (like samba, swapfile "
+"and nfsd) may cause this problem.\n"
+"Please stop this actions/applications and try again"
+msgstr ""
+
+msgid "Error checking disk. The disk may be damaged"
+msgstr ""
+
+msgid "Format terminated with success"
+msgstr ""
+
+msgid ""
+"Cannot format current drive.\n"
+"A record in progress, timeshift or some external tools (like samba, swapfile "
+"and nfsd) may cause this problem.\n"
+"Please stop this actions/applications and try again"
+msgstr ""
+
+msgid "Error formatting disk. The disk may be damaged"
+msgstr ""
+
+msgid "Formatting disk %s"
+msgstr ""
+
+msgid "Formatting disk"
+msgstr ""
+
+msgid "Checking disk %s"
+msgstr ""
+
+msgid "Checking disk"
+msgstr ""
+
+msgid "P. %d - %s (Fixed: %s)"
+msgstr ""
+
+msgid "P. %d - %s (Fast: %s)"
+msgstr ""
+
+msgid "Mount as main hdd"
+msgstr ""
+
+msgid "Mount as /media/hdd1"
+msgstr ""
+
+msgid "Mount as /media/hdd2"
+msgstr ""
+
+msgid "Mount as /media/hdd3"
+msgstr ""
+
+msgid "Mount as /media/hdd4"
+msgstr ""
+
+msgid "Mount as /media/hdd5"
+msgstr ""
+
+msgid "Mount as /media/usb"
+msgstr ""
+
+msgid "Mount as /media/usb1"
+msgstr ""
+
+msgid "Mount as /media/usb2"
+msgstr ""
+
+msgid "Mount as /media/usb3"
+msgstr ""
+
+msgid "Mount as /media/usb4"
+msgstr ""
+
+msgid "Mount as /media/usb5"
+msgstr ""
+
+msgid "Mount on custom path"
+msgstr ""
+
+msgid "Fixed mount"
+msgstr ""
+
+msgid "Fast mount"
+msgstr ""
+
+msgid "Mountpoints"
+msgstr ""
+
+msgid "Insert mount point:"
+msgstr ""
+
+msgid "/media/custom"
+msgstr ""
+
+msgid "Selected mount point is already used by another drive."
+msgstr ""
+
+msgid "Mount point exist!"
+msgstr ""
+
+msgid "Change old drive with this new drive"
+msgstr ""
+
+msgid "Keep old drive"
+msgstr ""
+
+msgid ""
+"Cannot mount new drive.\n"
+"Please check filesystem or format it and try again"
+msgstr ""
+
+msgid ""
+"Device Fixed Mount Point change needs a system restart in order to take "
+"effect.\n"
+"Restart your STB now?"
+msgstr ""
+
+msgid "Fast Mounted Remove"
+msgstr ""
+
+msgid ""
+"Fast mounted Media unmounted.\n"
+"You can safely remove the Device now, if no further Partitions (displayed as "
+"P.x on Devicelist - where x >=2) are mounted on the same Device.\n"
+"Please unmount Fixed Mounted Devices with Device Manager Panel!"
+msgstr ""
+
+msgid "P.%s (Fixed: %s)"
+msgstr ""
+
+msgid "P.%s (Fast: %s)"
+msgstr ""
+
+msgid "Harddisk standby after"
+msgstr ""
+
+msgid "Model: unknown"
+msgstr ""
+
+msgid "Serial: unknown"
+msgstr ""
+
+msgid "Firmware: unknown"
+msgstr ""
+
+msgid "Cylinders: unknown"
+msgstr ""
+
+msgid "Heads: unknown"
+msgstr ""
+
+msgid "Sectors: unknown"
+msgstr ""
+
+msgid "Read disk speed: unknown"
+msgstr ""
+
+msgid "Read disk cache speed: unknown"
+msgstr ""
+
+msgid "Disk temperature: unknown"
+msgstr ""
+
+msgid "Device Details"
+msgstr ""
+
+msgid "Model: %s"
+msgstr ""
+
+msgid "Serial: %s"
+msgstr ""
+
+msgid "Firmware: %s"
+msgstr ""
+
+msgid "Cylinders: %s (max) %s (attuale)"
+msgstr ""
+
+msgid "Heads: %s (max) %s (attuale)"
+msgstr ""
+
+msgid "Sectors: %s (max) %s (attuale)"
+msgstr ""
+
+msgid "Read speed: %s"
+msgstr ""
+
+msgid "Read cache speed: %s"
+msgstr ""
+
+msgid "Disk temperature: %s"
+msgstr ""
+
+msgid "Devices Manager"
+msgstr ""
+
+msgid "saveMypoints"
+msgstr ""
+
+msgid "Use as HDD"
+msgstr ""
+
+msgid "Size: "
+msgstr ""
+
+msgid "Type: "
+msgstr ""
+
+msgid "Devices Manager - Setup"
+msgstr ""
+
+msgid "Choose where to mount your devices to:"
+msgstr ""
+
+msgid "Wait please while scanning your %s %s devices..."
+msgstr ""
+
+msgid "Updating mount locations."
+msgstr ""
+
+msgid "USB Disk Format Wizard"
+msgstr ""
+
+msgid "Partition size"
+msgstr ""
+
+msgid "Sorry, your partition(s) sizes are bigger than total device size."
+msgstr ""
+
+msgid "ext4 - recommended for OPDBoot"
+msgstr ""
+
+msgid "Formatting..."
+msgstr ""
+
+msgid "Model: "
+msgstr ""
+
+msgid "OPD BootLogo settings"
+msgstr ""
+
+msgid "BluePanel"
+msgstr ""
+
+msgid "OScamInfo"
+msgstr ""
+
+msgid "Image-Flasher"
+msgstr ""
+
+msgid "opdBootLogo-Setup"
+msgstr ""
+
+msgid "Infobar_Setup"
+msgstr ""
+
+msgid "Decoding_Setup"
+msgstr ""
+
+msgid "OPD-Main Menu"
+msgstr ""
+
+msgid "Sorry no backups found!"
+msgstr ""
+
+msgid "Password-Change"
+msgstr ""
+
+msgid "HddSetup"
+msgstr ""
+
+msgid "CronManager"
+msgstr ""
+
+msgid "OscamSmartcard"
+msgstr ""
+
+msgid "MultiQuickButton"
+msgstr ""
+
+msgid "Ram"
+msgstr ""
+
+msgid "System Info"
+msgstr ""
+
+msgid "Module"
+msgstr ""
+
+msgid "Image/Remote Setup"
+msgstr ""
+
+msgid "Red Panel"
+msgstr ""
+
+msgid "Restore Settings"
+msgstr ""
+
+msgid "RedPanel"
+msgstr ""
+
+msgid "Show OPD_panel Red-key"
+msgstr ""
+
+msgid "Show BluePanel Red-key long"
+msgstr ""
+
+msgid "Yellow Key Action"
+msgstr ""
+
+msgid "an internal error has occured"
+msgstr ""
+
+msgid "Image Info"
+msgstr ""
+
+msgid "Change Root Password"
+msgstr ""
+
+msgid "Set Password"
+msgstr ""
+
+msgid "new Random"
+msgstr ""
+
+msgid "virt. Keyboard"
+msgstr ""
+
+msgid "Enter new Password"
+msgstr ""
+
+msgid ""
+"Sucessfully changed password for root user to:\n"
+"%s "
+msgstr ""
+
+msgid "Unable to change/reset password for root user"
+msgstr ""
+
+msgid "Enter your password here:"
+msgstr ""
+
+msgid "83"
+msgstr ""
+
+msgid ""
+"Remove all first.\n"
+"otherwise Oscamsmartcard will not start"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "Oscamsmartcard found "
+msgstr ""
+
+msgid " Server and "
+msgstr ""
+
+msgid "online"
+msgstr ""
+
+msgid "Oscam will be installed with the following settings"
+msgstr ""
+
+msgid "no PayTV Card"
+msgstr ""
+
+msgid "file already exists and use it"
+msgstr ""
+
+msgid "file exists, becomes upgrade"
+msgstr ""
+
+msgid "will be installed"
+msgstr ""
+
+msgid "Are the settings correct ?"
+msgstr ""
+
+msgid "check your settings"
+msgstr ""
+
+msgid ""
+"oscam install finished\n"
+"have fun"
+msgstr ""
+
+msgid "done"
+msgstr ""
+
+msgid "wrong Settings detected"
+msgstr ""
+
+msgid "no installed oscamsmartcard found"
+msgstr ""
+
+msgid "download fix"
+msgstr ""
+
+msgid "added HD03/04 Support"
+msgstr ""
+
+msgid "added ORF 650, added 6.2 Support"
+msgstr ""
+
+msgid "update init.d start/stop"
+msgstr ""
+
+msgid "update oscamsmartcard code"
+msgstr ""
+
+msgid "update Redlight HD Card"
+msgstr ""
+
+msgid "added ORF ICE p410 Card"
+msgstr ""
+
+msgid "remove reboot from oscamsmartcard"
+msgstr ""
+
+msgid "this info added"
+msgstr ""
+
+msgid "added SRG V6 Card"
+msgstr ""
+
+msgid "added CI+"
+msgstr ""
+
+msgid "added default Reader 357 Mhz"
+msgstr ""
+
+msgid "Error command '%s'"
+msgstr ""
+
+msgid "partition(s)"
+msgstr ""
+
+msgid "add partition"
+msgstr ""
+
+msgid "size in %s (max %d %s):"
+msgstr ""
+
+msgid "filesystem:"
+msgstr ""
+
+msgid "cancel"
+msgstr ""
+
+msgid "ok"
+msgstr ""
+
+msgid "Nr"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "add"
+msgstr ""
+
+msgid "create partition %s"
+msgstr ""
+
+msgid "make filesystem '%s' on partition %s (%d %s)"
+msgstr ""
+
+msgid "delete partition %s"
+msgstr ""
+
+msgid "execute"
+msgstr ""
+
+msgid "quit"
+msgstr ""
+
+msgid "Please Wait"
+msgstr ""
+
+msgid "Install Tgz"
+msgstr ""
+
+msgid "UnInstall"
+msgstr ""
+
+msgid "Addons"
+msgstr ""
+
+msgid "Format/Partition your Devices and manage Mountpoints"
+msgstr ""
+
+msgid "Device Manager - Fast Mounted Remove"
+msgstr ""
+
+msgid "Quick and safe remove for your mounted devices "
+msgstr ""
+
+msgid "Run Confirmation"
+msgstr ""
+
+msgid "Updates Available:"
+msgstr ""
+
+msgid "feed status"
+msgstr ""
+
+msgid ""
+"There are to many update packages !!\n"
+"\n"
+"There is a risk that your %s %s will not\n"
+"boot after online-update, or will show disfunction in running Image.\n"
+"\n"
+"You need to flash new !!\n"
+"\n"
+"Do you want to flash-online ?"
+msgstr ""
+
+msgid "Wait please while scanning..."
+msgstr ""
+
+msgid "Please select device to use as swapfile location"
+msgstr ""
+
+msgid ""
+"Sorry, no physical devices that supports SWAP attached. Can't create "
+"Swapfile on network or fat32 filesystems"
+msgstr ""
+
+msgid "Wait please while creating swapfile..."
+msgstr ""
+
+msgid "Change the transparency "
+msgstr ""
+
+msgid "Skin adjustments"
+msgstr ""
+
+msgid ""
+"For less transparency in the user interface, in /usr/share/enigma2/OPD-Blue-"
+"Line/DEV/ diePixmaps: bg1280.png and bg1920.png copy and in "
+"/usr/share/enigma2/OPD-Blue-Line/menu insert. -  User interface reboot."
+msgstr ""
+
+msgid ""
+"This skin can in   Menü -&gt; settings -&gt; Operation and interface, to be "
+"customized. There you will also find information about setting the weather "
+"in the second Infobar."
+msgstr ""
+
+msgid ""
+"Write error at start of recording. Disk %s\n"
+"%s"
+msgstr ""
+
+msgid "Write error while recording. Disk %s"
+msgstr ""
+
+msgid ""
+"During this time, the transmitter and the recording destination are checked. "
+"If the recording destination (eg NAS) does not ready in time for recording, "
+"this time can be increased."
+msgstr ""
+
+msgid "You have to create a Swap File before to activate the autostart."
 msgstr ""

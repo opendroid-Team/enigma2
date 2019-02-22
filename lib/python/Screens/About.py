@@ -10,7 +10,7 @@ from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString, getDesktop
-from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType
+from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType, getBrandOEM
 from Components.SystemInfo import SystemInfo
 from skin import isOPDSkin
 
@@ -19,7 +19,7 @@ from Components.Network import iNetwork
 from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
-
+import re
 from Tools.StbHardware import getFPVersion
 from enigma import ePicLoad, getDesktop, eSize, eTimer, eLabel, eConsoleAppContainer
 from Components.Pixmap import Pixmap
@@ -29,7 +29,7 @@ from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 import skin, os
 import time
-from os import path, popen
+from os import path, popen, system
 from re import search
 def parse_ipv4(ip):
 	ret = ""
@@ -86,13 +86,50 @@ class About(Screen):
 			})
 
 	def populate(self):
+		def netspeed():
+			netspeed=""
+			for line in popen('ethtool eth0 |grep Speed','r'):
+				line = line.strip().split(":")
+				line =line[1].replace(' ','')
+				netspeed += line
+				return str(netspeed)
+		def netspeed_eth1():
+			netspeed=""
+			for line in popen('ethtool eth1 |grep Speed','r'):
+				line = line.strip().split(":")
+				line =line[1].replace(' ','')
+				netspeed += line
+				return str(netspeed)
+		def netspeed_ra0():
+			netspeed=""
+			for line in popen('iwconfig ra0 | grep Bit | cut -c 75-85','r'):
+				line = line.strip()
+				netspeed += line
+				return str(netspeed)
+		def netspeed_wlan0():
+			netspeed=""
+			for line in popen('iwconfig wlan0 | grep Bit | cut -c 75-85','r'):
+				line = line.strip()
+				netspeed += line
+				return str(netspeed)
+		def netspeed_wlan1():
+			netspeed=""
+			for line in popen('iwconfig wlan1 | grep Bit | cut -c 75-85','r'):
+				line = line.strip()
+				netspeed += line
+				return str(netspeed)
+		def freeflash():
+			freeflash=""
+			for line in popen("df -mh / | grep -v '^Filesystem' | awk '{print $4}'",'r'):
+				line = line.strip()
+				freeflash += line
+				return str(freeflash)
 		self["lab1"] = StaticText(_("OpenDroid by OPD Image Team"))
 		self["lab2"] = StaticText(_("Support at") + " www.droidsat.org")
 		model = None
 		AboutText = ""
 		self["lab2"] = StaticText(_("Support:") + " www.droidsat.org")
 		AboutText += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
-		#AboutText += _("Boxtype:\t%s\n") % getBoxType()
 
 		if path.exists('/proc/stb/info/chipset'):
 			if SystemInfo["HasHiSi"]:
@@ -102,7 +139,6 @@ class About(Screen):
 			else:
 				AboutText += _("Chipset:\t%s\n") % about.getChipSetString().upper()
 
-				AboutText += _("Chipset:\t\t%s") % about.getChipSetString() + "\n"
 				AboutText += _("CPU:\t%s %s %s\n") % (about.getCPUArch(), about.getCPUSpeedString(), about.getCpuCoresString())
 
 		cmd = 'cat /proc/cpuinfo | grep "cpu MHz" -m 1 | awk -F ": " ' + "'{print $2}'"
@@ -182,7 +218,7 @@ class About(Screen):
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"
 		AboutText += _("Cores:\t%s") % about.getCpuCoresString() + "\n"
-		AboutText += _("image Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
+		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
 		AboutText += _("Kernel (Box):\t%s") % about.getKernelVersionString() + " (" + getBoxType() + ")" + "\n"
 		imagestarted = ""
 		bootname = ''
@@ -210,7 +246,7 @@ class About(Screen):
 						image = "5"
 				f.close()
 				if bootname: bootname = "   (%s)" %bootname 
-				AboutText += _("Selected Image:\t\t%s") % "STARTUP_" + image + bootname + "\n"
+				AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 	        elif getMachineBuild() in ('osmio4k'):
 		        if path.exists('/boot/STARTUP'):
 			        f = open('/boot/STARTUP', 'r')
@@ -218,13 +254,13 @@ class About(Screen):
 			        image = f.read(1) 
 			        f.close()
 			        if bootname: bootname = "   (%s)" %bootname 
-			        AboutText += _("Selected Image:\t\t%s") % "STARTUP_" + image + bootname + "\n"
+			        AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 		elif path.exists('/boot/STARTUP'):
 			f = open('/boot/STARTUP', 'r')
 			f.seek(22)
 			image = f.read(1) 
 			f.close()
-			if bootname: bootname = "   (%s)" %bootname 
+			if bootname: bootname = "   (%s)" %bootname
 			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 		elif path.exists('/boot/cmdline.txt'):
 			f = open('/boot/cmdline.txt', 'r')
@@ -234,19 +270,30 @@ class About(Screen):
 			if bootname: bootname = "   (%s)" %bootname 
 			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 
-		AboutText += _("Version:\t%s") % getImageVersion() + "\n"
+		if path.isfile("/etc/issue"):
+			version = open("/etc/issue").readlines()[-2].upper().strip()[:-6]
+			if path.isfile("/etc/image-version"):
+				build = self.searchString("/etc/image-version", "^build=")
+				version = "%s #%s" % (version,build)
+			AboutText += _("Image:\t%s") % version + "\n"
 		AboutText += _("Build:\t%s") % getImageBuild() + "\n"
 		AboutText += _("Kernel:\t%s") % about.getKernelVersionString() + "\n"
-	
+
 		string = getDriverDate()
 		year = string[0:4]
 		month = string[4:6]
 		day = string[6:8]
 		driversdate = '-'.join((year, month, day))
+		gstcmd = 'opkg list-installed | grep "gstreamer1.0 -" | cut -c 16-32'
+		gstcmd2 = os.system(gstcmd)
 		AboutText += _("Drivers:\t%s") % driversdate + "\n"
 		AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
-		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " - Build " + getImageBuild() + "\n"
-		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
+		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
+		if path.exists('/boot/STARTUP'):
+			AboutText += _("Flashed:\tMultiboot active\n")
+		else:
+			AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
+		AboutText += _("Free Flash:\t%s\n") % freeflash()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		skinWidth = getDesktop(0).size().width()
 		skinHeight = getDesktop(0).size().height()
@@ -254,8 +301,30 @@ class About(Screen):
 		AboutText += _("Skin:\t%s") % config.skin.primary_skin.value[0:-9] + _("  (%s x %s)") % (skinWidth, skinHeight) + "\n"
 		if getMachineBuild() not in ('vuduo4k','osmio4k','h9','h9combo','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u54','u51','sf8008','i55plus'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
-	
-		AboutText += _("Last update:\t\t%s") % getEnigmaVersionString() + "\n"
+		AboutText += _("Network:")
+		eth0 = about.getIfConfig('eth0')
+		eth1 = about.getIfConfig('eth1')
+		ra0 = about.getIfConfig('ra0')
+		wlan0 = about.getIfConfig('wlan0')
+		wlan1 = about.getIfConfig('wlan1')
+		if eth0.has_key('addr'):
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed() + ")\n"
+		elif eth1.has_key('addr'):
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed_eth1() + ")\n"
+		elif ra0.has_key('addr'):
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_ra0() + ")\n"
+		elif wlan0.has_key('addr'):
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan0() + ")\n"
+		elif wlan1.has_key('addr'):
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan1() + ")\n"
+		else:
+			for x in about.GetIPsFromNetworkInterfaces():
+				AboutText += "\t" + x[0] + ": " + x[1] + "\n"
 
 		fp_version = getFPVersion()
 		if fp_version is None:
@@ -288,7 +357,7 @@ class About(Screen):
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
 			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
-	
+
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
 			f = open('/proc/stb/fp/temp_sensor_avs', 'r')
@@ -321,42 +390,6 @@ class About(Screen):
 			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
-		self["HDDHeader"] = StaticText(_("Detected HDD:"))
-		hddlist = harddiskmanager.HDDList()
-		hdd = hddlist and hddlist[0][1] or None
-		if hdd is not None and hdd.model() != "":
-				self["hddA"] = StaticText(_("%s\n(%s, %d MB free)") % (hdd.model(), hdd.capacity(),hdd.free()))
-		else:
-				self["hddA"] = StaticText(_("none"))
-				self.hdd_header = _("Detected HDD:")
-				self.hdd_list = []
-				if len(hddlist):
-					for hddX in hddlist:
-						hdd = hddX[1]
-						if hdd.model() != "":
-							self.hdd_list.append((hdd.model() + "\n   %.2f GB - %.2f GB" % (hdd.diskSize()/1000.0, hdd.free()/1000.0) + " " + _("free") + "\n\n"))
-				ifaces = iNetwork.getConfiguredAdapters()
-				iface_list = []
-				for iface in ifaces:
-					iface_list.append((_("Interface") + " : " + iNetwork.getAdapterName(iface) + " ("+ iNetwork.getFriendlyAdapterName(iface) + ")\n"))
-					iface_list.append((_("IP") + " : " + parse_ipv4(iNetwork.getAdapterAttribute(iface, "ip")) + "\n"))
-					iface_list.append((_("Netmask") + " : " + parse_ipv4(iNetwork.getAdapterAttribute(iface, "netmask")) + "\n"))
-					iface_list.append((_("Gateway") + " : " + parse_ipv4(iNetwork.getAdapterAttribute(iface, "gateway")) + "\n"))
-					if iNetwork.getAdapterAttribute(iface, "dhcp"):
-						iface_list.append((_("DHCP") + " : " + _("Yes") + "\n"))
-					else:
-						iface_list.append((_("DHCP") + " : " + _("No") + "\n"))
-					iface_list.append((_("MAC") + " : " + iNetwork.getAdapterAttribute(iface, "mac") + "\n"))
-					iface_list.append(("\n"))
-
-				AboutText += _("Network") + ":\n"
-				for x in iface_list:
-					AboutText += "   " + x
-				AboutText += self.hdd_header + "\n"
-				for x in self.hdd_list:
-					AboutText += "   " + x
-				AboutText += "\n"
-#				AboutText = getAboutText()[0]
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
@@ -385,6 +418,12 @@ class About(Screen):
 				self.session.open(MessageBox,id[1], type = MessageBox.TYPE_INFO)
 			except:
 				pass
+	def searchString(self, file, search):
+		f = open(file)
+		for line in f:
+			if re.match(search, line):
+				return line.split("=")[1].replace('\n', '')
+		f.close()
 
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)
@@ -447,8 +486,6 @@ class ModelPic(Screen):
 			model = "sf8008.png"
 		elif getBoxType() in ('sf8008s'):
 		        model = "sf8008s.png"
-		elif getBoxType() in ('sf8008t'):
-		        model = "sf8008t.png"
 		elif getBoxType() in ('sf3038'):
 			model = "sf3038.png"
 		elif getBoxType() in ('sf128'):
@@ -507,8 +544,6 @@ class ModelPic(Screen):
 			model = "zgemmah92h.png"
 		elif getBoxType() in ('zgemmah92s'):
 			model = "zgemmah92s.png"
-		elif getBoxType() in ('zgemmah9combo'):
-			model = "zgemmah9combo.png"
 		elif getBoxType() in ('zgemmahs'):
 			model = "zgemmahs.png"
 		elif getBoxType() in ('zgemmai55'):
@@ -813,11 +848,23 @@ class SystemMemoryInfo(Screen):
 		self.Console = Console()
 		self.Console.ePopen("df -mh / | grep -v '^Filesystem'", self.Stage1Complete)
 
+	def MySize(self, RamText):
+		RamText_End = RamText[len(RamText)-1]
+		RamText_End2 = RamText_End
+		if RamText_End == "G":
+			RamText_End = _("GB")
+		elif RamText_End == "M":
+			RamText_End = _("MB")
+		elif RamText_End == "K":
+			RamText_End = _("KB")
+		if RamText_End != RamText_End2:
+			RamText = RamText[0:len(RamText)-1] + " " + RamText_End
+		return RamText
 	def Stage1Complete(self, result, retval, extra_args=None):
 		flash = str(result).replace('\n', '')
 		flash = flash.split()
-		RamTotal = flash[1]
-		RamFree = flash[3]
+		RamTotal = self.MySize(flash[1])
+		RamFree = self.MySize(flash[3])
 
 		self.AboutText += _("FLASH") + '\n\n'
 		self.AboutText += _("Total:") + "\t" + RamTotal + "\n"
@@ -879,28 +926,50 @@ class SystemNetworkInfo(Screen):
 			})
 
 	def createscreen(self):
+		def netspeed():
+			netspeed=""
+			for line in popen('ethtool eth0 |grep Speed','r'):
+				line = line.strip().split(":")
+				line =line[1].replace(' ','')
+				netspeed += line
+				return str(netspeed)
+		def netspeed_eth1():
+			netspeed=""
+			for line in popen('ethtool eth1 |grep Speed','r'):
+				line = line.strip().split(":")
+				line =line[1].replace(' ','')
+				netspeed += line
+				return str(netspeed)
 		self.AboutText = ""
 		self.iface = "eth0"
 		eth0 = about.getIfConfig('eth0')
 		if eth0.has_key('addr'):
+			if eth0.has_key('ifname'):
+				self.AboutText += _('Interface:') + "\t/dev/" + eth0['ifname'] + "\n"
 			self.AboutText += _("IP:") + "\t" + eth0['addr'] + "\n"
 			if eth0.has_key('netmask'):
 				self.AboutText += _("Netmask:") + "\t" + eth0['netmask'] + "\n"
 			if eth0.has_key('hwaddr'):
 				self.AboutText += _("MAC:") + "\t" + eth0['hwaddr'] + "\n"
+			self.AboutText += _("Network Speed:") + "\t" + netspeed() + "\n"
 			self.iface = 'eth0'
 
 		eth1 = about.getIfConfig('eth1')
 		if eth1.has_key('addr'):
+			if eth1.has_key('ifname'):
+				self.AboutText += _('Interface:') + "\t/dev/" + eth1['ifname'] + "\n"
 			self.AboutText += _("IP:") + "\t" + eth1['addr'] + "\n"
 			if eth1.has_key('netmask'):
 				self.AboutText += _("Netmask:") + "\t" + eth1['netmask'] + "\n"
 			if eth1.has_key('hwaddr'):
 				self.AboutText += _("MAC:") + "\t" + eth1['hwaddr'] + "\n"
+			self.AboutText += _("Network Speed:") + "\t" + netspeed_eth1() + "\n"
 			self.iface = 'eth1'
 
 		ra0 = about.getIfConfig('ra0')
 		if ra0.has_key('addr'):
+			if ra0.has_key('ifname'):
+				self.AboutText += _('Interface:') + "\t/dev/" + ra0['ifname'] + "\n"
 			self.AboutText += _("IP:") + "\t" + ra0['addr'] + "\n"
 			if ra0.has_key('netmask'):
 				self.AboutText += _("Netmask:") + "\t" + ra0['netmask'] + "\n"
@@ -910,6 +979,8 @@ class SystemNetworkInfo(Screen):
 
 		wlan0 = about.getIfConfig('wlan0')
 		if wlan0.has_key('addr'):
+			if wlan0.has_key('ifname'):
+				self.AboutText += _('Interface:') + "\t/dev/" + wlan0['ifname'] + "\n"
 			self.AboutText += _("IP:") + "\t" + wlan0['addr'] + "\n"
 			if wlan0.has_key('netmask'):
 				self.AboutText += _("Netmask:") + "\t" + wlan0['netmask'] + "\n"
@@ -919,6 +990,8 @@ class SystemNetworkInfo(Screen):
 
 		wlan1 = about.getIfConfig('wlan1')
 		if wlan1.has_key('addr'):
+			if wlan1.has_key('ifname'):
+				self.AboutText += _('Interface:') + "\t/dev/" + wlan1['ifname'] + "\n"
 			self.AboutText += _("IP:") + "\t" + wlan1['addr'] + "\n"
 			if wlan1.has_key('netmask'):
 				self.AboutText += _("Netmask:") + "\t" + wlan1['netmask'] + "\n"

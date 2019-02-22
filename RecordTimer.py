@@ -21,6 +21,7 @@ import timer
 import NavigationInstance
 from ServiceReference import ServiceReference
 from enigma import pNavigation, eDVBFrontend
+import subprocess, threading
 
 
 # ok, for descriptions etc we have:
@@ -163,6 +164,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.messageStringShow = False
 		self.messageBoxAnswerPending = False
 		self.justTriedFreeingTuner = False
+		self.MountPathRetryCounter = 0
+		self.MountPathErrorNumber = 0
+		self.lastend = 0
 
 		if descramble == 'notset' and record_ecm == 'notset':
 			if config.recording.ecm_data.value == 'descrambled+ecm':
@@ -209,7 +213,44 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.log_entries.append((int(time()), code, msg))
 		print "[TIMER]", msg
 
-	def freespace(self):
+	def MountTest(self, dirname, cmd):
+		if cmd == 'writeable':
+			if not os.access(dirname, os.W_OK):
+				self.stop_MountTest(None, cmd)
+		elif cmd == 'freespace':
+			s = os.statvfs(dirname)
+			if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
+				self.stop_MountTest(None, cmd)
+		elif cmd == 'driveawake':
+			if not subprocess.call('touch %s/drive.awake' % dirname, shell=True):
+				subprocess.call('rm -f %s/drive.awake' % dirname, shell=True)
+			else:
+				self.stop_MountTest(None, cmd)
+
+	def stop_MountTest(self, thread, cmd):
+		if thread and thread.isAlive():
+			print 'timeout thread : %s' %cmd
+			thread._Thread__stop()
+
+		if cmd == 'writeable':
+			self.MountPathErrorNumber = 2
+		elif cmd == 'freespace':
+			self.MountPathErrorNumber = 3
+		elif cmd == 'driveawake':
+			self.MountPathErrorNumber = 4
+
+	def freespace_old(self, WRITEERROR = False):
+		if WRITEERROR:
+			if findSafeRecordPath(self.MountPath) is None:
+				return ("mount '%s' is not available." % self.MountPath, 1)
+			elif not os.access(self.MountPath, os.W_OK):
+				return ("mount '%s' is not writeable." % self.MountPath, 2)
+			s = os.statvfs(self.MountPath)
+			if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
+				return ("mount '%s' has not enough free space to record." % self.MountPath, 3)
+			else:
+				return ("unknown error.", 0)
+
 		self.MountPath = None
 		if not self.dirname:
 			dirname = findSafeRecordPath(defaultMoviePath())
@@ -219,46 +260,121 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				dirname = findSafeRecordPath(defaultMoviePath())
 				self.dirnameHadToFallback = True
 		if not dirname:
+			dirname = self.dirname
+			if not dirname:
+				dirname = defaultMoviePath() or '-'
+			self.log(0, ("Mount '%s' is not available." % dirname))
+			self.MountPathErrorNumber = 1
 			return False
 
-		self.MountPath = dirname
 		mountwriteable = os.access(dirname, os.W_OK)
 		if not mountwriteable:
 			self.log(0, ("Mount '%s' is not writeable." % dirname))
+			self.MountPathErrorNumber = 2
 			return False
 
 		s = os.statvfs(dirname)
 		if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
-			self.log(0, _("Not enough free space to record"))
+			self.log(0, _("Mount '%s' has not enough free space to record.") % dirname)
+			self.MountPathErrorNumber = 3
 			return False
 		else:
 			if debug:
 				self.log(0, "Found enough free space to record")
+			self.MountPathRetryCounter = 0
+			self.MountPathErrorNumber = 0
+			self.MountPath = dirname
 			return True
 
-	def calculateFilename(self):
+	def freespace(self, WRITEERROR = False):
+		if WRITEERROR:
+			dirname = self.MountPath
+			if findSafeRecordPath(dirname) is None:
+				return ("mount '%s' is not available." % dirname, 1)
+		else:
+			self.MountPath = None
+			if not self.dirname:
+				dirname = findSafeRecordPath(defaultMoviePath())
+			else:
+				dirname = findSafeRecordPath(self.dirname)
+				if dirname is None:
+					dirname = findSafeRecordPath(defaultMoviePath())
+					self.dirnameHadToFallback = True
+			if not dirname:
+				dirname = self.dirname
+				if not dirname:
+					dirname = defaultMoviePath() or '-'
+				self.log(0, "Mount '%s' is not available." % dirname)
+				self.MountPathErrorNumber = 1
+				return False
+
+		self.MountPathErrorNumber = 0
+		#for cmd in ('writeable', 'freespace', 'driveawake'): #driveawake is not needed
+		for cmd in ('writeable', 'freespace'):
+			print 'starting thread :%s' %cmd
+			p = threading.Thread(target=self.MountTest, args=(dirname, cmd))
+			t = threading.Timer(3, self.stop_MountTest, args=(p, cmd))
+			t.start()
+			p.start()
+			p.join()
+			t.cancel()
+			if self.MountPathErrorNumber:
+				print 'break - error number: %d' %self.MountPathErrorNumber
+				break
+			print 'finished thread :%s' %cmd
+
+		if WRITEERROR:
+			if self.MountPathErrorNumber == 2:
+				return ("mount '%s' is not writeable." % dirname, 2)
+			elif self.MountPathErrorNumber == 3:
+				return ("mount '%s' has not enough free space to record." % dirname, 3)
+			elif self.MountPathErrorNumber == 4:
+				return ("mount '%s' has failed to write file." % dirname, 2)
+			else:
+				return ("unknown error.", 0)
+
+		if self.MountPathErrorNumber == 2:
+			self.log(0, "Mount '%s' is not writeable." % dirname)
+			return False
+		elif self.MountPathErrorNumber == 3:
+			self.log(0, _("Mount '%s' has not enough free space to record.") % dirname)
+			return False
+		elif self.MountPathErrorNumber == 4:
+			self.MountPathErrorNumber = 2
+			self.log(0, _("Mount '%s' has failed to write file.") % dirname)
+			return False
+		else:
+			if debug:
+				self.log(0, "Found enough free space to record")
+			self.MountPathRetryCounter = 0
+			self.MountPathErrorNumber = 0
+			self.MountPath = dirname
+			return True
+
+	def calculateFilename(self, name = None):
 		service_name = self.service_ref.getServiceName()
 		begin_date = strftime("%Y%m%d %H%M", localtime(self.begin))
+		name = name or self.name
+		filename = begin_date + " - " + service_name
 
 #		print "begin_date: ", begin_date
 #		print "service_name: ", service_name
 #		print "name:", self.name
 #		print "description: ", self.description
 #
-		filename = begin_date + " - " + service_name
-		if self.name:
+		if name:
 			if config.recording.filename_composition.value == "veryveryshort":
-				filename = self.name
+				filename = name
 			elif config.recording.filename_composition.value == "veryshort":
-				filename = self.name + " - " + begin_date
+				filename = name + " - " + begin_date
 			elif config.recording.filename_composition.value == "short":
-				filename = strftime("%Y%m%d", localtime(self.begin)) + " - " + self.name
+				filename = strftime("%Y%m%d", localtime(self.begin)) + " - " + name
 			elif config.recording.filename_composition.value == "shortwithtime":
-				filename = strftime("%Y%m%d %H%M", localtime(self.begin)) + " - " + self.name
+				filename = strftime("%Y%m%d %H%M", localtime(self.begin)) + " - " + name
 			elif config.recording.filename_composition.value == "long":
-				filename += " - " + self.name + " - " + self.description
+				filename += " - " + name + " - " + self.description
 			else:
-				filename += " - " + self.name # standard
+				filename += " - " + name # standard
 
 		if config.recording.ascii_filenames.value:
 			filename = ASCIItranslit.legacyEncode(filename)
@@ -295,14 +411,26 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.setRecordingPreferredTuner(setdefault=True)
 				return False
 
+			name = self.name
+			description = self.description
 			if self.repeated:
 				epgcache = eEPGCache.getInstance()
 				queryTime=self.begin+(self.end-self.begin)/2
 				evt = epgcache.lookupEventTime(rec_ref, queryTime)
 				if evt:
-					self.description = evt.getShortDescription()
-					if self.description == "":
-						self.description = evt.getExtendedDescription()
+					if self.rename_repeat:
+						event_description = evt.getShortDescription()
+						if not event_description:
+							event_description = evt.getExtendedDescription()
+						if event_description and event_description != description:
+							description = event_description
+						event_name = evt.getEventName()
+						if event_name and event_name != name:
+							name = event_name
+							if not self.calculateFilename(event_name):
+								self.do_backoff()
+								self.start_prepare = time() + self.backoff
+								return False
 					event_id = evt.getEventId()
 				else:
 					event_id = -1
@@ -311,7 +439,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				if event_id is None:
 					event_id = -1
 
-			prep_res=self.record_service.prepare(self.Filename + self.record_service.getFilenameExtension(), self.begin, self.end, event_id, self.name.replace("\n", ""), self.description.replace("\n", ""), ' '.join(self.tags), bool(self.descramble), bool(self.record_ecm))
+			prep_res=self.record_service.prepare(self.Filename + self.record_service.getFilenameExtension(), self.begin, self.end, event_id, name.replace("\n", ""), description.replace("\n", ""), ' '.join(self.tags), bool(self.descramble), bool(self.record_ecm))
 			if prep_res:
 				if prep_res == -255:
 					self.log(4, "failed to write meta information")
@@ -367,9 +495,14 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				return False
 
 			if not self.justplay and not self.freespace():
-				message = _("Write error while recording. Disk full?\n%s") % self.name
+				if self.MountPathErrorNumber < 3 and self.MountPathRetryCounter < 3:
+					self.MountPathRetryCounter += 1
+					self.start_prepare = time() + 5 # tryPrepare in 5 seconds
+					self.log(0, "next try in 5 seconds ...(%d/3)" % self.MountPathRetryCounter)
+					return False
+				message = _("Write error at start of recording. Disk %s\n%s") % ((_("not found!"), _("not writable!"), _("full?"))[self.MountPathErrorNumber-1],self.name)
 				messageboxtyp = MessageBox.TYPE_ERROR
-				timeout = 5
+				timeout = 20
 				id = "DiskFullMessage"
 				if InfoBar and InfoBar.instance:
 					InfoBar.instance.openInfoBarMessage(message, messageboxtyp, timeout)
@@ -377,6 +510,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					Notifications.AddPopup(message, messageboxtyp, timeout = timeout, id = id)
 				self.failed = True
 				self.next_activation = time()
+				self.lastend = self.end
 				self.end = time() + 5
 				self.backoff = 0
 				return True
@@ -657,13 +791,17 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				if self.record_service:
 					NavigationInstance.instance.stopRecordService(self.record_service)
 					self.record_service = None
+			if self.lastend and self.failed:
+				self.end = self.lastend
 
 			NavigationInstance.instance.RecordTimer.saveTimer()
+
 			box_instandby = Screens.Standby.inStandby
 			tv_notactive = Screens.Standby.TVinStandby.getTVstate('notactive')
 			isRecordTime = abs(NavigationInstance.instance.RecordTimer.getNextRecordingTime() - time()) <= 900 or NavigationInstance.instance.RecordTimer.getStillRecording()
 
 			if debug: print "[RECORDTIMER] box_instandby=%s" % box_instandby, "tv_notactive=%s" % tv_notactive, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent, "isRecordTime=%s" % isRecordTime
+
 			timeout = 180
 			default = True
 			messageboxtyp = MessageBox.TYPE_YESNO
@@ -955,7 +1093,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	def timeChanged(self):
 		old_prepare = self.start_prepare
-		self.start_prepare = self.begin - self.prepare_time
+		self.start_prepare = self.begin - config.recording.prepare_time.value #self.prepare_time
 		self.backoff = 0
 
 		if int(old_prepare) > 60 and int(old_prepare) != int(self.start_prepare):
@@ -971,11 +1109,20 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			return
 		# self.log(16, "record event %d" % event)
 		if event == iRecordableService.evRecordWriteError:
-			print "WRITE ERROR on recording, disk full?"
+			if self.record_service:
+				NavigationInstance.instance.stopRecordService(self.record_service)
+				self.record_service = None
+			self.failed = True
+			self.lastend = self.end
+			self.end = time() + 5
+			self.backoff = 0
+			msg, err = self.freespace(True)
+			self.log(16, "WRITE ERROR while recording, %s" % msg)
+			print "WRITE ERROR on recording, %s" % msg
 			# show notification. the 'id' will make sure that it will be
 			# displayed only once, even if more timers are failing at the
 			# same time. (which is very likely in case of disk fullness)
-			Notifications.AddPopup(text = _("Write error while recording. Disk full?\n"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage")
+			Notifications.AddPopup(text = _("Write error while recording. Disk %s") %(_("unknown error!"), _("not found!"), _("not writable!"), _("full?"))[err], type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage")
 			# ok, the recording has been stopped. we need to properly note
 			# that in our state, with also keeping the possibility to re-try.
 			# TODO: this has to be done.
@@ -1014,6 +1161,7 @@ def createTimer(xml):
 	serviceref = ServiceReference(xml.get("serviceref").encode("utf-8"))
 	description = xml.get("description").encode("utf-8")
 	repeated = xml.get("repeated").encode("utf-8")
+	rename_repeat = long(xml.get("rename_repeat") or "1")
 	disabled = long(xml.get("disabled") or "0")
 	justplay = long(xml.get("justplay") or "0")
 	always_zap = long(xml.get("always_zap") or "0")
@@ -1045,7 +1193,7 @@ def createTimer(xml):
 
 	name = xml.get("name").encode("utf-8")
 	#filename = xml.get("filename").encode("utf-8")
-	entry = RecordTimerEntry(serviceref, begin, end, name, description, eit, disabled, justplay, afterevent, dirname = location, tags = tags, descramble = descramble, record_ecm = record_ecm, isAutoTimer = isAutoTimer, always_zap = always_zap)
+	entry = RecordTimerEntry(serviceref, begin, end, name, description, eit, disabled, justplay, afterevent, dirname = location, tags = tags, descramble = descramble, record_ecm = record_ecm, isAutoTimer = isAutoTimer, always_zap = always_zap, rename_repeat = rename_repeat)
 	entry.repeated = int(repeated)
 
 	for l in xml.findall("log"):
@@ -1170,6 +1318,7 @@ class RecordTimer(timer.Timer):
 			list.append(' end="' + str(int(timer.end)) + '"')
 			list.append(' serviceref="' + stringToXML(str(timer.service_ref)) + '"')
 			list.append(' repeated="' + str(int(timer.repeated)) + '"')
+			list.append(' rename_repeat="' + str(int(timer.rename_repeat)) + '"')
 			list.append(' name="' + str(stringToXML(timer.name)) + '"')
 			list.append(' description="' + str(stringToXML(timer.description)) + '"')
 			list.append(' afterevent="' + str(stringToXML({
@@ -1324,33 +1473,6 @@ class RecordTimer(timer.Timer):
 			else:
 				isAutoTimer = False
 			check = ':'.join(x.service_ref.ref.toString().split(':')[:11]) == refstr
-			if not check:
-				sref = x.service_ref.ref
-				parent_sid = sref.getUnsignedData(5)
-				parent_tsid = sref.getUnsignedData(6)
-				if parent_sid and parent_tsid:
-					# check for subservice
-					sid = sref.getUnsignedData(1)
-					tsid = sref.getUnsignedData(2)
-					sref.setUnsignedData(1, parent_sid)
-					sref.setUnsignedData(2, parent_tsid)
-					sref.setUnsignedData(5, 0)
-					sref.setUnsignedData(6, 0)
-					check = sref.toCompareString() == refstr
-					num = 0
-					if check:
-						check = False
-						event = eEPGCache.getInstance().lookupEventId(sref, eventid)
-						num = event and event.getNumOfLinkageServices() or 0
-					sref.setUnsignedData(1, sid)
-					sref.setUnsignedData(2, tsid)
-					sref.setUnsignedData(5, parent_sid)
-					sref.setUnsignedData(6, parent_tsid)
-					for cnt in range(num):
-						subservice = event.getLinkageService(sref, cnt)
-						if sref.toCompareString() == subservice.toCompareString():
-							check = True
-							break
 			if check:
 				timer_end = x.end
 				timer_begin = x.begin
