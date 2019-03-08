@@ -454,9 +454,13 @@ class DownloadOnLineImage(Screen):
                                 box = 'spycat'
                                 urlbox = 'Spycat'
                                 stb = '1'
-                        elif getMachineBuild() in ('hd51', 'h7'):
+                        elif getMachineBuild() in 'hd51':
                                 box = 'hd51'
                                 urlbox = 'Mutant-HD51'
+                                stb = '1'
+                        elif getMachineBuild() in 'h7':
+                                box = 'h7'
+                                urlbox = 'Zgemma-H7/'
                                 stb = '1'
                         elif getMachineBuild() in 'sf4008':
                                 box = 'sf4008'
