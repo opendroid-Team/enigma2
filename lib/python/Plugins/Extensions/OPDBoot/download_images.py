@@ -462,6 +462,14 @@ class DownloadOnLineImage(Screen):
                                 box = 'h7'
                                 urlbox = 'Zgemma-H7/'
                                 stb = '1'
+                        elif getMachineBuild() in 'h9':
+                                box = 'h9'
+                                urlbox = 'Zgemma-H9S/'
+                                stb = '1'
+                        elif getMachineBuild() in 'h9':
+                                box = 'h9'
+                                urlbox = 'Zgemma-H9T/'
+                                stb = '1'
                         elif getMachineBuild() in 'sf4008':
                                 box = 'sf4008'
                                 urlbox = 'OCTAGON-SF4008/'
