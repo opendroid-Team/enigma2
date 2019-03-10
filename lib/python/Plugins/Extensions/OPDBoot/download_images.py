@@ -402,14 +402,6 @@ class DownloadOnLineImage(Screen):
                                 box = 'xpeedlx3'
                                 urlbox = getBoxType()
                                 stb = '1'
-                        elif box in ('vusolo2'):
-                                box = 'vusolo2'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('vusolo4k'):
-                                box = 'vusolo4k'
-                                urlbox = getBoxType()
-                                stb = '1'
                         elif box in ('sf4008'):
                                 box = 'sf4008'
                                 urlbox = 'OCTAGON-SF4008/'
@@ -417,22 +409,6 @@ class DownloadOnLineImage(Screen):
                         elif box in ('mutant51', 'ax51'):
                                 box = 'mutant51'
                                 urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('gbquad4k'):
-                                box = 'gbquad4k'
-                                urlbox = 'GiGaBlue-UHD-QUAD-4K'
-                                stb = '1'
-                        elif box in ('vusolose'):
-                                box = 'vusolose'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('vuduo2'):
-                                box = 'vuduo2'
-                                urlbox = getBoxType() 
-                                stb = '1'
-                        elif box in ('mutant2400'):
-                                box = 'mutant2400'
-                                urlbox = 'Mutant-HD2400'
                                 stb = '1'
                         elif box in 'gbquadplus':
                                 box = 'gbquadplus'
@@ -446,13 +422,49 @@ class DownloadOnLineImage(Screen):
                                 box = 'gb800seplus'
                                 urlbox = 'GiGaBlue-HD800SE-PLUS'
                                 stb = '1'
+                        elif box in ('gbue4k'):
+                                box = 'gbue4k'
+                                urlbox = 'GiGaBlue-UHD-UE-4K'
+                                stb = '1'
+                        elif box in ('gbquad4k'):
+                                box = 'gbquad4k'
+                                urlbox = 'GiGaBlue-UHD-QUAD-4K'
+                                stb = '1'
+                        elif box in ('vuduo2'):
+                                box = 'vuduo2'
+                                urlbox = getBoxType() 
+                                stb = '1'
+                        elif box in ('vusolo4k'):
+                                box = 'vusolo4k'
+                                urlbox = getBoxType()
+                                stb = '1'
                         elif box in 'osmini':
                                 box = 'osmini'
                                 urlbox = 'OS-mini'
                                 stb = '1'
-                        elif box in 'spycat':
-                                box = 'spycat'
-                                urlbox = 'Spycat'
+                        elif box in 'osminiplus':
+                                box = 'osminiplus'
+                                urlbox = 'OS-miniplus'
+                                stb = '1'
+                        elif box in 'osmega':
+                                box = 'osmega'
+                                urlbox = 'OS-mega'
+                                stb = '1'
+                        elif box in 'osmio4k':
+                                box = 'osmio4k'
+                                urlbox = 'OS-mio4k'
+                                stb = '1'
+                        elif box in 'osnino':
+                                box = 'osnino'
+                                urlbox = 'OS-nino'
+                                stb = '1'
+                        elif box in 'osninoplus':
+                                box = 'osninoplus'
+                                urlbox = 'OS-ninoplus'
+                                stb = '1'
+                        elif box in 'osninopro':
+                                box = 'osninopro'
+                                urlbox = 'OS-ninopro'
                                 stb = '1'
                         elif getMachineBuild() in 'hd51':
                                 box = 'hd51'
