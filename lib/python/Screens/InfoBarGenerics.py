@@ -4958,12 +4958,23 @@ class InfoBarServiceErrorPopupSupport:
 				eDVBServicePMTHandler.eventSOF: None,
 				eDVBServicePMTHandler.eventEOF: None,
 				eDVBServicePMTHandler.eventMisconfiguration: _("Service unavailable!\nCheck tuner configuration!"),
-			}.get(error)
-
+				}.get(error)
+                        if error is not None:
+                                if error == _('No free tuner!') and config.usage.messageNoResources.value == False:
+                                        return
+                                if error == _('Tune failed!') and config.usage.messageTuneFailed.value == False:
+                                        return
+                                if error == _('No data on transponder!\n(Timeout reading PAT)') and config.usage.messageNoPAT.value == False:
+                                        return
+                                if error == _('Service not found!\n(SID not found in PAT)') and config.usage.messageNoPATEntry.value == False:
+                                        return
+                                if error == _('Service invalid!\n(Timeout reading PMT)') and config.usage.messageNoPMT.value == False:
+                                        return
 			if error and not config.usage.hide_zap_errors.value:
 				self.closeNotificationInstantiateDialog()
 				if hasattr(self, "dishDialog") and not self.dishDialog.dishState():
 					Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError")
+                return
 
 class InfoBarZoom:
 	def __init__(self):
