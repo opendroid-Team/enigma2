@@ -27,8 +27,11 @@ class OPDChooseOnLineImage(Screen):
                 self.list = []
                 self['list'] = List(self.list)
                 self.updateList()
-                self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'ok': self.KeyOk,
-                                                                                'back': self.close})
+                self['actions'] = ActionMap(['WizardActions', 'ColorActions'], 
+                {
+                    'ok': self.KeyOk,
+                    'back': self.close,
+                }, -2)
 
         def KeyOk1(self, res = None):
                 config.usage.mbimageversion.save()
@@ -177,7 +180,6 @@ class OPDChooseOnLineImage(Screen):
         def quit(self):
                 self.close()
 
-
 class DownloadOnLineImage(Screen):
         skin = '\n\t<screen position="center,center" size="560,500" title="OPDBoot - Download Image">\n\t\t<ePixmap position="0,460"   zPosition="1" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />\n\t\t<ePixmap position="140,460" zPosition="1" size="140,40" pixmap="skin_default/buttons/green.png" transparent="1" alphatest="on" />\n\t\t<widget name="key_red" position="0,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="key_green" position="140,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="imageList" position="10,10" zPosition="1" size="550,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />\n\t</screen>'
 
@@ -288,9 +290,12 @@ class DownloadOnLineImage(Screen):
                         self.feed = 'opennfr'
                         self.feedurl = 'http://dev.nachtfalke.biz/nfr/feeds/6.0/images'
                 self['imageList'] = MenuList(self.imagelist)
-                self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {'green': self.green,
-                                                                                  'red': self.quit,
-                                                                                  'cancel': self.quit}, -2)
+                self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], 
+                {
+                    'green': self.green,
+                    'red': self.quit,
+                    'cancel': self.quit,
+                }, -2)
                 self.onLayoutFinish.append(self.layoutFinished)
                 return
 
