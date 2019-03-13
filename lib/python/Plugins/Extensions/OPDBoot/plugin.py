@@ -39,6 +39,7 @@ class OPDBootInstallation(Screen):
                 self['config'] = MenuList(self.list)
                 self['key_red'] = Label(_('Install'))
                 self['key_green'] = Label(_('Cancel'))
+                self['key_yellow'] = Label(_('info Install'))
                 self['key_blue'] = Label(_('Devices Panel'))
                 self['label1'] = Label(_('Welcome to OPDBoot %s MultiBoot Plugin installation.') % PLUGINVERSION)
                 self['label2'] = Label(_('Here is the list of mounted devices in Your STB\n\nPlease choose a device where You would like to install OPDBoot:'))
@@ -46,6 +47,7 @@ class OPDBootInstallation(Screen):
                 {
                    'red': self.install,
                    'green': self.close,
+                   'yellow': self.info,
                    'back': self.close,
                    'blue': self.devpanel})
                 self.updateList()
@@ -125,6 +127,9 @@ class OPDBootInstallation(Screen):
 
         def myclose(self):
                 self.close()
+
+        def info(self):
+                self.session.open(info)
 
         def myclose2(self, message):
                 self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
