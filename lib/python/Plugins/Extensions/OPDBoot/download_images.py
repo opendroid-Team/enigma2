@@ -256,7 +256,7 @@ class DownloadOnLineImage(Screen):
                         self.feedurl = 'http://images.teamblue.tech/6.1-release'
                 elif self.distro == 'openvix':
                         self.feed = 'openvix'
-                        self.feedurl = 'http://www.openvix.co.uk/openvix-builds'
+                        self.feedurl = 'http://www.openvix.co.uk/openvix-builds/'
                 elif self.distro == 'pure2':
                         self.feed = 'pure2'
                         self.feedurl = 'http://pur-e2.club/OU/images/index.php?dir=6.2/'
@@ -310,7 +310,7 @@ class DownloadOnLineImage(Screen):
                 urlbox = getBoxType()
                 if urlbox == "twinboxlcdci5":
                         urlbox = "twinboxlcd"
-                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'egami' or self.distro == 'openhdf' or self.distro == 'satdreamgr':
+                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'egami' or self.distro == 'openhdf' or self.distro == 'satdreamgr'or self.distro == 'openvix':
                         if box in ('xpeedlx1', 'xpeedlx2'):
                                 box = 'xpeedlx'
                         req = urllib2.Request(self.feedurl)
@@ -409,7 +409,7 @@ class DownloadOnLineImage(Screen):
                                 stb = '1'
                         elif box in ('sf4008'):
                                 box = 'sf4008'
-                                urlbox = 'OCTAGON-SF4008/'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in ('mutant51', 'ax51'):
                                 box = 'mutant51'
@@ -417,23 +417,23 @@ class DownloadOnLineImage(Screen):
                                 stb = '1'
                         elif box in 'gbquadplus':
                                 box = 'gbquadplus'
-                                urlbox = 'GiGaBlue-HD-QUAD-PLUS'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'gb800ueplus':
                                 box = 'gb800ueplus'
-                                urlbox = 'GiGaBlue-HD800UE-PLUS'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'gb800seplus':
                                 box = 'gb800seplus'
-                                urlbox = 'GiGaBlue-HD800SE-PLUS'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in ('gbue4k'):
                                 box = 'gbue4k'
-                                urlbox = 'GiGaBlue-UHD-UE-4K'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in ('gbquad4k'):
                                 box = 'gbquad4k'
-                                urlbox = 'GiGaBlue-UHD-QUAD-4K'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in ('vuduo2'):
                                 box = 'vuduo2'
@@ -445,67 +445,75 @@ class DownloadOnLineImage(Screen):
                                 stb = '1'
                         elif box in 'osmini':
                                 box = 'osmini'
-                                urlbox = 'OS-mini'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osminiplus':
                                 box = 'osminiplus'
-                                urlbox = 'OS-miniplus'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osmega':
                                 box = 'osmega'
-                                urlbox = 'OS-mega'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osmio4k':
                                 box = 'osmio4k'
-                                urlbox = 'OS-mio4k'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osnino':
                                 box = 'osnino'
-                                urlbox = 'OS-nino'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osninoplus':
                                 box = 'osninoplus'
-                                urlbox = 'OS-ninoplus'
+                                urlbox = getBoxType()
                                 stb = '1'
                         elif box in 'osninopro':
                                 box = 'osninopro'
-                                urlbox = 'OS-ninopro'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'hd51':
+                        elif box  in 'hd51':
                                 box = 'hd51'
-                                urlbox = 'Mutant-HD51'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'h7':
-                                box = 'h7'
-                                urlbox = 'Zgemma-H7/'
+                        elif box in 'zgemmah7':
+                                box = 'zgemmah7'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'h9':
-                                box = 'h9'
-                                urlbox = 'Zgemma-H9S/'
+                        elif box in 'zgemmah9s':
+                                box = 'zgemmah9s'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'h9':
-                                box = 'h9'
-                                urlbox = 'Zgemma-H9T/'
+                        elif box in 'zgemmah9t':
+                                box = 'zgemmah9t'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'sf4008':
+                        elif box in 'zgemmah92h':
+                                box = 'zgemmah92h'
+                                urlbox = getBoxType()
+                                stb = '1'
+                        elif box in 'zgemmah92s':
+                                box = 'zgemmah92s'
+                                urlbox = getBoxType()
+                                stb = '1'
+                        elif box in 'sf4008':
                                 box = 'sf4008'
-                                urlbox = 'OCTAGON-SF4008/'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'sf228':
+                        elif box in 'sf228':
                                 box = 'sf228'
-                                urlbox = 'OCTAGON-SF228/'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'sf208':
+                        elif box in 'sf208':
                                 box = 'sf208'
-                                urlbox = 'OCTAGON-SF208/'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'sf128':
+                        elif box in 'sf128':
                                 box = 'sf128'
-                                urlbox = 'OCTAGON-SF128/'
+                                urlbox = getBoxType()
                                 stb = '1'
-                        elif getMachineBuild() in 'sf138':
+                        elif box in 'sf138':
                                 box = 'sf138'
-                                urlbox = 'OCTAGON-SF138/'
+                                urlbox = getBoxType()
                                 stb = '1'
                         else:
                                 stb = 'no Image for this Box on this Side'
@@ -700,7 +708,7 @@ class DownloadOnLineImage(Screen):
                                         t4 = line.find('openvix-')
                                         t5 = line.find('.zip"')
                                         self.imagelist.append(line[t4:t5 + 4])
-                                elif line.find('file=openvixhd-') > -1:
+                                elif line.find('file=openvix-') > -1:
                                         t4 = line.find('file=')
                                         self.imagelist.append(line[t4 + 5:-2])
                                 elif line.find('<a href="download.php?file=' + box + '/') > -1:
