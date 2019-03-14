@@ -25,6 +25,8 @@ from Screens.CCcamInfo import CCcamInfoMain
 from Screens.OScamInfo import OscamInfoMenu
 from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo
 config.OPENDROID_BluePanel = ConfigSubsection()
+config.OPENDROID_BluePanel_frozencheck = ConfigSubsection()
+config.OPENDROID_BluePanel_frozencheck.list = ConfigSelection([('0',_("Off")),('1',_("1 min.")), ('5',_("5 min.")),('10',_("10 min.")),('15',_("15 min.")),('30',_("30 min."))])
 config.softcam = ConfigSubsection()
 config.softcam_actCam = ConfigText(visible_width = 200)
 config.softcam_actCam2 = ConfigText(visible_width = 200)
@@ -60,6 +62,10 @@ def command(comandline, strip=1):
 	comandline = text
 	os.system("rm /tmp/command.txt")
 	return comandline
+
+def camstart(reason, **kwargs):
+	if not config.OPENDROID_BluePanel_frozencheck.list.value == '0':
+		CamCheck()
 
 SOFTCAM_SKIN = """<screen name="BluePanel" position="center,center" size="500,450" title="Emu Manager">
 	<eLabel font="Regular;22" position="10,10" size="185,25" text="Softcam Selection:" />
@@ -860,7 +866,7 @@ CFG = "/usr/keys/CCcam.cfg"
 
 def CamCheck():
     global campoller, POLLTIME
-    POLLTIME = int(config.OPENDROID_frozencheck.list.value) * 60
+    POLLTIME = int(config.OPENDROID_BluePanel_frozencheck.list.value) * 60
     if campoller is None:
         campoller = CamCheckPoller()
     campoller.start()
@@ -1313,7 +1319,6 @@ class SoftcamSetup(ConfigListScreen, Screen):
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
 		self.createSetup()
-
 		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
 		{
 			"ok": self.keySave,
@@ -1339,8 +1344,9 @@ class SoftcamSetup(ConfigListScreen, Screen):
 			self.list.append(getConfigListEntry(_("Stop check when cam is running"), config.softcam_restartRunning))
 		self.list.append(getConfigListEntry(_("Show CCcamInfo in Extensions Menu"), config.cccaminfo.showInExtensions))
 		self.list.append(getConfigListEntry(_("Show OscamInfo in Extensions Menu"), config.oscaminfo.showInExtensions))
+		self.list.append(getConfigListEntry(_("Frozen Cam Check"), config.OPENDROID_BluePanel_frozencheck.list))
 		self.list.append(getConfigListEntry(_("Wait time before start Cam 2"), config.softcam_waittime))
-		
+
 		self["config"].list = self.list
 		self["config"].setList(self.list)
 		if config.usage.sort_settings.value:
@@ -1367,7 +1373,7 @@ class SoftcamSetup(ConfigListScreen, Screen):
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
-	
+
 	def saveAll(self):
 		if config.softcam_camstartMode.value == "0":
 			if os.path.exists("/etc/rc2.d/S20softcam.cam1"):
@@ -1392,14 +1398,22 @@ class SoftcamSetup(ConfigListScreen, Screen):
 
 	def keySave(self):
 		self.saveAll()
+		self.doClose()
 
 	def cancelConfirm(self, result):
 		if not result:
 			return
 		for x in self["config"].list:
 			x[1].cancel()
+		self.doClose()
 
 	def keyCancel(self):
 		if self["config"].isChanged():
 			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
+		else:
+			self.doClose()
+
+	def doClose(self):
+		if not config.OPENDROID_BluePanel_frozencheck.list.value == '0':
+			CamCheck()
 		self.close()
