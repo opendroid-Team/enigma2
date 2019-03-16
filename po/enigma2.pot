@@ -3425,6 +3425,9 @@ msgstr ""
 msgid "time to wait next keypress in milliseconds"
 msgstr ""
 
+msgid "Please set your time zone"
+msgstr ""
+
 msgid "alternative service counter in bouquets"
 msgstr ""
 
