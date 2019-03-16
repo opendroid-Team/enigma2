@@ -169,7 +169,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], {"red": self.exit,"yellow": self.exit,"blue": self.exit,"green": self.exit,"ok": self.exit,"cancel": self.exit}, -1)
 			self.exit
 		else:
-			if arch != 'armv7l' and arch != 'mips' and arch != 'sh4' and arch != 'ppc' and arch != 'armv7ahf-vfp-neon':
+			if arch != 'armv7l' and arch != 'mips' and arch != 'sh4' and arch != 'ppc' and arch != 'armv7ahf-vfp-neon' and arch != 'aarch64' :
 				list = []
 				self.headers = _("Error") + "\n"
 				self.headers += _("Unsupportet CPU") + ' -> ' + arch + ' <- ' + _("found") + "\n"
@@ -579,7 +579,9 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		if getImageDistro() =='openmips':
 			if config.OPENDROID_OscamSmartcard.emu.value:
 				emu='_emu'
-		archs = ['armv7l','mips','sh4','ppc','armv7ahf-vfp-neon']
+		archs = ['armv7l','mips','sh4','ppc','armv7ahf-vfp-neon','aarch64']
+		if arch =='aarch64':
+			emu=''
 		if arch in archs:
 			downloadurl = base64.b64decode(self.getdl()[1]) + binary + '_' + arch + emu + suffix
 			#overwrite if Box is a WeTeKPLAY
@@ -899,6 +901,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def showNews(self):
 		lastinfo =  ""
 		x = " : "
+		lastinfo += "10-20-2018" + x + _("added bcm arm 64 bit CPU") + "\n"
 		lastinfo += "11-07-2018" + x + _("download fix") + "\n"
 		lastinfo += "18-02-2018" + x + _("added HD03/04 Support") + "\n"
 		lastinfo += "27-01-2018" + x + _("added ORF 650, added 6.2 Support") + "\n"
