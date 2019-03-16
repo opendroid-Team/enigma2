@@ -589,7 +589,7 @@ class RedPanel(ConfigListScreen, Screen):
 		return
 
 	def selectionChanged(self):
-		self['status'].setText(self['config'].getCurrent()[0])
+		self["status"].setText(self["config"].getCurrent()[0])
 
 	def changedEntry(self):
 		for x in self.onChangedEntry:

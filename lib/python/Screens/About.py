@@ -1295,9 +1295,9 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "6.7", "github"),
+			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "6.8", "gith
 			("opendroid-Team",      "OPD-Blue-Line",             "opendroid-Team Skin OPD-Blue-Line",   "master", "github"),
-			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.2", "github"),
+			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.3", "github"),
 			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
 			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
 		]
