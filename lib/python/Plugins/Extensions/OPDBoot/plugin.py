@@ -873,7 +873,8 @@ class info(Screen):
                         self.updatetext()
 
         def updatetext(self):
-                message = _('GUIDE FOR CORRECT INSTALLATION OF OPDBOOT!\n\n')
+                message = _('GUIDE FOR CORRECT INSTALLATION OF OPDBOOT.\n\n')
+                message += _('Attention! During the entire installation process does not restart the receiver!\n\n')
                 message += _('Warning! for the correct functioning of OPDboot, a USB or HDD memory is required, formatted in the Linux ext3 or ext4 system files\n\n')
                 message += _('1. If you do not have a media formatted in ext3 or ext4, open menu, general configurations, system, storage device, select the drive and format it.\n\n')
                 message += _('2. Go to the mount device manager from the OPD panel, services, device mount management and install hdd and usb correctly.\n\n')

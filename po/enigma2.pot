@@ -16357,6 +16357,10 @@ msgid "GUIDE FOR CORRECT INSTALLATION OF OPDBOOT!\n"
 "\n"
 msgstr ""
 
+msgid "Attention! During the entire installation process does not restart the receiver!\n"
+"\n"
+msgstr ""
+
 msgid "Warning! for the correct functioning of OPDboot, a USB or HDD memory is required, formatted in the Linux ext3 or ext4 system files\n"
 "\n"
 msgstr ""
