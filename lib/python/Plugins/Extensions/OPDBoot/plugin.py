@@ -850,7 +850,7 @@ def main(session, **kwargs):
 
 class info(Screen):
         skin = """
-		<screen name="info" position="center,60" size="800,635" title="installation info" >
+		<screen name="info" position="center,60" size="800,635" title="Installation info" >
 		<widget name="lab1" position="80,100" size="710,350" zPosition="2" scrollbarMode="showOnDemand" transparent="1"/>
 		<widget name="key_red" position="135,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="red" backgroundColor="red" transparent="1" />		
 		<widget name="key_green" position="400,600" zPosition="1" size="100,45" font="Regular;18" foregroundColor="green" backgroundColor="green" transparent="1" />
@@ -873,15 +873,15 @@ class info(Screen):
                         self.updatetext()
 
         def updatetext(self):
-                message = _('During the entire installation process does not restart the receiver !!!\n\n')
-                message += _('For proper operation OF boot type device is required USB stick or HDD, formatted on your system files Linux ext3 or ext4..\n\n')
-                message += _('1. If you do not have a media formatted with the ext3 or ext4 open  Device Manager <Initialize>, select the drive and format it.\n\n')
-                message += _('2. Go to the device manager and install correctly hdd and usb ...\n\n')
-                message += _('3. Install OPDboot on the selected device.\n\n')
-                message += _('4. key menu settings select the type of boot...\n\n')
-                message += _('5. key green select the firmware source.\n\n')
-                message += _('6. In the event of a problem with the installation cancel and  inform OpenDroid Team.\n\n')
-                message += _('https://droidsat.org/forum/ !!!')
+                message = _('GUIDE FOR CORRECT INSTALLATION OF OPDBOOT!\n\n')
+                message += _('Warning! for the correct functioning of OPDboot, a USB or HDD memory is required, formatted in the Linux ext3 or ext4 system files\n\n')
+                message += _('1. If you do not have a media formatted in ext3 or ext4, open menu, general configurations, system, storage device, select the drive and format it.\n\n')
+                message += _('2. Go to the mount device manager from the OPD panel, services, device mount management and install hdd and usb correctly.\n\n')
+                message += _('3. Now install OPDboot on the device by going to: menu, multiboot OPD.\n\n')
+                message += _('4. On OPDboot press: menu to choose the type of start. Attention select: Start without Bootmanager for 64Bit devices.\n\n')
+                message += _('5. Press the green button and select the source to install the multiboot image.\n\n')
+                message += _('6. In case of problems with the installation, cancel and ask OpenDroid-Team for support on:\n\n')
+                message += _('https://droidsat.org/forum')
                 self['lab1'].show()
                 self['lab1'].setText(message)
 
