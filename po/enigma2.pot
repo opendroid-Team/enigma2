@@ -16385,7 +16385,12 @@ msgid "5. Press the green button and select the source to install the multiboot 
 "\n"
 msgstr ""
 
-msgid "6. In case of problems with the installation, cancel and ask OpenDroid-Team for support on:\n"
+msgid ""
+"6. Downloaded the image, we have the possibility to choose whether to copy the settings from the flash image! choose YES if we want to import the settings, the password, network configurations etc ...\n"
+"\n"
+msgstr ""
+
+msgid "7. In case of problems with the installation, cancel and ask OpenDroid-Team for support on:\n"
 "\n"
 msgstr ""
 
