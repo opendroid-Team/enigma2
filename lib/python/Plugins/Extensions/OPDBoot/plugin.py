@@ -850,7 +850,7 @@ def main(session, **kwargs):
 
 class info(Screen):
         skin = """
-		<screen name="info" position="center,60" size="800,635" title="Installation info" >
+		<screen name="info" position="center,60" size="800,635" title="installation info" >
 		<widget name="lab1" position="80,100" size="710,350" zPosition="2" scrollbarMode="showOnDemand" transparent="1"/>
 		<widget name="key_red" position="135,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="red" backgroundColor="red" transparent="1" />		
 		<widget name="key_green" position="400,600" zPosition="1" size="100,45" font="Regular;18" foregroundColor="green" backgroundColor="green" transparent="1" />

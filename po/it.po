@@ -19450,5 +19450,5 @@ msgstr ""
 msgid "https://droidsat.org/forum"
 msgstr "https://droidsat.org/forum"
 
-msgid "Installation info"
-msgstr "Informazioni di installazione"
+msgid "installation info"
+msgstr "informazioni di installazione"
