@@ -5,6 +5,7 @@ from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
 from Components.SystemInfo import SystemInfo
 from Components.config import config, ConfigSubsection, ConfigText, ConfigYesNo
 from Components.PluginComponent import plugins
+from Components.Sources.StaticText import StaticText
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -15,110 +16,121 @@ from enigma import eServiceReference, eActionMap
 from Components.Label import Label
 from boxbranding import getHaveHDMIinHD, getHaveHDMIinFHD, getHaveCI
 import os
-ButtonSetupKeys = [(_("Red"), "red", "Infobar/openSingleServiceEPG"),
-                   (_("Red long"), "red_long", "Infobar/activateRedButton"),
-                   (_("Green"), "green", "Module/OPENDROID.GreenPanel/GreenPanel"),
-                   (_("Green long"), "green_long", "Infobar/showAutoTimerList"),
-                   (_("Yellow"), "yellow", "Infobar/showExtensionSelection"),
-                   (_("Yellow long"), "yellow_long", "Plugins/Extensions/IMDb/1"),
-                   (_("Blue"), "blue", "Module/OPENDROID.BluePanel/BluePanel"),
-                   (_("Blue long"), "blue_long", "Module/Plugins.Extensions.FileCommander.plugin/FileCommanderScreen"),
-                   (_("Info (EPG)"), "info", "Infobar/openEventView"),
-                   (_("Info (EPG) Long"), "info_long", "Infobar/showEventInfoPlugins/1"),
-                   (_("Epg/Guide"), "epg", "Infobar/openGraphEPG"),
-                   (_("Epg/Guide long"), "epg_long", "Infobar/showEventGuidePlugins/1"),
-                   (_("Left"), "cross_left", ""),
-                   (_("Right"), "cross_right", ""),
-                   (_("Up"), "cross_up", ""),
-                   (_("Down"), "cross_down", ""),
-                   (_("Channel up"), "channelup", ""),
-                   (_("Channel down"), "channeldown", ""),
-                   (_("TV"), "showTv", "Infobar/showTv"),
-                   (_("Radio"), "radio", "Infobar/showRadio"),
-                   (_("Rec"), "rec", "Infobar/startInstantRecording"),
-                   (_("Teletext"), "text", ""),
-                   (_("Subtitle"), "subtitle", ""),
-                   (_("Menu"), "mainMenu", ""),
-		   (_("List/Fav"), "list", ""),
-		   (_("List/Fav long"), "list_long", ""),
-		   (_("PVR"), "pvr", ""),
-		   (_("PVR long"), "pvr_long", ""),
-                   (_("Favorites"), "favorites", ""),
-		   (_("Favorites long"), "favorites_long", ""),
-                   (_("File"), "file", ""),
-                   (_("File long"), "file_long", ""),
-                   (_("OK long"), "ok_long", ""),
-                   (_("Media"), "media", ""),
-                   (_("Media long"), "media_long", ""),
-                   (_("Open"), "open", ""),
-                   (_("Open long"), "open_long", ""),
-		   (_("Option"), "option", ""),
-		   (_("Option long"), "option_long", ""),
-                   (_("Www"), "www", ""),
-                   (_("Www long"), "www_long", ""),
-                   (_("Directory"), "directory", ""),
-                   (_("Directory long"), "directory_long", ""),
-                   (_("Back/Recall"), "back", ""),
-                   (_("Back/Recall") + " " + _("long"), "back_long", ""),
-		   (_("History"), "archive", ""),
-		   (_("History long"), "archive_long", ""),
-		   (_("Aspect"), "mode", ""),
-		   (_("Aspect long"), "mode_long", ""),
-                   (_("Home"), "home", ""),
-		   (_("Home long"), "home_long", ""),
-                   (_("End"), "end", ""),
-		   (_("End long"), "end_long", ""),
-                   (_("Next"), "next", ""),
-                   (_("Previous"), "previous", ""),
-                   (_("Audio"), "audio", ""),
-		   (_("Audio long"), "audio_long", ""),
-                   (_("Play"), "play", ""),
-                   (_("Playpause"), "playpause", ""),
-                   (_("Stop"), "stop", ""),
-                   (_("Pause"), "pause", ""),
-                   (_("Rewind"), "rewind", ""),
-                   (_("Fastforward"), "fastforward", ""),
-                   (_("Skip back"), "skip_back", ""),
-                   (_("Skip forward"), "skip_forward", ""),
-                   (_("activatePiP"), "activatePiP", ""),
-		   (_("Time"), "time", ""),
-		   (_("Time long"), "time_long", ""),
-		   (_("Playlist"), "playlist", ""),
-		   (_("Playlist long"), "playlist_long", ""),
-                   (_("Timeshift"), "timeshift", ""),
-                   (_("Search/WEB"), "search", ""),
-		   (_("Search/WEB long"), "search_long", ""),
-                   (_("Slow"), "slow", ""),
-                   (_("Mark/Portal/Playlist"), "mark", ""),
-		   (_("Mark/Portal/Playlist long"), "mark_long", ""),
-                   (_("Sleep"), "sleep", ""),
-		   (_("Sleep long"), "sleep_long", ""),
-                   (_("Power"), "power", ""),
-                   (_("Power long"), "power_long", ""),
-                   (_("HDMIin"), "HDMIin", "Infobar/HDMIIn"),
-                   (_("HDMIin") + " " + _("long"), "HDMIin_long", SystemInfo["LcdLiveTV"] and "Infobar/ToggleLCDLiveTV" or ""),
-                   (_("Help"), "displayHelp", ""),
-                   (_("Help long"), "displayHelp_long", ""),
-                   (_("Context"), "contextMenu", "Infobar/showExtensionSelection"),
-                   (_("F1/LAN"), "f1", "Infobar/showNetworkMounts"),
-                   (_("F1/LAN long"), "f1_long", ""),
-		   (_("F1"), "f1", ""),
-		   (_("F1 long"), "f1_long", ""),
-                   (_("F2"), "f2", ""),
-                   (_("F2 long"), "f2_long", ""),
-                   (_("F3"), "f3", ""),
-                   (_("F3 long"), "f3_long", ""),
-                   (_("F4"), "f4", ""),
-                   (_("F4 long"), "f4_long", ""),
-                   (_("PIP"), "f6", ""),
-                   (_("PIP long"), "f6_long", ""),
-                   (_("ZOOM"), "zoom", ""),
-                   (_("ZOOM long"), "zoom_long", "")]
+def getButtonSetupKeys():
+	return [(_("Red"), "red", "Infobar/openSingleServiceEPG"),
+		(_("Red long"), "red_long", "Infobar/activateRedButton"),
+		(_("Green"), "green", "Module/OPENDROID.GreenPanel/GreenPanel"),
+		(_("Green long"), "green_long", "Infobar/showAutoTimerList"),
+		(_("Yellow"), "yellow", "Infobar/showExtensionSelection"),
+		(_("Yellow long"), "yellow_long", "Plugins/Extensions/IMDb/1"),
+		(_("Blue"), "blue", "Module/OPENDROID.BluePanel/BluePanel"),
+		(_("Blue long"), "blue_long", ""),
+		(_("Info (EPG)"), "info", "Infobar/InfoPressed/1"),
+		(_("Info (EPG) Long"), "info_long", "Infobar/showEventInfoPlugins/1"),
+		(_("Epg/Guide"), "epg", "Infobar/EPGPressed/1"),
+		(_("Epg/Guide long"), "epg_long", "Infobar/showEventGuidePlugins/1"),
+		(_("Left"), "cross_left", ""),
+		(_("Right"), "cross_right", ""),
+		(_("Left long"), "cross_left_long", ""),
+		(_("Right long"), "cross_right_long", "Infobar/seekFwdVod"),
+		(_("Up"), "cross_up", ""),
+		(_("Down"), "cross_down", ""),
+		(_("PageUp"), "pageup", ""),
+		(_("PageUp long"), "pageup_long", ""),
+		(_("PageDown"), "pagedown", ""),
+		(_("PageDown long"), "pagedown_long", ""),
+		(_("Channel up"), "channelup", ""),
+		(_("Channel down"), "channeldown", ""),
+		(_("TV"), "showTv", "Infobar/showTv"),
+		(_("Radio"), "radio", "Infobar/showRadio"),
+		(_("Rec"), "rec", "Infobar/startInstantRecording"),
+		(_("Teletext"), "text", ""),
+		(_("Subtitle"), "subtitle", ""),
+		(_("Menu"), "mainMenu", ""),
+		(_("List/Fav"), "list", ""),
+		(_("List/Fav long"), "list_long", ""),
+		(_("PVR"), "pvr", ""),
+		(_("PVR long"), "pvr_long", ""),
+		(_("Favorites"), "favorites", ""),
+		(_("Favorites long"), "favorites_long", ""),
+		(_("File"), "file", ""),
+		(_("File long"), "file_long", ""),
+		(_("OK long"), "ok_long", ""),
+		(_("Media"), "media", ""),
+		(_("Media long"), "media_long", ""),
+		(_("Open"), "open", ""),
+		(_("Open long"), "open_long", ""),
+		(_("Option"), "option", ""),
+		(_("Option long"), "option_long", ""),
+		(_("Www"), "www", ""),
+		(_("Www long"), "www_long", ""),
+		(_("Directory"), "directory", ""),
+		(_("Directory long"), "directory_long", ""),
+		(_("Back/Recall"), "back", ""),
+		(_("Back/Recall") + " " + _("long"), "back_long", ""),
+		(_("History"), "archive", ""),
+		(_("History long"), "archive_long", ""),
+		(_("Aspect"), "mode", ""),
+		(_("Aspect long"), "mode_long", ""),
+		(_("Home"), "home", ""),
+		(_("Home long"), "home_long", ""),
+		(_("End"), "end", ""),
+		(_("End long"), "end_long", ""),
+		(_("Next"), "next", ""),
+		(_("Previous"), "previous", ""),
+		(_("Audio"), "audio", ""),
+		(_("Audio long"), "audio_long", ""),
+		(_("Play"), "play", ""),
+		(_("Playpause"), "playpause", ""),
+		(_("Stop"), "stop", ""),
+		(_("Pause"), "pause", ""),
+		(_("Rewind"), "rewind", ""),
+		(_("Fastforward"), "fastforward", ""),
+		(_("Skip back"), "skip_back", ""),
+		(_("Skip forward"), "skip_forward", ""),
+		(_("activatePiP"), "activatePiP", ""),
+		(_("Time"), "time", ""),
+		(_("Time long"), "time_long", ""),
+		(_("Playlist"), "playlist", ""),
+		(_("Playlist long"), "playlist_long", ""),
+		(_("Timeshift"), "timeshift", ""),
+		(_("Search/WEB"), "search", ""),
+		(_("Search/WEB long"), "search_long", ""),
+		(_("Slow"), "slow", ""),
+		(_("Mark/Portal/Playlist"), "mark", ""),
+		(_("Mark/Portal/Playlist long"), "mark_long", ""),
+		(_("Sleep"), "sleep", ""),
+		(_("Sleep long"), "sleep_long", ""),
+		(_("Power"), "power", ""),
+		(_("Power long"), "power_long", ""),
+		(_("HDMIin"), "HDMIin", "Infobar/HDMIIn"),
+		(_("HDMIin") + " " + _("long"), "HDMIin_long", (SystemInfo["LcdLiveTV"] and "Infobar/ToggleLCDLiveTV") or ""),
+		(_("Help"), "displayHelp", ""),
+		(_("Help long"), "displayHelp_long", ""),
+		(_("Context"), "contextMenu", "Infobar/showExtensionSelection"),
+		(_("F1/LAN"), "f1", "Infobar/showNetworkMounts"),
+		(_("F1/LAN long"), "f1_long", ""),
+		(_("F1"), "f1", ""),
+		(_("F1 long"), "f1_long", ""),
+		(_("F2"), "f2", ""),
+		(_("F2 long"), "f2_long", ""),
+		(_("F3"), "f3", ""),
+		(_("F3 long"), "f3_long", ""),
+		(_("F4"), "f4", ""),
+		(_("F4 long"), "f4_long", ""),
+		(_("PIP"), "f6", ""),
+		(_("PIP long"), "f6_long", ""),
+		(_("MOUSE"), "mouse", ""),
+		(_("MOUSE long"), "mouse_long", ""),
+		(_("VOD"), "vod", ""),
+		(_("VOD long"), "vod_long", ""),
+		(_("ZOOM"), "zoom", ""),
+		(_("ZOOM long"), "zoom_long", "")]
 
 config.misc.ButtonSetup = ConfigSubsection()
 config.misc.ButtonSetup.additional_keys = ConfigYesNo(default=True)
-for x in ButtonSetupKeys:
-	exec 'config.misc.ButtonSetup.' + x[1] + " = ConfigText(default='" + x[2] + "')"
+for x in getButtonSetupKeys():
+	exec "config.misc.ButtonSetup." + x[1] + " = ConfigText(default='" + x[2] + "')"
 
 def getButtonSetupFunctions():
 	ButtonSetupFunctions = []
@@ -128,23 +140,23 @@ def getButtonSetupFunctions():
 	pluginlist.sort(key=lambda p: p.name)
 	for plugin in pluginlist:
 		if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.func_code.co_varnames:
-			if twinPaths.has_key(plugin.path[24:]):
-				twinPaths[plugin.path[24:]] += 1
+			if twinPaths.has_key(plugin.path[plugin.path.rfind("Plugins"):]):
+				twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] += 1
 			else:
-				twinPaths[plugin.path[24:]] = 1
-			ButtonSetupFunctions.append((plugin.name, plugin.path[24:] + '/' + str(twinPaths[plugin.path[24:]]), 'EPG'))
+				twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] = 1
+			ButtonSetupFunctions.append((plugin.name, plugin.path[plugin.path.rfind("Plugins"):] + "/" + str(twinPaths[plugin.path[plugin.path.rfind("Plugins"):]]) , "EPG"))
 			twinPlugins.append(plugin.name)
-
 	pluginlist = plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO])
 	pluginlist.sort(key=lambda p: p.name)
 	for plugin in pluginlist:
 		if plugin.name not in twinPlugins and plugin.path:
-			if twinPaths.has_key(plugin.path[24:]):
-				twinPaths[plugin.path[24:]] += 1
+			if twinPaths.has_key(plugin.path[plugin.path.rfind("Plugins"):]):
+				twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] += 1
 			else:
-				twinPaths[plugin.path[24:]] = 1
-			ButtonSetupFunctions.append((plugin.name, plugin.path[24:] + '/' + str(twinPaths[plugin.path[24:]]), 'Plugins'))
+				twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] = 1
+			ButtonSetupFunctions.append((plugin.name, plugin.path[plugin.path.rfind("Plugins"):] + "/" + str(twinPaths[plugin.path[plugin.path.rfind("Plugins"):]]) , "Plugins"))
 			twinPlugins.append(plugin.name)
+	ButtonSetupFunctions.append((_("Show vertical Program Guide"), "Infobar/openVerticalEPG", "EPG"))
 	ButtonSetupFunctions.append((_("Show graphical multi EPG"), "Infobar/openGraphEPG", "EPG"))
 	ButtonSetupFunctions.append((_("Main menu"), "Infobar/mainMenu", "InfoBar"))
 	ButtonSetupFunctions.append((_("Show help"), "Infobar/showHelp", "InfoBar"))
@@ -186,11 +198,9 @@ def getButtonSetupFunctions():
 		ButtonSetupFunctions.append((_("Move PIP"), "Infobar/movePiP", "InfoBar"))
 		ButtonSetupFunctions.append((_("Toggle PIP-ZAP"), "Infobar/togglePipzap", "InfoBar"))
 	ButtonSetupFunctions.append((_("Activate HbbTV (RedButton)"), "Infobar/activateRedButton", "InfoBar"))
-	if getHaveHDMIinHD() == True or getHaveHDMIinFHD() == True:
+	if getHaveHDMIinHD() in ('True') or getHaveHDMIinFHD() in ('True'):
 		ButtonSetupFunctions.append((_("Toggle HDMI-In full screen"), "Infobar/HDMIInFull", "InfoBar"))
 		ButtonSetupFunctions.append((_("Toggle HDMI-In PiP"), "Infobar/HDMIInPiP", "InfoBar"))
-	if SystemInfo["LcdLiveTV"]:
-		ButtonSetupFunctions.append((_("Toggle LCD LiveTV"), "Infobar/ToggleLCDLiveTV", "InfoBar"))
 	if SystemInfo["LcdLiveTV"]:
 		ButtonSetupFunctions.append((_("Toggle LCD LiveTV"), "Infobar/ToggleLCDLiveTV", "InfoBar"))
 	if SystemInfo["HaveMultiBootHD"]:
@@ -206,7 +216,7 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Do nothing"), "Void", "InfoBar"))
 	ButtonSetupFunctions.append((_("Button setup"), "Module/Screens.ButtonSetup/ButtonSetup", "Setup"))
 	ButtonSetupFunctions.append((_("Software update"), "Module/Screens.SoftwareUpdate/UpdatePlugin", "Setup"))
-	if getHaveCI() == True:
+	if getHaveCI() in ('True'):
 		ButtonSetupFunctions.append((_("CI (Common Interface) Setup"), "Module/Screens.Ci/CiSelection", "Setup"))
 	ButtonSetupFunctions.append((_("Videosetup"), "Module/Screens.VideoMode/VideoSetup", "Setup"))
 	ButtonSetupFunctions.append((_("Tuner Configuration"), "Module/Screens.Satconfig/NimSelection", "Scanning"))
@@ -266,27 +276,27 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Disable this button"), "Infobar/fakeButton", "Disable Button"))
 	return ButtonSetupFunctions
 
-
 class ButtonSetup(Screen):
 	skin = '<screen name="ButtonSetup" position="center,center" size="860,600" title="Quick button setup">\n\t\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />\n\t\t\t<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t\t<widget name="list" position="0,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t\t<widget name="choosen" position="430,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
-		self['description'] = Label(_('Click on your remote on the button you want to change, then click on "OK"'))
+		self['description'] = Label(_('Click on your remote on the button you want to change'))
 		self.session = session
-		self.setTitle(_("Quick button setup"))
-		self["key_red"] = Button(_("Exit"))
-		self["key_green"] = Button(_("Mode"))
+		self.setTitle(_("Button setup"))
+		self["key_red"] = Label(_("Exit"))
+                self["key_green"] = Label(_("Mode"))
 		self.list = []
+		self.ButtonSetupKeys = getButtonSetupKeys()
 		self.ButtonSetupFunctions = getButtonSetupFunctions()
-		for x in ButtonSetupKeys:
-			self.list.append(ChoiceEntryComponent('', (_(x[0]), x[1])))
-		self["list"] = ChoiceList(list=self.list[:config.misc.ButtonSetup.additional_keys.value and len(ButtonSetupKeys) or 10], selection=0)
+		for x in self.ButtonSetupKeys:
+			self.list.append(ChoiceEntryComponent('',(_(x[0]), x[1])))
+		self["list"] = ChoiceList(list=self.list[:config.misc.ButtonSetup.additional_keys.value and len(self.ButtonSetupKeys) or 10], selection = 0)
 		self["choosen"] = ChoiceList(list=[])
 		self.getFunctions()
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions"],
-		                            {
-		                                    "ok": self.keyOk,
+		{
+		        "ok": self.keyOk,
 		        "cancel": self.close,
 		        "red": self.close,
 		        "up": self.keyUp,
@@ -294,7 +304,8 @@ class ButtonSetup(Screen):
 		        "left": self.keyLeft,
 		        "right": self.keyRight,
 		        "green": self.greenPressed,
-		        }, -1)
+		}, -1)
+		self["ButtonSetupButtonActions"] = ButtonSetupActionMap(["ButtonSetupActions"], dict((x[1], self.ButtonSetupGlobal) for x in self.ButtonSetupKeys))
 		self.longkeyPressed = False
 		self.onLayoutFinish.append(self.__layoutFinished)
 		self.onExecBegin.append(self.getFunctions)
@@ -373,33 +384,33 @@ class ButtonSetup(Screen):
 	def greenPressed(self):
 		self.session.open(KeymapSel)
 
-
 class ButtonSetupSelect(Screen):
 	skin = '<screen name="ButtonSetupSelect" position="center,center" size="860,600" title="Quick button setup">\n\t\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />\n\t\t\t<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t\t<widget name="list" position="0,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t\t<widget name="choosen" position="430,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
-	def __init__(self, session, key, args = None):
+	def __init__(self, session, key, args=None):
 		Screen.__init__(self, session)
 		self.skinName="ButtonSetupSelect"
 		self['description'] = Label(_('Select the desired function and click on "OK" to assign it. Use "CH+/-" to toggle between the lists. Select an assigned function and click on "OK" to de-assign it. Use "Next/Previous" to change the order of the assigned functions.'))
 		self.session = session
 		self.key = key
-		self.setTitle(_("Quick button setup for") + ": " + key[0][0])
-		self["key_red"] = Button(_("Cancel"))
-		self["key_green"] = Button(_("Save"))
+		self.setTitle(_("button setup for") + ": " + key[0][0])
+		self["key_red"] = Label(_("Cancel"))
+		self["key_green"] = Label(_("Save"))
 		self.mode = "list"
 		self.ButtonSetupFunctions = getButtonSetupFunctions()
 		self.config = eval("config.misc.ButtonSetup." + key[0][1])
 		self.expanded = []
 		self.selected = []
 		for x in self.config.value.split(','):
-			if x.startswith("apPanic"):
-				self.selected.append(ChoiceEntryComponent("", (_("Panic to") + " " + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName(), x)))
-			elif x.startswith("Zap"):
-				self.selected.append(ChoiceEntryComponent('', (_('Zap to') + ' ' + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName(), x)))
-			else:
-				function = list((function for function in self.ButtonSetupFunctions if function[1] == x))
-				if function:
-					self.selected.append(ChoiceEntryComponent('', (function[0][0], function[0][1])))
+                        if x.startswith("ZapPanic"):
+                                self.selected.append(ChoiceEntryComponent("", (_("Panic to") + " " + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName(), x)))
+                        elif x.startswith("Zap"):
+                                self.selected.append(ChoiceEntryComponent('', (_("Zap to") + ' ' + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName(), x)))
+                        else:
+                                function = list((function for function in self.ButtonSetupFunctions if function[1] == x))
+                                if function:
+                                        self.selected.append(ChoiceEntryComponent('', (function[0][0], function[0][1])))
+
 		self.prevselected = self.selected[:]
 		self["choosen"] = ChoiceList(list=self.selected, selection=0)
 		self["list"] = ChoiceList(list=self.getFunctionList(), selection=0)
@@ -418,25 +429,10 @@ class ButtonSetupSelect(Screen):
 			"moveUp": self.moveUp,
 			"moveDown": self.moveDown,
 		}, -1)
-		self.onShown.append(self.enableKeyMap)
-		self.onClose.append(self.disableKeyMap)
 		self.onLayoutFinish.append(self.__layoutFinished)
 
 	def __layoutFinished(self):
 		self["choosen"].selectionEnabled(0)
-	def disableKeyMap(self):
-		globalActionMap.setEnabled(False)
-		eActionMap.getInstance().unbindNativeKey("ListboxActions", 0)
-		eActionMap.getInstance().unbindNativeKey("ListboxActions", 1)
-		eActionMap.getInstance().unbindNativeKey("ListboxActions", 4)
-		eActionMap.getInstance().unbindNativeKey("ListboxActions", 5)
-
-	def enableKeyMap(self):
-		globalActionMap.setEnabled(True)
-		eActionMap.getInstance().bindKey("keymap.xml", "generic", 103, 5, "ListboxActions", "moveUp")
-		eActionMap.getInstance().bindKey("keymap.xml", "generic", 108, 5, "ListboxActions", "moveDown")
-		eActionMap.getInstance().bindKey("keymap.xml", "generic", 105, 5, "ListboxActions", "pageUp")
-		eActionMap.getInstance().bindKey("keymap.xml", "generic", 106, 5, "ListboxActions", "pageDown")
 
 	def getFunctionList(self):
 		functionslist = []
@@ -448,12 +444,13 @@ class ButtonSetupSelect(Screen):
 
 		for catagorie in sorted(list(catagories)):
 			if catagorie in self.expanded:
-				functionslist.append(ChoiceEntryComponent('expanded', (catagorie, 'Expander')))
+				functionslist.append(ChoiceEntryComponent('expanded',((catagorie), "Expander")))
 				for function in catagories[catagorie]:
-					functionslist.append(ChoiceEntryComponent('verticalline', (function[0], function[1])))
+					functionslist.append(ChoiceEntryComponent('verticalline',((function[0]), function[1])))
 
 			else:
-				functionslist.append(ChoiceEntryComponent('expandable', (catagorie, 'Expander')))
+				functionslist.append(ChoiceEntryComponent('expandable',((catagorie), "Expander")))
+
 		return functionslist
 
 	def toggleMode(self):
@@ -513,7 +510,7 @@ class ButtonSetupSelect(Screen):
 	def moveChoosen(self, direction):
 		if self.mode == "choosen":
 			currentIndex = self["choosen"].getSelectionIndex()
-			swapIndex = (currentIndex + (direction == self.keyDown and 1 or -1)) % len(self['choosen'].list)
+			swapIndex = (currentIndex + (direction == self.keyDown and 1 or -1)) % len(self["choosen"].list)
 			self["choosen"].list[currentIndex], self["choosen"].list[swapIndex] = self["choosen"].list[swapIndex], self["choosen"].list[currentIndex]
 			self["choosen"].setList(self["choosen"].list)
 			direction()
@@ -524,25 +521,22 @@ class ButtonSetupSelect(Screen):
 		configValue = []
 		for x in self.selected:
 			configValue.append(x[0][1])
-
 		self.config.value = ",".join(configValue)
 		self.config.save()
 		self.close()
 
 	def cancel(self):
 		if self.selected != self.prevselected:
-			self.session.openWithCallback(self.cancelCallback, MessageBox, _('are you sure you want to cancel all the changes'), default=False)
+			self.session.openWithCallback(self.cancelCallback, MessageBox, _("Are you sure to cancel all changes"), default=False)
 		else:
 			self.close()
 
 	def cancelCallback(self, answer):
 		answer and self.close()
 
-
 class ButtonSetupActionMap(ActionMap):
-
 	def action(self, contexts, action):
-		if action in tuple((x[1] for x in ButtonSetupKeys)) and self.actions.has_key(action):
+		if (action in tuple(x[1] for x in getButtonSetupKeys()) and self.actions.has_key(action)):
 			res = self.actions[action](action)
 			if res is not None:
 				return res
@@ -551,9 +545,8 @@ class ButtonSetupActionMap(ActionMap):
 			return ActionMap.action(self, contexts, action)
 
 class helpableButtonSetupActionMap(HelpableActionMap):
-
 	def action(self, contexts, action):
-		if action in tuple((x[1] for x in ButtonSetupKeys)) and self.actions.has_key(action):
+		if (action in tuple(x[1] for x in getButtonSetupKeys()) and self.actions.has_key(action)):
 			res = self.actions[action](action)
 			if res is not None:
 				return res
@@ -561,12 +554,11 @@ class helpableButtonSetupActionMap(HelpableActionMap):
 		else:
 			return ActionMap.action(self, contexts, action)
 
-
-class InfoBarButtonSetup:
-
+class InfoBarButtonSetup():
 	def __init__(self):
-		self["ButtonSetupButtonActions"] = helpableButtonSetupActionMap(self, "ButtonSetupActions", 
-			dict(((x[1], (self.ButtonSetupGlobal, boundFunction(self.getHelpText, x[1]))) for x in ButtonSetupKeys)), -10)
+		self.ButtonSetupKeys = getButtonSetupKeys()
+		self["ButtonSetupButtonActions"] = helpableButtonSetupActionMap(self, "ButtonSetupActions",
+			dict((x[1],(self.ButtonSetupGlobal, boundFunction(self.getHelpText, x[1]))) for x in self.ButtonSetupKeys), -10)
 		self.longkeyPressed = False
 		self.onExecEnd.append(self.clearLongkeyPressed)
 
@@ -584,10 +576,9 @@ class InfoBarButtonSetup:
 			elif x.startswith("Zap"):
 				selected.append(((_("Zap to") + " " + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName()), x))
 			else:
-				function = list((function for function in getButtonSetupFunctions() if function[1] == x))
+				function = list(function for function in getButtonSetupFunctions() if function[1] == x )
 				if function:
 					selected.append(function[0])
-
 		return selected
 
 	def getHelpText(self, key):
@@ -612,7 +603,7 @@ class InfoBarButtonSetup:
 				return self.execButtonSetup(selected[0])
 			else:
 				key = tuple(x[0] for x in self.ButtonSetupKeys if x[1] == key)[0]
-				self.session.openWithCallback(self.execButtonSetup, ChoiceBox, (_("Hotkey")) + ": " + key, selected)
+				self.session.openWithCallback(self.execButtonSetup, ChoiceBox, (_("ButtonSetup")) + ": " + key, selected)
 
 	def execButtonSetup(self, selected):
 		if selected:
@@ -624,11 +615,11 @@ class InfoBarButtonSetup:
 				pluginlist.sort(key=lambda p: p.name)
 				for plugin in pluginlist:
 					if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.func_code.co_varnames:
-						if twinPaths.has_key(plugin.path[24:]):
-							twinPaths[plugin.path[24:]] += 1
+						if twinPaths.has_key(plugin.path[plugin.path.rfind("Plugins"):]):
+							twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] += 1
 						else:
-							twinPaths[plugin.path[24:]] = 1
-						if plugin.path[24:] + '/' + str(twinPaths[plugin.path[24:]]) == '/'.join(selected):
+							twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] = 1
+						if plugin.path[plugin.path.rfind("Plugins"):] + "/" + str(twinPaths[plugin.path[plugin.path.rfind("Plugins"):]]) == "/".join(selected):
 							self.runPlugin(plugin)
 							return
 						twinPlugins.append(plugin.name)
@@ -636,11 +627,11 @@ class InfoBarButtonSetup:
 				pluginlist.sort(key=lambda p: p.name)
 				for plugin in pluginlist:
 					if plugin.name not in twinPlugins and plugin.path:
-						if twinPaths.has_key(plugin.path[24:]):
-							twinPaths[plugin.path[24:]] += 1
+						if twinPaths.has_key(plugin.path[plugin.path.rfind("Plugins"):]):
+							twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] += 1
 						else:
-							twinPaths[plugin.path[24:]] = 1
-						if plugin.path[24:] + '/' + str(twinPaths[plugin.path[24:]]) == '/'.join(selected):
+							twinPaths[plugin.path[plugin.path.rfind("Plugins"):]] = 1
+						if plugin.path[plugin.path.rfind("Plugins"):] + "/" + str(twinPaths[plugin.path[plugin.path.rfind("Plugins"):]]) == "/".join(selected):
 							self.runPlugin(plugin)
 							return
 						twinPlugins.append(plugin.name)
@@ -667,10 +658,10 @@ class InfoBarButtonSetup:
 				if selected[0] == "ZapPanic":
 					self.servicelist.history = []
 					self.pipShown() and self.showPiP()
-				self.servicelist.servicelist.setCurrent(eServiceReference('/'.join(selected[1:])))
-				self.servicelist.zap(enable_pipzap=True)
-				if hasattr(self, 'lastservice'):
-					self.lastservice = eServiceReference('/'.join(selected[1:]))
+				self.servicelist.servicelist.setCurrent(eServiceReference("/".join(selected[1:])))
+				self.servicelist.zap(enable_pipzap = True)
+				if hasattr(self, "lastservice"):
+					self.lastservice = eServiceReference("/".join(selected[1:]))
 					self.close()
 				else:
 					self.show()
@@ -679,7 +670,7 @@ class InfoBarButtonSetup:
 				if moviepath:
 					config.movielist.last_videodir.value = moviepath
 			elif selected[0] == "PPanel":
-				ppanelFileName = '/etc/ppanels/' + selected[1] + '.xml'
+				ppanelFileName = '/etc/ppanels/' + selected[1] + ".xml"
 				if os.path.isfile(ppanelFileName) and os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/PPanel'):
 					from Plugins.Extensions.PPanel.ppanel import PPanel
 					self.session.open(PPanel, name=selected[1] + ' PPanel', node=None, filename=ppanelFileName, deletenode=None)
@@ -699,8 +690,8 @@ class InfoBarButtonSetup:
 				except Exception as e:
 					print('[EMCPlayer] showMovies exception:\n' + str(e))
 			elif selected[0] == "ScriptRunner":
-				if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/Infopanel/ScriptRunner.pyo"):
-					from Plugins.Extensions.Infopanel.ScriptRunner import ScriptRunner
+				if os.path.isfile("/usr/lib/enigma2/python/OPENDROID/ScriptRunner.pyo"):
+					from OPENDROID.ScriptRunner import ScriptRunner
 					self.session.open (ScriptRunner)
 			elif selected[0] == "Kodi":
 				if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/Kodi/plugin.pyo"):

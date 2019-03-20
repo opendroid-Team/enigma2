@@ -372,6 +372,8 @@
 		<!--item level="0" text="OPENDROID Green button mode" description="Select what you want the Green button to activate:">config.usage.greenbutton_mode</item-->
 		<!--item level="0" text="OPENDROID Blue button mode" description="Select what you want the Blue button to activate:">config.usage.bluebutton_mode</item-->
 		<!--item level="0" text="Select Red-key action" description="Select what you want the RED button to activate:">config.OPENDROID_redpanel.selection</item-->
+		<item level="0" text="Select Yellow Key Action" description="Select what you want the YELLOW button to activate:">config.OPENDROID_yellowkey.list</item>
+		<item level="0" text="Select Yellow Key Action long" description="Select what you want the YELLOW-Long button to activate:">config.OPENDROID_yellowkey.listLong</item>
 		</setup>
 	<setup level="2" key="softcamsetup" title="Softcam settings">
 		<item level="2" text="Show CCcam in extensions ?" description="Allows you to show/hide CCcam in extensions (blue button).">config.cccaminfo.showInExtensions</item>

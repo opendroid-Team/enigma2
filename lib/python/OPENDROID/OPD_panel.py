@@ -72,6 +72,14 @@ from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
 import gettext
 
+choicelist = [('0',_("Audio Selection")),('1',_("Default (Timeshift)")), ('2',_("Toggle Pillarbox <> Pan&Scan")),('3',_("Teletext"))]
+config.OPENDROID_yellowkey = ConfigSubsection()
+config.OPENDROID_yellowkey.list = ConfigSelection(default='1', choices = choicelist)
+config.OPENDROID_yellowkey.listLong = ConfigSelection(default='1', choices = choicelist)
+
+config.OPENDROID_yellowkey.list = ConfigSelection(default='0', choices = choicelist)
+config.OPENDROID_yellowkey.listLong = ConfigSelection(default='0', choices = choicelist)
+
 SystemInfo["SoftCam"] = Check_Softcam()
 
 config.softcam = ConfigSubsection()

@@ -4001,14 +4001,14 @@ class InfoBarAudioSelection:
 		if not hasattr(self, "LongButtonPressed"):
 			self.LongButtonPressed = False
 		if not self.LongButtonPressed:
-			if config.plugins.infopanel_yellowkey.list.value == '0':
+			if config.OPENDROID_yellowkey.list.value == '0':
 				from Screens.AudioSelection import AudioSelection
 				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
-			elif config.plugins.infopanel_yellowkey.list.value == '2':
+			elif config.OPENDROID_yellowkey.list.value == '2':
 				global AUDIO
 				AUDIO = True
 				ToggleVideo()
-			elif config.plugins.infopanel_yellowkey.list.value == '3':
+			elif config.OPENDROID_yellowkey.list.value == '3':
 				self.startTeletext()
 			else:
 				try:
@@ -4016,14 +4016,14 @@ class InfoBarAudioSelection:
 				except:
 					pass
 		else:
-			if config.plugins.infopanel_yellowkey.listLong.value == '0':
+			if config.OPENDROID_yellowkey.listLong.value == '0':
 				from Screens.AudioSelection import AudioSelection
 				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
-			elif config.plugins.infopanel_yellowkey.listLong.value == '2':
+			elif config.OPENDROID_yellowkey.listLong.value == '2':
 				global AUDIO
 				AUDIO = True
 				ToggleVideo()
-			elif config.plugins.infopanel_yellowkey.listLong.value == '3':
+			elif config.OPENDROID_yellowkey.listLong.value == '3':
 				self.startTeletext()
 			else:
 				try:

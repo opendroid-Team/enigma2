@@ -10,6 +10,7 @@ from Screens.MessageBox import MessageBox
 from Components.Label import Label
 from Components.Pixmap import MultiPixmap
 from Tools.Directories import fileExists
+from Screens.ButtonSetup import InfoBarButtonSetup
 
 profile("LOAD:enigma")
 import enigma
@@ -29,7 +30,6 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarZoom, InfoBarSleepTimer, InfoBarOpenOnTopHelper, \
 	InfoBarHdmi, setResumePoint, delResumePoint
 from Screens.ButtonSetup import InfoBarButtonSetup
-
 profile("LOAD:InitBar_Components")
 from Components.ActionMap import HelpableActionMap
 from Components.Timeshift import InfoBarTimeshift
