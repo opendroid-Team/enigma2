@@ -67,6 +67,8 @@ def getChipSetString():
 		return "7252S"
 	elif getMachineBuild() in ('hd51','vs1500','h7'):
 		return "7251S"
+	elif getMachineBuild() in ('vuduo4k'):
+		return "7278"
 	else:
 		try:
 			f = open('/proc/stb/info/chipset', 'r')
