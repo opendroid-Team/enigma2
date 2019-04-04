@@ -109,6 +109,9 @@ def getButtonSetupKeys():
 		(_("Help"), "displayHelp", ""),
 		(_("Help long"), "displayHelp_long", ""),
 		(_("Context"), "contextMenu", "Infobar/showExtensionSelection"),
+		(_("Context long"), "context_long", ""),
+		(_("SAT"), "sat", "Infobar/openSatellites"),
+		(_("SAT long"), "sat_long", ""),
 		(_("F1/LAN"), "f1", "Infobar/showNetworkMounts"),
 		(_("F1/LAN long"), "f1_long", ""),
 		(_("F1"), "f1", ""),
@@ -225,9 +228,10 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Automatic Scan"), "Module/Screens.ScanSetup/ScanSimple", "Scanning"))
 	for plugin in plugins.getPluginsForMenu("scan"):
 		ButtonSetupFunctions.append((plugin[0], "MenuPlugin/scan/" + plugin[2], "Scanning"))
-	ButtonSetupFunctions.append((_("Network Setup"), "Module/Screens.NetworkSetup/NetworkAdapterSelection", "Setup"))
+	ButtonSetupFunctions.append((_("Network setup"), "Module/Screens.NetworkSetup/NetworkAdapterSelection", "Setup"))
 	ButtonSetupFunctions.append((_("Network menu"), "Infobar/showNetworkMounts", "Setup"))
-	ButtonSetupFunctions.append((_("Plugin browser"), "Module/Screens.PluginBrowser/PluginBrowser", "Setup"))
+	ButtonSetupFunctions.append((_("VPN"), "Module/Screens.NetworkSetup/NetworkOpenvpn", "Setup"))
+	ButtonSetupFunctions.append((_("Plugin Browser"), "Module/Screens.PluginBrowser/PluginBrowser", "Setup"))
 	ButtonSetupFunctions.append((_("Channel info"), "Module/Screens.ServiceInfo/ServiceInfo", "Setup"))
 	ButtonSetupFunctions.append((_("Timers"), "Module/Screens.TimerEdit/TimerEditList", "Setup"))
 	ButtonSetupFunctions.append((_("AutoTimer overview"), "Infobar/showAutoTimerList", "Setup"))
@@ -246,9 +250,9 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("PowerTimer"), "Module/Screens.PowerTimerEdit/PowerTimerEditList", "Power"))
 	ButtonSetupFunctions.append((_("Usage setup"), "Setup/usage", "Setup"))
 	ButtonSetupFunctions.append((_("User interface settings"), "Setup/userinterface", "Setup"))
-	ButtonSetupFunctions.append((_("Recording and playback settings"), "Setup/recording", "Setup"))
-	ButtonSetupFunctions.append((_("Skin setup"), "Module/Screens.SkinSelector/SkinSelector", "Setup"))
-	ButtonSetupFunctions.append((_("Harddisk setup"), "Setup/harddisk", "Setup"))
+	ButtonSetupFunctions.append((_("Recording Setup"), "Setup/recording", "Setup"))
+	ButtonSetupFunctions.append((_("SkinSelector"), "Module/Screens.SkinSelector/SkinSelector", "Setup"))
+	ButtonSetupFunctions.append((_("Harddisk Setup"), "Setup/harddisk", "Setup"))
 	ButtonSetupFunctions.append((_("Subtitles settings"), "Setup/subtitlesetup", "Setup"))
 	ButtonSetupFunctions.append((_("Language"), "Module/Screens.LanguageSelection/LanguageSelection", "Setup"))
 	ButtonSetupFunctions.append((_("OscamInfo Mainmenu"), "Module/Screens.OScamInfo/OscamInfoMenu", "Plugins"))
