@@ -21,6 +21,9 @@ config.plugins.wlan.encryption = NoSave(ConfigSelection(list, default = "WPA2"))
 config.plugins.wlan.wepkeytype = NoSave(ConfigSelection(weplist, default = "ASCII"))
 config.plugins.wlan.psk = NoSave(ConfigPassword(default = "", fixed_size = False))
 
+def existBcmWifi(iface):
+	return os_path.exists("/tmp/bcm/" + iface)
+
 def getWlanConfigName(iface):
 	driver = iNetwork.detectWlanModule(iface)
 	if driver in ('brcm-wl', ):
@@ -64,7 +67,8 @@ class Wlan:
 				driver = iNetwork.detectWlanModule(self.iface)
 				if driver in ('brcm-wl', ):
 					system("wl up")
-
+				if existBcmWifi(self.iface):
+					eConsoleAppContainer().execute("wl up")
 		ifobj = Wireless(self.iface) # a Wireless NIC Object
 
 		try:
@@ -78,6 +82,9 @@ class Wlan:
 			index = 1
 			for result in scanresults:
 				bssid = result.bssid
+
+				if not result.essid:
+					continue
 
 				if result.encode.flags & wififlags.IW_ENCODE_DISABLED > 0:
 					encryption = False
@@ -131,7 +138,8 @@ class Wlan:
 					system("wl down")
 				self.oldInterfaceState = None
 				self.iface = None
-
+				if existBcmWifi(self.iface):
+					eConsoleAppContainer().execute("wl down")
 iWlan = Wlan()
 
 class brcmWLConfig:
@@ -263,6 +271,9 @@ class wpaSupplicant:
 		wepkeytype = config.plugins.wlan.wepkeytype.value
 		psk = config.plugins.wlan.psk.value
 
+		if existBcmWifi(iface):
+			self.writeBcmWifiConfig(iface, essid, encryption, psk)
+			return
 		fp = file(getWlanConfigName(iface), 'w')
 		fp.write('#WPA Supplicant Configuration by enigma2\n')
 		fp.write('ctrl_interface=/var/run/wpa_supplicant\n')
@@ -304,6 +315,9 @@ class wpaSupplicant:
 		#system('cat ' + getWlanConfigName(iface))
 
 	def loadConfig(self,iface):
+		if existBcmWifi(iface):
+			return self.loadBcmWifiConfig(iface)
+
 		configfile = getWlanConfigName(iface)
 		if not os_path.exists(configfile):
 			configfile = '/etc/wpa_supplicant.conf'
