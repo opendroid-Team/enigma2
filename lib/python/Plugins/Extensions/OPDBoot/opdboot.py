@@ -140,7 +140,7 @@ def OPDBootExtract(source, target, zipdelete, getimagefolder, getMachineRootFile
                         os.system('rm -rf ' + sourcefile)
                 else:
                         os.system('echo "[OPDBoot] keep  %s for next time"'% sourcefile)
-                if "aarch64" in getImageArch:
+                if "cortexa15" in getImageArch:
                         if os.path.exists(media_nf + '/OPDBootUpload/%s'% getimagefolder):
                                 os.chdir('%s'% getimagefolder)
                         print '[OPDBoot] Extracting tar.bz2 image and moving extracted image to our target'
