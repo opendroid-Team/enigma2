@@ -12,7 +12,7 @@ from Components.Network import iNetwork
 from Plugins.Plugin import PluginDescriptor
 from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
 from Tools.LoadPixmap import LoadPixmap
-from Wlan import iWlan, iStatus, getWlanConfigName, existBcmWifi
+from Wlan import iWlan, iStatus, getWlanConfigName
 
 
 plugin_path = eEnv.resolve("${libdir}/enigma2/python/Plugins/SystemPlugins/WirelessLan")
@@ -397,19 +397,6 @@ def configStrings(iface):
 	if config.plugins.wlan.hiddenessid.value == True:
 		ret += "\tpre-up iwconfig " + iface + " essid \"" + re_escape(config.plugins.wlan.essid.value) + "\" || true\n"
 	ret += "\tpre-down wpa_cli -i" + iface + " terminate || true\n"
-	return ret
-
-	if existBcmWifi(iface):
-		encryption = config.plugins.wlan.encryption.value
-		psk = config.plugins.wlan.psk.value
-		essid = config.plugins.wlan.essid.value
-		ret += '\tpre-up wl-config.sh -m ' + encryption.lower() + ' -k ' + psk + ' -s "' + essid + '" \n'
-		ret += '\tpost-down wl-down.sh\n'
-	else:
-		if driver == 'madwifi' and config.plugins.wlan.hiddenessid.value:
-			ret += "\tpre-up iwconfig " + iface + " essid \"" + re.escape(config.plugins.wlan.essid.value) + "\" || true\n"
-		ret += "\tpre-up wpa_supplicant -i" + iface + " -c" + getWlanConfigName(iface) + " -B -dd -D" + driver + " || true\n"
-		ret += "\tpre-down wpa_cli -i" + iface + " terminate || true\n"
 	return ret
 
 def Plugins(**kwargs):

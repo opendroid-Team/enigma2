@@ -1,8 +1,10 @@
 import re
 import os
 from socket import *
+from os import system, popen, path as os_path, listdir
 from Components.Console import Console
 from Components.PluginComponent import plugins
+from enigma import eConsoleAppContainer
 from Plugins.Plugin import PluginDescriptor
 from boxbranding import getBoxType
 
@@ -15,6 +17,7 @@ class Network:
 		self.DnsState = 0
 		self.nameservers = []
 		self.ethtool_bin = "ethtool"
+		self.container = eConsoleAppContainer()
 		self.Console = Console()
 		self.LinkConsole = Console()
 		self.restartConsole = Console()
@@ -139,6 +142,12 @@ class Network:
 		fp.write("auto lo\n")
 		fp.write("iface lo inet loopback\n\n")
 		for ifacename, iface in self.ifaces.items():
+			if iface.has_key('dns-nameservers') and iface['dns-nameservers']:
+				dns = []
+				for s in iface['dns-nameservers'].split()[1:]:
+					dns.append((self.convertIP(s)))
+				if dns:
+					self.nameservers = dns
 			WoW = False
 			if self.onlyWoWifaces.has_key(ifacename):
 				WoW = self.onlyWoWifaces[ifacename]
@@ -151,7 +160,6 @@ class Network:
 				fp.write("#only WakeOnWiFi " + ifacename + "\n")
 			if iface['dhcp']:
 				fp.write("iface "+ ifacename +" inet dhcp\n")
-				fp.write("udhcpc_opts -T1 -t9\n")
 			if not iface['dhcp']:
 				fp.write("iface "+ ifacename +" inet static\n")
 				fp.write("  hostname $(hostname)\n")
@@ -298,6 +306,9 @@ class Network:
 				self.lan_interfaces.append(iface)
 		return name
 
+	def useWlCommand(self, iface):
+		return iface and os_path.exists("/tmp/bcm/%s" % iface)
+	
 	def getFriendlyAdapterDescription(self, iface):
 		if not self.isWirelessInterface(iface):
 			return _('Ethernet network interface')
@@ -315,13 +326,32 @@ class Network:
 				name = 'Realtek'
 			elif name  == 'brcm-systemport':
 				name = 'Broadcom'
-		elif os.path.exists("/tmp/bcm/%s"%iface):
-			name = 'Broadcom'
+			elif self.isRalinkModule(iface):
+				name = 'Ralink'
+		elif self.useWlCommand(iface):
+			name = 'BroadCom'
 		else:
 			name = _('Unknown')
 
 		return name + ' ' + _('wireless network interface')
 
+	def isRalinkModule(self, iface):
+		import os
+# check vendor ID for lagacy driver
+		vendorID = "148f" # ralink vendor ID
+		idVendorPath = "/sys/class/net/%s/device/idVendor" % iface
+		if os.access(idVendorPath, os.R_OK):
+			if open(idVendorPath, "r").read().strip() == vendorID:
+				return True
+
+# check sys driver path for kernel driver
+		ralinkKmod = "rt2800usb" # ralink kernel driver name
+		driverPath = "/sys/class/net/%s/device/driver/" % iface
+		if os.path.exists(driverPath):
+			driverName = os.path.basename(os_path.realpath(driverPath))
+			if driverName == ralinkKmod:
+				return True
+		return False
 	def getAdapterName(self, iface):
 		return iface
 
