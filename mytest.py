@@ -136,6 +136,13 @@ except ImportError:
 
 profile("LOAD:Plugin")
 
+from twisted.python import log
+config.misc.enabletwistedlog = ConfigYesNo(default = False)
+if config.misc.enabletwistedlog.value == True:
+	log.startLogging(open('/tmp/twisted.log', 'w'))
+else:
+	log.startLogging(sys.stdout)
+
 # initialize autorun plugins and plugin menu entries
 from Components.PluginComponent import plugins
 

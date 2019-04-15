@@ -1,4 +1,5 @@
 from boxbranding import getBoxType, getBrandOEM
+import os
 from time import localtime, mktime
 from datetime import datetime
 import xml.etree.cElementTree
@@ -849,6 +850,9 @@ class NIM(object):
 		if not multistream and "TBS" in self.description:
 			multistream = True
 		return multistream
+
+	def isT2MI(self):
+		return os.path.exists("/proc/stb/frontend/%d/t2mi" % self.frontend_id)
 
 	def supportsBlindScan(self):
 		return self.supports_blind_scan
