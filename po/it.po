@@ -7490,7 +7490,7 @@ msgid "Right long"
 msgstr "Destra lungo"
 
 msgid "Left "
-msgstr "Sinistra"
+msgstr "Sinistra "
 
 msgid "Left from servicename"
 msgstr "A sinistra del nome canale"
@@ -19526,7 +19526,7 @@ msgstr ""
 "servizio'."
 
 msgid "Select 'yes' to include the %s band in your search."
-msgstr "Seleziona 'sì' per includere la banda %s nella ricerca"
+msgstr "Seleziona 'sì' per includere la banda %s nella ricerca."
 
 msgid ""
 "Enter the frequency step size for the tuner to use when searching for cable "
@@ -19734,12 +19734,8 @@ msgstr ""
 "utilizzare la tensione aumentata '14 / 18V 'se si verificano problemi "
 "durante la commutazione di lnb"
 
-msgid ""
-"Select 'band' if using a 'universal' LNB, otherwise consult your LNB spec "
-"sheet."
-msgstr ""
-"Selezionare 'banda' se si utilizza un LNB 'universale', altrimenti "
-"consultare la scheda tecnica LNB."
+msgid "Select 'band' if using a 'universal' LNB, otherwise consult your LNB spec sheet."
+msgstr "Selezionare 'banda' se si utilizza un LNB 'universale', altrimenti consultare la scheda tecnica LNB."
 
 msgid ""
 "Select '1.0' for standard committed switches, '1.1' for uncommitted switches,"
