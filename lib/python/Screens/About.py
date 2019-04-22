@@ -170,7 +170,7 @@ class About(Screen):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u51','u5','u53','u54','u55','u56','u52','u5pvr','h9','h9combo','sf8008','i55plus'):
+	        elif getMachineBuild() in ('u51','u5','u53','u54','u55','u56','u52','hd60','hd61','u5pvr','h9','h9combo','sf8008','i55plus'):
 			cpuMHz = "   (1,6 GHz)"
 	        elif getMachineBuild() in ('vuduo4k'):
 			cpuMHz = "   (2,1 GHz)"
@@ -632,6 +632,10 @@ class ModelPic(Screen):
 			model = "atemionemesis.png"
 		elif getBoxType() in ('mutant51'):
 			model = "mutant51.png"
+		elif getBoxType() in ('mutant60'):
+			model = "mutant60.png"
+		elif getBoxType() in ('mutant61'):
+			model = "mutant61.png"
 		elif getBoxType() in ('osmio4k'):
 			model = "osmio4k.png"
 		elif getBoxType() in ('osmega'):
