@@ -63,6 +63,16 @@ def parseLines(filename):
 		print "[ERROR] failed to open file %s" % filename
 	return ret
 
+def MyDateConverter(StringDate):
+	## StringDate must be a string "YYYY-MM-DD"
+	try:
+		StringDate = StringDate.replace("-"," ")
+		StringDate = time.strftime(_("%Y-%m-%d"), time.strptime(StringDate, "%Y %m %d"))
+		return StringDate
+	except:
+		return _("unknown")
+
+
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -123,7 +133,15 @@ class About(Screen):
 			for line in popen("df -mh / | grep -v '^Filesystem' | awk '{print $4}'",'r'):
 				line = line.strip()
 				freeflash += line
-				return str(freeflash)
+
+		def find_rootfssubdir(file):
+			startup_content = read_startup("/boot/" + file)
+			rootsubdir = startup_content[startup_content.find("rootsubdir=")+11:].split()[0]
+			if rootsubdir.startswith("linuxrootfs"):
+				return rootsubdir
+			return
+
+			return str(freeflash)
 		self["lab1"] = StaticText(_("OpenDroid by OPD Image Team"))
 		self["lab2"] = StaticText(_("Support at") + " www.droidsat.org")
 		model = None
@@ -226,7 +244,10 @@ class About(Screen):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
 			f.close()
-		if getMachineBuild() in ('sf8008'):
+		if SystemInfo["HasRootSubdir"]:
+			image = find_rootfssubdir("STARTUP")
+			AboutText += _("Selected Image:\t\t%s") % "STARTUP_" + image[-1:] + bootname + "\n"
+		elif getMachineBuild() in ('gbmv200','cc1','sf8008','ustym4kpro','beyonwizv2',"viper4k"):
 			if path.exists('/boot/STARTUP'):
 				f = open('/boot/STARTUP', 'r')
 				f.seek(5)
