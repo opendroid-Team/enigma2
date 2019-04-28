@@ -16745,6 +16745,18 @@ msgstr ""
 msgid "Kodi MediaCenter"
 msgstr ""
 
+msgid "Kodi"
+msgstr ""
+
+msgid "Kodi installed:"
+msgstr ""
+
+msgid "Kodi Launcher"
+msgstr ""
+
+msgid "Kodi/extra partition free space:"
+msgstr ""
+
 #: ButtonSetup.py:211
 msgid "OPD BluePanel"
 msgstr ""
