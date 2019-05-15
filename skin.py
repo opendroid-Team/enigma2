@@ -111,7 +111,9 @@ def skinExists(skin = False):
 skinExists()
 
 def getSkinPath():
-	primary_skin_path = config.skin.primary_skin.value.replace('skin.xml', '')
+	#primary_skin_path = config.skin.primary_skin.value.replace('skin.xml', '')
+	p = config.skin.primary_skin.value
+	primary_skin_path = p[:p.rfind('/')+1]
 	if not primary_skin_path.endswith('/'):
 		primary_skin_path = primary_skin_path + '/'
 	return primary_skin_path
@@ -142,17 +144,33 @@ except:
 	addSkin('skin_text.xml')
 
 addSkin('skin_subtitles.xml')
+
+if config.skin.primary_skin.value != DEFAULT_SKIN:
+	skinpath = resolveFilename(SCOPE_SKIN, primary_skin_path)
+	if os.path.isdir(skinpath):
+		for file in sorted(os.listdir(skinpath)):
+			if file.startswith('skin_user_') and file.endswith('.xml'):
+				try:
+					addSkin(primary_skin_path + file, SCOPE_SKIN)
+					print "[SKIN] loading user defined %s skin file: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file)
+				except (SkinError, IOError, OSError, AssertionError), err:
+					print "[SKIN] not loading user defined %s skin file: %s - error: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file, err)
+
+'''
 try:
-	addSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
-	print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
+	if config.skin.primary_skin.value != DEFAULT_SKIN:
+		addSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
+		print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined colors for skin"
 
 try:
-	addSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
-	print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
+	if config.skin.primary_skin.value != DEFAULT_SKIN:
+		addSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
+		print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined header file for skin"
+'''
 
 def load_modular_files():
 	modular_files = get_modular_files(primary_skin_path, SCOPE_SKIN)
@@ -164,6 +182,7 @@ def load_modular_files():
 			except (SkinError, IOError, AssertionError), err:
 				print "[SKIN] failed to load modular skin file : ", err
 load_modular_files()
+
 try:
 	if not addSkin(config.skin.primary_skin.value):
 		raise SkinError, "primary skin not found"
