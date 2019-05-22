@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-04-20 03:49+0200\n"
+"PO-Revision-Date: 2019-05-22 17:30+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -255,7 +255,7 @@ msgid "Execute in "
 msgstr "Eseguire in "
 
 msgid "Frozen Cam Check"
-msgstr "Scarica ed installa cam"
+msgstr "Controllo congela cam"
 
 #, python-format
 msgid "GStreamer:\t%s"
