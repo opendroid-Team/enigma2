@@ -264,6 +264,8 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.Mlist = []
 		if Check_Softcam():
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('BluePanel'), _("BluePanel"), 'BluePanel')))
+		if Check_SysSoftcam() is not "none":
+			self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftcamSetup'), _("Softcam-Setup"), 'SoftcamSetup')))
 		if Check_SysSoftcam() is "oscam":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("OScamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
@@ -385,6 +387,8 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.System()
 		elif menu == "CronTimer":
 			self.session.open(CronTimers)
+		elif menu == "SoftcamSetup":
+			self.session.open(SoftcamSetup)
 		elif menu == "Infobar_Setup":
 			from OPENDROID.GreenPanel import InfoBarSetup
 			self.session.open(InfoBarSetup)
