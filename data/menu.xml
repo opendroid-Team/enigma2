@@ -2,13 +2,13 @@
 <!-- Menu -->
 <menu text="Mainmenu" title="Main menu">
 	<id val="mainmenu" />
-		<item weight="0" level="1" text="Blue Panel" entryID="Blue Panel">
+		<item weight="0" level="1" text="Blue Panel" entryID="BluePanel_selection">
 <code>
 from OPENDROID.BluePanel import BluePanel
 self.session.open(BluePanel)
 </code>
 		</item>	
-		<item weight="0" level="1" text="Green Panel" entryID="Green Panel">
+		<item weight="2" level="1" text="Green Panel" entryID="GreenPanel_selection">
 <code>
 from OPENDROID.GreenPanel import GreenPanel
 self.session.open(GreenPanel)
