@@ -8,7 +8,7 @@ from OPENDROID.BluePanel import BluePanel
 self.session.open(BluePanel)
 </code>
 		</item>	
-		<item weight="2" level="1" text="Green Panel" entryID="GreenPanel_selection">
+		<item weight="0" level="1" text="Green Panel" entryID="GreenPanel_selection">
 <code>
 from OPENDROID.GreenPanel import GreenPanel
 self.session.open(GreenPanel)
