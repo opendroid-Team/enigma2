@@ -565,6 +565,10 @@ class ModelPic(Screen):
 			model = "zgemmah92h.png"
 		elif getBoxType() in ('zgemmah92s'):
 			model = "zgemmah92s.png"
+		elif getBoxType() in ('zgemmah9twin'):
+			model = "zgemmah9twin.png"
+		elif getBoxType() in ('zgemmah9combo'):
+			model = "zgemmah9combo.png"
 		elif getBoxType() in ('zgemmah10'):
 			model = "zgemmah10.png"
 		elif getBoxType() in ('zgemmahs'):
