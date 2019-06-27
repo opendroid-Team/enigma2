@@ -465,10 +465,11 @@ def InitUsageConfig():
 	config.usage.show_channel_numbers_in_servicelist.addNotifier(refreshServiceList)
 
 	#standby
-	if getDisplayType() in ('textlcd7segment'):
+	if getDisplayType() in ('7segment'):
 		config.usage.blinking_display_clock_during_recording = ConfigSelection(default = "Rec", choices = [
-						("Rec", _("REC")), 
-						("RecBlink", _("Blinking REC")), 
+						("Rec", _("REC")),
+						("RecBlink", _("Blinking REC")),
+						("Time", _("Time")),
 						("Nothing", _("Nothing"))])
 	else:
 		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default = False)
@@ -479,18 +480,17 @@ def InitUsageConfig():
 						("Rec", _("REC Symbol")), 
 						("RecBlink", _("Blinking REC Symbol")), 
 						("Channel", _("Channelname"))])
-	if getDisplayType() in ('textlcd7segment'):
+	if getDisplayType() in ('7segment'):
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default = "Rec", choices = [
 						("Rec", _("REC")), 
 						("RecBlink", _("Blinking REC")), 
 						("Time", _("Time"))])
 	else:
 		config.usage.blinking_rec_symbol_during_recording = ConfigYesNo(default = True)
-		
-	if getDisplayType() in ('textlcd7segment'):
-		config.usage.show_in_standby = ConfigSelection(default = "time", choices = [
-						("time", _("Time")), 
-						("nothing", _("Nothing"))])
+
+	config.usage.show_in_standby = ConfigSelection(default = "time", choices = [
+					("time", _("Time")), 
+					("nothing", _("Nothing"))])
 
 	config.usage.show_message_when_recording_starts = ConfigYesNo(default = True)
 
