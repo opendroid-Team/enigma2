@@ -45,7 +45,7 @@ from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScr
 from BackupRestore import InitConfig as BackupRestore_InitConfig
 from SoftwareTools import iSoftwareTools
 import os
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM
+from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM, getImageDistro
 
 boxtype = getBoxType()
 brandoem = getBrandOEM()
@@ -504,6 +504,8 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 			self["introduction"].setText(_("Overwrite bootlogo files during software upgrade?"))
 		elif self["config"].getCurrent() == self.overwriteSpinnerfilesEntry:
 			self["introduction"].setText(_("Overwrite spinner files during software upgrade?"))
+		elif self["config"].getCurrent() == self.restoremodeEntry:
+			self["introduction"].setText(_("Turbo: One reboot after flash\nFast: One reboot after flash, one reboot after restore\nSlow: One reboot after flash, one reboot after restore in GUI"))
 		elif self["config"].getCurrent() == self.updatetypeEntry:
 			self["introduction"].setText(_("Select how your box will upgrade."))
 		else:
@@ -762,7 +764,6 @@ class PluginManager(Screen, PackageInfoHandler):
 				self.statuslist.append(( _("Error"), '', _("An error occurred while downloading the packetlist. Please try again." ),'', '', statuspng, divpng, None, '' ))
 			self["list"].style = "default"
 			self['list'].setList(self.statuslist)
-
 
 	def getUpdateInfos(self):
 		if (iSoftwareTools.lastDownloadDate is not None and iSoftwareTools.NetworkConnectionAvailable is False):
@@ -1519,7 +1520,7 @@ class UpdatePlugin(Screen):
 	def __init__(self, session, *args):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Software update"))
-		
+
 		self.sliderPackages = { "dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3 }
 
 		self.slider = Slider(0, 4)
@@ -1629,9 +1630,9 @@ class UpdatePlugin(Screen):
 		        self.runUpgrade(True)
 		else:
 			if doUpdate:
-				# Ask for Update, 
-				message += _("Do you want to update your %s %s?") % (getMachineBrand(), getMachineName()) + "\n" + _("After pressing OK, please wait!")
-				self.session.openWithCallback(self.runUpgrade, MessageBox, message, default = False, picon = picon)
+				# Ask for Update,
+				message += _("Do you want to update your box?")+"\n"+_("After pressing OK, please wait!")
+				self.session.openWithCallback(self.runUpgrade, MessageBox, message, default = default, picon = picon)
 			else:
 				# Don't Update RED LIGHT !!
 				self.session.open(MessageBox, message, picon, timeout = 20)
@@ -1738,7 +1739,7 @@ class UpdatePlugin(Screen):
 			else:
 				self.activityTimer.stop()
 				self.activityslider.setValue(0)
-				error = _("your %s %s might be unusable now. Please consult the manual for further assistance before rebooting your %s %s.") % (getMachineBrand(), getMachineName(), getMachineBrand(), getMachineName())
+				error = _("your %s %s might be unusable now. Please consult the manual for further assistance before rebooting your %s %s.") % (getMachineBrand(), getMachineName())
 				if self.packages == 0:
 					error = _("No packages were upgraded yet. So you can check your network and try again.")
 				if self.updating:
@@ -2180,7 +2181,6 @@ class PacketManager(Screen, NumericalTextInput):
 					self.Console = Console()
 				cmd = self.ipkg.ipkg + " list"
 				self.Console.ePopen(cmd, self.IpkgList_Finished)
-		#print event, "-", param
 		pass
 
 	def IpkgList_Finished(self, result, retval, extra_args = None):
@@ -2355,8 +2355,8 @@ def filescan(**kwargs):
 			paths_to_scan =
 				[
 					ScanPath(path = "ipk", with_subdirs = True),
-					ScanPath(path = "", with_subdirs = False), 
-				], 
+					ScanPath(path = "", with_subdirs = False),
+				],
 			name = "Ipkg",
 			description = _("Install extensions."),
 			openfnc = filescan_open, )
@@ -2382,7 +2382,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 				</convert>
 			</widget>
 		</screen>"""
-		
+
 	def __init__(self, session, plugin_path, args = None):
 		Screen.__init__(self, session)
 		NumericalTextInput.__init__(self)
@@ -2409,7 +2409,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 			"9": self.keyNumberGlobal,
 			"0": self.keyNumberGlobal
 		}, -1)
-		
+
 		self.list = []
 		self.statuslist = []
 		self["list"] = List(self.list)
@@ -2422,7 +2422,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 		self.onLayoutFinish.append(self.rebuildList)
 
 		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmAscii)		
+		rcinput.setKeyboardMode(rcinput.kmAscii)
 
 	def keyNumberGlobal(self, val):
 		key = self.getKey(val)
@@ -2430,12 +2430,12 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 			keyvalue = key.encode("utf-8")
 			if len(keyvalue) == 1:
 				self.setNextIdx(keyvalue[0])
-		
+
 	def keyGotAscii(self):
 		keyvalue = unichr(getPrevAsciiCode()).encode("utf-8")
 		if len(keyvalue) == 1:
 			self.setNextIdx(keyvalue[0])
-		
+
 	def setNextIdx(self,char):
 		if char in ("0", "1", "a"):
 			self["list"].setIndex(0)
@@ -2454,7 +2454,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 		rcinput = eRCInput.getInstance()
 		rcinput.setKeyboardMode(rcinput.kmNone)
 		self.close()
-			
+
 	def setWindowTitle(self):
 		self.setTitle(_("New Packages"))
 
@@ -2488,7 +2488,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 			self.buildPacketList()
 
 		pass
-	
+
 	def buildEntryComponent(self, name, version, description, state):
 		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
 		if not description:
@@ -2531,7 +2531,7 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 						self.list.append(self.buildEntryComponent(x[0], '', 'no valid architecture, ignoring !!', "installable"))
 
 			self['list'].setList(self.list)
-	
+
 		else:
 			self.setStatus('error')
 
