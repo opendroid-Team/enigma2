@@ -320,7 +320,10 @@ class About(Screen):
 		AboutText += _("Drivers:\t%s") % driversdate + "\n"
 		AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
 		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
-		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
+		if path.exists('/boot/STARTUP'):
+			AboutText += _("Flashed:\tMultiboot active\n")
+		else:
+			AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Free Flash:\t%s\n") % freeflash()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		skinWidth = getDesktop(0).size().width()
