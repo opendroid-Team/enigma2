@@ -72,6 +72,23 @@ def MyDateConverter(StringDate):
 	except:
 		return _("unknown")
 
+def find_rootfssubdir(file):
+	startup_content = read_startup("/boot/" + file)
+	rootsubdir = startup_content[startup_content.find("rootsubdir=")+11:].split()[0]
+	if rootsubdir.startswith("linuxrootfs"):
+		return rootsubdir
+	return
+
+def read_startup(FILE):
+	file = FILE
+	try:
+		with open(file, 'r') as myfile:
+			data=myfile.read().replace('\n', '')
+		myfile.close()
+	except IOError:
+		print "[ERROR] failed to open file %s" % file
+		data = " "
+	return data
 
 class About(Screen):
 	def __init__(self, session):
@@ -133,15 +150,6 @@ class About(Screen):
 			for line in popen("df -mh / | grep -v '^Filesystem' | awk '{print $4}'",'r'):
 				line = line.strip()
 				freeflash += line
-
-		def find_rootfssubdir(file):
-			startup_content = read_startup("/boot/" + file)
-			rootsubdir = startup_content[startup_content.find("rootsubdir=")+11:].split()[0]
-			if rootsubdir.startswith("linuxrootfs"):
-				return rootsubdir
-			return
-
-			return str(freeflash)
 		self["lab1"] = StaticText(_("OpenDroid by OPD Image Team"))
 		self["lab2"] = StaticText(_("Support at") + " www.droidsat.org")
 		model = None
@@ -184,11 +192,13 @@ class About(Screen):
 
 		if getMachineBuild() in ('vusolo4k','vuzero4k','vuultimo4k'):
 			cpuMHz = "   (1,5 GHz)"
-	        elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
+		elif getMachineBuild() in ('u41','u42'):
+			cpuMHz = "   (1,0 GHz)"
+		elif getMachineBuild() in ('vuuno4k','dm900','gb7252','dags7252'):
 			cpuMHz = "   (1,7 GHz)"
 		elif getMachineBuild() in ('formuler1tc','formuler1','triplex'):
 			cpuMHz = "   (1,3 GHz)"
-	        elif getMachineBuild() in ('u51','u5','u53','u54','u55','u56','u52','hd60','hd61','u5pvr','h9','h9combo','h10','sf8008','i55plus'):
+		elif getMachineBuild() in ('u51','u5','u53','u54','u55','u56','u52','hd60','hd61','u5pvr','h9','h9combo','h10','sf8008','i55plus'):
 			cpuMHz = "   (1,6 GHz)"
 	        elif getMachineBuild() in ('vuduo4k'):
 			cpuMHz = "   (2,1 GHz)"
@@ -246,7 +256,7 @@ class About(Screen):
 			f.close()
 		if SystemInfo["HasRootSubdir"]:
 			image = find_rootfssubdir("STARTUP")
-			AboutText += _("Selected Image:\t\t%s") % "STARTUP_" + image[-1:] + bootname + "\n"
+			AboutText += _("Selected Image:\t%s") % "STARTUP_" + image[-1:] + bootname + "\n"
 		elif getMachineBuild() in ('gbmv200','cc1','sf8008','ustym4kpro','beyonwizv2',"viper4k"):
 			if path.exists('/boot/STARTUP'):
 				f = open('/boot/STARTUP', 'r')
@@ -272,7 +282,7 @@ class About(Screen):
 		        if path.exists('/boot/STARTUP'):
 			        f = open('/boot/STARTUP', 'r')
 			        f.seek(38)
-			        image = f.read(1) 
+			        image = f.read(1)
 			        f.close()
 			        if bootname: bootname = "   (%s)" %bootname 
 			        AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
@@ -310,10 +320,7 @@ class About(Screen):
 		AboutText += _("Drivers:\t%s") % driversdate + "\n"
 		AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
 		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
-		if path.exists('/boot/STARTUP'):
-			AboutText += _("Flashed:\tMultiboot active\n")
-		else:
-			AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
+		AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
 		AboutText += _("Free Flash:\t%s\n") % freeflash()
 		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
 		skinWidth = getDesktop(0).size().width()
