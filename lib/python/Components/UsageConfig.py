@@ -465,7 +465,7 @@ def InitUsageConfig():
 	config.usage.show_channel_numbers_in_servicelist.addNotifier(refreshServiceList)
 
 	#standby
-	if getDisplayType() in ('7segment'):
+	if getDisplayType() in ('7segment',):
 		config.usage.blinking_display_clock_during_recording = ConfigSelection(default = "Rec", choices = [
 						("Rec", _("REC")),
 						("RecBlink", _("Blinking REC")),
@@ -475,12 +475,12 @@ def InitUsageConfig():
 		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default = False)
 		
 	#in use
-	if getDisplayType() in ('textlcd'):
+	if getDisplayType() in ('textlcd',):
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default = "Channel", choices = [
 						("Rec", _("REC Symbol")), 
 						("RecBlink", _("Blinking REC Symbol")), 
 						("Channel", _("Channelname"))])
-	if getDisplayType() in ('7segment'):
+	if getDisplayType() in ('7segment',):
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default = "Rec", choices = [
 						("Rec", _("REC")), 
 						("RecBlink", _("Blinking REC")), 
@@ -583,7 +583,11 @@ def InitUsageConfig():
 	config.usage.dsemudmessages = ConfigYesNo(default = True)
 	config.usage.messageYesPmt = ConfigYesNo(default = False)
 	config.usage.hide_zap_errors = ConfigYesNo(default = False)
-
+	if SystemInfo["PowerOffDisplay"]:
+		def powerOffDisplayChanged(configElement):
+			open(SystemInfo["PowerOffDisplay"], "w").write(configElement.value and "1" or "0")
+		config.usage.powerOffDisplay = ConfigYesNo(default = True)
+		config.usage.powerOffDisplay.addNotifier(powerOffDisplayChanged)
 	config.usage.hide_ci_messages = ConfigYesNo(default = False)
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
 	config.usage.show_eit_nownext = ConfigYesNo(default = True)
@@ -942,7 +946,7 @@ def InitUsageConfig():
 	choiceoptions = [("mode1", _("Mode 1")), ("mode2", _("Mode 2"))]
 	config.osd.threeDsetmode = ConfigSelection(default = 'mode1' , choices = choiceoptions )
 
-	hddchoises = [('/etc/enigma2/', 'Internal Flash')]
+	hddchoises = [('/etc/enigma2/', _('Internal Flash'))]
 	for p in harddiskmanager.getMountedPartitions():
 		if os.path.exists(p.mountpoint):
 			d = os.path.normpath(p.mountpoint)

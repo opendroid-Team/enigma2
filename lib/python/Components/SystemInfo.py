@@ -1,8 +1,8 @@
-from os import path
+from os import path, listdir
 from enigma import eDVBResourceManager, Misc_Options
-from Tools.Directories import fileExists, fileCheck, pathExists, fileHas
+from Tools.Directories import fileExists, fileCheck, fileHas, pathExists
 from Tools.HardwareInfo import HardwareInfo
-from boxbranding import getBoxType, getMachineBuild, getDisplayType, getHaveRCA, getHaveDVI, getHaveYUV, getHaveSCART, getHaveAVJACK, getHaveSCARTYUV, getHaveHDMI
+from boxbranding import getBoxType, getMachineBuild, getBrandOEM, getDisplayType, getHaveRCA, getHaveDVI, getHaveYUV, getHaveSCART, getHaveAVJACK, getHaveSCARTYUV, getHaveHDMI, getMachineMtdKernel, getMachineMtdRoot
 
 SystemInfo = { }
 
@@ -28,36 +28,60 @@ def countFrontpanelLEDs():
 
 	return leds
 
+def haveInitCam():
+	for cam in listdir("/etc/init.d"):
+		if cam.startswith('softcam.') and not cam.endswith('None'):
+			return True
+		elif cam.startswith('cardserver.') and not cam.endswith('None'):
+			return True
+		else:
+			pass
+	return False
+
+SystemInfo["OScamInstalled"] = fileExists("/usr/bin/oscam") or fileExists("/usr/bin/oscam-emu")
+SystemInfo["OScamIsActive"] = SystemInfo["OScamInstalled"] and fileExists("/tmp/.oscam/oscam.version")
+SystemInfo["OscamSmartcardInstalled"] = fileExists("/usr/bin/oscam_oscamsmartcard") or fileExists("/usr/bin/oscam-emu")
+SystemInfo["OscamSmartcardIsActive"] = SystemInfo["OscamSmartcardInstalled"] and fileExists("/tmp/.oscam/oscam.version")
+SystemInfo["NCamInstalled"] = fileExists("/usr/bin/ncam")
+SystemInfo["NCamIsActive"] = SystemInfo["NCamInstalled"] and fileExists("/tmp/.ncam/ncam.version")
 SystemInfo["FrontpanelDisplay"] = fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0")
-SystemInfo["7segment"] = getDisplayType() in ('7segment')
-SystemInfo["ConfigDisplay"] = SystemInfo["FrontpanelDisplay"] and getDisplayType() not in ('7segment')
+SystemInfo["HAVEINITCAM"] = haveInitCam()
+SystemInfo["7segment"] = getDisplayType() in ('7segment',)
+SystemInfo["ConfigDisplay"] = SystemInfo["FrontpanelDisplay"] and getDisplayType() not in ('7segment',)
 SystemInfo["LCDSKINSetup"] = path.exists("/usr/share/enigma2/display")
 SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
 SystemInfo["ZapMode"] = fileCheck("/proc/stb/video/zapmode") or fileCheck("/proc/stb/video/zapping_mode")
 SystemInfo["NumFrontpanelLEDs"] = countFrontpanelLEDs()
-SystemInfo["FrontpanelDisplay"] = fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0")
-SystemInfo["OledDisplay"] = fileExists("/dev/dbox/oled0") or getBoxType() in ('osminiplus')
+SystemInfo["OledDisplay"] = fileExists("/dev/dbox/oled0") or getBoxType() in ('osminiplus',)
 SystemInfo["LcdDisplay"] = fileExists("/dev/dbox/lcd0")
 SystemInfo["FBLCDDisplay"] = fileCheck("/proc/stb/fb/sd_detach")
 SystemInfo["DeepstandbySupport"] = HardwareInfo().has_deepstandby()
 SystemInfo["Fan"] = fileCheck("/proc/stb/fp/fan")
 SystemInfo["FanPWM"] = SystemInfo["Fan"] and fileCheck("/proc/stb/fp/fan_pwm")
-SystemInfo["FBLCDDisplay"] = fileCheck("/proc/stb/fb/sd_detach")
+SystemInfo["PowerLed"] = fileExists("/proc/stb/power/powerled")
 SystemInfo["StandbyPowerLed"] = fileExists("/proc/stb/power/standbyled")
 SystemInfo["SuspendPowerLed"] = fileExists("/proc/stb/power/suspendled")
+SystemInfo["LedPowerColor"] = fileExists("/proc/stb/fp/ledpowercolor")
+SystemInfo["LedStandbyColor"] = fileExists("/proc/stb/fp/ledstandbycolor")
+SystemInfo["LedSuspendColor"] = fileExists("/proc/stb/fp/ledsuspendledcolor")
+SystemInfo["Power4x7On"] = fileExists("/proc/stb/fp/power4x7on")
+SystemInfo["Power4x7Standby"] = fileExists("/proc/stb/fp/power4x7standby")
+SystemInfo["Power4x7Suspend"] = fileExists("/proc/stb/fp/power4x7suspend")
+SystemInfo["PowerOffDisplay"] = getBoxType() not in ('formuler1','hitube4k') and fileCheck("/proc/stb/power/vfd") or fileCheck("/proc/stb/lcd/vfd")
 SystemInfo["LEDButtons"] = getBoxType() == 'vuultimo'
 SystemInfo["WakeOnLAN"] = fileCheck("/proc/stb/power/wol") or fileCheck("/proc/stb/fp/wol")
 SystemInfo["HDMICEC"] = (fileExists("/dev/hdmi_cec") or fileExists("/dev/misc/hdmi_cec0")) and fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/HdmiCEC/plugin.pyo")
 SystemInfo["SABSetup"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/SABnzbd/plugin.pyo")
 SystemInfo["SeekStatePlay"] = False
-SystemInfo["GraphicLCD"] = getBoxType() in ('vuultimo', 'xpeedlx3', 'et10000', 'mutant2400', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4')
+SystemInfo["StatePlayPause"] = False
+SystemInfo["StandbyState"] = False
+SystemInfo["GraphicLCD"] = getBoxType() in ('vuultimo', 'xpeedlx3', 'et10000', 'mutant2400', 'quadbox2400', 'sezammarvel', 'atemionemesis', 'mbultra', 'beyonwizt4','osmio4kplus')
 SystemInfo["Blindscan"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Blindscan/plugin.pyo")
 SystemInfo["Satfinder"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Satfinder/plugin.pyo")
 SystemInfo["HasExternalPIP"] = getMachineBuild() not in ('et9x00', 'et6x00', 'et5x00') and fileCheck("/proc/stb/vmpeg/1/external")
 SystemInfo["hasPIPVisibleProc"] = fileCheck("/proc/stb/vmpeg/1/visible")
 SystemInfo["VideoDestinationConfigurable"] = fileExists("/proc/stb/vmpeg/0/dst_left")
 SystemInfo["GBWOL"] = fileExists("/usr/bin/gigablue_wol")
-SystemInfo["LCDSKINSetup"] = path.exists("/usr/share/enigma2/display")
 SystemInfo["VFD_scroll_repeats"] = fileCheck("/proc/stb/lcd/scroll_repeats")
 SystemInfo["VFD_scroll_delay"] = fileCheck("/proc/stb/lcd/scroll_delay")
 SystemInfo["VFD_initial_scroll_delay"] = fileCheck("/proc/stb/lcd/initial_scroll_delay")
@@ -89,7 +113,7 @@ SystemInfo["LCDsymbol_circle"] = fileCheck("/proc/stb/lcd/symbol_circle")
 SystemInfo["HasOPD-Blue-LineSkinSupport"] = HardwareInfo().get_device_name() not in ("et4000", "et5000", "sh1", "hd500c", "dm900", "dm920")
 SystemInfo["HasRootSubdir"] = fileHas("/proc/cmdline", "rootsubdir=")
 SystemInfo["HaveMultiBootADV"] = SystemInfo["HaveMultiBoot"] and SystemInfo["HasRootSubdir"]
-SystemInfo["RecoveryMode"] = SystemInfo["HasRootSubdir"] or fileCheck("/proc/stb/fp/boot_mode")
+SystemInfo["RecoveryMode"] = SystemInfo["HasRootSubdir"] and getMachineBuild() not in ('vs1500','hd51','h7') or fileCheck("/proc/stb/fp/boot_mode")
 SystemInfo["ForceLNBPowerChanged"] = fileCheck("/proc/stb/frontend/fbc/force_lnbon")
 SystemInfo["ForceToneBurstChanged"] = fileCheck("/proc/stb/frontend/fbc/force_toneburst")
 SystemInfo["USETunersetup"] = SystemInfo["ForceLNBPowerChanged"] or SystemInfo["ForceToneBurstChanged"]
