@@ -86,7 +86,7 @@ class FlashOnline(Screen):
 
 		Screen.setTitle(self, _("Flash On the Fly"))
 		if SystemInfo["HaveMultiBoot"]:
-			self["key_yellow"] = StaticText(_("Multiboot Select"))
+			self["key_yellow"] = Label(_("Multiboot Select"))
 			self.read_current_multiboot()
 		else:
 			self["key_yellow"] = StaticText("")
