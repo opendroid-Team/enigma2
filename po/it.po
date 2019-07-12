@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-05-22 17:30+0200\n"
+"PO-Revision-Date: 2019-07-12 10:00+0000\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -5096,6 +5096,30 @@ msgstr "Stato LED di alimentazione in standby"
 msgid "Power LED State in Deep-Standby"
 msgstr "Stato LED di alimentazione in Deep-Standby"
 
+msgid "Status of the display during operation"
+msgstr "Stato del display durante il funzionamento"
+
+msgid "With this option you can switch off the display during operation."
+msgstr "Con questa opzione è possibile spegnere il display durante il funzionamento."
+
+msgid "With this option you can switch off the display in Deep Standby Mode."
+msgstr "Con questa opzione è possibile spegnere il display in modalità Deep Standby."
+
+msgid "Dim the LCD to the level from 'Brightness (Dimmed)' after specified time."
+msgstr "Attenua l'LCD dopo un tempo specifico"
+
+msgid "Status of the display in standby mode"
+msgstr "Stato del display in modalità standby"
+
+msgid "With this option you can switch off the display in Standby Mode."
+msgstr "Con questa opzione è possibile spegnere il display in modalità Standby."
+
+msgid "Status of the display in deep standby"
+msgstr "Stato del display in deep standby"
+
+msgid "Operating LED status in deep standby mode"
+msgstr "Stato del LED di accensione durante standby e deep-standby."
+
 msgid "Power LED state during standby."
 msgstr ""
 "Qui è possibile impostare se il LED di alimentazione deve essere acceso o spento in modalità standby."
@@ -5107,11 +5131,20 @@ msgstr ""
 msgid "Turn on the power LED."
 msgstr "Accendi il LED di alimentazione."
 
+msgid "Operating LED status in standby mode"
+msgstr "Stato del LED di accensione durante standby e deep-standby."
+
+msgid "With this option you can switch the LED color or deactivate the LED."
+msgstr "Con questa opzione è possibile cambiare il colore del LED o disattivare il LED."
+
 msgid "Power LED can be turned on or off here."
 msgstr "Il LED di alimentazione può essere acceso o spento qui."
 
 msgid "Power On Display"
 msgstr "Accensione display"
+
+msgid "Operating LED status while running"
+msgstr "Funzionamento dello stato del LED durante l'esecuzione"
 
 #, python-format
 msgid "LCD scroll speed"
