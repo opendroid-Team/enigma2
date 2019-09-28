@@ -32,7 +32,7 @@ from Components.Button import Button
 from Components.ActionMap import ActionMap
 from Components.SystemInfo import SystemInfo
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from OPENDROID.OscamSmartcard import *
 from enigma import eConsoleAppContainer
 from Tools.Directories import fileExists
@@ -43,6 +43,7 @@ from enigma import getDesktop
 from Screens.InputBox import PinInput
 import string
 from random import Random
+
 import os
 import sys
 import re, string
@@ -51,16 +52,58 @@ import ServiceReference
 import time
 import datetime
 inOPD_panel = None
-config.softcam = ConfigSubsection()
-config.softcam.actCam = ConfigText(visible_width=200)
-config.softcam.actCam2 = ConfigText(visible_width=200)
-config.softcam.waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
 
-if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/plugin.pyo') is True:
-	try:
-		from Plugins.Extensions.MultiQuickButton.plugin import *
-	except:
-		pass
+config.OPENDROID_redpanel = ConfigSubsection()
+
+def Check_Softcam():
+	found = False
+	if fileExists("/etc/enigma2/noemu"):
+		found = False
+	else:
+		for cam in os.listdir("/etc/init.d"):
+			if cam.startswith('softcam.') and not cam.endswith('None'):
+				found = True
+				break
+			elif cam.startswith('cardserver.') and not cam.endswith('None'):
+				found = True
+				break
+	return found
+
+def Check_SysSoftcam():
+	syscam="none"
+	if os.path.isfile('/etc/init.d/softcam'):
+		if (os.path.islink('/etc/init.d/softcam') and not os.readlink('/etc/init.d/softcam').lower().endswith('none')):
+			try:
+				syscam = os.readlink('/etc/init.d/softcam').rsplit('.', 1)[1]
+				if syscam.lower().startswith('oscam'):
+					syscam="oscam"
+				if syscam.lower().startswith('ncam'):
+					syscam="ncam"
+				if syscam.lower().startswith('cccam'):
+					syscam="cccam"
+			except:
+				pass
+	return syscam
+
+
+if Check_Softcam():
+	redSelection = [('0',_("Default (Instant Record)")), ('1',_("OPD_panel")),('2',_("Timer List")),('3',_("Show Movies")), ('4',_("SoftcamSetup"))]
+else:
+	redSelection = [('0',_("Default (Instant Record)")), ('1',_("OPD_panel")),('2',_("Timer List")),('3',_("Show Movies"))]
+
+def timerEvent():
+	pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
+	for p in pluginlist:
+		redSelection.append((p.name, _(p.name)))
+	if getBoxType() == "dm800":
+		config.OPENDROID_redpanel.selection = ConfigSelection(redSelection, default='0')
+		config.OPENDROIDl_redpanel.selectionLong = ConfigSelection(redSelection, default='1')
+	else:
+		config.OPENDROID_redpanel.selection = ConfigSelection(redSelection, default='1')
+		config.OPENDROID_redpanel.selectionLong = ConfigSelection(redSelection, default='2')
+timer = eTimer()
+timer.timeout.get().append(timerEvent)
+timer.startLongTimer(1)
 
 from OPENDROID.HddSetup import *
 from OPENDROID.BluePanel import *
@@ -70,59 +113,20 @@ from OPENDROID.MountManager import *
 from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
-import gettext
-
-choicelist = [('0',_("Audio Selection")),('1',_("Default (Timeshift)")), ('2',_("Toggle Pillarbox <> Pan&Scan")),('3',_("Teletext"))]
-config.OPENDROID_yellowkey = ConfigSubsection()
-config.OPENDROID_yellowkey.list = ConfigSelection(default='1', choices = choicelist)
-config.OPENDROID_yellowkey.listLong = ConfigSelection(default='1', choices = choicelist)
-
-config.OPENDROID_yellowkey.list = ConfigSelection(default='0', choices = choicelist)
-config.OPENDROID_yellowkey.listLong = ConfigSelection(default='0', choices = choicelist)
-
 SystemInfo["SoftCam"] = Check_Softcam()
 
-config.softcam = ConfigSubsection()
-config.softcam.actCam = ConfigText(visible_width = 200)
-config.softcam.actCam2 = ConfigText(visible_width = 200)
-config.softcam.waittime = ConfigSelection([('0',_("dont wait")),('1',_("1 second")), ('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='15')
-config.OPENDROID_BluePanel = ConfigSubsection()
+if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):
+	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.usr")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.usr"):
+		setDefaultKeymap()
+	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.ntr")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.ntr"):
+		setDefaultKeymap()
+	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.u80")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.u80"):
+		setDefaultKeymap()
+def setDefaultKeymap():
+	print "[Info-Panel] Set Keymap to Default"
+	config.usage.keymap.value = eEnv.resolve("${datadir}/enigma2/keymap.xml")
+	config.save()
 
-def Check_Softcam():
-	found = False
-	if fileExists("/etc/enigma2/noemu"):
-		found = False
-	else:
-		for x in os.listdir('/etc'):
-			if x.find('.emu') > -1:
-				found = True
-				break;
-	return found
-
-def Check_SysSoftcam():
-	if os.path.isfile('/etc/init.d/softcam'):
-		if (os.path.islink('/etc/init.d/softcam') and not os.readlink('/etc/init.d/softcam').lower().endswith('none')):
-			try:
-				syscam = None
-				syscam = os.readlink('/etc/init.d/softcam').rsplit('.', 1)[1]
-				if syscam.lower().startswith('oscam'):
-					return "oscam"
-			except:
-				pass
-		if pathExists('/usr/bin/'):
-			softcams = os.listdir('/usr/bin/')
-			for softcam in softcams:
-				if softcam.lower().startswith('oscam'):
-					return "oscam"
-	return None
-
-
-def _(txt):
-	t = gettext.dgettext("OPD_panel", txt)
-	if t == txt:
-		print "[OPD_panel] fallback to default translation for", txt
-		t = gettext.gettext(txt)
-	return t
 def command(comandline, strip=1):
   comandline = comandline + " >/tmp/command.txt"
   os.system(comandline)
@@ -158,6 +162,10 @@ panel.write("Machinebrand: %s " % (machinebrand)+ '\n')
 panel.write("Machinename: %s " % (machinename)+ '\n')
 panel.write("oem name: %s " % (OEMname)+ '\n')
 panel.write("Boxtype: %s " % (boxversion)+ '\n')
+try:
+	panel.write("Keymap: %s " % (config.usage.keymap.value)+ '\n')
+except:
+	panel.write("Keymap: keymap file not found !!" + '\n')
 panel.close()
 ExitSave = "[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save")
 
@@ -256,21 +264,29 @@ class OPD_panel(Screen, InfoBarPiP):
 		else:
 			self.servicelist = None
 		self.list = []
-		self['actions'] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions'], {'cancel': self.Exit,
-                                                                                                      'upUp': self.up,
-                                                                                              'downUp': self.down,
-                                                                                              'ok': self.ok}, 1)
+		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
+			{
+				"cancel": self.Exit,
+				"upUp": self.up,
+				"downUp": self.down,
+				"ok": self.ok,
+			}, 1)
+		
 		self['label1'] = Label(OPD_panel_Version)
+		self["summary_description"] = StaticText("")
+
 		self.Mlist = []
 		if Check_Softcam():
-			self.Mlist.append(MenuEntryItem((InfoEntryComponent('BluePanel'), _("BluePanel"), 'BluePanel')))
-		if Check_SysSoftcam() is not "none":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftcamSetup'), _("Softcam-Setup"), 'SoftcamSetup')))
 		if Check_SysSoftcam() is "oscam":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("OScamInfo"), 'OScamInfo')))
+		if Check_SysSoftcam() is "ncam":
+			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("NcamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('opdBootLogoSelector'), _('opdBootLogo-Setup'), 'opdBootLogoSelector')))
+                self.Mlist.append(MenuEntryItem((InfoEntryComponent('ClearMem'), _('ClearMem-Setup'), 'ClearMem')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('LogManager'), _('Log-Manager'), 'LogManager')))
+		self.Mlist.append(MenuEntryItem((InfoEntryComponent('KeymapSel'), _("Keymap Selection"), 'KeymapSel')))	
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftwareManager'), _('Software-Manager'), 'software-manager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('services'), _('services'), 'services')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infos'), _('Infos'), 'Infos')))
@@ -285,9 +301,9 @@ class OPD_panel(Screen, InfoBarPiP):
 	def getCurrentEntry(self):
 		if self['Mlist'].l.getCurrentSelection():
 			selection = self['Mlist'].l.getCurrentSelection()[0]
-			if selection[0] is not None:
+			self["summary_description"].text = selection[1]
+			if (selection[0] is not None):
 				return selection[0]
-		return
 
 	def selectionChanged(self):
 		item = self.getCurrentEntry()
@@ -341,10 +357,12 @@ class OPD_panel(Screen, InfoBarPiP):
 			self["Mlist"].moveToIndex(0)
 			self["Mlist"].l.setList(self.oldmlist1)
 			menu = 1
-			self["label1"].setText("Infos")
-		return
+			self["label1"].setText(_("Infos"))
+		else:
+			pass
 
 	def ok(self):
+		global INFOCONF
 		menu = self['Mlist'].l.getCurrentSelection()[0][2]
 		print '[OPD_panel] MenuItem: ' + menu
 		if menu == "services":
@@ -353,10 +371,8 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.session.open(PluginBrowser)
 		elif menu == "Infos":
 			self.Infos()
-		elif menu == "Service_Team":
-			self.session.open(Info, "Service_Team")
 		elif menu == "Info":
-			self.session.open(Info, "Sytem_info")
+			self.session.open(Info, "SystemInfo")
 		elif menu == "ImageVersion":
 			self.session.open(Info, "ImageVersion")
 		elif menu == "FreeSpace":
@@ -387,8 +403,6 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.System()
 		elif menu == "CronTimer":
 			self.session.open(CronTimers)
-		elif menu == "SoftcamSetup":
-			self.session.open(SoftcamSetup)
 		elif menu == "Infobar_Setup":
 			from OPENDROID.GreenPanel import InfoBarSetup
 			self.session.open(InfoBarSetup)
@@ -398,6 +412,9 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "opdBootLogoSelector":
 			from OPENDROID.OPD_Bootlogo import opdBootLogoSelector
 			self.session.open(opdBootLogoSelector)
+                elif menu == "ClearMem":
+			from OPENDROID.ClearMem import ClearMem
+			self.session.open(ClearMem)
 		elif menu == "JobManager":
 			self.session.open(ScriptRunner)
 		elif menu == "software-manager":
@@ -405,7 +422,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "OScamInfo":
 			from Screens.OScamInfo import OscamInfoMenu
 			self.session.open(OscamInfoMenu)
-		elif menu == "BluePanel":
+		elif menu == "SoftcamSetup":
 			self.session.open(BluePanel)
 		elif menu == "software-manager":
 			self.Software_Manager()
@@ -420,11 +437,15 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.backupfile = getBackupFilename()
 			self.fullbackupfilename = self.backuppath + "/" + self.backupfile
 			if os_path.exists(self.fullbackupfilename):
-				self.session.openWithCallback(self.startRestore, MessageBox, _('Are you sure you want to restore your STB backup?\nSTB will restart after the restore'))
+				self.session.openWithCallback(self.startRestore, MessageBox, _("Are you sure you want to restore your STB backup?\nSTB will restart after the restore"), default = False)
 			else:
-				self.session.open(MessageBox, _('Sorry no backups found!'), MessageBox.TYPE_INFO, timeout=10)
+				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout = 10)
 		elif menu == "backup-files":
-			self.session.openWithCallback(self.backupfiles_choosen, BackupSelection)
+			self.session.open(BackupSelection,title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
+		elif menu == "backup-files-additional":
+			self.session.open(BackupSelection,title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
+		elif menu == "backup-files-excluded":
+			self.session.open(BackupSelection,title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
 		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
@@ -435,10 +456,10 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.session.open(OscamSmartcard)
 		elif menu == "SwapManager":
 			self.session.open(Swap)
-		elif menu == "RedPanel":
-			self.session.open(RedPanel)
-		elif menu == "Yellow-Key-Action":
-			self.session.open(YellowPanel)
+		elif menu == "KeymapSel":
+			self.session.open(KeymapSel)
+		elif menu == "Edid":
+			self.session.open(Info, "Edid")
 		elif menu == "LogManager":
 			self.session.open(LogManager)
 		elif menu == "ImageFlash":
@@ -475,7 +496,6 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.oldmlist = []
 		self.oldmlist1 = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Service_Team'), _("Service_Team"), 'Service_Team')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('ImageVersion'), _("Image-Version"), 'ImageVersion')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('FreeSpace'), _("FreeSpace"), 'FreeSpace')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Kernel'), _("Kernel"), 'Kernel')))
@@ -483,6 +503,8 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Network'), _("Network"), 'Network')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Ram'), _("Ram"), 'Ram')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('SystemInfo'), _("SystemInfo"), 'SystemInfo')))
+		if SystemInfo["HAVEEDIDDECODE"]:
+			self.tlist.append(MenuEntryItem((InfoEntryComponent('Edid'), _("EDID decode"), 'Edid')))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 		self.oldmlist1 = self.tlist
@@ -502,18 +524,6 @@ class OPD_panel(Screen, InfoBarPiP):
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 
-	def System_main(self):
-
-		global menu
-		menu = 1
-		self["label1"].setText(_("Image/Remote Setup"))
-		self.tlist = []
-		self.oldmlist = []
-		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Red-Key-Action'), _("Red Panel"), 'Red-Key-Action')))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent('Blue-Key-Action'), _("Blue Panel"), 'Blue-Key-Action')))
-		self["Mlist"].moveToIndex(0)
-		self["Mlist"].l.setList(self.tlist)
 	def System_main(self):
 		global menu
 		menu = 1
@@ -536,133 +546,59 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupSettings" ), _("Backup Settings"), ("backup-settings"))))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent ("RestoreSettings" ), _("Restore Settings"), ("restore-settings"))))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFiles" ), _("Show default backup files"), ("backup-files"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFilesAdditional" ), _("Select additional backup files"), ("backup-files-additional"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFilesExcluded" ), _("Select excluded backup files"), ("backup-files-excluded"))))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 
-	def backupfiles_choosen(self, ret):
-		config.plugins.configurationbackup.backupdirs.save()
-		config.plugins.configurationbackup.save()
-		config.save()
-
-	def backupDone(self, retval = None):
+	def backupDone(self,retval = None):
 		if retval is True:
 			self.session.open(MessageBox, _("Backup done."), MessageBox.TYPE_INFO, timeout = 10)
 		else:
 			self.session.open(MessageBox, _("Backup failed."), MessageBox.TYPE_INFO, timeout = 10)
 
 	def startRestore(self, ret = False):
-		if ret == True:
+		if (ret == True):
 			self.exe = True
-			self.session.open(RestoreScreen, runRestore=True)
+			self.session.open(RestoreScreen, runRestore = True)
 
-
-class RedPanel(ConfigListScreen, Screen):
-
+class KeymapSel(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
-		self.skinName = "Setup"
-		Screen.setTitle(self, _("RedPanel") + "...")
-		self.setup_title = _("RedPanel") + "..."
+		self.skinName = ["SetupInfo", "Setup" ]
+		Screen.setTitle(self, _("Keymap Selection") + "...")
+		self.setup_title =  _("Keymap Selection") + "..."
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["status"] = StaticText()
 		self["footnote"] = Label()
 		self["description"] = Label("")
-		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
-		self.onChangedEntry = []
-		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
-		self.createSetup()
-		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
-		{
-			"ok": self.keySave,
-			"cancel": self.keyCancel,
-			"red": self.keyCancel,
-			"green": self.keySave,
-			"menu": self.keyCancel,
-		}, -2)
 
-		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("OK"))
-		if not self.selectionChanged in self["config"].onSelectionChanged:
-			self["config"].onSelectionChanged.append(self.selectionChanged)
-		self.selectionChanged()
-
-	def createSetup(self):
-		self.editListEntry = None
-		self.list = []
-		self.list.append(getConfigListEntry(_("Show OPD_panel Red-key"), config.plugins.OPD_panel_redpanel.enabled))
-		self.list.append(getConfigListEntry(_("Show BluePanel Red-key long"), config.plugins.OPD_panel_redpanel.enabledlong))
-		self["config"].list = self.list
-		self["config"].setList(self.list)
-		if config.usage.sort_settings.value:
-			self["config"].list.sort()
-		return
-
-	def selectionChanged(self):
-		self["status"].setText(self["config"].getCurrent()[0])
-
-	def changedEntry(self):
-		for x in self.onChangedEntry:
-			x()
-
-		self.selectionChanged()
-
-	def getCurrentEntry(self):
-		return self["config"].getCurrent()[0]
-
-	def getCurrentValue(self):
-		return str(self["config"].getCurrent()[1].getText())
-
-	def getCurrentDescription(self):
-		return self["config"].getCurrent() and len(self["config"].getCurrent()) > 2 and self["config"].getCurrent()[2] or ""
-
-	def createSummary(self):
-		from Screens.Setup import SetupSummary
-		return SetupSummary
-
-	def saveAll(self):
-		for x in self["config"].list:
-			x[1].save()
-		configfile.save()
-
-	def keySave(self):
-		self.saveAll()
-		self.close()
-
-	def cancelConfirm(self, result):
-		if not result:
-			return
-		for x in self["config"].list:
-			x[1].cancel()
-		self.close()
-
-	def keyCancel(self):
-		if self["config"].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
-		else:
-			self.close()
-
-class YellowPanel(ConfigListScreen, Screen):
-	def __init__(self, session):
-		Screen.__init__(self, session)
-		self.session = session
-		self.skinName = "Setup"
-		Screen.setTitle(self, _("Yellow Key Action") + "...")
-		self.setup_title = _("Yellow Key Action") + "..."
-		self["HelpWindow"] = Pixmap()
-		self["HelpWindow"].hide()
-		self["status"] = StaticText()
-		self['footnote'] = Label("")
-		self["description"] = Label("")
-		self["labelExitsave"] = Label("[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save"))
+		usrkey = eEnv.resolve("${datadir}/enigma2/keymap.usr")
+		ntrkey = eEnv.resolve("${datadir}/enigma2/keymap.ntr")
+		u80key = eEnv.resolve("${datadir}/enigma2/keymap.u80")
+		self.actkeymap = self.getKeymap(config.usage.keymap.value)
+		keySel = [ ('keymap.xml',_("Default  (keymap.xml)"))]
+		if os.path.isfile(usrkey):
+			keySel.append(('keymap.usr',_("User  (keymap.usr)")))
+		if os.path.isfile(ntrkey):
+			keySel.append(('keymap.ntr',_("Neutrino  (keymap.ntr)")))
+		if os.path.isfile(u80key):
+			keySel.append(('keymap.u80',_("UP80  (keymap.u80)")))
+		if self.actkeymap == usrkey and not os.path.isfile(usrkey):
+			setDefaultKeymap()
+		if self.actkeymap == ntrkey and not os.path.isfile(ntrkey):
+			setDefaultKeymap()
+		if self.actkeymap == u80key and not os.path.isfile(u80key):
+			setDefaultKeymap()
+		self.keyshow = ConfigSelection(keySel)
+		self.keyshow.value = self.actkeymap
 
 		self.onChangedEntry = [ ]
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
 		self.createSetup()
-
 		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
 		{
 			"ok": self.keySave,
@@ -681,7 +617,8 @@ class YellowPanel(ConfigListScreen, Screen):
 	def createSetup(self):
 		self.editListEntry = None
 		self.list = []
-		self.list.append(getConfigListEntry(_("Yellow Key Action"), config.plugins.OPD_panel_yellowkey.list))
+		self.list.append(getConfigListEntry(_("Use Keymap"), self.keyshow))
+		
 		self["config"].list = self.list
 		self["config"].setList(self.list)
 		if config.usage.sort_settings.value:
@@ -709,9 +646,11 @@ class YellowPanel(ConfigListScreen, Screen):
 		return SetupSummary
 
 	def saveAll(self):
-		for x in self["config"].list:
-			x[1].save()
+		config.usage.keymap.value = eEnv.resolve("${datadir}/enigma2/" + self.keyshow.value)
+		config.usage.keymap.save()
 		configfile.save()
+		if self.actkeymap != self.keyshow.value:
+			self.changedFinished()
 
 	def keySave(self):
 		self.saveAll()
@@ -730,18 +669,28 @@ class YellowPanel(ConfigListScreen, Screen):
 		else:
 			self.close()
 
-class Info(Screen):
+	def getKeymap(self, file):
+		return file[file.rfind('/') +1:]
 
+	def changedFinished(self):
+		self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Keymap changed, you need to restart the GUI") +"\n"+_("Do you want to restart now?"), MessageBox.TYPE_YESNO)
+		self.close()
+
+	def ExecuteRestart(self, result):
+		if result:
+			quitMainloop(3)
+		else:
+			self.close()
+
+class Info(Screen):
 	def __init__(self, session, info):
 		self.service = None
 		Screen.__init__(self, session)
 		self.skin = INFO_SKIN
 		self["label2"] = Label("INFO")
 		self["label1"] =  ScrollLabel()
-		if info == "Service_Team":
-			self.Service_Team()
-		if info == "Sytem_info":
-			self.Sytem_info()
+		if info == "SystemInfo":
+			self.SystemInfo()
 		elif info == "ImageVersion":
 			self.ImageVersion()
 		elif info == "FreeSpace":
@@ -768,6 +717,8 @@ class Info(Screen):
 			self.Partitions()
 		elif info == "Swap":
 			self.Swap()
+		elif info == "Edid":
+			self.Edid()
 
 		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions"],
 		{
@@ -789,44 +740,32 @@ class Info(Screen):
 	def Up(self):
 		self["label1"].pageUp()
 
-	def Service_Team(self):
-		try:
-			self["label2"].setText("INFO")
-			info1 = self.Do_cmd("cat", "/etc/motd", None)
-			if info1.find('wElc0me') > -1:
-				info1 = info1[info1.find('wElc0me'):len(info1)] + "\n"
-				info1 = info1.replace('|','')
-			else:
-				info1 = info1[info1.find('INFO'):len(info1)] + "\n"
-			info2 = self.Do_cmd("cat", "/etc/image-version", None)
-			info3 = self.Do_cut(info1 + info2)
-			self["label1"].setText(info3)
-		except:
-			self["label1"].setText(_("an internal error has occured"))
-
-	def Sytem_info(self):
+	def SystemInfo(self):
 		try:
 			self["label2"].setText(_("Image Info"))
 			info1 = self.Do_cmd("cat", "/etc/version", None)
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def ImageVersion(self):
 		try:
-			self["label2"].setText("INFO")
-			info1 = self.Do_cmd("cat", "/etc/motd", None)
-			if info1.find('wElc0me') > -1:
-				info1 = info1[info1.find('wElc0me'):len(info1)] + "\n"
-				info1 = info1.replace('|','')
-			else:
-				info1 = info1[info1.find('INFO'):len(info1)] + "\n"
-			info2 = self.Do_cmd("cat", "/etc/image-version", None)
-			info3 = self.Do_cut(info1 + info2)
-			self["label1"].setText(info3)
+			self["label2"].setText(_("Image Version"))
+			now = datetime.datetime.now()
+			info1 = 'Date = ' + now.strftime("%d-%B-%Y") + "\n"
+			info2 = 'Time = ' + now.strftime("%H:%M:%S") + "\n"
+			info3 = self.Do_cmd("uptime", None, None)
+			tmp = info3.split(",")
+			info3 = 'Uptime = ' + tmp[0].lstrip() + "\n"
+			info4 = self.Do_cmd("cat", "/etc/image-version", " | head -n 1")
+			info4 = info4[9:]
+			info4 = 'Imagetype = ' + info4 + "\n"
+			info5 = 'Load = ' + self.Do_cmd("cat", "/proc/loadavg", None)
+			info6 = self.Do_cut(info1 + info2 + info3 + info4 + info5)
+			self["label1"].setText(info6)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def FreeSpace(self):
 		try:
@@ -835,7 +774,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Mounts(self):
 		try:
@@ -844,7 +783,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Network(self):
 		try:
@@ -854,7 +793,7 @@ class Info(Screen):
 			info3 = self.Do_cut(info1 + info2)
 			self["label1"].setText(info3)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Kernel(self):
 		try:
@@ -868,7 +807,7 @@ class Info(Screen):
 			info5 = self.Do_cut(info1 + info2 + info3 + info4)
 			self["label1"].setText(info5)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Free(self):
 		try:
@@ -877,7 +816,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Cpu(self):
 		try:
@@ -886,7 +825,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Top(self):
 		try:
@@ -895,7 +834,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def MemInfo(self):
 		try:
@@ -904,7 +843,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Module(self):
 		try:
@@ -913,7 +852,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Mtd(self):
 		try:
@@ -922,7 +861,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Partitions(self):
 		try:
@@ -931,7 +870,7 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
 
 	def Swap(self):
 		try:
@@ -951,7 +890,16 @@ class Info(Screen):
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
-			self["label1"].setText(_("an internal error has occured"))
+			self["label1"].setText(_("an internal error has occur"))
+
+	def Edid(self):
+		try:
+			self["label2"].setText(_("EDID decode"))
+			info1 = self.Do_cmd("cat /proc/stb/hdmi/raw_edid | edid-decode", None, None)
+			info1 = self.Do_cut(info1)
+			self["label1"].setText(info1)
+		except:
+			self["label1"].setText(_("an internal error has occur"))
 
 
 	def Do_find(self, text, search):

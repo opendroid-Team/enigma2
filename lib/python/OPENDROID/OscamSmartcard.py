@@ -9,19 +9,19 @@ from Components.AVSwitch import AVSwitch
 from Components.config import config, configfile, ConfigYesNo, ConfigSubsection, getConfigListEntry, ConfigSelection, ConfigNumber, ConfigText, ConfigInteger
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
+from Components.Sources.StaticText import StaticText
 from Components.Language import language
 from Components.Pixmap import Pixmap
 #from skin import parseColor
 from enigma import ePicLoad
 import gettext, base64, os, time, glob, urllib2
-from os import environ, listdir, remove, rename, system, popen
+from os import environ, listdir, remove, rename, system, popen, mkdir
 from Tools.Directories import fileExists, resolveFilename, SCOPE_LANGUAGE, SCOPE_PLUGINS
-from boxbranding import *
-from OPENDROID.BluePanel import BluePanel
+from boxbranding import getBoxType, getImageDistro, getMachineName, getMachineBrand, getImageVersion, getMachineBuild, getImageArch
 from datetime import datetime
 plugin='[OscamSmartcard] '
+dev_null = ' > /dev/null 2>&1'
 null =' >/dev/null 2>&1'
-
 def architectures():
 	hardwaretype = popen('uname -m').read().strip()
 	hostname = popen('uname -n').read().strip()
@@ -30,38 +30,36 @@ def architectures():
 	return ossystem,kernelversion,hardwaretype,hostname
 
 arch = architectures()[2]
-extrainfo=(architectures()[3] +' - ' + architectures()[0] + ' - ' + architectures()[1]).title()
+extrainfo=(architectures()[3])
 
 
-config.OPENDROID_OscamSmartcard = ConfigSubsection()
-config.OPENDROID_OscamSmartcard.Camstart = ConfigSelection(default="opendroid", choices = [
-				("openmips", "Script SoftCamstart (openMips)"),
-				("opendroid", "Python SoftCamstart (opendroid)")
-				])
-config.OPENDROID_OscamSmartcard.systemclean = ConfigSelection(default= True, choices = [
+config.OscamSmartcard = ConfigSubsection()
+config.OscamSmartcard.systemclean = ConfigSelection(default = True, choices = [
 				(True, ' ')
 				])
-config.OPENDROID_OscamSmartcard.ConfigPath = ConfigSelection(default="/etc/tuxbox/config/", choices = [
-				("/usr/keys/", "/usr/keys/ (opendroid)"),
+config.OscamSmartcard.ConfigPath = ConfigSelection(default="/etc/tuxbox/config/oscam-smartcard/", choices = [
+				("/etc/tuxbox/config/oscam-smartcard/", "/etc/tuxbox/config/oscam-smartcard/ (opendroid)"),
 				("/etc/tuxbox/config/", "/etc/tuxbox/config/ (openMips)")
 				])
-config.OPENDROID_OscamSmartcard.WebifPort = ConfigSelection(default="83", choices = [
+config.OscamSmartcard.WebifPort = ConfigSelection(default="83", choices = [
+				("81", _("81")),
+				("82", _("82")),
 				("83", _("83")),
 				("8888", _("8888"))
 				])
-config.OPENDROID_OscamSmartcard.oscambinary = ConfigSelection(default="no_binary_install", choices = [
+config.OscamSmartcard.oscambinary = ConfigSelection(default="no_binary_install", choices = [
 				("no_binary_install", _("No")),
 				("yes_binary_install", _("Yes"))
 				])
-config.OPENDROID_OscamSmartcard.cccam  = ConfigSelection(default="no_cccam_import", choices = [
+config.OscamSmartcard.cccam  = ConfigSelection(default="no_cccam_import", choices = [
 				("no_cccam_import", _("No")),
 				("yes_cccam_import", _("Yes"))
 				])
-config.OPENDROID_OscamSmartcard.emu  = ConfigSelection(default= False, choices = [
+config.OscamSmartcard.emu  = ConfigSelection(default= False, choices = [
 				(False, _("No")),
 				(True, _("Yes"))
 				])
-config.OPENDROID_OscamSmartcard.hasciplus  = ConfigSelection(default="no", choices = [
+config.OscamSmartcard.hasciplus  = ConfigSelection(default="no", choices = [
 				("no", _("No")),
 				("ciplusV13", _("CI+ V13")),
 				("ciplusV14", _("CI+ V14"))
@@ -104,10 +102,10 @@ cardlist = [
 	("none", _("None"))
 	]
 
-config.OPENDROID_OscamSmartcard.internalReader0 = ConfigSelection(default="none", choices = cardlist)
-config.OPENDROID_OscamSmartcard.internalReader1 = ConfigSelection(default="none", choices = cardlist)
-config.OPENDROID_OscamSmartcard.externalReader0 = ConfigSelection(default="none", choices = cardlist)
-config.OPENDROID_OscamSmartcard.externalReader1 = ConfigSelection(default="none", choices = cardlist)
+config.OscamSmartcard.internalReader0 = ConfigSelection(default="none", choices = cardlist)
+config.OscamSmartcard.internalReader1 = ConfigSelection(default="none", choices = cardlist)
+config.OscamSmartcard.externalReader0 = ConfigSelection(default="none", choices = cardlist)
+config.OscamSmartcard.externalReader1 = ConfigSelection(default="none", choices = cardlist)
 class OscamSmartcard(ConfigListScreen, Screen):
 	skin ="""
 <screen name="OscamSmartcard" position="center,center" size="1280,720" flags="wfNoBorder" backgroundColor="#90000000">
@@ -133,8 +131,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self.config_lines = []
 		Screen.__init__(self, session)
 		self.session = session
-		self.oscamconfigpath = config.OPENDROID_OscamSmartcard.ConfigPath.value
-		self.oscamcamstartvalue = config.OPENDROID_OscamSmartcard.Camstart.value
+		self.oscamconfigpath = config.OscamSmartcard.ConfigPath.value
 		self.oscamuser = (self.oscamconfigpath + "oscam.user")
 		self.oscamuserTMP = (self.oscamuser + ".tmp")
 		self.oscamconf = (self.oscamconfigpath + "oscam.conf")
@@ -200,7 +197,18 @@ class OscamSmartcard(ConfigListScreen, Screen):
 						zz += title + "-" +desc
 						i = i + 1
 					ConfigListScreen.__init__(self, list)
-					self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], {"left": self.keyLeft,"down": self.keyDown,"up": self.keyUp,"right": self.keyRight,"red": self.exit,"yellow": self.showNews,"blue": self.exit,"green": self.systemcleaning,"cancel": self.exit}, -1)
+					self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], 
+                                        {
+                                                "left": self.keyLeft,
+                                                "down": self.keyDown,
+                                                "up": self.keyUp,
+                                                "right": self.keyRight,
+                                                "red": self.exit,
+                                                "yellow": self.showNews,
+                                                "blue": self.exit,
+                                                "green": self.systemcleaning,
+                                                "cancel": self.exit,
+                                        }, -1)
 					self.onLayoutFinish.append(self.UpdatePicture)
 					if not self.selectionChanged in self["config"].onSelectionChanged:
 						self["config"].onSelectionChanged.append(self.selectionChanged)
@@ -209,48 +217,57 @@ class OscamSmartcard(ConfigListScreen, Screen):
 					self["INFOTXT"].setText( _("Press GREEN to remove all")   )
 					self["HELPTEXT"].setText("")
 				else:
-					self.createoscamsmartcarddata()
-					self.oscamsmartcarddata = "/tmp/data/"
-					self.downloadurl()
-					onlineavaible = self.newversion(arch)
+					try:
+						onlineavaible = self.newversion(arch)
+					except:
+						onlineavaible = _("Error")
 					list = []
 					if getImageDistro() =='opendroid':
-						camstartname='opendroid System'
-						config.OPENDROID_OscamSmartcard.Camstart.value = "opendroid"
-						config.OPENDROID_OscamSmartcard.ConfigPath.value = "/usr/keys/"
-					elif getImageDistro() =='opendroid':
-						camstartname='Emu Manager'
-						config.OPENDROID_OscamSmartcard.Camstart.value = "openmips"
-						config.OPENDROID_OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/"
+						config.OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/oscam-smartcard/"
+					elif getImageDistro() =='openmips':
+						config.OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/"
+					elif getImageDistro() =='teamblue':
+						config.OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/"
 					else:
 						self.close()
-					self.headers += _("Config path set automatically to") 	+ '\t: ' + config.OPENDROID_OscamSmartcard.ConfigPath.value + "\n"
-					self.headers += _("Camstart set automatically to") 		+ '\t: ' + camstartname + "\n"
+					self.headers += _("Config path set automatically to") 	+ '\t: ' + config.OscamSmartcard.ConfigPath.value + "\n"
 					self.headers += _("Oscam type set automatically to") 	+ '\t: ' + arch + "\n"
 					self.headers += _("Cardreader found automatically")  	+ '\t: ' + str(self.readercheck()[4]) + "\n"
 					self.headers += "\n" + _("Settings:") + "\n"
-					list.append(getConfigListEntry(_("Select OScam WebifPort:"), config.OPENDROID_OscamSmartcard.WebifPort, _("INFORMATION: Select OScam WebifPort\nOscam Webif will be accessible on the selected port.") + '\nhttp://' + architectures()[3] + ':' +   str(config.OPENDROID_OscamSmartcard.WebifPort.value)   + " " + _("or")  + " http://"  + self.getIP()  + ":"  + str(config.OPENDROID_OscamSmartcard.WebifPort.value)            ))
+					list.append(getConfigListEntry(_("Select OScam WebifPort:"), config.OscamSmartcard.WebifPort, _("INFORMATION: Select OScam WebifPort\nOscam Webif will be accessible on the selected port.") + '\nhttp://' + architectures()[3] + ':' +   str(config.OscamSmartcard.WebifPort.value)   + " " + _("or")  + " http://"  + self.getIP()  + ":"  + str(config.OscamSmartcard.WebifPort.value)            ))
 					if self.readercheck()[0] == 'installed':
-						list.append(getConfigListEntry(_("Internal Reader /dev/sci0:"), config.OPENDROID_OscamSmartcard.internalReader0, _("INFORMATION: Internal Reader /dev/sci0\n\nAll STB's having only one cardslot.\nOn STB's having two cardslots it is mostly the lower cardslot.")))
+						list.append(getConfigListEntry(_("Internal Reader /dev/sci0:"), config.OscamSmartcard.internalReader0, _("INFORMATION: Internal Reader /dev/sci0\n\nAll STB's having only one cardslot.\nOn STB's having two cardslots it is mostly the lower cardslot.")))
 					if self.readercheck()[1] == 'installed':
-						list.append(getConfigListEntry(_("Internal Reader /dev/sci1:"), config.OPENDROID_OscamSmartcard.internalReader1, _("INFORMATION: Internal Reader /dev/sci1\n\nOn STB's having two cardslots it is mostly the upper cardslot.")))
+						list.append(getConfigListEntry(_("Internal Reader /dev/sci1:"), config.OscamSmartcard.internalReader1, _("INFORMATION: Internal Reader /dev/sci1\n\nOn STB's having two cardslots it is mostly the upper cardslot.")))
 					if self.readercheck()[2] == 'installed':
-						list.append(getConfigListEntry(_("External Reader /dev/ttyUSB0:"), config.OPENDROID_OscamSmartcard.externalReader0, _("INFORMATION: External Reader /dev/ttyUSB0\n\nThis Reader can be used to configure for example a connected easymouse.")))
+						list.append(getConfigListEntry(_("External Reader /dev/ttyUSB0:"), config.OscamSmartcard.externalReader0, _("INFORMATION: External Reader /dev/ttyUSB0\n\nThis Reader can be used to configure for example a connected easymouse.")))
 					if self.readercheck()[3] == 'installed':
-						list.append(getConfigListEntry(_("External Reader /dev/ttyUSB1:"), config.OPENDROID_OscamSmartcard.externalReader1, _("INFORMATION: External Reader /dev/ttyUSB1\n\nThis Reader can be used to configure for example a second connected easymouse.")))
+						list.append(getConfigListEntry(_("External Reader /dev/ttyUSB1:"), config.OscamSmartcard.externalReader1, _("INFORMATION: External Reader /dev/ttyUSB1\n\nThis Reader can be used to configure for example a second connected easymouse.")))
 					anzcc= self.cccamcheck()[1]
 					anzus= self.cccamcheck()[5]
 					anz35= self.cccamcheck()[3]
 					cccport= self.cccamcheck()[6]
 					if anzcc > 0 or anzus >0 or anz35 >0:
-						list.append(getConfigListEntry(( _("CCcam.cfg found. Import your settings") ), config.OPENDROID_OscamSmartcard.cccam, ( _("Oscamsmartcard found ") + str(anzcc+anz35) + _(" Server and ") + str(anzus) + " User in CCcam.cfg\n" + str(anzcc) + " x CCcam-Server\t" + str(anz35) +' x Camd35 Server\n' + str(anzus) + ' x Userlines (Friends)\tShareport: ' +cccport  )))
-					list.append(getConfigListEntry(_("Oscam binary install"),config.OPENDROID_OscamSmartcard.oscambinary,('INFORMATION: ' + _("install or update to the latest version") + '\n' +  _("installed")  + ' \t: ' + self.currentversion() + '\n' + _("online") + '\t: ' + onlineavaible )))
-					if getImageDistro() =='opendroid' and arch =='mips':
-						list.append(getConfigListEntry(_("Install oscam EMU Version:"), config.OPENDROID_OscamSmartcard.emu, _("INFORMATION: install Oscam Emu Version\n\nSoftcam.key included")))
-					list.append(getConfigListEntry(_("Is a Ci+ Module installed:"), config.OPENDROID_OscamSmartcard.hasciplus, _("INFORMATION: please select your CI+ Modul\n\n")))
+						list.append(getConfigListEntry(( _("CCcam.cfg found. Import your settings") ), config.OscamSmartcard.cccam, ( _("Oscamsmartcard found ") + str(anzcc+anz35) + _(" Server and ") + str(anzus) + " User in CCcam.cfg\n" + str(anzcc) + " x CCcam-Server\t" + str(anz35) +' x Camd35 Server\n' + str(anzus) + ' x Userlines (Friends)\tShareport: ' +cccport  )))
+					list.append(getConfigListEntry(_("Oscam binary install"),config.OscamSmartcard.oscambinary,('INFORMATION:    ' + _("Versions Info") + '\n' +  _("installed")  + ' \t: ' + self.installedversion + '\n' + _("online") + '\t: ' + onlineavaible )))
+					list.append(getConfigListEntry(_("Is a Ci+ Module installed:"), config.OscamSmartcard.hasciplus, _("INFORMATION: please select your CI+ Modul\n\n")))
 					ConfigListScreen.__init__(self, list)
-					self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "InputActions", "ColorActions"], {"left": self.keyLeft,"down": self.keyDown,"up": self.keyUp,"right": self.keyRight,"red": self.exit,"yellow": self.showNews, "blue": self.rmconfig, "green": self.save,"cancel": self.exit}, -1)
+					self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "InputActions", "ColorActions"], 
+                                        {       "left": self.keyLeft,
+                                                "down": self.keyDown,
+                                                "up": self.keyUp,
+                                                "right": self.keyRight,
+                                                "red": self.exit,
+                                                "yellow": self.showNews, 
+                                                "blue": self.rmconfig, 
+                                                "green": self.save,
+                                                "cancel": self.exit,
+                                        }, -1)
 					self.onLayoutFinish.append(self.UpdatePicture)
+                            		self["key_red"] = StaticText(_("Close"))
+		                        self["key_green"] = StaticText(_("save"))
+		                        self["key_blue"] = StaticText(_("remove current config"))
+                                        self["key_yellow"] = StaticText(_("Note Release"))
 					if not self.selectionChanged in self["config"].onSelectionChanged:
 						self["config"].onSelectionChanged.append(self.selectionChanged)
 					self.selectionChanged()
@@ -304,51 +321,46 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		if self.configcheck() == False:
 			return
 		msginfo = _("Oscam will be installed with the following settings") + "\n\n"
-		msginfo += "Webif Port\t"		+ str(config.OPENDROID_OscamSmartcard.WebifPort.value)		+ "\n"
+		msginfo += "Webif Port\t"		+ str(config.OscamSmartcard.WebifPort.value)		+ "\n"
 		if self.readercheck()[0] == 'installed':
-			if config.OPENDROID_OscamSmartcard.internalReader0.value != "none":
-				msginfo += "Slot 0\t" + config.OPENDROID_OscamSmartcard.internalReader0.value			+ "\n"
+			if config.OscamSmartcard.internalReader0.value != "none":
+				msginfo += "Slot 0\t" + config.OscamSmartcard.internalReader0.value			+ "\n"
 			else:
 				msginfo += "Slot 0\t" + _("no PayTV Card")											+ "\n"
 		if self.readercheck()[1] == 'installed':
-			if config.OPENDROID_OscamSmartcard.internalReader1.value != "none":
-				msginfo += "Slot 1\t" + config.OPENDROID_OscamSmartcard.internalReader1.value			+ "\n"
+			if config.OscamSmartcard.internalReader1.value != "none":
+				msginfo += "Slot 1\t" + config.OscamSmartcard.internalReader1.value			+ "\n"
 			else:
 				msginfo += "Slot 1\t" + _("no PayTV Card")											+ "\n"
 		if self.readercheck()[2] == 'installed':
-			if config.OPENDROID_OscamSmartcard.externalReader0.value != "none":
-				msginfo += "USB0\t"  + config.OPENDROID_OscamSmartcard.externalReader0.value			+ "\n"
+			if config.OscamSmartcard.externalReader0.value != "none":
+				msginfo += "USB0\t"  + config.OscamSmartcard.externalReader0.value			+ "\n"
 			else:
 				msginfo += "USB0\t" + _("no PayTV Card")											+ "\n"
 		if self.readercheck()[3] == 'installed':
-			if config.OPENDROID_OscamSmartcard.externalReader1.value != "none":
-				msginfo += "USB1\t"   + config.OPENDROID_OscamSmartcard.externalReader1.value			+ "\n"
+			if config.OscamSmartcard.externalReader1.value != "none":
+				msginfo += "USB1\t"   + config.OscamSmartcard.externalReader1.value			+ "\n"
 			else:
 				msginfo += "USB1\t" + _("no PayTV Card")											+ "\n"
-		msginfo += "CI+ Modul\t"		+ _(config.OPENDROID_OscamSmartcard.hasciplus.value)			+ "\n"
+		msginfo += "CI+ Modul\t"		+ _(config.OscamSmartcard.hasciplus.value)			+ "\n"
 		if os.path.exists('/etc/CCcam.cfg'):
-			if config.OPENDROID_OscamSmartcard.cccam.value == "yes_cccam_import":
+			if config.OscamSmartcard.cccam.value == "yes_cccam_import":
 				msginfo += "CCcam Import\t" + _("yes") + "\n"
 			else:
 				msginfo += "CCcam Import\t" + _("no") + "\n"
-		if getImageDistro() == 'opendroid':
-			if config.OPENDROID_OscamSmartcard.emu.value == True:
-				msginfo += "Oscam EMU\t" + _("yes") + "\n"
-			else:
-				msginfo += "Oscam EMU\t" + _("no") + "\n"
 		mm = ""
 		if self.hd34check() == True:
 			msginfo += "Binary\t" + "oscam r11400 special HD03/04" + "\n"
 		else:
 			if self.installedversion[0:5] == "oscam":
 				mm = "Binary\t" + _("file already exists and use it")
-				if config.OPENDROID_OscamSmartcard.oscambinary.value == "yes_binary_install":
+				if config.OscamSmartcard.oscambinary.value == "yes_binary_install":
 					if self.newversion(arch) > self.installedversion:
 						mm = "Binary\t" + _("file exists, becomes upgrade")
 			else:
 				mm = "Binary\t" + str( self.newversion(arch)).replace('-1.20-unstable_svn','') + " " + _("will be installed")	+ "\n"
 		if mm != "":
-			msginfo += mm + "\n" 
+			msginfo += mm + "\n"
 		msginfo += "\n"
 		msginfo += _("Are the settings correct ?")
 		self.session.openWithCallback(self.resume,MessageBox,msginfo, MessageBox.TYPE_YESNO).setTitle(_("check your settings"))
@@ -360,8 +372,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			return
 
 	def savego(self):
-		self.oscamconfigpath = config.OPENDROID_OscamSmartcard.ConfigPath.value
-		self.oscamcamstartvalue = config.OPENDROID_OscamSmartcard.Camstart.value
+		self.oscamconfigpath = config.OscamSmartcard.ConfigPath.value
 		self.oscamuser = (self.oscamconfigpath + "oscam.user")
 		self.oscamuserTMP = (self.oscamuser + ".tmp")
 		self.oscamconf = (self.oscamconfigpath + "oscam.conf")
@@ -380,7 +391,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			else:
 				pass
 		try:
-			system('mkdir ' + config.OPENDROID_OscamSmartcard.ConfigPath.value + ' > /dev/null 2>&1')
+			os.system('mkdir -p ' + config.OscamSmartcard.ConfigPath.value + ' > /dev/null 2>&1')
 		except:
 			pass
 		self.makebackup()
@@ -390,24 +401,18 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self.saveoscamconf()
 		self.saveoscamservices()
 		self.saveoscamfiles()
-		if config.OPENDROID_OscamSmartcard.oscambinary.value == 'yes_binary_install':
+		if config.OscamSmartcard.oscambinary.value == 'yes_binary_install':
 			self.oscambinaryupdate()
 		self.savecamstart()
-		if getImageDistro() == 'opendroid':
-			system ('/usr/bin/oscam_oscamsmartcard -b -c /usr/keys > /dev/null 2>&1')
-		elif getImageDistro() == 'openmips':
-			system ('/etc/init.d/softcam start')
-		else:
-			self.session.open(MessageBox, _("Oscam is not running\nunknown OS"), MessageBox.TYPE_INFO,10)
-			self.close()
-		config.OPENDROID_OscamSmartcard.save()
+		system ('/etc/init.d/softcam start')
+		config.OscamSmartcard.save()
 		configfile.save()
 		self.rmoscamsmartcarddata()
 		self.session.open(MessageBox, _("oscam install finished\nhave fun"), MessageBox.TYPE_INFO, 10).setTitle(_("done"))
 		self.close()
 
 	def configcheck(self):
-		if not os.path.exists('/usr/bin/oscam_oscamsmartcard') and config.OPENDROID_OscamSmartcard.oscambinary.value == "no_binary_install":
+		if not os.path.exists('/usr/bin/oscam_oscamsmartcard') and config.OscamSmartcard.oscambinary.value == "no_binary_install":
 			self.session.open(MessageBox,(_("Oscam Binary is not installed\nYou must this install") + "\n\n\tOK"  ), MessageBox.TYPE_ERROR,).setTitle(_("wrong Settings detected"))
 			return False
 
@@ -433,13 +438,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def saveoscamserver(self):
 		try:
 			self.appendconfFile(self.oscamsmartcarddata + "header.txt")
-			if config.OPENDROID_OscamSmartcard.emu.value:
+			if config.OscamSmartcard.emu.value:
 				self.appendconfFile(self.oscamsmartcarddata + "oscam.server_emu.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OPENDROID_OscamSmartcard.internalReader0.value + "_internalReader0.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OPENDROID_OscamSmartcard.internalReader1.value + "_internalReader1.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OPENDROID_OscamSmartcard.externalReader0.value + "_externalReader0.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OPENDROID_OscamSmartcard.externalReader1.value + "_externalReader1.txt")
-			if config.OPENDROID_OscamSmartcard.cccam.value == "yes_cccam_import":
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OscamSmartcard.internalReader0.value + "_internalReader0.txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OscamSmartcard.internalReader1.value + "_internalReader1.txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OscamSmartcard.externalReader0.value + "_externalReader0.txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.server_" + config.OscamSmartcard.externalReader1.value + "_externalReader1.txt")
+			if config.OscamSmartcard.cccam.value == "yes_cccam_import":
 				self.appendconfFile(self.oscamsmartcarddata + "cccamserver.txt")
 			self.appendconfFile(self.oscamsmartcarddata + "footer.txt")
 			xFile = open(self.oscamserverTMP, "w")
@@ -459,14 +464,14 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def saveoscamdvbapi(self):
 		try:
 			self.appendconfFile(self.oscamsmartcarddata + "header.txt")
-			if config.OPENDROID_OscamSmartcard.hasciplus.value =='ciplusV14':
+			if config.OscamSmartcard.hasciplus.value =='ciplusV14':
 				self.appendconfFile(self.oscamsmartcarddata + "ciplusV14.txt")
-			if config.OPENDROID_OscamSmartcard.hasciplus.value =='ciplusV13':
+			if config.OscamSmartcard.hasciplus.value =='ciplusV13':
 				self.appendconfFile(self.oscamsmartcarddata + "ciplusV13.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OPENDROID_OscamSmartcard.internalReader0.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OPENDROID_OscamSmartcard.internalReader1.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OPENDROID_OscamSmartcard.externalReader0.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OPENDROID_OscamSmartcard.externalReader1.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OscamSmartcard.internalReader0.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OscamSmartcard.internalReader1.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OscamSmartcard.externalReader0.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.dvbapi_" + config.OscamSmartcard.externalReader1.value + ".txt")
 			self.appendconfFile(self.oscamsmartcarddata + "footer.txt")
 			xFile = open(self.oscamdvbapiTMP, "w")
 			for xx in self.config_lines:
@@ -486,7 +491,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		try:
 			self.appendconfFile(self.oscamsmartcarddata + "header.txt")
 			self.appendconfFile(self.oscamsmartcarddata + "oscam.user.txt")
-			if config.OPENDROID_OscamSmartcard.cccam.value == "yes_cccam_import":
+			if config.OscamSmartcard.cccam.value == "yes_cccam_import":
 				self.appendconfFile(self.oscamsmartcarddata + "cccamuser.txt")
 			self.appendconfFile(self.oscamsmartcarddata + "footer.txt")
 			xFile = open(self.oscamuserTMP, "w")
@@ -506,11 +511,11 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def saveoscamconf(self):
 		try:
 			self.appendconfFile(self.oscamsmartcarddata + "header.txt")
-			if config.OPENDROID_OscamSmartcard.emu.value:
+			if config.OscamSmartcard.emu.value:
 				self.appendconfFile(self.oscamsmartcarddata + "oscam.conf.emu.txt")
 			else:
 				self.appendconfFile(self.oscamsmartcarddata + "oscam.conf.txt")
-			if config.OPENDROID_OscamSmartcard.cccam.value == "yes_cccam_import":
+			if config.OscamSmartcard.cccam.value == "yes_cccam_import":
 				self.appendconfFile(self.oscamsmartcarddata + "cccamconfig.txt")
 			self.appendconfFile(self.oscamsmartcarddata + "footer.txt")
 			xFile = open(self.oscamconfTMP, "w")
@@ -519,7 +524,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			xFile.close()
 			o = open(self.oscamconf,"w")
 			for line in open(self.oscamconfTMP):
-				line = line.replace("83", config.OPENDROID_OscamSmartcard.WebifPort.value )
+				line = line.replace("83", config.OscamSmartcard.WebifPort.value )
 				o.write(line)
 			o.close()
 			system('rm -rf ' + self.oscamconfTMP)
@@ -531,10 +536,10 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def saveoscamservices(self):
 		try:
 			self.appendconfFile(self.oscamsmartcarddata + "header.txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OPENDROID_OscamSmartcard.internalReader0.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OPENDROID_OscamSmartcard.internalReader1.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OPENDROID_OscamSmartcard.externalReader0.value + ".txt")
-			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OPENDROID_OscamSmartcard.externalReader1.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OscamSmartcard.internalReader0.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OscamSmartcard.internalReader1.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OscamSmartcard.externalReader0.value + ".txt")
+			self.appendconfFile(self.oscamsmartcarddata + "oscam.services_" + config.OscamSmartcard.externalReader1.value + ".txt")
 			self.appendconfFile(self.oscamsmartcarddata + "oscam.services.txt")
 			self.appendconfFile(self.oscamsmartcarddata + "footer.txt")
 			xFile = open(self.oscamservicesTMP, "w")
@@ -552,17 +557,17 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self.config_lines = []
 
 	def saveoscamfiles(self):
-		if config.OPENDROID_OscamSmartcard.emu.value:
-			system('cp -f ' + self.oscamsmartcarddata + 'SoftCam.Key'  + ' ' + config.OPENDROID_OscamSmartcard.ConfigPath.value)
-		system('cp -f ' + self.oscamsmartcarddata + 'oscam.srvid'  + ' ' + config.OPENDROID_OscamSmartcard.ConfigPath.value)
-		system('cp -f ' + self.oscamsmartcarddata + 'oscam.srvid2'  + ' ' + config.OPENDROID_OscamSmartcard.ConfigPath.value)
-		system('cp -f ' + self.oscamsmartcarddata + 'oscam.provid' + ' ' + config.OPENDROID_OscamSmartcard.ConfigPath.value)
-		system('cp -f ' + self.oscamsmartcarddata + 'oscam.tiers'  + ' ' + config.OPENDROID_OscamSmartcard.ConfigPath.value)
+		if config.OscamSmartcard.emu.value:
+			system('cp -f ' + self.oscamsmartcarddata + 'SoftCam.Key'  + ' ' + config.OscamSmartcard.ConfigPath.value)
+		system('cp -f ' + self.oscamsmartcarddata + 'oscam.srvid'  + ' ' + config.OscamSmartcard.ConfigPath.value)
+		system('cp -f ' + self.oscamsmartcarddata + 'oscam.srvid2'  + ' ' + config.OscamSmartcard.ConfigPath.value)
+		system('cp -f ' + self.oscamsmartcarddata + 'oscam.provid' + ' ' + config.OscamSmartcard.ConfigPath.value)
+		system('cp -f ' + self.oscamsmartcarddata + 'oscam.tiers'  + ' ' + config.OscamSmartcard.ConfigPath.value)
 
 	def oscambinaryupdate(self):
 		if self.newversion(arch) != _("Download not avaible"):
 			system('killall -9 oscam_oscamsmartcard' + null)
-			system('wget -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
+			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
 			system('tar -xzf /tmp/oscam.tar.gz -C /tmp' + null)
 			system('rm -f /usr/bin/oscam_oscamsmartcard' + null)
 			system('mv /tmp/oscam /usr/bin/oscam_oscamsmartcard' + null)
@@ -574,10 +579,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		suffix = '.tar.gz'
 		emu=''
 		if getImageDistro() =='opendroid':
-			if config.OPENDROID_OscamSmartcard.emu.value:
+			if config.OscamSmartcard.emu.value:
 				emu='_emu'
 		if getImageDistro() =='openmips':
-			if config.OPENDROID_OscamSmartcard.emu.value:
+			if config.OscamSmartcard.emu.value:
+				emu='_emu'
+		if getImageDistro() =='teamblue':
+			if config.OscamSmartcard.emu.value:
 				emu='_emu'
 		archs = ['armv7l','mips','sh4','ppc','armv7ahf-vfp-neon','aarch64']
 		if arch =='aarch64':
@@ -595,13 +603,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def hd34check(self):
 		hd34 = ['HD03','HD04']
-		if config.OPENDROID_OscamSmartcard.internalReader0.value in hd34:
+		if config.OscamSmartcard.internalReader0.value in hd34:
 			return True
-		if config.OPENDROID_OscamSmartcard.internalReader1.value in hd34:
+		if config.OscamSmartcard.internalReader1.value in hd34:
 			return True
-		if config.OPENDROID_OscamSmartcard.externalReader0.value in hd34:
+		if config.OscamSmartcard.externalReader0.value in hd34:
 			return True
-		if config.OPENDROID_OscamSmartcard.externalReader1.value in hd34:
+		if config.OscamSmartcard.externalReader1.value in hd34:
 			return True
 		return False
 	def newversion(self,arch):
@@ -614,31 +622,16 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			for line in file.readlines():
 				line = line.strip().split(',')
 				if line[0] == arch:
-					upgradeinfo = line[1]
+					upgradeinfo = line[1].replace("-unstable","")
 			file.close()
 			os.remove("/tmp/version.info")
 			os.remove(upgfile)
 			return upgradeinfo
 		return upgradeinfo
 
-	def currentversion(self):
-		try:
-			if os.path.exists('/usr/bin/oscam_oscamsmartcard'):
-				system('chmod 755 /usr/bin/oscam_oscamsmartcard')
-				f = popen('/usr/bin/oscam_oscamsmartcard -V')
-				for line in f:
-					if 'Version:' in line:
-						line=line.strip().split()
-						currentversion= line[1]
-				f.close()
-			else:
-				currentversion = _("no installed oscamsmartcard found")
-			return currentversion
-		except:
-			currentversion = _("Error")
-			return currentversion
-
 	def checkallcams(self):
+		if getImageDistro() =='opendroid':
+			return []
 		ignore =[
 		'enigma2-plugin-softcams-oscamsmartcard',
 		'enigma2-plugin-pli-softcamsetup',
@@ -647,8 +640,8 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		'enigma2-plugin-softcams-mgcamd.config',
 		'enigma2-plugin-systemplugins-softcamstartup',
 		'enigma2-plugin-systemplugins-softcamstartup-src',
-		'softcam-feed-mipsel'
-		'om-softcam-support'
+		'softcam-feed-mipsel',
+		'om-softcam-support',
 		'softcam-feed-universal'
 		]
 		liste=[]
@@ -683,11 +676,16 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def makebackup(self):
 		dd = (time.strftime("%Y-%m-%d-%H-%M-%S"))
 		if getImageDistro() =='opendroid':
-			x = glob.glob("/usr/keys/oscam.*")
+			x = glob.glob("/etc/tuxbox/config/oscam-smartcard/oscam.*")
 			if len(x) >0:
-				system('tar -czf /usr/keys/backup-oscamsmartcard-'+ dd +'.tar.gz /usr/keys/oscam.*')
-				system('rm -f /usr/keys/oscam.*')
+				system('tar -czf /etc/tuxbox/config/backup-oscamsmartcard-'+ dd +'.tar.gz /etc/tuxbox/config/oscam-smartcard/oscam.*')
+				system('rm -f /etc/tuxbox/config/oscam-smartcard/oscam.*')
 		if getImageDistro() =='openmips':
+			y = glob.glob("/etc/tuxbox/config/oscam.*")
+			if len(y) >0:
+				system('tar -czf /etc/tuxbox/config/backup-oscamsmartcard-'+ dd +'.tar.gz /etc/tuxbox/config/oscam.*')
+				system('rm -f /etc/tuxbox/config/oscam.*')
+		if getImageDistro() =='teamblue':
 			y = glob.glob("/etc/tuxbox/config/oscam.*")
 			if len(y) >0:
 				system('tar -czf /etc/tuxbox/config/backup-oscamsmartcard-'+ dd +'.tar.gz /etc/tuxbox/config/oscam.*')
@@ -703,26 +701,18 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def savecamstart(self):
 		try:
-			if getImageDistro() =='openmips':
-				system('/etc/init.d/softcam stop && /etc/init.d/cardserver stop')
-				self.initd()
-				system('rm -f /etc/init.d/cardserver.OscamSmartcard')
-				system('rm -f /etc/init.d/softcam.OscamSmartcard')
-				system('cp -f /tmp/data/softcam.OscamSmartcard /etc/init.d/softcam.OscamSmartcard')
-				system('cp -f /tmp/data/cardserver.OscamSmartcard /etc/init.d/cardserver.OscamSmartcard')
-				system('chmod 755 /etc/init.d/softcam.OscamSmartcard')
-				system('chmod 755 /etc/init.d/cardserver.OscamSmartcard')
-
-				system('rm -f /etc/init.d/softcam && rm -f /etc/init.d/cardserver')
-				system('ln -sf /etc/init.d/softcam.OscamSmartcard /etc/init.d/softcam')
-				system('ln -sf /etc/init.d/cardserver.None /etc/init.d/cardserver')
-			if getImageDistro() =='opendroid':
-				system('killall -9 oscam_oscamsmartcard' + null)
-				system('rm -f /etc/oscamsmartcard.emu')
-				system('cp -f /tmp/data/oscamsmartcard.emu /etc/oscamsmartcard.emu')
-				config.softcam_actCam.setValue("OscamSmartcard")
-				config.softcam_actCam2.setValue("None")
-				config.softcam.save()
+			system('/etc/init.d/softcam stop && /etc/init.d/cardserver stop')
+			self.initd()
+			system('rm -f /etc/init.d/cardserver.OscamSmartcard')
+			system('rm -f /etc/init.d/softcam.OscamSmartcard')
+			system('cp -f /tmp/data/softcam.OscamSmartcard /etc/init.d/softcam.OscamSmartcard')
+			system('sed -i /etc/init.d/softcam.OscamSmartcard -e \'s#/etc/tuxbox/config"#' + self.oscamconfigpath + '"#\'')
+			system('cp -f /tmp/data/cardserver.OscamSmartcard /etc/init.d/cardserver.OscamSmartcard')
+			system('chmod 755 /etc/init.d/softcam.OscamSmartcard')
+			system('chmod 755 /etc/init.d/cardserver.OscamSmartcard')
+			system('rm -f /etc/init.d/softcam && rm -f /etc/init.d/cardserver')
+			system('ln -sf softcam.OscamSmartcard /etc/init.d/softcam')
+			system('ln -sf cardserver.None /etc/init.d/cardserver')
 			self.config_lines = []
 		except:
 			self.session.open(MessageBox, _("Error creating oscam camstart files!"), MessageBox.TYPE_ERROR)
@@ -768,9 +758,11 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			system('killall -9 oscam_oscamsmartcard ' + null)
 			system('rm /usr/bin/oscam_oscamsmartcard' + null)
 			if getImageDistro() =='opendroid':
-				system('rm -f /usr/keys/oscam.*' + null)
-				system('rm -f /etc/oscamsmartcard.emu' + null)
-			if getImageDistro() =='openmips':
+				system('rm -rf /etc/tuxbox/config/oscam-smartcard' + null)
+				system('rm /etc/init.d/softcam.OscamSmartcard' + null)
+				system('rm /etc/init.d/cardserver.OscamSmartcard' + null)
+				self.initd()
+			if getImageDistro() =='openmips' or getImageDistro() =='teamblue':
 				system('rm -f /etc/tuxbox/config/oscam.*' + null)
 				system('rm /etc/init.d/softcam.OscamSmartcard' + null)
 				system('rm /etc/init.d/cardserver.OscamSmartcard' + null)
@@ -784,19 +776,18 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			return
 
 	def valuedefaultsettings(self):
-		config.OPENDROID_OscamSmartcard.WebifPort.value = "83"
-		config.OPENDROID_OscamSmartcard.Camstart.value = "openmips"
-		config.OPENDROID_OscamSmartcard.systemclean.value = True
-		config.OPENDROID_OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/"
-		config.OPENDROID_OscamSmartcard.oscambinary.value = "no_binary_install"
-		config.OPENDROID_OscamSmartcard.cccam.value = "no_cccam_import"
-		config.OPENDROID_OscamSmartcard.internalReader0.value = "none"
-		config.OPENDROID_OscamSmartcard.internalReader1.value = "none"
-		config.OPENDROID_OscamSmartcard.externalReader0.value = "none"
-		config.OPENDROID_OscamSmartcard.externalReader1.value = "none"
-		config.OPENDROID_OscamSmartcard.emu.value = False
-		config.OPENDROID_OscamSmartcard.hasciplus.value = "no"
-		config.OPENDROID_OscamSmartcard.save()
+		config.OscamSmartcard.WebifPort.value = "83"
+		config.OscamSmartcard.systemclean.value = True
+		config.OscamSmartcard.ConfigPath.value = "/etc/tuxbox/config/oscam-smartcard/"
+		config.OscamSmartcard.oscambinary.value = "no_binary_install"
+		config.OscamSmartcard.cccam.value = "no_cccam_import"
+		config.OscamSmartcard.internalReader0.value = "none"
+		config.OscamSmartcard.internalReader1.value = "none"
+		config.OscamSmartcard.externalReader0.value = "none"
+		config.OscamSmartcard.externalReader1.value = "none"
+		config.OscamSmartcard.emu.value = False
+		config.OscamSmartcard.hasciplus.value = "no"
+		config.OscamSmartcard.save()
 		configfile.save()
 		return
 
@@ -835,13 +826,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 								if servername == "IP":
 									servername=server.replace(".","-")
 								servername =  servername+"_"+str(xc)
-								peer = '\n[reader]\nlabel\t\t\t = ' +servername + '\ndescription\t\t = ' + 'CCcam-Server: '+ server + ':' + port + '\nprotocol\t\t = ' + protokoll + '\n' + 'device\t\t\t = '+ server + ',' + port + '\n' +'user\t\t\t = ' + user + '\npassword\t\t = ' + passwd + '\ngroup\t\t\t = 1\ncccversion\t\t = 2.3.0\nccckeepalive\t\t = 1\nccchop\t\t\t = 9\naudisabled\t\t = 1\n'
+								peer = '\n[reader]\nlabel\t\t\t = ' +servername + '\ndescription\t\t = ' + 'CCcam-Server: '+ server + ':' + port + '\nprotocol\t\t = ' + protokoll + '\n' + 'device\t\t\t = '+ server + ',' + port + '\n' +'user\t\t\t = ' + user + '\npassword\t\t = ' + passwd + '\ngroup\t\t\t = 1\ncccversion\t\t = 2.3.0\nccckeepalive\t\t = 1\nccchop\t\t\t = 9\naudisabled\t\t = 1\ndisablecrccws\t\t= 1\ndisablecrccws_only_for\t = 09C4:000000;098C:000000\n'
 							if protokoll=='cs357x':
 								yc +=1
 								if servername == "IP":
 									servername=server.replace(".","-")
 								servername = servername+"_"+str(yc)
-								peer = '\n[reader]\nlabel\t\t\t = ' +servername + '\ndescription\t\t = ' + 'Camd35-Server: ' + server + ':' + port + '\nprotocol\t\t = ' + protokoll + '\n' + 'device\t\t\t = '+ server + ',' + port + '\n' +'user\t\t\t = ' + user + '\npassword\t\t = ' + passwd + '\ngroup\t\t\t = 1\naudisabled\t\t = 1\n'
+								peer = '\n[reader]\nlabel\t\t\t = ' +servername + '\ndescription\t\t = ' + 'Camd35-Server: ' + server + ':' + port + '\nprotocol\t\t = ' + protokoll + '\n' + 'device\t\t\t = '+ server + ',' + port + '\n' +'user\t\t\t = ' + user + '\npassword\t\t = ' + passwd + '\ngroup\t\t\t = 1\naudisabled\t\t = 1\ndisablecrccws\t\t= 1\ndisablecrccws_only_for\t = 09C4:000000;098C:000000\n'
 							cccsrv += peer
 					elif line.startswith(userline):
 						zc=zc+1
@@ -884,13 +875,18 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		system('rm -f /etc/init.d/cardserver')
 		system('ln -s /etc/init.d/cardserver.None /etc/init.d/cardserver')
 		system('chmod 755 /etc/init.d/cardserver')
-		if fileExists ('/etc/rc0.d/K20softcam'):
+		if fileExists ('/etc/rcS.d/*softcam'):
 			os.system('update-rc.d -f softcam remove && update-rc.d -f cardserver remove')
-		if not fileExists('/etc/rc0.d/K09softcam'):
-			os.system('update-rc.d softcam stop 09 0 1 6 . start  60 2 3 4 5 .')
-			os.system('update-rc.d cardserver stop 09 0 1 6 . start  60 2 3 4 5 .')
+			os.system('rm /etc/rcS.d/*softcam')
+			os.system('rm /etc/rcS.d/*cardserver')
+		if fileExists ('/etc/rc2.d/*softcam'):
+			os.system('update-rc.d -f softcam remove && update-rc.d -f cardserver remove')
+		if not fileExists('/etc/rc2.d/*softcam'):
+			os.system('update-rc.d softcam defaults 50')
+			os.system('update-rc.d cardserver start 95 S .')
+
 	def getIP(self):
-		return str(popen('hostname -i').read().strip())
+		return str(popen('ip route get 8.8.8.8 |cut -d " " -f7').read().strip())
 
 	def getdl(self):
 		info  = 'aHR0cDovL2NhbTRtZS5vcmcvb3Blbm1pcHMyL29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uaW5mbw=='
@@ -901,7 +897,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def showNews(self):
 		lastinfo =  ""
 		x = " : "
-		lastinfo += "10-20-2018" + x + _("added bcm arm 64 bit CPU") + "\n"
+                lastinfo += "06-07-2019" + x + _("Adjust runlevels") + "\n"
+                lastinfo += "06-06-2019" + x + _("small changes due to disablecrccws") + "\n"
+                lastinfo += "02-06-2019" + x + _("Adjust config dir on install") + "\n"
+                lastinfo += "02-06-2019" + x + _("Adjust for sfeed and cleanup") + "\n"
+                lastinfo += "02-06-2019" + x + _("Fix softcam/cardserver start") + "\n"
+		lastinfo += "10-02-2018" + x + _("added bcm arm 64 bit CPU") + "\n"
 		lastinfo += "11-07-2018" + x + _("download fix") + "\n"
 		lastinfo += "18-02-2018" + x + _("added HD03/04 Support") + "\n"
 		lastinfo += "27-01-2018" + x + _("added ORF 650, added 6.2 Support") + "\n"
@@ -910,14 +911,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		lastinfo += "11-09-2016" + x + _("update Redlight HD Card") + "\n"
 		lastinfo += "08-09-2016" + x + _("added ORF ICE p410 Card") + "\n"
 		lastinfo += "08-09-2016" + x + _("remove reboot from oscamsmartcard") + "\n"
-		lastinfo += "08-09-2016" + x + _("this info added") + "\n" 
-		lastinfo += "17-06-2016" + x + _("added SRG V6 Card") + "\n" 
-		lastinfo += "09-06-2016" + x + _("added CI+") + "\n" 
-		lastinfo += "06-04-2016" + x + _("added default Reader 357 Mhz") + "\n" 
-		self.session.open(MessageBox, lastinfo, MessageBox.TYPE_INFO).setTitle("Oscamsmartcard News")
+		lastinfo += "08-09-2016" + x + _("this info added") + "\n"
+		lastinfo += "17-06-2016" + x + _("added SRG V6 Card") + "\n"
+		lastinfo += "09-06-2016" + x + _("added CI+") + "\n"
+		self.session.open(MessageBox, lastinfo, MessageBox.TYPE_INFO).setTitle(_("Oscamsmartcard News"))
 
 def main(session, **kwargs):
 	session.open(OscamSmartcard,"/usr/lib/enigma2/python/OPENDROID/icons/oscamsmartcard.png")
 def OPENDROID(**kwargs):
 	return PluginDescriptor(name="Oscam Smartcard v2.4", description=_("Configuration tool for OScam"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="plugin.png", fnc=main)
-
