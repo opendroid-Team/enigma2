@@ -593,6 +593,9 @@ eDVBFrontend::eDVBFrontend(const char *devicenodename, int fe, int &ok, bool sim
 	:m_simulate(simulate), m_enabled(false), m_fbc(false), m_simulate_fe(simulate_fe), m_type(-1), m_dvbid(fe), m_slotid(fe)
 	,m_fd(-1), m_teakover(0), m_waitteakover(0), m_break_teakover(0), m_break_waitteakover(0), m_dvbversion(0), m_configRetuneNoPatEntry(0), m_rotor_mode(false)
 	,m_need_rotor_workaround(false), m_need_delivery_system_workaround(false), m_multitype(false), m_state(stateClosed), m_timeout(0), m_tuneTimer(0)
+#if HAVE_ALIEN5
+	,m_looptimeout(100)
+#endif
 {
 	m_DebugOptions = (1ULL << static_cast<int>(enumDebugOptions::DEBUG_DELIVERY_SYSTEM));
 	m_filename = devicenodename;
@@ -1034,6 +1037,9 @@ void eDVBFrontend::feEvent(int w)
 	eDVBFrontend *sec_fe = this;
 	long tmp = m_data[LINKED_PREV_PTR];
 #if HAVE_AMLOGIC
+#if HAVE_ALIEN5
+static int timeoutNum = 0;
+#endif
 			if (w < 0)
 				return;
 #endif
@@ -1049,6 +1055,9 @@ void eDVBFrontend::feEvent(int w)
 		int res;
 		int state;
 #if HAVE_AMLOGIC
+#if HAVE_ALIEN5
+		usleep(20000);
+#endif
 		if((res = ::ioctl(m_fd, FE_READ_STATUS, &event.status)) != 0)
 		{
 			break;
@@ -1086,6 +1095,27 @@ void eDVBFrontend::feEvent(int w)
 #endif
 		else
 		{
+#if HAVE_ALIEN5
+			if (m_tuning) {
+				state = stateTuning;
+				if (event.status & FE_TIMEDOUT) {
+				//if (m_tuning >=100) {
+					if (m_looptimeout == 0){
+						eDebug("[eDVBFrontend] FE_TIMEDOUT! ..abort");
+						m_tuneTimer->stop();
+						timeout();
+						//m_looptimeout=0;
+						return;
+					}
+					else{
+						m_looptimeout--;
+					}
+				
+				}
+				++m_tuning;
+				break;
+			}
+#else
 			if (m_tuning) {
 				state = stateTuning;
 				if (event.status & FE_TIMEDOUT) {
@@ -1096,13 +1126,14 @@ void eDVBFrontend::feEvent(int w)
 				}
 				++m_tuning;
 			}
+#endif
 			else
 			{
 				eDebug("[eDVBFrontend] stateLostLock");
 				state = stateLostLock;
 				if (!m_rotor_mode)
 					sec_fe->m_data[CSW] = sec_fe->m_data[UCSW] = sec_fe->m_data[TONEBURST] = -1; // reset diseqc
-#if HAVE_AMLOGIC
+#if HAVE_ALIEN5
 				if(m_state == state)
 					break; /* I do not see any other way out */
 #endif
@@ -1788,10 +1819,29 @@ int eDVBFrontend::readFrontendData(int type)
 			if (!m_simulate)
 			{
 				ioctlMeasureStart;
+#if HAVE_ALIEN5
+				//static int timeoutNum =0 ;
+				usleep(20000);
+				if ( ioctl(m_fd, FE_READ_STATUS, &status) < 0 && errno != ERANGE )
+					eDebug("[eDVBFrontend] FE_READ_STATUS failed (%m)");
+				if (status & FE_TIMEDOUT) {
+				//if (m_tuning >=100) {
+					if (m_looptimeout == 0){
+					
+						ioctlMeasureEval("FE_READ_STATUS");
+						return (int)status;
+					}
+					else{
+						m_looptimeout--;
+					}
+				
+				}
+#else
 				if ( ioctl(m_fd, FE_READ_STATUS, &status) < 0 && errno != ERANGE )
 					eDebug("[eDVBFrontend] FE_READ_STATUS failed (%m)");
 				ioctlMeasureEval("FE_READ_STATUS");
 				return (int)status;
+#endif
 			}
 			return (FE_HAS_SYNC | FE_HAS_LOCK);
 		}
@@ -2259,7 +2309,8 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 					{
 						dvb_frontend_event event;
 						int res;
-#if HAVE_AMLOGIC
+#if HAVE_ALIEN5
+						usleep(20000);
 						if((res = ::ioctl(m_fd, FE_READ_STATUS, &event.status)) != 0)
 						{
 							break;
@@ -2615,15 +2666,26 @@ void eDVBFrontend::setFrontend(bool recvEvents)
 		cmdseq.props = p;
 		cmdseq.num = 0;
 		p[cmdseq.num].cmd = DTV_CLEAR, cmdseq.num++;
+#if HAVE_ALIEN5
+		m_looptimeout = 100;
+#endif
 		if (type == iDVBFrontend::feSatellite)
 		{
-			eDVBFrontendParametersSatellite parm;
+			eDVBFrontendParametersSatellite parm = {0};
 			fe_rolloff_t rolloff = ROLLOFF_35;
 			fe_pilot_t pilot = PILOT_OFF;
 			fe_modulation_t modulation = QPSK;
 			fe_delivery_system_t system = SYS_DVBS;
 			oparm.getDVBS(parm);
-
+#if HAVE_ALIEN5
+			if (parm.symbol_rate < 5000000)
+		        m_looptimeout = 250;
+		    else if (parm.symbol_rate < 10000000)
+		        m_looptimeout = 60;
+		    else
+		        m_looptimeout = 50;
+			//m_looptimeout(100);
+#endif
 			//p[cmdseq.num].cmd = DTV_LNA, p[cmdseq.num].u.data = 0, cmdseq.num++;
 			p[cmdseq.num].cmd = DTV_INVERSION;
 			switch (parm.inversion)
@@ -2712,6 +2774,9 @@ void eDVBFrontend::setFrontend(bool recvEvents)
 		{
 			eDVBFrontendParametersCable parm = {0};
 			oparm.getDVBC(parm);
+#if HAVE_ALIEN5
+			m_looptimeout = 300;
+#endif
 			//p[cmdseq.num].cmd = DTV_LNA, p[cmdseq.num].u.data = 0, cmdseq.num++;
 			p[cmdseq.num].cmd = DTV_FREQUENCY, p[cmdseq.num].u.data = parm.frequency * 1000, cmdseq.num++;
 
@@ -2783,6 +2848,9 @@ void eDVBFrontend::setFrontend(bool recvEvents)
 			eDVBFrontendParametersTerrestrial parm = {0};
 			fe_delivery_system_t system = SYS_DVBT;
 			oparm.getDVBT(parm);
+#if HAVE_ALIEN5
+			m_looptimeout = 100;
+#endif
 			switch (parm.system)
 			{
 				default:
