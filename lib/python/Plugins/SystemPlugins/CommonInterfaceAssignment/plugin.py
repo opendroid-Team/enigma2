@@ -44,7 +44,7 @@ class CIselectMainMenu(Screen):
 				"cancel": self.close
 			}, -1)
 
-		if getBoxType() in ('zgemmah9combo'):
+		if getBoxType() in ('zgemmah9combo',):
 			NUM_CI = 1
 		else:
 			NUM_CI = eDVBCIInterfaces.getInstance() and eDVBCIInterfaces.getInstance().getNumOfSlots()
@@ -112,7 +112,7 @@ class CIconfigMenu(Screen):
 		</screen>"""
 
 	def __init__(self, session, ci_slot="9"):
-
+		Screen.setTitle(self, _("CIselectMainMenu"))
 		Screen.__init__(self, session)
 		self.ci_slot=ci_slot
 		self.filename = eEnv.resolve("${sysconfdir}/enigma2/ci") + str(self.ci_slot) + ".xml"
