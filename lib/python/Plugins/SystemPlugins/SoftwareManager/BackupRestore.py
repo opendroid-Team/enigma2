@@ -81,7 +81,7 @@ def SettingsEntry(name, checked):
 		picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_on.png"));
 	else:
 		picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_off.png"));
-		
+
 	return (name, picture, checked)
 
 class BackupScreen(Screen, ConfigListScreen):
@@ -457,8 +457,9 @@ class RestoreScreen(Screen, ConfigListScreen):
 		SH_List = []
 		SH_List.append('/media/hdd/images/config/myrestore.sh')
 		SH_List.append('/media/usb/images/config/myrestore.sh')
+		SH_List.append('/media/mmc/images/config/myrestore.sh')
 		SH_List.append('/media/cf/images/config/myrestore.sh')
-		
+
 		startSH = None
 		for SH in SH_List:
 			if path.exists(SH):
@@ -496,7 +497,7 @@ class RestartNetwork(Screen):
 	def restartLan(self):
 		print"[SOFTWARE MANAGER] Restart Network"
 		iNetwork.restartNetwork(self.restartLanDataAvail)
-		
+
 	def restartLanDataAvail(self, data):
 		if data is True:
 			iNetwork.getInterfaces(self.getInterfacesDataAvail)
@@ -616,7 +617,7 @@ class RestorePlugins(Screen):
 		self["key_green"] = Button(_("Install"))
 		self["key_red"] = Button(_("Cancel"))
 		self["summary_description"] = StaticText("")
-				
+
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
 				{
 					"red": self.exit,
@@ -658,7 +659,7 @@ class RestorePlugins(Screen):
 
 	def installLocalIPK(self):
 		self.session.open(Console, title = _("Installing plugins..."), cmdlist = ['opkg --force-overwrite install ' + ' '.join(self.myipklist)], finishedCallback = self.exit, closeOnSuccess = True)
-	
+
 	def ok(self):
 		index = self["menu"].getIndex()
 		item = self["menu"].getCurrent()[0]
@@ -678,7 +679,7 @@ class RestorePlugins(Screen):
 		else:
 			self["summary_description"].text = self["menu"].getCurrent()[0]
 		self.index = index
-			
+
 	def drawList(self):
 		self["menu"].setList(self.Menulist)
 		self["menu"].setIndex(self.index)

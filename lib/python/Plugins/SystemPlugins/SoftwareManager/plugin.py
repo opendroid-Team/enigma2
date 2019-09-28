@@ -14,6 +14,7 @@ from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
 from Components.Sources.List import List
 from Components.Slider import Slider
+from Components.SystemInfo import SystemInfo
 from Components.Harddisk import harddiskmanager
 from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
@@ -41,10 +42,12 @@ from twisted.internet import reactor
 from ImageBackup import ImageBackup
 from Flash_online import FlashOnline
 from ImageWizard import ImageWizard
+from Multibootmgr import MultiBootWizard
 from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getOldBackupPath, getBackupFilename
 from BackupRestore import InitConfig as BackupRestore_InitConfig
 from SoftwareTools import iSoftwareTools
 import os
+import shutil
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM, getImageDistro
 
 boxtype = getBoxType()
@@ -84,6 +87,12 @@ def Load_defaults():
 						("hot", _("Upgrade with GUI")),
 						("cold", _("Unattended upgrade without GUI")),
 					], "hot")
+	config.plugins.softwaremanager.restoremode = ConfigSelection(
+					[
+						("turbo", _("turbo")),
+						("fast", _("fast")),
+						("slow", _("slow")),
+					], "turbo")
 	config.plugins.softwaremanager.epgcache = ConfigYesNo(default=False)
 
 Load_defaults()
@@ -176,6 +185,8 @@ class UpdatePluginMenu(Screen):
 				self.list.append(("flash-online", _("Flash Online"), _("\nFlash on the fly your %s %s.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
 			if not boxtype.startswith('az') and not brandoem.startswith('cube') and not brandoem.startswith('wetek'):
 				self.list.append(("backup-image", _("Backup Image"), _("\nBackup your running %s %s image to HDD or USB.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
+			if SystemInfo["canMultiBoot"]:
+				self.list.append(("multiboot-manager", _("Multiboot Manager"), _("\nMaintain your multiboot device.") + self.oktext, None))
 			self.list.append(("system-backup", _("Backup system settings"), _("\nBackup your %s %s settings.") % (getMachineBrand(), getMachineName()) + self.oktext + "\n\n" + self.infotext, None))
 			self.list.append(("system-restore",_("Restore system settings"), _("\nRestore your %s %s settings.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
 			self.list.append(("ipkg-install", _("Install local extension"),  _("\nScan for local extensions and install them.") + self.oktext, None))
@@ -313,6 +324,8 @@ class UpdatePluginMenu(Screen):
 					self.session.open(PluginManager, self.skin_path)
 				elif (currentEntry == "flash-online"):
 					self.session.open(FlashOnline)
+				elif (currentEntry == "multiboot-manager"):
+					self.session.open(MultiBootWizard)
 				elif (currentEntry == "backup-image"):
 					if DFLASH == True:
 						self.session.open(dFlash)
@@ -352,9 +365,6 @@ class UpdatePluginMenu(Screen):
 					self.session.open(BackupSelection,title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
 				elif (currentEntry == "backupfiles_addon"):
 					self.session.open(BackupSelection,title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
-				elif (currentEntry == "resetbackupfiles"):
-					restartbox = self.session.openWithCallback(self.coldrestartGUI,MessageBox,_("Set selected files for backup to default \nand restart Enigma now?"), MessageBox.TYPE_YESNO)
-					restartbox.setTitle(_("Restart Enigma"))
 				elif (currentEntry == "backupfiles_exclude"):
 					self.session.open(BackupSelection,title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
 				elif (currentEntry == "advancedrestore"):
@@ -365,11 +375,6 @@ class UpdatePluginMenu(Screen):
 					self.extended = current[3]
 					self.extended(self.session, None)
 
-	def coldrestartGUI(self, answer):
-		if answer is True:
-			self.session.open(TryQuitMainloop, 9)
-		else:
-			self.close()
 	def backuplocation_choosen(self, option):
 		oldpath = config.plugins.configurationbackup.backuplocation.value
 		if option is not None:
@@ -1520,7 +1525,6 @@ class UpdatePlugin(Screen):
 	def __init__(self, session, *args):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Software update"))
-
 		self.sliderPackages = { "dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3 }
 
 		self.slider = Slider(0, 4)
@@ -1642,26 +1646,11 @@ class UpdatePlugin(Screen):
 		self.TraficResult = result
 		if result:
 			self.TraficCheck = True
-			print "create /etc/last-upgrades-git.log with opkg list-upgradable"
-			os.system("opkg list-upgradable > /etc/last-upgrades-git.log")
-			if os.system("grep 'dvb-module\|kernel-module' /etc/last-upgrades-git.log"):
-				print "Upgrade asap = Yes"
-				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
-			else:
-				print "Upgrade asap = No"
-				message = _("There is a Kernel- and/or Driver-Update available for your %s %s!") % (getMachineBrand(), getMachineName()) + "\n" + _("Please backup your settings and do a fresh online-flash of latest image.") + "\n" + _("It is possible that your Box have a problem with booting up after update.") + "\n" + "\n" + _("If you really want to try the update without backup, press Yes.")
-				picon = MessageBox.TYPE_ERROR
-				self.session.openWithCallback(self.runUpgrade2, MessageBox, message, default = False, picon = picon)
+			self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
 		else:
 			self.TraficCheck = False
 			self.activityTimer.stop()
 			self.activityslider.setValue(0)
-			self.exit()
-
-	def runUpgrade2(self, result):
-		if result:
-			self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
-		else:
 			self.exit()
 
 	def doActivityTimer(self):
@@ -1722,12 +1711,13 @@ class UpdatePlugin(Screen):
 					self.checkTraficLight()
 					return
 				if self.total_packages and self.TraficCheck and self.TraficResult:
-					message = _("Do you want to update your %s %s") % (getMachineBrand(), getMachineName()) + "                 \n(%s " % self.total_packages + _("Packages") + ")"
-					if config.plugins.softwaremanager.updatetype.value == "cold":
-						choices = [(_("Show new Packages"), "show"), (_("Unattended upgrade without GUI and reboot system"), "cold"), (_("Cancel"), "")]
-					else:
-						choices = [(_("Show new Packages"), "show"), (_("Upgrade and ask to reboot"), "hot"), (_("Cancel"), "")]
-					self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices)
+					try:
+						if config.plugins.softwaremanager.updatetype.value == "cold":
+							self.startActualUpgrade("cold")
+						else:
+							self.startActualUpgrade("hot")
+					except:
+						self.startActualUpgrade("hot")
 				else:
 					self.session.openWithCallback(self.close, MessageBox, _("Nothing to upgrade"), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 			elif self.error == 0:
