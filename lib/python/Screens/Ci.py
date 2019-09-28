@@ -18,14 +18,14 @@ from Tools.BoundFunction import boundFunction
 from boxbranding import getBrandOEM, getBoxType
 import time
 
-if getBoxType() in ('zgemmah9combo'):
+if getBoxType() in ('zgemmah9combo',):
 	MAX_NUM_CI = 1
 else:
 	MAX_NUM_CI = 4
 relevantPidsRoutingChoices = None
 
 def setCIBitrate(configElement):
-	if configElement.value == "no":
+	if not configElement.value:
 		eDVBCI_UI.getInstance().setClockRate(configElement.slotid, eDVBCI_UI.rateNormal)
 	else:
 		eDVBCI_UI.getInstance().setClockRate(configElement.slotid, eDVBCI_UI.rateHigh)
@@ -53,9 +53,9 @@ def InitCiConfig():
 		config.ci[slot].show_ci_messages = ConfigYesNo(default = True)
 		if SystemInfo["CommonInterfaceSupportsHighBitrates"]:
 			if getBrandOEM() in ('dags', 'blackbox'):
-				config.ci[slot].canHandleHighBitrates = ConfigSelection(choices = [("no", _("No")), ("yes", _("Yes"))], default = "yes")
+				config.ci[slot].canHandleHighBitrates = ConfigYesNo(default = True)
 			else: 
-				config.ci[slot].canHandleHighBitrates = ConfigSelection(choices = [("no", _("No")), ("yes", _("Yes"))], default = "no")
+				config.ci[slot].canHandleHighBitrates = ConfigYesNo(default = False)
 			config.ci[slot].canHandleHighBitrates.slotid = slot
 			config.ci[slot].canHandleHighBitrates.addNotifier(setCIBitrate)
 		if SystemInfo["RelevantPidsRoutingSupport"]:
@@ -91,7 +91,7 @@ class CISetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = ["Setup" ]
-		self.setup_title = _("CI settings")
+		self.setup_title = _("CI Basic settings")
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -411,7 +411,7 @@ class CiMessageHandler:
 		self.dlgs = { }
 		self.auto_close = False
 		eDVBCI_UI.getInstance().ciStateChanged.get().append(self.ciStateChanged)
-		if getBoxType() in ('vuzero'):
+		if getBoxType() in ('vuzero',):
 			SystemInfo["CommonInterface"] = False
 		else:
 			SystemInfo["CommonInterface"] = eDVBCIInterfaces.getInstance().getNumOfSlots() > 0

@@ -2504,22 +2504,23 @@ class InfoBarSeek:
 			hdd = 1
 			if self.activity >= 100:
 				self.activity = 0
-			if SystemInfo["FrontpanelDisplay"] and SystemInfo["Display"]:
-				if os.path.exists("/proc/stb/lcd/symbol_hdd"):
-					if config.lcd.hdd.value == "1":
-						file = open("/proc/stb/lcd/symbol_hdd", "w")
-						file.write('%d' % int(hdd))
-						file.close()
-				if os.path.exists("/proc/stb/lcd/symbol_hddprogress"):
-					if config.lcd.hdd.value == "1":
-						file = open("/proc/stb/lcd/symbol_hddprogress", "w")
-						file.write('%d' % int(self.activity))
-						file.close()
+			SystemInfo["SeekStatePlay"] = True
+			if os.path.exists("/proc/stb/lcd/symbol_hdd"):
+				if config.lcd.hdd.value == "1":
+					file = open("/proc/stb/lcd/symbol_hdd", "w")
+					file.write('%d' % int(hdd))
+					file.close()
+			if os.path.exists("/proc/stb/lcd/symbol_hddprogress"):
+				if config.lcd.hdd.value == "1":
+					file = open("/proc/stb/lcd/symbol_hddprogress", "w")
+					file.write('%d' % int(self.activity))
+					file.close()
 		else:
 			self.activityTimer.stop()
 			self.activity = 0
 			hdd = 0
 			self.seekAction = 0
+		SystemInfo["SeekStatePlay"] = True
 		if os.path.exists("/proc/stb/lcd/symbol_hdd"):
 			if config.lcd.hdd.value == "1":
 				file = open("/proc/stb/lcd/symbol_hdd", "w")
@@ -2613,6 +2614,7 @@ class InfoBarSeek:
 			self.unPauseService()
 
 	def pauseService(self):
+		SystemInfo["StatePlayPause"] = True
 		if self.seekstate != self.SEEK_STATE_EOF:
 			self.lastseekstate = self.seekstate
 		self.setSeekState(self.SEEK_STATE_PAUSE)
@@ -2625,6 +2627,7 @@ class InfoBarSeek:
 			self.playpauseService()
 
 	def unPauseService(self):
+		SystemInfo["StatePlayPause"] = False
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			if self.seekAction <> 0: self.playpauseService()
 			return
@@ -4001,14 +4004,14 @@ class InfoBarAudioSelection:
 		if not hasattr(self, "LongButtonPressed"):
 			self.LongButtonPressed = False
 		if not self.LongButtonPressed:
-			if config.OPENDROID_yellowkey.list.value == '0':
+			if config.plugins.OPDBoot_yellowkey.list.value == '0':
 				from Screens.AudioSelection import AudioSelection
 				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
-			elif config.OPENDROID_yellowkey.list.value == '2':
+			elif config.plugins.OPDBoot_yellowkey.list.value == '2':
 				global AUDIO
 				AUDIO = True
 				ToggleVideo()
-			elif config.OPENDROID_yellowkey.list.value == '3':
+			elif config.plugins.OPDBoot_yellowkey.list.value == '3':
 				self.startTeletext()
 			else:
 				try:
@@ -4016,14 +4019,14 @@ class InfoBarAudioSelection:
 				except:
 					pass
 		else:
-			if config.OPENDROID_yellowkey.listLong.value == '0':
+			if config.plugins.OPDBoot_yellowkey.listLong.value == '0':
 				from Screens.AudioSelection import AudioSelection
 				self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
-			elif config.OPENDROID_yellowkey.listLong.value == '2':
+			elif config.plugins.OPDBoot_yellowkey.listLong.value == '2':
 				global AUDIO
 				AUDIO = True
 				ToggleVideo()
-			elif config.OPENDROID_yellowkey.listLong.value == '3':
+			elif config.plugins.OPDBoot_yellowkey.listLong.value == '3':
 				self.startTeletext()
 			else:
 				try:
@@ -5194,7 +5197,7 @@ class InfoBarSleepTimer:
 				self.setSleepTimer(1800, False)
 				if not Screens.Standby.inStandby:
 					message = _("A Recording, RecordTimer or PowerTimer is running or begins in 15 minutes.\nExtend sleep timer 30 minutes. Your %s %s\nwill shut down after Recording or Powertimer event. Get in Standby now?") % (getMachineBrand(), getMachineName())
-					self.session.openWithCallback(self.goStandby, MessageBox, message, MessageBox.TYPE_YESNO, timeout=180, default=True)
+					self.session.openWithCallback(self.goStandby, MessageBox, message, MessageBox.TYPE_YESNO, timeout=int(config.usage.shutdown_msgbox_timeout.value), default=True)
 				return
 		if not Screens.Standby.inStandby:
 			list = [ (_("Yes"), True),
@@ -5204,7 +5207,7 @@ class InfoBarSleepTimer:
 				message = _("A sleep timer wants to set your %s %s to standby.\nDo that now or set extend additional minutes?") % (getMachineBrand(), getMachineName())
 			else:
 				message = _("A sleep timer wants to shut down your %s %s.\nDo that now or set extend additional minutes?") % (getMachineBrand(), getMachineName())
-			self.session.openWithCallback(self.sleepTimerTimeoutCallback, MessageBox, message, timeout=180, simple=True, list=list, default=True)
+			self.session.openWithCallback(self.sleepTimerTimeoutCallback, MessageBox, message, timeout=int(config.usage.shutdown_msgbox_timeout.value), simple=True, list=list, default=True)
 		else:
 			self.goStandby()
 

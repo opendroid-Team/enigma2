@@ -27,6 +27,7 @@ from TimerEntry import TimerEntry, InstantRecordTimerEntry
 from ServiceReference import ServiceReference
 from Tools.HardwareInfo import HardwareInfo
 from RecordTimer import TIMERTYPE
+from skin import getSkinFactor
 
 mepg_config_initialized = False
 # PiPServiceRelation installed?
@@ -255,10 +256,7 @@ class EPGSelection(Screen, HelpableScreen):
 					self.skinName = 'GraphicalEPG'
 				else:
 					self.skinName = 'GraphicalEPGPIG'
-			elif self.type == EPG_TYPE_INFOBARGRAPH:
-				self.skinName = 'GraphicalInfoBarEPG'
-			now = time() - int(config.epg.histminutes.value) * 60
-			if self.type == EPG_TYPE_GRAPH:
+				now = time() - int(config.epgselection.graph_histminutes.value) * 60
 				self.ask_time = now - now % (int(config.epgselection.graph_roundto.value) * 60)
 				if 'primetime' in config.epgselection.graph_startmode.value:
 					basetime = localtime(self.ask_time)
@@ -267,6 +265,8 @@ class EPGSelection(Screen, HelpableScreen):
 					if self.ask_time + 3600 < time():
 						self.ask_time += 86400
 			elif self.type == EPG_TYPE_INFOBARGRAPH:
+				self.skinName = 'GraphicalInfoBarEPG'
+				now = time() - int(config.epgselection.infobar_histminutes.value) * 60
 				self.ask_time = now - now % (int(config.epgselection.infobar_roundto.value) * 60)
 			self.closeRecursive = False
 			self.bouquetlist_active = False
@@ -564,9 +564,9 @@ class EPGSelection(Screen, HelpableScreen):
 		return services
 
 	def LayoutFinish(self):
-		self['lab1'].show()
 		self.createTimer = eTimer()
 		self.createTimer.start(500, True)
+		self['lab1'].show()
 		self.onCreate()
 
 	def onCreate(self):
@@ -674,7 +674,6 @@ class EPGSelection(Screen, HelpableScreen):
 			self['list'].fillMultiEPG(self.services, self.ask_time)
 			for i in range(curr):
 				self['list'].updateMultiEPG(1)
-			self['list'].fillMultiEPG(self.services, self.ask_time)
 		elif self.type == EPG_TYPE_SINGLE or self.type == EPG_TYPE_ENHANCED or self.type == EPG_TYPE_INFOBAR:
 			try:
 				if self.type == EPG_TYPE_SINGLE:
@@ -877,10 +876,10 @@ class EPGSelection(Screen, HelpableScreen):
 
 	def BouquetOK(self):
 		self.BouquetRoot = False
-		now = time() - int(config.epg.histminutes.value) * 60
 		self.services = self.getBouquetServices(self.getCurrentBouquet())
 		if self.type == EPG_TYPE_GRAPH or self.type == EPG_TYPE_INFOBARGRAPH:
 			if self.type == EPG_TYPE_GRAPH:
+				now = time() - int(config.epgselection.graph_histminutes.value) * 60
 				self.ask_time = now - now % (int(config.epgselection.graph_roundto.value) * 60)
 				if 'primetime' in config.epgselection.graph_startmode.value:
 					basetime = localtime(self.ask_time)
@@ -889,6 +888,7 @@ class EPGSelection(Screen, HelpableScreen):
 					if self.ask_time + 3600 < time():
 						self.ask_time += 86400
 			elif self.type == EPG_TYPE_INFOBARGRAPH:
+				now = time() - int(config.epgselection.infobar_histminutes.value) * 60
 				self.ask_time = now - now % (int(config.epgselection.infobar_roundto.value) * 60)
 			self['list'].resetOffset()
 			self['list'].fillGraphEPG(self.services, self.ask_time)
@@ -1018,12 +1018,10 @@ class EPGSelection(Screen, HelpableScreen):
 	def onDateTimeInputClosed(self, ret):
 		if len(ret) > 1:
 			if ret[0]:
+				self.ask_time = ret[1]
 				if self.type == EPG_TYPE_MULTI:
-					self.ask_time = ret[1]
-					self['list'].fillMultiEPG(self.services, ret[1])
+					self['list'].fillMultiEPG(self.services, self.ask_time)
 				elif self.type == EPG_TYPE_GRAPH or self.type == EPG_TYPE_INFOBARGRAPH:
-					self.ask_time = ret[1]
-					now = time() - int(config.epg.histminutes.value) * 60
 					if self.type == EPG_TYPE_GRAPH:
 						self.ask_time -= self.ask_time % (int(config.epgselection.graph_roundto.value) * 60)
 					elif self.type == EPG_TYPE_INFOBARGRAPH:
@@ -1033,8 +1031,7 @@ class EPGSelection(Screen, HelpableScreen):
 					l.fillGraphEPG(None, self.ask_time)
 					self.moveTimeLines(True)
 				elif EPG_TYPE_VERTICAL:
-					if ret[1] > time():
-						self.ask_time = ret[1]
+					if self.ask_time > time():
 						self.updateVerticalEPG()
 					else:
 						self.ask_time = -1
@@ -1503,20 +1500,27 @@ class EPGSelection(Screen, HelpableScreen):
 			title = _("Select action for timer %s:") % event.getEventName()
 		else:
 			if not manual:
-				menu = [(_("Add Timer"), 'CALLFUNC', self.ChoiceBoxCB, self.doRecordTimer), (_("Add AutoTimer"), 'CALLFUNC', self.ChoiceBoxCB, self.addAutoTimerSilent)]
+				cb_func1 = lambda ret: self.doRecordTimer(True)
+				menu = [(_("Add Record Timer"), 'CALLFUNC', self.RemoveChoiceBoxCB, cb_func1), 
+						(_("Add Zap Timer"), 'CALLFUNC', self.ChoiceBoxCB, self.doZapTimer),
+						(_("Add Zap+Record Timer"), 'CALLFUNC', self.ChoiceBoxCB, self.doZapRecordTimer),
+						(_("Add AutoTimer"), 'CALLFUNC', self.ChoiceBoxCB, self.addAutoTimerSilent)
+						]
 				title = "%s?" % event.getEventName()
 			else:
 				newEntry = RecordTimerEntry(serviceref, checkOldTimers=True, dirname=preferredTimerPath(), *parseEvent(event))
 				self.session.openWithCallback(self.finishedAdd, TimerEntry, newEntry)
 		if title:
-			self.ChoiceBoxDialog = self.session.instantiateDialog(ChoiceBox, title=title, list=menu, keys=['green', 'blue'], skin_name="RecordTimerQuestion")
+			self.ChoiceBoxDialog = self.session.instantiateDialog(ChoiceBox, title=title, list=menu, keys=['red', 'green', 'yellow', 'blue'], skin_name="RecordTimerQuestion")
 			serviceref = eServiceReference(str(self['list'+str(self.activeList)].getCurrent()[1]))
 			pos = self['list'+str(self.activeList)].getSelectionPosition(serviceref, self.activeList)
-			posx = pos[0]
-			dialogwidth = self.ChoiceBoxDialog.instance.size().width()
-			if posx - dialogwidth < 0:
-				posx = dialogwidth
-			self.ChoiceBoxDialog.instance.move(ePoint(posx-dialogwidth,self.instance.position().y()+pos[1]))
+			sf = getSkinFactor()
+			posx = max(self.instance.position().x() + pos[0] - self.ChoiceBoxDialog.instance.size().width() - 20*sf, 0)
+			posy = self.instance.position().y() + pos[1]
+			posy += self['list'+str(self.activeList)].itemHeight - 2*sf
+			if posy + self.ChoiceBoxDialog.instance.size().height() > 720*sf:
+				posy -= self['list'+str(self.activeList)].itemHeight - 4*sf + self.ChoiceBoxDialog.instance.size().height()
+			self.ChoiceBoxDialog.instance.move(ePoint(int(posx), int(posy)))
 			self.showChoiceBoxDialog()
 
 	def recButtonPressed(self):
@@ -1571,13 +1575,19 @@ class EPGSelection(Screen, HelpableScreen):
 		if self.has_key('input_actions'):
 			self['input_actions'].setEnabled(True)
 
-	def doRecordTimer(self):
-		self.doInstantTimer(TIMERTYPE.JUSTPLAY)
+	def doRecordTimer(self, rec=False):
+		if not rec and 'Plugins.Extensions.EPGSearch.EPGSearch.EPGSearch' in `self`:
+			self.RecordTimerQuestion()
+		else:
+			self.doInstantTimer(0, 0)
 
 	def doZapTimer(self):
-		self.doInstantTimer(1)
+		self.doInstantTimer(1, 0)
 
-	def doInstantTimer(self, zap):
+	def doZapRecordTimer(self):
+		self.doInstantTimer(0, 1)
+
+	def doInstantTimer(self, zap, zaprecord):
 		cur = self['list'+str(self.activeList)].getCurrent()
 		event = cur[0]
 		serviceref = cur[1]
@@ -1586,7 +1596,7 @@ class EPGSelection(Screen, HelpableScreen):
 		eventid = event.getEventId()
 		refstr = serviceref.ref.toString()
 		newEntry = RecordTimerEntry(serviceref, checkOldTimers=True, *parseEvent(event))
-		self.InstantRecordDialog = self.session.instantiateDialog(InstantRecordTimerEntry, newEntry, zap)
+		self.InstantRecordDialog = self.session.instantiateDialog(InstantRecordTimerEntry, newEntry, zap, zaprecord)
 		retval = [True, self.InstantRecordDialog.retval()]
 		self.session.deleteDialogWithCallback(self.finishedAdd, self.InstantRecordDialog, retval)
 
@@ -1917,11 +1927,13 @@ class EPGSelection(Screen, HelpableScreen):
 		if self.createTimer.isActive(): return
 		if self.type == EPG_TYPE_GRAPH or self.type == EPG_TYPE_INFOBARGRAPH:
 			if self.type == EPG_TYPE_GRAPH:
+				now = time() - int(config.epgselection.graph_histminutes.value) * 60
 				prevtimeperiod = config.epgselection.graph_prevtimeperiod
 				roundto = config.epgselection.graph_roundto
 				primetimehour = config.epgselection.graph_primetimehour
 				primetimemins = config.epgselection.graph_primetimemins
 			else:
+				now = time() - int(config.epgselection.infobar_histminutes.value) * 60
 				prevtimeperiod = config.epgselection.infobar_prevtimeperiod
 				roundto = config.epgselection.infobar_roundto
 				primetimehour = config.epgselection.infobar_primetimehour
@@ -1946,7 +1958,6 @@ class EPGSelection(Screen, HelpableScreen):
 			elif number == 4:
 				self.updEvent(-2)
 			elif number == 5:
-				now = time() - int(config.epg.histminutes.value) * 60
 				self.ask_time = now - now % (int(roundto.value) * 60)
 				self['list'].resetOffset()
 				self['list'].fillGraphEPG(None, self.ask_time, True)
@@ -1974,7 +1985,6 @@ class EPGSelection(Screen, HelpableScreen):
 				self.moveTimeLines(True)
 			elif number == 0:
 				self.toTop()
-				now = time() - int(config.epg.histminutes.value) * 60
 				self.ask_time = now - now % (int(roundto.value) * 60)
 				self['list'].resetOffset()
 				self['list'].fillGraphEPG(None, self.ask_time, True)

@@ -40,6 +40,20 @@ def dump(x, i=0):
 	except:
 		None
 
+skinfactor = 0
+def getSkinFactor(refresh = False):
+	global skinfactor
+	if refresh or not skinfactor:
+		try:
+			skinfactor = getDesktop(0).size().width() / 1280.0
+			if not skinfactor in [1, 1.5, 3]:
+				print '[SKIN] getSkinFactor unknown result (%s) -> set skinfactor to 1' %skinfactor
+				skinfactor = 1
+		except Exception, err:
+			skinfactor = 1
+			print '[SKIN] getSkinFactor failed: ', err
+	return skinfactor
+
 class SkinError(Exception):
 	def __init__(self, message):
 		self.msg = message
@@ -62,8 +76,7 @@ def addSkin(name, scope = SCOPE_SKIN):
 	if fileExists(filename):
 		mpath = os.path.dirname(filename) + "/"
 		try:
-			file = open(filename, 'r')
-			dom_skins.append((mpath, xml.etree.cElementTree.parse(file).getroot()))
+			dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
 		except:
 			print "[SKIN ERROR] error in %s" % filename
 			return False
@@ -74,7 +87,7 @@ def addSkin(name, scope = SCOPE_SKIN):
 def get_modular_files(name, scope = SCOPE_SKIN):
 	dirname = resolveFilename(scope, name + 'mySkin/')
 	file_list = []
-	if fileExists(dirname):
+	if fileExists(dirname) and config.skin.primary_skin.value != DEFAULT_SKIN:
 		skin_files = (os.listdir(dirname))
 		if len(skin_files):
 			for f in skin_files:
@@ -93,6 +106,7 @@ def skin_user_skinname():
 
 config.skin = ConfigSubsection()
 config.skin.primary_skin = ConfigText(default = DEFAULT_SKIN)
+config.skin.display_skin = ConfigText(default = DEFAULT_DISPLAY_SKIN)
 if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 else:
@@ -137,6 +151,19 @@ if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["Ol
 
 if addSkin('skin_display.xml'):
 	display_skin_id = 2
+try:
+	if not addSkin(os.path.join('display', config.skin.display_skin.value)):
+		raise DisplaySkinError, "display skin not found"
+except Exception, err:
+	print "SKIN ERROR:", err
+	skin = DEFAULT_DISPLAY_SKIN
+	if config.skin.display_skin.value == skin:
+		skin = 'skin_display.xml'
+	print "defaulting to standard display skin...", skin
+	config.skin.display_skin.value = skin
+	skin = os.path.join('display', skin)
+	addSkin(skin)
+	del skin
 
 try:
 	addSkin(config.vfd.show.value)
@@ -282,6 +309,19 @@ def parseColor(s):
 			raise SkinError("color '%s' must be #aarrggbb or valid named color" % s)
 	return gRGB(int(s[1:], 0x10))
 
+def parseParameter(s):
+	"""This function is responsible for parsing parameters in the skin, it can parse integers, floats, hex colors, hex integers, named colors and strings."""
+	if s[0] == '#':
+		return int(s[1:], 16)
+	elif s[:2] == '0x':
+		return int(s, 16)
+	elif '.' in s:
+		return float(s)
+	elif s in colorNames:
+		return colorNames[s].argb()
+	else:
+		return int(s)
+
 def collectAttributes(skinAttributes, node, context, skin_path_prefix=None, ignore=(), filenames=frozenset(("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "sliderPixmap", "scrollbarbackgroundPixmap"))):
 	# walk all attributes
 	size = None
@@ -325,9 +365,11 @@ def loadPixmap(path, desktop):
 		path = path[:option]
 		cached = "cached" in options
 	ptr = LoadPixmap(morphRcImagePath(path), desktop, cached)
-	if ptr is None:
-		print("pixmap file %s not found!" % path)
-	return ptr
+	if ptr is not None:
+		return ptr
+	print("pixmap file %s not found!" % path)
+
+
 
 pngcache = []
 def cachemenu():
@@ -620,6 +662,8 @@ class AttributeParser:
 		self.guiObject.setScrollbarMode(getattr(self.guiObject, value))
 	def enableWrapAround(self, value):
 		self.guiObject.setWrapAround(True)
+	def itemHeight(self, value):
+		self.guiObject.setItemHeight(int(value))
 	def pointer(self, value):
 		(name, pos) = value.split(':')
 		pos = parsePosition(pos, self.scaleTuple)
@@ -745,6 +789,11 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				elif fileExists(resolveFilename(SCOPE_ACTIVE_LCDSKIN, filename)):
 					resolved_font = resolveFilename(SCOPE_ACTIVE_LCDSKIN, filename)
 			addFont(resolved_font, name, scale, is_replacement, render)
+
+		fallbackFont = resolveFilename(SCOPE_FONTS, "fallback.font", path_prefix=path_prefix)
+		if fileExists(fallbackFont):
+			addFont(fallbackFont, "Fallback", 100, -1, 0)
+
 		for alias in c.findall("alias"):
 			get = alias.attrib.get
 			try:
@@ -769,7 +818,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					if isinstance(font, list) and len(font) == 2:
 						parameters[name] = (str(font[0]), int(font[1]))
 				else:
-					parameters[name] = map(int, value.split(","))
+					parameters[name] = map(parseParameter, value.split(","))
 			except Exception, ex:
 				print "[SKIN] bad parameter", ex
 
@@ -1190,19 +1239,19 @@ def readSkin(screen, skin, names, desktop):
 		if widgetType == "onLayoutFinish":
 			screen.onLayoutFinish.append(code)
 		else:
-			raise SkinError("[Skin] applet type '%s' unknown!" % widgetType)
+			print("applet type '%s' unknown!" % widgetType)
 
 	def process_elabel(widget, context):
 		w = additionalWidget()
 		w.widget = eLabel
-		w.skinAttributes = []
+		w.skinAttributes = [ ]
 		collectAttributes(w.skinAttributes, widget, context, skin_path_prefix, ignore=('name',))
 		screen.additionalWidgets.append(w)
 
 	def process_epixmap(widget, context):
 		w = additionalWidget()
 		w.widget = ePixmap
-		w.skinAttributes = []
+		w.skinAttributes = [ ]
 		collectAttributes(w.skinAttributes, widget, context, skin_path_prefix, ignore=('name',))
 		screen.additionalWidgets.append(w)
 

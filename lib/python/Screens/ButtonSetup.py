@@ -22,7 +22,7 @@ def getButtonSetupKeys():
 		(_("Green"), "green", "Module/OPENDROID.GreenPanel/GreenPanel"),
 		(_("Green long"), "green_long", "Infobar/showAutoTimerList"),
 		(_("Yellow"), "yellow", "Infobar/showExtensionSelection"),
-		(_("Yellow long"), "yellow_long", "Plugins/Extensions/IMDb/1"),
+		(_("Yellow long"), "yellow_long", ""),
 		(_("Blue"), "blue", "Module/OPENDROID.BluePanel/BluePanel"),
 		(_("Blue long"), "blue_long", ""),
 		(_("Info (EPG)"), "info", "Infobar/InfoPressed/1"),
@@ -47,6 +47,7 @@ def getButtonSetupKeys():
 		(_("Rec long"), "rec_long", ""),
 		(_("Teletext"), "text", ""),
 		(_("Subtitle"), "subtitle", ""),
+		(_("Subtitle long"), "subtitle_long", ""),
 		(_("Menu"), "mainMenu", ""),
 		(_("List/Fav"), "list", ""),
 		(_("List/Fav long"), "list_long", ""),
@@ -182,8 +183,8 @@ def getButtonSetupFunctions():
 	ButtonSetupFunctions.append((_("Show event details"), "Infobar/openEventView", "EPG"))
 	ButtonSetupFunctions.append((_("Show EPG for current service"), "Infobar/openSingleServiceEPG", "EPG"))
 	ButtonSetupFunctions.append((_("Show multi EPG"), "Infobar/openMultiServiceEPG", "EPG"))
-	ButtonSetupFunctions.append((_("Show select audio track"), "Infobar/audioSelection", "InfoBar"))
 	ButtonSetupFunctions.append((_("Show subtitle selection"), "Infobar/subtitleSelection", "InfoBar"))
+	ButtonSetupFunctions.append((_("Show Audioselection"), "Infobar/audioSelection", "InfoBar"))
 	ButtonSetupFunctions.append((_("Switch to radio mode"), "Infobar/showRadio", "InfoBar"))
 	ButtonSetupFunctions.append((_("Switch to TV mode"), "Infobar/showTv", "InfoBar"))
 	ButtonSetupFunctions.append((_("Instant record"), "Infobar/instantRecord", "InfoBar"))
@@ -207,16 +208,8 @@ def getButtonSetupFunctions():
 		ButtonSetupFunctions.append((_("Toggle HDMI-In PiP"), "Infobar/HDMIInPiP", "InfoBar"))
 	if SystemInfo["LcdLiveTV"]:
 		ButtonSetupFunctions.append((_("Toggle LCD LiveTV"), "Infobar/ToggleLCDLiveTV", "InfoBar"))
-	if SystemInfo["HaveMultiBootHD"]:
-		ButtonSetupFunctions.append((_("MultiBoot Selector"), "Module/Screens.MultiBootStartup/MultiBootStartup", "InfoBar"))
-	if SystemInfo["HaveMultiBootGB"]:
-		ButtonSetupFunctions.append((_("MultiBoot Selector"), "Module/Screens.MultiBootStartupGB/MultiBootStartup", "InfoBar"))
-	if SystemInfo["HaveMultiBootCY"]:
-		ButtonSetupFunctions.append((_("MultiBoot Selector"), "Module/Screens.MultiBootStartupCY/MultiBootStartup", "InfoBar"))
-	if SystemInfo["HaveMultiBootDS"]:
-		ButtonSetupFunctions.append((_("MultiBoot Selector"), "Module/Screens.MultiBootStartupDS/MultiBootStartup", "InfoBar"))
-	if SystemInfo["HaveMultiBootOS"]:
-		ButtonSetupFunctions.append((_("MultiBoot Selector"), "Module/Screens.MultiBootStartupOS/MultiBootStartup", "InfoBar"))
+	if SystemInfo["canMultiBoot"]:
+		ButtonSetupFunctions.append((_("MultiBootSelector"), "Module/Screens.MultiBootSelector/MultiBootSelector", "InfoBar"))
 	ButtonSetupFunctions.append((_("Do nothing"), "Void", "InfoBar"))
 	ButtonSetupFunctions.append((_("Button setup"), "Module/Screens.ButtonSetup/ButtonSetup", "Setup"))
 	ButtonSetupFunctions.append((_("Software update"), "Module/Screens.SoftwareUpdate/UpdatePlugin", "Setup"))
@@ -652,13 +645,13 @@ class InfoBarButtonSetup():
 					return 0
 			elif selected[0] == "Module":
 				try:
-					exec "from " + selected[1] + " import *"
-					exec "self.session.open(" + ",".join(selected[2:]) + ")"
+					exec "from %s import %s" % (selected[1], selected[2])
+					exec "self.session.open(%s)" %  ",".join(selected[2:])
 				except:
 					print "[ButtonSetup] error during executing module %s, screen %s" % (selected[1], selected[2])
 			elif selected[0] == "Setup":
-				exec "from Screens.Setup import *"
-				exec "self.session.open(Setup, \"" + selected[1] + "\")"
+				from Screens.Setup import Setup
+				exec "self.session.open(Setup, \"%s\")" % selected[1]
 			elif selected[0].startswith("Zap"):
 				if selected[0] == "ZapPanic":
 					self.servicelist.history = []

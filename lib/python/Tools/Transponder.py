@@ -22,7 +22,7 @@ def getChannelNumber(frequency, nim):
 			if n.isCompatible("DVB-T"):
 				nim = n.slot
 				break
-	f = int(getMHz(frequency))
+	f = getMHz(frequency)
 	descr = getTunerDescription(nim)
 	if "DVB-T" in descr:
 		if "Europe" in descr:

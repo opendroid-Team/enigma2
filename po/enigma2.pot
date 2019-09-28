@@ -3852,7 +3852,7 @@ msgstr ""
 msgid "Configure the netmask."
 msgstr ""
 
-msgid "Configure the number of days after which items are automaticaly removed from the trash can."
+msgid "Configure the number of days after which items are automatically removed from the trash can."
 msgstr ""
 
 msgid "Configure the number of days old timers are kept before they are automatically removed from the timer list."
@@ -4336,7 +4336,7 @@ msgstr ""
 msgid "Delay for external subtitles"
 msgstr ""
 
-msgid "Delay in miliseconds before start of scrolling text on display."
+msgid "Delay in milliseconds before start of scrolling text on display."
 msgstr ""
 
 msgid "Channel zap delay mode"
@@ -4348,7 +4348,7 @@ msgstr ""
 msgid "Channel zap delay first button"
 msgstr ""
 
-msgid "Delay in miliseconds after finish scrolling text on display."
+msgid "Delay in milliseconds after finish scrolling text on display."
 msgstr ""
 
 msgid "Delay:"
@@ -5534,7 +5534,7 @@ msgstr ""
 msgid "Full screen"
 msgstr ""
 
-msgid "Fulview resulution"
+msgid "Fulview Resolution"
 msgstr ""
 
 msgid "Automatic resolution"
@@ -9181,7 +9181,7 @@ msgstr ""
 msgid "Show HDMI-Output Res"
 msgstr ""
 
-msgid "Show HDMI Output Resulution"
+msgid "Show HDMI Output Resolution"
 msgstr ""
 
 msgid "Select excluded backup files"
@@ -10328,7 +10328,7 @@ msgstr ""
 msgid "Show preview of current mode (*)."
 msgstr ""
 
-msgid "This option moves the PVR status from the seprate window into the MoviePlayer infobar."
+msgid "This option moves the PVR status from the separate window into the MoviePlayer infobar."
 msgstr ""
 
 msgid "LCD skin"
@@ -11178,7 +11178,7 @@ msgstr ""
 msgid "Stop timeshift while recording?"
 msgstr ""
 
-msgid "Stop's timeshift being used if a recording is in progress. (adviseable for usb sticks)"
+msgid "Stop's timeshift being used if a recording is in progress. (advisable for usb sticks)"
 msgstr ""
 
 msgid "Stopped"
@@ -13354,7 +13354,7 @@ msgstr ""
 msgid "When enabled the PiP can be closed by the EXIT button."
 msgstr ""
 
-msgid "When enabled, the lenght of each recording will be shown in the movielist (this might cause some additional loading time)."
+msgid "When enabled, the length of each recording will be shown in the movielist (this might cause some additional loading time)."
 msgstr ""
 
 msgid "When enabled the original line breaks will be removed from the teletext subtitles."
@@ -16743,18 +16743,6 @@ msgstr ""
 
 #: ButtonSetup.py:210
 msgid "Kodi MediaCenter"
-msgstr ""
-
-msgid "Kodi"
-msgstr ""
-
-msgid "Kodi installed:"
-msgstr ""
-
-msgid "Kodi Launcher"
-msgstr ""
-
-msgid "Kodi/extra partition free space:"
 msgstr ""
 
 #: ButtonSetup.py:211

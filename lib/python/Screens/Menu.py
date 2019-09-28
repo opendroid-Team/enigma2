@@ -87,9 +87,8 @@ class Menu(Screen, ProtectedScreen):
 		#        stuff which is just imported)
 		# FIXME. somehow
 		if arg[0] != "":
-			exec "from " + arg[0] + " import *"
-
-		self.openDialog(*eval(arg[1]))
+			exec "from %s import %s" % (arg[0], arg[1].split(",")[0])
+			self.openDialog(*eval(arg[1]))
 
 	def nothing(self): #dummy
 		pass

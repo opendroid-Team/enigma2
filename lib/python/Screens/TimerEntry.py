@@ -134,6 +134,8 @@ class TimerEntry(Screen, ConfigListScreen):
 		self.timerentry_justplay = ConfigSelection(choices = [
 			("zap", _("zap")), ("record", _("record")), ("zap+record", _("zap and record"))],
 			default = {0: "record", 1: "zap", 2: "zap+record"}[justplay + 2*always_zap])
+		self.timertyp = self.timerentry_justplay.value
+
 		if SystemInfo["DeepstandbySupport"]:
 			shutdownString = _("go to deep standby")
 		else:
@@ -186,13 +188,26 @@ class TimerEntry(Screen, ConfigListScreen):
 		self.timerentry_service = ConfigSelection([servicename])
 
 	def createSetup(self, widget):
+		if not self.timer in self.session.nav.RecordTimer.timer_list:
+			newtime = None
+			if self.timerentry_justplay.value == 'zap' and self.timertyp != 'zap':
+				newtime = self.getTimestamp(self.timerentry_date.value, self.timerentry_starttime.value) + config.recording.margin_before.value * 60
+				newbegin = localtime(newtime)
+			elif self.timerentry_justplay.value != 'zap' and self.timertyp == 'zap':
+				newtime = self.getTimestamp(self.timerentry_date.value, self.timerentry_starttime.value) - config.recording.margin_before.value * 60
+				newbegin = localtime(newtime)
+			if newtime:
+				self.timerentry_date.value = newtime
+				self.timerentry_starttime.value = [newbegin.tm_hour, newbegin.tm_min]
+			self.timertyp = self.timerentry_justplay.value
+
 		self.list = []
+		self.timerJustplayEntry = getConfigListEntry(_("Timer type"), self.timerentry_justplay, _("Chose between record and ZAP."))
+		self.list.append(self.timerJustplayEntry)
 		self.entryName = getConfigListEntry(_("Name"), self.timerentry_name, _("Set the name the recording will get."))
 		self.list.append(self.entryName)
 		self.entryDescription = getConfigListEntry(_("Description"), self.timerentry_description, _("Set the description of the recording."))
 		self.list.append(self.entryDescription)
-		self.timerJustplayEntry = getConfigListEntry(_("Timer type"), self.timerentry_justplay, _("Chose between record and ZAP."))
-		self.list.append(self.timerJustplayEntry)
 		self.timerTypeEntry = getConfigListEntry(_("Repeat type"), self.timerentry_type, _("A repeating timer or just once?"))
 		self.list.append(self.timerTypeEntry)
 
@@ -320,8 +335,8 @@ class TimerEntry(Screen, ConfigListScreen):
 		cur = self["config"].getCurrent()
 		if cur in (self.channelEntry, self.tagsSet):
 			self.keySelect()
-		elif cur in (self.entryName, self.entryDescription):
-			self.renameEntry()
+		#elif cur in (self.entryName, self.entryDescription):
+		#	self.renameEntry()
 		else:
 			ConfigListScreen.keyLeft(self)
 			self.newConfig()
@@ -330,8 +345,8 @@ class TimerEntry(Screen, ConfigListScreen):
 		cur = self["config"].getCurrent()
 		if cur in (self.channelEntry, self.tagsSet):
 			self.keySelect()
-		elif cur in (self.entryName, self.entryDescription):
-			self.renameEntry()
+		#elif cur in (self.entryName, self.entryDescription):
+		#	self.renameEntry()
 		else:
 			ConfigListScreen.keyRight(self)
 			self.newConfig()
@@ -662,18 +677,20 @@ class TimerLog(Screen):
 			self["logentry"].setText("")
 
 class InstantRecordTimerEntry(TimerEntry):
-	def __init__(self, session, timer, zap):
+	def __init__(self, session, timer, zap = 0, zaprecord = 0):
 		Screen.__init__(self, session)
 		self.setup_title = ""
 		self.timer = timer
 		self.timer.justplay = zap
+		self.timer.always_zap = zaprecord
 		self.entryDate = None
 		self.entryService = None
 		self.keyGo()
 
 	def keyGo(self, result = None):
 		if self.timer.justplay:
-			self.timer.end = self.timer.begin + (config.recording.margin_before.value * 60) + 1
+			self.timer.begin += config.recording.margin_before.value * 60
+			self.timer.end = self.timer.begin + 1
 		self.timer.resetRepeated()
 		self.saveTimer()
 

@@ -2,13 +2,13 @@
 
 > Ubuntu 16.04.1 LTS 
 
-## openDroid 6.6 is build using oe-alliance build-environment and several git repositories: ##
+## openDroid 6.8 is build using oe-alliance build-environment and several git repositories: ##
 
-> [https://github.com/oe-alliance/oe-alliance-core/tree/4.2](https://github.com/oe-alliance/oe-alliance-core/tree/4.2 "OE-Alliance")
+> [https://github.com/oe-alliance/oe-alliance-core/tree/4.3](https://github.com/oe-alliance/oe-alliance-core/tree/4.3 "OE-Alliance")
 > 
 > [https://github.com/opendroid-Team/enigma2]  (https://github.com/opendroid-Team/enigma2 "openDroid Enigma2")
 > 
-> [https://github.com/stein17/OPD-Blue-Line](https://github.com/stein17/OPD-Blue-Line "openDroid Skin")
+> [https://github.com/stein17/Skins-for-openOPD](https://github.com/stein17/Skins-for-openOPD "openDroid Skin")
 
 > and a lot more...
 
@@ -19,8 +19,7 @@
 
 1 - Install packages on your buildserver
 
-    sudo apt-get install -y autoconf automake bison bzip2 curl cvs diffstat flex g++ gawk gcc gettext git-core gzip help2man ncurses-bin ncurses-dev libc6-dev libtool make texinfo patch perl pkg-config subversion tar texi2html wget zlib1g-dev chrpath libxml2-utils xsltproc libglib2.0-dev python-setuptools zip info coreutils diffstat chrpath libproc-processtable-perl libperl4-corelibs-perl sshpass default-jre default-jre-headless java-common libserf-dev qemu quilt
-----------
+    sudo apt-get install -y psmisc autoconf automake bison bzip2 curl cvs diffstat flex g++ gawk gcc gettext git gzip help2man ncurses-bin libncurses5-dev libc6-dev libtool make texinfo patch perl pkg-config subversion tar texi2html wget zlib1g-dev chrpath libxml2-utils xsltproc libglib2.0-dev python-setuptools zip info coreutils diffstat chrpath libproc-processtable-perl libperl4-corelibs-perl sshpass default-jre default-jre-headless java-common libserf-dev qemu quilt libssl-dev
 2 - Set your shell to /bin/bash.
 
     sudo dpkg-reconfigure dash
@@ -28,6 +27,15 @@
     select "NO"
 
 ----------
+
+3 - modify max_user_watches
+
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+
+    sysctl -n -w fs.inotify.max_user_watches=524288
+
+----------
+
 3 - Add user opendroidbuilder
 
     sudo adduser opendroidbuilder
@@ -55,7 +63,7 @@
 ----------
 8 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b 4.2
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 4.3
 
 ----------
 9 - Switch to folder build-enviroment

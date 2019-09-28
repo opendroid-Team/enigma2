@@ -5,7 +5,7 @@ from time import localtime, strftime, ctime, time
 from bisect import insort
 from sys import maxint
 import os
-from enigma import eEPGCache, getBestPlayableServiceReference, eStreamServer, eServiceReference, iRecordableService, quitMainloop, eActionMap, setPreferredTuner, eServiceCenter
+from enigma import eEPGCache, getBestPlayableServiceReference, eServiceReferenceDVB, eStreamServer, eServiceReference, iRecordableService, quitMainloop, eActionMap, setPreferredTuner, eServiceCenter
 
 from Components.config import config
 from Components import Harddisk
@@ -15,6 +15,7 @@ import Components.RecordingConfig
 Components.RecordingConfig.InitRecordingConfig()
 from Screens.MessageBox import MessageBox
 import Screens.Standby
+from Tools.ServiceReference import service_types_tv_ref, service_types_radio_ref, serviceRefAppendPath
 from Tools import Directories, Notifications, ASCIItranslit, Trashcan
 from Tools.XMLTools import stringToXML
 import timer
@@ -96,18 +97,8 @@ def findSafeRecordPath(dirname):
 			return None
 	return dirname
 
-# type 1 = digital television service
-# type 4 = nvod reference service (NYI)
-# type 17 = MPEG-2 HD digital television service
-# type 22 = advanced codec SD digital television
-# type 24 = advanced codec SD NVOD reference service (NYI)
-# type 25 = advanced codec HD digital television
-# type 27 = advanced codec HD NVOD reference service (NYI)
-# type 2 = digital radio sound service
-# type 10 = advanced codec digital radio sound service
-
-service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
-service_types_radio = '1:7:2:0:0:0:0:0:0:0:(type == 2) || (type == 10)'
+service_types_tv = service_types_tv_ref.toString()
+service_types_radio = service_types_radio_ref.toString()
 
 def getBqRootStr(ref):
 	ref = ref.toString()
@@ -221,11 +212,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			s = os.statvfs(dirname)
 			if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
 				self.stop_MountTest(None, cmd)
-		elif cmd == 'driveawake':
-			if not subprocess.call('touch %s/drive.awake' % dirname, shell=True):
-				subprocess.call('rm -f %s/drive.awake' % dirname, shell=True)
-			else:
-				self.stop_MountTest(None, cmd)
 
 	def stop_MountTest(self, thread, cmd):
 		if thread and thread.isAlive():
@@ -236,55 +222,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			self.MountPathErrorNumber = 2
 		elif cmd == 'freespace':
 			self.MountPathErrorNumber = 3
-		elif cmd == 'driveawake':
-			self.MountPathErrorNumber = 4
-
-	def freespace_old(self, WRITEERROR = False):
-		if WRITEERROR:
-			if findSafeRecordPath(self.MountPath) is None:
-				return ("mount '%s' is not available." % self.MountPath, 1)
-			elif not os.access(self.MountPath, os.W_OK):
-				return ("mount '%s' is not writeable." % self.MountPath, 2)
-			s = os.statvfs(self.MountPath)
-			if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
-				return ("mount '%s' has not enough free space to record." % self.MountPath, 3)
-			else:
-				return ("unknown error.", 0)
-
-		self.MountPath = None
-		if not self.dirname:
-			dirname = findSafeRecordPath(defaultMoviePath())
-		else:
-			dirname = findSafeRecordPath(self.dirname)
-			if dirname is None:
-				dirname = findSafeRecordPath(defaultMoviePath())
-				self.dirnameHadToFallback = True
-		if not dirname:
-			dirname = self.dirname
-			if not dirname:
-				dirname = defaultMoviePath() or '-'
-			self.log(0, ("Mount '%s' is not available." % dirname))
-			self.MountPathErrorNumber = 1
-			return False
-
-		mountwriteable = os.access(dirname, os.W_OK)
-		if not mountwriteable:
-			self.log(0, ("Mount '%s' is not writeable." % dirname))
-			self.MountPathErrorNumber = 2
-			return False
-
-		s = os.statvfs(dirname)
-		if (s.f_bavail * s.f_bsize) / 1000000 < 1024:
-			self.log(0, _("Mount '%s' has not enough free space to record.") % dirname)
-			self.MountPathErrorNumber = 3
-			return False
-		else:
-			if debug:
-				self.log(0, "Found enough free space to record")
-			self.MountPathRetryCounter = 0
-			self.MountPathErrorNumber = 0
-			self.MountPath = dirname
-			return True
 
 	def freespace(self, WRITEERROR = False):
 		if WRITEERROR:
@@ -328,8 +265,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				return ("mount '%s' is not writeable." % dirname, 2)
 			elif self.MountPathErrorNumber == 3:
 				return ("mount '%s' has not enough free space to record." % dirname, 3)
-			elif self.MountPathErrorNumber == 4:
-				return ("mount '%s' has failed to write file." % dirname, 2)
 			else:
 				return ("unknown error.", 0)
 
@@ -338,10 +273,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			return False
 		elif self.MountPathErrorNumber == 3:
 			self.log(0, _("Mount '%s' has not enough free space to record.") % dirname)
-			return False
-		elif self.MountPathErrorNumber == 4:
-			self.MountPathErrorNumber = 2
-			self.log(0, _("Mount '%s' has failed to write file.") % dirname)
 			return False
 		else:
 			if debug:
@@ -500,7 +431,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					self.start_prepare = time() + 5 # tryPrepare in 5 seconds
 					self.log(0, "next try in 5 seconds ...(%d/3)" % self.MountPathRetryCounter)
 					return False
-				message = _("Write error at start of recording. Disk %s\n%s") % ((_("not found!"), _("not writable!"), _("full?"))[self.MountPathErrorNumber-1],self.name)
+				message = _("Write error at start of recording. %s\n%s") % ((_("Disk was not found!"), _("Disk is not writable!"), _("Disk full?"))[self.MountPathErrorNumber-1],self.name)
 				messageboxtyp = MessageBox.TYPE_ERROR
 				timeout = 20
 				id = "DiskFullMessage"
@@ -679,9 +610,15 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.first_try_prepare += 1
 				self.log(8, "freeing a tuner failed")
 				if self.messageString:
-					Notifications.AddNotification(MessageBox, _("No tuner is available for recording a timer!\n\nThe following methods of freeing a tuner were tried without success:\n\n") + self.messageString, type=MessageBox.TYPE_INFO, timeout=20)
+					message = _("No tuner is available for recording a timer!\n\nThe following methods of freeing a tuner were tried without success:\n\n") + self.messageString
 				else:
-					Notifications.AddNotification(MessageBox, _("No tuner is available for recording a timer!\n"), type=MessageBox.TYPE_INFO, timeout=20)
+					message = _("No tuner is available for recording a timer!\n")
+				messageboxtyp = MessageBox.TYPE_INFO
+				timeout = 20
+				if InfoBar and InfoBar.instance:
+					InfoBar.instance.openInfoBarMessage(callback, message, messageboxtyp, timeout)
+				else:
+					Notifications.AddNotification(MessageBox, message, messageboxtyp, timeout = timeout)
 
 			return False
 
@@ -802,13 +739,13 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 			if debug: print "[RECORDTIMER] box_instandby=%s" % box_instandby, "tv_notactive=%s" % tv_notactive, "wasRecTimerWakeup=%s" % wasRecTimerWakeup, "self.wasInStandby=%s" % self.wasInStandby, "self.afterEvent=%s" % self.afterEvent, "isRecordTime=%s" % isRecordTime
 
-			timeout = 180
-			default = True
-			messageboxtyp = MessageBox.TYPE_YESNO
 			if self.afterEvent == AFTEREVENT.STANDBY or (self.afterEvent == AFTEREVENT.AUTO and self.wasInStandby and (not wasRecTimerWakeup or (wasRecTimerWakeup and isRecordTime))):
 				if not box_instandby and not tv_notactive:# not already in standby
 					callback = self.sendStandbyNotification
 					message = _("A finished record timer wants to set your\n%s %s to standby. Do that now?") % (getMachineBrand(), getMachineName())
+					messageboxtyp = MessageBox.TYPE_YESNO
+					timeout = int(config.usage.shutdown_msgbox_timeout.value)
+					default = True
 					if InfoBar and InfoBar.instance:
 						InfoBar.instance.openInfoBarMessageWithCallback(callback, message, messageboxtyp, timeout, default)
 					else:
@@ -833,6 +770,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					if not box_instandby and not tv_notactive: # not already in standby
 						callback = self.sendTryQuitMainloopNotification
 						message = _("A finished record timer wants to shut down\nyour %s %s. Shutdown now?") % (getMachineBrand(), getMachineName())
+						messageboxtyp = MessageBox.TYPE_YESNO
+						timeout = int(config.usage.shutdown_msgbox_timeout.value)
+						default = True
 						if InfoBar and InfoBar.instance:
 							InfoBar.instance.openInfoBarMessageWithCallback(callback, message, messageboxtyp, timeout, default)
 						else:
@@ -1122,7 +1062,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			# show notification. the 'id' will make sure that it will be
 			# displayed only once, even if more timers are failing at the
 			# same time. (which is very likely in case of disk fullness)
-			Notifications.AddPopup(text = _("Write error while recording. Disk %s") %(_("unknown error!"), _("not found!"), _("not writable!"), _("full?"))[err], type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage")
+			Notifications.AddPopup(text = _("Write error while recording. %s") %(_("An unknown error occurred!"), _("Disk was not found!"), _("Disk is not writable!"), _("Disk full?"))[err], type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage")
 			# ok, the recording has been stopped. we need to properly note
 			# that in our state, with also keeping the possibility to re-try.
 			# TODO: this has to be done.

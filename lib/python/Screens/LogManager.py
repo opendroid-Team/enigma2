@@ -1,4 +1,4 @@
-﻿from Screens.Screen import Screen
+from Screens.Screen import Screen
 from Components.GUIComponent import GUIComponent
 from Components.VariableText import VariableText
 from Components.ActionMap import ActionMap
@@ -16,6 +16,7 @@ from datetime import datetime
 from enigma import eTimer, eBackgroundFileEraser, eLabel, getDesktop, gFont, fontRenderClass
 from Tools.TextBoundary import getTextBoundarySize
 from glob import glob
+from skin import getSkinFactor
 
 import Components.Task
 
@@ -409,7 +410,7 @@ class LogManager(Screen):
 			self.session.openWithCallback(self.doSendlog, LogManagerFb)
 		else:
 			from Screens.VirtualKeyBoard import VirtualKeyBoard
-			self.session.openWithCallback(self.doSendlog, VirtualKeyBoard, title = 'Additonal Info')
+			self.session.openWithCallback(self.doSendlog, VirtualKeyBoard, title = _("Additional Info"))
 
 	def doSendlog(self, additonalinfo = None):
 		ref = str(time())
@@ -502,16 +503,10 @@ class LogManagerViewLog(Screen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		screenwidth = getDesktop(0).size().width()
-		if screenwidth and screenwidth < 1920:
-			f = 1
-		elif screenwidth and screenwidth < 3840:
-			f = 1.5
-		else:
-			f = 3
-		font = gFont("Console", int(16*f))
+		sf = getSkinFactor()
+		font = gFont("Console", int(16*sf))
 		if not int(fontRenderClass.getInstance().getLineHeight(font)):
-			font = gFont("Regular", int(16*f))
+			font = gFont("Regular", int(16*sf))
 		self["list"].instance.setFont(font)
 		fontwidth = getTextBoundarySize(self.instance, font, self["list"].instance.size(), _(" ")).width()
 		listwidth = int(self["list"].instance.size().width() / fontwidth) - 2
@@ -639,11 +634,11 @@ class LogInfo(VariableText, GUIComponent):
 		if self.type == self.USED:
 			try:
 				if total_size < 10000000:
-					total_size = "%d kB" % (total_size >> 10)
+					total_size = _("%d kB") % (total_size >> 10)
 				elif total_size < 10000000000:
-					total_size = "%d MB" % (total_size >> 20)
+					total_size = _("%d MB") % (total_size >> 20)
 				else:
-					total_size = "%d GB" % (total_size >> 30)
+					total_size = _("%d GB") % (total_size >> 30)
 				self.setText(_("Space used:") + " " + total_size)
 			except:
 				# occurs when f_blocks is 0 or a similar error
