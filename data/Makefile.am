@@ -20,7 +20,6 @@ dist_pkgdata_DATA = \
 	hd-testcard.mvi \
 	distro-logo.png
 
-
 if HAVE_7SEGMENT
 SUBDIRS += 7segment
 endif
