@@ -95,6 +95,7 @@ self.session.open(RemoteControlCode)
 			<item weight="120" level="2" entryID="setup_epginfobar"><setup id="epginfobar" /></item>
 			<item weight="125" level="2" entryID="setup_epginfobargraphical"><setup id="epginfobargraphical" /></item>
 			<item weight="130" level="2" entryID="setup_epggraphical"><setup id="epggraphical" /></item>
+			<item weight="135" level="2" entryID="setup_epgvertical"><setup id="epgvertical" /></item>
 			<menu weight="200" level="2" text="Load/Save/Delete" entryID="epgloadsave_menu">
 				<id val="epgloadsave_menu" />
 				<item weight="0" level="0" entryID="loadepgcache" text="Load EPG">
@@ -254,13 +255,8 @@ else:
 </code>
 		</item>
 		<item weight="5" level="0" text="Shutdown" requires="!DeepstandbySupport" entryID="deep_standby"><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootHD" entryID="deep_standby"><screen module="MultiBootStartup" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootXC" entryID="deep_standby"><screen module="MultiBootStartupXC" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootGB" entryID="deep_standby"><screen module="MultiBootStartupGB" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootCY" entryID="deep_standby"><screen module="MultiBootStartupCY" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootDS" entryID="deep_standby"><screen module="MultiBootStartupDS" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootOS" entryID="deep_standby"><screen module="MultiBootStartupOS" screen="MultiBootStartup" /></item>
-		<item weight="6" level="0" text="MultiBoot" requires="HaveMultiBootADV" entryID="deep_standby"><screen module="MultiBootStartupADV" screen="MultiBootStartup" /></item>
+		<item weight="6" level="0" text="Multiboot Image Selector" entryID="restart" requires="canMultiBoot"><screen module="MultiBootSelector" screen="MultiBootSelector">1</screen></item>
+		<!--item weight="7" level="0" text="SDroot" entryID="SDswap" requires="HasSDswap"><screen module="SDswap" screen="SDswap">1</screen></item-->
 		<item weight="10" level="0" text="WOL Standby" requires="GBWOL" entryID="deep_standby">
 			<code>
 from Screens.Standby import TryQuitMainloop
