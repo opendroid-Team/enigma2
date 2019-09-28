@@ -57,6 +57,37 @@ def findMountPoint(path):
 		path = os.path.dirname(path)
 	return path
 
+def getFolderSize(path):
+	if os.path.islink(path):
+		return (os.lstat(path).st_size, 0)
+	if os.path.isfile(path):
+		st = os.lstat(path)
+		return (st.st_size, st.st_blocks * 512)
+	total_bytes = 0
+	have = []
+	for dirpath, dirnames, filenames in os.walk(path):
+		total_bytes += os.lstat(dirpath).st_blocks * 512
+		for f in filenames:
+			fp = os.path.join(dirpath, f)
+			if os.path.islink(fp):
+				continue
+			st = os.lstat(fp)
+			if st.st_ino in have:
+				continue  # skip hardlinks which were already counted
+			have.append(st.st_ino)
+			total_bytes += st.st_blocks * 512
+		for d in dirnames:
+			dp = os.path.join(dirpath, d)
+	return total_bytes
+
+def Freespace(dev):
+	try:
+		statdev = os.statvfs(dev)
+		space = (statdev.f_bavail * statdev.f_frsize) / 1024
+	except:
+		space = 0
+	return space
+
 
 DEVTYPE_UDEV = 0
 DEVTYPE_DEVFS = 1
@@ -172,8 +203,8 @@ class Harddisk:
 		if cap == 0:
 			return ""
 		if cap < 1000:
-			return "%03d MB" % cap
-		return "%d.%03d GB" % (cap/1000, cap%1000)
+			return _("%03d MB") % cap
+		return _("%d.%03d GB") % (cap/1000, cap%1000)
 
 	def model(self):
 		try:
@@ -194,8 +225,11 @@ class Harddisk:
 	def free(self):
 		dev = self.findMount()
 		if dev:
-			stat = os.statvfs(dev)
-			return int((stat.f_bfree/1000) * (stat.f_bsize/1024))
+			try:
+				stat = os.statvfs(dev)
+				return int((stat.f_bfree/1000) * (stat.f_bsize/1024))
+			except:
+				pass
 		return -1
 
 	def numPartitions(self):
@@ -756,9 +790,9 @@ class HarddiskManager:
 		error = False
 		removable = False
 		BLACKLIST=[]
-		if getMachineBuild() in ('h9combo','h10','u51','u52','u53','u54','u56','u5','u5pvr','hd60','hd61','vuzero4k','et1x000','vuduo4k','vuuno4k','vuuno4kse','vuultimo4k','vusolo4k','hd51','hd52','sf4008','dm900','dm7080','dm820', 'gb7252', 'dags7252', 'vs1500','h7','8100s','et13000','sf5008','sf8008'):
+		if getMachineBuild() in ('gbmv200','multibox','h9combo','h10','v8plus','hd60','hd61','vuduo4k','ustym4kpro','beyonwizv2','viper4k','dags72604','u51','u52','u53','u532','u533','u54','u56','u5','u5pvr','cc1','sf8008','vuzero4k','et1x000','vuuno4k','vuuno4kse','vuultimo4k','vusolo4k','hd51','hd52','sf4008','dm900','dm7080','dm820', 'gb7252', 'dags7252', 'vs1500','h7','8100s','et13000','sf5008'):
 			BLACKLIST=["mmcblk0"]
-		elif getMachineBuild() in ('xc7439','osmio4k'):
+		elif getMachineBuild() in ('xc7439','osmio4k','osmio4kplus'):
 			BLACKLIST=["mmcblk1"]
 
 		blacklisted = False
