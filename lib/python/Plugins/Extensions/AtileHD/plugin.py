@@ -329,7 +329,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		else:
 			return False
 
-
 	def setPicture(self, f):
 		pic = f.replace(".xml", ".png")
 		preview = self.skin_base_dir + "preview/preview_" + pic
@@ -359,7 +358,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self.delaytimer = eTimer()
 		self.delaytimer.callback.append(self.openSkinSelector)
 		self.delaytimer.start(200, True)
-
 
 	def skinChanged(self, ret = None):
 		global cur_skin
@@ -423,7 +421,7 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		if path.exists(user_file) or path.islink(user_file):
 			remove(user_file)
 		if config_entry.value != 'default':
-			symlink(config_entry.value,  user_file)
+			symlink(config_entry.value, user_file)
 
 	def AtileHDScreenCB(self):
 		self.changed_screens = True
@@ -519,11 +517,11 @@ class AtileHDScreens(Screen):
 		self.screen_dir = "allScreens"
 		self.skinparts_dir = "skinparts"
 		self.file_dir = "mySkin_off"
-		my_path = resolveFilename(SCOPE_SKIN, "%s/icons/input_info.png" % cur_skin)
+		my_path = resolveFilename(SCOPE_SKIN, "%s/icons/lock_on.png" % cur_skin)
 		if not path.exists(my_path):
 			my_path = resolveFilename(SCOPE_SKIN, "skin_default/icons/lock_on.png")
 		self.enabled_pic = LoadPixmap(cached = True, path = my_path)
-		my_path = resolveFilename(SCOPE_SKIN, "%s/icons/input_error.png" % cur_skin)
+		my_path = resolveFilename(SCOPE_SKIN, "%s/icons/lock_off.png" % cur_skin)
 		if not path.exists(my_path):
 			my_path = resolveFilename(SCOPE_SKIN, "skin_default/icons/lock_off.png")
 		self.disabled_pic = LoadPixmap(cached = True, path = my_path)
