@@ -18808,12 +18808,12 @@ msgid "because of the used filesystem the back-up\n"
 msgstr "a secondo del sistema, il backup richiede\n"
 
 msgid "will take about 30 minutes for this system\n"
-msgstr "circa 30 minuti per questo sistema\n"
+msgstr "ci vorranno circa 30 minuti per questo sistema\n"
 
 msgid "will take about 1-15 minutes for this system\n"
 msgstr "ci vorranno circa 1-15 minuti per questo sistema\n"
 
-msgid "Almost there... "
+msgid "Wait for... "
 msgstr "Attendere... "
 
 msgid "Now building the Backup Image"

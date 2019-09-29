@@ -463,7 +463,7 @@ class ImageBackup(Screen):
 	def doFullBackupCB(self):
 		cmdlist = []
 		cmdlist.append(self.message)
-		cmdlist.append('echo "' + _("Almost there... ") + '"')
+		cmdlist.append('echo "' + _("Wait for... ") + '"')
 		cmdlist.append('echo "' + _("Now building the Backup Image") + '"')
 
 		os.system('rm -rf %s' %self.MAINDEST)
