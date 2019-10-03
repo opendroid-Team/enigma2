@@ -232,11 +232,11 @@ class ImageBackup(Screen):
 				self.message += VERSION + '\n'
 				self.message += "_________________________________________________\n\n"
 				self.message += _("Please be patient, a backup will now be made,\n")
-				self.message += _("because of the used filesystem the back-up\n")
+				self.message += _("because of the used filesystem the backup\n")
 				if self.RECOVERY:
-					self.message += _("will take about 30 minutes for this system\n")
+					self.message += _("will take about 1-4 minutes for this system\n")
 				else:
-					self.message += _("will take about 1-15 minutes for this system\n")
+					self.message += _("will take about 3-12 minutes for this system\n")
 				self.message += "_________________________________________________\n"
 				self.message += "'"
 

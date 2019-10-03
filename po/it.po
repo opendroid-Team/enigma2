@@ -8769,7 +8769,7 @@ msgid "Please add titles to the compilation."
 msgstr "Aggiungere titoli alla collezione."
 
 msgid "Please be patient, a backup will now be made,\n"
-msgstr "Attendere prego. Sta per avviarsi la creazione di un backup, \n"
+msgstr "Ti preghiamo di pazientare, verrà ora eseguito un backup,\n"
 
 msgid "Please change recording endtime"
 msgstr "Cambiare orario fine registrazione"
@@ -18804,20 +18804,20 @@ msgstr "Strumento di backup per uno %s\n"
 msgid "Back-up Tool for a %s\n"
 msgstr "Strumento di backup per %s\n"
 
-msgid "because of the used filesystem the back-up\n"
-msgstr "a secondo del sistema, il backup richiede\n"
+msgid "because of the used filesystem the backup\n"
+msgstr "a causa del filesystem utilizzato il backup\n"
 
-msgid "will take about 30 minutes for this system\n"
-msgstr "ci vorranno circa 30 minuti per questo sistema\n"
+msgid "will take about 1-4 minutes for this system\n"
+msgstr "richiederà circa 1-4 minuti per questo sistema\n"
 
-msgid "will take about 1-15 minutes for this system\n"
-msgstr "ci vorranno circa 1-15 minuti per questo sistema\n"
+msgid "will take about 3-12 minutes for this system\n"
+msgstr "richiederà circa 3-12 minuti per questo sistema\n"
 
 msgid "Wait for... "
 msgstr "Attendere... "
 
 msgid "Now building the Backup Image"
-msgstr "immagine di backup in Costruzione"
+msgstr "Immagine di backup in Costruzione"
 
 msgid "Time required for this process:"
 msgstr "Tempo richiesto per questo processo:"
