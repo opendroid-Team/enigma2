@@ -290,8 +290,12 @@ class ShowSoftcamPackages(Screen):
 		<screen name="ShowSoftcamPackages" position="center,center" size="630,500" title="Install Softcams" >
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
+			<widget name="key_red,StaticText" source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;18" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+			<widget name="key_green,StaticText" source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;18" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget name="key_yellow,StaticText" source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;18" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
+			<widget name="key_blue,StaticText" source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;18" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
 			<widget source="key_ok" render="Label" position="240,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget source="list" render="Listbox" position="5,50" size="620,420" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
@@ -324,10 +328,10 @@ class ShowSoftcamPackages(Screen):
 		self.list = []
 		self.statuslist = []
 		self["list"] = List(self.list)
-		self["key_red"] = StaticText(_("Close"))
-		self["key_green"] = StaticText(_("Reload"))
-		self["key_ok"] = StaticText(_("Install"))
-                self["key_yellow"] = StaticText(_("oscamsmartcard"))
+		self["key_red"] = Label(_("Close"))
+		self["key_green"] = Label(_("Reload"))
+		self["key_ok"] = Label(_("Install"))
+                self["key_yellow"] = Label(_("oscamsmartcard"))
 		self.oktext = _("\nPress OK on your remote control to continue.")
 		self.onShown.append(self.setWindowTitle)
 		self.setStatus('list')
