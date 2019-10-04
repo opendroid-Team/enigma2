@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-09-29 16:19+0200\n"
+"PO-Revision-Date: 2019-10-04 13:48+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
@@ -5814,10 +5814,6 @@ msgstr "Flash e ripristina la configurazione e i plugin selezionati (chiedi all�
 
 msgid "Flash and start installation wizard"
 msgstr "Flash ed avvia l’installazione guidata"
-
-#, fuzzy
-msgid "Flash on the fly your your Receiver software."
-msgstr "Esegui un flash attraverso la rete."
 
 msgid "Flashing"
 msgstr "Flash in corso"
@@ -18834,8 +18830,8 @@ msgstr "Per ripristinare l'immagine:"
 msgid "Use OnlineFlash in SoftwareManager"
 msgstr "Utilizzare il flash online in Software Manager"
 
-msgid "Please check the manual of the receiver"
-msgstr "Si prega di controllare il manuale del ricevitore"
+msgid "Otherwise, please check the receiver manual"
+msgstr "Altrimenti, consultare il manuale del ricevitore"
 
 msgid "on how to restore the image"
 msgstr "su come ripristinare l'immagine"
@@ -18967,3 +18963,49 @@ msgstr "Sì, ma se non disponibile, mostra lista plugin"
 
 msgid "Audio Selection"
 msgstr "Seleziona audio"
+
+msgid "Use the cursor keys to select an installed image and then Start button."
+msgstr "Utilizzare i tasti cursore per selezionare un'immagine installata, quindi il pulsante Start."
+
+msgid "slot%s - %s - %s as USB Recovery"
+msgstr "slot%s - %s - %s come recupero USB"
+
+msgid "slot%s - %s - %s (current image"
+msgstr "slot%s - %s - %s (immagine corrente"
+
+msgid "internal flash: %s %s as USB Recovery"
+msgstr "flash interno: %s %s come recupero USB"
+
+msgid "internal flash:  %s %s "
+msgstr "flash interno:  %s %s "
+
+msgid "Please select a backup destination"
+msgstr "Seleziona la destinazione del backup"
+
+msgid "No, do not backup a image"
+msgstr "No, non eseguire il backup di un'immagine"
+
+msgid "Backup to destination: %s"
+msgstr "Destinazione Backup: %s"
+
+msgid "Cannot create backup directory"
+msgstr "Impossibile creare la directory di backup"
+
+msgid "Multiboot Image created on: %s/%s-%s-%s-backup-%s_usb.zip"
+msgstr "Immagine multiboot creata on: %s/%s-%s-%s-backup-%s_usb.zip"
+
+msgid ""
+" https://droidsat.org/forum/\n"
+"\n"
+msgstr ""
+" https://droidsat.org/forum/\n"
+"\n"
+
+msgid "Image created on: %s/%s-%s-%s-backup-%s_recovery.zip"
+msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_recovery.zip"
+
+msgid "Image created on: %s/%s-%s-%s-backup-%s_mmc.zip"
+msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_mmc.zip"
+
+msgid "Image created on: %s/%s-%s-%s-backup-%s_usb.zip"
+msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_usb.zip
