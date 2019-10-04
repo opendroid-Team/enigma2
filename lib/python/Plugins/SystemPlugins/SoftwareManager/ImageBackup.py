@@ -587,7 +587,7 @@ class ImageBackup(Screen):
 			cmdlist.append('echo " "')
 			cmdlist.append('echo "' + _("To restore the image:") + '"')
 			cmdlist.append('echo "' + _("Use OnlineFlash in SoftwareManager") + '"')
-                        cmdlist.append('echo "' + _("Otherwise, please check the receiver manual") + '"')
+			cmdlist.append('echo "' + _("Otherwise, please check the receiver manual") + '"')
 			cmdlist.append('echo "' + _("on how to restore the image") + '"')
 		else:
 			cmdlist.append('echo "_________________________________________________\n"')
