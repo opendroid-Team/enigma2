@@ -19004,4 +19004,4 @@ msgid "Image created on: %s/%s-%s-%s-backup-%s_mmc.zip"
 msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_mmc.zip"
 
 msgid "Image created on: %s/%s-%s-%s-backup-%s_usb.zip"
-msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_usb.zip
+msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_usb.zip"
