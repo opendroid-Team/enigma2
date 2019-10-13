@@ -19005,3 +19005,6 @@ msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_mmc.zip"
 
 msgid "Image created on: %s/%s-%s-%s-backup-%s_usb.zip"
 msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_usb.zip"
+
+msgid "You must set a root password in order to be able to use network services, such as FTP, telnet or ssh."
+msgstr "Devi impostare una password di root per poter usare i servizi di rete, come FTP, telnet o ssh."

@@ -184,6 +184,7 @@ self.session.open(UsbFormat)
 				<item weight="50" level="2" text="SABnzbd Setup" entryID="netsabnzbd_setup"><screen module="NetworkSetup" screen="NetworkSABnzbd"/></item>
 				<item weight="55" level="2" text="Telnet Setup" entryID="nettelnet_setup"><screen module="NetworkSetup" screen="NetworkTelnet"/></item>
 				<item weight="60" level="2" text="uShare Setup" entryID="netushare_setup"><screen module="NetworkSetup" screen="NetworkuShare"/></item>
+                                <item weight="3"  level="1" text="Password setup" entryID="password_setup"><screen module="NetworkSetup" screen="NetworkPassword"/></item>
 			</menu>
 			<item weight="60" level="0" entryID="time_setup"><setup id="time"/></item>
 			<item weight="70" level="0" entryID="logs_setup"><setup id="logs" /></item>
