@@ -3955,14 +3955,13 @@ class NetworkServicesSummary(Screen):
 		self["autostartstatus_summary"].text = autostartstatus_summary
 
 class NetworkPassword(Screen):
-
 	def __init__(self, session, args = 0):
 		Screen.__init__(self, session)
 		self.skinName = "NetworkPassword"
-		self.title = _('Password setup')
-                self['lab1'] = ScrollLabel('')
+		self.title = _("Password setup")
+		self['lab1'] = ScrollLabel('')
 		try:
-			self['title'] = StaticText(self.title)
+			self["title"] = StaticText(self.title)
 		except:
 			print 'self["title"] was not found in skin'
 
@@ -3970,29 +3969,28 @@ class NetworkPassword(Screen):
 		self.output_line = ''
 		self.list = []
 		self['passwd'] = ConfigList(self.list)
-		self['key_red'] = StaticText(_('Close'))
-		self['key_green'] = StaticText(_('Save'))
-		self['key_yellow'] = StaticText(_('new Random'))
-		self['key_blue'] = StaticText(_('virt. Keyboard'))
-		self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {
-			'red': self.close,
-			'green': self.SetPasswd,
-                        "save": self.SetPasswd,
-			'yellow': self.newRandom,
-			'blue': self.bluePressed,
-                        'down': self['lab1'].pageDown,
-			'cancel': self.close}, -1)
-                self['lab1'].hide()
-                self.updatetext()
+		self["key_red"] = StaticText(_("Close"))
+		self["key_green"] = StaticText(_("Save"))
+		self["key_yellow"] = StaticText(_("new Random"))
+		self["key_blue"] = StaticText(_("virt. Keyboard"))
+		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"], {
+			"red": self.close,
+			"green": self.SetPasswd,
+			"save": self.SetPasswd,
+			"yellow": self.newRandom,
+			"blue": self.bluePressed,
+			"down": self['lab1'].pageDown,
+			"cancel": self.close}, -1)
+		self["lab1"].hide()
+		self.updatetext()
 		self.buildList(self.GeneratePassword())
 		self.onShown.append(self.setWindowTitle)
-                self.updatetext()
-                self['lab1'].show()
+		self["lab1"].show()
 
-        def updatetext(self):
-                message = _("You must set a root password in order to be able to use network services,"
+	def updatetext(self):
+		message = _("You must set a root password in order to be able to use network services,"
 						" such as FTP, telnet or ssh.")
-                self['lab1'].setText(message)
+		self["lab1"].setText(message)
 
 	def newRandom(self):
 		self.buildList(self.GeneratePassword())
@@ -4000,8 +3998,8 @@ class NetworkPassword(Screen):
 	def buildList(self, password):
 		self.password = password
 		self.list = []
-		self.list.append(getConfigListEntry(_('Enter new Password'), ConfigText(default=self.password, fixed_size=False)))
-		self['passwd'].setList(self.list)
+		self.list.append(getConfigListEntry(_("Enter new Password"), ConfigText(default=self.password, fixed_size=False)))
+		self["passwd"].setList(self.list)
 
 	def GeneratePassword(self):
 		passwdChars = string.letters + string.digits
@@ -4014,9 +4012,9 @@ class NetworkPassword(Screen):
 		self.container.dataAvail.append(self.processOutputLine)
 		retval = self.container.execute('passwd %s' % self.user)
 		if retval == 0:
-			self.session.open(MessageBox, _('Sucessfully changed password for root user to:\n%s ' % self.password), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Sucessfully changed password for root user to:\n%s " % self.password), MessageBox.TYPE_INFO)
 		else:
-			self.session.open(MessageBox, _('Unable to change/reset password for root user'), MessageBox.TYPE_ERROR)
+			self.session.open(MessageBox, _("Unable to change/reset password for root user"), MessageBox.TYPE_ERROR)
 
 	def dataAvail(self,data):
 		self.output_line += data
@@ -4027,8 +4025,8 @@ class NetworkPassword(Screen):
 
 	def processOutputLine(self, line):
 		if line.find('new UNIX password: '):
-			print '2password:%s\n' % self.password
-			self.container.write('%s\n' % self.password)
+			print "2password:%s\n" % self.password
+			self.container.write("%s\n" % self.password)
 			self.output_line = ''
 
 	def runFinished(self, retval):
@@ -4049,7 +4047,7 @@ class NetworkPassword(Screen):
 		if not title:
 			title = self.title
 		try:
-			self['title'] = StaticText(title)
+			self["title"] = StaticText(title)
 		except:
 			pass
 

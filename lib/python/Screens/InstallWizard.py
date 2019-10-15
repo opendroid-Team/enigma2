@@ -19,6 +19,7 @@ class InstallWizard(Screen, ConfigListScreen):
 	STATE_CHOISE_CHANNELLIST = 1
 	INSTALL_PLUGINS = 2
 	INSTALL_SKINS = 3
+	INSTALL_NETWORkPASSWORD = 4
 
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
@@ -56,6 +57,9 @@ class InstallWizard(Screen, ConfigListScreen):
 		elif self.index == self.INSTALL_SKINS:
 			self.enabled = ConfigYesNo(default = True)
 			self.createMenu()
+		elif self.index == self.INSTALL_NETWORkPASSWORD:
+			self.enabled = ConfigYesNo(default = True)
+			self.createMenu()
 
 	def checkNetworkCB(self, data):
 		if data < 3:
@@ -87,6 +91,8 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Do you want to install plugins"), self.enabled))
 		elif self.index == self.INSTALL_SKINS:
 			self.list.append(getConfigListEntry(_("Do you want to change the default skin"), self.enabled))
+		elif self.index == self.INSTALL_NETWORkPASSWORD:
+			self.list.append(getConfigListEntry(_("To access the network services enter the password"), self.enabled))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -114,6 +120,9 @@ class InstallWizard(Screen, ConfigListScreen):
 		elif self.index == self.INSTALL_SKINS and self.enabled.value:
 			from SkinSelector import SkinSelector
 			self.session.open(SkinSelector)
+		elif self.index == self.INSTALL_NETWORkPASSWORD and self.enabled.value:
+			from NetworkSetup import NetworkPassword
+			self.session.open(NetworkPassword)
 		return
 
 class InstallWizardIpkgUpdater(Screen):

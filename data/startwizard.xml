@@ -365,12 +365,23 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-		<step id="skins">
+		<step id="skins" nextstep="NetworkPassword">
 			<condition>
 self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
 			</condition>
 			<text value="Skin install" />
 			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
+			<code>
+self.clearSelectedKeys()
+self.selectKey("OK")
+			</code>
+		</step>
+		<step id="NetworkPassword">
+			<condition>
+self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+			</condition>
+			<text value="Password setup" />
+			<config screen="InstallWizard" module="InstallWizard" args="4" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
 self.selectKey("OK")
