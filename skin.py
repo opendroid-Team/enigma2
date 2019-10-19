@@ -28,7 +28,7 @@ fonts = {
 parameters = {}
 constant_widgets = {}
 variables = {}
-DEFAULT_SKIN = "OPD-Blue-Line/skin.xml"
+DEFAULT_SKIN = "multibox-fhd-4opd/skin.xml"
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 isOPDSkin = False
 
