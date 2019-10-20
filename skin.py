@@ -28,7 +28,7 @@ fonts = {
 parameters = {}
 constant_widgets = {}
 variables = {}
-DEFAULT_SKIN = "multibox-fhd-4opd/skin.xml"
+DEFAULT_SKIN = "Multibox/skin.xml"
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 isOPDSkin = False
 
@@ -390,7 +390,7 @@ def cachemenu():
 		ptr = loadPixmap(value, desktop)
 		pngcache.append((value,ptr))
 try:
-	if config.skin.primary_skin.value == "OPD-Blue-Line/skin.xml" or config.skin.primary_skin.value == DEFAULT_SKIN:
+	if config.skin.primary_skin.value == "Multibox/skin.xml" or config.skin.primary_skin.value == DEFAULT_SKIN:
 		cachemenu()
 except:
 	print "fail cache main menu"
