@@ -37,16 +37,19 @@ class MultiBootWizard(Screen):
 
 	def __init__(self, session,menu_path=""):
 		Screen.__init__(self, session)
+                self.skinName = "MultiBootWizard"
 		Screen.setTitle(self, _("MultiBoot Image Manager"))
 		if SystemInfo["HasSDmmc"] and not pathExists('/dev/sda4'):
 			self["key_red"] = StaticText(_("Cancel"))
 			self["description"] = StaticText(_("Press Init to format SDcard."))
 			self["options"] = StaticText("")
 			self["key_yellow"] = StaticText(_("Init SDcard"))
+			self["key_blue"] = StaticText(_("Reboot"))
 			self["config"] = ChoiceList(list=[ChoiceEntryComponent('',((""), "Queued"))])
 			self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "KeyboardInputActions", "MenuActions"],
 			{
 				"red": boundFunction(self.close, None),
+				"blue": self.reboot,
 				"yellow": self.format,
 				"ok": self.erase,
 				"cancel": boundFunction(self.close, None),
@@ -65,6 +68,7 @@ class MultiBootWizard(Screen):
 			self["description"] = StaticText(_("Use the cursor keys to select an installed image and then Erase button."))
 			self["options"] = StaticText(_("Note: slot list does not show current image or empty slots."))
 			self["key_green"] = StaticText(_("Erase"))
+			self["key_blue"] = Label(_("Reboot"))
 			if SystemInfo["HasSDmmc"]:
 				self["key_yellow"] = StaticText(_("Init SDcard"))
 			else:
@@ -79,6 +83,7 @@ class MultiBootWizard(Screen):
 				"red": boundFunction(self.close, None),
 				"green": self.erase,
 				"yellow": self.format,
+				"blue": self.reboot,
 				"ok": self.erase,
 				"cancel": boundFunction(self.close, None),
 				"up": self.keyUp,
@@ -190,6 +195,9 @@ class MultiBootWizard(Screen):
 						self.session.open(Console, title = self.TITLE, cmdlist = cmdlist, closeOnSuccess = True)
 		else:
 			self.close()
+
+	def reboot(self):
+		self.session.open(TryQuitMainloop, 2)
 
 	def selectionChanged(self):
 		pass
