@@ -47,7 +47,7 @@ class OPDChooseOnLineImage(Screen):
                 returnValue = self.sel[2]
                 if returnValue in ('opennfr', 'openhdf', 'openatv', 'opendroid'): 
                         from Screens.Setup import Setup
-                        MBImagelist = [("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3"))]
+                        MBImagelist = [("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4"))]
                         if returnValue ==  'opennfr':
                                 MBImagelist.append(("6.3", _("6.3")))
                         elif returnValue ==  'opendroid':
