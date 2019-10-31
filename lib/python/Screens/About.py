@@ -281,7 +281,7 @@ class About(Screen):
 				f.close()
 				if bootname: bootname = "   (%s)" %bootname 
 				AboutText += _("Selected Image:\t\t%s") % _("STARTUP_") + image + bootname + "\n"
-	        elif getMachineBuild() in ('osmio4k'):
+	        elif getMachineBuild() in ('osmio4k','osmio4kplus'):
 		        if path.exists('/boot/STARTUP'):
 			        f = open('/boot/STARTUP', 'r')
 			        f.seek(38)
@@ -680,6 +680,8 @@ class ModelPic(Screen):
 			model = "mutant61.png"
 		elif getBoxType() in ('osmio4k'):
 			model = "osmio4k.png"
+		elif getBoxType() in ('osmio4kplus'):
+			model = "osmio4kplus.png"
 		elif getBoxType() in ('osmega'):
 			model = "osmega.png"
 		elif getBoxType() in ('osmini'):
