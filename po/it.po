@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-10-04 13:48+0200\n"
+"PO-Revision-Date: 2019-10-31 18:22+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
@@ -192,6 +192,9 @@ msgstr "Abilita avvio"
 
 msgid "Enable client mode"
 msgstr "Abilita la modalità client"
+
+msgid "Client mode"
+msgstr "Modalità client"
 
 msgid "Disable Startup"
 msgstr "Disabilita avvio"
@@ -5856,7 +5859,7 @@ msgid "change"
 msgstr "modifica"
 
 msgid "add Current"
-msgstr "aggiungere Current"
+msgstr "aggiungere Attuale"
 
 msgid "add Service"
 msgstr "aggiungere Servizio"
@@ -6377,6 +6380,9 @@ msgstr "Menu di rete"
 
 msgid "Hide CI messages"
 msgstr "Nascondere i messaggi CI"
+
+msgid "Hide mute notification"
+msgstr "Nascondere la notifica mute"
 
 msgid "Infobar frontend data source"
 msgstr "Seleziona origine dati Infobar"
@@ -6998,7 +7004,7 @@ msgstr "Ignora rete secondaria dello spazio dei nomi DVB-T"
 msgid "On valid ONIDs, ignore frequency sub network part"
 msgstr "Sugli ID validi, ignorare la parte di sottorete della frequenza"
 
-msgid "Force Legacy Signal Stats"
+msgid "Force Legacy Signal stats"
 msgstr "Forza lo stato del segnale originale"
 
 msgid "JUMP 24 HOURS"
@@ -14400,6 +14406,9 @@ msgstr ""
 msgid "Would you save the entered PIN %s persistent?"
 msgstr "Vuoi salvare il PIN inserito %s persistente?"
 
+msgid "You can switch with left and right this tuner types (DVB-T2, DVB-C, DVB-S2)"
+msgstr "È possibile selezionare il sintonizzatore desiderato con freccia sinistra o destra (DVB-T2, DVB-C, DVB-S2)"
+
 msgid "You can cancel the installation."
 msgstr "E' possibile annullare l'installazione."
 
@@ -18646,6 +18655,9 @@ msgstr ""
 "Selezionare 'provider' per eseguire la scansione dall'elenco predefinito di multiplex via cavo. Seleziona 'bande' per scansionare solo alcune parti dello spettro. Seleziona 'passaggi' per eseguire la scansione in passaggi di una particolare larghezza "
 "di banda di frequenza."
 
+msgid "Country"
+msgstr "Nazione"
+
 msgid "Select your country. If not available select 'all'."
 msgstr "Seleziona il tuo paese. Se non disponibile seleziona 'tutti'."
 
@@ -18994,8 +19006,12 @@ msgstr "Impossibile creare la directory di backup"
 msgid "Multiboot Image created on: %s/%s-%s-%s-backup-%s_usb.zip"
 msgstr "Immagine multiboot creata on: %s/%s-%s-%s-backup-%s_usb.zip"
 
-msgid " https://droidsat.org/forum/\n\n"
-msgstr " https://droidsat.org/forum/\n\n"
+msgid ""
+" https://droidsat.org/forum/\n"
+"\n"
+msgstr ""
+" https://droidsat.org/forum/\n"
+"\n"
 
 msgid "Image created on: %s/%s-%s-%s-backup-%s_recovery.zip"
 msgstr "Immagine creata on: %s/%s-%s-%s-backup-%s_recovery.zip"
