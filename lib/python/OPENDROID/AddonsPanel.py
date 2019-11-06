@@ -242,7 +242,7 @@ class	AddonsRemove(Screen):
 							pluginfiles += item
 							pluginfiles += "\n" 
 							self.listplugininfo(pluginfiles)
-							elf.list = []                                                 
+							self.list = []                                                 
 				else:
 					self.setuplist.append("%s" % sel.name)
 					list = self.setuplist
