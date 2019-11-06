@@ -47,7 +47,7 @@ class ManualPanel(Screen):
 		self.entrylist = []  #List reset
 		self.entrylist.append((_("TarGz packages installer"), "one", "/usr/lib/enigma2/python/OPENDROID/icons/File_Archive.png"))
 		self.entrylist.append((_("Ipk packages installer"), "two", "/usr/lib/enigma2/python/OPENDROID/icons/File_Archive.png"))
-                self.entrylist.append((_("Advanced ipk packages installer"), "tree", "/usr/lib/enigma2/python/OPENDROID/icons/File_Archive.png"))	
+		self.entrylist.append((_("Advanced ipk packages installer"), "tree", "/usr/lib/enigma2/python/OPENDROID/icons/File_Archive.png"))	
 		self.entrylist.append((_("Ipk remove"), "four", "/usr/lib/enigma2/python/OPENDROID/icons/File_Archive.png"))	
 		self['list'] = PluginList(self.list)
 		self['actions'] = ActionMap(['WizardActions','ColorActions'],

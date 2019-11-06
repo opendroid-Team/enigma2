@@ -98,14 +98,14 @@ class About(Screen):
 		self.populate()
 
 		self["key_green"] = Button(_("Translations"))
-                self["key_info"] = StaticText(_("Contact Info"))
+		self["key_info"] = StaticText(_("Contact Info"))
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "TimerEditActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,
 				"log": self.showAboutReleaseNotes,
 				"blue": self.showModelPic,
-                                "info": self.showContactInfo,
+				"info": self.showContactInfo,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown,
 				"green": self.showTranslationInfo,
@@ -281,14 +281,14 @@ class About(Screen):
 				f.close()
 				if bootname: bootname = "   (%s)" %bootname 
 				AboutText += _("Selected Image:\t\t%s") % _("STARTUP_") + image + bootname + "\n"
-	        elif getMachineBuild() in ('osmio4k','osmio4kplus'):
-		        if path.exists('/boot/STARTUP'):
-			        f = open('/boot/STARTUP', 'r')
-			        f.seek(38)
-			        image = f.read(1)
-			        f.close()
-			        if bootname: bootname = "   (%s)" %bootname 
-			        AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
+		elif getMachineBuild() in ('osmio4k','osmio4kplus'):
+			if path.exists('/boot/STARTUP'):
+				f = open('/boot/STARTUP', 'r')
+				f.seek(38)
+				image = f.read(1)
+				f.close()
+				if bootname: bootname = "   (%s)" %bootname 
+				AboutText += _("Selected Image:\t%s") % "STARTUP_" + image + bootname + "\n"
 		elif path.exists('/boot/STARTUP'):
 			f = open('/boot/STARTUP', 'r')
 			f.seek(22)
@@ -519,7 +519,7 @@ class ModelPic(Screen):
 		elif getBoxType() in ('sf8008'):
 			model = "sf8008.png"
 		elif getBoxType() in ('sf8008s'):
-		        model = "sf8008s.png"
+			model = "sf8008s.png"
 		elif getBoxType() in ('sf3038'):
 			model = "sf3038.png"
 		elif getBoxType() in ('sf128'):
@@ -613,11 +613,11 @@ class ModelPic(Screen):
 		elif getBoxType() in ('vuuno4kse'):
 			model = "vuuno4kse.png"
 		elif getBoxType() in ('vuduo4k'):
-		        model = "vuduo4k.png"
+			model = "vuduo4k.png"
 		elif getBoxType() in ('vuzero'):
 			model = "vuzero.png"
 		elif getBoxType() in ('vuzero4k'):
-		        model = "vuzero4k.png"
+			model = "vuzero4k.png"
 		elif getBoxType() in ('gb800se'):
 			model = "gb800se.png "
 		elif getBoxType() in ('gb800seplus'):
@@ -1346,10 +1346,10 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "6.8", "github"),
-                        ("formiano",      "E2",               "formiano E2",             "6.8", "github"),
-			("opendroid-Team",      "OPD-Blue-Line",             "opendroid-Team Skin OPD-Blue-Line",   "master", "github"),
-			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.3", "github"),
+			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.0", "github"),
+			("formiano",      "E2",               "formiano E2",             "7.0", "github"),
+			("opendroid-Team",      "Skins-for-openOPD",             "opendroid-Team Skins-for-openOPD",   "master", "github"),
+			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.4", "github"),
 			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
 			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
 		]
@@ -1456,7 +1456,6 @@ class MemoryInfo(Screen):
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
 		self["params"] = MemoryInfoSkinParams()
-
 		self['info'] = Label(_("This info is for developers only.\nFor a normal users it is not relevant.\nDon't panic please when you see values being displayed that you think look suspicious!"))
 
 		Typ = _("%s  ") % (getMachineName())

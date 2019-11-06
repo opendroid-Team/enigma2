@@ -128,24 +128,23 @@ def setDefaultKeymap():
 	config.save()
 
 def command(comandline, strip=1):
-  comandline = comandline + " >/tmp/command.txt"
-  os.system(comandline)
-  text = ""
-  if os.path.exists("/tmp/command.txt") is True:
-    file = open("/tmp/command.txt", "r")
-    if strip == 1:
-      for line in file:
-        text = text + line.strip() + '\n'
-    else:
-      for line in file:
-        text = text + line
-        if text[-1:] != '\n': text = text + "\n"
-    file.close()
-  # if one or last line then remove linefeed
-  if text[-1:] == '\n': text = text[:-1]
-  comandline = text
-  os.system("rm /tmp/command.txt")
-  return comandline
+	comandline = comandline + " >/tmp/command.txt"
+	os.system(comandline)
+	text = ""
+	if os.path.exists("/tmp/command.txt") is True:
+		file = open("/tmp/command.txt", "r")
+		if strip == 1:
+			for line in file:
+				text = text + line.strip() + '\n'
+		else:
+			for line in file:
+				text = text + line
+				if text[-1:] != '\n': text = text + "\n"
+		file.close()
+	if text[-1:] == '\n': text = text[:-1]
+	comandline = text
+	os.system("rm /tmp/command.txt")
+	return comandline
 
 boxversion = getBoxType()
 machinename = getMachineName()
@@ -284,7 +283,7 @@ class OPD_panel(Screen, InfoBarPiP):
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("NcamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('opdBootLogoSelector'), _('opdBootLogo-Setup'), 'opdBootLogoSelector')))
-                self.Mlist.append(MenuEntryItem((InfoEntryComponent('ClearMem'), _('ClearMem-Setup'), 'ClearMem')))
+		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ClearMem'), _('ClearMem-Setup'), 'ClearMem')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('LogManager'), _('Log-Manager'), 'LogManager')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('KeymapSel'), _("Keymap Selection"), 'KeymapSel')))	
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftwareManager'), _('Software-Manager'), 'software-manager')))
@@ -412,7 +411,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "opdBootLogoSelector":
 			from OPENDROID.OPD_Bootlogo import opdBootLogoSelector
 			self.session.open(opdBootLogoSelector)
-                elif menu == "ClearMem":
+		elif menu == "ClearMem":
 			from OPENDROID.ClearMem import ClearMem
 			self.session.open(ClearMem)
 		elif menu == "JobManager":
@@ -937,244 +936,231 @@ class Info(Screen):
 			return o
 
 ####################################################################################################################################
-def getStbArch():
-    if about.getChipSetString() in ('7366', '7376', '5272s', '7252', '7251', '7251S', '7252', '7252S'):
-        return 'armv7ahf'
-    elif about.getChipSetString() in 'pnx8493':
-        return 'armv7a-vfp'
-    elif about.getChipSetString() in ('meson-6', 'meson-64'):
-        return 'cortexa9hf'
-    elif about.getChipSetString() in ('7162', '7111'):
-        return 'sh40'
-    else:
-        return 'mipsel'
+	def getStbArch():
+		if about.getChipSetString() in ('7366', '7376', '5272s', '7252', '7251', '7251S', '7252', '7252S'):
+			return 'armv7ahf'
+		elif about.getChipSetString() in 'pnx8493':
+			return 'armv7a-vfp'
+		elif about.getChipSetString() in ('meson-6', 'meson-64'):
+			return 'cortexa9hf'
+		elif about.getChipSetString() in ('7162', '7111'):
+			return 'sh40'
+		else:
+			return 'mipsel'
 
-def runBackCmd(cmd):
-    eConsoleAppContainer().execute(cmd)
-
-
-def getRealName(string):
-    if string.startswith(' '):
-        while string.startswith(' '):
-            string = string[1:]
-
-    return string
+	def runBackCmd(cmd):
+		eConsoleAppContainer().execute(cmd)
 
 
-def hex_str2dec(str):
-    ret = 0
-    try:
-        ret = int(re.sub('0x', '', str), 16)
-    except:
-        pass
-
-    return ret
+	def getRealName(string):
+		if string.startswith(' '):
+			while string.startswith(' '):
+				string = string[1:]
+		return string
 
 
-def norm_hex(str):
-    return '%04x' % hex_str2dec(str)
+	def hex_str2dec(str):
+		ret = 0
+		try:
+			ret = int(re.sub('0x', '', str), 16)
+		except:
+			pass
+		return ret
 
 
-def loadcfg(plik, fraza, dlugosc):
-    wartosc = '0'
-    if fileExists(plik):
-        f = open(plik, 'r')
-        for line in f.readlines():
-            line = line.strip()
-            if line.find(fraza) != -1:
-                wartosc = line[dlugosc:]
+	def norm_hex(str):
+		return '%04x' % hex_str2dec(str)
 
-        f.close()
-    return wartosc
+	def loadcfg(plik, fraza, dlugosc):
+		wartosc = '0'
+		if fileExists(plik):
+			f = open(plik, 'r')
+			for line in f.readlines():
+				line = line.strip()
+				if line.find(fraza) != -1:
+					wartosc = line[dlugosc:]
+			f.close()
+		return wartosc
 
+	def loadbool(plik, fraza, dlugosc):
+		wartosc = '0'
+		if fileExists(plik):
+			f = open(plik, 'r')
+			for line in f.readlines():
+				line = line.strip()
+				if line.find(fraza) != -1:
+					wartosc = line[dlugosc:]
+			f.close()
+		if wartosc == '1':
+			return True
+		else:
+			return False
 
-def loadbool(plik, fraza, dlugosc):
-    wartosc = '0'
-    if fileExists(plik):
-        f = open(plik, 'r')
-        for line in f.readlines():
-            line = line.strip()
-            if line.find(fraza) != -1:
-                wartosc = line[dlugosc:]
+	def unload_modules(name):
+		try:
+			from sys import modules
+			del modules[name]
+		except:
+			pass
 
-        f.close()
-    if wartosc == '1':
-        return True
-    else:
-        return False
+	def wyszukaj_in(zrodlo, szukana_fraza):
+		wyrazenie = string.strip(szukana_fraza)
+		for linia in zrodlo.xreadlines():
+			if wyrazenie in linia:
+				return True
+		return False
 
-
-def unload_modules(name):
-    try:
-        from sys import modules
-        del modules[name]
-    except:
-        pass
-
-
-def wyszukaj_in(zrodlo, szukana_fraza):
-    wyrazenie = string.strip(szukana_fraza)
-    for linia in zrodlo.xreadlines():
-        if wyrazenie in linia:
-            return True
-
-    return False
-
-
-def wyszukaj_re(szukana_fraza):
-    wyrazenie = re.compile(string.strip(szukana_fraza), re.IGNORECASE)
-    zrodlo = open('/usr/share/enigma2/' + config.skin.primary_skin.value, 'r')
-    for linia in zrodlo.xreadlines():
-        if re.search(wyrazenie, linia) != None:
-            return True
-
-    zrodlo.close()
-    return False
-
+	def wyszukaj_re(szukana_fraza):
+		wyrazenie = re.compile(string.strip(szukana_fraza), re.IGNORECASE)
+		zrodlo = open('/usr/share/enigma2/' + config.skin.primary_skin.value, 'r')
+		for linia in zrodlo.xreadlines():
+			if re.search(wyrazenie, linia) != None:
+				return True
+		zrodlo.close()
+		return False
 
 class FileDownloadJob(Job):
 
-    def __init__(self, url, filename, file):
-        Job.__init__(self, _('Downloading %s' % file))
-        FileDownloadTask(self, url, filename)
-
+	def __init__(self, url, filename, file):
+		Job.__init__(self, _('Downloading %s' % file))
+		FileDownloadTask(self, url, filename)
 
 class DownloaderPostcondition(Condition):
 
-    def check(self, task):
-        return task.returncode == 0
+	def check(self, task):
+		return task.returncode == 0
 
-    def getErrorMessage(self, task):
-        return self.error_message
+	def getErrorMessage(self, task):
+		return self.error_message
 
 
 class FileDownloadTask(Task):
 
-    def __init__(self, job, url, path):
-        Task.__init__(self, job, _('Downloading'))
-        self.postconditions.append(DownloaderPostcondition())
-        self.job = job
-        self.url = url
-        self.path = path
-        self.error_message = ''
-        self.last_recvbytes = 0
-        self.error_message = None
-        self.download = None
-        self.aborted = False
-        return
+	def __init__(self, job, url, path):
+		Task.__init__(self, job, _('Downloading'))
+		self.postconditions.append(DownloaderPostcondition())
+		self.job = job
+		self.url = url
+		self.path = path
+		self.error_message = ''
+		self.last_recvbytes = 0
+		self.error_message = None
+		self.download = None
+		self.aborted = False
+		return
 
-    def run(self, callback):
-        self.callback = callback
-        self.download = downloadWithProgress(self.url, self.path)
-        self.download.addProgress(self.download_progress)
-        self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
-        print '[FileDownloadTask] downloading', self.url, 'to', self.path
+	def run(self, callback):
+		self.callback = callback
+		self.download = downloadWithProgress(self.url, self.path)
+		self.download.addProgress(self.download_progress)
+		self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
+		print '[FileDownloadTask] downloading', self.url, 'to', self.path
 
-    def abort(self):
-        print '[FileDownloadTask] aborting', self.url
-        if self.download:
-            self.download.stop()
-        self.aborted = True
+	def abort(self):
+		print '[FileDownloadTask] aborting', self.url
+		if self.download:
+			self.download.stop()
+		self.aborted = True
 
-    def download_progress(self, recvbytes, totalbytes):
-        if recvbytes - self.last_recvbytes > 10000:
-            self.progress = int(100 * (float(recvbytes) / float(totalbytes)))
-            self.name = _('Downloading') + ' ' + '%d of %d kBytes' % (recvbytes / 1024, totalbytes / 1024)
-            self.last_recvbytes = recvbytes
+	def download_progress(self, recvbytes, totalbytes):
+		if recvbytes - self.last_recvbytes > 10000:
+			self.progress = int(100 * (float(recvbytes) / float(totalbytes)))
+			self.name = _('Downloading') + ' ' + '%d of %d kBytes' % (recvbytes / 1024, totalbytes / 1024)
+			self.last_recvbytes = recvbytes
 
-    def download_failed(self, failure_instance = None, error_message = ''):
-        self.error_message = error_message
-        if error_message == '' and failure_instance is not None:
-            self.error_message = failure_instance.getErrorMessage()
-        Task.processFinished(self, 1)
-        return
+	def download_failed(self, failure_instance = None, error_message = ''):
+		self.error_message = error_message
+		if error_message == '' and failure_instance is not None:
+			self.error_message = failure_instance.getErrorMessage()
+		Task.processFinished(self, 1)
+		return
 
-    def download_finished(self, string = ''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            Task.processFinished(self, 0)
+	def download_finished(self, string = ''):
+		if self.aborted:
+			self.finish(aborted=True)
+		else:
+			Task.processFinished(self, 0)
 class PasswdScreen(Screen):
 
-    def __init__(self, session, args = 0):
-        Screen.__init__(self, session)
-        self.title = _('Change Root Password')
-        try:
-            self['title'] = StaticText(self.title)
-        except:
-            print 'self["title"] was not found in skin'
+	def __init__(self, session, args = 0):
+		Screen.__init__(self, session)
+		self.title = _('Change Root Password')
+		try:
+			self['title'] = StaticText(self.title)
+		except:
+			print 'self["title"] was not found in skin'
 
-        self.user = 'root'
-        self.output_line = ''
-        self.list = []
-        self['passwd'] = ConfigList(self.list)
-        self['key_red'] = StaticText(_('Close'))
-        self['key_green'] = StaticText(_('Set Password'))
-        self['key_yellow'] = StaticText(_('new Random'))
-        self['key_blue'] = StaticText(_('virt. Keyboard'))
-        self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {'red': self.close,
-         'green': self.SetPasswd,
-         'yellow': self.newRandom,
-         'blue': self.bluePressed,
-         'cancel': self.close}, -1)
-        self.buildList(self.GeneratePassword())
-        self.onShown.append(self.setWindowTitle)
+		self.user = 'root'
+		self.output_line = ''
+		self.list = []
+		self['passwd'] = ConfigList(self.list)
+		self['key_red'] = StaticText(_('Close'))
+		self['key_green'] = StaticText(_('Set Password'))
+		self['key_yellow'] = StaticText(_('new Random'))
+		self['key_blue'] = StaticText(_('virt. Keyboard'))
+		self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {'red': self.close,
+			'green': self.SetPasswd,
+			'yellow': self.newRandom,
+			'blue': self.bluePressed,
+			'cancel': self.close}, -1)
+		self.buildList(self.GeneratePassword())
+		self.onShown.append(self.setWindowTitle)
 
-    def newRandom(self):
-        self.buildList(self.GeneratePassword())
+	def newRandom(self):
+		self.buildList(self.GeneratePassword())
 
-    def buildList(self, password):
-        self.password = password
-        self.list = []
-        self.list.append(getConfigListEntry(_('Enter new Password'), ConfigText(default=self.password, fixed_size=False)))
-        self['passwd'].setList(self.list)
+	def buildList(self, password):
+		self.password = password
+		self.list = []
+		self.list.append(getConfigListEntry(_('Enter new Password'), ConfigText(default=self.password, fixed_size=False)))
+		elf['passwd'].setList(self.list)
 
-    def GeneratePassword(self):
-        passwdChars = string.letters + string.digits
-        passwdLength = 8
-        return ''.join(Random().sample(passwdChars, passwdLength))
+	def GeneratePassword(self):
+		passwdChars = string.letters + string.digits
+		passwdLength = 8
+		return ''.join(Random().sample(passwdChars, passwdLength))
 
-    def SetPasswd(self):
-        self.container = eConsoleAppContainer()
-        self.container.appClosed.append(self.runFinished)
-        self.container.dataAvail.append(self.processOutputLine)
-        retval = self.container.execute('passwd %s' % self.user)
-        if retval == 0:
-            self.session.open(MessageBox, _('Sucessfully changed password for root user to:\n%s ' % self.password), MessageBox.TYPE_INFO)
-        else:
-            self.session.open(MessageBox, _('Unable to change/reset password for root user'), MessageBox.TYPE_ERROR)
+	def SetPasswd(self):
+		self.container = eConsoleAppContainer()
+		self.container.appClosed.append(self.runFinished)
+		self.container.dataAvail.append(self.processOutputLine)
+		retval = self.container.execute('passwd %s' % self.user)
+		if retval == 0:
+			self.session.open(MessageBox, _('Sucessfully changed password for root user to:\n%s ' % self.password), MessageBox.TYPE_INFO)
+		else:
+			self.session.open(MessageBox, _('Unable to change/reset password for root user'), MessageBox.TYPE_ERROR)
 
-    def dataAvail(self, data):
-        self.output_line += data
-        if self.output_line.find('password changed.') == -1:
-            if self.output_line.endswith('new UNIX password: '):
-                print '1password:%s\n' % self.password
-                self.processOutputLine(self.output_line[:1])
+	def dataAvail(self, data):
+		self.output_line += data
+		if self.output_line.find('password changed.') == -1:
+			if self.output_line.endswith('new UNIX password: '):
+				print '1password:%s\n' % self.password
+				self.processOutputLine(self.output_line[:1])
 
-    def processOutputLine(self, line):
-        if line.find('new UNIX password: '):
-            print '2password:%s\n' % self.password
-            self.container.write('%s\n' % self.password)
-            self.output_line = ''
+	def processOutputLine(self, line):
+		if line.find('new UNIX password: '):
+			print '2password:%s\n' % self.password
+			self.container.write('%s\n' % self.password)
+			self.output_line = ''
 
-    def runFinished(self, retval):
-        del self.container.dataAvail[:]
-        del self.container.appClosed[:]
-        del self.container
-        self.close()
+	def runFinished(self, retval):
+		del self.container.dataAvail[:]
+		del self.container.appClosed[:]
+		del self.container
+		self.close()
 
-    def bluePressed(self):
-        self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
+	def bluePressed(self):
+		self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
 
-    def VirtualKeyBoardTextEntry(self, callback = None):
-        if callback is not None:
-            self.buildList(callback)
-        return
+	def VirtualKeyBoardTextEntry(self, callback = None):
+		if callback is not None:
+			self.buildList(callback)
+		return
 
-    def setWindowTitle(self, title = None):
-        if not title:
-            title = self.title
-        try:
-            self['title'] = StaticText(title)
-        except:
-            pass   
+	def setWindowTitle(self, title = None):
+		if not title:
+			title = self.title
+		try:
+			self['title'] = StaticText(title)
+		except:
+			pass   

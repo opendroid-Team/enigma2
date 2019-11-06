@@ -68,11 +68,9 @@ class AddonsUtility(Screen):
 		self.entrylist.append((_("Picons-HDD"), "Pcs-HDD", "/usr/lib/enigma2/python/OPENDROID/icons/Picons-HDD.png"))
 		self.entrylist.append((_("Picons-USB"), "Pcs-USB", "/usr/lib/enigma2/python/OPENDROID/icons/Picons-USB.png"))
 		self.entrylist.append((_("Setting"), "Stg", "/usr/lib/enigma2/python/OPENDROID/icons/Setting_list.png"))
-                self.entrylist.append((_("Skin"), "Sks", "/usr/lib/enigma2/python/OPENDROID/icons/Skins.png"))
-                self.entrylist.append((_("BootLogo"), "Logo","/usr/lib/enigma2/python/OPENDROID/icons/BootLogo.png"))
-		
-		
-                self['list'] = PluginList(self.list)
+		self.entrylist.append((_("Skin"), "Sks", "/usr/lib/enigma2/python/OPENDROID/icons/Skins.png"))
+		self.entrylist.append((_("BootLogo"), "Logo","/usr/lib/enigma2/python/OPENDROID/icons/BootLogo.png"))
+		self['list'] = PluginList(self.list)
 		self["key_red"] = Label(_("Exit"))
 		self["key_green"] = Label(_("Remove"))
 		self["key_yellow"] = Label(_("Restart E2"))
@@ -92,7 +90,7 @@ class AddonsUtility(Screen):
 		self.session.open(AddonsRemove)
 	def RestartE2(self):
 		msg="Do you want Restart GUI now ?" 
-    		self.session.openWithCallback(self.Finish, MessageBox, msg, MessageBox.TYPE_YESNO)
+		self.session.openWithCallback(self.Finish, MessageBox, msg, MessageBox.TYPE_YESNO)
 	def Finish(self, answer):
 		if answer is True:
 			self.session.open(TryQuitMainloop, 3)
@@ -106,18 +104,18 @@ class AddonsUtility(Screen):
 			self.title = ' OPENDROID Downloader Plugins'
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Pcs-HDD"):
-		       	addons = 'Picons-HDD'
+			addons = 'Picons-HDD'
 			self.title = 'Picons-HDD'
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Pcs-USB"):
-		        addons = 'Picons-USB'
-		        self.title = 'Picons-USB'
-		        self.session.open(Connection_Server, addons, self.title)
-                elif (selection == "Stg"):
+			addons = 'Picons-USB'
+			self.title = 'Picons-USB'
+			self.session.open(Connection_Server, addons, self.title)
+		elif (selection == "Stg"):
 			addons = 'Settings'
 			self.title = ' OPENDROID Downloader Settings '
 			self.session.open(Connection_Server, addons, self.title)
-               	elif (selection == "Sks"):
+		elif (selection == "Sks"):
 			addons = 'Skins'
 			self.title = ' OPENDROID Downloader Skins '
 			self.session.open(Connection_Server, addons, self.title)
@@ -127,7 +125,7 @@ class AddonsUtility(Screen):
 			self.session.open(Connection_Server, addons, self.title)
 		else:
 			self.messpopup("Selection error")
-		        
+
 	def messpopup(self,msg):
 		self.session.open(MessageBox, msg , MessageBox.TYPE_INFO)
 	
@@ -147,7 +145,7 @@ class AddonsUtility(Screen):
 class	AddonsRemove(Screen):
 	
 	skin = """
-               <screen name="AddonsRemove" position="80,160" size="1100,450" title="Remove Plugins">
+		<screen name="AddonsRemove" position="80,160" size="1100,450" title="Remove Plugins">
 				<widget name="list" position="5,0" size="560,300" itemHeight="49" foregroundColor="white" backgroundColor="black" transparent="1" scrollbarMode="showOnDemand" zPosition="2" enableWrapAround="1" />
 				<widget name="status" position="580,43" size="518,300" font="Regular;16" halign="center" noWrap="1" transparent="1" />
 				<eLabel name="" position="580,6" size="517,30" font="Regular; 22"text="List of plugins to uninstall" zPosition="3" halign="center" />
@@ -160,7 +158,7 @@ class	AddonsRemove(Screen):
 				<eLabel name="spaceused" text="% Flash Used..." position="45,414" size="150,20" font="Regular;19" halign="left" foregroundColor="white" backgroundColor="black" transparent="1" zPosition="5" />
 				<widget name="spaceused" position="201,415" size="894,20" foregroundColor="white" backgroundColor="blue" zPosition="3" />
 			</screen>"""
-               
+	
 	REMOVE = 1		  
 	DOWNLOAD = 0
 	PLUGIN_PREFIX = 'enigma2-plugin-'
@@ -168,7 +166,7 @@ class	AddonsRemove(Screen):
 
 	def __init__(self, session, type = 1, needupdate = True):
 		Screen.__init__(self, session)
-                global pluginfiles
+		global pluginfiles
 		self.type = type
 		self.needupdate = needupdate
 		self.container = eConsoleAppContainer()
@@ -176,7 +174,7 @@ class	AddonsRemove(Screen):
 		self.container.dataAvail.append(self.dataAvail)
 		self.onLayoutFinish.append(self.startRun)
 		self.onShown.append(self.setWindowTitle)
-                self.setuplist = []
+		self.setuplist = []
 
 		self.list = []
 		self["list"] = PluginList(self.list)
@@ -190,7 +188,7 @@ class	AddonsRemove(Screen):
 		self.install_settings_name = ''
 		self.remove_settings_name = ''
 		self['spaceused'] = ProgressBar()		
-                self["status"] = ScrollLabel()
+		self["status"] = ScrollLabel()
 		self['key_green']  = Label(_('Remove'))	
 		self['key_red']  = Label(_('Exit'))
 		
@@ -219,66 +217,66 @@ class	AddonsRemove(Screen):
 		sel = self["list"].l.getCurrentSelection()
 		if sel is None:
 			return
-                
+
 		sel = sel[0]
 		if isinstance(sel, str): 
 
 			if sel in self.expanded:
-			        
+
 				self.expanded.remove(sel)
 			else:
 				self.expanded.append(sel)
 			self.updateList()
-			
+
 		else:
-		        pluginfiles = ""
+			pluginfiles = ""
 			if self.type == self.DOWNLOAD:
-			        if sel.name in self.setuplist:
-                                        self.setuplist.remove("%s" % sel.name)
-                                        if not self.setuplist:
-                                               pluginfiles += "no Plugin select"
-                                               self.listplugininfo(pluginfiles)
-                                        else:
-                                               list = self.setuplist
-                                               for item in list:
-                                                      pluginfiles += item
-                 	                              pluginfiles += "\n" 
-                 	                              self.listplugininfo(pluginfiles)
-                                                      self.list = []                                                 
-			        else:
- 			                self.setuplist.append("%s" % sel.name)
-                                        list = self.setuplist
-                                        for item in list:
-                 	                       pluginfiles += item
-                 	                       pluginfiles += "\n"
-                 	                       self.listplugininfo(pluginfiles)
-                                               self.list = []    
-                                               
-                       	elif self.type == self.REMOVE:
-			        if sel.name in self.setuplist:
-                                        self.setuplist.remove("%s" % sel.name)
-                                        if not self.setuplist:
-                                               pluginfiles += "no Plugin select"
-                                               self.listplugininfo(pluginfiles)
-                                        else:
-                                               list = self.setuplist
-                                               for item in list:
-                                                      pluginfiles += item
-                 	                              pluginfiles += "\n" 
-                 	                              self.listplugininfo(pluginfiles)
-                                                      self.list = []                                                 
-			        else:
- 			                self.setuplist.append("%s" % sel.name)
-                                        list = self.setuplist
-                                        for item in list:
-                 	                       pluginfiles += item
-                 	                       pluginfiles += "\n"
-                 	                       self.listplugininfo(pluginfiles)
-                                               self.list = []                         
-                                               			                
+				if sel.name in self.setuplist:
+					self.setuplist.remove("%s" % sel.name)
+					if not self.setuplist:
+						pluginfiles += "no Plugin select"
+						self.listplugininfo(pluginfiles)
+					else:
+						list = self.setuplist
+						for item in list:
+							pluginfiles += item
+							pluginfiles += "\n" 
+							self.listplugininfo(pluginfiles)
+							elf.list = []                                                 
+				else:
+					self.setuplist.append("%s" % sel.name)
+					list = self.setuplist
+					for item in list:
+						pluginfiles += item
+						pluginfiles += "\n"
+						self.listplugininfo(pluginfiles)
+						self.list = []    
+
+			elif self.type == self.REMOVE:
+				if sel.name in self.setuplist:
+					self.setuplist.remove("%s" % sel.name)
+					if not self.setuplist:
+						pluginfiles += "no Plugin select"
+						self.listplugininfo(pluginfiles)
+					else:
+						list = self.setuplist
+						for item in list:
+							pluginfiles += item
+							pluginfiles += "\n" 
+							self.listplugininfo(pluginfiles)
+							self.list = []                                                 
+				else:
+					self.setuplist.append("%s" % sel.name)
+					list = self.setuplist
+					for item in list:
+						pluginfiles += item
+						pluginfiles += "\n"
+						self.listplugininfo(pluginfiles)
+						self.list = []                         
+
 
 	def install(self):
-	        PLUGIN_PREFIX = 'enigma2-plugin-'
+		PLUGIN_PREFIX = 'enigma2-plugin-'
 		cmdList = []
 		for item in self.setuplist:
 			cmdList.append((IpkgComponent.CMD_REMOVE, { "package": PLUGIN_PREFIX + item }))
@@ -287,8 +285,8 @@ class	AddonsRemove(Screen):
 		
 	def listplugininfo(self, pluginfiles):
 		try:
-		        pluginfiles.split("/n")	
-		        self["status"].setText(pluginfiles)                                
+			pluginfiles.split("/n")	
+			self["status"].setText(pluginfiles)
 		except:
 			self["status"].setText("")
 
@@ -696,15 +694,15 @@ class Installer_Addons(Screen):
 				ipkname = nipk
 			icount = icount + 1
 		if ipkname != 0:
-		       print "endinstall ipk name =", ipkname 
-                       ipos = ipkname.find("_")
-                       remname = ipkname[:ipos]
-                       print "endinstall remname =", remname
-                       f=open('/etc/ipklist_installed', 'a')
-                       f1= remname + "\n"
-                       f.write(f1)
-                       cmd = "rm /tmp/*.ipk"
-                       os.system(cmd)  		
+			print "endinstall ipk name =", ipkname 
+			ipos = ipkname.find("_")
+			remname = ipkname[:ipos]
+			print "endinstall remname =", remname
+			f=open('/etc/ipklist_installed', 'a')
+			f1= remname + "\n"
+			f.write(f1)
+			cmd = "rm /tmp/*.ipk"
+			os.system(cmd)  		
 
 ###########################################################
 

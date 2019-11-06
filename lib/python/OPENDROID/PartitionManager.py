@@ -451,10 +451,10 @@ class Cpart(Screen):
 	def __delPart2Comlist(self, list, val):
 		partnr = val[PA_NR]
 		if "mmcblk1" in self.__devpath:
-                        self.__devpath1 = self.__devpath +"p"
-                	dev = "%s%s" % (self.__devpath1, partnr)		
+			self.__devpath1 = self.__devpath +"p"
+			dev = "%s%s" % (self.__devpath1, partnr)		
 		else:
-                	dev = "%s%s" % (self.__devpath, partnr)
+			dev = "%s%s" % (self.__devpath, partnr)
 		mp = ismounted(dev)
 		if mp is not None:
 			if myExecute("umount %s" % mp, self.session):

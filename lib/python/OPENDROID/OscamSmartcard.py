@@ -198,17 +198,17 @@ class OscamSmartcard(ConfigListScreen, Screen):
 						i = i + 1
 					ConfigListScreen.__init__(self, list)
 					self["actions"] = ActionMap(["OkCancelActions","DirectionActions", "InputActions", "ColorActions", "SetupActions"], 
-                                        {
-                                                "left": self.keyLeft,
-                                                "down": self.keyDown,
-                                                "up": self.keyUp,
-                                                "right": self.keyRight,
-                                                "red": self.exit,
-                                                "yellow": self.showNews,
-                                                "blue": self.exit,
-                                                "green": self.systemcleaning,
-                                                "cancel": self.exit,
-                                        }, -1)
+					{
+						"left": self.keyLeft,
+						"down": self.keyDown,
+						"up": self.keyUp,
+						"right": self.keyRight,
+						"red": self.exit,
+						"yellow": self.showNews,
+						"blue": self.exit,
+						"green": self.systemcleaning,
+						"cancel": self.exit,
+					}, -1)
 					self.onLayoutFinish.append(self.UpdatePicture)
 					if not self.selectionChanged in self["config"].onSelectionChanged:
 						self["config"].onSelectionChanged.append(self.selectionChanged)
@@ -253,21 +253,22 @@ class OscamSmartcard(ConfigListScreen, Screen):
 					list.append(getConfigListEntry(_("Is a Ci+ Module installed:"), config.OscamSmartcard.hasciplus, _("INFORMATION: please select your CI+ Modul\n\n")))
 					ConfigListScreen.__init__(self, list)
 					self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "InputActions", "ColorActions"], 
-                                        {       "left": self.keyLeft,
-                                                "down": self.keyDown,
-                                                "up": self.keyUp,
-                                                "right": self.keyRight,
-                                                "red": self.exit,
-                                                "yellow": self.showNews, 
-                                                "blue": self.rmconfig, 
-                                                "green": self.save,
-                                                "cancel": self.exit,
-                                        }, -1)
+					{
+						"left": self.keyLeft,
+						"down": self.keyDown,
+						"up": self.keyUp,
+						"right": self.keyRight,
+						"red": self.exit,
+						"yellow": self.showNews, 
+						"blue": self.rmconfig, 
+						"green": self.save,
+						"cancel": self.exit,
+					}, -1)
 					self.onLayoutFinish.append(self.UpdatePicture)
-                            		self["key_red"] = StaticText(_("Close"))
-		                        self["key_green"] = StaticText(_("save"))
-		                        self["key_blue"] = StaticText(_("remove current config"))
-                                        self["key_yellow"] = StaticText(_("Note Release"))
+					self["key_red"] = StaticText(_("Close"))
+					self["key_green"] = StaticText(_("save"))
+					self["key_blue"] = StaticText(_("remove current config"))
+					self["key_yellow"] = StaticText(_("Note Release"))
 					if not self.selectionChanged in self["config"].onSelectionChanged:
 						self["config"].onSelectionChanged.append(self.selectionChanged)
 					self.selectionChanged()
@@ -897,11 +898,11 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def showNews(self):
 		lastinfo =  ""
 		x = " : "
-                lastinfo += "06-07-2019" + x + _("Adjust runlevels") + "\n"
-                lastinfo += "06-06-2019" + x + _("small changes due to disablecrccws") + "\n"
-                lastinfo += "02-06-2019" + x + _("Adjust config dir on install") + "\n"
-                lastinfo += "02-06-2019" + x + _("Adjust for sfeed and cleanup") + "\n"
-                lastinfo += "02-06-2019" + x + _("Fix softcam/cardserver start") + "\n"
+		lastinfo += "06-07-2019" + x + _("Adjust runlevels") + "\n"
+		lastinfo += "06-06-2019" + x + _("small changes due to disablecrccws") + "\n"
+		lastinfo += "02-06-2019" + x + _("Adjust config dir on install") + "\n"
+		lastinfo += "02-06-2019" + x + _("Adjust for sfeed and cleanup") + "\n"
+		lastinfo += "02-06-2019" + x + _("Fix softcam/cardserver start") + "\n"
 		lastinfo += "10-02-2018" + x + _("added bcm arm 64 bit CPU") + "\n"
 		lastinfo += "11-07-2018" + x + _("download fix") + "\n"
 		lastinfo += "18-02-2018" + x + _("added HD03/04 Support") + "\n"
