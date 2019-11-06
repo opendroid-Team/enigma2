@@ -319,9 +319,10 @@ class descriptionList(choicesList): # XXX: we might want a better name for this
 # all ids MUST be plain strings.
 #
 class ConfigSelection(ConfigElement):
-	def __init__(self, choices, default = None):
+	def __init__(self, choices, default = None, graphic=True):
 		ConfigElement.__init__(self)
 		self.choices = choicesList(choices)
+		self.graphic = graphic
 
 		if default is None:
 			default = self.choices.default()
@@ -391,8 +392,14 @@ class ConfigSelection(ConfigElement):
 		return self._descr
 
 	def getMulti(self, selected):
+		from config import config
+		from skin import switchPixmap
 		if self._descr is None:
 			self._descr = self.description[self.value]
+		keywords_true = (_('True'),_('Yes'),_('Enabled'),_('On'))
+		keywords_false = (_('False'),_('No'),_("Disable"),_('Disabled'),_('Off'), _("None"))
+		if self._descr in (keywords_true + keywords_false) and self.graphic and config.usage.boolean_graphic.value and switchPixmap.get("menu_on", False) and switchPixmap.get("menu_off", False):
+			return ('pixmap', self._descr in keywords_true and switchPixmap["menu_on"] or switchPixmap["menu_off"])
 		return ("text", self._descr)
 
 	# HTML
@@ -423,18 +430,7 @@ class ConfigBoolean(ConfigElement):
 		ConfigElement.__init__(self)
 		self.descriptions = descriptions
 		self.value = self.last_value = self.default = default
-		self.graphic = False
-		if graphic:
-			from skin import switchPixmap
-			offPath = switchPixmap.get('menu_off')
-			onPath = switchPixmap.get('menu_on')
-			if offPath and onPath:
-				falseIcon = LoadPixmap(offPath, cached=True)
-				trueIcon = LoadPixmap(onPath, cached=True)
-				if falseIcon and trueIcon:
-					self.falseIcon = falseIcon
-					self.trueIcon = trueIcon
-					self.graphic = True
+		self.graphic = graphic
 
 	def handleKey(self, key):
 		if key in (KEY_LEFT, KEY_RIGHT):
@@ -449,11 +445,9 @@ class ConfigBoolean(ConfigElement):
 
 	def getMulti(self, selected):
 		from config import config
-		if self.graphic and config.usage.boolean_graphic.value:
-			if self.value:
-				return ('pixmap', self.trueIcon)
-			else:
-				return ('pixmap', self.falseIcon)
+		from skin import switchPixmap
+		if self.graphic and config.usage.boolean_graphic.value and switchPixmap.get("menu_on", False) and switchPixmap.get("menu_off", False):
+			return ('pixmap', self.value and switchPixmap["menu_on"] or switchPixmap["menu_off"])
 		else:
 			return ("text", self.descriptions[self.value])
 
@@ -636,7 +630,7 @@ class ConfigSequence(ConfigElement):
 			# position in the block
 			posinblock = self.marked_pos - block_len_total[blocknumber]
 
-			oldvalue = self._value[blocknumber]
+			oldvalue = abs(self._value[blocknumber]) # we are using abs in order to allow change negative values like default -1 on mis
 			olddec = oldvalue % 10 ** (number_len - posinblock) - (oldvalue % 10 ** (number_len - posinblock - 1))
 			newvalue = oldvalue - olddec + (10 ** (number_len - posinblock - 1) * number)
 
@@ -779,7 +773,7 @@ class ConfigMAC(ConfigSequence):
 		ConfigSequence.__init__(self, seperator = ":", limits = mac_limits, default = default)
 
 class ConfigMacText(ConfigElement, NumericalTextInput):
-	def __init__(self, default = "", visible_width = False):
+	def __init__(self, default = "", visible_width = False, show_help=True):
 		ConfigElement.__init__(self)
 		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
@@ -790,6 +784,7 @@ class ConfigMacText(ConfigElement, NumericalTextInput):
 		self.offset = 0
 		self.overwrite = 17
 		self.help_window = None
+		self.show_help = show_help
 		self.value = self.last_value = self.default = default
 		self.useableChars = '0123456789ABCDEF'
 
@@ -894,7 +889,8 @@ class ConfigMacText(ConfigElement, NumericalTextInput):
 			from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
 			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self)
 			self.help_window.setAnimationMode(0)
-			self.help_window.show()
+			if self.show_help:
+				self.help_window.show()
 
 	def onDeselect(self, session):
 		self.marked_pos = 0
@@ -916,11 +912,17 @@ class ConfigPosition(ConfigSequence):
 	def __init__(self, default, args):
 		ConfigSequence.__init__(self, seperator = ",", limits = [(0,args[0]),(0,args[1]),(0,args[2]),(0,args[3])], default = default)
 
-clock_limits = [(0,23),(0,59)]
+clock_limits = [(0, 23), (0, 59)]
 class ConfigClock(ConfigSequence):
-	def __init__(self, default):
-		self.t = localtime(default)
+	def __init__(self, default, timeconv=localtime, durationmode=False):
+		self.t = timeconv(default)
 		ConfigSequence.__init__(self, seperator=":", limits=clock_limits, default=[self.t.tm_hour, self.t.tm_min])
+		if durationmode:
+			self.wideformat = False
+			self.timeformat = "%_H:%M"
+		else:
+			self.wideformat = None  # Defer until later
+			self.timeformat = None  # Defer until later
 
 	def increment(self):
 		# Check if Minutes maxed out
@@ -937,34 +939,43 @@ class ConfigClock(ConfigSequence):
 		# Trigger change
 		self.changed()
 
-	def decrement(self):
+	def decrement(self, step=1):
 		# Check if Minutes is minimum
 		if self._value[1] == 0:
-			# Decrement Hour, set Minutes to 59
+			# Decrement Hour, set Minutes to 59 or 55
 			if self._value[0] > 0:
 				self._value[0] -= 1
 			else:
 				self._value[0] = 23
-			self._value[1] = 59
+			self._value[1] = 60 - step
 		else:
 			# Decrement Minutes
-			self._value[1] -= 1
+			self._value[1] -= step
 		# Trigger change
 		self.changed()
 
+	def nextStep(self):
+		self._value[1] += 5 - self._value[1] % 5 - 1
+		self.increment()
+
+	def prevStep(self):
+		# Set Minutes to the previous multiple of 5
+		step = (4 + self._value[1]) % 5 + 1
+		self.decrement(step)
+
 	def handleKey(self, key):
-		if key == KEY_DELETE and config.usage.time.wide.value:
+		if self.wideformat is None:
+			self.wideformat = config.usage.time.wide.value
+		if key == KEY_DELETE and self.wideformat:
 			if self._value[0] < 12:
 				self._value[0] += 12
 				self.validate()
 				self.changed()
-
-		elif key == KEY_BACKSPACE and config.usage.time.wide.value:
+		elif key == KEY_BACKSPACE and self.wideformat:
 			if self._value[0] >= 12:
 				self._value[0] -= 12
 				self.validate()
 				self.changed()
-
 		elif key in KEY_NUMBERS or key == KEY_ASCII:
 			if key == KEY_ASCII:
 				code = getPrevAsciiCode()
@@ -976,7 +987,7 @@ class ConfigClock(ConfigSequence):
 
 			hour = self._value[0]
 			pmadjust = 0
-			if config.usage.time.wide.value:
+			if self.wideformat:
 				if hour > 11:  # All the PM times
 					hour -= 12
 					pmadjust = 12
@@ -1001,7 +1012,7 @@ class ConfigClock(ConfigSequence):
 			hour = int(value[:2])
 			minute = int(value[2:])
 
-			if config.usage.time.wide.value:
+			if self.wideformat:
 				if hour == 12:  # 12AM & 12PM map to back to 00
 					hour = 0
 				elif hour > 12:
@@ -1019,13 +1030,15 @@ class ConfigClock(ConfigSequence):
 			ConfigSequence.handleKey(self, key)
 
 	def genText(self):
+		if self.timeformat is None:
+			self.timeformat = config.usage.time.short.value.replace("%-I", "%_I").replace("%-H", "%_H")
 		mPos = self.marked_pos
 		if mPos >= 2:
 			mPos += 1  # Skip over the separator
 		newtime = list(self.t)
 		newtime[3] = self._value[0]
 		newtime[4] = self._value[1]
-		value = strftime(config.usage.time.short.value.replace("%-I", "%_I").replace("%-H", "%_H"), newtime)
+		value = strftime(self.timeformat, newtime)
 		return value, mPos
 integer_limits = (0, 9999999999)
 class ConfigInteger(ConfigSequence):
@@ -1077,7 +1090,7 @@ class ConfigFloat(ConfigSequence):
 
 # an editable text...
 class ConfigText(ConfigElement, NumericalTextInput):
-	def __init__(self, default = "", fixed_size = True, visible_width = False):
+	def __init__(self, default = "", fixed_size = True, visible_width = False, show_help=True):
 		ConfigElement.__init__(self)
 		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
@@ -1088,6 +1101,7 @@ class ConfigText(ConfigElement, NumericalTextInput):
 		self.offset = 0
 		self.overwrite = fixed_size
 		self.help_window = None
+		self.show_help = show_help
 		self.value = self.last_value = self.default = default
 
 	def validateMarker(self):
@@ -1253,7 +1267,8 @@ class ConfigText(ConfigElement, NumericalTextInput):
 			from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
 			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self)
 			self.help_window.setAnimationMode(0)
-			self.help_window.show()
+			if self.show_help:
+				self.help_window.show()
 
 	def onDeselect(self, session):
 		self.marked_pos = 0
@@ -1272,8 +1287,8 @@ class ConfigText(ConfigElement, NumericalTextInput):
 		self.value = str(value)
 
 class ConfigPassword(ConfigText):
-	def __init__(self, default = "", fixed_size = False, visible_width = False, censor = "*"):
-		ConfigText.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
+	def __init__(self, default = "", fixed_size = False, visible_width = False, censor = "*", show_help=True):
+		ConfigText.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width, show_help=show_help)
 		self.censor_char = censor
 		self.hidden = True
 
@@ -1720,7 +1735,7 @@ class ConfigLocations(ConfigElement):
 	def isChanged(self):
 		sv = self.saved_value
 		locations = self.locations
-		if val is None and not locations:
+		if sv is None and not locations:
 			return False
 		return self.tostring([x[0] for x in locations]) != sv
 
@@ -2021,6 +2036,7 @@ class Config(ConfigSubsection):
 			(name, val) = result
 			val = val.strip()
 
+			'''
 			#convert old settings
 			if l.startswith("config.Nims."):
 				tmp = name.split('.')
@@ -2030,10 +2046,11 @@ class Config(ConfigSubsection):
 					tmp[3] = "dvbc." + tmp[3]
 				elif tmp[3].startswith("terrestrial"):
 					tmp[3] = "dvbt." + tmp[3]
-				else:
-					if tmp[3] not in ('dvbs', 'dvbc', 'dvbt', 'multiType'):
-						tmp[3] = "dvbs." + tmp[3]
+				#else:
+				#	if tmp[3] not in ('dvbs', 'dvbc', 'dvbt', 'multiType'):
+				#		tmp[3] = "dvbs." + tmp[3]
 				name =".".join(tmp)
+			'''
 
 			names = name.split('.')
 
@@ -2106,8 +2123,8 @@ class ConfigFile:
 		names = key.split('.')
 		if len(names) > 1:
 			if names[0] == "config":
-				ret=self.__resolveValue(names[1:], config.content.items)
-				if ret and len(ret):
+				ret = self.__resolveValue(names[1:], config.content.items)
+				if ret and len(ret) or ret == "":
 					return ret
 		print "getResolvedKey", key, "failed !! (Typo??)"
 		return ""

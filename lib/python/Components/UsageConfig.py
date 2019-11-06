@@ -61,8 +61,8 @@ def InitUsageConfig():
 	config.usage.multibouquet = ConfigYesNo(default = True)
 	config.usage.maxchannelnumlen = ConfigSelection(default = "4", choices = [("1", _("1")), ("2", _("2")),("3", _("3")), ("4", _("4")), ("5", _("5"))])
 	config.usage.numzaptimeoutmode = ConfigSelection(default = "standard", choices = [("standard", _("Standard")), ("userdefined", _("User defined")), ("off", _("off"))])
-	config.usage.numzaptimeout1 = ConfigSlider(default = 3000, increment = 250, limits = (750, 5000))
-	config.usage.numzaptimeout2 = ConfigSlider(default = 1000, increment = 250, limits = (750, 5000))
+	config.usage.numzaptimeout1 = ConfigSlider(default = 3000, increment = 250, limits = (500, 5000))
+	config.usage.numzaptimeout2 = ConfigSlider(default = 1000, increment = 250, limits = (0, 5000))
 	config.usage.numzappicon = ConfigYesNo(default = False)
 	config.usage.use_pig = ConfigYesNo(default = False)
 	config.usage.update_available = NoSave(ConfigYesNo(default = False))
@@ -78,6 +78,9 @@ def InitUsageConfig():
 		refreshServiceList()
 	config.usage.alternative_number_mode.addNotifier(alternativeNumberModeChange)
 
+	config.usage.hide_number_markers = ConfigYesNo(default = True)
+	config.usage.hide_number_markers.addNotifier(refreshServiceList)
+
 	config.usage.servicetype_icon_mode = ConfigSelection(default = "0", choices = [("0", _("None")), ("1", _("Left from servicename")), ("2", _("Right from servicename"))])
 	config.usage.servicetype_icon_mode.addNotifier(refreshServiceList)
 	config.usage.crypto_icon_mode = ConfigSelection(default = "2", choices = [("0", _("None")), ("1", _("Left from servicename")), ("2", _("Right from servicename"))])
@@ -91,11 +94,38 @@ def InitUsageConfig():
 		choicelist.append(("%d" % i, ngettext("%d pixel wide", "%d pixels wide", i) % i))
 	config.usage.servicelist_column = ConfigSelection(default="-1", choices=choicelist)
 	config.usage.servicelist_column.addNotifier(refreshServiceList)
+	#two lines options
+	config.usage.servicelist_twolines = ConfigYesNo(default = False)
+	config.usage.servicelist_twolines.addNotifier(refreshServiceList)
+	config.usage.serviceitems_per_page_twolines = ConfigSelectionNumber(default = 12, stepwidth = 1, min = 4, max = 20, wraparound = True)
+	config.usage.servicelist_servicenumber_valign = ConfigSelection(default = "0", choices = [("0", _("centered")), ("1", _("upper line"))])
+	config.usage.servicelist_servicenumber_valign.addNotifier(refreshServiceList)
+	config.usage.servicelist_eventprogress_valign = ConfigSelection(default = "0", choices = [("0", _("centered")), ("1", _("upper line"))])
+	config.usage.servicelist_eventprogress_valign.addNotifier(refreshServiceList)
+	config.usage.servicelist_eventprogress_view_mode = ConfigSelection(default = "0_barright", choices = [
+		('0_no', _("No")),
+		('0_barleft', _("Progress bar left")),
+		('0_barright', _("Progress bar right")),
+		('0_percleft', _("Percentage left")),
+		('0_percright', _("Percentage right")),
+		('0_minsleft', _("Remaining minutes left")),
+		('0_minsright', _("Remaining minutes right")),
+		('1_barpercleft', _("Progress bar/Percentage left")),
+		('1_barpercright', _("Progress bar/Percentage right")),
+		('1_barminsleft', _("Progress bar/Remaining minutes left")),
+		('1_barminsright', _("Progress bar/Remaining minutes right")),
+		('2_percbarleft', _("Percentage/Progress bar left")),
+		('2_percbarright', _("Percentage/Progress bar right")),
+		('2_minsbarleft', _("Remaining minutes/Progress bar left")),
+		('2_minsbarright', _("Remaining minutes/Progress bar right"))
+		])
+	config.usage.servicelist_eventprogress_view_mode.addNotifier(refreshServiceList)
 	config.usage.servicelist_infokey = ConfigSelection(default = "event", choices = [("epg", _("Single EPG")), ("event", _("Eventview"))])
 
 	config.usage.service_icon_enable = ConfigYesNo(default = False)
 	config.usage.service_icon_enable.addNotifier(refreshServiceList)
-	config.usage.servicelist_picon_downsize = ConfigSelectionNumber(default = -2, stepwidth = 1, min = -8, max = 0, wraparound = True)
+	config.usage.servicelist_picon_downsize = ConfigSelectionNumber(default = -2, stepwidth = 1, min = -10, max = 0, wraparound = True)
+	config.usage.servicelist_picon_ratio = ConfigSelection(default = "167", choices = [("167", _("XPicon, ZZZPicon")), ("235", _("ZZPicon")), ("250", _("ZPicon"))])
 	config.usage.servicelist_cursor_behavior = ConfigSelection(default = "keep", choices = [
 		("standard", _("Standard")),
 		("keep", _("Keep service")),
@@ -150,6 +180,7 @@ def InitUsageConfig():
 	
 	config.usage.show_picon_bkgrn = ConfigSelection(default = "transparent", choices = [("none", _("Disabled")), ("transparent", _("Transparent")), ("blue", _("Blue")), ("red", _("Red")), ("black", _("Black")), ("white", _("White")), ("lightgrey", _("Light Grey")), ("grey", _("Grey"))])
 	config.usage.show_menupath = ConfigSelection(default = "small", choices = [("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
+	config.usage.show_genre_info = ConfigYesNo(default=True)
 	config.usage.show_spinner = ConfigYesNo(default = True)
 	config.usage.enable_tt_caching = ConfigYesNo(default = True)
 	config.usage.tuxtxt_font_and_res = ConfigSelection(default = "TTF_SD", choices = [("X11_SD", _("Fixed X11 font (SD)")), ("TTF_SD", _("TrueType font (SD)")), ("TTF_HD", _("TrueType font (HD)")), ("TTF_FHD", _("TrueType font (full-HD)")), ("expert_mode", _("Expert mode"))])
@@ -420,10 +451,12 @@ def InitUsageConfig():
 	config.usage.recording_frontend_priority_intval      = NoSave(ConfigInteger(default = 0, limits = (-99, maxint)))
 	config.misc.disable_background_scan = ConfigYesNo(default = False)
 
+	config.usage.menutype = ConfigSelection(default='standard', choices=[('horzanim', _('Horizontal menu')), ('horzicon', _('Horizontal icons')), ('standard', _('Standard menu'))])
 	config.usage.jobtaksextensions = ConfigYesNo(default = True)
-	config.usage.servicenum_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
-	config.usage.servicename_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
-	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
+	config.usage.servicenum_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -10, max = 10, wraparound = True)
+	config.usage.servicename_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -10, max = 10, wraparound = True)
+	config.usage.serviceinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -10, max = 10, wraparound = True)
+	config.usage.progressinfo_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -10, max = 10, wraparound = True)
 	config.usage.serviceitems_per_page = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 8, max = 40, wraparound = True)
 	config.usage.show_servicelist = ConfigYesNo(default = True)
 	config.usage.servicelist_mode = ConfigSelection(default = "standard", choices = [
@@ -491,6 +524,8 @@ def InitUsageConfig():
 		('barright', _("Progress bar right")),
 		('percleft', _("Percentage left")),
 		('percright', _("Percentage right")),
+		('minsleft', _("Remaining minutes left")),
+		('minsright', _("Remaining minutes right")),
 		('no', _("No")) ])
 	config.usage.show_channel_numbers_in_servicelist = ConfigYesNo(default = True)
 	config.usage.show_channel_jump_in_servicelist = ConfigSelection(default="quick", choices = [
@@ -625,7 +660,7 @@ def InitUsageConfig():
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")),("1", _("One line")),("2", _("Two lines"))], "2")
 	config.usage.show_eit_nownext = ConfigYesNo(default = True)
 	config.usage.show_vcr_scart = ConfigYesNo(default = False)
-	config.usage.pic_resolution = ConfigSelection(default=None, choices=[(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")][:SystemInfo["HasOPD-Blue-LineSkinSupport"] and 4 or 3])
+	config.usage.pic_resolution = ConfigSelection(default = None, choices = [(None, _("Same resolution as skin")), ("(720, 576)","720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")])
 	config.usage.enable_delivery_system_workaround = ConfigYesNo(default = False)
 	config.usage.date = ConfigSubsection()
 	config.usage.date.enabled = NoSave(ConfigBoolean(default=False))
@@ -906,6 +941,7 @@ def InitUsageConfig():
 		config.usage.time.display.value = config.usage.time.display.default
 
 	config.usage.boolean_graphic = ConfigYesNo(default=False)
+	config.usage.show_slider_value = ConfigYesNo(default=True)
 	config.epg = ConfigSubsection()
 	config.epg.eit = ConfigYesNo(default = True)
 	config.epg.mhw = ConfigYesNo(default = False)

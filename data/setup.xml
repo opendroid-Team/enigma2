@@ -20,7 +20,8 @@
 	</setup>
 	<setup key="usage" title="Customize">
 		<item level="0" text="Setup mode" description="Choose which level of menu/setting's to display. 'Expert'-level shows all items.">config.usage.setup_level</item>
-		<item level="0" text="Show menu numbers" description="This option allows you to show menu number quick links.">config.usage.menu_show_numbers</item>
+		<item level="0" text="Show Main Menu as" description="Choose style of main menus" >config.usage.menutype</item>
+		<item level="0" text="Show menu numbers" description="This option allows you to show menu number quick links." requires="config.usage.menutype" value="standard">config.usage.menu_show_numbers</item>
 		<item level="1" text="Enable teletext caching" description="When enabled, teletext pages will be cached, allowing faster access.">config.usage.enable_tt_caching</item>
 		<item level="1" text="Teletext font and resolution" description="Configure the display resolution and the font used for teletext.">config.usage.tuxtxt_font_and_res</item>
 		<item level="1" tt_level="1" text="Teletext UseTTF (0=fixed font, 1=TrueType)" description="Configure whether a fixed font or a scalable TrueType font is used for teletext.">config.usage.tuxtxt_UseTTF</item>
@@ -86,6 +87,7 @@
 		<item level="1" text="Show infobar on event change" description="If set to 'yes' the infobar will be displayed when a new event starts.">config.usage.show_infobar_on_event_change</item>
 		<item level="1" text="Show channel number in infobar" description="If set to 'yes' the channel number will be displayed in the infobar.">config.usage.show_infobar_channel_number</item>
 		<item level="0" text="Show picon background colour" description="This option allows you choose the background colour of transparent picons.">config.usage.show_picon_bkgrn</item>
+		<item level="0" text="Show event genre information" description="This option allows you to choose whether or not to display genre information for the event.">config.usage.show_genre_info</item>
 		<item level="2" text="Show background in Radio Mode" description="Show background when tuned to a radio channel.">config.misc.showradiopic</item>
 		<item level="2" text="Show screensaver" description="Configure the duration in minutes for the screensaver.">config.usage.screen_saver</item>
 		<item level="0" text="Show time remaining/elapsed" description="This option allows you choose how to display remaining time, or elapsed time, or both.">config.usage.swap_time_remaining_on_osd</item>
@@ -108,6 +110,7 @@
 		<item level="2" text="Remember last service in PiP" description="Configure if and how long the latest service in the PiP will be remembered." requires="PIPAvailable">config.usage.pip_last_service_timeout</item>
 		<item level="2" text="Show VCR scart on main menu" description="When enabled, the VCR scart option will be shown on the main menu" requires="ScartSwitch">config.usage.show_vcr_scart</item>
 		<item level="2" text="Show True/False as graphical switch" description="Enable to display all true/false, yes/no, on/off and enable/disable set up options as a graphical switch.">config.usage.boolean_graphic</item>
+		<item level="2" text="Show additional slider value" description="Enable the current value of the slider at end of the slider bar.">config.usage.show_slider_value</item>
 	</setup>
 	<setup key="channelselection" title="Channel selection settings">
 		<item level="1" text="Alternative numbering mode" description="When enabled, channel numbering will start at '1' for each bouquet.">config.usage.alternative_number_mode</item>
@@ -139,6 +142,7 @@
 		<item level="1" text="Text scrolling speed (software render)*" description="Set the scrolling speed of text on the menus, this uses a software render in some skins.">config.usage.scroll_label_speed</item>
 		<item level="1" text="Text scrolling delay (software render)*" description="Set the delay time between repeated loops, this uses a software render in some skins.">config.usage.scroll_label_delay</item>
 		<item level="1" text="Service info font size" description="This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size">config.usage.serviceinfo_fontsize</item>
+		<item level="1" text="Progress info font size" description="This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size">config.usage.progressinfo_fontsize</item>
 		<item level="1" text="Zap mode" requires="ZapMode" description="Setup how to control the channel changing.">config.misc.zapmode</item>
 		<item level="2" text="Channel zap delay mode" description="Setup delay mode to zap to channels.">config.usage.numzaptimeoutmode</item>
 		<item level="2" text="Channel zap delay first button" description="User defined delay when you press the first button to zap to the channel.">config.usage.numzaptimeout1</item>

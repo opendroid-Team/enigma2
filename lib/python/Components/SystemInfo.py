@@ -104,7 +104,7 @@ SystemInfo["HaveID"] = fileCheck("/etc/.id")
 SystemInfo["HaveTouchSensor"] = getBoxType() in ('dm520', 'dm525', 'dm900', 'dm920')
 SystemInfo["DefaultDisplayBrightness"] = getBoxType() in ('dm900', 'dm920') and 8 or 5
 SystemInfo["LCDsymbol_circle"] = fileCheck("/proc/stb/lcd/symbol_circle")
-SystemInfo["HasOPD-Blue-LineSkinSupport"] = HardwareInfo().get_device_name() not in ("et4000", "et5000", "sh1", "hd500c", "dm900", "dm920")
+SystemInfo["HasMultiboxSupport"] = HardwareInfo().get_device_name() not in ("et4000", "et5000", "sh1", "hd500c", "dm900", "dm920")
 SystemInfo["HasRootSubdir"] = fileHas("/proc/cmdline", "rootsubdir=")
 SystemInfo["RecoveryMode"] = SystemInfo["HasRootSubdir"] and getMachineBuild() not in ('vs1500','hd51','h7') or fileCheck("/proc/stb/fp/boot_mode")
 SystemInfo["ForceLNBPowerChanged"] = fileCheck("/proc/stb/frontend/fbc/force_lnbon")
@@ -128,4 +128,4 @@ SystemInfo["HasMMC"] = fileHas("/proc/cmdline", "root=/dev/mmcblk") or SystemInf
 SystemInfo["HasSDmmc"] = SystemInfo["canMultiBoot"] and "sd" in SystemInfo["canMultiBoot"][2] and "mmcblk" in getMachineMtdRoot() 
 SystemInfo["HasSDswap"] = getMachineBuild() in ("h9", "i55plus") and pathExists("/dev/mmcblk0p1")
 SystemInfo["CanProc"] = SystemInfo["HasMMC"] and getBrandOEM() != "vuplus"
-SystemInfo["canRecovery"] = getMachineBuild() in ('hd51','vs1500','h7','8100s') and ('disk.img', 'mmcblk0p1') or getMachineBuild() in ('xc7439','osmio4k','osmio4kplus') and ('emmc.img', 'mmcblk1p1') or getMachineBuild() in ('gbmv200','cc1','sf8008','ustym4kpro','beyonwizv2','viper4k') and ('usb_update.bin','none')
+SystemInfo["canRecovery"] = getMachineBuild() in ('hd51','vs1500','h7','8100s') and ('disk.img', 'mmcblk0p1') or getMachineBuild() in ('xc7439','osmio4k','osmio4kplus','osmini4k') and ('emmc.img', 'mmcblk1p1') or getMachineBuild() in ('gbmv200','cc1','sf8008','ustym4kpro','beyonwizv2','viper4k') and ('usb_update.bin','none')
