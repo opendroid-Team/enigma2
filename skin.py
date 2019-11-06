@@ -2,13 +2,14 @@ from Tools.Profile import profile
 profile("LOAD:ElementTree")
 import xml.etree.cElementTree
 import os
+from os import path, remove, listdir
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, eRect, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, addFont, gRGB, eWindowStyleSkinned, getDesktop
 from Components.config import ConfigSubsection, ConfigText, config, ConfigYesNo, ConfigSelection, ConfigNothing
 from Components.Converter.Converter import Converter
 from Components.Sources.Source import Source, ObsoleteSource
 from Components.SystemInfo import SystemInfo
-from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_ACTIVE_SKIN, SCOPE_ACTIVE_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
+from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CURRENT_LCDSKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Components.RcModel import rc_model
@@ -28,7 +29,6 @@ fonts = {
 parameters = {}
 constant_widgets = {}
 variables = {}
-DEFAULT_SKIN = "Multibox/skin.xml"
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 isOPDSkin = False
 
@@ -69,32 +69,14 @@ class DisplaySkinError(Exception):
 dom_skins = [ ]
 
 def addSkin(name, scope = SCOPE_SKIN):
-	if name is None or not len(name):
-		print "[SKIN ERROR] attempt to add a skin without filename"
-		return False
 	filename = resolveFilename(scope, name)
 	if fileExists(filename):
 		mpath = os.path.dirname(filename) + "/"
-		try:
-			dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
-		except:
-			print "[SKIN ERROR] error in %s" % filename
-			return False
-		else:
-			return True
+		file = open(filename, 'r')
+		dom_skins.append((mpath, xml.etree.cElementTree.parse(file).getroot()))
+		file.close()
+		return True
 	return False
-
-def get_modular_files(name, scope = SCOPE_SKIN):
-	dirname = resolveFilename(scope, name + 'mySkin/')
-	file_list = []
-	if fileExists(dirname) and config.skin.primary_skin.value != DEFAULT_SKIN:
-		skin_files = (os.listdir(dirname))
-		if len(skin_files):
-			for f in skin_files:
-				if f.startswith('skin_') and f.endswith('.xml'):
-					file_list.append(("mySkin/" + f))
-	file_list = sorted(file_list, key=str.lower)
-	return file_list
 
 def skin_user_skinname():
 	name = "skin_user_" + config.skin.primary_skin.value[:config.skin.primary_skin.value.rfind('/')] + ".xml"
@@ -102,9 +84,35 @@ def skin_user_skinname():
 	if fileExists(filename):
 		return name
 	return None
+	
+def loadSkin(name, scope = SCOPE_SKIN):
+	filename = resolveFilename(scope, name)
+	mpath = path.dirname(filename) + "/"
+	dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
+
+def get_modular_files(name, scope = SCOPE_SKIN):
+	dirname = resolveFilename(scope, name + 'mySkin/')
+	file_list = []
+	if fileExists(dirname):
+		skin_files = (listdir(dirname))
+		if len(skin_files):
+			for f in skin_files:
+				if f.startswith('skin_') and f.endswith('.xml'):
+					file_list.append(("mySkin/" + f))
+	file_list = sorted(file_list, key=str.lower)
+	return file_list
 
 
 config.skin = ConfigSubsection()
+config.defaultskinSetup = ConfigSubsection()
+config.defaultskinSetup.steps = ConfigSelection([('default Multibox',_("default Multibox")),('default OPD-Blue-Line',_("default OPD-Blue-Line"))])
+if config.defaultskinSetup.steps.value == "default OPD-Blue-Line":
+	DEFAULT_SKIN = "Multibox/skin.xml"
+elif config.defaultskinSetup.steps.value == "default Multibox":
+	DEFAULT_SKIN = "skin_default/skin.xml"
+
+if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
+	DEFAULT_SKIN = "Multibox/skin.xml"
 config.skin.primary_skin = ConfigText(default = DEFAULT_SKIN)
 config.skin.display_skin = ConfigText(default = DEFAULT_DISPLAY_SKIN)
 if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
@@ -146,7 +154,7 @@ if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["Ol
 	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
 		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
 			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
-		else:	
+		else:
 			addSkin('display/' + config.skin.display_skin.value)
 
 if addSkin('skin_display.xml'):
@@ -172,39 +180,72 @@ except:
 
 addSkin('skin_subtitles.xml')
 
-if config.skin.primary_skin.value != DEFAULT_SKIN:
-	skinpath = resolveFilename(SCOPE_SKIN, primary_skin_path)
-	if os.path.isdir(skinpath):
-		for file in sorted(os.listdir(skinpath)):
-			if file.startswith('skin_user_') and file.endswith('.xml'):
-				try:
-					addSkin(primary_skin_path + file, SCOPE_SKIN)
-					print "[SKIN] loading user defined %s skin file: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file)
-				except (SkinError, IOError, OSError, AssertionError), err:
-					print "[SKIN] not loading user defined %s skin file: %s - error: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file, err)
-
-'''
 try:
-	if config.skin.primary_skin.value != DEFAULT_SKIN:
-		addSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
-		print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
+	loadSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined colors for skin"
 
 try:
-	if config.skin.primary_skin.value != DEFAULT_SKIN:
-		addSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
-		print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
+	loadSkin(primary_skin_path + 'skin_user_background.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined background for skin", (primary_skin_path + 'skin_user_background.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined background for skin"	
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined header file for skin"
-'''
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_infobar.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined infobar file for skin", (primary_skin_path + 'skin_user_infobar.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined infobar file for skin"
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_sib.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined sib file for skin", (primary_skin_path + 'skin_user_sib.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined sib file for skin"
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_ch_se.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined ch_se file for skin", (primary_skin_path + 'skin_user_ch_se.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined ch_se file for skin"
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_ev.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined ev file for skin", (primary_skin_path + 'skin_user_ev.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined ev file for skin"	
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_sb.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined sb file for skin", (primary_skin_path + 'skin_user_sb.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined sb file for skin"
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_ul.xml', SCOPE_SKIN)
+	print "[SKIN] loading user defined ul file for skin", (primary_skin_path + 'skin_user_ul.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined ul file for skin"
+
+try:
+	loadSkin(primary_skin_path + 'skin_user_clock.xml', SCOPE_SKIN)
+	print "[SKIN loading user defined clock file for skin", (primary_skin_path + 'skin_user_clock.xml')
+except (SkinError, IOError, AssertionError), err:
+	print "[SKIN] not loading user defined clock file for skin"
 
 def load_modular_files():
 	modular_files = get_modular_files(primary_skin_path, SCOPE_SKIN)
 	if len(modular_files):
 		for f in modular_files:
 			try:
-				addSkin(primary_skin_path + f, SCOPE_SKIN)
+				loadSkin(primary_skin_path + f, SCOPE_SKIN)
 				print "[SKIN] loading modular skin file : ", (primary_skin_path + f)
 			except (SkinError, IOError, AssertionError), err:
 				print "[SKIN] failed to load modular skin file : ", err
@@ -330,9 +371,9 @@ def collectAttributes(skinAttributes, node, context, skin_path_prefix=None, igno
 	for attrib, value in node.items():
 		if attrib not in ignore:
 			if attrib in filenames:
-				pngfile = resolveFilename(SCOPE_ACTIVE_SKIN, value, path_prefix=skin_path_prefix)
-				if fileExists(resolveFilename(SCOPE_ACTIVE_LCDSKIN, value, path_prefix=skin_path_prefix)):
-					pngfile = resolveFilename(SCOPE_ACTIVE_LCDSKIN, value, path_prefix=skin_path_prefix)
+				pngfile = resolveFilename(SCOPE_CURRENT_SKIN, value, path_prefix=skin_path_prefix)
+				if not fileExists(pngfile) and fileExists(resolveFilename(SCOPE_CURRENT_LCDSKIN, value, path_prefix=skin_path_prefix)):
+					pngfile = resolveFilename(SCOPE_CURRENT_LCDSKIN, value, path_prefix=skin_path_prefix)
 				value = pngfile
 			if attrib == 'size':
 				size = value.encode("utf-8")
@@ -724,9 +765,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 	for skininclude in skin.findall("include"):
 		filename = skininclude.attrib.get("filename")
 		if filename:
-			skinfile = resolveFilename(SCOPE_ACTIVE_SKIN, filename, path_prefix=path_prefix)
-			if not fileExists(skinfile):
-				skinfile = resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix)
+			skinfile = resolveFilename(SCOPE_CURRENT_SKIN, filename, path_prefix=path_prefix)
 			if fileExists(skinfile):
 				print "[SKIN] loading include:", skinfile
 				loadSkin(skinfile)
@@ -740,9 +779,9 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			filename = get_attr('filename')
 			if not filename:
 				raise SkinError('[Skin] pixmap needs filename attribute')
-			resolved_png = resolveFilename(SCOPE_ACTIVE_SKIN, filename, path_prefix=path_prefix)
+			resolved_png = resolveFilename(SCOPE_CURRENT_SKIN, filename, path_prefix=path_prefix)
 			if fileExists(resolved_png):
-				switchPixmap[name] = resolved_png
+				switchPixmap[name] = LoadPixmap(resolved_png, cached=True)
 			else:
 				raise SkinError('[Skin] switchpixmap pixmap filename="%s" (%s) not found' % (filename, resolved_png))
 
@@ -783,11 +822,9 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				render = 0
 			resolved_font = resolveFilename(SCOPE_FONTS, filename, path_prefix=path_prefix)
 			if not fileExists(resolved_font):
-				resolved_font = resolveFilename(SCOPE_ACTIVE_SKIN, filename)
-				if fileExists(resolveFilename(SCOPE_CURRENT_SKIN, filename)):
-					resolved_font = resolveFilename(SCOPE_CURRENT_SKIN, filename)
-				elif fileExists(resolveFilename(SCOPE_ACTIVE_LCDSKIN, filename)):
-					resolved_font = resolveFilename(SCOPE_ACTIVE_LCDSKIN, filename)
+				resolved_font = resolveFilename(SCOPE_CURRENT_SKIN, filename)
+				if not fileExists(resolved_font) and fileExists(resolveFilename(SCOPE_CURRENT_LCDSKIN, filename)):
+					resolved_font = resolveFilename(SCOPE_CURRENT_LCDSKIN, filename)
 			addFont(resolved_font, name, scale, is_replacement, render)
 
 		fallbackFont = resolveFilename(SCOPE_FONTS, "fallback.font", path_prefix=path_prefix)
@@ -887,9 +924,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				bpName = get_attr("pos")
 				filename = get_attr("filename")
 				if filename and bpName:
-					pngfile = resolveFilename(SCOPE_ACTIVE_SKIN, filename, path_prefix=path_prefix)
-					if fileExists(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix)):
-						pngfile = resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix)
+					pngfile = resolveFilename(SCOPE_CURRENT_SKIN, filename, path_prefix=path_prefix)
 					png = loadPixmap(pngfile, desktop)
 					try:
 						style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
