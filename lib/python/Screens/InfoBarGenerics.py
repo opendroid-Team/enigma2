@@ -3947,9 +3947,9 @@ class InfoBarInstantRecord:
 		if isStandardInfoBar(self):
 			commonVOD = ((_('Download (remember to switch to a channel DVB-S2/T/T2/C)'), 'downloadvod'), (_('Add recording (stop after current event)'), 'event'))
 			common = ((_('Add recording (stop after current event)'), 'event'),
-			          (_('Add recording (indefinitely)'), 'indefinitely'),
-			          (_('Add recording (enter recording duration)'), 'manualduration'),
-		      (_('Add recording (enter recording endtime)'), 'manualendtime'))
+				(_('Add recording (indefinitely)'), 'indefinitely'),
+				(_('Add recording (enter recording duration)'), 'manualduration'),
+		(_('Add recording (enter recording endtime)'), 'manualendtime'))
 			timeshiftcommon = ((_("Timeshift save recording (stop after current event)"), "savetimeshift"),
 				(_("Timeshift save recording (Select event)"), "savetimeshiftEvent"),)
 		else:
@@ -4253,23 +4253,23 @@ class InfoBarRedButton:
 			pass
 
 	def activateRedButton(self):
-                isWEBBROWSER = None
-                isHBBTV = None
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/WebBrowser/browser.pyo'):
-                        isWEBBROWSER = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/HbbTV/plugin.pyo'):
-                        isHBBTV = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/E3Opera/plugin.pyo'):
-                        isHBBTV = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/NXHbbTV/plugin.pyo'):
-                        isHBBTV = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/OpenOpera/plugin.pyo'):
-                        isHBBTV = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/WebkitHbbTV/plugin.pyo'):
-                        isHBBTV = True
-                if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/QtHbbtv/plugin.pyo'):
-                        isHBBTV = True
-                if isWEBBROWSER or isHBBTV:
+		isWEBBROWSER = None
+		isHBBTV = None
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/WebBrowser/browser.pyo'):
+			isWEBBROWSER = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/HbbTV/plugin.pyo'):
+			isHBBTV = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/E3Opera/plugin.pyo'):
+			isHBBTV = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/NXHbbTV/plugin.pyo'):
+			isHBBTV = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/OpenOpera/plugin.pyo'):
+			isHBBTV = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/WebkitHbbTV/plugin.pyo'):
+			isHBBTV = True
+		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/QtHbbtv/plugin.pyo'):
+			isHBBTV = True
+		if isWEBBROWSER or isHBBTV:
 			service = self.session.nav.getCurrentService()
 			info = service and service.info()
 			if info and info.getInfoString(iServiceInformation.sHBBTVUrl) != "":
@@ -4962,22 +4962,22 @@ class InfoBarServiceErrorPopupSupport:
 				eDVBServicePMTHandler.eventEOF: None,
 				eDVBServicePMTHandler.eventMisconfiguration: _("Service unavailable!\nCheck tuner configuration!"),
 				}.get(error)
-                        if error is not None:
-                                if error == _('No free tuner!') and config.usage.messageNoResources.value == False:
-                                        return
-                                if error == _('Tune failed!') and config.usage.messageTuneFailed.value == False:
-                                        return
-                                if error == _('No data on transponder!\n(Timeout reading PAT)') and config.usage.messageNoPAT.value == False:
-                                        return
-                                if error == _('Service not found!\n(SID not found in PAT)') and config.usage.messageNoPATEntry.value == False:
-                                        return
-                                if error == _('Service invalid!\n(Timeout reading PMT)') and config.usage.messageNoPMT.value == False:
-                                        return
+			if error is not None:
+				if error == _('No free tuner!') and config.usage.messageNoResources.value == False:
+					return
+				if error == _('Tune failed!') and config.usage.messageTuneFailed.value == False:
+					return
+				if error == _('No data on transponder!\n(Timeout reading PAT)') and config.usage.messageNoPAT.value == False:
+					return
+				if error == _('Service not found!\n(SID not found in PAT)') and config.usage.messageNoPATEntry.value == False:
+					return
+				if error == _('Service invalid!\n(Timeout reading PMT)') and config.usage.messageNoPMT.value == False:
+					return
 			if error and not config.usage.hide_zap_errors.value:
 				self.closeNotificationInstantiateDialog()
 				if hasattr(self, "dishDialog") and not self.dishDialog.dishState():
 					Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError")
-                return
+		return
 
 class InfoBarZoom:
 	def __init__(self):
