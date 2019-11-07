@@ -50,7 +50,7 @@ class ExtrasList(MenuList, HTMLComponent, GUIComponent):
 					if self.getSelectionIndex() < self.last:
 						self.up()
 					else:
-						elf.down()
+						self.down()
 
 		except Exception as e:
 			pass

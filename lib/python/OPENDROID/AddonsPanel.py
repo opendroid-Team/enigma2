@@ -242,7 +242,7 @@ class	AddonsRemove(Screen):
 							pluginfiles += item
 							pluginfiles += "\n" 
 							self.listplugininfo(pluginfiles)
-							self.list = []                                                 
+							self.list = []
 				else:
 					self.setuplist.append("%s" % sel.name)
 					list = self.setuplist
@@ -250,7 +250,7 @@ class	AddonsRemove(Screen):
 						pluginfiles += item
 						pluginfiles += "\n"
 						self.listplugininfo(pluginfiles)
-						self.list = []    
+						self.list = []
 
 			elif self.type == self.REMOVE:
 				if sel.name in self.setuplist:
@@ -264,7 +264,7 @@ class	AddonsRemove(Screen):
 							pluginfiles += item
 							pluginfiles += "\n" 
 							self.listplugininfo(pluginfiles)
-							self.list = []                                                 
+							self.list = []
 				else:
 					self.setuplist.append("%s" % sel.name)
 					list = self.setuplist
@@ -272,8 +272,7 @@ class	AddonsRemove(Screen):
 						pluginfiles += item
 						pluginfiles += "\n"
 						self.listplugininfo(pluginfiles)
-						self.list = []                         
-
+						self.list = []
 
 	def install(self):
 		PLUGIN_PREFIX = 'enigma2-plugin-'
