@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-10-31 18:22+0100\n"
+"PO-Revision-Date: 2019-11-10 15:45+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -19033,3 +19033,108 @@ msgstr "Vuoi cambiare la skin predefinita?"
 
 msgid "Do you want to install plugins?"
 msgstr "Vuoi installare plugin?"
+
+#: for multibox skins
+msgid "%s Setup"
+msgstr "%s Setup"
+
+msgid "Personalize your Skin"
+msgstr "Personalizza la tua skin"
+
+msgid "Setup - %s"
+msgstr "Setup - %s"
+
+msgid "%s - Setup"
+msgstr "%s - Setup"
+
+msgid "Style:"
+msgstr "Stile:"
+
+msgid "Background:"
+msgstr "Sfondo:"
+
+msgid "ColorSelectedBackground:"
+msgstr "Colore sfondo selezionato:"
+
+msgid "Infobar:"
+msgstr "Infobar:"
+
+msgid "Secondinfobar:"
+msgstr "Secondinfobar:"
+
+msgid "Channelselection:"
+msgstr "Selezione del canale:"
+
+msgid "Eventview:"
+msgstr "Visualizzatore eventi:"
+
+msgid "Clock:"
+msgstr "Orologio:"
+
+msgid "UserLogo:"
+msgstr "Logo dell'utente:"
+
+msgid "Enable %s pro:"
+msgstr "Abilitare %s pro:"
+
+msgid "Change skin"
+msgstr "Cambiare skin"
+
+msgid "*Multibox FHD*  FHD Skin for OPD Images by stein17"
+msgstr "*Multibox FHD*  Skin FHD per immagini OPD di stein17"
+
+msgid "Skin information"
+msgstr "Informazioni sulla skin"
+
+msgid "*Multibox* FHD Skin for OPD Images by stein17"
+msgstr "*Multibox* Skin FHD per immagini OPD di stein17"
+
+msgid "Support: https://droidsat.org/forum/"
+msgstr "Support: https://droidsat.org/forum/"
+
+msgid ""
+"In the skin there is the possibility to integrate your own user logos. The logo should not be bigger than 150x48 pixels. Scale your logo to this size and save it as User_Logo.png. Then copy the logo with FTP to usr / share / enigma2 / Multibox / "
+"Skinparts /, this will overwrite the original. Anyone who has requests regarding a user logo, can sign up in the forum. PN s are ignored."
+msgstr ""
+"Nella skin c'è la possibilità di integrare i propri loghi utente. Il logo non deve essere più grande di 150x48 pixel. Ridimensiona il tuo logo di queste dimensioni e salvalo come User_Logo.png. Quindi copia il logo con FTP su usr / share / enigma2 / "
+"Multibox / Skinparts /, questo sovrascriverà l'originale. Chiunque abbia richieste relative al logo di un utente, può iscriversi al forum. I PM vengono ignorati."
+
+msgid ""
+"Google DNS Server: The IP addresses of the Google service\n"
+"IP addresses for the Internet Protocol version 4 (IPv4)\n"
+"Preferred DNS server: 8.8.8.8\n"
+"Alternative DNS server: 8.8.4.4IP addresses for the Internet Protocol version 6 (IPv6)\n"
+"Preferred DNS server: 2001:4860:4860:8888\n"
+"Alternative DNS server: 2001:4860:4860:8844"
+msgstr ""
+"Google DNS Server: gli indirizzi IP del servizio Google\n"
+"Indirizzi IP per Internet Protocol versione 4 (IPv4)\n"
+"Server DNS preferito: 8.8.8.8\n"
+"Server DNS alternativo: 8.8.4.4 Indirizzi IP per Internet Protocol versione 6 (IPv6)\n"
+"PServer DNS preferito: 2001: 4860: 4860: 8888\n"
+"Server DNS alternativo: 2001: 4860: 4860: 8844"
+
+msgid "Instructions User logo"
+msgstr "Istruzioni Logo dell'utente"
+
+msgid "If no weather is displayed, it may help to change the DNS address"
+msgstr "Se non viene visualizzato alcun meteo, può essere utile cambiare l'indirizzo DNS"
+
+msgid "DNS server fast and secure: Super fast DNS server from Cloudflare"
+msgstr "Server DNS veloce e sicuro: server DNS superveloce di Cloudflare"
+
+msgid ""
+"Preferred DNSv4-Server die IP 1.1.1.1\n"
+"Alternative DNSv4-Server die IP 1.0.0.1"
+msgstr ""
+"Server DNSv4 preferito da IP 1.1.1.1\n"
+"Server DNSv4 alternativo con IP 1.0.0.1"
+
+msgid "press yellow button to select SkinParts"
+msgstr "premi il tasto giallo per selezionare SkinParts"
+
+msgid "Weather Setup .... Press Menu Button to get to the weather plugin"
+msgstr "Impostazione meteo .... Premere il pulsante Menu per accedere al plug-in meteo"
+
+msgid "Help, Skin settings(Weather, Own user logo )"
+msgstr "Guida, Impostazioni skin (Meteo, Logo dell'utente)"
