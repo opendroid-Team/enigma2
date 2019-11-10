@@ -78,7 +78,9 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self.skin_lines = []
 		self.changed_screens = False
 		Screen.__init__(self, session)
-		
+		self['lab11'] = Label(_('press yellow button to select SkinParts'))
+		self['lab12'] = Label(_('Weather Setup .... Press Menu Button to get to the weather plugin'))
+		self['lab13'] = Label(_('Help, Skin settings(Weather, Own user logo )'))
 		self.start_skin = config.skin.primary_skin.value
 
 		if self.start_skin != "skin.xml":
@@ -101,12 +103,17 @@ class AtileHD_Config(Screen, ConfigListScreen):
 				"ok": self.keyOk,
 				"menu": self.config,
 			}, -2)
+		self.onLayoutFinish.append(self.opdtext)
 
+	def opdtext(self):
+		self['lab11'].show()
+		self['lab12'].show()
+		self['lab13'].show()
 		self["Picture"] = Pixmap()
-		
+
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
-		
+
 		if self.start_skin == "skin.xml":
 			self.onLayoutFinish.append(self.openSkinSelectorDelayed)
 		else:
@@ -441,15 +448,39 @@ class AtileHD_Config(Screen, ConfigListScreen):
 			self.close()
 
 class AtileHD_About(Screen):
+	skin = '\n\t<screen position="150,150" size="420,310" title="AtileHD About">\n\t\t<widget name="lab1" position="530,20" size="200,30" font="Regular;20" valign="center" transparent="1"/>\n\t\t<widget name="lab2" position="180,20" size="150,30" font="Regular;20" valign="center" transparent="1"/>\n\t\t<widget name="lab3" position="1227,880" size="200,30" font="Regular;20" valign="center" transparent="1"/>\n\t\t<widget name="lab4" position="1225,961" size="100,30" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab5" position="10,332" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab6" position="10,605" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab7" position="10,288" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab8" position="12,560" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab9" position="10,875" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<widget name="lab10" position="10,922" size="100,30" zPosition="1" font="Regular;20" valign="center"  halign="center" transparent="1"/>\n\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="0,260" size="140,40" alphatest="on" />\n\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="140,260" size="140,40" alphatest="on" />\n\t\t<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,260" size="140,40" alphatest="on" />\n\t\t<widget name="key_red" position="0,260" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t<widget name="key_green" position="140,260" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t<widget name="key_yellow" position="280,260" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />\n\t</screen>'
 
 	def __init__(self, session, args = 0):
 		self.session = session
 		Screen.__init__(self, session)
+		self['lab1'] = Label(_('*Multibox FHD*  FHD Skin for OPD Images by stein17'))
+		self['lab2'] = Label(_('Skin information'))
+		self['lab3'] = Label(_('*Multibox* FHD Skin for OPD Images by stein17'))
+		self['lab4'] = Label(_('Support: https://droidsat.org/forum/'))
+		self['lab5'] = Label(_('In the skin there is the possibility to integrate your own user logos. The logo should not be bigger than 150x48 pixels. Scale your logo to this size and save it as User_Logo.png. Then copy the logo with FTP to usr / share / enigma2 / Multibox / Skinparts /, this will overwrite the original. Anyone who has requests regarding a user logo, can sign up in the forum. PN s are ignored.'))
+		self['lab6'] = Label(_('Google DNS Server: The IP addresses of the Google service\nIP addresses for the Internet Protocol version 4 (IPv4)\nPreferred DNS server: 8.8.8.8\nAlternative DNS server: 8.8.4.4IP addresses for the Internet Protocol version 6 (IPv6)\nPreferred DNS server: 2001:4860:4860:8888\nAlternative DNS server: 2001:4860:4860:8844'))
+		self['lab7'] = Label(_('Instructions User logo'))
+		self['lab8'] = Label(_('If no weather is displayed, it may help to change the DNS address'))
+		self['lab9'] = Label(_('DNS server fast and secure: Super fast DNS server from Cloudflare'))
+		self['lab10'] = Label(_('Preferred DNSv4-Server die IP 1.1.1.1\nAlternative DNSv4-Server die IP 1.0.0.1'))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
 				"cancel": self.cancel,
 				"ok": self.keyOk,
 			}, -2)
+		self.onLayoutFinish.append(self.opdtext)
+
+	def opdtext(self):
+		self['lab1'].show()
+		self['lab2'].show()
+		self['lab3'].show()
+		self['lab4'].show()
+		self['lab5'].show()
+		self['lab6'].show()
+		self['lab7'].show()
+		self['lab8'].show()
+		self['lab9'].show()
+		self['lab10'].show()
 
 	def keyOk(self):
 		self.close()
