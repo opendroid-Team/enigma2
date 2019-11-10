@@ -105,10 +105,6 @@ class AtileHD_Config(Screen, ConfigListScreen):
 			}, -2)
 		self.onLayoutFinish.append(self.opdtext)
 
-	def opdtext(self):
-		self['lab11'].show()
-		self['lab12'].show()
-		self['lab13'].show()
 		self["Picture"] = Pixmap()
 
 		if not self.selectionChanged in self["config"].onSelectionChanged:
@@ -440,6 +436,11 @@ class AtileHD_Config(Screen, ConfigListScreen):
 
 	def about(self):
 		self.session.open(AtileHD_About)
+
+	def opdtext(self):
+		self['lab11'].show()
+		self['lab12'].show()
+		self['lab13'].show()
 
 	def restartGUIcb(self, answer):
 		if answer is True:
