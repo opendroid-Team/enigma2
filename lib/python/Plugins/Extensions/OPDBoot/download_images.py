@@ -385,7 +385,7 @@ class DownloadOnLineImage(Screen):
                 if self.distro == 'opendroid':
                         if box == "ax51":
                                 box = "mutant51"
-                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?dir=' + MASCHINEBUILD 
+                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD 
                         req = urllib2.Request(self.feedurl1)
                         stb = 'no Image for this Box on this Side'
                         try:
@@ -658,7 +658,7 @@ class DownloadOnLineImage(Screen):
                 elif self.distro == 'openvix':
                         url = '%s/%s' % (self.feedurl, urlbox)
                 elif self.distro == 'opendroid':
-                        url = '%s/%s/index.php?dir=%s' % (self.feedurl, BRANDOEMDROID, MASCHINEBUILD)			
+                        url = '%s/%s/index.php?open=%s' % (self.feedurl, BRANDOEMDROID, MASCHINEBUILD)			
                 elif self.distro == 'opennfr':
                         url = '%s/%s' % (self.feedurl, box)
                 elif self.distro == 'openhdf':

@@ -10,6 +10,6 @@ else
 	opdbm  \
 	opdinitboot \
 	fbclear 
-endif 
+endif
 
 
