@@ -378,14 +378,14 @@ class About(Screen):
 			f = open('/proc/stb/sensors/temp/value', 'r')
 			tempinfo = f.read()
 			f.close()
-		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
-			if getBoxType() in ('mutant51', 'ax51', 'zgemmah7'):
-				tempinfo = ""
-			else:
-				f = open('/sys/devices/virtual/thermal/thermal_zone0/temp', 'r')
-				tempinfo = f.read()
-				tempinfo = tempinfo[:-4]
-				f.close()
+#		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
+#			if getBoxType() in ('mutant51', 'ax51', 'zgemmah7'):
+#				tempinfo = ""
+#			else:
+#				f = open('/sys/devices/virtual/thermal/thermal_zone0/temp', 'r')
+#				tempinfo = f.read()
+#				tempinfo = tempinfo[:-4]
+#				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
 			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
