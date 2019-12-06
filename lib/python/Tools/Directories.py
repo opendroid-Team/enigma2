@@ -6,6 +6,7 @@ from re import compile
 from stat import S_IMODE
 
 pathExists = os.path.exists
+isMount = os.path.ismount  
 
 SCOPE_TRANSPONDERDATA = 0
 SCOPE_SYSETC = 1
