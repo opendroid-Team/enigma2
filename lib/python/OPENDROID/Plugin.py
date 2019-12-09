@@ -275,13 +275,13 @@ class AdvInstallIpk(Screen):
 		try:
 			item = self["menu"].getCurrent()
 			name = item[0]
-			self.session.open(Console,title = _("Install ipk packets"), cmdlist = ["opkg install -force-overwrite -force-downgrade /tmp/%s" % name])
+			self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
 		except:
 			pass
 		
 	def okInstAll(self):
 		name = "*.ipk"
-		self.session.open(Console,title = _("Install ipk packets"), cmdlist = ["opkg install -force-overwrite -force-downgrade /tmp/%s" % name])
+		self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
 		
 	def cancel(self):
 		self.close()
