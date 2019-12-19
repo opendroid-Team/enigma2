@@ -177,7 +177,7 @@ def InitUsageConfig():
 			SystemInfo["InfoBarEpg"] = False
 	config.usage.show_second_infobar.addNotifier(showsecondinfobarChanged, immediate_feedback = True)
 	config.usage.infobar_frontend_source = ConfigSelection(default = "tuner", choices = [("settings", _("Settings")), ("tuner", _("Tuner"))])
-	
+
 	config.usage.show_picon_bkgrn = ConfigSelection(default = "transparent", choices = [("none", _("Disabled")), ("transparent", _("Transparent")), ("blue", _("Blue")), ("red", _("Red")), ("black", _("Black")), ("white", _("White")), ("lightgrey", _("Light Grey")), ("grey", _("Grey"))])
 	config.usage.show_menupath = ConfigSelection(default = "small", choices = [("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
 	config.usage.show_genre_info = ConfigYesNo(default=True)
@@ -317,8 +317,10 @@ def InitUsageConfig():
 			config.usage.autorecord_path.save()
 	config.usage.autorecord_path.addNotifier(autorecordpathChanged, immediate_feedback = False)
 	config.usage.allowed_autorecord_paths = ConfigLocations(default = [resolveFilename(SCOPE_AUTORECORD)])
-
-
+	config.usage.trashsort_deltime = ConfigSelection(default = "no", choices = [
+		("no", _("no")),
+		("show record time", _("Yes, show record time")),
+		("show delete time", _("Yes, show delete time"))])
 	config.usage.movielist_trashcan = ConfigYesNo(default=True)
 	config.usage.movielist_trashcan_network_clean = ConfigYesNo(default=False)
 	config.usage.movielist_trashcan_days = ConfigSelectionNumber(min = 1, max = 31, stepwidth = 1, default = 8, wraparound = True)
