@@ -29,6 +29,7 @@ fonts = {
 parameters = {}
 constant_widgets = {}
 variables = {}
+DEFAULT_SKIN = "Multibox/skin.xml"
 DEFAULT_DISPLAY_SKIN = "skin_display.xml"
 isOPDSkin = False
 
@@ -58,13 +59,13 @@ class SkinError(Exception):
 	def __init__(self, message):
 		self.msg = message
 	def __str__(self):
-		return "[Skin] {%s}: %s. Please contact the skin's author!" % (config.skin.primary_skin.value, self.msg)
+		return "{%s}: %s. Please contact the skin's author!" % (config.skin.primary_skin.value, self.msg)
 
 class DisplaySkinError(Exception):
 	def __init__(self, message):
 		self.msg = message
 	def __str__(self):
-		return "[Skin] {%s}: %s. Please contact the skin's author!" % (config.skin.display_skin.value, self.msg)
+		return "{%s}: %s. Please contact the skin's author!" % (config.skin.display_skin.value, self.msg)
 
 dom_skins = [ ]
 
@@ -93,8 +94,8 @@ def loadSkin(name, scope = SCOPE_SKIN):
 def get_modular_files(name, scope = SCOPE_SKIN):
 	dirname = resolveFilename(scope, name + 'mySkin/')
 	file_list = []
-	if fileExists(dirname):
-		skin_files = (listdir(dirname))
+	if fileExists(dirname) and config.skin.primary_skin.value != DEFAULT_SKIN:
+		skin_files = (os.listdir(dirname))
 		if len(skin_files):
 			for f in skin_files:
 				if f.startswith('skin_') and f.endswith('.xml'):
@@ -104,17 +105,7 @@ def get_modular_files(name, scope = SCOPE_SKIN):
 
 
 config.skin = ConfigSubsection()
-config.defaultskinSetup = ConfigSubsection()
-config.defaultskinSetup.steps = ConfigSelection([('default Multibox',_("default Multibox")),('default OPD-Blue-Line',_("default OPD-Blue-Line"))])
-if config.defaultskinSetup.steps.value == "default OPD-Blue-Line":
-	DEFAULT_SKIN = "Multibox/skin.xml"
-elif config.defaultskinSetup.steps.value == "default Multibox":
-	DEFAULT_SKIN = "skin_default/skin.xml"
-
-if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	DEFAULT_SKIN = "Multibox/skin.xml"
 config.skin.primary_skin = ConfigText(default = DEFAULT_SKIN)
-config.skin.display_skin = ConfigText(default = DEFAULT_DISPLAY_SKIN)
 if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 else:
@@ -133,7 +124,6 @@ def skinExists(skin = False):
 skinExists()
 
 def getSkinPath():
-	#primary_skin_path = config.skin.primary_skin.value.replace('skin.xml', '')
 	p = config.skin.primary_skin.value
 	primary_skin_path = p[:p.rfind('/')+1]
 	if not primary_skin_path.endswith('/'):
