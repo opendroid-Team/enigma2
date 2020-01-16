@@ -105,12 +105,10 @@ def get_modular_files(name, scope = SCOPE_SKIN):
 
 config.skin = ConfigSubsection()
 config.defaultskinSetup = ConfigSubsection()
-config.defaultskinSetup.steps = ConfigSelection([('default Ultimate',_("default Ultimate")),('default Multibox',_("default Multibox")),('default OPD-Blue-Line',_("default OPD-Blue-Line"))])
+config.defaultskinSetup.steps = ConfigSelection([('default Multibox',_("default Multibox")),('default OPD-Blue-Line',_("default OPD-Blue-Line"))])
 if config.defaultskinSetup.steps.value == "default OPD-Blue-Line":
 	DEFAULT_SKIN = "Multibox/skin.xml"
 elif config.defaultskinSetup.steps.value == "default Multibox":
-	DEFAULT_SKIN = "Ultimate/skin.xml"
-elif config.defaultskinSetup.steps.value == "default Ultimate":
 	DEFAULT_SKIN = "skin_default/skin.xml"
 
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
