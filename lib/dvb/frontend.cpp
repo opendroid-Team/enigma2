@@ -1241,7 +1241,11 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 	int cab_max = 4200; // we assume a max of 42db here
 	int atsc_max = 4200; // we assume a max of 42db here
 
-	if (!strcmp(m_description, "AVL2108")) // ET9000
+	if (strstr(m_description, "STV090x Multistandard")) // FULAN
+	{
+		ret = (int)(snr / 32.768);
+	}
+	else if (!strcmp(m_description, "AVL2108")) // ET9000
 	{
 		ret = (int)(snr / 40.5);
 		sat_max = 1618;
