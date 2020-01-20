@@ -1,7 +1,7 @@
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
 import struct, socket, fcntl, re, sys, os, time
 from sys import modules
-from boxbranding import getBoxType, getMachineBuild
+from boxbranding import getBoxType, getMachineBuild, getBrandOEM
 
 def getVersionString():
 	return getImageVersion()
@@ -119,6 +119,8 @@ def getCPUSpeedString():
 		except IOError:
 			return "unavailable"
 def getCPUArch():
+	if getBrandOEM() in ('fulan'):
+		return "SH4"
 	if "ARM" in getCPUString():
 		return getCPUString()
 	return _("Mipsel")
