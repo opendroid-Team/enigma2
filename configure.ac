@@ -907,8 +907,6 @@ lib/python/Plugins/Makefile
 lib/python/Plugins/Extensions/Makefile
 lib/python/Plugins/Extensions/AtileHD/Makefile
 lib/python/Plugins/Extensions/AtileHD/pic/Makefile
-lib/python/Plugins/Extensions/AtileHDB/Makefile
-lib/python/Plugins/Extensions/AtileHDB/pic/Makefile
 lib/python/Plugins/Extensions/CutListEditor/Makefile
 lib/python/Plugins/Extensions/CutListEditor/meta/Makefile
 lib/python/Plugins/Extensions/DVDBurn/Makefile
