@@ -28,6 +28,10 @@ if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MediaPortal/plugin
 
 from traceback import print_exc
 
+profile("Geolocation")
+import Tools.Geolocation
+Tools.Geolocation.InitGeolocation()
+
 profile("ClientMode")
 import Components.ClientMode
 Components.ClientMode.InitClientMode()
