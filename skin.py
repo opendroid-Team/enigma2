@@ -70,13 +70,20 @@ class DisplaySkinError(Exception):
 dom_skins = [ ]
 
 def addSkin(name, scope = SCOPE_SKIN):
+	# read the skin
+	if name is None or not len(name):
+		print "[SKIN ERROR] attempt to add a skin without filename"
+		return False
 	filename = resolveFilename(scope, name)
 	if fileExists(filename):
 		mpath = os.path.dirname(filename) + "/"
-		file = open(filename, 'r')
-		dom_skins.append((mpath, xml.etree.cElementTree.parse(file).getroot()))
-		file.close()
-		return True
+		try:
+			dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
+		except:
+			print "[SKIN ERROR] error in %s" % filename
+			return False
+		else:
+			return True
 	return False
 
 def skin_user_skinname():
@@ -106,6 +113,7 @@ def get_modular_files(name, scope = SCOPE_SKIN):
 
 config.skin = ConfigSubsection()
 config.skin.primary_skin = ConfigText(default = DEFAULT_SKIN)
+config.skin.display_skin = ConfigText(default = DEFAULT_DISPLAY_SKIN)
 if SystemInfo["FrontpanelDisplay"] or SystemInfo["LcdDisplay"] or SystemInfo["OledDisplay"] or SystemInfo["FBLCDDisplay"]:
 	config.skin.display_skin = ConfigText(default = "skin_display.xml")
 else:
@@ -170,6 +178,16 @@ except:
 
 addSkin('skin_subtitles.xml')
 
+if config.skin.primary_skin.value != DEFAULT_SKIN:
+	skinpath = resolveFilename(SCOPE_SKIN, primary_skin_path)
+	if os.path.isdir(skinpath):
+		for file in sorted(os.listdir(skinpath)):
+			if file.startswith('skin_user_') and file.endswith('.xml'):
+				try:
+					addSkin(primary_skin_path + file, SCOPE_SKIN)
+					print "[SKIN] loading user defined %s skin file: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file)
+				except (SkinError, IOError, OSError, AssertionError), err:
+					print "[SKIN] not loading user defined %s skin file: %s - error: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file, err)
 try:
 	loadSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
 	print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
@@ -316,7 +334,7 @@ def load_modular_files():
 	if len(modular_files):
 		for f in modular_files:
 			try:
-				loadSkin(primary_skin_path + f, SCOPE_SKIN)
+				addSkin(primary_skin_path + f, SCOPE_SKIN)
 				print "[SKIN] loading modular skin file : ", (primary_skin_path + f)
 			except (SkinError, IOError, AssertionError), err:
 				print "[SKIN] failed to load modular skin file : ", err
