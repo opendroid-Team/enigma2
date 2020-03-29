@@ -29,7 +29,6 @@ from Tools import Notifications
 from os import listdir, remove, rename, system, path, symlink, chdir, makedirs, mkdir
 import shutil
 cur_skin = config.skin.primary_skin.value.replace('/skin.xml', '')
-
 # Atile
 config.plugins.AtileHDB = ConfigSubsection()
 
@@ -53,7 +52,6 @@ def isInteger(s):
 		return True
 	except ValueError:
 		return False
-
 
 class AtileHDB_Config(Screen, ConfigListScreen):
 
@@ -82,10 +80,9 @@ class AtileHDB_Config(Screen, ConfigListScreen):
 		self['lab12'] = Label(_('Weather Setup .... Press Menu Button to get to the weather plugin'))
 		self['lab13'] = Label(_('Help, Skin settings(Weather, Own user logo )'))
 		self.start_skin = config.skin.primary_skin.value
-
 		if self.start_skin != "skin.xml":
 			self.getInitConfig()
-		
+
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
 
