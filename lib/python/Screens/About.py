@@ -281,7 +281,7 @@ class About(Screen):
 				f.close()
 				if bootname: bootname = "   (%s)" %bootname 
 				AboutText += _("Selected Image:\t\t%s") % _("STARTUP_") + image + bootname + "\n"
-		elif getMachineBuild() in ('osmio4k','osmio4kplus'):
+		elif getMachineBuild() in ('osmio4k','osmio4kplus','osmini4k'):
 			if path.exists('/boot/STARTUP'):
 				f = open('/boot/STARTUP', 'r')
 				f.seek(38)
