@@ -20,7 +20,7 @@ from Components.config import config,getConfigListEntry, ConfigSubsection, Confi
 from Components.ConfigList import ConfigListScreen
 from boxbranding import getBoxType,getImageDistro, getMachineBuild, getMachineBrand,getMachineName
 
-feedurl = 'http://images.opendroid.org/7.0'
+feedurl = 'https://opendroid.org/7.0'
 imagecat = [7.0]
 
 def checkimagefiles(files):
