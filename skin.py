@@ -25,7 +25,9 @@ fonts = {
 	"Body": ("Regular", 18, 22, 16),
 	"ChoiceList": ("Regular", 20, 24, 18),
 }
-
+USER_SKIN = "skin_user.xml"
+USER_SKIN_TEMPLATE = "skin_user_%s.xml"
+USER_SKIN_FILE = "skin_user_%s.xml"
 parameters = {}
 constant_widgets = {}
 variables = {}
@@ -93,7 +95,7 @@ def skin_user_skinname():
 		return name
 	return None
 	
-def loadSkin(name, scope = SCOPE_SKIN):
+def loadSkin(name, scope = SCOPE_CURRENT_SKIN):
 	filename = resolveFilename(scope, name)
 	mpath = path.dirname(filename) + "/"
 	dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
@@ -189,142 +191,142 @@ if config.skin.primary_skin.value != DEFAULT_SKIN:
 				except (SkinError, IOError, OSError, AssertionError), err:
 					print "[SKIN] not loading user defined %s skin file: %s - error: %s" %(file.replace('skin_user_','')[:-4], primary_skin_path + file, err)
 try:
-	loadSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_colors.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined colors for skin", (primary_skin_path + 'skin_user_colors.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined colors for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_background.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_background.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined background for skin", (primary_skin_path + 'skin_user_background.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined background for skin"	
 try:
-	loadSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_header.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined header file for skin", (primary_skin_path + 'skin_user_header.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined header file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_infobar.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_infobar.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined infobar file for skin", (primary_skin_path + 'skin_user_infobar.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined infobar file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_sib.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_sib.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined sib file for skin", (primary_skin_path + 'skin_user_sib.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined sib file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_ch_se.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_ch_se.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined ch_se file for skin", (primary_skin_path + 'skin_user_ch_se.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined ch_se file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_ev.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_ev.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined ev file for skin", (primary_skin_path + 'skin_user_ev.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined ev file for skin"	
 try:
-	loadSkin(primary_skin_path + 'skin_user_sb.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_sb.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined sb file for skin", (primary_skin_path + 'skin_user_sb.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined sb file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_ul.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_ul.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN] loading user defined ul file for skin", (primary_skin_path + 'skin_user_ul.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined ul file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_clock.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_clock.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined clock file for skin", (primary_skin_path + 'skin_user_clock.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined clock file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_frame.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_frame.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined frame file for skin", (primary_skin_path + 'skin_user_frame.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined frame file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_lines.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_lines.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined lines file for skin", (primary_skin_path + 'skin_user_lines.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined lines file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_sbar.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_sbar.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined sbar file for skin", (primary_skin_path + 'skin_user_sbar.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined sbar file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_wget.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_wget.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined wget file for skin", (primary_skin_path + 'skin_user_wget.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined wget file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_emcsel.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_emcsel.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined emcsel file for skin", (primary_skin_path + 'skin_user_emcsel.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined emcsel file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_volume.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_volume.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined volume file for skin", (primary_skin_path + 'skin_user_volume.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined volume file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_movsel.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_movsel.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined movsel file for skin", (primary_skin_path + 'skin_user_movsel.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined movsel file for skin"
 try:
-	loadSkin(primary_skin_path + 'skin_user_center.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'skin_user_center.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined center file for skin", (primary_skin_path + 'skin_user_center.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined center file for skin"
 try:
-	loadSkin(primary_skin_path + 'infobar_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'infobar_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'infobar_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'sib_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'sib_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'sib_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'ch_se_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'ch_se_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'ch_se_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'ev_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'ev_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'ev_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'sb_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'sb_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'sb_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'emcsel_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'emcsel_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'emcsel_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'frame_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'frame_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'frame_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'lines_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'lines_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'lines_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'sbar_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'sbar_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'sbar_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
 try:
-	loadSkin(primary_skin_path + 'wget_Original.xml', SCOPE_SKIN)
+	loadSkin(primary_skin_path + 'wget_Original.xml', SCOPE_CURRENT_SKIN)
 	print "[SKIN loading user defined Original file for skin", (primary_skin_path + 'wget_Original.xml')
 except (SkinError, IOError, AssertionError), err:
 	print "[SKIN] not loading user defined Original file for skin"
