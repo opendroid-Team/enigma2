@@ -17,25 +17,8 @@ from keyids import KEYIDS
 from sys import maxint
 import glob
 import os
-from Components.RcModel import rc_model
 
 def InitUsageConfig():
-	AvailRemotes=glob.glob('/usr/share/enigma2/rc_models/*')
-	RemoteChoices=[]
-	DefaultRemote=rc_model.getRcFolder(GetDefault=True)
-	
-	remoteSelectable=False
-	if AvailRemotes is not None:
-		for remote in AvailRemotes:
-			if os.path.isfile(remote+'/rc.png') and os.path.isfile(remote+'/rcpositions.xml') and os.path.isfile(remote+'/remote.html'):
-				pass
-			else:
-				AvailRemotes.remove(remote)
-		if len(AvailRemotes)>1:
-			remoteSelectable=True
-			for remote in AvailRemotes:
-				toadd = (remote.split('/')[-1], remote.split('/')[-1])
-				RemoteChoices.append(toadd)
 	config.misc.SettingsVersion = ConfigFloat(default = [1,1], limits = [(1,10),(0,99)])
 	config.misc.SettingsVersion.value = [1,1]
 	config.misc.SettingsVersion.save_forced = True
@@ -46,7 +29,6 @@ def InitUsageConfig():
 	config.workaround = ConfigSubsection()
 	config.workaround.blueswitch = ConfigSelection(default = "0", choices = [("0", _("BluePanel/OPENDROID")), ("1", _("OPENDROID/BluePanel"))])
 	config.workaround.deeprecord = ConfigYesNo(default = False)
-	config.workaround.wakeuptimeoffset = ConfigSelection(default = "standard", choices = [("-300", _("-5")), ("-240", _("-4")), ("-180", _("-3")), ("-120", _("-2")), ("-60", _("-1")), ("standard", _("Standard")), ("0", _("0")), ("60", _("1")), ("120", _("2")), ("180", _("3")), ("240", _("4")), ("300", _("5"))])
 	config.workaround.wakeuptime = ConfigSelectionNumber(default = 5, stepwidth = 1, min = 0, max = 30, wraparound = True)
 	config.workaround.wakeupwindow = ConfigSelectionNumber(default = 5, stepwidth = 5, min = 5, max = 60, wraparound = True)
 
@@ -228,7 +210,6 @@ def InitUsageConfig():
 	config.usage.sort_extensionslist = ConfigYesNo(default = False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default = True)
 	config.usage.movieplayer_pvrstate = ConfigYesNo(default = False)
-	config.usage.rc_model = ConfigSelection(default = DefaultRemote, choices = RemoteChoices)
 
 	choicelist = []
 	for i in (10, 30):

@@ -25,7 +25,7 @@ from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Tools.Directories import *
 from Tools.LoadPixmap import LoadPixmap
-from inits import PluginLanguagePath, AtileHDInfo, SkinPath
+from inits import AtileHDInfo, SkinPath
 from debug import printDEBUG
 from Components.Console import Console as iConsole
 try:
