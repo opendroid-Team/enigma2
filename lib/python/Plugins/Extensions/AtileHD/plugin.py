@@ -86,8 +86,8 @@ class AtileHD_Config(Screen, ConfigListScreen):
 	def __init__(self, session, args = 0):
 		self.session = session
 		Screen.__init__(self, session)
-		self['lab11'] = Label(_('press yellow button to select SkinParts'))
-		self['lab12'] = Label(_('Weather Setup .... Press Menu Button to get to the weather plugin'))
+		self['lab11'] = Label(_('Weather Setup .... Press Menu Button to get to the weather plugin'))
+		self['lab12'] = Label(_('press yellow button to select Multibox Tool'))
 		self['lab13'] = Label(_('Help, Skin settings(Weather, Own user logo )'))
 		myTitle=_("Multibox Setup %s") % AtileHDInfo
 		self.setTitle(myTitle)
@@ -312,7 +312,7 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 		if self.myAtileHD_active.value:
-			self["key_yellow"].setText(_("User skins"))
+			self["key_yellow"].setText(_("Multibox Tool"))
 		else:
 			self["key_yellow"].setText("")
 	def config(self):
@@ -345,7 +345,7 @@ class AtileHD_Config(Screen, ConfigListScreen):
 			self.setPicture(self.myAtileHD_ul.value)
 		elif self["config"].getCurrent() == self.set_myatile:
 			if self.myAtileHD_active.value:
-				self["key_yellow"].setText(_("User skins"))
+				self["key_yellow"].setText(_("Multibox Tool"))
 			else:
 				self["key_yellow"].setText("")
 

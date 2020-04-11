@@ -653,7 +653,7 @@ class Connection_Server(Screen):
 		self["info"].setText("Downloading list...")
 		testno = 1
 
-		xurl = 'http://images.opendroid.org/Addons/'+ self.addon + '/list'
+		xurl = 'https://opendroid.org/Addons/'+ self.addon + '/list'
 		print "xurl =", xurl
 		getPage(xurl).addCallback(self.gotPage).addErrback(self.getfeedError)
 
@@ -755,7 +755,7 @@ class Installer_Addons(Screen):
 		if not os.path.exists("/etc/ipkinst"): 
 			cmd = "mkdir -p /etc/ipkinst"
 			os.system(cmd)
-		xurl1 = 'http://images.opendroid.org/Addons/' + self.addon + '/'
+		xurl1 = 'https://opendroid.org/Addons/' + self.addon + '/'
 		print "xurl1 =", xurl1
 		xurl2 = xurl1 + self.ipk
 		print "xurl2 =", xurl2
