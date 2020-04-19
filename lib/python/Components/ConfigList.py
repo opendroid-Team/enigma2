@@ -286,7 +286,8 @@ class ConfigListScreen:
 			self.session.openWithCallback(self.handleKeyFileCallback, ChoiceBox, selection[0],
 				list=zip(selection[1].description, selection[1].choices),
 				selection=selection[1].choices.index(selection[1].value),
-				keys=[])
+				keys=[],
+				text=self.getCurrentDescription())
 
 	def handleKeyFileCallback(self, answer):
 		if answer:
@@ -314,6 +315,7 @@ class ConfigListScreen:
 
 	def run(self):
 		self.keySave()
+
 	# keySave and keyCancel are just provided in case you need them.
 	# you have to call them by yourself.
 	def keySave(self):
