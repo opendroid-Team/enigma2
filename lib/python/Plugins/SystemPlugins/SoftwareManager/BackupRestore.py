@@ -46,8 +46,8 @@ def InitConfig():
 		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
 		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
 		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
-		+eEnv_resolve_multi("${datadir}/enigma2/*/mySkin_off/*.xml")\
-		+eEnv_resolve_multi("${datadir}/enigma2/*/mySkin/*.xml")\
+		+eEnv_resolve_multi("${datadir}/enigma2/*/mySkin_off")\
+		+eEnv_resolve_multi("${datadir}/enigma2/*/mySkin")\
 		+eEnv_resolve_multi("${datadir}/enigma2/*/skin_user_*.xml")\
 		+eEnv_resolve_multi('/usr/bin/*cam*')\
 		+eEnv_resolve_multi('/etc/cron*')\
@@ -689,7 +689,7 @@ class RestorePlugins(Screen):
 
 	def SearchIPK(self, ipkname):
 		ipkname = ipkname + "*"
-		search_dirs = [ "/media/hdd", "/media/usb" ]
+		search_dirs = [ "/media/hdd/images/ipk", "/media/usb/images/ipk", "/media/mmc/images/ipk", "/media/cf/images/ipk" ]
 		sdirs = " ".join(search_dirs)
 		cmd = 'find %s -name "%s" | grep -iv "./open-multiboot/*" | head -n 1' % (sdirs, ipkname)
 		res = popen(cmd).read()

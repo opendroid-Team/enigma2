@@ -13,7 +13,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
 from Components.Console import Console
 from Tools.BoundFunction import boundFunction
-from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, GetCurrentKern, GetCurrentRoot, getBoxType
+from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, getBoxType, GetBoxName
 from enigma import eTimer, fbClass
 import os, urllib2, shutil, math, time, zipfile, shutil
 from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
@@ -267,8 +267,10 @@ class FlashImage(Screen):
 		self.saveImageList = imagedict
 		self.getImageList = None
 		choices = []
+		HIslot = len(imagedict) + 1
 		currentimageslot = GetCurrentImage()
-		for x in range(1, SystemInfo["canMultiBoot"][1] + 1):
+		print "[FlashOnline] Current Image Slot %s, Imagelist %s"% ( currentimageslot, imagedict)
+		for x in range(1,HIslot):
 			choices.append(((_("slot%s - %s (current image)") if x == currentimageslot else _("slot%s - %s")) % (x, imagedict[x]['imagename']), (x,True)))
 		choices.append((_("No, do not flash an image"), False))
 		self.session.openWithCallback(self.checkMedia, MessageBox, self.message, list=choices, default=currentimageslot, simple=True)
@@ -420,7 +422,7 @@ class FlashImage(Screen):
 							os.makedirs('/media/hdd/images/config')
 						open('/media/hdd/images/config/settings','w').close()
 					except:
-						print "postFlashActionCallback: failed to create /media/hdd/images/config/settings"
+						print "[FlashOnline] postFlashActionCallback: failed to create /media/hdd/images/config/settings"
 				else:
 					if os.path.exists('/media/hdd/images/config/settings'):
 						os.unlink('/media/hdd/images/config/settings')
@@ -430,7 +432,7 @@ class FlashImage(Screen):
 							os.makedirs('/media/hdd/images/config')
 						open('/media/hdd/images/config/plugins','w').close()
 					except:
-						print "postFlashActionCallback: failed to create /media/hdd/images/config/plugins"
+						print "[FlashOnline] postFlashActionCallback: failed to create /media/hdd/images/config/plugins"
 				else:
 					if os.path.exists('/media/hdd/images/config/plugins'):
 						os.unlink('/media/hdd/images/config/plugins')
@@ -440,7 +442,7 @@ class FlashImage(Screen):
 							os.makedirs('/media/hdd/images/config')
 						open('/media/hdd/images/config/noplugins','w').close()
 					except:
-						print "postFlashActionCallback: failed to create /media/hdd/images/config/noplugins"
+						print "[FlashOnline] postFlashActionCallback: failed to create /media/hdd/images/config/noplugins"
 				else:
 					if os.path.exists('/media/hdd/images/config/noplugins'):
 						os.unlink('/media/hdd/images/config/noplugins')
@@ -471,7 +473,7 @@ class FlashImage(Screen):
 								if os.path.exists('/media/hdd/images/config/fast'):
 									os.unlink('/media/hdd/images/config/fast')
 						except:
-							print "postFlashActionCallback: failed to create restore mode flagfile"
+							print "[FlashOnline] postFlashActionCallback: failed to create restore mode flagfile"
 				self.startDownload()
 			else:
 				self.abort()
@@ -529,7 +531,6 @@ class FlashImage(Screen):
 			self.session.openWithCallback(self.abort, MessageBox, _("Error during unzipping image\n%s") % self.imagename, type=MessageBox.TYPE_ERROR, simple=True)
 
 	def flashimage(self):
-		os.system('rm /sbin/init;ln -sfn /sbin/init.sysvinit /sbin/init')
 		self["header"].setText(_("Flashing Image"))
 		self["summary_header"].setText(self["header"].getText())
 		def findimagefiles(path):
@@ -538,28 +539,24 @@ class FlashImage(Screen):
 					return checkimagefiles(files) and path
 		imagefiles = findimagefiles(self.unzippedimage)
 		if imagefiles:
+			self.ROOTFSSUBDIR = "none"
 			self.getImageList = self.saveImageList
-			self.MTDKERNEL = GetCurrentKern()
-			self.MTDROOTFS = GetCurrentRoot()
 			if SystemInfo["canMultiBoot"]:
-				if "sd" in self.getImageList[self.multibootslot]['part']:
-					self.MTDKERNEL = "%s%s" %(SystemInfo["canMultiBoot"][2], int(self.getImageList[self.multibootslot]['part'][3])-1)
-					self.MTDROOTFS = "%s" %(self.getImageList[self.multibootslot]['part'])
-			if SystemInfo["canMultiBoot"]:
-				if getMachineBuild() in ("gbmv200","cc1","sf8008","ustym4kpro","beyonwizv2","viper4k"): # issue detect kernel device and rootfs on sda
-					print "[FlashImage] detect Kernel:",self.MTDKERNEL
-					print "[FlashImage] detect rootfs:",self.MTDROOTFS
-					command = "/usr/bin/ofgwrite -r%s -k%s %s" % (self.MTDROOTFS, self.MTDKERNEL, imagefiles)
-				else:
-					command = "/usr/bin/ofgwrite -r -k -m%s %s" % (self.multibootslot, imagefiles)
-			elif getMachineBuild() in ("u5pvr","u5","u51","u52","u53","u532","u533","u54","u56"): # issue detect kernel device
-				print "[FlashImage] detect Kernel:",self.MTDKERNEL
-				print "[FlashImage] detect rootfs:",self.MTDROOTFS
-				command = "/usr/bin/ofgwrite -r%s -k%s %s" % (self.MTDROOTFS, self.MTDKERNEL, imagefiles)
+				self.MTDKERNEL  = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2] 
+				self.MTDROOTFS  = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2] 
+				if SystemInfo["HasRootSubdir"]:
+					self.ROOTFSSUBDIR = SystemInfo["canMultiBoot"][self.multibootslot]['rootsubdir']
 			else:
-				command = "/usr/bin/ofgwrite -r -k %s" % imagefiles
+				self.MTDKERNEL = getMachineMtdKernel()
+				self.MTDROOTFS = getMachineMtdRoot()
+			CMD = "/usr/bin/ofgwrite -r -k '%s'" % imagefiles	#normal non multiboot receiver
+			if SystemInfo["canMultiBoot"]:
+				if (self.ROOTFSSUBDIR) is None:	# receiver with SD card multiboot
+					CMD = "/usr/bin/ofgwrite -r%s -k%s -m0 '%s'" % (self.MTDROOTFS, self.MTDKERNEL, imagefiles)
+				else:
+					CMD = "/usr/bin/ofgwrite -r -k -m%s '%s'" % (self.multibootslot, imagefiles)
 			self.containerofgwrite = Console()
-			self.containerofgwrite.ePopen(command, self.FlashimageDone)
+			self.containerofgwrite.ePopen(CMD, self.FlashimageDone)
 			fbClass.getInstance().lock()
 		else:
 			self.session.openWithCallback(self.abort, MessageBox, _("Image to install is invalid\n%s") % self.imagename, type=MessageBox.TYPE_ERROR, simple=True)
