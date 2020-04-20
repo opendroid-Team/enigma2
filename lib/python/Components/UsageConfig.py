@@ -924,7 +924,7 @@ def InitUsageConfig():
 		config.usage.time.enabled_display.value = False
 		config.usage.time.display.value = config.usage.time.display.default
 
-	config.usage.boolean_graphic = ConfigYesNo(default=False)
+	config.usage.boolean_graphic = ConfigYesNo(default=True)
 	config.usage.show_slider_value = ConfigYesNo(default=True)
 	config.epg = ConfigSubsection()
 	config.epg.eit = ConfigYesNo(default = True)
