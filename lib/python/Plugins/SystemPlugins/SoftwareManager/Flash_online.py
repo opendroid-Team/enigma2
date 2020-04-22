@@ -18,7 +18,8 @@ from enigma import eTimer, fbClass
 import os, urllib2, shutil, math, time, zipfile, shutil
 from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
-from boxbranding import getBoxType,getImageDistro, getMachineBuild, getMachineBrand,getMachineName
+from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
+
 
 feedurl = 'https://opendroid.org/7.0'
 imagecat = [7.0]
