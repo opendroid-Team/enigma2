@@ -20,7 +20,6 @@ from Components.config import config,getConfigListEntry, ConfigSubsection, Confi
 from Components.ConfigList import ConfigListScreen
 from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
 
-
 feedurl = 'https://opendroid.org/7.0'
 imagecat = [7.0]
 
@@ -218,7 +217,7 @@ class FlashOnline(Screen):
 	def keyDown(self):
 		self["list"].instance.moveSelection(self["list"].instance.moveDown)
 		self.selectionChanged()
-		
+
 class FlashImage(Screen):
 	skin = """<screen position="center,center" size="1200,600" flags="wfNoBorder" backgroundColor="#54242424">
 		<widget name="header" position="5,10" size="e-10,50" font="Regular;40" backgroundColor="#54242424"/>
@@ -491,7 +490,7 @@ class FlashImage(Screen):
 		if reply:
 			if "://" in self.source:
 				from Tools.Downloader import downloadWithProgress
-				self["header"].setText(_("Downloading Image please wait"))
+				self["header"].setText(_("Downloading Image ... Please wait"))
 				self["info"].setText(self.imagename)
 				self["summary_header"].setText(self["header"].getText())
 				self.downloader = downloadWithProgress(self.source, self.zippedimage)
@@ -543,8 +542,8 @@ class FlashImage(Screen):
 			self.ROOTFSSUBDIR = "none"
 			self.getImageList = self.saveImageList
 			if SystemInfo["canMultiBoot"]:
-				self.MTDKERNEL  = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2] 
-				self.MTDROOTFS  = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2] 
+				self.MTDKERNEL  = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2]
+				self.MTDROOTFS  = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2]
 				if SystemInfo["HasRootSubdir"]:
 					self.ROOTFSSUBDIR = SystemInfo["canMultiBoot"][self.multibootslot]['rootsubdir']
 			else:
