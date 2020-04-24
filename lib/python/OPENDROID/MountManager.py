@@ -764,7 +764,7 @@ class UsbFormat(Screen):
 		['2', '2'],
 		['3', '3'],
 		['4', '4']]
-		elf.session.openWithCallback(self.partSize1, ChoiceBox, title=_('Select number of partitions:'), list=myoptions)
+		self.session.openWithCallback(self.partSize1, ChoiceBox, title=_('Select number of partitions:'), list=myoptions)
 
 	def partSize1(self, total):
 		self.totalpartitions = int(total[1])
@@ -906,7 +906,7 @@ class UsbFormat(Screen):
 			device = '/dev/%s4' % self.device
 			cmd = '%s %s' % (self.formatcmd, device)
 			cmds.append(cmd)
-		elf.session.open(ConsoleScreen, title=_('Formatting...'), cmdlist=cmds, finishedCallback=self.succesS)
+		self.session.open(ConsoleScreen, title=_('Formatting...'), cmdlist=cmds, finishedCallback=self.succesS)
 
 	def step_Bump(self):
 		if self.step == 1:
