@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2019-11-10 15:45+0100\n"
+"PO-Revision-Date: 2020-04-27 22:57+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
@@ -13285,7 +13285,7 @@ msgid "Tuner settings"
 msgstr "Impostazioni tuner"
 
 msgid "Tuner slot"
-msgstr "Tuner Slot"
+msgstr "Posizione Tuner"
 
 msgid "Tuner status"
 msgstr "Stato tuner"
@@ -18928,6 +18928,9 @@ msgstr ""
 "L'immagine da installare è non valida\n"
 "%s"
 
+msgid "Erase"
+msgstr "Cancellare"
+
 msgid "Use the cursor keys to select an installed image and then Erase button."
 msgstr "Usa i tasti cursore per selezionare un'immagine installata e quindi premi il tasto Cancella."
 
@@ -18980,10 +18983,16 @@ msgid "Use the cursor keys to select an installed image and then Start button."
 msgstr "Utilizzare i tasti cursore per selezionare un'immagine installata, quindi il pulsante Start."
 
 msgid "slot%s - %s - %s as USB Recovery"
-msgstr "slot%s - %s - %s come recupero USB"
+msgstr "Posizione%s - %s - %s come recupero USB"
 
-msgid "slot%s - %s - %s (current image"
-msgstr "slot%s - %s - %s (immagine corrente"
+msgid "slot%s - %s - %s (current image)"
+msgstr "Posizione%s - %s - %s (immagine corrente)"
+
+msgid "Slot %s - %s - %s (current image)"
+msgstr "Posizione %s - %s - %s (immagine corrente)"
+
+msgid "Slot %s - %s - %s"
+msgstr "Posizione %s - %s - %s"
 
 msgid "internal flash: %s %s as USB Recovery"
 msgstr "flash interno: %s %s come recupero USB"
