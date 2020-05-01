@@ -191,7 +191,7 @@ class About(Screen):
 			cpuMHz = _("   (1.5 GHz)")
 		elif getMachineBuild() in ('formuler1tc','formuler1', 'triplex', 'tiviaraplus'):
 			cpuMHz = _("   (1.3 GHz)")
-		elif getMachineBuild() in ('gbmv200','u51','u5','u53','u532','u533','u52','u54','u55','u56','u5pvr','h9','h9combo','h10','cc1','sf8008','hd60','hd61','i55plus','ustym4kpro','beyonwizv2','viper4k','v8plus','multibox'):
+		elif getMachineBuild() in ('gbmv200','u51','u5','u53','u532','u533','u52','u54','u55','u56','u5pvr','h9','h9combo','h10','cc1','sf8008','sf8008m','hd60','hd61','i55plus','ustym4kpro','beyonwizv2','viper4k','v8plus','multibox'):
 			cpuMHz = _("   (1.6 GHz)")
 		elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
 			cpuMHz = _("   (1.7 GHz)")
@@ -199,7 +199,7 @@ class About(Screen):
 			cpuMHz = _("   (2.0 GHz)")
 		elif getMachineBuild() in ('vuduo4k',):
 			cpuMHz = _("   (2.1 GHz)")
-		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7','osmio4k','osmio4kplus'):
+		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7','osmio4k','osmio4kplus','osmini4k'):
 			try:
 				import binascii
 				f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
