@@ -593,6 +593,10 @@ class ModelPic(Screen):
 			model = "gbipbox.png"
 		elif getBoxType() in ('gbquad'):
 			model = "gbquad.png"
+		elif getBoxType() in ('gbip4k'):
+			model = "gbip4k.png"
+		elif getBoxType() in ('gbx34k'):
+			model = "gbx34k.png"
 		elif getBoxType() in ('gbquad4k'):
 			model = "gbquad4k.png"
 		elif getBoxType() in ('gbquadplus'):
@@ -611,6 +615,8 @@ class ModelPic(Screen):
 			model = "gbx3.png"
 		elif getBoxType() in ('gbx3h'):
 			model = "gbx3h.png "
+		elif getBoxType() in ('hitube4k'):
+			model = "hitube4k.png"
 		elif getBoxType() in ('dinobot4k'):
 			model = "dinobot4k.png"
 		elif getBoxType() in ('dinobot4kplus'):
