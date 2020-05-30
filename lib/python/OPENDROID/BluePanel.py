@@ -186,7 +186,12 @@ class BluePanel(Screen, ConfigListScreen):
 		self.activityTimer = eTimer()
 		self.activityTimer.timeout.get().append(self.doStop)
 		self.activityTimer.start(100, False)
+		softcams = self.softcam.getList()
+		cardservers = self.cardserver.getList()
 
+		self.softcams = ConfigSelection(choices = softcams)
+		self.softcams.value = self.softcam.current()
+                self.session.openWithCallback(self.myclose, startcam, softcams)
 	def doStop(self):
 		self.activityTimer.stop()
 		if "c" in self.what:
@@ -233,6 +238,9 @@ class BluePanel(Screen, ConfigListScreen):
 
 	def cancel(self):
 		self.close()
+
+        def myclose(self):
+                self.close()
 
 class CamControl:
 	'''CAM convention is that a softlink named /etc/init.c/softcam.* points
@@ -452,3 +460,43 @@ class ShowSoftcamPackages(Screen):
 	
 		else:
 			self.setStatus('error')
+
+class startcam(Screen):
+	skin = """
+	<screen name="startcam" position="center,center" size="484, 150" title="Starting Softcam">
+	<widget name="connect" position="217, 0" size="64,64" zPosition="2" pixmaps="OPENDROID/icons/sc1.png,OPENDROID/icons/sc2.png,OPENDROID/icons/sc3.png,OPENDROID/icons/sc4.png,OPENDROID/icons/sc5.png,OPENDROID/icons/sc6.png,OPENDROID/icons/sc7.png,OPENDROID/icons/sc8.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc10.png,OPENDROID/icons/sc11.png,OPENDROID/icons/sc12.png,OPENDROID/icons/sc13.png,OPENDROID/icons/sc14.png,OPENDROID/icons/sc15.png,OPENDROID/icons/sc17.png,OPENDROID/icons/sc18.png,OPENDROID/icons/sc19.png,OPENDROID/icons/sc20.png,OPENDROID/icons/sc21.png,OPENDROID/icons/sc22.png,OPENDROID/icons/sc23.png,OPENDROID/icons/sc24.png"  transparent="1" alphatest="blend"/>
+	<widget name="text" position="10, 80" halign="center" size="460, 60" zPosition="1" font="Regular;20" valign="top" transparent="1"/>
+	</screen>"""
+
+        def __init__(self, session, title):
+                Screen.__init__(self, session)
+                msg  = _("Please wait, restarting softcam.")
+                self['starting'] = MultiPixmap()
+                self['text'] = Label(msg)
+                self.activityTimer = eTimer()
+                self.activityTimer.timeout.get().append(self.updatepix)
+                self.onShow.append(self.startShow)
+                self.onClose.append(self.delTimer)
+
+        def startShow(self):
+                self.curpix = 0
+                self.count = 0
+                self['starting'].setPixmapNum(0)
+                self.activityTimer.start(120)
+
+        def updatepix(self):
+                self.activityTimer.stop()
+                if self.curpix > 23:
+                        self.curpix = 0
+                if self.count > 120:
+                        self.curpix = 23
+                self['starting'].setPixmapNum(self.curpix)
+                if self.count == 35:
+                        self.hide()
+                        self.close()
+                self.activityTimer.start(140)
+                self.curpix += 1
+                self.count += 1
+
+        def delTimer(self):
+                del self.activityTimer
