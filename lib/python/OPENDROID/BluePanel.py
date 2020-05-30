@@ -8,6 +8,7 @@ from Components.Label import Label
 from Components.config import ConfigSelection, getConfigListEntry, ConfigAction
 from Components.ScrollLabel import ScrollLabel
 from Components.Sources.List import List
+from Components.Pixmap import MultiPixmap
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, fileExists
 from Tools.GetEcmInfo import GetEcmInfo
