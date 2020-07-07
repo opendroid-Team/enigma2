@@ -663,7 +663,9 @@ class ModelPic(Screen):
 			model = "osninopro.png"	
 		elif getBoxType() in ('gbtrio4k'):
 			model = "gbtrio4k.png"	
-		else:
+		elif getBoxType() in ('ustym4kpro'):
+			model = "ustym4kpro.png"	
+                else:
 			model = None
 		poster_path = "/usr/share/enigma2/%s" % model
 		self["boxpic"].hide()
