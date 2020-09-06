@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import gettext
 import locale
 import os
@@ -12,7 +14,7 @@ Lpackagename = "enigma2-locale-"
 
 class Language:
 	def __init__(self):
-		gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), unicode=0, codeset="utf-8")
+		gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), codeset="utf-8")
 		gettext.bindtextdomain("enigma2", resolveFilename(SCOPE_LANGUAGE))
 		gettext.textdomain("enigma2")
 		self.activeLanguage = 0
@@ -82,13 +84,13 @@ class Language:
 					self.langlist.append(str(lang + "_" + country))
 
 		except:
-			print "Language " + str(name) + " not found"
+			print("[Language] Language " + str(name) + " not found")
 		self.langlistselection.append((str(lang + "_" + country), name))
 
 	def activateLanguage(self, index):
 		try:
 			lang = self.lang[index]
-			print "Activating language " + lang[0]
+			print("[Language] Activating language " + lang[0])
 			self.catalog = gettext.translation('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), languages=[index], fallback=True)
 			self.catalog.install(names=("ngettext", "pgettext"))
 			self.activeLanguage = index
@@ -96,7 +98,7 @@ class Language:
 				if x:
 					x()
 		except:
-			print "Selected language does not exist!"
+			print("[Language] Selected language does not exist!")
 
 		try:
 			locale.setlocale(locale.LC_CTYPE, ('C', 'UTF-8'))
@@ -180,24 +182,24 @@ class Language:
 		lang = config.osd.language.value
 
 		if delLang:
-			print"DELETE LANG", delLang
+			print("[Language] DELETE LANG", delLang)
 			if delLang == "en_US" or delLang == "it_IT":
-				print"Default Language can not be deleted !!"
+				print("[Language] Default Language can not be deleted !!")
 				return
 			elif delLang == "en_GB" or delLang == "pt_BR":
 				delLang = delLang.lower()
-				delLang = delLang.replace('_','-')
+				delLang = delLang.replace('_', '-')
 				os.system("opkg remove --autoremove --force-depends " + Lpackagename + delLang)
 			else:
 				os.system("opkg remove --autoremove --force-depends " + Lpackagename + delLang[:2])
 		else:
-			print"Delete all lang except ", lang
+			print("[Language] Delete all lang except ", lang)
 			ll = os.listdir(LPATH)
 			for x in ll:
 				if len(x) > 2:
 					if x != lang and x != "it":
 						x = x.lower()
-						x = x.replace('_','-')
+						x = x.replace('_', '-')
 						os.system("opkg remove --autoremove --force-depends " + Lpackagename + x)
 				else:
 					if x != lang[:2] and x != "en" and x != "it":
@@ -207,7 +209,7 @@ class Language:
 							os.system("opkg remove --autoremove --force-depends " + Lpackagename + x)
 			
 			os.system("touch /etc/enigma2/.removelang")
-			print "reinstall default language"
+			print("reinstall default language")
 			os.system("opkg install enigma2-locale-en-gb")
 
 		self.InitLang()
@@ -215,7 +217,7 @@ class Language:
 	def updateLanguageCache(self):
 		t = localtime(time())
 		createdate = strftime("%d.%m.%Y  %H:%M:%S", t)
-		f = open('/usr/lib/enigma2/python/Components/Language_cache.py','w')
+		f = open('/usr/lib/enigma2/python/Components/Language_cache.py', 'w')
 		f.write('# -*- coding: UTF-8 -*-\n')
 		f.write('# date: ' + createdate + '\n#\n\n')
 		f.write('LANG_TEXT = {\n')

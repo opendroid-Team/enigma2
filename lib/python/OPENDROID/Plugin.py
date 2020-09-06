@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eTimer, eConsoleAppContainer
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -71,7 +72,7 @@ class ManualPanel(Screen):
 
 	def KeyOk(self):
 		selection = self["list"].getCurrent()[0][1]
-		print selection
+		print(selection)
 		if (selection == "Plg"):
 			self.title = 'bh.tgz, tar.gz, nab.tgz installer'
 			self.session.open(PanelTGzInstaller, self.title)
@@ -95,7 +96,7 @@ class ManualPanel(Screen):
 			self.messpopup("Selection error")
 
 	def messpopup(self,msg):
-		self.session.open(MessageBox, msg , MessageBox.TYPE_INFO)
+		self.session.open(MessageBox, msg, MessageBox.TYPE_INFO)
 
 	def updateList(self):
 		for i in self.entrylist:
@@ -132,7 +133,7 @@ class PanelTGzInstaller(Screen):
 				"green": self.okInst,
 				"red": self.cancel,
 				"yellow": self.okInstAll,
-			},-1)
+			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
@@ -192,7 +193,7 @@ class PanelIPKInstaller(Screen):
 				"green": self.okInst,
 				"red": self.cancel,
 				"yellow": self.okInstAll,
-			},-1)
+			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
@@ -252,7 +253,7 @@ class AdvInstallIpk(Screen):
 				"green": self.okInst,
 				"red": self.cancel,
 				"yellow": self.okInstAll,
-			},-1)
+			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
@@ -381,7 +382,7 @@ class downfeed(Screen):
 				"ok": self.setup,
 				"green": self.setup,
 				"red": self.cancel,
-			},-1)
+			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))

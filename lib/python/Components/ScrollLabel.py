@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+from __future__ import division
 import skin
-from HTMLComponent import HTMLComponent
-from GUIComponent import GUIComponent
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
 from enigma import eLabel, eWidget, eSlider, fontRenderClass, ePoint, eSize
 
 class ScrollLabel(HTMLComponent, GUIComponent):
@@ -38,20 +40,20 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 					self.scrollbarmode = value
 					remove_attribs.append((attrib, value))
 				if "borderColor" in attrib or "borderWidth" in attrib:
-					scrollbar_attribs.append((attrib,value))
+					scrollbar_attribs.append((attrib, value))
 				if "transparent" in attrib or "backgroundColor" in attrib:
-					widget_attribs.append((attrib,value))
+					widget_attribs.append((attrib, value))
 				if "scrollbarSliderForegroundColor" in attrib:
-					scrollbar_attribs.append((attrib,value))
+					scrollbar_attribs.append((attrib, value))
 					remove_attribs.append((attrib, value))
 				if "scrollbarSliderBorderColor" in attrib:
-					scrollbar_attribs.append((attrib,value))
+					scrollbar_attribs.append((attrib, value))
 					remove_attribs.append((attrib, value))
 				if "scrollbarSliderPicture" in attrib:
-					scrollbar_attribs.append((attrib,value))
+					scrollbar_attribs.append((attrib, value))
 					remove_attribs.append((attrib, value))
 				if "scrollbarBackgroundPicture" in attrib:
-					scrollbar_attribs.append((attrib,value))
+					scrollbar_attribs.append((attrib, value))
 					remove_attribs.append((attrib, value))
 				if "scrollbarWidth" in attrib:
 					scrollbarWidth = int(value)
@@ -84,8 +86,8 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		self.pageHeight = int(lines * self.lineheight)
 		self.instance.move(self.long_text.position())
 		self.instance.resize(eSize(self.pageWidth, self.pageHeight + int(self.lineheight/6)))
-		self.scrollbar.move(ePoint(self.pageWidth-scrollbarWidth,0))
-		self.scrollbar.resize(eSize(scrollbarWidth,self.pageHeight+ int(self.lineheight/6)))
+		self.scrollbar.move(ePoint(self.pageWidth-scrollbarWidth, 0))
+		self.scrollbar.resize(eSize(scrollbarWidth, self.pageHeight+ int(self.lineheight/6)))
 		self.scrollbar.setOrientation(eSlider.orVertical)
 		self.scrollbar.setRange(0, 100)
 		self.scrollbar.setBorderWidth(scrollbarBorderWidth)
@@ -145,8 +147,8 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		return self.TotalTextHeight <= self.pageHeight or self.curPos == self.TotalTextHeight - self.pageHeight
 
 	def updateScrollbar(self):
-		vis = max(100 * self.pageHeight / self.TotalTextHeight, 3)
-		start = (100 - vis) * self.curPos / (self.TotalTextHeight - self.pageHeight)
+		vis = max(100 * self.pageHeight // self.TotalTextHeight, 3)
+		start = (100 - vis) * self.curPos // (self.TotalTextHeight - self.pageHeight)
 		self.scrollbar.setStartEnd(start, start + vis)
 
 	def GUIcreate(self, parent):

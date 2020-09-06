@@ -15,17 +15,19 @@
 #######################################################################
 
 
+from __future__ import print_function
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 from Components.config import config, ConfigSubsection, ConfigNumber, ConfigSelection
 from twisted.web.client import getPage
 from xml.dom.minidom import parseString
 from enigma import eTimer
+import six
 
 config.plugins.AtileHD = ConfigSubsection()
 config.plugins.AtileHD.refreshInterval = ConfigNumber(default = "10")
 config.plugins.AtileHD.woeid = ConfigNumber(default = "640161")
-config.plugins.AtileHD.tempUnit = ConfigSelection(default = "Celsius", choices = [("Celsius", _("Celsius")),("Fahrenheit", _("Fahrenheit"))])
+config.plugins.AtileHD.tempUnit = ConfigSelection(default = "Celsius", choices = [("Celsius", _("Celsius")), ("Fahrenheit", _("Fahrenheit"))])
 
 weather_data = None
 
@@ -168,21 +170,22 @@ class WeatherData:
 			self.GetWeather()
 
 	def downloadError(self, error = None):
-		print "[WeatherUpdate] error fetching weather data"
+		print("[WeatherUpdate] error fetching weather data")
 
 	def GetWeather(self):
 		timeout = config.plugins.AtileHD.refreshInterval.value * 1000 * 60
 		if timeout > 0:
 			self.timer.start(timeout, True)
-			print "AtileHD lookup for ID " + str(config.plugins.AtileHD.woeid.value)
+			print("AtileHD lookup for ID " + str(config.plugins.AtileHD.woeid.value))
 			url = "http://query.yahooapis.com/v1/public/yql?q=select%20item%20from%20weather.forecast%20where%20woeid%3D%22"+str(config.plugins.AtileHD.woeid.value)+"%22&format=xml"
-			getPage(url,method = 'GET').addCallback(self.GotWeatherData).addErrback(self.downloadError)
+			url = six.ensure_binary(url)
+			getPage(url, method = 'GET').addCallback(self.GotWeatherData).addErrback(self.downloadError)
 
 	def GotWeatherData(self, data = None):
 		if data is not None:
 			dom = parseString(data)
 			title = self.getText(dom.getElementsByTagName('title')[0].childNodes)
-			self.WeatherInfo["currentLocation"] = str(title).split(',')[0].replace("Conditions for ","")
+			self.WeatherInfo["currentLocation"] = str(title).split(',')[0].replace("Conditions for ", "")
 
 			weather = dom.getElementsByTagName('yweather:condition')[0]
 			self.WeatherInfo["currentWeatherCode"] = self.ConvertCondition(weather.getAttributeNode('code').nodeValue)
@@ -229,7 +232,7 @@ class WeatherData:
 			self.WeatherInfo["forecastTomorrow3TempMin"] = self.getTemp(weather.getAttributeNode('low').nodeValue)
 			self.WeatherInfo["forecastTomorrow3Text"] =_(str(weather.getAttributeNode('text').nodeValue))
 			
-	def getText(self,nodelist):
+	def getText(self, nodelist):
 	    rc = []
 	    for node in nodelist:
 	        if node.nodeType == node.TEXT_NODE:
@@ -279,12 +282,12 @@ class WeatherData:
 			condition = ")"
 		return str(condition)
 
-	def getTemp(self,temp):
+	def getTemp(self, temp):
 		if config.plugins.AtileHD.tempUnit.value == "Fahrenheit":
-			return str(int(round(float(temp),0)))
+			return str(int(round(float(temp), 0)))
 		else:
 			celsius = (float(temp) - 32 ) * 5 / 9
-			return str(int(round(float(celsius),0)))
+			return str(int(round(float(celsius), 0)))
 
 	def getWeatherDate(self, weather):
 		cur_weather = str(weather.getAttributeNode('date').nodeValue).split(" ")

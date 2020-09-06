@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ConfigList import ConfigList, ConfigListScreen
 from Components.config import *
@@ -7,6 +8,7 @@ from Plugins.Plugin import PluginDescriptor
 from os import system
 from enigma import eTimer
 from Components.ProgressBar import ProgressBar
+import six
 config.plugins.ClearMem = ConfigSubsection()
 config.plugins.ClearMem.enable = ConfigYesNo(default=False)
 NGETTEXT = False
@@ -14,7 +16,7 @@ try:
 	ngettext('%d minute', '%d minutes', 5)
 	NGETTEXT = True
 except Exception as e:
-	print '[ClearMem] ngettext is not supported:', e
+	print('[ClearMem] ngettext is not supported:', e)
 
 choicelist = []
 for i in range(5, 151, 5):
@@ -147,7 +149,7 @@ class ClearMem(Screen, ConfigListScreen):
 				self['slide'].show()
 			return memory
 		except Exception as e:
-			print '[ClearMem] getMemory FAIL:', e
+			print('[ClearMem] getMemory FAIL:', e)
 			return ''
 
 	def memoryInfo(self):
@@ -261,7 +263,7 @@ class ClearMemInfoScreen(Screen):
 			value = ''
 			for line in open('/proc/meminfo', 'r'):
 				line = line.strip().split()
-				print line
+				print(line)
 				text += ''.join((line[0], '\n'))
 				value += ''.join((line[1],
 						' ',
@@ -271,7 +273,7 @@ class ClearMemInfoScreen(Screen):
 			self['memtext'].setText(text)
 			self['memvalue'].setText(value)
 		except Exception as e:
-			print '[ClearMem] getMemory FAIL:', e
+			print('[ClearMem] getMemory FAIL:', e)
 
 	def freeMemory(self):
 		clearMem()

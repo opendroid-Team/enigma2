@@ -69,7 +69,7 @@ class BluePanel(Screen, ConfigListScreen):
 				"red": self.cancel,
 				"yellow": self.Yellow,
 				"blue": self.ppanelShortcut,
-			},-1)
+			}, -1)
 
 		self.list = [ ]
 		ConfigListScreen.__init__(self, self.list, session = session, on_change = self.changedEntry)
@@ -159,16 +159,16 @@ class BluePanel(Screen, ConfigListScreen):
 
 	def ppanelShortcut(self):
 		ppanelFileName = '/etc/ppanels/' + self.softcams.value + '.xml'
-		if "oscam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.pyo'):
+		if "oscam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.py'):
 			from Screens.OScamInfo import OscamInfoMenu
 			self.session.open(OscamInfoMenu)
-		elif "cccam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/CCcamInfo.pyo'):
+		elif "cccam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/CCcamInfo.py'):
 			from Screens.CCcamInfo import CCcamInfoMain
 			self.session.open(CCcamInfoMain)
-		elif "ncam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.pyo'):
+		elif "ncam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.py'):
 			from Screens.OScamInfo import OscamInfoMenu
 			self.session.open(OscamInfoMenu)
-		elif os.path.isfile(ppanelFileName) and os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/PPanel/plugin.pyo'):
+		elif os.path.isfile(ppanelFileName) and os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/PPanel/plugin.py'):
 			from Plugins.Extensions.PPanel.ppanel import PPanel
 			self.session.open(PPanel, name = self.softcams.value + ' PPanel', node = None, filename = ppanelFileName, deletenode = None)
 		else:
@@ -250,7 +250,7 @@ class CamControl:
 		self.name = name
 		self.link = '/etc/init.d/' + name
 		if not os.path.exists(self.link):
-			print "[CamControl] No softcam link?", self.link
+			print "[CamControl] No softcam link?" , self.link
 
 	def getList(self):
 		result = []
@@ -280,7 +280,7 @@ class CamControl:
 			which = "None"
 		dst = self.name + '.' + which
 		if not os.path.exists('/etc/init.d/' + dst):
-			print "[CamControl] init script does not exist:", dst
+			print "[CamControl] init script does not exist:" , dst
 			return 
 		try:
 			os.unlink(self.link)

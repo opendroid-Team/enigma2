@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
@@ -32,6 +35,12 @@ import skin, os
 import time
 from os import path, popen, system
 from re import search
+
+import time
+import six
+
+SIGN = '°' if six.PY3 else str('\xc2\xb0')
+
 def parse_ipv4(ip):
 	ret = ""
 	idx = 0
@@ -51,7 +60,7 @@ def parseFile(filename):
 		ret = f.read().strip()
 		f.close()
 	except IOError:
-		print "[ERROR] failed to open file %s" % filename
+		print("[ERROR] failed to open file %s" % filename)
 	return ret
 
 def parseLines(filename):
@@ -61,7 +70,7 @@ def parseLines(filename):
 		ret = f.readlines()
 		f.close()
 	except IOError:
-		print "[ERROR] failed to open file %s" % filename
+		print("[ERROR] failed to open file %s" % filename)
 	return ret
 
 def MyDateConverter(StringDate):
@@ -80,7 +89,7 @@ def read_startup(FILE):
 			data=myfile.read().replace('\n', '')
 		myfile.close()
 	except IOError:
-		print "[ERROR] failed to open file %s" % file
+		print("[ERROR] failed to open file %s" % file)
 		data = " "
 	return data
 
@@ -88,7 +97,7 @@ class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Image Information"))
-		self.skinName = ["AboutOE","About"]
+		self.skinName = ["AboutOE", "About"]
 		self.populate()
 
 		self["key_green"] = Button(_("Translations"))
@@ -109,39 +118,39 @@ class About(Screen):
 	def populate(self):
 		def netspeed():
 			netspeed=""
-			for line in popen('ethtool eth0 |grep Speed','r'):
+			for line in popen('ethtool eth0 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ','')
+				line =line[1].replace(' ', '')
 				netspeed += line
 				return str(netspeed)
 		def netspeed_eth1():
 			netspeed=""
-			for line in popen('ethtool eth1 |grep Speed','r'):
+			for line in popen('ethtool eth1 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ','')
+				line =line[1].replace(' ', '')
 				netspeed += line
 				return str(netspeed)
 		def netspeed_ra0():
 			netspeed=""
-			for line in popen('iwconfig ra0 | grep Bit | cut -c 75-85','r'):
+			for line in popen('iwconfig ra0 | grep Bit | cut -c 75-85', 'r'):
 				line = line.strip()
 				netspeed += line
 				return str(netspeed)
 		def netspeed_wlan0():
 			netspeed=""
-			for line in popen('iwconfig wlan0 | grep Bit | cut -c 75-85','r'):
+			for line in popen('iwconfig wlan0 | grep Bit | cut -c 75-85', 'r'):
 				line = line.strip()
 				netspeed += line
 				return str(netspeed)
 		def netspeed_wlan1():
 			netspeed=""
-			for line in popen('iwconfig wlan1 | grep Bit | cut -c 75-85','r'):
+			for line in popen('iwconfig wlan1 | grep Bit | cut -c 75-85', 'r'):
 				line = line.strip()
 				netspeed += line
 				return str(netspeed)
 		def freeflash():
 			freeflash=""
-			for line in popen("df -mh / | grep -v '^Filesystem' | awk '{print $4}'",'r'):
+			for line in popen("df -mh / | grep -v '^Filesystem' | awk '{print $4}'", 'r'):
 				line = line.strip()
 				freeflash += line
 				return str(freeflash)
@@ -185,27 +194,27 @@ class About(Screen):
 		except:
 			BootLoaderVersion = 0
 
-		if getMachineBuild() in ('u41','u42','u43'):
+		if getMachineBuild() in ('u41', 'u42', 'u43'):
 			cpuMHz = _("   (1.0 GHz)")
-		elif getMachineBuild() in ('vusolo4k','vuultimo4k','vuzero4k','gb72604'):
+		elif getMachineBuild() in ('vusolo4k', 'vuultimo4k', 'vuzero4k', 'gb72604'):
 			cpuMHz = _("   (1.5 GHz)")
-		elif getMachineBuild() in ('formuler1tc','formuler1', 'triplex', 'tiviaraplus'):
+		elif getMachineBuild() in ('formuler1tc', 'formuler1', 'triplex', 'tiviaraplus'):
 			cpuMHz = _("   (1.3 GHz)")
-		elif getMachineBuild() in ('gbmv200','u51','u5','u53','u532','u533','u52','u54','u55','u56','u5pvr','h9','h9combo','h10','cc1','sf8008','sf8008m','hd60','hd61','i55plus','ustym4kpro','beyonwizv2','viper4k','v8plus','multibox'):
+		elif getMachineBuild() in ('gbmv200', 'u51', 'u5', 'u53', 'u532', 'u533', 'u52', 'u54', 'u55', 'u56', 'u5pvr', 'h9', 'h9combo', 'h10', 'cc1', 'sf8008', 'sf8008m', 'hd60', 'hd61', 'i55plus', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'v8plus', 'multibox'):
 			cpuMHz = _("   (1.6 GHz)")
-		elif getMachineBuild() in ('vuuno4kse','vuuno4k','dm900','dm920', 'gb7252', 'dags7252','xc7439','8100s'):
+		elif getMachineBuild() in ('vuuno4kse', 'vuuno4k', 'dm900', 'dm920', 'gb7252', 'dags7252','xc7439', '8100s'):
 			cpuMHz = _("   (1.7 GHz)")
-		elif getMachineBuild() in ('alien5',):
+		elif getMachineBuild() in ('alien5', ):
 			cpuMHz = _("   (2.0 GHz)")
-		elif getMachineBuild() in ('vuduo4k',):
+		elif getMachineBuild() in ('vuduo4k', ):
 			cpuMHz = _("   (2.1 GHz)")
-		elif getMachineBuild() in ('sf5008','et13000','et1x000','hd52','hd51','sf4008','vs1500','h7','osmio4k','osmio4kplus','osmini4k'):
+		elif getMachineBuild() in ('sf5008', 'et13000', 'et1x000', 'hd52', 'hd51', 'sf4008', 'vs1500', 'h7', 'osmio4k', 'osmio4kplus', 'osmini4k'):
 			try:
 				import binascii
 				f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
 				clockfrequency = f.read()
 				f.close()
-				cpuMHz = _("   (%s MHz)") % str(round(int(binascii.hexlify(clockfrequency), 16)/1000000,1))
+				cpuMHz = _("   (%s MHz)") % str(round(int(binascii.hexlify(clockfrequency), 16)/1000000, 1))
 			except:
 				cpuMHz = _("   (1.7 GHz)")
 		else:
@@ -229,16 +238,16 @@ class About(Screen):
 		if res2:
 			bogoMIPS = "" + res2.replace("\n", "")
 
-		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7','gb7252'):
+		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'h7', 'gb7252'):
 			AboutText += _("CPU:\t%s") % about.getCPUString() + cpuMHz + "\n"
 		else:
 			AboutText += _("CPU:\t%s") % about.getCPUString() + " " + cpuMHz + "\n"
 		dMIPS = 0
-		if getMachineBuild() in ('vusolo4k','vuultimo4k'):
+		if getMachineBuild() in ('vusolo4k', 'vuultimo4k'):
 			dMIPS = "10.500"
-		elif getMachineBuild() in ('hd52','hd51','sf4008','dm900','h7','gb7252'):
+		elif getMachineBuild() in ('hd52', 'hd51', 'sf4008', 'dm900', 'h7', 'gb7252'):
 			dMIPS = "12.000"
-		if getMachineBuild() in ('vusolo4k','hd51','hd52','sf4008','dm900','h7','gb7252'):
+		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'h7', 'gb7252'):
 			AboutText += _("DMIPS:\t") + dMIPS + "\n"
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"
@@ -349,7 +358,7 @@ class About(Screen):
 #				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
 
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
@@ -376,13 +385,13 @@ class About(Screen):
 						temp = line[1].split("=")
 						temp = line[1].split(" ")
 						tempinfo = temp[2]
-						if getMachineBuild() in ('u41','u42','u43'):
+						if getMachineBuild() in ('u41', 'u42', 'u43'):
 							tempinfo = str(int(tempinfo) - 15)
 			except:
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ','') + mark + "C\n"
+			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
@@ -716,7 +725,7 @@ class Devices(Screen):
 		self.Console = Console()
 		niminfo = ""
 		nims = nimmanager.nimList()
-		for count in range(len(nims)):
+		for count in list(range(len(nims))):
 			if niminfo:
 				niminfo += "\n"
 			niminfo += nims[count]
@@ -749,20 +758,20 @@ class Devices(Screen):
 				free = Harddisk(device).free()
 
 				if ((float(size) / 1024) / 1024) >= 1:
-					sizeline = _("Size: ") + str(round(((float(size) / 1024) / 1024), 2)) + _("TB")
+					sizeline = _("Size: ") + str(round(((float(size) / 1024) / 1024), 2)) + " " + _("TB")
 				elif (size / 1024) >= 1:
-					sizeline = _("Size: ") + str(round((float(size) / 1024), 2)) + _("GB")
+					sizeline = _("Size: ") + str(round((float(size) / 1024), 2)) +  " " + _("GB")
 				elif size >= 1:
-					sizeline = _("Size: ") + str(size) + _("MB")
+					sizeline = _("Size: ") + str(size) +  " " + _("MB")
 				else:
 					sizeline = _("Size: ") + _("unavailable")
 
 				if ((float(free) / 1024) / 1024) >= 1:
-					freeline = _("Free: ") + str(round(((float(free) / 1024) / 1024), 2)) + _("TB")
+					freeline = _("Free: ") + str(round(((float(free) / 1024) / 1024), 2)) +  " " + _("TB")
 				elif (free / 1024) >= 1:
-					freeline = _("Free: ") + str(round((float(free) / 1024), 2)) + _("GB")
+					freeline = _("Free: ") + str(round((float(free) / 1024), 2)) +  " " + _("GB")
 				elif free >= 1:
-					freeline = _("Free: ") + str(free) + _("MB")
+					freeline = _("Free: ") + str(free) +  " " + _("MB")
 				else:
 					freeline = _("Free: ") + _("full")
 				self.list.append(mount + '\t' + sizeline + ' \t' + freeline)
@@ -782,6 +791,7 @@ class Devices(Screen):
 		self.Console.ePopen("df -mh | grep -v '^Filesystem'", self.Stage1Complete)
 
 	def Stage1Complete(self, result, retval, extra_args=None):
+		result = six.ensure_str(result)
 		result = result.replace('\n                        ', ' ').split('\n')
 		self.mountinfo = ""
 		for line in result:
@@ -836,11 +846,11 @@ class SystemMemoryInfo(Screen):
 				"down": self["AboutScrollLabel"].pageDown,
 			})
 
-		out_lines = file("/proc/meminfo").readlines()
+		out_lines = open("/proc/meminfo").readlines()
 		self.AboutText = _("RAM") + '\n\n'
 		RamTotal = "-"
 		RamFree = "-"
-		for lidx in range(len(out_lines) - 1):
+		for lidx in list(range(len(out_lines) - 1)):
 			tstLine = out_lines[lidx].split()
 			if "MemTotal:" in tstLine:
 				MemTotal = out_lines[lidx].split()
@@ -877,7 +887,9 @@ class SystemMemoryInfo(Screen):
 		if RamText_End != RamText_End2:
 			RamText = RamText[0:len(RamText)-1] + " " + RamText_End
 		return RamText
+
 	def Stage1Complete(self, result, retval, extra_args=None):
+		result = six.ensure_str(result)
 		flash = str(result).replace('\n', '')
 		flash = flash.split()
 		RamTotal = self.MySize(flash[1])
@@ -945,74 +957,77 @@ class SystemNetworkInfo(Screen):
 	def createscreen(self):
 		def netspeed():
 			netspeed=""
-			for line in popen('ethtool eth0 |grep Speed','r'):
+			for line in popen('ethtool eth0 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ','')
+				line =line[1].replace(' ', '')
 				netspeed += line
-				return str(netspeed)
+			return str(netspeed)
+
+
 		def netspeed_eth1():
 			netspeed=""
-			for line in popen('ethtool eth1 |grep Speed','r'):
+			for line in popen('ethtool eth1 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ','')
+				line =line[1].replace(' ', '')
 				netspeed += line
-				return str(netspeed)
+			return str(netspeed)
+
 		self.AboutText = ""
 		self.iface = "eth0"
 		eth0 = about.getIfConfig('eth0')
-		if eth0.has_key('addr'):
-			if eth0.has_key('ifname'):
+		if 'addr' in eth0:
+			if 'ifname' in eth0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth0['ifname'] + "\n"
 			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + eth0['addr'] + "\n"
-			if eth0.has_key('netmask'):
+			if 'netmask' in eth0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth0['netmask'] + "\n"
-			if eth0.has_key('hwaddr'):
+			if 'hwaddr' in eth0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + eth0['hwaddr'] + "\n"
 			self.AboutText += '{:<35}'.format(_("Network Speed:")) + "\t" + netspeed() + "\n"
 			self.iface = 'eth0'
 
 		eth1 = about.getIfConfig('eth1')
-		if eth1.has_key('addr'):
-			if eth1.has_key('ifname'):
+		if 'addr' in eth1:
+			if 'ifname' in eth1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth1['ifname'] + "\n"
 			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + eth1['addr'] + "\n"
-			if eth1.has_key('netmask'):
+			if 'netmask' in eth1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth1['netmask'] + "\n"
-			if eth1.has_key('hwaddr'):
+			if 'hwaddr' in eth1:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + eth1['hwaddr'] + "\n"
 			self.AboutText += '{:<35}'.format(_("Network Speed:")) + "\t" + netspeed_eth1() + "\n"
 			self.iface = 'eth1'
 
 		ra0 = about.getIfConfig('ra0')
-		if ra0.has_key('addr'):
-			if ra0.has_key('ifname'):
+		if 'addr' in ra0:
+			if 'ifname' in ra0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + ra0['ifname'] + "\n"
 			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + ra0['addr'] + "\n"
-			if ra0.has_key('netmask'):
+			if 'netmask' in ra0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + ra0['netmask'] + "\n"
-			if ra0.has_key('hwaddr'):
+			if 'hwaddr' in ra0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + ra0['hwaddr'] + "\n"
 			self.iface = 'ra0'
 
 		wlan0 = about.getIfConfig('wlan0')
-		if wlan0.has_key('addr'):
-			if wlan0.has_key('ifname'):
+		if 'addr' in wlan0:
+			if 'ifname' in wlan0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan0['ifname'] + "\n"
 			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + wlan0['addr'] + "\n"
-			if wlan0.has_key('netmask'):
+			if 'netmask' in wlan0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan0['netmask'] + "\n"
-			if wlan0.has_key('hwaddr'):
+			if 'hwaddr' in wlan0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + wlan0['hwaddr'] + "\n"
 			self.iface = 'wlan0'
 
 		wlan1 = about.getIfConfig('wlan1')
-		if wlan1.has_key('addr'):
-			if wlan1.has_key('ifname'):
+		if 'addr' in wlan1:
+			if 'ifname' in wlan1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan1['ifname'] + "\n"
 			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + wlan1['addr'] + "\n"
-			if wlan1.has_key('netmask'):
+			if 'netmask' in wlan1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan1['netmask'] + "\n"
-			if wlan1.has_key('hwaddr'):
+			if 'hwaddr' in wlan1:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + wlan1['hwaddr'] + "\n"
 			self.iface = 'wlan1'
 
@@ -1020,7 +1035,7 @@ class SystemNetworkInfo(Screen):
 		self.AboutText += "\n" + '{:<35}'.format(_("Bytes received:")) + "\t" + rx_bytes + "\n"
 		self.AboutText += '{:<35}'.format(_("Bytes sent:")) + "\t" + tx_bytes + "\n"
 
-		hostname = file('/proc/sys/kernel/hostname').read()
+		hostname = open('/proc/sys/kernel/hostname').read()
 		self.AboutText += "\n" + '{:<35}'.format(_("Hostname:")) + "\t" + hostname + "\n"
 		self["AboutScrollLabel"] = ScrollLabel(self.AboutText)
 
@@ -1047,25 +1062,37 @@ class SystemNetworkInfo(Screen):
 							essid = _("No Connection")
 						else:
 							accesspoint = str(status[self.iface]["accesspoint"])
-						if self.has_key("BSSID"):
-							self.AboutText += _('Accesspoint:') + '\t' + accesspoint + '\n'
-						if self.has_key("ESSID"):
-							self.AboutText += _('SSID:') + '\t' + essid + '\n'
+						if "BSSID" in self:
+							self.AboutText += '{:<35}'.format(_('Accesspoint:')) + '\t' + accesspoint + '\n'
+						if "ESSID" in self:
+							self.AboutText += '{:<35}'.format(_('SSID:')) + '\t' + essid + '\n'
 
 						quality = str(status[self.iface]["quality"])
-						if self.has_key("quality"):
-							self.AboutText += _('Link Quality:') + '\t' + quality + '\n'
+						if "quality" in self:
+							self.AboutText += '{:<35}'.format(_('Link Quality:')) + '\t' + quality + '\n'
+
+						channel = str(status[self.iface]["channel"])
+						if "channel" in self:
+							self.AboutText += '{:<35}'.format(_('Channel:')) + '\t' + channel + '\n'
+
+						frequency = status[self.iface]["frequency"]
+						if "frequency" in self:
+							self.AboutText += '{:<35}'.format(_('Frequency:')) + '\t' + frequency + '\n'
+
+						frequency_norm = status[self.iface]["frequency_norm"]
+						if frequency_norm is not None:
+							self.AboutText += '{:<35}'.format(_('Frequency Norm:')) + '\t' + frequency_norm + '\n'
 
 						if status[self.iface]["bitrate"] == '0':
 							bitrate = _("Unsupported")
 						else:
-							bitrate = str(status[self.iface]["bitrate"]) + " Mb/s"
-						if self.has_key("bitrate"):
-							self.AboutText += _('Bitrate:') + '\t' + bitrate + '\n'
+							bitrate = str(status[self.iface]["bitrate"])
+						if "bitrate" in self:
+							self.AboutText += '{:<35}'.format(_('Bitrate:')) + '\t' + bitrate + '\n'
 
-						signal = str(status[self.iface]["signal"])
-						if self.has_key("signal"):
-							self.AboutText += _('Signal Strength:') + '\t' + signal + '\n'
+						signal = str(status[self.iface]["signal"]) + " dBm"
+						if "signal" in self:
+							self.AboutText += '{:<35}'.format(_('Signal Strength:')) + '\t' + signal + '\n'
 
 						if status[self.iface]["encryption"] == "off":
 							if accesspoint == "Not-Associated":
@@ -1074,8 +1101,12 @@ class SystemNetworkInfo(Screen):
 								encryption = _("Unsupported")
 						else:
 							encryption = _("Enabled")
-						if self.has_key("enc"):
-							self.AboutText += _('Encryption:') + '\t' + encryption + '\n'
+						if "enc" in self:
+							self.AboutText += '{:<35}'.format(_('Encryption:')) + '\t' + encryption + '\n'
+
+						encryption_type = status[self.iface]["encryption_type"]
+						if "encryption_type" in self:
+							self.AboutText += '{:<35}'.format(_('Encryption Type:')) + '\t' + encryption_type + '\n'
 
 						if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] is False:
 							self.LinkState = False
@@ -1103,6 +1134,7 @@ class SystemNetworkInfo(Screen):
 			iNetwork.getLinkState(self.iface, self.dataAvail)
 
 	def dataAvail(self, data):
+		data = six.ensure_str(data)
 		self.LinkState = None
 		for line in data.splitlines():
 			line = line.strip()
@@ -1194,7 +1226,7 @@ class ViewGitLog(Screen):
 			"right": self.pageDown,
 			"down": self.pageDown,
 			"up": self.pageUp
-		},-1)
+		}, -1)
 		self.onLayoutFinish.append(self.getlog)
 
 	def changelogtype(self):
@@ -1215,15 +1247,12 @@ class ViewGitLog(Screen):
 		self["text"].pageDown()
 
 	def getlog(self):
-		try:
-			fd = open('/etc/' + self.logtype + '-git.log', 'r')
-			releasenotes = fd.read()
-			fd.close()
-			releasenotes = releasenotes.replace('\nOpendroid: build', "\n\nOpendroid: build")
-			self["text"].setText(releasenotes)
-			summarytext = releasenotes
-		except:
-			print "there is a problem with reading log file"
+		fd = open('/etc/' + self.logtype + '-git.log', 'r')
+		releasenotes = fd.read()
+		fd.close()
+		releasenotes = releasenotes.replace('\nOpendroid: build', "\n\nOpendroid: build")
+		self["text"].setText(releasenotes)
+		summarytext = releasenotes
 		try:
 			if self.logtype == 'e2':
 				self['title_summary'].setText(_("E2 Log"))
@@ -1257,7 +1286,7 @@ class TranslationInfo(Screen):
 				continue
 			(type, value) = l
 			infomap[type] = value
-		self["actions"] = ActionMap(["SetupActions"],{"cancel": self.close,"ok": self.close})
+		self["actions"] = ActionMap(["SetupActions"], {"cancel": self.close, "ok": self.close})
 
 		translator_name = infomap.get("Language-Team", "none")
 		if translator_name == "none":
@@ -1267,7 +1296,7 @@ class TranslationInfo(Screen):
 		linfo += _("Translations Info")		+ ":" + "\n\n"
 		linfo += _("Project")				+ ":" + infomap.get("Project-Id-Version", "") + "\n"
 		linfo += _("Language")				+ ":" + infomap.get("Language", "") + "\n"
-		print infomap.get("Language-Team", "")
+		print(infomap.get)("Language-Team", "")
 		if infomap.get("Language-Team", "") == "" or infomap.get("Language-Team", "") == "none":
 			linfo += _("Language Team") 	+ ":" + "n/a"  + "\n"
 		else:
@@ -1436,7 +1465,7 @@ class MemoryInfo(Screen):
 			mem = 1
 			free = 0
 			rows_in_column = self["params"].rows_in_column
-			for i, line in enumerate(open('/proc/meminfo','r')):
+			for i, line in enumerate(open('/proc/meminfo', 'r')):
 				s = line.strip().split(None, 2)
 				if len(s) == 3:
 					name, size, units = s
@@ -1450,11 +1479,11 @@ class MemoryInfo(Screen):
 				if name.startswith("MemFree") or name.startswith("Buffers") or name.startswith("Cached"):
 					free += int(size)
 				if i < rows_in_column:
-					ltext += "".join((name,"\n"))
-					lvalue += "".join((size," ",units,"\n"))
+					ltext += "".join((name, "\n"))
+					lvalue += "".join((size, " ", units, "\n"))
 				else:
-					rtext += "".join((name,"\n"))
-					rvalue += "".join((size," ",units,"\n"))
+					rtext += "".join((name, "\n"))
+					rvalue += "".join((size, " ", units, "\n"))
 			self['lmemtext'].setText(ltext)
 			self['lmemvalue'].setText(lvalue)
 			self['rmemtext'].setText(rtext)
@@ -1462,8 +1491,8 @@ class MemoryInfo(Screen):
 			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
 			self['pfree'].setText("%.1f %s" % (100.*free/mem,'%'))
 			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem,'%'))
-		except Exception, e:
-			print "[About] getMemoryInfo FAIL:", e
+		except IOError:
+			print("[About] getMemoryInfo FAIL:", e)
 
 	def clearMemory(self):
 		eConsoleAppContainer().execute("sync")

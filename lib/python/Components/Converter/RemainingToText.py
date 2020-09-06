@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from time import time as getTime, localtime, strftime
-from Poll import Poll
+from Components.Converter.Poll import Poll
 from Components.Element import cached
 from Components.config import config
 
@@ -210,7 +211,12 @@ class RemainingToText(Poll, Converter, object):
 					if remaining is None:	
 						return strftime(d, t)
 					if remaining is not None:
-						myRestMinuten = ngettext(_("%+6d"), _("%+6d"), (r/60)) % (r/60)
+						if config.usage.elapsed_time_positive_vfd.value:
+							myRestMinuten = "%+6d" % (r/60)
+						else:
+							myRestMinuten = "%+6d" % (r/60*-1)
+						if (r/60) == 0:
+							myRestMinuten = " "
 						return strftime(d, t) + myRestMinuten
 				elif self.type == self.WITH_SECONDS:
 					if remaining is not None:

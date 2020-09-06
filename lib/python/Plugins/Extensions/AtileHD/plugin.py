@@ -6,6 +6,7 @@
 #This means you also have to distribute
 #source code of your modifications.
 
+from __future__ import print_function
 from inits import *
 from Components.ActionMap import ActionMap
 from Components.config import *
@@ -1151,7 +1152,7 @@ class AtileHD_Config(Screen, ConfigListScreen):
 		r=list(set(r)) #remove duplicates, no need to check for the same component several times
 
 		printDEBUG("Found %s:\n" % (look4Component))
-		print r
+		print(r)
 		if r:
 			for myComponent in set(r):
 				#print" [Multibox] checks if %s exists" % myComponent

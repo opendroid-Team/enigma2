@@ -1,4 +1,5 @@
-from config import ConfigSelectionNumber, ConfigYesNo, ConfigSubsection, ConfigSelection, config
+from __future__ import absolute_import
+from Components.config import ConfigInteger, ConfigSelectionNumber, ConfigYesNo, ConfigSubsection, ConfigSelection, config
 from enigma import pNavigation
 from Components.SystemInfo import SystemInfo
 
@@ -19,10 +20,9 @@ def InitRecordingConfig():
 		("long", _("Long filenames")) ] )
 	config.recording.always_ecm = ConfigYesNo(default = False)
 	config.recording.never_decrypt = ConfigYesNo(default = False)
-	config.recording.offline_decode_delay = ConfigSelectionNumber(min = 1, max = 10000, stepwidth = 10, default = 1000, wraparound = True)
+	config.recording.offline_decode_delay = ConfigInteger(default = 1000, limits=(1, 10000) )
 	config.recording.ecm_data = ConfigSelection(choices = [("normal", _("normal")), ("descrambled+ecm", _("descramble and record ecm")), ("scrambled+ecm", _("don't descramble, record ecm"))], default = "normal")
-	config.recording.default_timertype = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record")), ("zap+record", _("zap and record"))],default = "record")
-	config.recording.switchTVon = ConfigYesNo(default = True)
+	config.recording.default_timertype = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record")), ("zap+record", _("zap and record"))], default = "record")
 	if SystemInfo["DeepstandbySupport"]:
 		shutdownString = _("go to deep standby")
 	else:

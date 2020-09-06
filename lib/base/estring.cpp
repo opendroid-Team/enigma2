@@ -10,8 +10,6 @@
 #include "big5.h"
 #include "gb18030.h"
 
-extern bool verbose;
-
 std::string buildShortName( const std::string &str )
 {
 	std::string tmp;
@@ -643,12 +641,6 @@ std::string convertDVBUTF8(const unsigned char *data, int len, int table, int ts
 	if (pconvertedLen)
 		*pconvertedLen = convertedLen;
 
-	if (verbose)
-		eDebug("[convertDVBUTF8] table=0x%02X tsid:onid=0x%X:0x%X data[0..14]=%s   output:%s\n",
-			table, (unsigned int)tsidonid >> 16, tsidonid & 0xFFFFU,
-			string_to_hex(std::string((char*)data, len < 15 ? len : 15)).c_str(),
-			output.c_str());
-
 	return output;
 }
 
@@ -776,7 +768,7 @@ unsigned int truncateUTF8(std::string &s, unsigned int newsize)
         // Assume s is a real UTF8 string!!!
         while (len > newsize) {
                 while (len-- > 0  && (data[len] & 0xC0) == 0x80)
-                        ; // remove UTF data bytes,  e.g. range 0x80 - 0xBF
+                        // ; // remove UTF data bytes,  e.g. range 0x80 - 0xBF
                 if (len > 0)   // remove the UTF startbyte, or normal ascii character
                          --len;
         }

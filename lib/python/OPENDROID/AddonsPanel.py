@@ -1,3 +1,4 @@
+from __future__ import print_function
 from boxbranding import getImageVersion
 import os
 from enigma import eTimer
@@ -51,6 +52,7 @@ from twisted.web.client import downloadPage
 import urllib
 from enigma import *
 import sys,os
+import six
 from Tools.LoadPixmap import LoadPixmap
 from Components.Ipkg import IpkgComponent
 from Components.ScrollLabel import ScrollLabel
@@ -96,7 +98,7 @@ def RSListEntry(download, state):
 	else:
 		res.append(MultiContentEntryPixmapAlphaTest(pos=(x1, y1), size=(w1,h1), png=LoadPixmap(cached=True, desktop=getDesktop(0), path=resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/buttons/button_red.png"))))
 
-	print "res =", res
+	print("res =", res)
 	return res
 
 class AddonsUtility(Screen):
@@ -145,7 +147,7 @@ class AddonsUtility(Screen):
 			self.close()
 	def KeyOk(self):
 		selection = self["list"].getCurrent()[0][1]
-		print selection
+		print(selection)
 		if (selection == "Plg"):
 			addons = 'Plugins'
 			self.title = ' OPENDROID Downloader Plugins'
@@ -472,8 +474,8 @@ class	AddonsRemove(Screen):
 		if hasattr(self, 'postInstallCall'):
 			try:
 				self.postInstallCall()
-			except Exception, ex:
-				print "[PluginBrowser] postInstallCall failed:", ex
+			except (IOError, OSError) as ex:
+				print("[PluginBrowser] postInstallCall failed:", ex)
 			self.resetPostInstall()
 		try:
 			os.unlink('/tmp/opkg.conf')
@@ -654,30 +656,30 @@ class Connection_Server(Screen):
 		testno = 1
 
 		xurl = 'https://opendroid.org/Addons/'+ self.addon + '/list'
-		print "xurl =", xurl
+		print("xurl =", xurl)
 		getPage(xurl).addCallback(self.gotPage).addErrback(self.getfeedError)
 
 	def gotPage(self, html):
-		print "html = ", html 
+		print("html = ", html)
 		self.data = []
 		icount = 0
 		self.data = html.splitlines()
 		list = []
 		for line in self.data:
 			ipkname = self.data[icount] 
-			print "gotPage icount, ipk name =", icount, ipkname 
+			print("gotPage icount, ipk name =", icount, ipkname)
 			remname = ipkname
 			state = self.getstate(ipkname)
-			print "gotPage state, remname = ", state, remname
+			print("gotPage state, remname = ", state, remname)
 			list.append(RSListEntry(remname, state))
 			icount = icount+1
 			self["list"].setList(list)
-			print 'self["list"] A =', self["list"] 
+			print ('self["list"] A =', self["list"])
 			self["info"].setText("")
 
 	def getfeedError(self, error=""):
 		error = str(error)
-		print "Download error =", error
+		print("Download error =", error)
 
 
 	def getstate(self, ipkname):
@@ -690,7 +692,7 @@ class Connection_Server(Screen):
 			return state
 
 	def okClicked(self):
-		print "Here in okClicked A"
+		print("Here in okClicked A")
 		sel = self["list"].getSelectionIndex()
 		ipk = self.data[sel]
 		addon = self.addon
@@ -704,7 +706,7 @@ class Connection_Server(Screen):
 		self["text"].right()
 	
 	def keyNumberGlobal(self, number):
-		print "pressed", number
+		print("pressed", number)
 		self["text"].number(number)
 
 class Installer_Addons(Screen):
@@ -742,7 +744,7 @@ class Installer_Addons(Screen):
 			"cancel": self.cancel,
 			"ok": self.close,
 		}, -2)
-		print "Installer_Addons : ipk =", ipk
+		print("Installer_Addons : ipk =", ipk)
 		self.icount = 0
 		self.ipk = ipk
 		self.addon = addon
@@ -756,11 +758,11 @@ class Installer_Addons(Screen):
 			cmd = "mkdir -p /etc/ipkinst"
 			os.system(cmd)
 		xurl1 = 'https://opendroid.org/Addons/' + self.addon + '/'
-		print "xurl1 =", xurl1
+		print("xurl1 =", xurl1)
 		xurl2 = xurl1 + self.ipk
-		print "xurl2 =", xurl2
+		print("xurl2 =", xurl2)
 		xdest = "/tmp/" + self.ipk
-		print "xdest =", xdest
+		print("xdest =", xdest)
 		self.cmd1 = 'wget -O "' + xdest + '" "' + xurl2 + '"'
 		self.cmd2 = "opkg install --force-overwrite /tmp/" + self.ipk
 		self.cmd3 = "touch /etc/ipkinst/" + self.ipk + " &"
@@ -780,7 +782,7 @@ class Installer_Addons(Screen):
  
 	def install(self):
 		cmd = "opkg install --force-overwrite /tmp/" + self.ipk + ">/tmp/ipk.log"
-		print "cmd =", cmd
+		print("cmd =", cmd)
 		title = _("Installing addon %s" %(plug))
 		self.session.open(Console,_(title),[cmd])
 		self.endinstall()
@@ -796,10 +798,10 @@ class Installer_Addons(Screen):
 			data = []
 			for line in myfile.readlines():
 				data.append(icount)
-				print line
+				print(line)
 				num = len(line)
 				data[icount] = (line[:-1])
-				print data[icount]
+				print(data[icount])
 				icount = icount + 1
 			self["list"].setList(data)
 			self.endinstall()
@@ -809,7 +811,7 @@ class Installer_Addons(Screen):
 		tmplist = []
 		ipkname = 0  
 		tmplist=os.listdir(path)
-		print "files in /tmp", tmplist
+		print("files in /tmp", tmplist)
 		icount = 0
 		for name in tmplist:
 			nipk = tmplist[icount]
@@ -818,10 +820,10 @@ class Installer_Addons(Screen):
 			icount = icount+1       
 
 		if ipkname != 0:
-			print "endinstall ipk name =", ipkname 
+			print("endinstall ipk name =", ipkname)
 			ipos = ipkname.find("_")
 			remname = ipkname[:ipos]
-			print "endinstall remname =", remname
+			print("endinstall remname =", remname)
 			f=open('/etc/ipklist_installed', 'a')
 			f1= remname + "\n"
 			f.write(f1)
@@ -838,7 +840,7 @@ class Installer_Addons(Screen):
 		self["text"].right()
 
 	def keyNumberGlobal(self, number):
-		print "pressed", number
+		print("pressed", number)
 		self["text"].number(number)        
  
 class downloadJob(Job):
@@ -877,8 +879,8 @@ class downloadTask(Task):
 				self.progress = int(float(tmpvalue))
 			else:
 				Task.processOutput(self, data)
-		except Exception, errormsg:
-			print "Error processOutput: " + str(errormsg)
+		except (IOError, OSError) as errormsg:
+			print ("Error processOutput: " + str(errormsg))
 			Task.processOutput(self, data)
 
 	def processOutputLine(self, line):

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Harddisk import harddiskmanager
@@ -6,21 +7,21 @@ from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.Task import job_manager
 from Screens.MessageBox import MessageBox
-from Tools.BoundFunction import boundFunction
 import Screens.InfoBar
+
 
 class HarddiskSetup(Screen):
 	def __init__(self, session, hdd, action, text, question):
-		self.setTitle(_("Setup Harddisk"))
 		Screen.__init__(self, session)
+		self.setTitle(_("Setup Harddisk"))
 		self.action = action
 		self.question = question
 		self.curentservice = None
 		self["model"] = Label(_("Model: ") + hdd.model())
 		self["capacity"] = Label(_("Capacity: ") + hdd.capacity())
 		self["bus"] = Label(_("Bus: ") + hdd.bus())
-		self["key_red"] = Label(_("Cancel"))
-		self["key_green"] = Label(text)
+		self["initialize"] = Pixmap()
+		self["initializetext"] = Label(text)
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"ok": self.hddQuestion,
@@ -28,14 +29,13 @@ class HarddiskSetup(Screen):
 		})
 		self["shortcuts"] = ActionMap(["ShortcutActions"],
 		{
-			"red": self.close,
-			"green": self.hddQuestion
+			"red": self.hddQuestion
 		})
 
 	def hddQuestion(self, answer=False):
-		print 'answer:',answer
+		print('answer:', answer)
 		if Screens.InfoBar.InfoBar.instance.timeshiftEnabled():
-			message = self.question + "\n\n" + _("You seem to be in timeshft, the service wil breifly stop as timeshfit stops.")
+			message = self.question + "\n\n" + _("You seem to be in timeshft, the service will briefly stop as timeshfit stops.")
 			message += '\n' + _("Do you want to continue?")
 			self.session.openWithCallback(self.stopTimeshift, MessageBox, message)
 		else:
@@ -55,10 +55,10 @@ class HarddiskSetup(Screen):
 		try:
 			job_manager.AddJob(self.action())
 			for job in job_manager.getPendingJobs():
-				if job.name in (_("Initializing storage device..."), _("Checking filesystem..."),_("Converting ext3 to ext4...")):
+				if job.name in (_("Initializing storage device..."), _("Checking filesystem..."), _("Converting ext3 to ext4...")):
 					self.showJobView(job)
 					break
-		except Exception, ex:
+		except Exception as ex:
 			self.session.open(MessageBox, str(ex), type=MessageBox.TYPE_ERROR, timeout=10)
 
 		if self.curentservice:
@@ -84,7 +84,7 @@ class HarddiskSelection(Screen):
 			self["hddlist"] = MenuList(tlist)
 		else:
 			self["hddlist"] = MenuList(harddiskmanager.HDDList())
-		self["key_red"] = Label(_("Cancel"))
+
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"ok": self.okbuttonClick,

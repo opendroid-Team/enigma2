@@ -1,3 +1,4 @@
+from __future__ import print_function
 from boxbranding import getMachineBrand
 
 from enigma import ePicLoad, eTimer, getDesktop, gMainDC, eSize
@@ -26,8 +27,8 @@ config.pic.cache = ConfigYesNo(default=True)
 config.pic.lastDir = ConfigText(default=resolveFilename(SCOPE_MEDIA))
 config.pic.infoline = ConfigYesNo(default=True)
 config.pic.loop = ConfigYesNo(default=True)
-config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
-config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")), ("#009eb9ff", _("blue")), ("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")), ("#009eb9ff", _("blue")), ("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 
 class picshow(Screen):
 	skin = """
@@ -84,7 +85,7 @@ class picshow(Screen):
 			self["thn"].instance.setPixmap(ptr.__deref__())
 			self["thn"].show()
 
-		text = picInfo.split('\n',1)
+		text = picInfo.split('\n', 1)
 		self["label"].setText(text[1])
 		self["key_yellow"].setText(_("Exif"))
 
@@ -111,7 +112,7 @@ class picshow(Screen):
 			self.session.open(Pic_Exif, self.picload.getInfo(self.filelist.getCurrentDirectory() + self.filelist.getFilename()))
 
 	def KeyMenu(self):
-		self.session.openWithCallback(self.setConf ,Pic_Setup)
+		self.session.openWithCallback(self.setConf, Pic_Setup)
 
 	def KeyOk(self):
 		if self.filelist.canDescent():
@@ -242,7 +243,7 @@ class Pic_Exif(Screen):
 		exifdesc = [_("filename")+':', "EXIF-Version:", "Make:", "Camera:", "Date/Time:", "Width / Height:", "Flash used:", "Orientation:", "User Comments:", "Metering Mode:", "Exposure Program:", "Light Source:", "CompressedBitsPerPixel:", "ISO Speed Rating:", "X-Resolution:", "Y-Resolution:", "Resolution Unit:", "Brightness:", "Exposure Time:", "Exposure Bias:", "Distance:", "CCD-Width:", "ApertureFNumber:"]
 		list = []
 
-		for x in range(len(exiflist)):
+		for x in list(range(len(exiflist))):
 			if x>0:
 				list.append((exifdesc[x], exiflist[x]))
 			else:
@@ -267,7 +268,7 @@ class Pic_Thumb(Screen):
 
 		self.textcolor = config.pic.textcolor.value
 		self.color = config.pic.bgcolor.value
-		self.spaceX, self.picX, self.spaceY, self.picY, textsize, thumtxt  = skin.parameters.get("PicturePlayerThumb",(35, 190, 30, 200, 20, 14))
+		self.spaceX, self.picX, self.spaceY, self.picY, textsize, thumtxt  = skin.parameters.get("PicturePlayerThumb", (35, 190, 30, 200, 20, 14))
 
 		pic_frame = resolveFilename(SCOPE_ACTIVE_SKIN, "icons/pic_frame.png")
 
@@ -281,7 +282,7 @@ class Pic_Thumb(Screen):
 		skincontent = ""
 
 		posX = -1
-		for x in range(self.thumbsC):
+		for x in list(range(self.thumbsC)):
 			posY = x / self.thumbsX
 			posX += 1
 			if posX >= self.thumbsX:
@@ -314,7 +315,7 @@ class Pic_Thumb(Screen):
 		}, -1)
 
 		self["frame"] = MovingPixmap()
-		for x in range(self.thumbsC):
+		for x in list(range(self.thumbsC)):
 			self["label"+str(x)] = StaticText()
 			self["thumb"+str(x)] = Pixmap()
 
@@ -372,7 +373,7 @@ class Pic_Thumb(Screen):
 	def newPage(self):
 		self.Thumbnaillist = []
 		#clear Labels and Thumbnail
-		for x in range(self.thumbsC):
+		for x in list(range(self.thumbsC)):
 			self["label"+str(x)].setText("")
 			self["thumb"+str(x)].hide()
 		#paint Labels and fill Thumbnail-List
@@ -385,7 +386,7 @@ class Pic_Thumb(Screen):
 		self.showPic()
 
 	def showPic(self, picInfo=""):
-		for x in range(len(self.Thumbnaillist)):
+		for x in list(range(len(self.Thumbnaillist))):
 			if self.Thumbnaillist[x][0] == 0:
 				if self.picload.getThumbnail(self.Thumbnaillist[x][2]) == 1: #zu tun probier noch mal
 					self.ThumbTimer.start(500, True)
@@ -548,7 +549,7 @@ class Pic_Full_View(Screen):
 		if ptr is not None:
 			text = ""
 			try:
-				text = picInfo.split('\n',1)
+				text = picInfo.split('\n', 1)
 				text = "(" + str(self.index+1) + "/" + str(self.maxentry+1) + ") " + text[0].split('/')[-1]
 			except:
 				pass
@@ -573,7 +574,7 @@ class Pic_Full_View(Screen):
 			self.index = self.maxentry
 
 	def slidePic(self):
-		print "slide to next Picture index=" + str(self.lastindex)
+		print("slide to next Picture index=" + str(self.lastindex))
 		if config.pic.loop.value == False and self.lastindex == self.maxentry:
 			self.PlayPause()
 		self.shownow = True

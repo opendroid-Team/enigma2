@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 
@@ -8,6 +12,7 @@ add_type("audio/dts", ".dts")
 add_type("audio/mpeg", ".mp3")
 add_type("audio/x-wav", ".wav")
 add_type("audio/x-wav", ".wave")
+add_type("audio/x-wav", ".wv")
 add_type("audio/ogg", ".oga")
 add_type("audio/ogg", ".ogg")
 add_type("audio/flac", ".flac")
@@ -20,6 +25,9 @@ add_type("audio/x-matroska", ".mka")
 add_type("audio/x-aac", ".aac")
 add_type("audio/x-monkeys-audio", ".ape")
 add_type("audio/mp4", ".alac")
+add_type("audio/amr", ".amr")
+add_type("audio/basic", ".au")
+add_type("audio/midi", ".mid")
 add_type("video/x-dvd-iso", ".iso")
 add_type("video/x-dvd-iso", ".img")
 add_type("video/x-dvd-iso", ".nrg")
@@ -28,6 +36,8 @@ add_type("image/png", ".png")
 add_type("image/gif", ".gif")
 add_type("image/bmp", ".bmp")
 add_type("image/jpeg", ".jpeg")
+add_type("image/jpeg", ".jpe")
+add_type("image/svg+xml", ".svg")
 add_type("video/mpeg", ".mpg")
 add_type("video/dvd", ".vob")
 add_type("video/mp4", ".m4v")
@@ -54,9 +64,11 @@ add_type("video/mp2t", ".ts")
 add_type("application/x-debian-package", ".ipk")
 add_type("application/x-dream-image", ".nfi")
 add_type("video/webm", ".webm")
+add_type("video/mpeg", ".pva")
+add_type("video/mpeg", ".wtv")
 
 def getType(file):
-	(type, _) = guess_type(file)
+	(type, _) = guess_type(file, strict=False)
 	if type is None:
 		# Detect some unknown types
 		if file[-12:].lower() == "video_ts.ifo":
@@ -68,6 +80,9 @@ def getType(file):
 		if p == -1:
 			return None
 		ext = file[p+1:].lower()
+
+		if ext == "ipk":
+			return "application/x-debian-package"
 
 		if ext == "dat" and file[-11:-6].lower() == "avseq":
 			return "video/x-vcd"
@@ -107,13 +122,14 @@ class ScanPath:
 	def __hash__(self):
 		return self.path.__hash__() ^ self.with_subdirs.__hash__()
 
-	def __cmp__(self, other):
-		if self.path < other.path:
-			return -1
-		elif self.path > other.path:
-			return +1
-		else:
-			return self.with_subdirs.__cmp__(other.with_subdirs)
+	def __eq__(self, other):
+		return ((self.with_subdirs, self.path) == (other.with_subdirs, other.path))
+
+	def __lt__(self, other):
+		return ((self.with_subdirs, self.path) < (other.with_subdirs, other.path))
+
+	def __gt__(self, other):
+		return ((self.with_subdirs, self.path) > (other.with_subdirs, other.path))
 
 class ScanFile:
 	def __init__(self, path, mimetype = None, size = None, autodetect = True):
@@ -128,7 +144,7 @@ class ScanFile:
 		return "<ScanFile " + self.path + " (" + str(self.mimetype) + ", " + str(self.size) + " MB)>"
 
 def execute(option):
-	print "execute", option
+	print("[Scanner] execute", option)
 	if option is None:
 		return
 
@@ -144,7 +160,7 @@ def scanDevice(mountpoint):
 			l = [l]
 		scanner += l
 
-	print "scanner:", scanner
+	print("[Scanner] ", scanner)
 
 	res = { }
 
@@ -164,7 +180,7 @@ def scanDevice(mountpoint):
 			paths_to_scan.remove(ScanPath(path=p.path))
 
 	from Components.Harddisk import harddiskmanager
-	blockdev = mountpoint.rstrip("/").rsplit('/',1)[-1]
+	blockdev = mountpoint.rstrip("/").rsplit('/', 1)[-1]
 	error, blacklisted, removable, is_cdrom, partitions, medium_found = harddiskmanager.getBlockDevInfo(blockdev)
 
 	# now scan the paths
@@ -175,7 +191,7 @@ def scanDevice(mountpoint):
 			for f in files:
 				path = os.path.join(root, f)
 				if (is_cdrom and f.endswith(".wav") and f.startswith("track")) or f == "cdplaylist.cdpls":
-					sfile = ScanFile(path,"audio/x-cda")
+					sfile = ScanFile(path, "audio/x-cda")
 				else:
 					sfile = ScanFile(path)
 				for s in scanner:
@@ -201,7 +217,7 @@ def openList(session, files):
 		else:
 			scanner += l
 
-	print "scanner:", scanner
+	print("[Scanner] ", scanner)
 
 	res = { }
 

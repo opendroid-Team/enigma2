@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from time import time
 from boxbranding import getImageVersion
 
@@ -59,15 +61,15 @@ class OnlineUpdateCheckPoller:
 				self.total_packages = len(self.ipkg.getFetchedList())
 				print ('[OnlineVersionCheck] %s Updates available' % self.total_packages)
 				if self.total_packages:
-					from urllib import urlopen
+					from six.moves.urllib.request import urlopen
 					import socket
 					currentTimeoutDefault = socket.getdefaulttimeout()
 					socket.setdefaulttimeout(3)
 					config.softwareupdate.updatefound.setValue(True)
-					try:
-						config.softwareupdate.updateisunstable.setValue(urlopen("https://www.droidsat.org/feeds-status").read())
-					except:
-						config.softwareupdate.updateisunstable.setValue(1)
+					status = urlopen('https://opendroid.org/feeds/status').read()
+					if '404 Not Found' in status:
+						status = '1'
+					config.softwareupdate.updateisunstable.setValue(status)
 					socket.setdefaulttimeout(currentTimeoutDefault)
 				else:
 					config.softwareupdate.updatefound.setValue(False)

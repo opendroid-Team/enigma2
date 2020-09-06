@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import ePicLoad
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
@@ -100,6 +101,6 @@ class opdBootLogoSelector(Screen):
 		pngpath = root + self.current_sel
 		if os.path.exists(pngpath):
 			cmd = 'cp -a ' + pngpath + '/*.mvi /usr/share/'
-			print cmd
+			print (cmd)
 			os.system(cmd)
 		self.close()

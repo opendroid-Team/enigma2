@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.PluginComponent import plugins
@@ -15,6 +16,7 @@ from Plugin import ManualPanel, InstallFeed
 import os
 from OPENDROID.OPD_panel import OPD_panel
 from Screens.Ipkg import Ipkg
+import six
 class GreenPanel(Screen):
 	skin = """
 		<screen name="GreenPanel" position="center,60" size="1225,635" title="Green Panel" >

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from Screens.PluginBrowser import *
 from Screens.Ipkg import Ipkg
@@ -87,9 +88,9 @@ def Check_SysSoftcam():
 
 
 if Check_Softcam():
-	redSelection = [('0',_("Default (Instant Record)")), ('1',_("OPD_panel")),('2',_("Timer List")),('3',_("Show Movies")), ('4',_("SoftcamSetup"))]
+	redSelection = [('0', _("Default (Instant Record)")), ('1', _("OPD_panel")), ('2', _("Timer List")), ('3', _("Show Movies")), ('4', _("SoftcamSetup"))]
 else:
-	redSelection = [('0',_("Default (Instant Record)")), ('1',_("OPD_panel")),('2',_("Timer List")),('3',_("Show Movies"))]
+	redSelection = [('0', _("Default (Instant Record)")), ('1', _("OPD_panel")), ('2', _("Timer List")), ('3', _("Show Movies"))]
 
 def timerEvent():
 	pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
@@ -123,7 +124,7 @@ if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):
 	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.u80")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.u80"):
 		setDefaultKeymap()
 def setDefaultKeymap():
-	print "[Info-Panel] Set Keymap to Default"
+	print("[Info-Panel] Set Keymap to Default")
 	config.usage.keymap.value = eEnv.resolve("${datadir}/enigma2/keymap.xml")
 	config.save()
 
@@ -151,10 +152,10 @@ machinename = getMachineName()
 machinebrand = getMachineBrand()
 OEMname = getBrandOEM()
 OPD_panel_Version = 'OPD PANEL V1.5 (By OPD-Team)'
-print "[OPD_panel] machinebrand: %s"  % (machinebrand)
-print "[OPD_panel] machinename: %s"  % (machinename)
-print "[OPD_panel] oem name: %s"  % (OEMname)
-print "[OPD_panel] boxtype: %s"  % (boxversion)
+print("[OPD_panel] machinebrand: %s"  % (machinebrand))
+print("[OPD_panel] machinename: %s"  % (machinename))
+print("[OPD_panel] oem name: %s"  % (OEMname))
+print("[OPD_panel] boxtype: %s"  % (boxversion))
 panel = open("/tmp/OPD_panel.ver", "w")
 panel.write(OPD_panel_Version + '\n')
 panel.write("Machinebrand: %s " % (machinebrand)+ '\n')
@@ -171,7 +172,7 @@ ExitSave = "[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save")
 class ConfigPORT(ConfigSequence):
 
 	def __init__(self, default):
-		ConfigSequence.__init__(self, seperator = ".", limits = [(1,65535)], default = default)
+		ConfigSequence.__init__(self, seperator = ".", limits = [(1, 65535)], default = default)
 
 def main(session, **kwargs):
 		session.open(OPD_panel)
@@ -226,13 +227,13 @@ from Screens.PiPSetup import PiPSetup
 from Screens.InfoBarGenerics import InfoBarPiP
 
 def InfoEntryComponent(file):
-	png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'icons/' + file + '.png'))
+	png = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "icons/" + file + ".png"));
 	if png == None:
-		png = LoadPixmap('/usr/lib/enigma2/python/OPENDROID/icons/' + file + '.png')
+		png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/" + file + ".png")
 		if png == None:
-			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'icons/default.png'))
+			png = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, 'icons/default.png'))
 			if png == None:
-				png = LoadPixmap('/usr/lib/enigma2/python/OPENDROID/icons/default.png')
+				png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/default.png")
 	res = png
 	return res
 
@@ -253,10 +254,10 @@ class OPD_panel(Screen, InfoBarPiP):
 		INFOCONF = 0
 		pluginlist="False"
 		try:
-			print '[OPD_panel] SHOW'
+			print('[OPD_panel] SHOW')
 			OPD_panel = self
 		except:
-			print '[OPD_Panel] Error Hide'
+			print('[OPD_Panel] Error Hide')
 
 		if services is not None:
 			self.servicelist = services
@@ -266,20 +267,20 @@ class OPD_panel(Screen, InfoBarPiP):
 		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
 			{
 				"cancel": self.Exit,
-				"upUp": self.up,
-				"downUp": self.down,
+				"up": self.up,
+				"down": self.down,
 				"ok": self.ok,
 			}, 1)
 		
-		self['label1'] = Label(OPD_panel_Version)
+		self["label1"] = Label(OPD_panel_Version)
 		self["summary_description"] = StaticText("")
 
 		self.Mlist = []
 		if Check_Softcam():
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('SoftcamSetup'), _("Softcam-Setup"), 'SoftcamSetup')))
-		if Check_SysSoftcam() is "oscam":
+		if Check_SysSoftcam() == "oscam":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("OScamInfo"), 'OScamInfo')))
-		if Check_SysSoftcam() is "ncam":
+		if Check_SysSoftcam() == "ncam":
 			self.Mlist.append(MenuEntryItem((InfoEntryComponent('OScamInfo'), _("NcamInfo"), 'OScamInfo')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('ImageFlash'), _('Image-Flasher'), 'ImageFlash')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('opdBootLogoSelector'), _('opdBootLogo-Setup'), 'opdBootLogoSelector')))
@@ -309,12 +310,13 @@ class OPD_panel(Screen, InfoBarPiP):
 
 	def setWindowTitle(self):
 		self.setTitle(_("OPD-Main Menu"))
+		self.selectionChanged()
 
 	def up(self):
-		pass
+		self["Mlist"].up()
 
 	def down(self):
-		pass
+		self["Mlist"].down()
 
 	def left(self):
 		pass
@@ -336,16 +338,16 @@ class OPD_panel(Screen, InfoBarPiP):
 
 	def Exit(self):
 		global menu
-		global inOPD_panel
 		if menu == 0:
 			try:
 				self.service = self.session.nav.getCurrentlyPlayingServiceReference()
 				service = self.service.toCompareString()
 				servicename = ServiceReference.ServiceReference(service).getServiceName().replace('\xc2\x87', '').replace('\xc2\x86', '').ljust(16)
-				print '[OPD_panel] HIDE'
-				inOPD_panel = None
+				print('[OPD_panel] HIDE')
+				global OPD_panel
+				OPD_panel = None
 			except:
-				print '[OPD_panel] Error Hide'
+				print('[[OPD_panel] Error Hide')
 			self.close()
 		elif menu == 1:
 			self["Mlist"].moveToIndex(0)
@@ -363,7 +365,7 @@ class OPD_panel(Screen, InfoBarPiP):
 	def ok(self):
 		global INFOCONF
 		menu = self['Mlist'].l.getCurrentSelection()[0][2]
-		print '[OPD_panel] MenuItem: ' + menu
+		print('[OPD_panel] MenuItem: ' + menu)
 		if menu == "services":
 			self.services()
 		elif menu == "Pluginbrowser":
@@ -430,7 +432,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "Password-Change":
 			self.session.open(PasswdScreen)
 		elif menu == "backup-settings":
-			self.session.openWithCallback(self.backupDone,BackupScreen, runBackup = True)
+			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup = True)
 		elif menu == "restore-settings":
 			self.backuppath = getBackupPath()
 			self.backupfile = getBackupFilename()
@@ -440,11 +442,11 @@ class OPD_panel(Screen, InfoBarPiP):
 			else:
 				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout = 10)
 		elif menu == "backup-files":
-			self.session.open(BackupSelection,title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
+			self.session.open(BackupSelection, title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
 		elif menu == "backup-files-additional":
-			self.session.open(BackupSelection,title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
+			self.session.open(BackupSelection, title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
 		elif menu == "backup-files-excluded":
-			self.session.open(BackupSelection,title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
+			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
 		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
@@ -482,10 +484,10 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('OscamSmartcard'), _("OscamSmartcard"), 'OscamSmartcard')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Samba'), _("Samba"), 'Samba')))
 
-		if os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/plugin.pyo') is True:
-			self.tlist.append(MenuEntryItem((InfoEntryComponent('MultiQuickButton'), _('MultiQuickButton'), 'MultiQuickButton')))
-		self['Mlist'].moveToIndex(0)
-		self['Mlist'].l.setList(self.tlist)
+		if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/MultiQuickButton/plugin.py") is True:
+			self.tlist.append(MenuEntryItem((InfoEntryComponent('MultiQuickButton'), _("MultiQuickButton"), 'MultiQuickButton')))
+		self["Mlist"].moveToIndex(0)
+		self["Mlist"].l.setList(self.tlist)
 
 	def Infos(self):
 		global menu
@@ -578,13 +580,13 @@ class KeymapSel(ConfigListScreen, Screen):
 		ntrkey = eEnv.resolve("${datadir}/enigma2/keymap.ntr")
 		u80key = eEnv.resolve("${datadir}/enigma2/keymap.u80")
 		self.actkeymap = self.getKeymap(config.usage.keymap.value)
-		keySel = [ ('keymap.xml',_("Default  (keymap.xml)"))]
+		keySel = [ ('keymap.xml', _("Default  (keymap.xml)"))]
 		if os.path.isfile(usrkey):
-			keySel.append(('keymap.usr',_("User  (keymap.usr)")))
+			keySel.append(('keymap.usr', _("User  (keymap.usr)")))
 		if os.path.isfile(ntrkey):
-			keySel.append(('keymap.ntr',_("Neutrino  (keymap.ntr)")))
+			keySel.append(('keymap.ntr', _("Neutrino  (keymap.ntr)")))
 		if os.path.isfile(u80key):
-			keySel.append(('keymap.u80',_("UP80  (keymap.u80)")))
+			keySel.append(('keymap.u80', _("UP80  (keymap.u80)")))
 		if self.actkeymap == usrkey and not os.path.isfile(usrkey):
 			setDefaultKeymap()
 		if self.actkeymap == ntrkey and not os.path.isfile(ntrkey):
@@ -800,7 +802,7 @@ class Info(Screen):
 			info0 = self.Do_cmd("cat", "/proc/version", None)
 			info = info0.split('(')
 			info1 = "Name = " + info[0] + "\n"
-			info2 =  "Owner = " + info[1].replace(')','') + "\n"
+			info2 =  "Owner = " + info[1].replace(')', '') + "\n"
 			info3 =  "Mainimage = " + info[2][0:info[2].find(')')] + "\n"
 			info4 = "Date = " + info[3][info[3].find('SMP')+4:len(info[3])]
 			info5 = self.Do_cut(info1 + info2 + info3 + info4)
@@ -1054,10 +1056,10 @@ class FileDownloadTask(Task):
 		self.download = downloadWithProgress(self.url, self.path)
 		self.download.addProgress(self.download_progress)
 		self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
-		print '[FileDownloadTask] downloading', self.url, 'to', self.path
+		print('[FileDownloadTask] downloading', self.url, 'to', self.path)
 
 	def abort(self):
-		print '[FileDownloadTask] aborting', self.url
+		print('[FileDownloadTask] aborting', self.url)
 		if self.download:
 			self.download.stop()
 		self.aborted = True
@@ -1090,7 +1092,7 @@ class PasswdScreen(Screen):
 		try:
 			self["title"] = StaticText(self.title)
 		except:
-			print 'self["title"] was not found in skin'
+			print('self["title"] was not found in skin')
 
 		self.user = 'root'
 		self.output_line = ''
@@ -1147,12 +1149,12 @@ class PasswdScreen(Screen):
 		self.output_line += data
 		if self.output_line.find('password changed.') == -1:
 			if self.output_line.endswith('new UNIX password: '):
-				print '1password:%s\n' % self.password
+				print('1password:%s\n' % self.password)
 				self.processOutputLine(self.output_line[:1])
 
 	def processOutputLine(self, line):
 		if line.find('new UNIX password: '):
-			print "2password:%s\n" % self.password
+			print("2password:%s\n" % self.password)
 			self.container.write("%s\n" % self.password)
 			self.output_line = ''
 
