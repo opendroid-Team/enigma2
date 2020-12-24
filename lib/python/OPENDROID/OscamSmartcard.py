@@ -734,11 +734,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			return
 
 	def onlinecheck(self):
-		try:
-			response=urllib2.urlopen(base64.b64decode('aHR0cDovLzY5LjE5NS4xMjQuNTA='),timeout=10)
-			return True
-		except urllib2.URLError as err: pass
-		return False
+		return True
 
 	def exit(self):
 		system('rm -rf /tmp/data')
