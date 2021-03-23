@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService, eTimer
 from Components.Element import cached
@@ -70,7 +72,7 @@ class OPD_ExtraInfo(Converter, object):
                     expertString = expertString + ' ' + 'L:' + fileString[levelIndex + 4]
 
         except:
-            print 'Infobar'
+            print(Infobar)
 
         return expertString
 
@@ -134,7 +136,7 @@ class OPD_ExtraInfo(Converter, object):
         return syID
 
     def getStreamInfo(self, ltype):
-        print '============> getText PROV_CA_ID'
+        print(============> getText PROV_CA_ID)
         try:
             file = open('/tmp/ecm.info', 'r')
         except:
@@ -171,7 +173,7 @@ class OPD_ExtraInfo(Converter, object):
         return ''
 
     def getSourceInfo(self, ltype):
-        print '============> getText NETCARD_INFO'
+        print(============> getText NETCARD_INFO)
         try:
             file = open('/tmp/ecm.info', 'r')
         except:
@@ -239,7 +241,7 @@ class OPD_ExtraInfo(Converter, object):
                 return ''
             self.DynamicTimer.start(3000)
             nazwaemu = 'CI'
-            print self.type
+            print(self.type)
             if (self.type == self.PROV_CA_ID or self.type == self.PROV_ID or self.type == self.CAID_ID) and info.getInfo(iServiceInformation.sIsCrypted) == 1 and self.DynamicSwitch:
                 return self.getStreamInfo(self.type)
             if self.type == self.NETCARD_INFO and info.getInfo(iServiceInformation.sIsCrypted) == 1 and self.DynamicSwitch:

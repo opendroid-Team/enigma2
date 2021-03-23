@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService, eTimer, eServiceReference, eEPGCache
 from Components.Element import cached

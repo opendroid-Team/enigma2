@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from os import path
 from enigma import iServiceInformation, iPlayableService
 from Components.Converter.Converter import Converter

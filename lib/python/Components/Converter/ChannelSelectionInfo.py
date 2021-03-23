@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #
 # ChannelSelectionInfo Converter by mcbain // v0.1 // 20111109
 #

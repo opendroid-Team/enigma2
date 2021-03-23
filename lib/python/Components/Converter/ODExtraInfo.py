@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from enigma import iServiceInformation
 from Components.Converter.Converter import Converter
 from Components.Element import cached
@@ -101,7 +103,7 @@ class ODExtraInfo(Poll, Converter, object):
                 else:
                     source = info.get('source', None)
                     if source:
-                        print 'Found Source'
+                        print(Found Source)
                         if 'CaID 0x' in ecm[0] and 'pid 0x' in ecm[0]:
                             data['caid'] = ecm[0][ecm[0].find('CaID 0x') + 7:ecm[0].find(',')]
                             data['pid'] = ecm[0][ecm[0].find('pid 0x') + 6:ecm[0].find(' =')]

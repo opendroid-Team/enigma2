@@ -1,4 +1,5 @@
 #(c) 2boom mod 2012
+from __future__ import absolute_import
 from Renderer import Renderer 
 from enigma import ePixmap, eTimer 
 from Tools.Directories import fileExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename 

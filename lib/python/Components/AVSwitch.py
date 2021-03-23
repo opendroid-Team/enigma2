@@ -109,7 +109,7 @@ class AVSwitch:
 	elif (about.getChipSetString() in ('7252', '7251', '7251S', '7252S', '7251s', '7252s', '72604', '7278', '7444s', '3798mv200', '3798cv200', 'hi3798mv200', 'hi3798cv200')):
 		modes["HDMI"] = ["720p", "1080p", "2160p", "2160p30", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i", "2160p", "2160p30"}
-	elif (about.getChipSetString() in ('7241', '7358', '7362', '73625', '7346', '7356', '73565', '7424', '7425', '7435', '7552', '7581', '7584', '75845', '7585', 'pnx8493', '7162', '7111', '3716mv410', 'hi3716mv410')) or (getBrandOEM() in ('azbox')):
+	elif (about.getChipSetString() in ('7241', '7358', '7362', '73625', '7346', '7356', '73565', '7424', '7425', '7435', '7552', '7581', '7584', '75845', '7585', 'pnx8493', '7162', '7111', '3716mv410', 'hi3716mv410', 'hi3716mv430')) or (getBrandOEM() in ('azbox')):
 		modes["HDMI"] = ["720p", "1080p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i"}
 	elif about.getChipSetString() in ('meson-6',):
@@ -490,7 +490,7 @@ def InitAVSwitch():
 		config.av.yuvenabled = ConfigBoolean(default=False)
 	else:
 		config.av.yuvenabled = ConfigBoolean(default=True)
-	config.av.osd_alpha = ConfigSlider(default=255, increment = 5, limits=(20, 255)) # Make openATV compatible with some plugins who still use config.av.osd_alpha
+	config.av.osd_alpha = ConfigSlider(default=255, increment = 5, limits=(20, 255)) 
 	colorformat_choices = {"cvbs": _("CVBS"), "rgb": _("RGB"), "svideo": _("S-Video")}
 	if config.av.yuvenabled.value:
 		colorformat_choices["yuv"] = _("YPbPr")
@@ -715,7 +715,7 @@ def InitAVSwitch():
 				f.close()
 			except:
 				pass
-		if getBoxType() in ('vusolo4k', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vuduo4k'):
+		if getBoxType() in ('vusolo4k', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vuduo4k', 'vuduo4kse'):
 			config.av.hdmicolorspace = ConfigSelection(choices={
 					"Edid(Auto)": _("Auto"),
 					"Hdmi_Rgb": _("RGB"),

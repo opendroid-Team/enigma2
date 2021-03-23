@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # -*- coding: utf-8 -*-
 #
 # ChannelExpertInfo Converter by mcbain // v0.1 // 20111109

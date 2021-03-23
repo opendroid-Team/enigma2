@@ -14,7 +14,7 @@
 #    GNU General Public License for more details.
 #    
 #######################################################################
-
+from __future__ import absolute_import
 from Renderer import Renderer
 from enigma import eLabel
 from Components.VariableText import VariableText

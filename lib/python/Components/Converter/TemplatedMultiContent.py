@@ -2,6 +2,7 @@ from Components.Converter.StringList import StringList
 
 class TemplatedMultiContent(StringList):
 	"""Turns a python tuple list into a multi-content list which can be used in a listbox renderer."""
+
 	def __init__(self, args):
 		StringList.__init__(self, args)
 		from enigma import BT_SCALE, RT_HALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_VALIGN_BOTTOM, RT_VALIGN_CENTER, RT_VALIGN_TOP, RT_WRAP, eListboxPythonMultiContent, gFont
@@ -36,7 +37,6 @@ class TemplatedMultiContent(StringList):
 	def setTemplate(self):
 		if self.source:
 			style = self.source.style
-
 			if style == self.active_style:
 				return
 			templates = self.template.get("templates")  # If skin defined "templates", that means that it defines multiple styles in a dict. template should still be a default.
@@ -51,7 +51,6 @@ class TemplatedMultiContent(StringList):
 					selectionEnabled = templates[style][2]
 				if len(templates[style]) > 3:
 					scrollbarMode = templates[style][3]
-
 			self.content.setTemplate(template)
 			self.content.setItemHeight(itemheight)
 			self.selectionEnabled = selectionEnabled

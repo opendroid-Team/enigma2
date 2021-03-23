@@ -179,8 +179,6 @@ class MovieList(GUIComponent):
 		if root is not None:
 			self.reload(root)
 
-		self.l.setBuildFunc(self.buildMovieListEntry)
-
 		self.onSelectionChanged = [ ]
 		self.iconPart = []
 		for part in list(range(5)):
@@ -558,6 +556,7 @@ class MovieList(GUIComponent):
 			self.load(root, filter_tags)
 		else:
 			self.load(self.root, filter_tags)
+		self.l.setBuildFunc(self.buildMovieListEntry)  # don't move that to __init__ as this will create memory leak when calling MovieList from WebIf
 		self.l.setList(self.list)
 
 	def removeService(self, service):
@@ -659,7 +658,7 @@ class MovieList(GUIComponent):
 
 		self.firstFileEntry = numberOfDirs
 		self.parentDirectory = 0
-		#self.list.sort(key=self.buildGroupwiseSortkey) must rework for py3
+		self.list.sort(key=self.buildGroupwiseSortkey)
 		if self.sort_type == MovieList.SORT_ALPHANUMERIC:
 			self.list = sorted(self.list[:numberOfDirs], key=self.buildAlphaNumericSortKey) + sorted(self.list[numberOfDirs:], key=self.buildAlphaNumericSortKey)
 		elif self.sort_type == MovieList.SORT_ALPHANUMERIC_REVERSE:
@@ -782,8 +781,8 @@ class MovieList(GUIComponent):
 	def buildBeginTimeSortKey(self, x):
 		ref = x[0]
 		if ref.flags & eServiceReference.mustDescent:
-			return 0, x[1] and -os.stat(ref.getPath()).st_mtime
-		return 1, -x[2]
+			return (0, x[1] and x[1].getName(ref).lower() or "")
+		return 1, "", -x[2]
 
 	def buildGroupwiseSortkey(self, x):
 		# Sort recordings by date, sort MP3 and stuff by name

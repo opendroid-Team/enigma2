@@ -3,7 +3,7 @@
 #  ver 1.2.1 28.11.2013
 #
 #  Coded by bigroma & 2boom
-
+from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService
 from Tools.Directories import fileExists

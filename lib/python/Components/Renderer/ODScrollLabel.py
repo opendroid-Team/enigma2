@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import skin
 from Components.VariableText import VariableText
 from Components.config import config

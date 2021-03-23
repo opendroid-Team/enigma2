@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from Components.VariableText import VariableText
 from enigma import eLabel, iServiceInformation, eServiceReference, eServiceCenter
 from Renderer import Renderer

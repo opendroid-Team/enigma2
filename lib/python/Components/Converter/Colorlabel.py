@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #------------------------------------------------------
 # Release Mod. 0.1 30/07/2016 by M43C0
 # for ALL - Do NOT REMOVE THIS DISCLAIMER
