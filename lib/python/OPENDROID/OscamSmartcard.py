@@ -428,15 +428,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		else:
 			self.getcurrent()
 	def createoscamsmartcarddata(self):
-		try:
-			system('wget -T5 --no-check-certificate -O /tmp/data.zip ' + base64.b64decode(self.getdl()[1]).strip() + 'data.zip ' + null)
-			popen('unzip -o -q -d /tmp /tmp/data.zip')
-			popen('rm /tmp/data.zip')
-		except:
-			self.session.open(MessageBox, _("Error download oscam files"), MessageBox.TYPE_ERROR)
+		dldata=str(base64.b64decode(self.getdl()[1])).strip()+ "data.zip"
+		system('wget -T5 --no-check-certificate -O /tmp/data.zip ' + dldata +  ' ' + null)
+		system('unzip -o -q -d /tmp /tmp/data.zip')
+		system('rm /tmp/data.zip')
 
 	def rmoscamsmartcarddata(self):
-		popen('rm -rf /tmp/data')
+		system('rm -rf /tmp/data')
 
 	def saveoscamserver(self):
 		try:
@@ -570,7 +568,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def oscambinaryupdate(self):
 		if self.newversion(arch) != _("Download not avaible"):
 			system('killall -9 oscam_oscamsmartcard' + null)
-			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl() + ' ' + null)
+			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl().strip() + ' ' + null)
 			system('tar -xzf /tmp/oscam.tar.gz -C /tmp' + null)
 			system('rm -f /usr/bin/oscam_oscamsmartcard' + null)
 			system('mv /tmp/oscam /usr/bin/oscam_oscamsmartcard' + null)
@@ -736,11 +734,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			return
 
 	def onlinecheck(self):
-		try:
-			response=urllib2.urlopen(base64.b64decode('aHR0cHM6Ly9nb29nbGUuY29tCg=='), timeout=10)
-			return True
-		except urllib2.URLError as err: pass
-		return False
+		return True
 
 	def exit(self):
 		system('rm -rf /tmp/data')
@@ -891,16 +885,13 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			os.system('update-rc.d cardserver start 95 S .')
 
 	def getIP(self):
-		try:
-			return str(popen("ip addr |grep inet |grep -v inet6 |grep -v 127.0. | awk '{print $2}'").read().strip().replace('/24', ''))
-		except:
-			return "192.168.255.254"
+		return str(popen('ip address |grep -v "inet6" |grep -v "127" |grep inet |cut -d " " -f6').read().strip().replace('/24',''))
 
 	def getdl(self):
-		info  = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uaW5mbwo='
-		srv   = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkLwo='
-		infoz = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uemlwCg=='
-		return info, srv, infoz
+		info  = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy92ZXJzaW9uLmluZm8gCg=='
+		srv   = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy8K'
+		infoz = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy92ZXJzaW9uLnppcAo='
+		return info,srv,infoz
 
 	def showNews(self):
 		lastinfo =  ""
