@@ -891,7 +891,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		info  = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy92ZXJzaW9uLmluZm8gCg=='
 		srv   = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy8K'
 		infoz = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy92ZXJzaW9uLnppcAo='
-		return info,srv,infoz
+		return info, srv, infoz
 
 	def showNews(self):
 		lastinfo =  ""
