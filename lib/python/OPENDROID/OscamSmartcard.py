@@ -249,7 +249,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 					cccport= self.cccamcheck()[6]
 					if anzcc > 0 or anzus >0 or anz35 >0:
 						list.append(getConfigListEntry(( _("CCcam.cfg found. Import your settings") ), config.OscamSmartcard.cccam, ( _("Oscamsmartcard found ") + str(anzcc+anz35) + _(" Server and ") + str(anzus) + " User in CCcam.cfg\n" + str(anzcc) + " x CCcam-Server\t" + str(anz35) +' x Camd35 Server\n' + str(anzus) + ' x Userlines (Friends)\tShareport: ' +cccport  )))
-					list.append(getConfigListEntry(_("Oscam binary install"),config.OscamSmartcard.oscambinary,('INFORMATION:    ' + _("Versions Info") + '\n' +  _("installed")  + ' \t: ' + self.installedversion + '\n' + _("online") + '\t: ' + onlineavaible )))
+					list.append(getConfigListEntry(_("Oscam binary install"),config.OscamSmartcard.oscambinary, ('INFORMATION:    ' + _("Versions Info") + '\n' +  _("installed")  + ' \t: ' + self.installedversion + '\n' + _("online") + '\t: ' + onlineavaible )))
 					list.append(getConfigListEntry(_("Is a Ci+ Module installed:"), config.OscamSmartcard.hasciplus, _("INFORMATION: please select your CI+ Modul\n\n")))
 					ConfigListScreen.__init__(self, list)
 					self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "InputActions", "ColorActions"], 
@@ -721,7 +721,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			self.session.open(MessageBox, _("Error creating oscam camstart files!"), MessageBox.TYPE_ERROR)
 			self.config_lines = []
 
-	def appendconfFile(self,appendFileName):
+	def appendconfFile(self, appendFileName):
 		skFile = open(appendFileName, "r")
 		file_lines = skFile.readlines()
 		skFile.close()
@@ -892,7 +892,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 
 	def getIP(self):
 		try:
-			return str(popen("ip addr |grep inet |grep -v inet6 |grep -v 127.0. | awk '{print $2}'").read().strip().replace('/24',''))
+			return str(popen("ip addr |grep inet |grep -v inet6 |grep -v 127.0. | awk '{print $2}'").read().strip().replace('/24', ''))
 		except:
 			return "192.168.255.254"
 
@@ -900,7 +900,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		info  = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uaW5mbwo='
 		srv   = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkLwo='
 		infoz = 'aHR0cDovL29zYy5pZHRlLmV1L29zY2Ftc21hcnRjYXJkL3ZlcnNpb24uemlwCg=='
-		return info,srv,infoz
+		return info, srv, infoz
 
 	def showNews(self):
 		lastinfo =  ""
@@ -918,6 +918,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		lastinfo += "08-09-2016" + x + _("this info added") + "\n"
 		lastinfo += "17-06-2016" + x + _("added SRG V6 Card") + "\n"
 		lastinfo += "09-06-2016" + x + _("added CI+") + "\n"
+		lastinfo += "\nhttps://droidsat.org/\nOPD"
 		self.session.open(MessageBox, lastinfo, MessageBox.TYPE_INFO).setTitle("Oscamsmartcard News")
 
 def main(session, **kwargs):
