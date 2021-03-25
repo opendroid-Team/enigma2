@@ -56,6 +56,7 @@ from Components.Ipkg import IpkgComponent
 from Components.ScrollLabel import ScrollLabel
 from os import popen, system, remove, listdir, chdir, getcwd, statvfs, mkdir, path, walk
 from Components.ProgressBar import ProgressBar
+font = "Regular;16"
 def getVarSpaceKb():
 	try:
 		s = statvfs('/')
@@ -65,15 +66,18 @@ def getVarSpaceKb():
 	return (float(s.f_bfree * (s.f_bsize / 1024)), float(s.f_blocks * (s.f_bsize / 1024)))
 
 class RSList(MenuList):
-	def __init__(self, list):
-		MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-		try:
-			font = skin.fonts.get("RSList", ("Regular", 35, 50))
-			self.l.setFont(0, gFont(font[0], font[1]))
-			self.l.setItemHeight(font[2])
-		except:
-			self.l.setFont(0, gFont("Regular", 35))
-			self.l.setItemHeight(50)
+	if (getDesktop(0).size().width() == 1920):
+		def __init__(self, list, font0 = 33, font2 = 28, itemHeight = 35, enableWrapAround = True):
+			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
+			self.l.setFont(0, gFont("Regular", font0))
+			self.l.setFont(2, gFont("Regular", font2))
+			self.l.setItemHeight(itemHeight)
+	else:
+		def __init__(self, list, font0 = 20, font2 = 16, itemHeight = 35, enableWrapAround = True):	        
+			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
+			self.l.setFont(0, gFont("Regular", font0))
+			self.l.setFont(2, gFont("Regular", font2))
+			self.l.setItemHeight(itemHeight)
 
 ##############################################################################
 
@@ -82,12 +86,12 @@ def RSListEntry(download, state):
 	try:
 		x, y, w, h , x1, y1, w1, h1 = skin.parameters.get("RSList",(60, 0, 1920, 38, 5, 6, 38, 38))
 	except:
-		x = 50
-		y = 0
-		w = 820
-		h = 38
-		x1 = 8
-		y1 = 10
+		x = 43
+		y = 10
+		w = 850
+		h = 36
+		x1 = 13
+		y1 = 15
 		w1 = 38
 		h1 = 38
 	res.append(MultiContentEntryText(pos=(x, y), size=(w, h), font=0, text=download))
@@ -709,10 +713,8 @@ class Connection_Server(Screen):
 
 class Installer_Addons(Screen):
 	skin = """
-		<screen position="center,center" size="800,500" title="Play Options" >
-			<!--widget name="text" position="0,0" size="550,25" font="Regular;20" /-->
+		<screen position="center,center" size="800,500" Install IPK" >
 			<widget name="list" position="10,20" size="750,350" scrollbarMode="showOnDemand" />
-			<!--widget name="pixmap" position="200,0" size="190,250" /-->
 			<eLabel position="70,100" zPosition="-1" size="100,69" backgroundColor="#222222" />
 			<widget name="info" position="50,50" zPosition="4" size="500,400" font="Regular;22" foregroundColor="#ffffff" transparent="1" halign="left" valign="top" />
 			<ePixmap name="red"    position="0,450"   zPosition="2" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />
@@ -728,7 +730,7 @@ class Installer_Addons(Screen):
 	def __init__(self, session, ipk, addon):
 		Screen.__init__(self, session)
 		self.skin = Installer_Addons.skin
-		title = "Addon Install"
+		title = "Install IPK"
 		self.setTitle(title)
 		self["list"] = MenuList([])
 		self["info"] = Label()
