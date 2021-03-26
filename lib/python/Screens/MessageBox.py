@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 from enigma import eTimer, ePoint, eSize, getDesktop
 
 from Components.ActionMap import HelpableActionMap
@@ -47,8 +48,15 @@ class MessageBox(Screen, HelpableScreen):
 				"down": (self.down, _("Move down a line")),
 				"left": (self.left, _("Move up a page")),
 				"right": (self.right, _("Move down a page"))
+				# These actions are *ONLY* defined on OpenPLi!
+				# I don't believe thay add any functionality even for OpenPLi.
+				# "upRepeated": (self.up, _("Move up a line repeatedly")),
+				# "downRepeated": (self.down, _("Move down a line repeatedly")),
+				# "leftRepeated": (self.left, _("Move up a page repeatedly")),
+				# "rightRepeated": (self.right, _("Move down a page repeatedly"))
 			}, prio=-1, description=_("MessageBox Functions"))
 		self.msgBoxID = msgBoxID
+		# These six lines can go with new skins that only use self["icon"]...
 		self["QuestionPixmap"] = Pixmap()
 		self["QuestionPixmap"].hide()
 		self["InfoPixmap"] = Pixmap()
@@ -59,6 +67,7 @@ class MessageBox(Screen, HelpableScreen):
 		self["icon"].hide()
 		self.picon = picon
 		if picon:
+			# These five lines can go with new skins that only use self["icon"]...
 			if self.type == self.TYPE_YESNO:
 				self["QuestionPixmap"].show()
 			elif self.type == self.TYPE_INFO or self.type == self.TYPE_WARNING:
@@ -91,6 +100,8 @@ class MessageBox(Screen, HelpableScreen):
 		self.timeout_default = timeout_default
 		self.baseTitle = title or windowTitle or self.TYPE_PREFIX.get(self.type, None)
 		self.activeTitle = None
+		# DEBUG: This is a temporary patch to stop the VuRemote and GigaBlueRemote plugins from crashing!
+		# If this code is accepted then the offending lines from the plugins can safely be removed.
 		self.timerRunning = None  # DEBG: See note above!
 		self["text"] = Label(self.text)
 		self["Text"] = StaticText(self.text)  # What is self["Text"] for?
@@ -122,10 +133,11 @@ class MessageBox(Screen, HelpableScreen):
 			self.baseTitle = self.baseTitle % prefix
 		self.setTitle(self.baseTitle)
 		if self.timeout > 0:
-			print "[MessageBox] Timeout set to %d seconds." % self.timeout
+			print("[MessageBox] Timeout set to %d seconds." % self.timeout)
 			self.timer.start(25)
 
 	def processTimer(self):
+		# Check if the title has been externally changed and if so make it the dominant title.
 		if self.activeTitle is None:
 			self.activeTitle = self.getTitle()
 			if "%s" in self.activeTitle:
@@ -145,7 +157,7 @@ class MessageBox(Screen, HelpableScreen):
 				self.ok()
 
 	def stopTimer(self, reason):
-		print "[MessageBox] %s" % reason
+		print("[MessageBox] %s" % reason)
 		self.timer.stop()
 		self.timeout = 0
 		if self.baseTitle is not None:
@@ -185,11 +197,13 @@ class MessageBox(Screen, HelpableScreen):
 			self["list"].instance.resize(eSize(*listsize))
 		wsizey = textsize[1] + listsize[1]
 		self.instance.resize(eSize(*(wsizex, wsizey)))
-		self.instance.move(ePoint((getDesktop(0).size().width() - wsizex) / 2, (getDesktop(0).size().height() - wsizey) / 2))
+		self.instance.move(ePoint((getDesktop(0).size().width() - wsizex) // 2, (getDesktop(0).size().height() - wsizey) // 2))
 
 	def cancel(self):
 		if self["list"].list:
 			for l in self["list"].list:
+				# print "[MessageBox] DEBUG: (cancel) '%s' -> '%s'" % (str(l[0]), str(l[1]))
+				# Should we be looking at the second element to get the boolean value rather than the word?
 				if l[0].lower() == _('no') or l[0].lower() == _('false'):
 					if len(l) > 2:
 						l[2](None)
@@ -220,6 +234,8 @@ class MessageBox(Screen, HelpableScreen):
 	def alwaysOK(self):
 		if self["list"].list:
 			for l in self["list"].list:
+				# print "[MessageBox] DEBUG: (cancel) '%s' -> '%s'" % (str(l[0]), str(l[1]))
+				# Should we be looking at the second element to get the boolean value rather than the word?
 				if l[0].lower() == _('yes') or l[0].lower() == _('true'):
 					if len(l) > 2:
 						self.goEntry(l)

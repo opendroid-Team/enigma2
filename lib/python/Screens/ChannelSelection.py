@@ -1984,12 +1984,12 @@ class ChannelSelectionBase(Screen):
 						self.numberSelectionActions(number)
 				else:
 					unichar = self.numericalTextInput.getKey(number)
-					charstr = unichar.encode("utf-8")
+					charstr = six.ensure_str(unichar)
 					if len(charstr) == 1:
 						self.servicelist.moveToChar(charstr[0])
 		else:
 			unichar = self.numericalTextInput.getKey(number)
-			charstr = unichar.encode("utf-8")
+			charstr = six.ensure_str(unichar)
 			if len(charstr) == 1:
 				self.servicelist.moveToChar(charstr[0])
 
@@ -2341,7 +2341,8 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		if self.pipzaptimer.isActive():
 			self.pipzaptimer.callback.remove(self.hidePipzapMessage)
 			self.pipzaptimer.stop()
-		self.session.pip.inactive()
+		if hasattr(self.session, 'pip'):
+			self.session.pip.inactive()
 
 	def zap(self, enable_pipzap=False, preview_zap=False, checkParentalControl=True, ref=None):
 		self.curRoot = self.startRoot

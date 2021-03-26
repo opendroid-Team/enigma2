@@ -1,3 +1,4 @@
+from __future__ import print_function
 import enigma
 import xml.etree.cElementTree
 
@@ -43,9 +44,9 @@ def parseKeys(context, filename, actionmap, device, keys):
 		if unmap is not None:
 			assert id, "[keymapparser] %s: must specify id in context %s, unmap '%s'" % (filename, context, unmap)
 			keyid = getKeyId(id)
-			actionmap.unbindPythonKey(context, keyid, unmap)	
+			actionmap.unbindPythonKey(context, keyid, unmap)
 			unmapDict.update({(context, id, unmap):filename})
-		else:	
+		else:
 			assert mapto, "[keymapparser] %s: must specify mapto (or unmap) in context %s, id '%s'" % (filename, context, id)
 			assert id, "[keymapparser] %s: must specify id in context %s, mapto '%s'" % (filename, context, mapto)
 			keyid = getKeyId(id)
@@ -87,9 +88,9 @@ def readKeymap(filename):
 	assert p
 
 	try:
-		source = open(filename)
+		source = open(filename, 'r')
 	except:
-		print "[keymapparser] keymap file " + filename + " not found"
+		print("[keymapparser] keymap file " + filename + " not found")
 		return
 
 	try:

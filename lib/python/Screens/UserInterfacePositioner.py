@@ -1,4 +1,4 @@
-from Screens.MessageBox import MessageBox
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.config import config, configfile, ConfigSubsection, getConfigListEntry, ConfigSelectionNumber, ConfigSelection, ConfigSlider, ConfigYesNo, NoSave, ConfigNumber, ConfigText
@@ -15,7 +15,7 @@ from os import access, R_OK
 from boxbranding import getBoxType, getBrandOEM
 
 def getFilePath(setting):
-	if getBrandOEM() in ('dreambox'):
+	if getBrandOEM() in ('dreambox',):
 		return "/proc/stb/vmpeg/0/dst_%s" % (setting)
 	else:
 		return "/proc/stb/fb/dst_%s" % (setting)
@@ -39,11 +39,11 @@ def InitOsd():
 	else:
 		SystemInfo["OsdMenu"] = False
 		
-	if getBrandOEM() in ('fulan'):
+	if getBrandOEM() in ('fulan',):
 		SystemInfo["CanChangeOsdPosition"] = False
 		SystemInfo["CanChange3DOsd"] = False
 
-	if getBrandOEM() in ('dreambox'):
+	if getBrandOEM() in ('dreambox',):
 		SystemInfo["CanChangeOsdPosition"] = True
 
 	def setOSDLeft(configElement):
@@ -65,11 +65,11 @@ def InitOsd():
 		if SystemInfo["CanChangeOsdPosition"]:
 			setPositionParameter("height", configElement)
 	config.osd.dst_height.addNotifier(setOSDHeight)
-	print 'Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value)
+	print('[UserInterfacePositioner] Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value))
 
 	def setOSDAlpha(configElement):
 		if SystemInfo["CanChangeOsdAlpha"]:
-			print 'Setting OSD alpha:', str(configElement.value)
+			print('[UserInterfacePositioner] Setting OSD alpha:', str(configElement.value))
 			config.av.osd_alpha.setValue(configElement.value)
 			f = open("/proc/stb/video/alpha", "w")
 			f.write(str(configElement.value))
@@ -79,7 +79,7 @@ def InitOsd():
 	def set3DMode(configElement):
 		if SystemInfo["CanChange3DOsd"]:
 			value = configElement.value
-			print 'Setting 3D mode:',value
+			print('[UserInterfacePositioner] Setting 3D mode:', value)
 			try:
 				if SystemInfo["CanUse3DModeChoices"]:
 					f = open("/proc/stb/fb/3dmode_choices", "r")
@@ -101,7 +101,7 @@ def InitOsd():
 
 	def set3DZnorm(configElement):
 		if SystemInfo["CanChange3DOsd"]:
-			print 'Setting 3D depth:',configElement.value
+			print('[UserInterfacePositioner] Setting 3D depth:', configElement.value)
 			try:
 				f = open("/proc/stb/fb/znorm", "w")
 				f.write('%d' % int(configElement.value))
@@ -381,7 +381,7 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		config.osd.dst_width.setValue(dst_width)
 		config.osd.dst_top.setValue(dst_top)
 		config.osd.dst_height.setValue(dst_height)
-		print 'Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value)
+		print('[UserInterfacePositioner] Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value))
 
 	def saveAll(self):
 		for x in self["config"].list:
@@ -547,7 +547,7 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 		config.osd.dst_width.setValue(dst_width)
 		config.osd.dst_top.setValue(dst_top)
 		config.osd.dst_height.setValue(dst_height)
-		print 'Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value)
+		print('[UserInterfacePositioner] Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value))
 
 	def saveAll(self):
 		for x in self["config"].list:

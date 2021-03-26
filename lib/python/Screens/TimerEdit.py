@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
@@ -22,6 +23,7 @@ from Tools.Directories import resolveFilename, SCOPE_HDD, fileExists
 from time import time, localtime
 from timer import TimerEntry as RealTimerEntry
 from enigma import eServiceCenter, eEPGCache
+from functools import cmp_to_key
 import Tools.CopyFiles
 import os
 
@@ -69,7 +71,9 @@ class TimerEditList(Screen):
 				"down": self.down
 			}, -1)
 		self.setTitle(_("Timer overview"))
-#		self.session.nav.RecordTimer.on_state_change.append(self.onStateChange)
+		# Disabled because it crashes on some boxes with SSD ######################
+		#self.session.nav.RecordTimer.on_state_change.append(self.onStateChange)
+		# #########################################################################
 		self.onShown.append(self.updateState)
 
 	def createSummary(self):
@@ -101,12 +105,12 @@ class TimerEditList(Screen):
 				timersanitycheck = TimerSanityCheck(self.session.nav.RecordTimer.timer_list, cur)
 				if not timersanitycheck.check():
 					t.disable()
-					print "Sanity check failed"
+					print("Sanity check failed")
 					simulTimerList = timersanitycheck.getSimulTimerList()
 					if simulTimerList is not None:
 						self.session.openWithCallback(self.finishedEdit, TimerSanityConflict, simulTimerList)
 				else:
-					print "Sanity check passed"
+					print("Sanity check passed")
 					if timersanitycheck.doubleCheck():
 						t.disable()
 			else:
@@ -233,19 +237,21 @@ class TimerEditList(Screen):
 
 	def fillTimerList(self):
 		#helper function to move finished timers to end of list
+		def _cmp(a, b):
+			return (a > b) - (a < b)
 		def eol_compare(x, y):
 			if x[0].state != y[0].state and x[0].state == RealTimerEntry.StateEnded or y[0].state == RealTimerEntry.StateEnded:
-				return cmp(x[0].state, y[0].state)
-			return cmp(x[0].begin, y[0].begin)
+				return _cmp(x[0].state, y[0].state)
+			return _cmp(x[0].begin, y[0].begin)
 
-		list = self.list
-		del list[:]
-		list.extend([(timer, False) for timer in self.session.nav.RecordTimer.timer_list])
-		list.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
+		_list = self.list
+		del _list[:]
+		_list.extend([(timer, False) for timer in self.session.nav.RecordTimer.timer_list])
+		_list.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
 		if config.usage.timerlist_finished_timer_position.index: #end of list
-			list.sort(cmp = eol_compare)
+			_list.sort(key=cmp_to_key(eol_compare))
 		else:
-			list.sort(key = lambda x: x[0].begin)
+			_list.sort(key = lambda x: x[0].begin)
 
 	def getEPGEvent(self, timer):
 		event = None
@@ -310,9 +316,9 @@ class TimerEditList(Screen):
 		service = str(cur.service_ref.getServiceName())
 		t = localtime(cur.begin)
 		f = str(t.tm_year) + str(t.tm_mon).zfill(2) + str(t.tm_mday).zfill(2) + " " + str(t.tm_hour).zfill(2) + str(t.tm_min).zfill(2) + " - " + service + " - " + cur.name
-		f = f.replace(':','_')
-		f = f.replace(',','_')
-		f = f.replace('/','_')
+		f = f.replace(':', '_')
+		f = f.replace(',', '_')
+		f = f.replace('/', '_')
 
 		if not cur:
 			return
@@ -347,7 +353,7 @@ class TimerEditList(Screen):
 		elif answer[1] == 'yes':
 			self.removeTimer(True)
 		elif answer[1] == 'yesremove':
-			if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/EnhancedMovieCenter/plugin.pyo"):
+			if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/EnhancedMovieCenter/plugin.py"):
 				if config.EMC.movie_trashcan_enable.value:
 					trashpath = config.EMC.movie_trashcan_path.value
 					self.MoveToTrash(trashpath)
@@ -394,9 +400,9 @@ class TimerEditList(Screen):
 		service = str(item.service_ref.getServiceName())
 		t = localtime(item.begin)
 		f = str(t.tm_year) + str(t.tm_mon).zfill(2) + str(t.tm_mday).zfill(2) + " " + str(t.tm_hour).zfill(2) + str(t.tm_min).zfill(2) + " - " + service + " - " + name
-		f = f.replace(':','_')
-		f = f.replace(',','_')
-		f = f.replace('/','_')
+		f = f.replace(':', '_')
+		f = f.replace(',', '_')
+		f = f.replace('/', '_')
 		path = resolveFilename(SCOPE_HDD)
 		self.removeTimer(True)
 		from enigma import eBackgroundFileEraser
@@ -439,10 +445,7 @@ class TimerEditList(Screen):
 
 
 	def finishedEdit(self, answer):
-# 		print "finished edit"
-
 		if answer[0]:
-# 			print "Edited timer"
 			entry = answer[1]
 			timersanitycheck = TimerSanityCheck(self.session.nav.RecordTimer.timer_list, entry)
 			success = False
@@ -461,16 +464,13 @@ class TimerEditList(Screen):
 			else:
 				success = True
 			if success:
-				print "Sanity check passed"
+				print("Sanity check passed")
 				self.session.nav.RecordTimer.timeChanged(entry)
 
 			self.fillTimerList()
 			self.updateState()
-# 		else:
-# 			print "Timeredit aborted"
 
 	def finishedAdd(self, answer):
-# 		print "finished add"
 		if answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.RecordTimer.record(entry)
@@ -483,14 +483,14 @@ class TimerEditList(Screen):
 					self.session.openWithCallback(self.finishSanityCorrection, TimerSanityConflict, simulTimerList)
 			self.fillTimerList()
 			self.updateState()
-# 		else:
-# 			print "Timeredit aborted"
 
 	def finishSanityCorrection(self, answer):
 		self.finishedAdd(answer)
 
 	def leave(self):
-#		self.session.nav.RecordTimer.on_state_change.remove(self.onStateChange)
+		# Disabled because it crashes on some boxes with SSD ######################
+		#self.session.nav.RecordTimer.on_state_change.append(self.onStateChange)
+		# #########################################################################
 		self.close()
 
 	def onStateChange(self, entry):
@@ -506,7 +506,7 @@ class TimerSanityConflict(Screen):
 	def __init__(self, session, timer):
 		Screen.__init__(self, session)
 		self.timer = timer
-		print "TimerSanityConflict"
+		print("TimerSanityConflict")
 
 		self["timer1"] = TimerList(self.getTimerList(timer[0]))
 		self.list = []

@@ -1,5 +1,7 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
+from Screens.Standby import TryQuitMainloop
 from Components.ActionMap import ActionMap
 from Components.Language import language
 from Components.config import config
@@ -67,8 +69,8 @@ class LanguageSelection(Screen):
 		}, -1)
 
 	def updateCache(self):
-		print"updateCache"
-		self["languages"].setList([('update cache',_('Updating cache, please wait...'),None)])
+		print("updateCache")
+		self["languages"].setList([('update cache', _('Updating cache, please wait...'), None)])
 		self.updateTimer = eTimer()
 		self.updateTimer.callback.append(self.startupdateCache)
 		self.updateTimer.start(100)
@@ -93,14 +95,26 @@ class LanguageSelection(Screen):
 		global inWizzard
 		if inWizzard:
 			inWizzard = False
-			self.session.openWithCallback(self.deletelanguagesCB, MessageBox, _("Do you want to delete all other languages?"), default = False)
+			#self.session.openWithCallback(self.deletelanguagesCB, MessageBox, _("Do you want to delete all other languages?"), default = False)
+			if self.oldActiveLanguage != config.osd.language.value:
+				self.session.open(TryQuitMainloop, 3)
+			self.close()
 		else:
-			self.close(self.oldActiveLanguage != config.osd.language.value)
+			if self.oldActiveLanguage != config.osd.language.value:
+				self.session.openWithCallback(self.restartGUI, MessageBox, _("GUI needs a restart to apply a new language\nDo you want to restart the GUI now?"), MessageBox.TYPE_YESNO)
+			else:
+				self.close()
 
-	def deletelanguagesCB(self, anwser):
-		if anwser:
-			language.delLanguage()
-		self.close()
+	def restartGUI(self, answer=True):
+		if answer is True:
+			self.session.open(TryQuitMainloop, 3)
+		else:
+			self.close()
+
+	#def deletelanguagesCB(self, anwser):
+		#if anwser:
+			#language.delLanguage()
+		#self.close()
 
 	def cancel(self):
 		language.activateLanguage(self.oldActiveLanguage)
@@ -116,7 +130,7 @@ class LanguageSelection(Screen):
 			if curlang == t[0]:
 				lang = t[1]
 				break
-		self.session.openWithCallback(self.delLangCB, MessageBox, _("Do you want to delete all other languages?\nExcept English, French, German, Italian and your selection:\n\n") + _("%s") %(lang), default = False)
+		self.session.openWithCallback(self.delLangCB, MessageBox, _("Do you want to delete all other languages?\nExcept English, French, German and your selection:\n\n") + _("%s") %(lang), default = False)
 
 	def delLangCB(self, anwser):
 		if anwser:
@@ -126,7 +140,7 @@ class LanguageSelection(Screen):
 			self.selectActiveLanguage()
 
 	def run(self, justlocal = False):
-		print "updating language..."
+		print("updating language...")
 		lang = self["languages"].getCurrent()[0]
 
 		if lang == 'update cache':
@@ -153,7 +167,7 @@ class LanguageSelection(Screen):
 		language.activateLanguage(lang)
 		config.misc.languageselected.value = 0
 		config.misc.languageselected.save()
-		print "ok"
+		print("ok")
 
 	def updateList(self):
 		languageList = language.getLanguageList()

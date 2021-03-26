@@ -1,8 +1,9 @@
 import os
 import time
+import six
 
 ECM_INFO = '/tmp/ecm.info'
-EMPTY_ECM_INFO = '','0','0','0'
+EMPTY_ECM_INFO = '', '0', '0', '0'
 
 old_ecm_time = time.time()
 info = {}
@@ -23,14 +24,17 @@ class GetEcmInfo:
 			info = {}
 			ecm = ''
 		if ecm_time != old_ecm_time:
-			oecmi1 = info.get('ecminterval1','')
-			oecmi0 = info.get('ecminterval0','')
+			oecmi1 = info.get('ecminterval1', '')
+			oecmi0 = info.get('ecminterval0', '')
 			info = {}
 			info['ecminterval2'] = oecmi1
 			info['ecminterval1'] = oecmi0
 			old_ecm_time = ecm_time
 			try:
-				ecm = open(ECM_INFO, 'rb').readlines()
+				if six.PY2:
+					ecm = open(ECM_INFO, 'rb').readlines()
+				else:
+					ecm = open(ECM_INFO, 'r').readlines()
 			except:
 				ecm = ''
 			for line in ecm:
@@ -61,7 +65,7 @@ class GetEcmInfo:
 			if using:
 				# CCcam
 				if using == 'fta':
-					self.textvalue = _("Free To Air")
+					self.textvalue = _("FTA")
 				elif using == 'emu':
 					self.textvalue = "EMU (%ss)" % (info.get('ecm time', '?'))
 				else:
@@ -78,7 +82,10 @@ class GetEcmInfo:
 					if info['decode'] == 'Network':
 						cardid = 'id:' + info.get('prov', '')
 						try:
-							share = open('/tmp/share.info', 'rb').readlines()
+							if six.PY2:
+								share = open('/tmp/share.info', 'rb').readlines()
+							else:
+								share = open('/tmp/share.info', 'r').readlines()
 							for line in share:
 								if cardid in line:
 									self.textvalue = line.strip()
@@ -139,4 +146,4 @@ class GetEcmInfo:
 			decCI='0'
 			provid='0'
 			ecmpid='0'
-		return self.textvalue,decCI,provid,ecmpid
+		return self.textvalue, decCI, provid, ecmpid

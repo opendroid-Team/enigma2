@@ -1,6 +1,6 @@
 from os import listdir
 
-from boxbranding import getBoxType, getBrandOEM, getDisplayType, getHaveAVJACK, getHaveDVI, getHaveHDMI, getHaveRCA, getHaveSCART, getHaveSCARTYUV, getHaveYUV, getMachineBuild, getMachineMtdRoot
+from boxbranding import getBoxType, getFHDSkin, getBrandOEM, getDisplayType, getHaveAVJACK, getHaveDVI, getHaveHDMI, getHaveRCA, getHaveSCART, getHaveSCARTYUV, getHaveYUV, getMachineBuild, getMachineMtdRoot
 from enigma import Misc_Options, eDVBResourceManager
 
 from Tools.Directories import fileCheck, fileExists, fileHas, pathExists
@@ -97,6 +97,7 @@ SystemInfo["3DMode"] = fileCheck("/proc/stb/fb/3dmode") or fileCheck("/proc/stb/
 SystemInfo["3DZNorm"] = fileCheck("/proc/stb/fb/znorm") or fileCheck("/proc/stb/fb/primary/zoffset")
 SystemInfo["CanUse3DModeChoices"] = fileExists("/proc/stb/fb/3dmode_choices") and True or False
 SystemInfo["need_dsw"] = getBoxType() not in ("osminiplus", "osmega")
+SystemInfo["HasFullHDSkinSupport"] = getFHDSkin() == "True"
 SystemInfo["HaveCISSL"] = fileCheck("/etc/ssl/certs/customer.pem") and fileCheck("/etc/ssl/certs/device.pem")
 SystemInfo["HaveID"] = fileCheck("/etc/.id")
 SystemInfo["HaveTouchSensor"] = getBoxType() in ("dm520", "dm525", "dm900", "dm920")

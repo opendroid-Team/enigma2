@@ -16,6 +16,7 @@ from Components.Pixmap import Pixmap, MovingPixmap
 from Components.Button import Button
 from Tools.LoadPixmap import LoadPixmap
 import os
+import six
 from skin import findSkinScreen
 
 import xml.etree.cElementTree
@@ -49,21 +50,21 @@ def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 
 def MenuEntryName(name):
 	def splitUpperCase(name, maxlen):
-		for c in range(len(name),0,-1):
+		for c in list(range(len(name), 0, -1)):
 			if name[c-1].isupper() and c-1 and c-1 <= maxlen:
 				return name[:c-1] + "-:-" + name[c-1:]
 		return name
 	def splitLowerCase(name, maxlen):
-		for c in range(len(name),0,-1):
+		for c in list(range(len(name), 0, -1)):
 			if name[c-1].islower() and c-1 and c-1 <= maxlen:
 				return name[:c-1] + "-:-" + name[c-1:]
 		return name
 	def splitName(name, maxlen):
 		for s in (" ", "-", "/"):
-			pos = name.rfind(s,0,maxlen+1)
+			pos = name.rfind(s, 0, maxlen+1)
 			if pos > 1:
 				return [name[:pos+1] if pos+1 <= maxlen and s != " " else name[:pos], name[pos+1:]]
-		return splitUpperCase(name, maxlen).split("-:-",1)
+		return splitUpperCase(name, maxlen).split("-:-", 1)
 
 	maxrow = 3
 	maxlen = 18
@@ -71,14 +72,14 @@ def MenuEntryName(name):
 	if len(name) > maxlen and maxrow > 1:
 		namesplit = splitName(name, maxlen)
 		if len(namesplit) == 1 or (len(namesplit) == 2 and len(namesplit[1]) > maxlen * (maxrow-1)):
-			tmp = splitLowerCase(name, maxlen).split("-:-",1)
+			tmp = splitLowerCase(name, maxlen).split("-:-", 1)
 			if len(tmp[0]) > len(namesplit[0]) or len(namesplit) < 2:
 				namesplit = tmp
-		for x in range(1,maxrow):
+		for x in list(range(1, maxrow)):
 			if len(namesplit) > x and len(namesplit) < maxrow and len(namesplit[x]) > maxlen:
 				tmp = splitName(namesplit[x], maxlen)
 				if len(tmp) == 1 or (len(tmp) == 2 and len(tmp[1]) > maxlen * (maxrow-x)):
-					tmp = splitLowerCase(namesplit[x], maxlen).split("-:-",1)
+					tmp = splitLowerCase(namesplit[x], maxlen).split("-:-", 1)
 				if len(tmp) == 2:
 					namesplit.pop(x)
 					namesplit.extend(tmp)
@@ -90,6 +91,7 @@ def MenuEntryName(name):
 file = open(resolveFilename(SCOPE_SKIN, 'menu.xml'), 'r')
 mdom = xml.etree.cElementTree.parse(file)
 file.close()
+
 class title_History:
 	def __init__(self):
 		self.thistory = ''
@@ -102,7 +104,7 @@ class title_History:
 			return
 		if(self.thistory == ''):
 			return
-		result = self.thistory.rsplit('>',2)
+		result = self.thistory.rsplit('>', 2)
 		if(result[0] == ''):
 			self.reset()
 			return
@@ -123,7 +125,7 @@ class MenuUpdater:
 		self.updatedMenuItems[id].remove([text, pos, module, screen, weight, description])
 
 	def updatedMenuAvailable(self, id):
-		return self.updatedMenuItems.has_key(id)
+		return id in self.updatedMenuItems
 
 	def getUpdatedMenu(self, id):
 		return self.updatedMenuItems[id]
@@ -147,17 +149,16 @@ class Menu(Screen, ProtectedScreen):
 			selection[1]()
 
 	def execText(self, text):
-		exec text
+		exec(text)
 
 	def runScreen(self, arg):
 		# arg[0] is the module (as string)
 		# arg[1] is Screen inside this module
-		#        plus possible arguments, as
-		#        string (as we want to reference
-		#        stuff which is just imported)
-		# FIXME. somehow
+		#	plus possible arguments, as
+		#	string (as we want to reference
+		#	stuff which is just imported)
 		if arg[0] != "":
-			exec "from %s import %s" % (arg[0], arg[1].split(",")[0])
+			exec("from %s import %s" % (arg[0], arg[1].split(",")[0]))
 			self.openDialog(*eval(arg[1]))
 
 	def nothing(self): #dummy
@@ -182,10 +183,10 @@ class Menu(Screen, ProtectedScreen):
 					return
 			elif not SystemInfo.get(requires, False):
 				return
-		MenuTitle = _(node.get("text", "??").encode("UTF-8"))
+		MenuTitle = _(six.ensure_str(node.get("text", "??")))
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
-		description = node.get('description', '').encode('UTF-8') or None
+		description = six.ensure_str(node.get("description", "")) or None
 		description = description and _(description)
 		menupng = MenuEntryPixmap(entryID, self.png_cache, lastMenuID)
 		x = node.get("flushConfigOnClose")
@@ -217,10 +218,10 @@ class Menu(Screen, ProtectedScreen):
 		configCondition = node.get("configcondition")
 		if configCondition and not eval(configCondition + ".value"):
 			return
-		item_text = node.get("text", "").encode("UTF-8")
+		item_text = six.ensure_str(node.get("text", ""))
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
-		description = node.get('description', '').encode('UTF-8') or ''
+		description = six.ensure_str(node.get("description", "")) or ''
 		description = description and _(description)
 		menupng = MenuEntryPixmap(entryID, self.png_cache, lastMenuID)
 		for x in node:
@@ -325,7 +326,7 @@ class Menu(Screen, ProtectedScreen):
 				if menuupdater.updatedMenuAvailable(menuID):
 					for x in menuupdater.getUpdatedMenu(menuID):
 						if x[1] == count:
-							description = x.get('description', '').encode('UTF-8') or None
+							description = six.ensure_str(x.get("description", "")) or None
 							description = description and _(description)
 							menupng = MenuEntryPixmap(menuID, self.png_cache, lastMenuID)
 							m_list.append((x[0], boundFunction(self.runScreen, (x[2], x[3] + ", ")), x[4], description, menupng))
@@ -367,8 +368,8 @@ class Menu(Screen, ProtectedScreen):
 		if config.usage.menu_sort_mode.value == "user" and menuID == "mainmenu":
 			plugin_list = []
 			id_list = []
-			for l in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU ,PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
-				l.id = (l.name.lower()).replace(' ','_')
+			for l in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
+				l.id = (l.name.lower()).replace(' ', '_')
 				if l.id not in id_list:
 					id_list.append(l.id)
 					plugin_list.append((l.name, boundFunction(l.__call__, session), l.id, 200))
@@ -412,6 +413,7 @@ class Menu(Screen, ProtectedScreen):
 				"ok": self.okbuttonClick,
 				"cancel": self.closeNonRecursive,
 				"menu": self.closeRecursive,
+				#"0": self.resetSortOrder,
 				"0": self.keyNumberGlobal,
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
@@ -440,10 +442,11 @@ class Menu(Screen, ProtectedScreen):
 				"yellow": self.keyYellow,
 				"blue": self.keyBlue,
 			})
-		a = parent.get("title", "").encode("UTF-8") or None
+
+		a = six.ensure_str(parent.get("title", "")) or None
 		a = a and _(a)
 		if a is None:
-			a = _(parent.get("text", "").encode("UTF-8"))
+			a = _(six.ensure_str(parent.get("text", "")))
 		else:
 			t_history.reset()
 		self["title"] = StaticText(a)
@@ -561,6 +564,7 @@ class Menu(Screen, ProtectedScreen):
 				return True
 			elif config.ParentalControl.config_sections.standby_menu.value and self.menuID == "shutdown":
 				return True
+
 	def updateList(self):
 		self.sub_menu_sort = NoSave(ConfigDictionarySet())
 		self.sub_menu_sort.value = config.usage.menu_sort_weight.getConfigValue(self.menuID, "submenu") or None

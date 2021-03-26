@@ -503,9 +503,9 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 
 		self.allowPiP = True
 
-		for x in HelpableScreen, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG, \
+		for x in InfoBarAspectSelection, HelpableScreen, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG, \
 				InfoBarBase, InfoBarSeek, InfoBarShowMovies, InfoBarInstantRecord, \
-				InfoBarAudioSelection, InfoBarNotifications, InfoBarSimpleEventView, \
+				InfoBarAudioSelection, InfoBarResolutionSelection, InfoBarNotifications, InfoBarSimpleEventView, \
 				InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, \
 				InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, \
 				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, \
