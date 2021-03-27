@@ -104,7 +104,7 @@ def InitSkins():
 		result.append(skin)
 	# Add the activated optional skin parts.
 	if currentPrimarySkin != None:
-		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin", ""))
+		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin_off", ""))
 		if pathExists(partsDir) and currentPrimarySkin != DEFAULT_SKIN:
 			for file in sorted(listdir(partsDir)):
 				if file.startswith("skin_") and file.endswith(".xml"):
