@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from Components.Element import Element
 
 class Converter(Element):

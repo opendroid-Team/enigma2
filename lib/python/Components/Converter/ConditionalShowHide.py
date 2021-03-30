@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from enigma import eTimer
 from Components.Converter.Converter import Converter
 
@@ -10,12 +9,7 @@ class ConditionalShowHide(Converter, object):
 		self.invert = "Invert" in args
 		self.blink = "Blink" in args
 		if self.blink:
-			self.blinktime = len(args) > 1 and args[1].isdigit() and int(args[1]) or 500
-			if len(args) == 3:
-				self.asymmetric = True
-				self.blinkhide = args[2].isdigit() and int(args[2]) or 500
-			else:
-				self.asymmetric = False
+			self.blinktime = len(args) == 2 and args[1].isdigit() and int(args[1]) or 500
 			self.timer = eTimer()
 			self.timer.callback.append(self.blinkFunc)
 		else:
@@ -27,19 +21,12 @@ class ConditionalShowHide(Converter, object):
 
 	def blinkFunc(self):
 		if self.blinking:
-			show = False
 			for x in self.downstream_elements:
 				x.visible = not x.visible
-				show = x.visible
-			if self.asymmetric:
-				self.timer.start(self.blinkhide if show else self.blinktime, True)
 
 	def startBlinking(self):
 		self.blinking = True
-		if self.asymmetric:
-			self.timer.start(self.blinktime, True)
-		else:
-			self.timer.start(self.blinktime)
+		self.timer.start(self.blinktime)
 
 	def stopBlinking(self):
 		self.blinking = False

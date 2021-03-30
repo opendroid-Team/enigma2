@@ -5,7 +5,6 @@
 """
 HTTP client.
 """
-from __future__ import division, absolute_import
 import os, types
 try:
     from urlparse import urlunparse, urljoin, urldefrag

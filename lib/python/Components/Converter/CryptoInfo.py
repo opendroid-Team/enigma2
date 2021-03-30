@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 from Components.config import config
@@ -14,7 +13,10 @@ class CryptoInfo(Poll, Converter, object):
 
 		self.type = type
 		self.active = False
-		self.visible = config.usage.show_cryptoinfo.value
+		if int(config.usage.show_cryptoinfo.value) > 0:
+			self.visible = True
+		else:
+			self.visible = False
 		self.textvalue = ""
 		self.poll_interval = 1000
 		self.poll_enabled = True
@@ -22,7 +24,7 @@ class CryptoInfo(Poll, Converter, object):
 
 	@cached
 	def getText(self):
-		if not config.usage.show_cryptoinfo.value:
+		if int(config.usage.show_cryptoinfo.value) < 1:
 			self.visible = False
 			data = ''
 		else:

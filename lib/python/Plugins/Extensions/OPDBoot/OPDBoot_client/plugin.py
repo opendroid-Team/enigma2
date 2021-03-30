@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from Screens.Screen import Screen
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
@@ -112,7 +114,7 @@ class OPDBootImageChoose(Screen):
                                 if os.path.isdir(os.path.join(mypath, fil)):
                                         self.list.append(fil)
                 except:
-                        print "no other Image found"
+                        print("no other Image found")
 
                 self['label11'].setText(str(len(self.list) - 1))
                 self['config'].setList(self.list)
@@ -157,7 +159,7 @@ class OPDBootImageChoose(Screen):
                         self['config'].setList(self.list)
                         self.updateList()
                 except:
-                        print ' '
+                        print (' ')
 
 def main(session, **kwargs):
         f = open('/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot_client/.opdboot_location', 'r')

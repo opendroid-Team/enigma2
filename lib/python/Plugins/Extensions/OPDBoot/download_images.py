@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from Components.Button import Button
 from Components.ActionMap import ActionMap
 from Components.MenuList import MenuList
@@ -562,7 +564,7 @@ class DownloadOnLineImage(Screen):
         def green(self, ret = None):
                 sel = self['imageList'].l.getCurrentSelection()
                 if sel == None:
-                        print 'Nothing to select !!'
+                        print('Nothing to select !!')
                         return
                 else:
                         file_name = self.imagePath + '/' + sel
@@ -598,7 +600,7 @@ class DownloadOnLineImage(Screen):
                                 url = self.feedurl + '/' + box[0] + '/' + box[1] + '/' + sel            
                         else:
                                 url = self.feedurl + '/' + box[0] + '/' + sel
-                        print '[OPDBoot] Image download url: ', url
+                        print('[OPDBoot] Image download url: ', url)
                         try:
                                 u = urllib2.urlopen(url)
                         except:
@@ -610,7 +612,7 @@ class DownloadOnLineImage(Screen):
                         try:
                                 meta = u.info()
                                 file_size = int(meta.getheaders('Content-Length')[0])
-                                print 'Downloading: %s Bytes: %s' % (sel, file_size)
+                                print('Downloading: %s Bytes: %s' % (sel, file_size))
                                 job = ImageDownloadJob(url, file_name, sel)
                                 job.afterEvent = 'close'
                                 job_manager.AddJob(job)
@@ -645,9 +647,9 @@ class DownloadOnLineImage(Screen):
                 box = self.box()[0]
                 urlbox = self.box()[1]
                 stb = self.box()[2]
-                print '[OPDBoot] FEED URL: ', self.feedurl
-                print '[OPDBoot] BOXTYPE: ', box
-                print '[OPDBoot] URL-BOX: ', urlbox
+                print('[OPDBoot] FEED URL: ', self.feedurl)
+                print('[OPDBoot] BOXTYPE: ', box)
+                print('[OPDBoot] URL-BOX: ', urlbox)
                 self.imagelist = []
                 if stb != '1':
                         url = self.feedurl
@@ -669,12 +671,12 @@ class DownloadOnLineImage(Screen):
                         url = '%s' % (self.feedurl1)
                 else:
                         url = self.feedurl
-                print '[OPDBoot] URL: ', url
+                print('[OPDBoot] URL: ', url)
                 req = urllib2.Request(url)
                 try:
                         response = urllib2.urlopen(req)
                 except urllib2.URLError as e:
-                        print 'URL ERROR: %s' % e
+                        print('URL ERROR: %s' % e)
                         self.imagelist.append(stb)
                         self['imageList'].l.setList(self.imagelist)
                         return
@@ -682,7 +684,7 @@ class DownloadOnLineImage(Screen):
                 try:
                         the_page = response.read()
                 except urllib2.HTTPError as e:
-                        print 'HTTP download ERROR: %s' % e.code
+                        print('HTTP download ERROR: %s' % e.code)
                         return
                 lines = the_page.split('\n')
                 tt = len(box)
@@ -787,10 +789,10 @@ class ImageDownloadTask(Task):
                 self.download = downloadWithProgress(self.url, self.path)
                 self.download.addProgress(self.download_progress)
                 self.download.start().addCallback(self.download_finished).addErrback(self.download_failed)
-                print '[ImageDownloadTask] downloading', self.url, 'to', self.path
+                print('[ImageDownloadTask] downloading', self.url, 'to', self.path)
 
         def abort(self):
-                print '[ImageDownloadTask] aborting', self.url
+                print('[ImageDownloadTask] aborting', self.url)
                 if self.download:
                         self.download.stop()
                 self.aborted = True

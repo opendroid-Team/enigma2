@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from Components.Converter.Converter import Converter
 from Components.Converter.Poll import Poll
 from Components.Element import cached
-from Components.Sources.StreamService import StreamServiceList
 from enigma import eStreamServer
 from ServiceReference import ServiceReference
 import socket

@@ -673,7 +673,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 				yres = int(yres) if yres else 576
 				bpp = res.attrib.get("bpp")
 				bpp = int(bpp) if bpp else 32
-				# print "[Skin] DEBUG: Resolution xres=%d, yres=%d, bpp=%d." % (xres, yres, bpp)
+				# print("[Skin] DEBUG: Resolution xres=%d, yres=%d, bpp=%d." % (xres, yres, bpp))
 				from enigma import gMainDC
 				gMainDC.getInstance().setResolution(xres, yres)
 				desktop.resize(eSize(xres, yres))
@@ -706,7 +706,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 			color = color.attrib.get("value")
 			if name and color:
 				colors[name] = parseColor(color)
-				# print "[Skin] DEBUG: Color name='%s', color='%s'." % (name, color)
+				# print("[Skin] DEBUG: Color name='%s', color='%s'." % (name, color))
 			else:
 				raise SkinError("Tag 'color' needs a name and color, got name='%s' and color='%s'" % (name, color))
 	for tag in domSkin.findall("fonts"):
@@ -725,7 +725,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 			if isfile(filename):
 				addFont(filename, name, scale, isReplacement, render)
 				# Log provided by C++ addFont code.
-				# print "[Skin] Add font: Font path='%s', name='%s', scale=%d, isReplacement=%s, render=%d." % (filename, name, scale, isReplacement, render)
+				# print("[Skin] Add font: Font path='%s', name='%s', scale=%d, isReplacement=%s, render=%d." % (filename, name, scale, isReplacement, render))
 			else:
 				raise SkinError("Font file '%s' not found" % filename)
 		fallbackFont = resolveFilename(SCOPE_FONTS, "fallback.font", path_prefix=pathSkin)
@@ -739,7 +739,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 				height = int(alias.attrib.get("height", size))  # To be calculated some day.
 				width = int(alias.attrib.get("width", size))
 				fonts[name] = (font, size, height, width)
-				# print "[Skin] Add font alias: name='%s', font='%s', size=%d, height=%s, width=%d." % (name, font, size, height, width)
+				# print("[Skin] Add font alias: name='%s', font='%s', size=%d, height=%s, width=%d." % (name, font, size, height, width))
 			except Exception as err:
 				raise SkinError("Bad font alias: '%s'" % str(err))
 	for tag in domSkin.findall("parameters"):
@@ -756,7 +756,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 			image = setup.attrib.get("image")
 			if key and image:
 				menus[key] = image
-				# print "[Skin] DEBUG: Menu key='%s', image='%s'." % (key, image)
+				# print("[Skin] DEBUG: Menu key='%s', image='%s'." % (key, image))
 			else:
 				raise SkinError("Tag menu needs key and image, got key='%s' and image='%s'" % (key, image))
 	for tag in domSkin.findall("setups"):
@@ -765,7 +765,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 			image = setup.attrib.get("image")
 			if key and image:
 				setups[key] = image
-				# print "[Skin] DEBUG: Setup key='%s', image='%s'." % (key, image)
+				# print("[Skin] DEBUG: Setup key='%s', image='%s'." % (key, image))
 			else:
 				raise SkinError("Tag setup needs key and image, got key='%s' and image='%s'" % (key, image))
 	for tag in domSkin.findall("constant-widgets"):
@@ -814,7 +814,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 			font = parseFont(title.attrib.get("font"), ((1, 1), (1, 1)))
 		style.setTitleFont(font)
 		style.setTitleOffset(offset)
-		# print "[Skin] DEBUG: WindowStyle font, offset -", font, offset
+		# print("[Skin] DEBUG: WindowStyle font, offset - '%s' '%s'." % (str(font), str(offset)))
 		for borderset in tag.findall("borderset"):
 			bsName = str(borderset.attrib.get("name"))
 			for pixmap in borderset.findall("pixmap"):
@@ -826,7 +826,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 						style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
 					except Exception:
 						pass
-				# print "[Skin] DEBUG: WindowStyle borderset name, filename -", bpName, filename
+				# print("[Skin] DEBUG: WindowStyle borderset name, filename - '%s' '%s'." % (bpName, filename))
 		for color in tag.findall("color"):
 			colorType = color.attrib.get("name")
 			color = parseColor(color.attrib.get("color"))
@@ -834,7 +834,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_CURRENT
 				style.setColor(eWindowStyleSkinned.__dict__["col" + colorType], color)
 			except Exception:
 				raise SkinError("Unknown color type '%s'" % colorType)
-			# print "[Skin] DEBUG: WindowStyle color type, color -", type, color
+			# print("[Skin] DEBUG: WindowStyle color type, color -" % (colorType, str(color)))
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(scrnID, style)
 	for tag in domSkin.findall("margin"):
@@ -1037,7 +1037,7 @@ def readSkin(screen, skin, names, desktop):
 			raise SkinError("The widget has no name and no source")
 			return
 		if wname:
-			# print "[Skin] DEBUG: Widget name='%s'." % wname
+			# print("[Skin] DEBUG: Widget name='%s'." % wname)
 			usedComponents.add(wname)
 			try:  # Get corresponding "gui" object.
 				attributes = screen[wname].skinAttributes = []
@@ -1046,7 +1046,7 @@ def readSkin(screen, skin, names, desktop):
 			# assert screen[wname] is not Source
 			collectAttributes(attributes, widget, context, skinPath, ignore=("name",))
 		elif wsource:
-			# print "[Skin] DEBUG: Widget source='%s'." % wsource
+			# print("[Skin] DEBUG: Widget source='%s'." % wsource)
 			while True:  # Get corresponding source until we found a non-obsolete source.
 				# Parse our current "wsource", which might specify a "related screen" before the dot,
 				# for example to reference a parent, global or session-global screen.
@@ -1055,7 +1055,7 @@ def readSkin(screen, skin, names, desktop):
 				while len(path) > 1:
 					scr = screen.getRelatedScreen(path[0])
 					if scr is None:
-						# print "[Skin] DEBUG: wsource='%s', name='%s'." % (wsource, name)
+						# print("[Skin] DEBUG: wsource='%s', name='%s'." % (wsource, name))
 						raise SkinError("Specified related screen '%s' was not found in screen '%s'" % (wsource, name))
 					path = path[1:]
 				source = scr.get(path[0])  # Resolve the source.
@@ -1076,12 +1076,12 @@ def readSkin(screen, skin, names, desktop):
 			for converter in widget.findall("convert"):
 				ctype = converter.get("type")
 				assert ctype, "[Skin] The 'convert' tag needs a 'type' attribute!"
-				# print "[Skin] DEBUG: Converter='%s'." % ctype
+				# print("[Skin] DEBUG: Converter='%s'." % ctype)
 				try:
 					parms = converter.text.strip()
 				except Exception:
 					parms = ""
-				# print "[Skin] DEBUG: Params='%s'." % parms
+				# print("[Skin] DEBUG: Params='%s'." % parms)
 				try:
 					converterClass = my_import(".".join(("Components", "Converter", ctype))).__dict__.get(ctype)
 				except ImportError:
@@ -1206,7 +1206,7 @@ def readSkin(screen, skin, names, desktop):
 def getSkinFactor():
 	skinfactor = getDesktop(GUI_SKIN_ID).size().height() / 720.0
 	# if skinfactor not in [0.8, 1, 1.5, 3, 6]:
-	# 	print "[Skin] Warning: Unexpected result for getSkinFactor '%0.4f'!" % skinfactor
+	# 	print("[Skin] Warning: Unexpected result for getSkinFactor '%0.4f'!" % skinfactor)
 	return skinfactor
 
 # Search the domScreens dictionary to see if any of the screen names provided

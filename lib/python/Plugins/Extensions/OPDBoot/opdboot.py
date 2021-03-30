@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import os
 import struct
@@ -66,7 +68,7 @@ def OPDBootMainEx(source, target, installsettings, bootquest, zipdelete, getimag
                                         elif 'rckeyboard_enable = True' in line:
                                                 line = '#' + line
                                 if 'HardwareInfoVu.py' in entrie:
-                                        if 'print "hardware detection failed"' in line:
+                                        if print("hardware detection failed"' in line:)
                                                 line = '\t\t    HardwareInfoVu.device_name ="duo"'
 
                                 out.write(line)
@@ -143,7 +145,7 @@ def OPDBootExtract(source, target, zipdelete, getimagefolder, getMachineRootFile
                 if "cortexa15hf-neon-vfpv4" in getImageArch:
                         if os.path.exists(media_nf + '/OPDBootUpload/%s'% getimagefolder):
                                 os.chdir('%s'% getimagefolder)
-                        print '[OPDBoot] Extracting tar.bz2 image and moving extracted image to our target'
+                        print('[OPDBoot] Extracting tar.bz2 image and moving extracted image to our target')
                         if os.path.exists('/usr/bin/bzip2'):
                                 sfolder = media_nf + '/OPDBootUpload/%s'% getimagefolder
                                 cmd = 'tar -jxf ' + sfolder + '/rootfs.tar.bz2 -C ' + media_nf + '/OPDBootI/' + target + ' > /dev/null 2>&1'
@@ -153,14 +155,14 @@ def OPDBootExtract(source, target, zipdelete, getimagefolder, getMachineRootFile
                         if os.path.exists(media_nf + '/OPDBootUpload/%s'% getimagefolder):
                                 os.chdir('%s'% getimagefolder)
                                 os.system('mv %s rootfs.bin'% getMachineRootFile)
-                        print '[OPDBoot] Extracting UBIFS image and moving extracted image to our target'
+                        print('[OPDBoot] Extracting UBIFS image and moving extracted image to our target')
                         if os.path.exists(extensions_path_extractpyo):
                                 os.chmod(extensions_path_extractpyo, 0777)
                                 cmd = 'python ' + extensions_path_extractpyo + ' rootfs.bin -o ' + media_nf + '/ubi'
                         else:
                                 os.chmod(extensions_path_extractpy, 0777)
                                 cmd = 'python ' + extensions_path_extractpy + ' rootfs.bin -o ' + media_nf + '/ubi'
-                        print cmd
+                        print (cmd)
                         os.system(cmd)
                         os.chdir('/home/root')
                         os.system('cp -r -p ' + media_nf + '/ubi/rootfs/* ' + media_nf + '/OPDBootI/' + target)

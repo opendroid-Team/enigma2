@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 from Components.config import config
@@ -116,8 +114,6 @@ class FrontendInfo(Converter):
 			elif type == 'DVB-C':
 				return 1
 			elif type == 'DVB-T':
-				return 2
-			elif type == 'DVB-T2':
 				return 2
 			elif type == 'ATSC':
 				return 3

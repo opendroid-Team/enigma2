@@ -30,6 +30,7 @@ caid_data = (
 	("0x5581", "0x5581", "BulCrypt", "B2", False )
 )
 
+# stream type to codec map
 codec_data = {
 	-1: "N/A",
 	0: "MPEG2",

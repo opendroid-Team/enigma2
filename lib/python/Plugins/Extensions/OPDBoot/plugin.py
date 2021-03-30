@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from boxbranding import getMachineProcModel, getMachineBuild, getBoxType, getMachineName, getImageDistro, getMachineBrand, getImageFolder, getMachineRootFile, getImageArch  
 from Screens.Screen import Screen
 from Screens.Console import Console
@@ -38,7 +40,7 @@ OPDBootImageInstall_Skin = '\n\t\t    <screen name="OPDBootImageInstall" positio
 def Freespace(dev):
         statdev = os.statvfs(dev)
         space = statdev.f_bavail * statdev.f_frsize / 1024
-        print '[OPDBoot] Free space on %s = %i kilobytes' % (dev, space)
+        print('[OPDBoot] Free space on %s = %i kilobytes' % (dev, space))
         return space
 
 class OPDBootInstallation(Screen):
@@ -237,7 +239,7 @@ class OPDBootInstallation(Screen):
                         self.session.open(MessageBox, _('Installation aborted !'), MessageBox.TYPE_INFO)
 
         def install3(self, yesno):
-                print "yesno:", yesno
+                print("yesno:", yesno)
                 if yesno:
                         cmd2 = 'mkdir /media/opdboot;mount ' + self.mysel + ' /media/opdboot'
                         os.system(cmd2)
@@ -563,7 +565,7 @@ class OPDBootImageChoose(Screen):
                                         ybox = self.session.openWithCallback(self.remove2, MessageBox, message, MessageBox.TYPE_YESNO)
                                         ybox.setTitle(_('Delete Confirmation'))
                         except:
-                                print 'no image to remove'
+                                print('no image to remove')
 
                 else:
                         self.mysel
@@ -579,7 +581,7 @@ class OPDBootImageChoose(Screen):
                         self['config'].setList(self.list)
                         self.updateList()
                 except:
-                        print ' '
+                        (print '  ')
 
         def remove2(self, yesno):
                 if yesno:
@@ -592,7 +594,7 @@ class OPDBootImageChoose(Screen):
         def installMedia(self):
                 images = False
                 myimages = os.listdir('/media/opdboot/OPDBootUpload')
-                print myimages
+                print(myimages)
                 for fil in myimages:
                         if fil.endswith('.zip'):
                                 images = True
@@ -649,7 +651,7 @@ class OPDBootImageChoose(Screen):
                                 f = file('/etc/fstab','r')
                                 lines = f.readlines()
                                 f.close()
-                                print "lines:", lines
+                                print("lines:", lines)
                                 for line in lines:
                                         if "/media/opdboot" in line:
                                                 lines.remove(line)
@@ -797,7 +799,7 @@ class OPDBootImageInstall(Screen, ConfigListScreen):
                                                                       getImageFolder(),
                                                                       getMachineRootFile(),
                                                                       getImageArch())
-                                print '[OPD-BOOT]: ', cmd
+                                print('[OPD-BOOT]: ', cmd)
                                 self.session.open(Console, _('OPDBoot: Install new image'), [message, cmd])
 
         def check_free_space(self):
