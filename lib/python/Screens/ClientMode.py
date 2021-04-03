@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.config import config, configfile, getConfigListEntry, ConfigSubList, ConfigSubsection
 from Components.ConfigList import ConfigListScreen
@@ -14,14 +17,16 @@ from Components.Pixmap import Pixmap
 from enigma import ePoint
 
 class ClientModeScreen(ConfigListScreen, Screen):
-	def __init__(self, session,):
+	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setup_title = screentitle = _("Client mode")
+		title = screentitle
+		Screen.setTitle(self, title)
 		self.skinName = "Setup"
 		self.initial_state = config.clientmode.enabled.value
 		self.onChangedEntry = []
 		self.session = session
-		ConfigListScreen.__init__(self, [], session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, [], session=session, on_change=self.changedEntry)
 
 		self["actions"] = ActionMap(["SetupActions", "MenuActions", "ColorActions"],
 		{
@@ -48,23 +53,23 @@ class ClientModeScreen(ConfigListScreen, Screen):
 
 	def createSetup(self):
 		setup_list = []
-		setup_list.append(getConfigListEntry(_("Enable client mode"), config.clientmode.enabled,_('Client mode sets up this receiver to stream from another receiver. In this mode no local tuners will be available and channel lists, EPG, etc, will come from the remote receiver. All tuner settings will be cleared.')))
+		setup_list.append(getConfigListEntry(_("Enable client mode"), config.clientmode.enabled, _('Client mode sets up this receiver to stream from another receiver. In this mode no local tuners will be available and channel lists, EPG, etc, will come from the remote receiver. All tuner settings will be cleared.')))
 		if config.clientmode.enabled.value:
-			setup_list.append(getConfigListEntry(_("Host receiver address type"), config.clientmode.serverAddressType,_('Select between entering an IP address or a domain.')))
+			setup_list.append(getConfigListEntry(_("Host receiver address type"), config.clientmode.serverAddressType, _('Select between entering an IP address or a domain.')))
 			if config.clientmode.serverAddressType.value == "ip":
-				setup_list.append(getConfigListEntry(_("Host receiver IP address"), config.clientmode.serverIP,_('Enter the IP address of the host receiver.')))
+				setup_list.append(getConfigListEntry(_("Host receiver IP address"), config.clientmode.serverIP, _('Enter the IP address of the host receiver.')))
 			else:
-				setup_list.append(getConfigListEntry(_("Host domain"), config.clientmode.serverDomain,_("Enter the domain of the host receiver. Do not include 'http://' or port number.")))
-			setup_list.append(getConfigListEntry(_("Host receiver streaming port"), config.clientmode.serverStreamingPort,_("Enter the streaming port of the host receiver (normally '8001').")))
-			setup_list.append(getConfigListEntry(_("Host receiver FTP username"), config.clientmode.serverFTPusername,_("Enter the FTP username of the host receiver (normally 'root').")))
-			setup_list.append(getConfigListEntry(_("Host receiver FTP password"), config.clientmode.serverFTPpassword,_("Enter the FTP password of the host receiver (normally just leave empty).")))
-			setup_list.append(getConfigListEntry(_("Host receiver FTP port"), config.clientmode.serverFTPPort,_("Enter the FTP port of the host receiver (normally '21').")))
-			setup_list.append(getConfigListEntry(_("FTP passive mode"), config.clientmode.passive,_("Should the FTP connection to the remote receiver be established in passive mode (normally 'no')?")))
-			setup_list.append(getConfigListEntry(_("Schedule EPG and channel list import"), config.clientmode.enableSchedule,_("Allows you to set a schedule to import the EPG and channels list. The EPG and channels list will always be imported on reboot or GUI restart.")))
+				setup_list.append(getConfigListEntry(_("Host domain"), config.clientmode.serverDomain, _("Enter the domain of the host receiver. Do not include 'http://' or port number.")))
+			setup_list.append(getConfigListEntry(_("Host receiver streaming port"), config.clientmode.serverStreamingPort, _("Enter the streaming port of the host receiver (normally '8001').")))
+			setup_list.append(getConfigListEntry(_("Host receiver FTP username"), config.clientmode.serverFTPusername, _("Enter the FTP username of the host receiver (normally 'root').")))
+			setup_list.append(getConfigListEntry(_("Host receiver FTP password"), config.clientmode.serverFTPpassword, _("Enter the FTP password of the host receiver (normally just leave empty).")))
+			setup_list.append(getConfigListEntry(_("Host receiver FTP port"), config.clientmode.serverFTPPort, _("Enter the FTP port of the host receiver (normally '21').")))
+			setup_list.append(getConfigListEntry(_("FTP passive mode"), config.clientmode.passive, _("Should the FTP connection to the remote receiver be established in passive mode (normally 'no')?")))
+			setup_list.append(getConfigListEntry(_("Schedule EPG and channel list import"), config.clientmode.enableSchedule, _("Allows you to set a schedule to import the EPG and channels list. The EPG and channels list will always be imported on reboot or GUI restart.")))
 			if config.clientmode.enableSchedule.value:
-				setup_list.append(getConfigListEntry(_("Repeat how often"), config.clientmode.scheduleRepeatInterval,_("Set the repeat interval of the schedule.")))
+				setup_list.append(getConfigListEntry(_("Repeat how often"), config.clientmode.scheduleRepeatInterval, _("Set the repeat interval of the schedule.")))
 				if config.clientmode.scheduleRepeatInterval.value in ("daily",):
-					setup_list.append(getConfigListEntry(_("Time import should start"), config.clientmode.scheduletime,_("Set the time of day to perform the import.")))
+					setup_list.append(getConfigListEntry(_("Time import should start"), config.clientmode.scheduletime, _("Set the time of day to perform the import.")))
 
 		self["config"].list = setup_list
 		self["config"].l.setList(setup_list)
@@ -81,7 +86,7 @@ class ClientModeScreen(ConfigListScreen, Screen):
 			mbox.setTitle(_("FTP connection failure"))
 			return
 		if self.initial_state != config.clientmode.enabled.value:
-			restartbox = self.session.openWithCallback(self.restartGUI, MessageBox,_("GUI needs a restart to switch modes\nDo you want to restart the GUI now?"), MessageBox.TYPE_YESNO)
+			restartbox = self.session.openWithCallback(self.restartGUI, MessageBox, _("GUI needs a restart to switch modes\nDo you want to restart the GUI now?"), MessageBox.TYPE_YESNO)
 			restartbox.setTitle(_("Restart GUI now?"))
 		else:
 			self.saveconfig()
@@ -131,7 +136,7 @@ class ClientModeScreen(ConfigListScreen, Screen):
 			return config.clientmode.serverDomain.value
 
 	def checkFTPconnection(self):
-		print "[ClientMode][checkFTPconnection] Testing FTP connection..."
+		print("[ClientMode] checkFTPconnection Testing FTP connection...")
 		try:
 			from ftplib import FTP
 			ftp = FTP()
@@ -140,12 +145,12 @@ class ClientModeScreen(ConfigListScreen, Screen):
 			result = ftp.login(user=config.clientmode.serverFTPusername.value, passwd=config.clientmode.serverFTPpassword.value)
 			ftp.quit()
 			if result.startswith("230"):
-				print "[ClientMode][checkFTPconnection] FTP connection success:", result
+				print("[ClientMode] checkFTPconnection FTP connection success:", result)
 				return True
-			print "[ClientMode][checkFTPconnection] FTP connection failure:", result
+			print("[ClientMode] checkFTPconnection FTP connection failure:", result)
 			return False
-		except Exception, err:
-			print "[ChannelsImporter][checkFTPconnection] Error:", err
+		except Exception as err:
+			print("[ClientMode] checkFTPconnection Error:", err)
 			return False
 
 	def restartGUI(self, answer):
