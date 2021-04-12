@@ -4,6 +4,7 @@ from time import localtime, strftime
 from Components.Element import cached
 from Components.config import config
 
+
 class ClockToText(Converter, object):
 	TIME_OPTIONS = {
 		# 		TRANSLATORS: short time representation hour:minute (Same as "Default")
@@ -58,6 +59,8 @@ class ClockToText(Converter, object):
 		"WithSeconds": lambda t: strftime(config.usage.time.long.value, localtime(t))  # _("%T")
 	}
 
+	# add: date, date as string, weekday, ...
+	# (whatever you need!)
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -68,6 +71,13 @@ class ClockToText(Converter, object):
 		if type[0:5] == "Parse":
 			parse = type[5:6]
 		else:
+			# OpenViX used ";" as the only ClockToText token separator.  For legacy
+			# support if the first token is "Format" skip the multiple parse character
+			# processing.
+			#
+			# Otherwise, some builds use ";" as a separator, most use ",".  If "Parse"
+			# is NOT used change "," to ";" and parse on ";".
+			#
 			parse = ";"
 			if type[0:6] != "Format":
 				type = type.replace(",", ";")
@@ -78,10 +88,13 @@ class ClockToText(Converter, object):
 				self.formats.append(eval("lambda t: strftime(\"%s\", localtime(t))" % arg[7:]))
 				continue
 			if arg[0:7] == "NoSpace":
+				# Eat old OpenVIX option as it doesn't make sense now.
 				continue
 			if arg[0:5] == "Parse":
+				# Already processed.
 				continue
 			if arg[0:12] == "Proportional":
+				# Eat old OpenVIX option as it doesn't make sense now.
 				continue
 			if arg[0:9] == "Separator":
 				self.separator = arg[10:]

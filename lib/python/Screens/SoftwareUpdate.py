@@ -24,8 +24,9 @@ from Components.Slider import Slider
 
 ocram = ''
 
+
 class SoftwareUpdateChanges(Screen):
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.setTitle(_("OE Changes"))
 		if path.exists('/tmp/oe-git.log'):
@@ -97,17 +98,17 @@ class SoftwareUpdateChanges(Screen):
 					releasever = releasever[0].replace(':', "")
 			if self.logtype == 'oe':
 				if int(getImageBuild()) == 1:
-					imagever = int(getImageBuild())-1
+					imagever = int(getImageBuild()) - 1
 				else:
 					imagever = int(getImageBuild())
 			else:
-				imagever = int(getImageBuild())+905
+				imagever = int(getImageBuild()) + 905
 			while int(releasever) > int(imagever):
 				if ocram:
-					viewrelease += releasenotes[int(ver)]+'\n'+ocram+'\n'
+					viewrelease += releasenotes[int(ver)] + '\n' + ocram + '\n'
 					ocram = ""
 				else:
-					viewrelease += releasenotes[int(ver)]+'\n\n'
+					viewrelease += releasenotes[int(ver)] + '\n\n'
 				ver += 1
 				releasever = releasenotes[int(ver)].split('\n')
 				releasever = releasever[0].split(' ')
@@ -118,7 +119,7 @@ class SoftwareUpdateChanges(Screen):
 			self["text"].setText(viewrelease)
 			summarytext = viewrelease.split(':\n')
 			try:
-				self['title_summary'].setText(summarytext[0]+':')
+				self['title_summary'].setText(summarytext[0] + ':')
 				self['text_summary'].setText(summarytext[1])
 			except:
 				self['title_summary'].setText("")
@@ -134,15 +135,16 @@ class SoftwareUpdateChanges(Screen):
 	def closeRecursive(self):
 		self.close(("menu", "menu"))
 
+
 class UpdatePlugin(Screen):
 	def __init__(self, session, *args):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Software Update"))
 
-		self.sliderPackages = { "dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3 }
+		self.sliderPackages = {"dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3}
 
 		self.setTitle(_("Software update"))
-		
+
 		self.slider = Slider(0, 4)
 		self["slider"] = self.slider
 		self.activityslider = Slider(0, 100)
@@ -160,7 +162,7 @@ class UpdatePlugin(Screen):
 		self['tl_green'] = Pixmap()
 		self.feedsStatus()
 		self['feedStatusMSG'] = Label(status_msgs[self.trafficLight])
-		
+
 		self.channellist_only = 0
 		self.channellist_name = ''
 		self.SettingsBackupDone = False
@@ -200,7 +202,7 @@ class UpdatePlugin(Screen):
 			self.trafficLight = 'unknown'
 			self['tl_off'].show()
 		socket.setdefaulttimeout(currentTimeoutDefault)
-		
+
 	def checkNetworkState(self):
 		cmd1 = "opkg update"
 		self.CheckConsole = Console()
@@ -317,12 +319,12 @@ class UpdatePlugin(Screen):
 						(_("Upgrade and reboot system"), "cold")]
 					if path.exists("/usr/lib/enigma2/python/Plugins/SystemPlugins/ViX/BackupManager.py"):
 						if not config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value:
-							choices.append((_("Perform a settings backup,") + '\n\t' + _("making a backup before updating") + '\n\t' +_("is strongly advised."), "backup"))
+							choices.append((_("Perform a settings backup,") + '\n\t' + _("making a backup before updating") + '\n\t' + _("is strongly advised."), "backup"))
 						if not config.softwareupdate.autoimagebackup.value and config.imagemanager.backuplocation.value:
 							choices.append((_("Perform a full image backup"), "imagebackup"))
 					choices.append((_("Update channel list only"), "channels"))
 					choices.append((_("Cancel"), ""))
-					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
+					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name="SoftwareUpdateChoices", var=self.trafficLight)
 					upgrademessage.setTitle(_('Software update'))
 				else:
 					upgrademessage = self.session.openWithCallback(self.close, MessageBox, _("Nothing to upgrade"), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
@@ -352,7 +354,7 @@ class UpdatePlugin(Screen):
 					error = _("No updates available. Please try again later.")
 				if self.updating:
 					error = _("Update failed. Your %s %s does not have a working internet connection.") % (getMachineBrand(), getMachineName())
-				self.status.setText(_("Error") +  " - " + error)
+				self.status.setText(_("Error") + " - " + error)
 		elif event == IpkgComponent.EVENT_LISTITEM:
 			if 'enigma2-plugin-settings-' in param[0] and self.channellist_only > 0:
 				self.channellist_name = param[0]
@@ -385,7 +387,7 @@ class UpdatePlugin(Screen):
 				choices.append((_("Perform a full image backup"), "imagebackup"))
 			choices.append((_("Update channel list only"), "channels"))
 			choices.append((_("Cancel"), ""))
-			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
+			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name="SoftwareUpdateChoices", var=self.trafficLight)
 			upgrademessage.setTitle(_('Software update'))
 		elif answer[1] == "changes":
 			self.session.openWithCallback(self.startActualUpgrade, SoftwareUpdateChanges)
@@ -396,7 +398,7 @@ class UpdatePlugin(Screen):
 		elif answer[1] == "channels":
 			self.channellist_only = 1
 			self.slider.setValue(1)
-			self.ipkg.startCmd(IpkgComponent.CMD_LIST, args = {'installed_only': True})
+			self.ipkg.startCmd(IpkgComponent.CMD_LIST, args={'installed_only': True})
 		elif answer[1] == "cold":
 			if (config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value) or (config.softwareupdate.autoimagebackup.value and config.imagemanager.backuplocation.value):
 				self.doAutoBackup()
@@ -429,7 +431,7 @@ class UpdatePlugin(Screen):
 				break
 		self.showJobView(job)
 
-	def doAutoBackup(self, val = False):
+	def doAutoBackup(self, val=False):
 		self.autobackuprunning = True
 		if config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value and not self.SettingsBackupDone:
 			self.doSettingsBackup()
@@ -447,14 +449,14 @@ class UpdatePlugin(Screen):
 		from Screens.TaskView import JobView
 		Components.Task.job_manager.in_background = False
 		if not self.autobackuprunning:
-			self.session.openWithCallback(self.startActualUpgrade(("menu", "menu")), JobView, job,  cancelable = False, backgroundable = False, afterEventChangeable = False, afterEvent="close")
+			self.session.openWithCallback(self.startActualUpgrade(("menu", "menu")), JobView, job, cancelable=False, backgroundable=False, afterEventChangeable=False, afterEvent="close")
 		else:
-			self.session.openWithCallback(self.doAutoBackup, JobView, job,  cancelable = False, backgroundable = False, afterEventChangeable = False, afterEvent="close")
+			self.session.openWithCallback(self.doAutoBackup, JobView, job, cancelable=False, backgroundable=False, afterEventChangeable=False, afterEvent="close")
 
 	def exit(self):
 		if not self.ipkg.isRunning():
 			if self.packages != 0 and self.error == 0 and self.channellist_only == 0:
-				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s") % (getMachineBrand(), getMachineName()))
+				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s") % (getMachineBrand(), getMachineName()))
 			else:
 				self.close()
 		else:

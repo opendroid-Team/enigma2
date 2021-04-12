@@ -2,10 +2,11 @@ from __future__ import absolute_import
 from Screens.Ci import MMIDialog
 from . import socketmmi
 
+
 class SocketMMIMessageHandler:
 	def __init__(self):
 		self.session = None
-		self.dlgs = { }
+		self.dlgs = {}
 		socketmmi.getSocketStateChangedCallbackList().append(self.socketStateChanged)
 
 	def setSession(self, session):
@@ -14,13 +15,13 @@ class SocketMMIMessageHandler:
 	def connected(self, slot=0):
 		return socketmmi.getState(slot)
 
-	def numConnections(self):                  
+	def numConnections(self):
 		if socketmmi.getState(0):
 			return 1
 		else:
 			return 0
 
-	def getState(self, slot=0):                                        
+	def getState(self, slot=0):
 		return socketmmi.getState(slot)
 
 	def getName(self, slot=0):

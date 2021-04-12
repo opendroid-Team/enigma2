@@ -9,6 +9,7 @@ import os
 import enigma
 from enigma import pNavigation
 
+
 def getTrashFolder(path=None):
 	# Returns trash folder without symlinks
 	try:
@@ -25,6 +26,7 @@ def getTrashFolder(path=None):
 	except:
 		return None
 
+
 def createTrashFolder(path=None):
 	trash = getTrashFolder(path)
 	if trash and os.access(os.path.split(trash)[0], os.W_OK):
@@ -37,7 +39,8 @@ def createTrashFolder(path=None):
 	else:
 		return None
 
-def get_size(start_path = '.'):
+
+def get_size(start_path='.'):
 	total_size = 0
 	if start_path:
 		for dirpath, dirnames, filenames in os.walk(start_path):
@@ -48,6 +51,7 @@ def get_size(start_path = '.'):
 				except:
 					pass
 	return total_size
+
 
 class Trashcan:
 	def __init__(self, session):
@@ -75,8 +79,9 @@ class Trashcan:
 			print("[Trashcan] Recording in progress", self.recordings)
 			return
 		ctimeLimit = time.time() - (config.usage.movielist_trashcan_days.value * 3600 * 24)
-		reserveBytes = 1024*1024*1024 * int(config.usage.movielist_trashcan_reserve.value)
+		reserveBytes = 1024 * 1024 * 1024 * int(config.usage.movielist_trashcan_reserve.value)
 		clean(ctimeLimit, reserveBytes)
+
 
 def clean(ctimeLimit, reserveBytes):
 	isCleaning = False
@@ -97,6 +102,7 @@ def clean(ctimeLimit, reserveBytes):
 	else:
 		print("[Trashcan] Disabled skipping check.")
 
+
 def cleanAll(path=None):
 	trash = getTrashFolder(path)
 	if not os.path.isdir(trash):
@@ -108,7 +114,7 @@ def cleanAll(path=None):
 			try:
 				enigma.eBackgroundFileEraser.getInstance().erase(fn)
 			except Exception as e:
-				print("[Trashcan] Failed to erase %s:"% name, e)
+				print("[Trashcan] Failed to erase %s:" % name, e)
 		# Remove empty directories if possible
 		for name in dirs:
 			try:
@@ -116,9 +122,11 @@ def cleanAll(path=None):
 			except:
 				pass
 
+
 def init(session):
 	global instance
 	instance = Trashcan(session)
+
 
 class CleanTrashTask(Components.Task.PythonTask):
 	def openFiles(self, ctimeLimit, reserveBytes):
@@ -126,7 +134,7 @@ class CleanTrashTask(Components.Task.PythonTask):
 		self.reserveBytes = reserveBytes
 
 	def work(self):
-		mounts=[]
+		mounts = []
 		matches = []
 		print("[Trashcan] probing folders")
 		f = open('/proc/mounts', 'r')
@@ -171,7 +179,7 @@ class CleanTrashTask(Components.Task.PythonTask):
 								candidates.append((st.st_ctime, fn, st.st_size))
 								size += st.st_size
 						except Exception as e:
-							print("[Trashcan] Failed to stat %s:"% name, e)
+							print("[Trashcan] Failed to stat %s:" % name, e)
 					# Remove empty directories if possible
 					for name in dirs:
 						try:
@@ -192,12 +200,13 @@ class CleanTrashTask(Components.Task.PythonTask):
 						size -= st_size
 					print("[Trashcan] " + str(trashfolder) + ": Size now:", size)
 
+
 class TrashInfo(VariableText, GUIComponent):
 	FREE = 0
 	USED = 1
 	SIZE = 2
 
-	def __init__(self, path, type, update = True):
+	def __init__(self, path, type, update=True):
 		GUIComponent.__init__(self)
 		VariableText.__init__(self)
 		self.type = type

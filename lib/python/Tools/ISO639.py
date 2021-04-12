@@ -1,7 +1,7 @@
 # -*- coding: iso-8859-2 -*-
 import six
 
-LanguageCodes = { }
+LanguageCodes = {}
 
 LanguageCodes["aar"] = LanguageCodes["aa"] = ("Afar", "Hamitic")
 LanguageCodes["abk"] = LanguageCodes["ab"] = ("Abkhazian", "Ibero-caucasian")
@@ -437,14 +437,16 @@ LanguageCodes["znd"] = ("Zande", "")
 LanguageCodes["zul"] = LanguageCodes["zu"] = ("Zulu", "Negro-african")
 LanguageCodes["zun"] = ("Zuni", "")
 
+
 class ISO639Language:
 	[PRIMARY, SECONDARY, TERTIARY] = [1, 2, 3]
+
 	def __init__(self, depth=PRIMARY):
 		self.depth = depth
 
 		wanted_languages = []
 		if depth == self.PRIMARY:
-			wanted_languages = [ "Undetermined", "English", "German", "Arabic", "Catalan", "Croatian", "Czech", "Danish", "Dutch", "Estonian", "Finnish", "French", "Greek", "Hungarian", "Lithuanian", "Latvian", "Icelandic", "Italian", "Norwegian", "Polish", "Portuguese", "Russian", "Serbian", "Slovakian", "Slovenian", "Spanish", "Swedish", "Turkish", "Ukrainian" ]
+			wanted_languages = ["Undetermined", "English", "German", "Arabic", "Catalan", "Croatian", "Czech", "Danish", "Dutch", "Estonian", "Finnish", "French", "Greek", "Hungarian", "Lithuanian", "Latvian", "Icelandic", "Italian", "Norwegian", "Polish", "Portuguese", "Russian", "Serbian", "Slovakian", "Slovenian", "Spanish", "Swedish", "Turkish", "Ukrainian"]
 		elif depth == self.SECONDARY:
 			for key, val in six.iteritems(LanguageCodes):
 				if len(key) == 2:

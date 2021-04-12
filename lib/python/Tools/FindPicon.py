@@ -9,8 +9,9 @@ from enigma import eServiceCenter, eServiceReference
 
 searchPaths = ('/usr/share/enigma2/%s/', '/media/usb/%s/', '/media/mmc/%s/', '/media/hdd/%s/')
 path = "picon"
-nameCache = { }
+nameCache = {}
 pngname = ""
+
 
 def findFile(serviceName):
 	path = "picon"
@@ -42,6 +43,7 @@ def findFile(serviceName):
 			return pngname
 	return ""
 
+
 def findPicon(service):
 	pngname = ""
 	sname = service
@@ -49,7 +51,7 @@ def findPicon(service):
 	if sname.startswith("1:134"):
 		sname = GetWithAlternative(service)
 	for protocol in ("http", "rtmp", "rtsp", "mms", "rtp"):
-		pos = sname.rfind(':' + protocol )
+		pos = sname.rfind(':' + protocol)
 		if pos != -1:
 			sname = sname.split(protocol)[0]
 			break

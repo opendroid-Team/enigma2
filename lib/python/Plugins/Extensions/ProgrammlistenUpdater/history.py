@@ -8,7 +8,8 @@ from six.moves.urllib.request import urlopen
 from six.moves.urllib.request import Request
 
 # TODO: this URL now redirects to https://www.receiver-settings.de/
-URL ='http://www.sattechnik.de/programmlisten-update/history.txt'
+URL = 'http://www.sattechnik.de/programmlisten-update/history.txt'
+
 
 def DownloadInfo(url):
     text = ""
@@ -20,15 +21,14 @@ def DownloadInfo(url):
         text = six.ensure_str(link)
 
     except:
-        print("ERROR Download History %s" %(url))
+        print("ERROR Download History %s" % (url))
 
     return text
 
 
-
 class PU_History(Screen):
 
-    skin =  """
+    skin = """
         <screen name="PU_History" position="center,center" size="600,470">
             <ePixmap pixmap="skin_default/buttons/red.png" position="5,0" size="140,40" alphatest="on" />
             <widget source="key_red" render="Label" position="5,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" foregroundColor="#ffffff" transparent="1" />
@@ -42,10 +42,9 @@ class PU_History(Screen):
         self.skinName = "PU_History"
         self.setup_title = _("Programmlisten History")
         self.setTitle(self.setup_title)
-        
+
         self["key_red"] = StaticText(_("Exit"))
         self["History"] = ScrollLabel()
-
 
         self["Actions"] = ActionMap(['OkCancelActions', 'ShortcutActions', "ColorActions", "DirectionActions"],
             {
@@ -61,4 +60,3 @@ class PU_History(Screen):
 
     def keyOk(self):
         self.close()
-

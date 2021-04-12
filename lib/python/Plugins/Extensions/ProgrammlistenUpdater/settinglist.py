@@ -1,7 +1,9 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from enigma import eTimer, eDVBDB
-import os, time, sys
+import os
+import time
+import sys
 from Components.config import config, configfile
 from Screens.MessageBox import MessageBox
 from .downloader import DownloadSetting, ConverDate, ConverDateBack
@@ -10,6 +12,7 @@ from six.moves.urllib.request import Request
 import six
 
 Directory = os.path.dirname(sys.modules[__name__].__file__)
+
 
 def InstallSettings(name, link, date):
 
@@ -37,7 +40,7 @@ def InstallSettings(name, link, date):
         return False
 
     Status = True
-    
+
     # remove old download if exists
     if os.path.exists(Directory + '/Settings/tmp'):
         os.system('rm -rf ' + Directory + '/Settings/tmp')
@@ -68,9 +71,9 @@ def InstallSettings(name, link, date):
         RemoveList = getRemoveList()
         if RemoveList:
             for file in RemoveList:
-               nFile = '/etc/enigma2/'+ file
+               nFile = '/etc/enigma2/' + file
                if os.path.isfile(nFile) and not nFile == '/etc/enigma2/lamedb':
-                    os.system('rm -rf %s' %nFile)
+                    os.system('rm -rf %s' % nFile)
 
         os.system('rm -rf /etc/enigma2/*.del')
         os.system('rm -rf /etc/enigma2/lamedb')
@@ -83,7 +86,7 @@ def InstallSettings(name, link, date):
         # remove /tmp folder
         if os.path.exists(Directory + '/Settings/tmp'):
             os.system('rm -rf ' + Directory + '/Settings/tmp')
-        
+
     else:
         Status = False
 
@@ -92,7 +95,7 @@ def InstallSettings(name, link, date):
 
 class CheckTimer:
 
-    def __init__(self, session = None):
+    def __init__(self, session=None):
         self.session = session
         self.UpdateTimer = eTimer()
         self.UpdateTimer.callback.append(self.startTimerSetting)
@@ -124,7 +127,7 @@ class CheckTimer:
             pass
 
     def TimerSetting(self, Auto=False):
-  
+
         try:
             self.StopTimer()
         except:
@@ -133,7 +136,7 @@ class CheckTimer:
         now = time.time()
         ttime = now + 28800 # Check each 8 hours for new version
         delta1 = int(ttime - now)
-        
+
         if Auto:
             #Do Check at bootup after 2 min
             self.UpdateTimer.start(120000, True)
@@ -147,7 +150,7 @@ class CheckTimer:
         else:
             config.pud.update_question.value = False
         config.pud.save()
-        
+
     def startTimerSetting(self):
 
         def OnDsl():
@@ -180,5 +183,5 @@ class CheckTimer:
                     else:
                         print("Programmlisten-Updater: NO NEW UPDATE AVAILBLE")
                     break
- 
+
         self.TimerSetting()

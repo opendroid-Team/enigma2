@@ -13,9 +13,10 @@ from Components.Sources.StaticText import StaticText
 from Components.SystemInfo import SystemInfo
 import six
 
+
 class SetupSummary(Screen):
 	def __init__(self, session, parent):
-		Screen.__init__(self, session, parent = parent)
+		Screen.__init__(self, session, parent=parent)
 		self["SetupTitle"] = StaticText(_(parent.setup_title))
 		self["SetupEntry"] = StaticText("")
 		self["SetupValue"] = StaticText("")
@@ -41,6 +42,7 @@ class SetupSummary(Screen):
 				self.parent['footnote'].text = (_("* = Restart Required"))
 			else:
 				self.parent['footnote'].text = (_(" "))
+
 
 class TimeshiftSettings(Screen, ConfigListScreen):
 	def removeNotifier(self):
@@ -73,10 +75,10 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 		self["key_green"] = StaticText(_("Save"))
 		self["description"] = Label(_(""))
 
-		self.onChangedEntry = [ ]
+		self.onChangedEntry = []
 		self.setup = "timeshift"
 		list = []
-		ConfigListScreen.__init__(self, list, session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, list, session=session, on_change=self.changedEntry)
 		self.createSetup()
 
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions"],
@@ -126,7 +128,7 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 			locations = []
 			for validdevice in candidates:
 				locations.append(validdevice[1])
-			if Components.Harddisk.findMountPoint(os.path.realpath(configele.value))+'/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(configele.value)) in locations:
+			if Components.Harddisk.findMountPoint(os.path.realpath(configele.value)) + '/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(configele.value)) in locations:
 				if fileExists(configele.value, "w"):
 					configele.last_value = configele.value
 					return True
@@ -135,8 +137,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 					configele.value = configele.last_value
 					self.session.open(
 						MessageBox,
-						_("The directory %s is not writable.\nMake sure you select a writable directory instead.")%dir,
-						type = MessageBox.TYPE_ERROR
+						_("The directory %s is not writable.\nMake sure you select a writable directory instead.") % dir,
+						type=MessageBox.TYPE_ERROR
 						)
 					return False
 			else:
@@ -144,8 +146,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 				configele.value = configele.last_value
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%dir,
-					type = MessageBox.TYPE_ERROR
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % dir,
+					type=MessageBox.TYPE_ERROR
 					)
 				return False
 		else:
@@ -153,8 +155,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 			configele.value = configele.last_value
 			self.session.open(
 				MessageBox,
-				_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%dir,
-				type = MessageBox.TYPE_ERROR
+				_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % dir,
+				type=MessageBox.TYPE_ERROR
 				)
 			return False
 
@@ -170,8 +172,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 			cooltmp = cooltmp[:]
 			cooltmp.append(cooldefault)
 # 		print "TimeshiftPath: ", default, tmp
-		self.timeshift_dirname = ConfigSelection(default = default, choices = tmp)
-		self.autorecord_dirname = ConfigSelection(default = cooldefault, choices = cooltmp)
+		self.timeshift_dirname = ConfigSelection(default=default, choices=tmp)
+		self.autorecord_dirname = ConfigSelection(default=cooldefault, choices=cooltmp)
 		self.timeshift_dirname.addNotifier(self.checkReadWriteDir, initial_call=False, immediate_feedback=False)
 		self.autorecord_dirname.addNotifier(self.checkReadWriteDir, initial_call=False, immediate_feedback=False)
 		list = []
@@ -222,7 +224,7 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 				locations = []
 				for validdevice in candidates:
 					locations.append(validdevice[1])
-				if Components.Harddisk.findMountPoint(os.path.realpath(res))+'/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(res)) in locations:
+				if Components.Harddisk.findMountPoint(os.path.realpath(res)) + '/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(res)) in locations:
 					self.entrydirname.value = res
 					if config.usage.allowed_timeshift_paths.value != self.lasttimeshiftdirs:
 						tmp = config.usage.allowed_timeshift_paths.value
@@ -243,14 +245,14 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 				else:
 					self.session.open(
 						MessageBox,
-						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%res,
-						type = MessageBox.TYPE_ERROR
+						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % res,
+						type=MessageBox.TYPE_ERROR
 						)
 			else:
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%res,
-					type = MessageBox.TYPE_ERROR
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % res,
+					type=MessageBox.TYPE_ERROR
 					)
 
 	def saveAll(self):
@@ -273,7 +275,7 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 			locations = []
 			for validdevice in candidates:
 				locations.append(validdevice[1])
-			if Components.Harddisk.findMountPoint(os.path.realpath(config.usage.timeshift_path.value))+'/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(config.usage.timeshift_path.value)) in locations:
+			if Components.Harddisk.findMountPoint(os.path.realpath(config.usage.timeshift_path.value)) + '/' in locations or Components.Harddisk.findMountPoint(os.path.realpath(config.usage.timeshift_path.value)) in locations:
 				config.usage.timeshift_path.value = self.timeshift_dirname.value
 				config.usage.timeshift_path.save()
 				self.saveAll()
@@ -282,8 +284,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 				if int(config.timeshift.startdelay.value) > 0:
 					self.session.open(
 						MessageBox,
-						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
-						type = MessageBox.TYPE_ERROR
+						_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % config.usage.timeshift_path.value,
+						type=MessageBox.TYPE_ERROR
 						)
 				else:
 					config.timeshift.startdelay.setValue(0)
@@ -293,8 +295,8 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 			if int(config.timeshift.startdelay.value) > 0:
 				self.session.open(
 					MessageBox,
-					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.")%config.usage.timeshift_path.value,
-					type = MessageBox.TYPE_ERROR
+					_("The directory %s is not a EXT2, EXT3, EXT4, NFS or CIFS partition.\nMake sure you select a valid partition type.") % config.usage.timeshift_path.value,
+					type=MessageBox.TYPE_ERROR
 					)
 			else:
 				config.timeshift.startdelay.setValue(0)
@@ -310,7 +312,7 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 
 	def keyCancel(self):
 		if self["config"].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), default = False)
+			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), default=False)
 		else:
 			self.close()
 
@@ -353,4 +355,3 @@ class TimeshiftSettings(Screen, ConfigListScreen):
 				# the second one is converted to string.
 				if not isinstance(item, ConfigNothing):
 					list.append((item_text, item, item_description))
-

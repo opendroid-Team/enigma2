@@ -35,7 +35,7 @@ def command(comandline, strip=1):
 				text = text + line
 				if text[-1:] != '\n': text = text + "\n"
 		file.close()
-	
+
 	if text[-1:] == '\n': text = text[:-1]
 	comandline = text
 	os.system("rm /tmp/command.txt")
@@ -192,7 +192,7 @@ class BluePanel(Screen, ConfigListScreen):
 
 		self.softcams = ConfigSelection(choices = softcams)
 		self.softcams.value = self.softcam.current()
-                self.session.openWithCallback(self.myclose, startcam, softcams)
+		self.session.openWithCallback(self.myclose, startcam, softcams)
 	def doStop(self):
 		self.activityTimer.stop()
 		if "c" in self.what:
@@ -320,7 +320,7 @@ class ShowSoftcamPackages(Screen):
 				</convert>
 			</widget>
 		</screen>"""
-	
+
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
 		self.session = session

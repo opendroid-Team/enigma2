@@ -9,11 +9,12 @@ from Components.config import config, getConfigListEntry
 from enigma import eEPGCache
 from time import time
 
+
 class SleepTimerEdit(ConfigListScreen, Screen):
 
 	skin = """
 	<screen name="SleepTimerEdit" position="center,center" size="500,250"  flags="wfNoBorder" title="Sleep Timer" backgroundColor="transparent">
-		<eLabel name="b" position="0,0" size="500,250" backgroundColor="ltbluette" zPosition="-2" />
+		<eLabel name="b" position="0,0" size="500,250" backgroundColor="#00ffffff" zPosition="-2" />
 		<eLabel name="a" position="1,1" size="498,248" backgroundColor="#00000000" zPosition="-1" />
 		<widget source="Title" render="Label" position="10,10" foregroundColor="#00ffffff" size="480,50" halign="center" font="Regular; 35" backgroundColor="#00000000" />
 		<eLabel name="line" position="1,69" size="498,1" backgroundColor="#00ffffff" zPosition="1" />
@@ -30,12 +31,12 @@ class SleepTimerEdit(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 		self.title = _("Sleep Timer")
 
-		self["key_red"] = Label(_("Cancel"))
-		self["key_green"] = Label(_("Save"))
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("Save"))
 		self["description"] = Label("")
 
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session = session)
+		ConfigListScreen.__init__(self, self.list, session=session)
 		self.createSetup()
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
@@ -79,7 +80,7 @@ class SleepTimerEdit(ConfigListScreen, Screen):
 			InfoBar.instance.setSleepTimer(sleepTimer)
 		self.close(True)
 
-	def cancel(self, answer = None):
+	def cancel(self, answer=None):
 		if answer is None:
 			if self["config"].isChanged():
 				self.session.openWithCallback(self.cancel, MessageBox, _("Really close without saving settings?"))
