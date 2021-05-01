@@ -14,7 +14,11 @@ from Components.Language import language
 from Components.Pixmap import Pixmap
 #from skin import parseColor
 from enigma import ePicLoad
-import gettext, base64, os, time, glob, urllib2
+from base64 import b64encode, b64decode
+import gettext, base64, os, time, glob
+from six.moves.urllib.error import URLError
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.request import urlopen
 from os import environ, listdir, remove, rename, system, popen, mkdir
 from Tools.Directories import fileExists, resolveFilename, SCOPE_LANGUAGE, SCOPE_PLUGINS
 from boxbranding import getBoxType, getImageDistro, getMachineName, getMachineBrand, getImageVersion, getMachineBuild, getImageArch

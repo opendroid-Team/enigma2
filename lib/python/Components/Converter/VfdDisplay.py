@@ -5,6 +5,7 @@ from Components.Converter.Poll import Poll
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 
+
 class VfdDisplay(Poll, Converter, object):
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -86,4 +87,3 @@ class VfdDisplay(Poll, Converter, object):
 			Converter.changed(self, what)
 		elif what[0] is self.CHANGED_ALL:
 			Converter.changed(self, what)
-

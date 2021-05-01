@@ -11,6 +11,7 @@ from Components.ServiceEventTracker import ServiceEventTracker
 import gettext
 from Components.Converter.Poll import Poll
 
+
 class ExtremeInfo(Poll, Converter, object):
     TUNERINFO = 0
     CAMNAME = 1
@@ -52,7 +53,7 @@ class ExtremeInfo(Poll, Converter, object):
     WICARDD = 37
     BULCRYPT = 38
     BULECM = 39
-    
+
     def __init__(self, type):
         Poll.__init__(self)
         Converter.__init__(self, type)
@@ -783,7 +784,7 @@ class ExtremeInfo(Poll, Converter, object):
                                 return True
 
         return False
-    
+
     def getIrdCrypt(self):
         service = self.source.service
         if service:
@@ -991,8 +992,8 @@ class ExtremeInfo(Poll, Converter, object):
                             if caid == '55':
                                 return True
 
-        return False 
-    
+        return False
+
     def int2hex(self, int):
         return '%x' % int
 

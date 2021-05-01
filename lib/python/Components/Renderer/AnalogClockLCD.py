@@ -9,6 +9,7 @@ from enigma import eCanvas, eSize, gRGB, eRect
 from Components.VariableText import VariableText
 from Components.config import config
 
+
 class AnalogClockLCD(Renderer):
 	def __init__(self):
 		Renderer.__init__(self)
@@ -59,12 +60,12 @@ class AnalogClockLCD(Renderer):
 		height = self.positionheight
 		r = (width / 2)
 		r1 = (height / 2)
-		l = self.linesize  
+		l = self.linesize
 		if opt == 'sec':
-			l = self.linesize  
+			l = self.linesize
 			self.fColor = self.fColors
 		elif opt == 'min':
-			l = self.linesize 
+			l = self.linesize
 			self.fColor = self.fColorm
 		else:
 			self.fColor = self.fColorh

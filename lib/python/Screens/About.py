@@ -1,7 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from Screens.Screen import Screen
-from Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -35,10 +34,12 @@ import skin, os
 import time
 from os import path, popen, system
 from re import search
-
 import time
 import six
-
+try:
+	from urllib2 import urlopen
+except ImportError:
+	from urllib.request import urlopen
 SIGN = '°' if six.PY3 else str('\xc2\xb0')
 
 def parse_ipv4(ip):
@@ -76,8 +77,14 @@ def parseLines(filename):
 def MyDateConverter(StringDate):
 	## StringDate must be a string "YYYY-MM-DD"
 	try:
-		StringDate = StringDate.replace("-"," ")
-		StringDate = time.strftime(_("%Y-%m-%d"), time.strptime(StringDate, "%Y %m %d"))
+		if len(StringDate) == 8:
+			year = StringDate[0:4]
+			month = StringDate[4:6]
+			day = StringDate[6:8]
+			StringDate = ' '.join((year, month, day))
+		else:
+			StringDate = StringDate.replace("-", " ")
+		StringDate = time.strftime(config.usage.date.full.value, time.strptime(StringDate, "%Y %m %d"))
 		return StringDate
 	except:
 		return _("unknown")
@@ -263,9 +270,9 @@ class About(Screen):
 		if SystemInfo["canMultiBoot"]:
 			slot = image = GetCurrentImage()
 			bootmode = ""
-			part = "eMMC slot %s" %slot
+			part = _("eMMC slot %s") % slot
 			if SystemInfo["canMode12"]:
-				bootmode = "bootmode = %s" %GetCurrentImageMode()
+				bootmode = _(" bootmode = %s") % GetCurrentImageMode()
 			if SystemInfo["HasHiSi"] and "sda" in SystemInfo["canMultiBoot"][slot]['device']:
 				if slot > 4:
 					image -=4
@@ -303,30 +310,30 @@ class About(Screen):
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		if getMachineBuild() not in ('vuduo4k','osmio4k','h9','h9combo','h10','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u54','u55','u56','u51','sf8008','i55plus'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
-		AboutText += _("Network:")
-		eth0 = about.getIfConfig('eth0')
-		eth1 = about.getIfConfig('eth1')
-		ra0 = about.getIfConfig('ra0')
-		wlan0 = about.getIfConfig('wlan0')
-		wlan1 = about.getIfConfig('wlan1')
-		if eth0.has_key('addr'):
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed() + ")\n"
-		elif eth1.has_key('addr'):
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed_eth1() + ")\n"
-		elif ra0.has_key('addr'):
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_ra0() + ")\n"
-		elif wlan0.has_key('addr'):
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan0() + ")\n"
-		elif wlan1.has_key('addr'):
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan1() + ")\n"
-		else:
-			for x in about.GetIPsFromNetworkInterfaces():
-				AboutText += "\t" + x[0] + ": " + x[1] + "\n"
+#		AboutText += _("Network:")
+#		eth0 = about.getIfConfig('eth0')
+#		eth1 = about.getIfConfig('eth1')
+#		ra0 = about.getIfConfig('ra0')
+#		wlan0 = about.getIfConfig('wlan0')
+#		wlan1 = about.getIfConfig('wlan1')
+#		if 'addr' in eth0:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed() + ")\n"
+#		elif 'addr' in eth1:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed_eth1() + ")\n"
+#		elif 'addr' in eth0:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_ra0() + ")\n"
+#		elif 'addr' in eth0:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan0() + ")\n"
+#		elif 'addr' in eth1:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan1() + ")\n"
+#		else:
+#			for x in about.GetIPsFromNetworkInterfaces():
+#				AboutText += "\t" + x[0] + ": " + x[1] + "\n"
 
 		fp_version = getFPVersion()
 		if fp_version is None:
@@ -391,7 +398,7 @@ class About(Screen):
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
 			mark = str('\xc2\xb0')
-			AboutText += _("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
+			AboutText += ("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
@@ -419,7 +426,7 @@ class About(Screen):
 				id = f.read()[:-1].split('=')
 				f.close()
 				from Screens.MessageBox import MessageBox
-				self.session.open(MessageBox,id[1], type = MessageBox.TYPE_INFO)
+				self.session.open(MessageBox, id[1], type=MessageBox.TYPE_INFO)
 			except:
 				pass
 	def searchString(self, file, search):
@@ -488,6 +495,8 @@ class ModelPic(Screen):
 			model = "sf5008.png"
 		elif getBoxType() in ('sf8008'):
 			model = "sf8008.png"
+		elif getBoxType() in ('sf8008m'):
+			model = "sf8008m.png"
 		elif getBoxType() in ('sf8008s'):
 			model = "sf8008s.png"
 		elif getBoxType() in ('sf3038'):
@@ -664,6 +673,8 @@ class ModelPic(Screen):
 			model = "osmini.png"
 		elif getBoxType() in ('osminiplus'):
 			model = "osminiplus.png"
+		elif getBoxType() in ('osmini4k'):
+			model = "osmini4k.png"
 		elif getBoxType() in ('osnino'):
 			model = "osnino.png"
 		elif getBoxType() in ('osninoplus'):
@@ -672,6 +683,8 @@ class ModelPic(Screen):
 			model = "osninopro.png"	
 		elif getBoxType() in ('gbtrio4k'):
 			model = "gbtrio4k.png"	
+		elif getBoxType() in ('ustym4kpro'):
+			model = "ustym4kpro.png"
 		else:
 			model = None
 		poster_path = "/usr/share/enigma2/%s" % model
@@ -762,7 +775,7 @@ class Devices(Screen):
 				elif (size / 1024) >= 1:
 					sizeline = _("Size: ") + str(round((float(size) / 1024), 2)) +  " " + _("GB")
 				elif size >= 1:
-					sizeline = _("Size: ") + str(size) +  " " + _("MB")
+					sizeline = _("Size: ") + str(size) + " " + _("MB")
 				else:
 					sizeline = _("Size: ") + _("unavailable")
 
@@ -876,7 +889,7 @@ class SystemMemoryInfo(Screen):
 		self.Console.ePopen("df -mh / | grep -v '^Filesystem'", self.Stage1Complete)
 
 	def MySize(self, RamText):
-		RamText_End = RamText[len(RamText)-1]
+		RamText_End = RamText[len(RamText) - 1]
 		RamText_End2 = RamText_End
 		if RamText_End == "G":
 			RamText_End = _("GB")
@@ -885,7 +898,7 @@ class SystemMemoryInfo(Screen):
 		elif RamText_End == "K":
 			RamText_End = _("KB")
 		if RamText_End != RamText_End2:
-			RamText = RamText[0:len(RamText)-1] + " " + RamText_End
+			RamText = RamText[0:len(RamText) - 1] + " " + RamText_End
 		return RamText
 
 	def Stage1Complete(self, result, retval, extra_args=None):
@@ -1296,7 +1309,7 @@ class TranslationInfo(Screen):
 		linfo += _("Translations Info")		+ ":" + "\n\n"
 		linfo += _("Project")				+ ":" + infomap.get("Project-Id-Version", "") + "\n"
 		linfo += _("Language")				+ ":" + infomap.get("Language", "") + "\n"
-		print(infomap.get)("Language-Team", "")
+		print(infomap.get("Language-Team", ""))
 		if infomap.get("Language-Team", "") == "" or infomap.get("Language-Team", "") == "none":
 			linfo += _("Language Team") 	+ ":" + "n/a"  + "\n"
 		else:
@@ -1342,12 +1355,12 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-			("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.0", "github"),
-			("formiano",      "E2",               "formiano E2",             "7.0", "github"),
-			("opendroid-Team",      "Skins-for-openOPD",             "opendroid-Team Skins-for-openOPD",   "master", "github"),
-			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "4.4", "github"),
-			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
-			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
+			("opendroid-Team", "enigma2", "opendroid-Team Enigma2", "7.1", "github"),
+			("formiano", "enigma2", "formiano enigma2", "7.1", "github"),
+			("opendroid-Team", "Skins-for-openOPD", "opendroid-Team Skins-for-openOPD", "master", "github"),
+			("oe-alliance", "oe-alliance-core", "OE Alliance Core", "4.5", "github"),
+			("oe-alliance", "oe-alliance-plugins", "OE Alliance Plugins", "master", "github"),
+			("oe-alliance", "enigma2-plugins", "OE Alliance Enigma2 Plugins", "master", "github")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -1357,15 +1370,15 @@ class CommitInfo(Screen):
 	def readGithubCommitLogs(self):
 		if self.projects[self.project][4] == "github":
 			url = 'https://api.github.com/repos/%s/%s/commits?sha=%s' % (self.projects[self.project][0], self.projects[self.project][1], self.projects[self.project][3])
-		if self.projects[self.project][4] == "gitlab":
-			url1 = 'https://gitlab.com/api/v4/projects/%s' % (self.projects[self.project][0])
+		if self.projects[self.project][4] == "github":
+			url1 = 'https://github.com/api/v4/projects/%s' % (self.projects[self.project][0])
 			url2 = '%2F'
 			url3 = '%s/repository/commits?ref_name=%s' % (self.projects[self.project][1], self.projects[self.project][3])
 			url = url1 + url2 + url3
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
-		from urllib2 import urlopen
+		from urllib.request import urlopen
 		if self.projects[self.project][4] == "github":
 			try:
 				commitlog += 80 * '-' + '\n'
@@ -1380,15 +1393,15 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
-				commitlog = commitlog.encode('utf-8')
+				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		if self.projects[self.project][4] == "gitlab":
+		if self.projects[self.project][4] == "github":
 			try:
 				commitlog += 80 * '-' + '\n'
 				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
-				commitlog += 'URL: https://gitlab.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
+				commitlog += 'URL: https://github.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
 				commitlog += 80 * '-' + '\n'
 				for c in loads(urlopen(url, timeout=5).read()):
 					creator = c['author_name']
@@ -1398,7 +1411,7 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + '\n'
-				commitlog = commitlog.encode('utf-8')
+				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
@@ -1491,7 +1504,7 @@ class MemoryInfo(Screen):
 			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
 			self['pfree'].setText("%.1f %s" % (100.*free/mem,'%'))
 			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem,'%'))
-		except IOError:
+		except Exception as e:
 			print("[About] getMemoryInfo FAIL:", e)
 
 	def clearMemory(self):

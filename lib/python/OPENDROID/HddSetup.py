@@ -7,7 +7,7 @@ from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
-from ExtrasList import ExtrasList
+from OPENDROID.ExtrasList import ExtrasList
 from Components.ConfigList import ConfigListScreen
 from Components.config import ConfigSelection, getConfigListEntry, config
 from Components.MenuList import MenuList

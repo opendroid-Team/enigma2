@@ -49,15 +49,16 @@ from Tools.Directories import SCOPE_VOD
 from Tools import Directories, Notifications
 from Tools.Directories import pathExists, fileExists, getRecordingFilename, copyfile, moveFiles, resolveFilename, SCOPE_TIMESHIFT, SCOPE_CURRENT_SKIN
 from Tools.KeyBindings import getKeyDescription
+from Tools.ServiceReference import hdmiInServiceRef
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, iPlayableService, eServiceReference, eEPGCache, eActionMap, eDVBVolumecontrol, getDesktop, quitMainloop, eDVBDB
 from boxbranding import getBoxType, getMachineProcModel, getMachineBuild, getMachineBrand, getMachineName
 
 from time import time, localtime, strftime
 from bisect import insort
-from sys import maxint
 from keyids import KEYIDS
 from datetime import datetime
-import itertools, datetime
+import itertools
+import datetime
 from sys import maxsize
 
 import os
@@ -5278,3 +5279,56 @@ class InfoBarOpenOnTopHelper:
 			print("[InfoBarGenerics] [openInfoBarSession] Exception:", e)
 
 #########################################################################################
+
+
+from enigma import getBsodCounter, resetBsodCounter
+
+
+class InfoBarHandleBsod:
+	def __init__(self):
+		self.lastBsod = 0
+		self.infoBsodIsShown = False
+		self.lastestBsodWarning = False
+		self.checkBsodTimer = eTimer()
+		self.checkBsodTimer.callback.append(self.checkBsodCallback)
+		self.checkBsodTimer.start(1000, True)
+		config.crash.bsodpython_ready.setValue(True)
+
+	def checkBsodCallback(self):
+		self.checkBsodTimer.start(1000, True)
+		if Screens.Standby.inStandby or self.infoBsodIsShown:
+			return
+		bsodcnt = getBsodCounter()
+		if config.crash.bsodpython.value and self.lastBsod < bsodcnt:
+			maxbs = int(config.crash.bsodmax.value) or 100
+			writelog = bsodcnt == 1 or not bsodcnt > int(config.crash.bsodhide.value) or bsodcnt >= maxbs
+			txt = _("Your Receiver has a Software problem detected. Since the last reboot it has occurred %d times.\n") % bsodcnt
+			txt += _("(Attention: There will be a restart after %d crashes.)") % maxbs
+			if writelog:
+				txt += "\n" + "-" * 80 + "\n"
+				txt += _("A crashlog was %s created in '%s'") % ((_('not'), '')[int(writelog)], config.crash.debug_path.value)
+			#if not writelog:
+			#	txt += "\n" + "-"*80 + "\n"
+			#	txt += _("(It is set that '%s' crash logs are displayed and written.\nInfo: It will always write the first, last but one and lastest crash log.)") % str(int(config.crash.bsodhide.value) or _('never'))
+			if bsodcnt >= maxbs:
+				txt += "\n" + "-" * 80 + "\n"
+				txt += _("Warning: This is the last crash before an automatic restart is performed.\n")
+				txt += _("Should the crash counter be reset to prevent a restart?")
+				self.lastestBsodWarning = True
+			try:
+				self.session.openWithCallback(self.infoBsodCallback, MessageBox, txt, type=MessageBox.TYPE_ERROR, default=False, close_on_any_key=not self.lastestBsodWarning, showYESNO=self.lastestBsodWarning)
+				self.infoBsodIsShown = True
+			except Exception as e:
+				#print "[InfoBarHandleBsod] Exception:", e
+				self.checkBsodTimer.stop()
+				self.checkBsodTimer.start(5000, True)
+				self.infoBsodCallback(False)
+				raise
+		self.lastBsod = bsodcnt
+
+	def infoBsodCallback(self, ret):
+		if ret and self.lastestBsodWarning:
+			resetBsodCounter()
+		self.infoBsodIsShown = False
+		self.lastestBsodWarning = False
+

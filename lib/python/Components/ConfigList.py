@@ -9,8 +9,9 @@ from Screens.ChoiceBox import ChoiceBox
 import skin
 from six.moves import zip
 
+
 class ConfigList(HTMLComponent, GUIComponent, object):
-	def __init__(self, list, session = None):
+	def __init__(self, list, session=None):
 		GUIComponent.__init__(self)
 		self.l = eListboxPythonConfigContent()
 		seperation = skin.parameters.get("ConfigListSeperator", 350)
@@ -19,7 +20,7 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.l.setSlider(height, space)
 		self.timer = eTimer()
 		self.list = list
-		self.onSelectionChanged = [ ]
+		self.onSelectionChanged = []
 		self.current = None
 		self.session = session
 
@@ -137,8 +138,9 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 			if x.__func__.__name__ == "selectionChanged":
 				x()
 
+
 class ConfigListScreen:
-	def __init__(self, list, session = None, on_change = None):
+	def __init__(self, list, session=None, on_change=None):
 		self["config_actions"] = NumberActionMap(["SetupActions", "InputAsciiActions", "KeyboardInputActions"],
 		{
 			"gotAsciiCode": self.keyGotAscii,
@@ -162,7 +164,7 @@ class ConfigListScreen:
 			"8": self.keyNumberGlobal,
 			"9": self.keyNumberGlobal,
 			"0": self.keyNumberGlobal,
-			"file" : self.keyFile
+			"file": self.keyFile
 		}, -1) # to prevent left/right overriding the listbox
 
 		self.onChangedEntry = []
@@ -173,7 +175,7 @@ class ConfigListScreen:
 		}, -2)
 		self["VirtualKB"].setEnabled(False)
 
-		self["config"] = ConfigList(list, session = session)
+		self["config"] = ConfigList(list, session=session)
 
 		if on_change is not None:
 			self.__changed = on_change
@@ -228,9 +230,9 @@ class ConfigListScreen:
 
 	def KeyText(self):
 		from Screens.VirtualKeyBoard import VirtualKeyBoard
-		self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title = self["config"].getCurrent()[0], text = self["config"].getCurrent()[1].value)
+		self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self["config"].getCurrent()[0], text=self["config"].getCurrent()[1].value)
 
-	def VirtualKeyBoardCallback(self, callback = None):
+	def VirtualKeyBoardCallback(self, callback=None):
 		if callback is not None and len(callback):
 			self["config"].getCurrent()[1].setValue(callback)
 			self["config"].invalidate(self["config"].getCurrent())
@@ -301,12 +303,12 @@ class ConfigListScreen:
 		restartgui = False
 		for x in self["config"].list:
 			if x[1].isChanged():
-				if x[0] == _('Show on Display'): 
+				if x[0] == _('Show on Display'):
 					restartgui = True
 			x[1].save()
-		configfile.save()	
+		configfile.save()
 		self.doRestartGui(restartgui)
-			
+
 	def doRestartGui(self, restart):
 		if restart:
 			self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Restart GUI now?"), MessageBox.TYPE_YESNO)
@@ -315,6 +317,7 @@ class ConfigListScreen:
 		if result:
 			quitMainloop(3)
 
+	# Allow ConfigList screens to be used from Wizards
 	def run(self):
 		self.keySave()
 
@@ -334,14 +337,14 @@ class ConfigListScreen:
 			x[1].cancel()
 		self.close()
 
-	def closeMenuList(self, recursive = False):
+	def closeMenuList(self, recursive=False):
 		self.help_window_was_shown = False
 		try:
 			self.HideHelp()
 		except:
 			pass
 		if self["config"].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), default = False)
+			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), default=False)
 		else:
 			try:
 				self.close(recursive)
@@ -350,6 +353,6 @@ class ConfigListScreen:
 
 	def keyCancel(self):
 		self.closeMenuList()
-	
+
 	def closeRecursive(self):
 		self.closeMenuList(True)

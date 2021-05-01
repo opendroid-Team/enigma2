@@ -472,7 +472,7 @@ class InstallFeed(Screen):
 		from Screens.PluginBrowser import PluginDownloadBrowser
 		self.session.open(PluginDownloadBrowser)
 
-from HddSetup import HddSetup, HddFastRemove
+from OPENDROID.HddSetup import HddSetup, HddFastRemove
 from Plugins.Plugin import PluginDescriptor
 import os
 

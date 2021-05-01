@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Console import Console
@@ -240,8 +241,8 @@ class BluePanel(Screen, ConfigListScreen):
 	def cancel(self):
 		self.close()
 
-        def myclose(self):
-                self.close()
+		def myclose(self):
+			self.close()
 
 class CamControl:
 	'''CAM convention is that a softlink named /etc/init.c/softcam.* points
@@ -250,7 +251,7 @@ class CamControl:
 		self.name = name
 		self.link = '/etc/init.d/' + name
 		if not os.path.exists(self.link):
-			print "[CamControl] No softcam link?" , self.link
+			print("[CamControl] No softcam link?" , self.link)
 
 	def getList(self):
 		result = []
@@ -271,17 +272,17 @@ class CamControl:
 
 	def command(self, cmd):
 		if os.path.exists(self.link):
-			print "Executing", self.link + ' ' + cmd
+			print("Executing", self.link + ' ' + cmd)
 			enigma.eConsoleAppContainer().execute(self.link + ' ' + cmd)
 
 	def select(self, which):
-		print "Selecting CAM:", which
+		print("Selecting CAM:", which)
 		if not which:
 			which = "None"
 		dst = self.name + '.' + which
 		if not os.path.exists('/etc/init.d/' + dst):
-			print "[CamControl] init script does not exist:" , dst
-			return 
+			print("[CamControl] init script does not exist:" , dst)
+			return
 		try:
 			os.unlink(self.link)
 		except:
@@ -289,9 +290,9 @@ class CamControl:
 		try:
 			os.symlink(dst, self.link);
 		except:
-			print "Failed to create symlink for softcam:", dst
+			print("Failed to create symlink for softcam:", dst)
 			import sys
-			print sys.exc_info()[:2]
+			print(sys.exc_info()[:2])
 
 
 class ShowSoftcamPackages(Screen):
@@ -469,35 +470,35 @@ class startcam(Screen):
 	<widget name="text" position="10, 80" halign="center" size="460, 60" zPosition="1" font="Regular;20" valign="top" transparent="1"/>
 	</screen>"""
 
-        def __init__(self, session, title):
-                Screen.__init__(self, session)
-                msg  = _("Please wait, restarting softcam.")
-                self['starting'] = MultiPixmap()
-                self['text'] = Label(msg)
-                self.activityTimer = eTimer()
-                self.activityTimer.timeout.get().append(self.updatepix)
-                self.onShow.append(self.startShow)
-                self.onClose.append(self.delTimer)
+	def __init__(self, session, title):
+			Screen.__init__(self, session)
+			msg  = _("Please wait, restarting softcam.")
+			self['starting'] = MultiPixmap()
+			self['text'] = Label(msg)
+			self.activityTimer = eTimer()
+			self.activityTimer.timeout.get().append(self.updatepix)
+			self.onShow.append(self.startShow)
+			self.onClose.append(self.delTimer)
 
-        def startShow(self):
-                self.curpix = 0
-                self.count = 0
-                self['starting'].setPixmapNum(0)
-                self.activityTimer.start(120)
+	def startShow(self):
+			self.curpix = 0
+			self.count = 0
+			self['starting'].setPixmapNum(0)
+			self.activityTimer.start(120)
 
-        def updatepix(self):
-                self.activityTimer.stop()
-                if self.curpix > 23:
-                        self.curpix = 0
-                if self.count > 120:
-                        self.curpix = 23
-                self['starting'].setPixmapNum(self.curpix)
-                if self.count == 35:
-                        self.hide()
-                        self.close()
-                self.activityTimer.start(140)
-                self.curpix += 1
-                self.count += 1
+	def updatepix(self):
+			self.activityTimer.stop()
+			if self.curpix > 23:
+				self.curpix = 0
+			if self.count > 120:
+				self.curpix = 23
+			self['starting'].setPixmapNum(self.curpix)
+			if self.count == 35:
+				self.hide()
+				self.close()
+			self.activityTimer.start(140)
+			self.curpix += 1
+			self.count += 1
 
-        def delTimer(self):
+	def delTimer(self):
                 del self.activityTimer

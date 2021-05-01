@@ -5,11 +5,12 @@ from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 from enigma import eLabel, eWidget, eSlider, fontRenderClass, ePoint, eSize
 
+
 class ScrollLabel(HTMLComponent, GUIComponent):
 	def __init__(self, text="", showscrollbar=True):
 		GUIComponent.__init__(self)
 		self.message = text
-		self.showscrollbar=showscrollbar
+		self.showscrollbar = showscrollbar
 		self.instance = None
 		self.long_text = None
 		self.right_text = None
@@ -31,7 +32,7 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		if self.skinAttributes:
 			widget_attribs = []
 			scrollbar_attribs = []
-			remove_attribs = [ ]
+			remove_attribs = []
 			for (attrib, value) in self.skinAttributes:
 				if "itemHeight" in attrib:
 					itemHeight = int(value)
@@ -65,7 +66,7 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 					self.split = int(value)
 					if self.split:
 						self.right_text = eLabel(self.instance)
-					self.skinAttributes.remove((attrib, value))	
+					self.skinAttributes.remove((attrib, value))
 				if "colposition" in attrib:
 					self.column = int(value)
 				if "dividechar" in attrib:
@@ -85,9 +86,9 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		lines = int(self.long_text.size().height() / self.lineheight)
 		self.pageHeight = int(lines * self.lineheight)
 		self.instance.move(self.long_text.position())
-		self.instance.resize(eSize(self.pageWidth, self.pageHeight + int(self.lineheight/6)))
-		self.scrollbar.move(ePoint(self.pageWidth-scrollbarWidth, 0))
-		self.scrollbar.resize(eSize(scrollbarWidth, self.pageHeight+ int(self.lineheight/6)))
+		self.instance.resize(eSize(self.pageWidth, self.pageHeight + int(self.lineheight / 6)))
+		self.scrollbar.move(ePoint(self.pageWidth - scrollbarWidth, 0))
+		self.scrollbar.resize(eSize(scrollbarWidth, self.pageHeight + int(self.lineheight / 6)))
 		self.scrollbar.setOrientation(eSlider.orVertical)
 		self.scrollbar.setRange(0, 100)
 		self.scrollbar.setBorderWidth(scrollbarBorderWidth)
@@ -141,7 +142,7 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 			self.updateScrollbar()
 
 	def lastPage(self):
-		self.setPos(self.TotalTextHeight-self.pageHeight)
+		self.setPos(self.TotalTextHeight - self.pageHeight)
 
 	def isAtLastPage(self):
 		return self.TotalTextHeight <= self.pageHeight or self.curPos == self.TotalTextHeight - self.pageHeight

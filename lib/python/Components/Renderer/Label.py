@@ -5,6 +5,7 @@ from Components.Renderer.Renderer import Renderer
 
 from enigma import eLabel
 
+
 class Label(VariableText, Renderer):
 	def __init__(self):
 		Renderer.__init__(self)
@@ -28,4 +29,3 @@ class Label(VariableText, Renderer):
 		else:
 			self.text = "<no-source>"
 			print("SKINERROR: render label has no source")
-

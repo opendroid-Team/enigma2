@@ -4,6 +4,7 @@ from Components.Renderer.Renderer import Renderer
 
 from enigma import eGauge
 
+
 class EGclock(VariableValue, Renderer):
 	def __init__(self):
 		Renderer.__init__(self)
@@ -19,17 +20,15 @@ class EGclock(VariableValue, Renderer):
 		if value is None:
 			value = 0
 		self.setValue(value)
-		
+
 	GUI_WIDGET = eGauge
-	
+
 	def postWidgetCreate(self, instance):
 		instance.setValue(0)
 
-	
 	def setValue(self, value):
 		#self.instance.setValue(5)
 		if self.instance is not None:
 			self.instance.setValue(value)
-
 
 	#value = property(setValue)

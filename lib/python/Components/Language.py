@@ -12,6 +12,7 @@ LPATH = resolveFilename(SCOPE_LANGUAGE, "")
 
 Lpackagename = "enigma2-locale-"
 
+
 class Language:
 	def __init__(self):
 		gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), codeset="utf-8")
@@ -112,7 +113,9 @@ class Language:
 			except:
 				pass
 
-		for category in [locale.LC_TIME, locale.LC_MONETARY, locale.LC_MESSAGES, locale.LC_NUMERIC ]:
+		# NOTE: we do not use LC_ALL, because LC_ALL will not set any of the categories, when one of the categories fails.
+		# We'd rather try to set all available categories, and ignore the others
+		for category in [locale.LC_TIME, locale.LC_MONETARY, locale.LC_MESSAGES, locale.LC_NUMERIC]:
 			try:
 				locale.setlocale(category, (self.getLanguage(), 'UTF-8'))
 			except:
@@ -121,12 +124,12 @@ class Language:
 		try:
 			os.stat('/home/root/.config')
 		except:
-			os.mkdir('/home/root/.config') 
+			os.mkdir('/home/root/.config')
 
 		localeconf = open('/home/root/.config/locale.conf', 'w')
-		for category in ["LC_TIME", "LC_DATE", "LC_MONETARY", "LC_MESSAGES", "LC_NUMERIC", "LC_NAME", "LC_TELEPHONE", "LC_ADDRESS", "LC_PAPER", "LC_IDENTIFICATION", "LC_MEASUREMENT", "LANG" ]:
+		for category in ["LC_TIME", "LC_DATE", "LC_MONETARY", "LC_MESSAGES", "LC_NUMERIC", "LC_NAME", "LC_TELEPHONE", "LC_ADDRESS", "LC_PAPER", "LC_IDENTIFICATION", "LC_MEASUREMENT", "LANG"]:
 			if category == "LANG" or (category == "LC_DATE" and os.path.exists('/usr/lib/locale/' + self.getLanguage() + '/LC_TIME')) or os.path.exists('/usr/lib/locale/' + self.getLanguage() + '/' + category):
-				localeconf.write('export %s="%s.%s"\n' % (category, self.getLanguage(), "UTF-8" ))
+				localeconf.write('export %s="%s.%s"\n' % (category, self.getLanguage(), "UTF-8"))
 			else:
 				if os.path.exists('/usr/lib/locale/C.UTF-8/' + category):
 					localeconf.write('export %s="C.UTF-8"\n' % category)
@@ -142,7 +145,7 @@ class Language:
 			self.activateLanguage(self.langlist[index])
 
 	def getLanguageList(self):
-		return [ (x, self.lang[x]) for x in self.langlist ]
+		return [(x, self.lang[x]) for x in self.langlist]
 
 	def getLanguageListSelection(self):
 		return self.langlistselection
@@ -176,7 +179,7 @@ class Language:
 	def addCallback(self, callback):
 		self.callbacks.append(callback)
 
-	def delLanguage(self, delLang = None):
+	def delLanguage(self, delLang=None):
 		from Components.config import config, configfile
 		from shutil import rmtree
 		lang = config.osd.language.value
@@ -207,7 +210,7 @@ class Language:
 					elif x == "pt":
 						if x != lang:
 							os.system("opkg remove --autoremove --force-depends " + Lpackagename + x)
-			
+
 			os.system("touch /etc/enigma2/.removelang")
 			print("reinstall default language")
 			os.system("opkg install enigma2-locale-en-gb")
@@ -237,5 +240,6 @@ class Language:
 		f.close
 		catalog = None
 		lang = None
+
 
 language = Language()

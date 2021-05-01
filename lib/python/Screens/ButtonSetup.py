@@ -17,8 +17,10 @@ from enigma import eServiceReference, eActionMap
 from Components.Label import Label
 from boxbranding import getHaveHDMIinHD, getHaveHDMIinFHD, getHaveCI
 import os
+
+
 def getButtonSetupKeys():
-        return [(_("Red"), "red", "Infobar/openSingleServiceEPG"),
+	return [(_("Red"), "red", "Infobar/openSingleServiceEPG"),
                 (_("Red long"), "red_long", "Infobar/activateRedButton"),
                 (_("Green"), "green", "Module/OPENDROID.GreenPanel/GreenPanel"),
                 (_("Green long"), "green_long", "Infobar/showAutoTimerList"),
@@ -290,7 +292,7 @@ class ButtonSetup(Screen):
                 self.ButtonSetupFunctions = getButtonSetupFunctions()
                 for x in self.ButtonSetupKeys:
                         self.list.append(ChoiceEntryComponent('', (_(x[0]), x[1])))
-                self["list"] = ChoiceList(list=self.list[:config.misc.ButtonSetup.additional_keys.value and len(self.ButtonSetupKeys) or 10], selection = 0)
+                self["list"] = ChoiceList(list=self.list[:config.misc.ButtonSetup.additional_keys.value and len(self.ButtonSetupKeys) or 10], selection=0)
                 self["choosen"] = ChoiceList(list=[])
                 self.getFunctions()
                 self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions"],

@@ -11,8 +11,8 @@ from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, 
 from Tools.LoadPixmap import LoadPixmap
 from Components.UsageConfig import *
 from Components.ConfigList import ConfigListScreen
-from AddonsPanel import * 
-from Plugin import ManualPanel, InstallFeed
+from OPENDROID.AddonsPanel import * 
+from OPENDROID.Plugin import ManualPanel, InstallFeed
 import os
 from OPENDROID.OPD_panel import OPD_panel
 from Screens.Ipkg import Ipkg

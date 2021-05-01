@@ -57,7 +57,8 @@ def setLoadUnlinkedUserbouquets(configElement):
 
 
 config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
-enigma.eDVBDB.getInstance().reloadBouquets()
+if config.clientmode.enabled.value == False:
+	enigma.eDVBDB.getInstance().reloadBouquets()
 
 profile("ParentalControl")
 import Components.ParentalControl

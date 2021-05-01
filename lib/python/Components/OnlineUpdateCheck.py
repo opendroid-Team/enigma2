@@ -15,6 +15,7 @@ def OnlineUpdateCheck(session=None, **kwargs):
 	onlineupdatecheckpoller = OnlineUpdateCheckPoller()
 	onlineupdatecheckpoller.start()
 
+
 class OnlineUpdateCheckPoller:
 	def __init__(self):
 		# Init Timer
@@ -59,14 +60,14 @@ class OnlineUpdateCheckPoller:
 				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
 			elif self.ipkg.currentCommand == IpkgComponent.CMD_UPGRADE_LIST:
 				self.total_packages = len(self.ipkg.getFetchedList())
-				print ('[OnlineVersionCheck] %s Updates available' % self.total_packages)
+				print('[OnlineVersionCheck] %s Updates available' % self.total_packages)
 				if self.total_packages:
 					from six.moves.urllib.request import urlopen
 					import socket
 					currentTimeoutDefault = socket.getdefaulttimeout()
 					socket.setdefaulttimeout(3)
 					config.softwareupdate.updatefound.setValue(True)
-					status = urlopen('https://opendroid.org/feeds/status').read()
+					status = urlopen('http://www.openvix.co.uk/feeds/status').read()
 					if '404 Not Found' in status:
 						status = '1'
 					config.softwareupdate.updateisunstable.setValue(status)
@@ -76,6 +77,7 @@ class OnlineUpdateCheckPoller:
 			else:
 				config.softwareupdate.updatefound.setValue(False)
 		pass
+
 
 class VersionCheck:
 	def __init__(self):
@@ -102,5 +104,6 @@ class VersionCheck:
 				return False
 		else:
 			return False
+
 
 versioncheck = VersionCheck()

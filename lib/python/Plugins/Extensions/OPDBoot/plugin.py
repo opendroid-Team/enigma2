@@ -16,7 +16,7 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.config import *
 from Components.ConfigList import ConfigListScreen
-import Components.Harddisk
+from Components.Harddisk import *
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists
 from Tools.Directories import pathExists
@@ -581,7 +581,7 @@ class OPDBootImageChoose(Screen):
                         self['config'].setList(self.list)
                         self.updateList()
                 except:
-                        (print '  ')
+                        pass
 
         def remove2(self, yesno):
                 if yesno:

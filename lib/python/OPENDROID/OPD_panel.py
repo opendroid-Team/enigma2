@@ -140,9 +140,11 @@ def command(comandline, strip=1):
 		else:
 			for line in file:
 				text = text + line
-				if text[-1:] != '\n': text = text + "\n"
+				if text[-1:] != '\n':
+					text = text + "\n"
 		file.close()
-	if text[-1:] == '\n': text = text[:-1]
+	if text[-1:] == '\n':
+		text = text[:-1]
 	comandline = text
 	os.system("rm /tmp/command.txt")
 	return comandline
@@ -227,11 +229,11 @@ from Screens.PiPSetup import PiPSetup
 from Screens.InfoBarGenerics import InfoBarPiP
 
 def InfoEntryComponent(file):
-	png = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "icons/" + file + ".png"));
+	png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "icons/" + file + ".png"))
 	if png == None:
 		png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/" + file + ".png")
 		if png == None:
-			png = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, 'icons/default.png'))
+			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "icons/default.png"))
 			if png == None:
 				png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/default.png")
 	res = png
@@ -543,33 +545,33 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist = []
 		self.oldmlist = []
 		self.oldmlist = self.Mlist
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("SoftwareManager" ), _("Software update"), ("software-update"))))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupSettings" ), _("Backup Settings"), ("backup-settings"))))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("RestoreSettings" ), _("Restore Settings"), ("restore-settings"))))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFiles" ), _("Show default backup files"), ("backup-files"))))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFilesAdditional" ), _("Select additional backup files"), ("backup-files-additional"))))
-		self.tlist.append(MenuEntryItem((InfoEntryComponent ("BackupFilesExcluded" ), _("Select excluded backup files"), ("backup-files-excluded"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("SoftwareManager"), _("Software update"), ("software-update"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupSettings"), _("Backup Settings"), ("backup-settings"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("RestoreSettings"), _("Restore Settings"), ("restore-settings"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFiles"), _("Show default backup files"), ("backup-files"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFilesAdditional"), _("Select additional backup files"), ("backup-files-additional"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFilesExcluded"), _("Select excluded backup files"), ("backup-files-excluded"))))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 
-	def backupDone(self,retval = None):
+	def backupDone(self, retval=None):
 		if retval is True:
-			self.session.open(MessageBox, _("Backup done."), MessageBox.TYPE_INFO, timeout = 10)
+			self.session.open(MessageBox, _("Backup done."), MessageBox.TYPE_INFO, timeout=10)
 		else:
-			self.session.open(MessageBox, _("Backup failed."), MessageBox.TYPE_INFO, timeout = 10)
+			self.session.open(MessageBox, _("Backup failed."), MessageBox.TYPE_INFO, timeout=10)
 
-	def startRestore(self, ret = False):
+	def startRestore(self, ret=False):
 		if (ret == True):
 			self.exe = True
-			self.session.open(RestoreScreen, runRestore = True)
+			self.session.open(RestoreScreen, runRestore=True)
 
 class KeymapSel(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
-		self.skinName = ["SetupInfo", "Setup" ]
+		self.skinName = ["SetupInfo", "Setup"]
 		Screen.setTitle(self, _("Keymap Selection") + "...")
-		self.setup_title =  _("Keymap Selection") + "..."
+		self.setup_title = _("Keymap Selection") + "..."
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["status"] = StaticText()
@@ -580,7 +582,7 @@ class KeymapSel(ConfigListScreen, Screen):
 		ntrkey = eEnv.resolve("${datadir}/enigma2/keymap.ntr")
 		u80key = eEnv.resolve("${datadir}/enigma2/keymap.u80")
 		self.actkeymap = self.getKeymap(config.usage.keymap.value)
-		keySel = [ ('keymap.xml', _("Default  (keymap.xml)"))]
+		keySel = [('keymap.xml', _("Default  (keymap.xml)"))]
 		if os.path.isfile(usrkey):
 			keySel.append(('keymap.usr', _("User  (keymap.usr)")))
 		if os.path.isfile(ntrkey):
@@ -596,9 +598,9 @@ class KeymapSel(ConfigListScreen, Screen):
 		self.keyshow = ConfigSelection(keySel)
 		self.keyshow.value = self.actkeymap
 
-		self.onChangedEntry = [ ]
+		self.onChangedEntry = []
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 		self.createSetup()
 		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
 		{
@@ -619,7 +621,7 @@ class KeymapSel(ConfigListScreen, Screen):
 		self.editListEntry = None
 		self.list = []
 		self.list.append(getConfigListEntry(_("Use Keymap"), self.keyshow))
-		
+
 		self["config"].list = self.list
 		self["config"].setList(self.list)
 		if config.usage.sort_settings.value:
@@ -689,7 +691,7 @@ class Info(Screen):
 		Screen.__init__(self, session)
 		self.skin = INFO_SKIN
 		self["label2"] = Label("INFO")
-		self["label1"] =  ScrollLabel()
+		self["label1"] = ScrollLabel()
 		if info == "SystemInfo":
 			self.SystemInfo()
 		elif info == "ImageVersion":
@@ -802,8 +804,8 @@ class Info(Screen):
 			info0 = self.Do_cmd("cat", "/proc/version", None)
 			info = info0.split('(')
 			info1 = "Name = " + info[0] + "\n"
-			info2 =  "Owner = " + info[1].replace(')', '') + "\n"
-			info3 =  "Mainimage = " + info[2][0:info[2].find(')')] + "\n"
+			info2 = "Owner = " + info[1].replace(')', '') + "\n"
+			info3 = "Mainimage = " + info[2][0:info[2].find(')')] + "\n"
 			info4 = "Date = " + info[3][info[3].find('SMP')+4:len(info[3])]
 			info5 = self.Do_cut(info1 + info2 + info3 + info4)
 			self["label1"].setText(info5)
@@ -877,7 +879,7 @@ class Info(Screen):
 		try:
 			self["label2"].setText(_("Swap"))
 			info0 = self.Do_cmd("cat", "/proc/swaps", None, " | sed 's/\t/ /g; s/[ ]* / /g'")
-			info0 = info0.split("\n");
+			info0 = info0.split("\n")
 			info1 = ""
 			for l in info0[1:]:
 				l1 = l.split(" ")
@@ -886,8 +888,10 @@ class Info(Screen):
 				info1 = info1 + "Size: " + l1[2] + '\n'
 				info1 = info1 + "Used: " + l1[3] + '\n'
 				info1 = info1 + "Prio: " + l1[4] + '\n\n'
-			if info1[-1:] == '\n': info1 = info1[:-1]
-			if info1[-1:] == '\n': info1 = info1[:-1]
+			if info1[-1:] == '\n':
+				info1 = info1[:-1]
+			if info1[-1:] == '\n':
+				info1 = info1[:-1]
 			info1 = self.Do_cut(info1)
 			self["label1"].setText(info1)
 		except:
@@ -917,10 +921,11 @@ class Info(Screen):
 		text = ""
 		for line in text1:
 			text = text + line[:95] + "\n"
-		if text[-1:] == '\n': text = text[:-1]
+		if text[-1:] == '\n':
+			text = text[:-1]
 		return text
 
-	def Do_cmd(self, cmd , file, arg , pipe = ""):
+	def Do_cmd(self, cmd, file, arg, pipe=""):
 		try:
 			if file != None:
 				if os.path.exists(file) is True:

@@ -10,6 +10,7 @@ from os import path
 
 WIDESCREEN = [1, 3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
 
+
 class ServiceInfo(Poll, Converter, object):
 	HAS_TELETEXT = 1
 	IS_MULTICHANNEL = 2
@@ -114,7 +115,7 @@ class ServiceInfo(Poll, Converter, object):
 			return info.getInfoString(what)
 		return convert(v)
 
-	def getServiceInfoHexString(self, info, what, convert = lambda x: "%04x" % x):
+	def getServiceInfoHexString(self, info, what, convert=lambda x: "%04x" % x):
 		v = info.getInfo(what)
 		if v == -1:
 			return "N/A"
@@ -263,7 +264,7 @@ class ServiceInfo(Poll, Converter, object):
 			return video_height > 500 and video_height <= 576
 		elif self.type == self.IS_480:
 			return video_height > 0 and video_height <= 480
-		elif self.type == self.IS_4K: 
+		elif self.type == self.IS_4K:
 			if info.getInfo(iServiceInformation.sGamma) > 0:
 				return False
 			else:
@@ -327,11 +328,11 @@ class ServiceInfo(Poll, Converter, object):
 					video_rate = int(self.getServiceInfoString(info, iServiceInformation.sFrameRate))
 				except:
 					return "N/A fps"
-			return video_rate, lambda x: "%d fps" % ((x+500)/1000)
+			return video_rate, lambda x: "%d fps" % ((x + 500) / 1000)
 		elif self.type == self.PROGRESSIVE:
 			return self._getProgressiveStr(info)
 		elif self.type == self.TRANSFERBPS:
-			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x/1024))
+			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x / 1024))
 		elif self.type == self.HAS_HBBTV:
 			return info.getInfoString(iServiceInformation.sHBBTVUrl)
 		elif self.type == self.FREQ_INFO:
@@ -432,4 +433,4 @@ class ServiceInfo(Poll, Converter, object):
 				if info and not self._isHDMIIn(info):
 					return
 
-			Converter.changed(self, what) 
+			Converter.changed(self, what)

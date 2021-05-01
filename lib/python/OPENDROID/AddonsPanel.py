@@ -5,7 +5,6 @@ from enigma import eTimer
 from os import system, listdir, chdir, getcwd, remove as os_remove
 import os
 import urllib
-from urllib2 import Request, urlopen, URLError, HTTPError
 from Screens.Screen import Screen
 from Components.PluginList import PluginList, PluginEntryComponent, PluginCategoryComponent, PluginDownloadComponent
 from Components.Harddisk import harddiskmanager

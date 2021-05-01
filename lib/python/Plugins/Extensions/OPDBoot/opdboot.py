@@ -18,7 +18,7 @@ def OPDBootMainEx(source, target, installsettings, bootquest, zipdelete, getimag
         media_opendroid_target = mediahome + target
         list_one = ['rm -r ' + media_opendroid_target + dev_null,
                     'mkdir ' + media_opendroid_target + dev_null, 
-                    'chmod -R 0777 ' + media_opendroid_target]
+                    'chmod -R 0o777 ' + media_opendroid_target]
 
         for command in list_one:
                 os.system(command)
@@ -68,8 +68,8 @@ def OPDBootMainEx(source, target, installsettings, bootquest, zipdelete, getimag
                                         elif 'rckeyboard_enable = True' in line:
                                                 line = '#' + line
                                 if 'HardwareInfoVu.py' in entrie:
-                                        if print("hardware detection failed"' in line:)
-                                                line = '\t\t    HardwareInfoVu.device_name ="duo"'
+                                        print("hardware detection failed", line)
+                                        line = '\t\t    HardwareInfoVu.device_name ="duo"'
 
                                 out.write(line)
 
@@ -107,7 +107,7 @@ def OPDBootMainEx(source, target, installsettings, bootquest, zipdelete, getimag
                                 f.close()
                                 out.close()
                                 os.rename(tempfile, filename)
-                                os.chmod(filename, 0755)
+                                os.chmod(filename, 0o755)
 
         rc = OPDBootRemoveUnpackDirs(getimagefolder)
         if bootquest == "True":
@@ -157,10 +157,10 @@ def OPDBootExtract(source, target, zipdelete, getimagefolder, getMachineRootFile
                                 os.system('mv %s rootfs.bin'% getMachineRootFile)
                         print('[OPDBoot] Extracting UBIFS image and moving extracted image to our target')
                         if os.path.exists(extensions_path_extractpyo):
-                                os.chmod(extensions_path_extractpyo, 0777)
+                                os.chmod(extensions_path_extractpyo, 0o755)
                                 cmd = 'python ' + extensions_path_extractpyo + ' rootfs.bin -o ' + media_nf + '/ubi'
                         else:
-                                os.chmod(extensions_path_extractpy, 0777)
+                                os.chmod(extensions_path_extractpy, 0o755)
                                 cmd = 'python ' + extensions_path_extractpy + ' rootfs.bin -o ' + media_nf + '/ubi'
                         print (cmd)
                         os.system(cmd)

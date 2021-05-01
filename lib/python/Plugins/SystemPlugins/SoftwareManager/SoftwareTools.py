@@ -12,16 +12,17 @@ from Tools.HardwareInfo import HardwareInfo
 from time import time
 
 from boxbranding import getImageVersion
+import six
+
 
 class SoftwareTools(PackageInfoHandler):
 	lastDownloadDate = None
 	NetworkConnectionAvailable = None
 	list_updating = False
 	available_updates = 0
-	available_updatelist  = []
-	available_packetlist  = []
+	available_updatelist = []
+	available_packetlist = []
 	installed_packetlist = {}
-
 
 	def __init__(self):
 		aboutInfo = getImageVersion()
@@ -30,7 +31,7 @@ class SoftwareTools(PackageInfoHandler):
 		else:
 			self.ImageVersion = 'Stable'
 		self.language = language.getLanguage()[:2] # getLanguage returns e.g. "fi_FI" for "language_country"
-		PackageInfoHandler.__init__(self, self.statusCallback, blocking = False, neededTag = 'ALL_TAGS', neededFlag = self.ImageVersion)
+		PackageInfoHandler.__init__(self, self.statusCallback, blocking=False, neededTag='ALL_TAGS', neededFlag=self.ImageVersion)
 		self.directory = resolveFilename(SCOPE_METADIR)
 		self.hardware_info = HardwareInfo()
 		self.list = List([])
@@ -45,12 +46,12 @@ class SoftwareTools(PackageInfoHandler):
 	def statusCallback(self, status, progress):
 		pass
 
-	def startSoftwareTools(self, callback = None):
+	def startSoftwareTools(self, callback=None):
 		if callback is not None:
 			self.NotifierCallback = callback
 		iNetwork.checkNetworkState(self.checkNetworkCB)
 
-	def checkNetworkCB(self,data):
+	def checkNetworkCB(self, data):
 		if data is not None:
 			if data <= 2:
 				self.NetworkConnectionAvailable = True
@@ -59,7 +60,7 @@ class SoftwareTools(PackageInfoHandler):
 				self.NetworkConnectionAvailable = False
 				self.getUpdates()
 
-	def getUpdates(self, callback = None):
+	def getUpdates(self, callback=None):
 		if self.lastDownloadDate is None:
 				if self.NetworkConnectionAvailable:
 					self.lastDownloadDate = time()
@@ -111,7 +112,7 @@ class SoftwareTools(PackageInfoHandler):
 				self.startIpkgListAvailable()
 		pass
 
-	def startIpkgListAvailable(self, callback = None):
+	def startIpkgListAvailable(self, callback=None):
 		if callback is not None:
 			self.list_updating = True
 		if self.list_updating:
@@ -120,9 +121,10 @@ class SoftwareTools(PackageInfoHandler):
 			cmd = self.ipkg.ipkg + " list"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListAvailableCB, callback)
 
-	def IpkgListAvailableCB(self, result, retval, extra_args = None):
+	def IpkgListAvailableCB(self, result, retval, extra_args=None):
 		(callback) = extra_args or None
 		if result:
+			result = six.ensure_str(result)
 			if self.list_updating:
 				self.available_packetlist = []
 				for x in result.splitlines():
@@ -146,7 +148,7 @@ class SoftwareTools(PackageInfoHandler):
 					if callback is not None:
 						callback(False)
 
-	def startInstallMetaPackage(self, callback = None):
+	def startInstallMetaPackage(self, callback=None):
 		if callback is not None:
 			self.list_updating = True
 		if self.list_updating:
@@ -158,9 +160,10 @@ class SoftwareTools(PackageInfoHandler):
 			else:
 				self.InstallMetaPackageCB(True)
 
-	def InstallMetaPackageCB(self, result, retval = None, extra_args = None):
+	def InstallMetaPackageCB(self, result, retval=None, extra_args=None):
 		(callback) = extra_args or None
 		if result:
+			result = six.ensure_str(result)
 			self.fillPackagesIndexList()
 			if callback is None:
 				self.startIpkgListInstalled()
@@ -175,7 +178,7 @@ class SoftwareTools(PackageInfoHandler):
 					if callback is not None:
 						callback(False)
 
-	def startIpkgListInstalled(self, callback = None):
+	def startIpkgListInstalled(self, callback=None):
 		if callback is not None:
 			self.list_updating = True
 		if self.list_updating:
@@ -184,9 +187,10 @@ class SoftwareTools(PackageInfoHandler):
 			cmd = self.ipkg.ipkg + " list_installed"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListInstalledCB, callback)
 
-	def IpkgListInstalledCB(self, result, retval, extra_args = None):
+	def IpkgListInstalledCB(self, result, retval, extra_args=None):
 		(callback) = extra_args or None
 		if result:
+			result = six.ensure_str(result)
 			self.installed_packetlist = {}
 			for x in result.splitlines():
 				tokens = x.split(' - ')
@@ -200,7 +204,7 @@ class SoftwareTools(PackageInfoHandler):
 					self.packagesIndexlist.remove(package)
 			for package in self.packagesIndexlist[:]:
 				attributes = package[0]["attributes"]
-				if attributes.has_key("packagetype"):
+				if "packagetype" in attributes:
 					if attributes["packagetype"] == "internal":
 						self.packagesIndexlist.remove(package)
 			if callback is None:
@@ -216,17 +220,17 @@ class SoftwareTools(PackageInfoHandler):
 					if callback is not None:
 						callback(False)
 
-	def countUpdates(self, callback = None):
+	def countUpdates(self, callback=None):
 		self.available_updates = 0
-		self.available_updatelist  = []
+		self.available_updatelist = []
 		for package in self.packagesIndexlist[:]:
 			attributes = package[0]["attributes"]
 			packagename = attributes["packagename"]
 			for x in self.available_packetlist:
 				if x[0] == packagename:
-					if self.installed_packetlist.has_key(packagename):
+					if packagename in self.installed_packetlist:
 						if self.installed_packetlist[packagename] != x[1]:
-							self.available_updates +=1
+							self.available_updates += 1
 							self.available_updatelist.append([packagename])
 
 		self.list_updating = False
@@ -239,13 +243,13 @@ class SoftwareTools(PackageInfoHandler):
 					self.NotifierCallback(True)
 					self.NotifierCallback = None
 
-	def startIpkgUpdate(self, callback = None):
+	def startIpkgUpdate(self, callback=None):
 		if not self.Console:
 			self.Console = Console()
 		cmd = self.ipkg.ipkg + " update"
 		self.Console.ePopen(cmd, self.IpkgUpdateCB, callback)
 
-	def IpkgUpdateCB(self, result, retval, extra_args = None):
+	def IpkgUpdateCB(self, result, retval, extra_args=None):
 		(callback) = extra_args or None
 		if result:
 			if self.Console:
@@ -261,15 +265,15 @@ class SoftwareTools(PackageInfoHandler):
 		self.ipkg.stop()
 		if self.Console is not None:
 			if len(self.Console.appContainers):
-				for name in self.Console.appContainers.keys():
+				for name in list(self.Console.appContainers.keys()):
 					self.Console.kill(name)
 		if self.UpdateConsole is not None:
 			if len(self.UpdateConsole.appContainers):
-				for name in self.UpdateConsole.appContainers.keys():
+				for name in list(self.UpdateConsole.appContainers.keys()):
 					self.UpdateConsole.kill(name)
 
 	def verifyPrerequisites(self, prerequisites):
-		if prerequisites.has_key("hardware"):
+		if "hardware" in prerequisites:
 			hardware_found = False
 			for hardware in prerequisites["hardware"]:
 				if hardware == self.hardware_info.device_name:

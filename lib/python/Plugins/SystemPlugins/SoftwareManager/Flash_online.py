@@ -1,5 +1,5 @@
 from __future__ import print_function
-from Plugins.Extensions.OPDBoot.plugin import *
+#from Plugins.Extensions.OPDBoot.plugin import *
 from Components.config import config
 from Components.Label import Label
 from Components.Button import Button
@@ -17,10 +17,11 @@ from Components.Console import Console
 from Tools.BoundFunction import boundFunction
 from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, getBoxType, GetBoxName
 from enigma import eTimer, fbClass
-import os, urllib2, shutil, math, time, zipfile, shutil
+#import os, urllib2, shutil, math, time, zipfile, shutil
 from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
 from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
+from six.moves.urllib.request import urlopen
 
 feedurl = 'https://opendroid.org/7.1'
 imagecat = [7.1]
@@ -101,15 +102,15 @@ class FlashOnline(Screen):
 				the_page =""
 				url = '%s/%s/%s' % (feedurl,brand,box)
 				try:
-					req = urllib2.Request(url)
-					response = urllib2.urlopen(req)
-				except urllib2.URLError as e:
+					req = urlopen.Request(url)
+					response = urlopen.urlopen(req)
+				except urlopen.URLError as e:
 					print("URL ERROR: %s\n%s" % (e,url))
 					continue
 
 				try:
 					the_page = response.read()
-				except urllib2.HTTPError as e:
+				except urlopen.HTTPError as e:
 					print("HTTP download ERROR: %s" % e.code)
 					continue
 

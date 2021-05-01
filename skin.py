@@ -15,7 +15,8 @@ from Tools.Directories import SCOPE_CONFIG, SCOPE_CURRENT_LCDSKIN, SCOPE_CURRENT
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 
-DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Multibox/skin.xml" or "Steampunk/skin.xml"
+DEFAULT_SKIN = "Steampunk/skin.xml"
+#DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Steampunk/skin.xml" or "Multibox/skin.xml"
 EMERGENCY_SKIN = "skin_default.xml"
 EMERGENCY_NAME = "Default OE-A"
 DEFAULT_DISPLAY_SKIN = "skin_display_grautec.xml" if SystemInfo["grautec"] else "skin_display.xml"
@@ -104,7 +105,8 @@ def InitSkins():
 		result.append(skin)
 	# Add the activated optional skin parts.
 	if currentPrimarySkin != None:
-		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin_off", ""))
+		config.skin.primary_skin.value.replace('/skin.xml', '')
+		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin", ""))
 		if pathExists(partsDir) and currentPrimarySkin != DEFAULT_SKIN:
 			for file in sorted(listdir(partsDir)):
 				if file.startswith("skin_") and file.endswith(".xml"):
@@ -137,7 +139,7 @@ def loadSkin(filename, scope=SCOPE_SKIN, desktop=getDesktop(GUI_SKIN_ID), screen
 		with open(filename, "r") as fd:  # This open gets around a possible file handle leak in Python's XML parser.
 			try:
 				domSkin = xml.etree.cElementTree.parse(fd).getroot()
-				# print "[Skin] DEBUG: Extracting non screen blocks from '%s'.  (scope='%s')" % (filename, scope)
+				# print("[Skin] DEBUG: Extracting non screen blocks from '%s'.  (scope='%s')" % (filename, scope))
 				# For loadSingleSkinData colors, bordersets etc. are applied one after
 				# the other in order of ascending priority.
 				loadSingleSkinData(desktop, screenID, domSkin, filename, scope=scope)
