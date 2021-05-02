@@ -10,7 +10,6 @@ from Components.Network import iNetwork
 from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_METADIR
 from Tools.HardwareInfo import HardwareInfo
 from time import time
-
 from boxbranding import getImageVersion
 import six
 
@@ -281,5 +280,6 @@ class SoftwareTools(PackageInfoHandler):
 			if not hardware_found:
 				return False
 		return True
+
 
 iSoftwareTools = SoftwareTools()

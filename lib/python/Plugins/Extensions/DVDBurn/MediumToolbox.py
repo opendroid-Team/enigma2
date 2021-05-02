@@ -10,6 +10,7 @@ from Components.Console import Console
 from Plugins.SystemPlugins.Hotplug.plugin import hotplugNotifier
 import six
 
+
 class MediumToolbox(Screen):
 	skin = """
 		<screen name="MediumToolbox" position="center,center"  size="560,445" title="Medium toolbox" >
@@ -27,15 +28,15 @@ class MediumToolbox(Screen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		
+
 		self["key_red"] = StaticText(_("Exit"))
 		self["key_green"] = StaticText(_("Update"))
 		self["key_yellow"] = StaticText()
-		
+
 		self["space_label"] = StaticText()
 		self["space_bar"] = Progress()
-		
-		self.mediuminfo = [ ]
+
+		self.mediuminfo = []
 		self.formattable = False
 		self["details"] = ScrollLabel()
 		self["info"] = StaticText()
@@ -76,7 +77,7 @@ class MediumToolbox(Screen):
 			job_manager.AddJob(job)
 			from Screens.TaskView import JobView
 			self.session.openWithCallback(self.formatCB, JobView, job)
-	
+
 	def formatCB(self, in_background):
 		self.update()
 
@@ -113,7 +114,7 @@ class MediumToolbox(Screen):
 				if size > 0:
 					capacity = size / 1048576
 					if used:
-						used = capacity-used
+						used = capacity - used
 					print("[dvd+rw-mediainfo] free blocks capacity=%d, used=%d" % (capacity, used))
 			elif line.find("Disc status:") > -1:
 				if line.find("blank") > -1:
@@ -126,7 +127,7 @@ class MediumToolbox(Screen):
 					capacity = 1
 				else:
 					capacity = formatted_capacity
-			infotext += line+'\n'
+			infotext += line + '\n'
 		if capacity and used > capacity:
 			used = read_capacity or capacity
 			capacity = formatted_capacity or capacity
@@ -152,7 +153,7 @@ class MediumToolbox(Screen):
 		else:
 			self["space_label"].text = _("Medium is not a writeable DVD!")
 			self["space_bar"].value = 0
-		free = capacity-used
+		free = capacity - used
 		if free < 2:
 			free = 0
 		self["info"].text = "Media-Type:\t\t%s\nFree capacity:\t\t%d MB" % (mediatype or "NO DVD", free)
@@ -162,18 +163,21 @@ class MediumToolbox(Screen):
 		hotplugNotifier.remove(self.update)
 		self.close()
 
+
 class DVDformatJob(Job):
 	def __init__(self, toolbox):
 		Job.__init__(self, _("Recordable media toolbox"))
 		self.toolbox = toolbox
 		DVDformatTask(self)
-		
+
 	def retry(self):
 		self.tasks[0].args += self.tasks[0].retryargs
 		Job.retry(self)
 
+
 class DVDformatTaskPostcondition(Condition):
 	RECOVERABLE = True
+
 	def check(self, task):
 		return task.error is None
 
@@ -184,16 +188,18 @@ class DVDformatTaskPostcondition(Condition):
 			task.ERROR_UNKNOWN: _("An unknown error occurred!")
 		}[task.error]
 
+
 class DVDformatTask(Task):
 	ERROR_ALREADYFORMATTED, ERROR_NOTWRITEABLE, ERROR_UNKNOWN = list(range(3))
+
 	def __init__(self, job, extra_args=[]):
 		Task.__init__(self, job, ("RW medium format"))
 		self.toolbox = job.toolbox
 		self.postconditions.append(DVDformatTaskPostcondition())
 		self.setTool("dvd+rw-format")
-		self.args += [ "/dev/" + harddiskmanager.getCD() ]
+		self.args += ["/dev/" + harddiskmanager.getCD()]
 		self.end = 1100
-		self.retryargs = [ ]
+		self.retryargs = []
 
 	def prepare(self):
 		self.error = None
@@ -201,21 +207,21 @@ class DVDformatTask(Task):
 	def processOutputLine(self, line):
 		if line.startswith("- media is already formatted"):
 			self.error = self.ERROR_ALREADYFORMATTED
-			self.retryargs = [ "-force" ]
-		#if line.startswith("- media is not blank") or 
+			self.retryargs = ["-force"]
+		#if line.startswith("- media is not blank") or
 		if line.startswith("  -format=full  to perform full (lengthy) reformat;"):
 			self.error = self.ERROR_ALREADYFORMATTED
-			self.retryargs = [ "-blank" ]
+			self.retryargs = ["-blank"]
 		elif line.startswith("                to eliminate or adjust Spare Area."):
 			self.error = self.ERROR_ALREADYFORMATTED
-			self.retryargs = [ "-ssa=default" ]	
+			self.retryargs = ["-ssa=default"]
 		if line.startswith(":-( mounted media doesn't appear to be"):
 			self.error = self.ERROR_NOTWRITEABLE
 
 	def processOutput(self, data):
 		print("[DVDformatTask processOutput]  ", data)
 		if data.endswith('%'):
-			data= data.replace('\x08', '')
-			self.progress = int(float(data[:-1])*10)
+			data = data.replace('\x08', '')
+			self.progress = int(float(data[:-1]) * 10)
 		else:
 			Task.processOutput(self, data)

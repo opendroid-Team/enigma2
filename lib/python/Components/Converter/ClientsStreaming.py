@@ -66,7 +66,7 @@ class ClientsStreaming(Converter, Poll, object):
 		ips = []
 		names = []
 		encoders = []
-		extrainfo = _("ClientIP") + "\t\t" + _("Transcode")  + "\t" + _("Channel")  + "\n\n"
+		extrainfo = _("ClientIP") + "\t\t" + _("Transcode") + "\t" + _("Channel") + "\n\n"
 		info = ""
 
 		for x in self.streamServer.getConnectedClients():

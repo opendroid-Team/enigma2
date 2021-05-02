@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 from boxbranding import getImageVersion
 
+
 def enumFeeds():
 	for fn in os.listdir('/etc/opkg'):
 		if fn.endswith('-feed.conf'):
@@ -16,6 +17,7 @@ def enumFeeds():
 			except IOError:
 				pass
 
+
 def enumPlugins(filter_start=''):
 	list_dir = listsDirPath()
 	for feed in enumFeeds():
@@ -26,7 +28,7 @@ def enumPlugins(filter_start=''):
 					package = line.split(":", 1)[1].strip()
 					version = ''
 					description = ''
-					if package.startswith(filter_start) and not package.endswith('-dev') and not package.endswith('-staticdev') and not package.endswith('-dbg') and not package.endswith('-doc') and not package.endswith('-src'):
+					if package.startswith(filter_start) and not package.endswith('-dev') and not package.endswith('-staticdev') and not package.endswith('-dbg') and not package.endswith('-doc') and not package.endswith('-src') and not package.endswith('--pycache--'):
 						continue
 					package = None
 				if package is None:
@@ -50,6 +52,7 @@ def enumPlugins(filter_start=''):
 		except IOError:
 			pass
 
+
 def listsDirPath():
 	try:
 		for line in open('/etc/opkg/opkg.conf', "r"):
@@ -62,6 +65,7 @@ def listsDirPath():
 	except Exception as ex:
 		print("[opkg]", ex)
 	return '/var/lib/opkg/lists'
+
 
 if __name__ == '__main__':
 	for p in enumPlugins('enigma'):
