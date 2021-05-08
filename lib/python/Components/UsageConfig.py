@@ -9,7 +9,7 @@ from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTun
 from Components.About import about
 from Components.Harddisk import harddiskmanager
 from Components.config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigFloat, ConfigDictionarySet, ConfigDirectory
-from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
+from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists, isPluginInstalled
 from Components.NimManager import nimmanager
 from Components.RcModel import rc_model
 from Components.ServiceList import refreshServiceList
@@ -48,9 +48,9 @@ def InitUsageConfig():
 	config.misc.remotecontrol_text_support = ConfigYesNo(default=True)
 
 	config.workaround = ConfigSubsection()
-	config.workaround.blueswitch = ConfigSelection(default = "0", choices = [("0", _("BluePanel/OPENDROID")), ("1", _("OPENDROID/BluePanel"))])
+	config.workaround.blueswitch = ConfigSelection(default="0", choices=[("0", _("BluePanel/OPENDROID")), ("1", _("OPENDROID/BluePanel"))])
 	config.workaround.deeprecord = ConfigYesNo(default=False)
-	config.workaround.wakeuptimeoffset = ConfigSelection(default = "standard", choices = [("-300", _("-5")), ("-240", _("-4")), ("-180", _("-3")), ("-120", _("-2")), ("-60", _("-1")), ("standard", _("Standard")), ("0", _("0")), ("60", _("1")), ("120", _("2")), ("180", _("3")), ("240", _("4")), ("300", _("5"))])
+	config.workaround.wakeuptimeoffset = ConfigSelection(default="standard", choices=[("-300", _("-5")), ("-240", _("-4")), ("-180", _("-3")), ("-120", _("-2")), ("-60", _("-1")), ("standard", _("Standard")), ("0", _("0")), ("60", _("1")), ("120", _("2")), ("180", _("3")), ("240", _("4")), ("300", _("5"))])
 	config.workaround.wakeuptime = ConfigSelectionNumber(default=5, stepwidth=1, min=0, max=30, wraparound=True)
 	config.workaround.wakeupwindow = ConfigSelectionNumber(default=5, stepwidth=5, min=5, max=60, wraparound=True)
 
@@ -145,7 +145,7 @@ def InitUsageConfig():
 		("keep", _("Keep service")),
 		("reverseB", _("Reverse bouquet buttons")),
 		("keep reverseB", _("Keep service") + " + " + _("Reverse bouquet buttons"))])
-	config.usage.show_dvdplayer = ConfigYesNo(default = False)
+	config.usage.show_dvdplayer = ConfigYesNo(default=False)
 	config.usage.showpicon = ConfigYesNo(default=True)
 
 #########  Workaround for VTI Skins   ##############
@@ -181,7 +181,7 @@ def InitUsageConfig():
 	config.usage.show_infobar_do_dimming = ConfigYesNo(default=False)
 	config.usage.show_infobar_dimming_speed = ConfigSelectionNumber(min=1, max=40, stepwidth=1, default=10, wraparound=True)
 	config.usage.show_infobar_channel_number = ConfigYesNo(default=False)
-	config.usage.show_second_infobar = ConfigSelection(default="1", choices=[("0", _("Off")), ("1", _("Event Info")), ("2", _("2nd Infobar INFO")), ("3", _("2nd Infobar ECM"))])
+	config.usage.show_second_infobar = ConfigSelection(default="2", choices=[("0", _("Off")), ("1", _("Event Info")), ("2", _("2nd Infobar INFO")), ("3", _("2nd Infobar ECM"))])
 	config.usage.second_infobar_timeout = ConfigSelection(default="5", choices=[("0", _("No timeout"))] + choicelist)
 
 	def showsecondinfobarChanged(configElement):
@@ -193,7 +193,7 @@ def InitUsageConfig():
 	config.usage.infobar_frontend_source = ConfigSelection(default="tuner", choices=[("settings", _("Settings")), ("tuner", _("Tuner"))])
 
 	config.usage.show_picon_bkgrn = ConfigSelection(default="transparent", choices=[("none", _("Disabled")), ("transparent", _("Transparent")), ("blue", _("Blue")), ("red", _("Red")), ("black", _("Black")), ("white", _("White")), ("lightgrey", _("Light Grey")), ("grey", _("Grey"))])
-	config.usage.show_menupath = ConfigSelection(default = "small", choices = [("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
+	config.usage.show_menupath = ConfigSelection(default="small", choices=[("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
 	config.usage.show_genre_info = ConfigYesNo(default=True)
 	config.usage.show_spinner = ConfigYesNo(default=True)
 	config.usage.enable_tt_caching = ConfigYesNo(default=True)
@@ -513,7 +513,7 @@ def InitUsageConfig():
          ('200', _('medium')),
          ('100', _('fast')),
          ('50', _('very fast'))])
-	if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/CoolTVGuide/plugin.py"):
+	if isPluginInstalled("CoolTVGuide"):
 		config.usage.okbutton_mode = ConfigSelection(default="0", choices=[
 						("0", _("InfoBar")),
 						("1", _("Channel List")),
@@ -528,10 +528,10 @@ def InitUsageConfig():
 						("1", _("Channel List"))])
 	config.usage.volume_instead_of_channelselection = ConfigYesNo(default = False)
 	config.usage.zap_with_arrow_buttons = ConfigYesNo(default = False)
-	config.usage.infobar_frontend_source = ConfigSelection(default = 'tuner', choices = [
+	config.usage.infobar_frontend_source = ConfigSelection(default='tuner', choices = [
         ('settings', _('Settings')),
         ('tuner', _('Tuner'))])
-	config.usage.show_picon_bkgrn = ConfigSelection(default = 'transparent', choices = [
+	config.usage.show_picon_bkgrn = ConfigSelection(default='transparent', choices = [
         ('none', _('Disabled')),
         ('transparent', _('Transparent')),
         ('blue', _('Blue')),
@@ -662,20 +662,20 @@ def InitUsageConfig():
 	   tmpvalue = config.usage.vod_path.value
 	   config.usage.vod_path.setValue(tmpvalue + '/')
 	   config.usage.vod_path.save()
-	config.usage.vod_path.addNotifier(vodpathChanged, immediate_feedback = False)
+	config.usage.vod_path.addNotifier(vodpathChanged, immediate_feedback=False)
 	config.usage.allowed_vod_paths = ConfigLocations(default = [
 	  resolveFilename(SCOPE_VOD)])
-	config.usage.hide_zap_errors = ConfigYesNo(default = True)
-	config.usage.enableVodMode = ConfigYesNo(default = True)
-	config.misc.use_ci_assignment = ConfigYesNo(default = True)
-	config.usage.messageNoResources = ConfigYesNo(default = True)
-	config.usage.messageTuneFailed = ConfigYesNo(default = True)
-	config.usage.messageNoPAT = ConfigYesNo(default = True)
-	config.usage.messageNoPATEntry = ConfigYesNo(default = True)
-	config.usage.messageNoPMT = ConfigYesNo(default = True)
-	config.usage.dsemudmessages = ConfigYesNo(default = True)
-	config.usage.messageYesPmt = ConfigYesNo(default = False)
-	config.usage.hide_zap_errors = ConfigYesNo(default = False)
+	config.usage.hide_zap_errors = ConfigYesNo(default=True)
+	config.usage.enableVodMode = ConfigYesNo(default=True)
+	config.misc.use_ci_assignment = ConfigYesNo(default=True)
+	config.usage.messageNoResources = ConfigYesNo(default=True)
+	config.usage.messageTuneFailed = ConfigYesNo(default=True)
+	config.usage.messageNoPAT = ConfigYesNo(default=True)
+	config.usage.messageNoPATEntry = ConfigYesNo(default=True)
+	config.usage.messageNoPMT = ConfigYesNo(default=True)
+	config.usage.dsemudmessages = ConfigYesNo(default=True)
+	config.usage.messageYesPmt = ConfigYesNo(default=False)
+	config.usage.hide_zap_errors = ConfigYesNo(default=False)
 
 	config.usage.hide_ci_messages = ConfigYesNo(default=False)
 	config.usage.show_cryptoinfo = ConfigSelection([("0", _("Off")), ("1", _("One line")), ("2", _("Two lines"))], "2")
@@ -1230,7 +1230,7 @@ def InitUsageConfig():
 
 	crashlogheader = _("We are really sorry. Your receiver encountered "
 					 "a software problem, and needs to be restarted.\n"
-					 "Please send the logfile %senigma2_crash_xxxxxx.log to www.opena.tv.\n"
+					 "Please send the logfile %senigma2_crash_xxxxxx.log to https://droidsat.org\n"
 					 "Your receiver restarts in 10 seconds!\n"
 					 "Component: enigma2") % config.crash.debug_path.value
 	config.crash.debug_text = ConfigText(default=crashlogheader, fixed_size=False)
@@ -1491,12 +1491,12 @@ def InitUsageConfig():
 					("2", _("Yes, but if not available show the timer list")),
 					("3", _("Yes, but if not available show the plugin browser"))])
 	config.plisettings.ColouredButtons = ConfigYesNo(default=False)
-	config.plisettings.InfoBarEpg_mode = ConfigSelection(default="3", choices=[
+	config.plisettings.InfoBarEpg_mode = ConfigSelection(default="0", choices=[
 					("0", _("as plugin in extended bar")),
 					("1", _("with long OK press")),
 					("2", _("with exit button")),
 					("3", _("with left/right buttons"))])
-	if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/CoolTVGuide/plugin.py"):
+	if isPluginInstalled("CoolTVGuide"):
 		config.plisettings.PLIEPG_mode = ConfigSelection(default="cooltvguide", choices=[
 					("pliepg", _("Show Graphical EPG")),
 					("single", _("Show Single EPG")),
@@ -1709,6 +1709,7 @@ def calcFrontendPriorityIntval(config_priority, config_priority_multiselect, con
 				elif config_priority_strictly.value == "while_available":
 					elem += eDVBFrontend.preferredFrontendPrioHigh
 	return elem
+
 
 def updateChoices(sel, choices):
 	if choices:

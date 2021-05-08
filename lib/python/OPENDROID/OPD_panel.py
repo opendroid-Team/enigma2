@@ -11,6 +11,7 @@ from Screens.Standby import *
 from Screens.LogManager import *
 from Screens.MessageBox import MessageBox
 from Plugins.SystemPlugins.SoftwareManager.Flash_online import FlashOnline
+import six
 from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
 from Screens.Screen import Screen
 from Screens.TaskView import JobView
@@ -25,7 +26,7 @@ from Components.FileList import FileList
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
 from Components.Pixmap import Pixmap
-from Components.config import ConfigSubsection, ConfigInteger, ConfigText, getConfigListEntry, ConfigSelection, ConfigIP, ConfigYesNo, ConfigSequence, ConfigNumber, NoSave, ConfigEnableDisable, configfile
+from Components.config import ConfigSubsection, ConfigInteger, ConfigText, getConfigListEntry, ConfigSelection, ConfigIP, ConfigYesNo, ConfigSequence, ConfigNumber, NoSave, ConfigEnableDisable, configfile, ConfigPassword
 from Components.ConfigList import ConfigListScreen, ConfigList
 from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
@@ -1087,81 +1088,120 @@ class FileDownloadTask(Task):
 			self.finish(aborted=True)
 		else:
 			Task.processFinished(self, 0)
-class PasswdScreen(Screen):
-
-	def __init__(self, session, args = 0):
+class PasswdScreen(ConfigListScreen, Screen):
+	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = "NetworkPassword"
-		self.title = _("Password setup")
-		self['lab1'] = ScrollLabel('')
-		try:
-			self["title"] = StaticText(self.title)
-		except:
-			print('self["title"] was not found in skin')
-
-		self.user = 'root'
-		self.output_line = ''
+		self.onChangedEntry = []
 		self.list = []
-		self['passwd'] = ConfigList(self.list)
-		self["key_red"] = StaticText(_("Close"))
+		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.selectionChanged)
+		Screen.setTitle(self, _("Password Setup"))
+
+		self["key_red"] = StaticText(_("Exit"))
 		self["key_green"] = StaticText(_("Save"))
-		self["key_yellow"] = StaticText(_("new Random"))
-		self["key_blue"] = StaticText(_("virt. Keyboard"))
-		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"], {
+		self["key_yellow"] = StaticText(_("Random password"))
+		self["key_blue"] = StaticText("virt. Keyboard")
+
+		self["actions"] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"], {
 			"red": self.close,
+			"cancel": self.close,
 			"green": self.SetPasswd,
 			"save": self.SetPasswd,
 			"yellow": self.newRandom,
 			"blue": self.bluePressed,
-			"down": self['lab1'].pageDown,
-			"cancel": self.close}, -1)
-		self["lab1"].hide()
-		self.updatetext()
-		self.buildList(self.GeneratePassword())
-		self.onShown.append(self.setWindowTitle)
-		self["lab1"].show()
+			})
 
-	def updatetext(self):
-		message = _("You must set a root password in order to be able to use network services,"
-						" such as FTP, telnet or ssh.")
-		self["lab1"].setText(message)
+		self["description"] = Label()
+		self['footnote'] = Label()
+		self["VKeyIcon"] = Boolean(False)
+		self["HelpWindow"] = Pixmap()
+		self["HelpWindow"].hide()
+
+		self.user="root"
+		self.output_line = ""
+
+		self.updateList()
+		if self.selectionChanged not in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
+		self.selectionChanged()
+
+	def selectionChanged(self):
+		item = self["config"].getCurrent()
+		self["description"].setText(item[2])
 
 	def newRandom(self):
-		self.buildList(self.GeneratePassword())
+		self.password.value = self.GeneratePassword()
+		self["config"].invalidateCurrent()
 
-	def buildList(self, password):
-		self.password = password
-		self.list = []
-		self.list.append(getConfigListEntry(_("Enter new Password"), ConfigText(default=self.password, fixed_size=False)))
-		self["passwd"].setList(self.list)
+	def updateList(self):
+		self.password = NoSave(ConfigPassword(default=""))
+		instructions = _("You must set a root password in order to be able to use network services,"
+						" such as FTP, telnet or ssh.")
+		self.list.append(getConfigListEntry(_('New password'), self.password, instructions))
+		self['config'].list = self.list
+		self['config'].l.setList(self.list)
 
 	def GeneratePassword(self):
 		passwdChars = string.letters + string.digits
-		passwdLength = 8
+		passwdLength = 10
 		return ''.join(Random().sample(passwdChars, passwdLength))
 
 	def SetPasswd(self):
+		self.hideHelpWindow()
+		password = self.password.value
+		if not password:
+			self.session.openWithCallback(self.showHelpWindow, MessageBox, _("The password can not be blank."), MessageBox.TYPE_ERROR)
+			return
+		#print "[NetworkPassword] Changing the password for %s to %s" % (self.user,self.password) 
 		self.container = eConsoleAppContainer()
 		self.container.appClosed.append(self.runFinished)
-		self.container.dataAvail.append(self.processOutputLine)
-		retval = self.container.execute('passwd %s' % self.user)
-		if retval == 0:
-			self.session.open(MessageBox, _("Sucessfully changed password for root user to:\n%s " % self.password), MessageBox.TYPE_INFO)
+		self.container.dataAvail.append(self.dataAvail)
+		retval = self.container.execute("echo -e '%s\n%s' | (passwd %s)"  % (password, password, self.user))
+		if retval:
+			message=_("Unable to change password")
+			self.session.openWithCallback(self.showHelpWindow, MessageBox, message, MessageBox.TYPE_ERROR)
 		else:
-			self.session.open(MessageBox, _("Unable to change/reset password for root user"), MessageBox.TYPE_ERROR)
+			message=_("Password changed")
+			self.session.open(MessageBox, message, MessageBox.TYPE_INFO, timeout=5)
+			self.close()
 
-	def dataAvail(self,data):
+	def showHelpWindow(self, ret=None):
+		if self['config'].getCurrent() and isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
+			if self["config"].getCurrent()[1].help_window.instance != None:
+				self["config"].getCurrent()[1].help_window.show()
+
+	def hideHelpWindow(self):
+		if self['config'].getCurrent() and isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
+			if self["config"].getCurrent()[1].help_window.instance != None:
+				self["config"].getCurrent()[1].help_window.hide()
+
+	def bluePressed(self):
+		if self['config'].getCurrent() and isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
+			if self["config"].getCurrent()[1].help_window.instance != None:
+				self["config"].getCurrent()[1].help_window.hide()
+			from Screens.VirtualKeyBoard import VirtualKeyBoard
+			self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title = self["config"].getCurrent()[0], text = self["config"].getCurrent()[1].value)
+
+	def VirtualKeyBoardCallback(self, callback = None):
+		if callback != None and len(callback):
+			self["config"].getCurrent()[1].setValue(callback)
+			self["config"].invalidate(self["config"].getCurrent())
+		self.showHelpWindow()
+
+
+	def dataAvail(self, data):
+		data = six.ensure_str(data)
 		self.output_line += data
-		if self.output_line.find('password changed.') == -1:
-			if self.output_line.endswith('new UNIX password: '):
-				print('1password:%s\n' % self.password)
-				self.processOutputLine(self.output_line[:1])
+		while True:
+			i = self.output_line.find('\n')
+			if i == -1:
+				break
+			self.processOutputLine(self.output_line[:i+1])
+			self.output_line = self.output_line[i+1:]
 
 	def processOutputLine(self, line):
-		if line.find('new UNIX password: '):
-			print("2password:%s\n" % self.password)
-			self.container.write("%s\n" % self.password)
-			self.output_line = ''
+		if line.find('password: '):
+			self.container.write("%s\n" % self.password.value)
 
 	def runFinished(self, retval):
 		del self.container.dataAvail[:]
@@ -1169,18 +1209,18 @@ class PasswdScreen(Screen):
 		del self.container
 		self.close()
 
-	def bluePressed(self):
-		self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
-
-	def VirtualKeyBoardTextEntry(self, callback = None):
-		if callback is not None:
-			self.buildList(callback)
-		return
-
-	def setWindowTitle(self, title = None):
-		if not title:
-			title = self.title
-		try:
-			self['title'] = StaticText(title)
-		except:
-			pass   
+#	def bluePressed(self):
+#		self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
+#
+#	def VirtualKeyBoardTextEntry(self, callback = None):
+#		if callback is not None:
+#			self.buildList(callback)
+#		return
+#
+#	def setWindowTitle(self, title = None):
+#		if not title:
+#			title = self.title
+#		try:
+#			self['title'] = StaticText(title)
+#		except:
+#			pass

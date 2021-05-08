@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from Screens.Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
+from Screens.WizardUserInterfacePositioner import UserInterfacePositionerWizard
 from Screens.VideoWizard import VideoWizard
 from Screens.Rc import Rc
 from Screens.Screen import Screen
@@ -44,7 +45,7 @@ class StartWizard(WizardLanguage, Rc):
 # mytest.py#L528ff - RestoreSettings
 wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority=0)
 wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority=2)
-# FrontprocessorUpgrade FPUpgrade priority = 8
+wizardManager.registerWizard(UserInterfacePositionerWizard, config.misc.firstrun.value, priority=4)
 # FrontprocessorUpgrade SystemMessage priority = 9
 wizardManager.registerWizard(StartWizard, config.misc.firstrun.value, priority=20)
 # StartWizard calls InstallWizard

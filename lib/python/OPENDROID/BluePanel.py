@@ -34,10 +34,12 @@ def command(comandline, strip=1):
 		else:
 			for line in file:
 				text = text + line
-				if text[-1:] != '\n': text = text + "\n"
+				if text[-1:] != '\n':
+					text = text + "\n"
 		file.close()
 
-	if text[-1:] == '\n': text = text[:-1]
+	if text[-1:] == '\n':
+		text = text[:-1]
 	comandline = text
 	os.system("rm /tmp/command.txt")
 	return comandline
@@ -57,6 +59,7 @@ class BluePanel(Screen, ConfigListScreen):
 			<convert type="ConditionalShowHide"/>
 		</widget>
 	</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
@@ -72,8 +75,8 @@ class BluePanel(Screen, ConfigListScreen):
 				"blue": self.ppanelShortcut,
 			}, -1)
 
-		self.list = [ ]
-		ConfigListScreen.__init__(self, self.list, session = session, on_change = self.changedEntry)
+		self.list = []
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
 
 		self.softcam = CamControl('softcam')
 		self.cardserver = CamControl('cardserver')
@@ -112,13 +115,13 @@ class BluePanel(Screen, ConfigListScreen):
 		softcams = self.softcam.getList()
 		cardservers = self.cardserver.getList()
 
-		self.softcams = ConfigSelection(choices = softcams)
+		self.softcams = ConfigSelection(choices=softcams)
 		self.softcams.value = self.softcam.current()
 
 		self.softcams_text = _("Select Softcam")
 		self.list.append(getConfigListEntry(self.softcams_text, self.softcams))
 		if cardservers:
-			self.cardservers = ConfigSelection(choices = cardservers)
+			self.cardservers = ConfigSelection(choices=cardservers)
 			self.cardservers.value = self.cardserver.current()
 			self.list.append(getConfigListEntry(_("Select Card Server"), self.cardservers))
 
@@ -171,7 +174,7 @@ class BluePanel(Screen, ConfigListScreen):
 			self.session.open(OscamInfoMenu)
 		elif os.path.isfile(ppanelFileName) and os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/PPanel/plugin.py'):
 			from Plugins.Extensions.PPanel.ppanel import PPanel
-			self.session.open(PPanel, name = self.softcams.value + ' PPanel', node = None, filename = ppanelFileName, deletenode = None)
+			self.session.open(PPanel, name=self.softcams.value + ' PPanel', node=None, filename=ppanelFileName, deletenode=None)
 		else:
 			return 0
 
@@ -181,19 +184,19 @@ class BluePanel(Screen, ConfigListScreen):
 			if "c" in what:
 				msg = _("Please wait, restarting softcam and cardserver.")
 			else:
-				msg  = _("Please wait, restarting softcam.")
+				msg = _("Please wait, restarting softcam.")
 		elif "c" in what:
 			msg = _("Please wait, restarting cardserver.")
 		self.mbox = self.session.open(MessageBox, msg, MessageBox.TYPE_INFO)
 		self.activityTimer = eTimer()
 		self.activityTimer.timeout.get().append(self.doStop)
 		self.activityTimer.start(100, False)
-		softcams = self.softcam.getList()
-		cardservers = self.cardserver.getList()
+		softcams=self.softcam.getList()
+		cardservers=self.cardserver.getList()
 
-		self.softcams = ConfigSelection(choices = softcams)
-		self.softcams.value = self.softcam.current()
-		self.session.openWithCallback(self.myclose, startcam, softcams)
+		self.softcams=ConfigSelection(choices=softcams)
+		self.softcams.value=self.softcam.current()
+#		self.session.openWithCallback(self.myclose, startcam, softcams)
 	def doStop(self):
 		self.activityTimer.stop()
 		if "c" in self.what:
@@ -241,17 +244,18 @@ class BluePanel(Screen, ConfigListScreen):
 	def cancel(self):
 		self.close()
 
-		def myclose(self):
-			self.close()
+#		def myclose(self):
+#			self.close()
 
 class CamControl:
 	'''CAM convention is that a softlink named /etc/init.c/softcam.* points
 	to the start/stop script.'''
+
 	def __init__(self, name):
 		self.name = name
 		self.link = '/etc/init.d/' + name
 		if not os.path.exists(self.link):
-			print("[CamControl] No softcam link?" , self.link)
+			print("[CamControl] No softcam link?", self.link)
 
 	def getList(self):
 		result = []
@@ -281,14 +285,14 @@ class CamControl:
 			which = "None"
 		dst = self.name + '.' + which
 		if not os.path.exists('/etc/init.d/' + dst):
-			print("[CamControl] init script does not exist:" , dst)
+			print("[CamControl] init script does not exist:", dst)
 			return
 		try:
 			os.unlink(self.link)
 		except:
 			pass
 		try:
-			os.symlink(dst, self.link);
+			os.symlink(dst, self.link)
 		except:
 			print("Failed to create symlink for softcam:", dst)
 			import sys
@@ -322,10 +326,10 @@ class ShowSoftcamPackages(Screen):
 			</widget>
 		</screen>"""
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
-		
+
 		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
 		{
 			"red": self.exit,
@@ -334,7 +338,7 @@ class ShowSoftcamPackages(Screen):
 			"green": self.startupdateList,
 			"yellow": self.oscamsmartcard,
 		}, -1)
-		
+
 		self.list = []
 		self.statuslist = []
 		self["list"] = List(self.list)
@@ -351,7 +355,7 @@ class ShowSoftcamPackages(Screen):
 		self.Timer2 = eTimer()
 		self.Timer2.callback.append(self.updateList)
 
-	def go(self, returnValue = None):
+	def go(self, returnValue=None):
 		cur = self["list"].getCurrent()
 		if cur:
 			status = cur[3]
@@ -361,22 +365,22 @@ class ShowSoftcamPackages(Screen):
 
 	def runInstall(self, result):
 		if result:
-			self.session.openWithCallback(self.runInstallCont, Console, cmdlist = ['opkg install ' + self.package], closeOnSuccess = True)
+			self.session.openWithCallback(self.runInstallCont, Console, cmdlist=['opkg install ' + self.package], closeOnSuccess=True)
 
 	def runInstallCont(self):
 			ret = command('opkg list-installed | grep ' + self.package + ' | cut -d " " -f1')
 
 			if ret != self.package:
-				self.session.open(MessageBox, _("Install Failed !!"), MessageBox.TYPE_ERROR, timeout = 10)
+				self.session.open(MessageBox, _("Install Failed !!"), MessageBox.TYPE_ERROR, timeout=10)
 			else:
-				self.session.open(MessageBox, _("Install Finished."), MessageBox.TYPE_INFO, timeout = 10)
+				self.session.open(MessageBox, _("Install Finished."), MessageBox.TYPE_INFO, timeout=10)
 				self.setStatus('list')
 				self.Timer1.start(1000, True)
 
 	def UpgradeReboot(self, result):
 		if result is None:
 			return
-		
+
 	def exit(self):
 		self.close()
 
@@ -386,22 +390,22 @@ class ShowSoftcamPackages(Screen):
 	def setWindowTitle(self):
 		self.setTitle(_("Install Softcams"))
 
-	def setStatus(self,status = None):
+	def setStatus(self, status=None):
 		if status:
 			self.statuslist = []
 			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
 			if status == 'update':
 				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "/usr/lib/enigma2/python/OPENDROID/icons/upgrade.png"))
-				self.statuslist.append(( _("Package list update"), '', _("Trying to download a new updatelist. Please wait..." ),'', statuspng, divpng ))
+				self.statuslist.append((_("Package list update"), '', _("Trying to download a new updatelist. Please wait..."), '', statuspng, divpng))
 				self['list'].setList(self.statuslist)
 			if status == 'list':
 				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "/usr/lib/enigma2/python/OPENDROID/icons/upgrade.png"))
-				self.statuslist.append(( _("Package list"), '', _("Getting Softcam list. Please wait..." ),'', statuspng, divpng ))
+				self.statuslist.append((_("Package list"), '', _("Getting Softcam list. Please wait..."), '', statuspng, divpng))
 				self['list'].setList(self.statuslist)
 			elif status == 'error':
 				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "/usr/lib/enigma2/python/OPENDROID/icons/remove.png"))
-				self.statuslist.append(( _("Error"), '', _("There was an error downloading the updatelist. Please try again." ),'', statuspng, divpng ))
-				self['list'].setList(self.statuslist)				
+				self.statuslist.append((_("Error"), '', _("There was an error downloading the updatelist. Please try again."), '', statuspng, divpng))
+				self['list'].setList(self.statuslist)
 
 	def startupdateList(self):
 		self.setStatus('update')
@@ -459,7 +463,7 @@ class ShowSoftcamPackages(Screen):
 					pass
 
 			self['list'].setList(self.list)
-	
+
 		else:
 			self.setStatus('error')
 
@@ -472,7 +476,7 @@ class startcam(Screen):
 
 	def __init__(self, session, title):
 			Screen.__init__(self, session)
-			msg  = _("Please wait, restarting softcam.")
+			msg = _("Please wait, restarting softcam.")
 			self['starting'] = MultiPixmap()
 			self['text'] = Label(msg)
 			self.activityTimer = eTimer()
@@ -481,15 +485,15 @@ class startcam(Screen):
 			self.onClose.append(self.delTimer)
 
 	def startShow(self):
-			self.curpix = 0
-			self.count = 0
+			self.curpix=0
+			self.count=0
 			self['starting'].setPixmapNum(0)
 			self.activityTimer.start(120)
 
 	def updatepix(self):
 			self.activityTimer.stop()
 			if self.curpix > 23:
-				self.curpix = 0
+				self.curpix=0
 			if self.count > 120:
 				self.curpix = 23
 			self['starting'].setPixmapNum(self.curpix)

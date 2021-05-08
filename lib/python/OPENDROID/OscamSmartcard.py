@@ -14,7 +14,7 @@ from Components.Language import language
 from Components.Pixmap import Pixmap
 #from skin import parseColor
 from enigma import ePicLoad
-from base64 import b64encode, b64decode
+#from base64 import b64encode, b64decode
 import gettext, base64, os, time, glob
 from six.moves.urllib.error import URLError
 from six.moves.urllib.parse import urlencode
@@ -23,14 +23,18 @@ from os import environ, listdir, remove, rename, system, popen, mkdir
 from Tools.Directories import fileExists, resolveFilename, SCOPE_LANGUAGE, SCOPE_PLUGINS
 from boxbranding import getBoxType, getImageDistro, getMachineName, getMachineBrand, getImageVersion, getMachineBuild, getImageArch
 from datetime import datetime
+import six
+from six.moves.cPickle import dump, load
+from six.moves import reload_module, range
+from base64 import urlsafe_b64decode
 plugin='[OscamSmartcard] '
 dev_null = ' > /dev/null 2>&1'
 null =' >/dev/null 2>&1'
 def architectures():
-	hardwaretype = popen('uname -m').read().strip()
-	hostname = popen('uname -n').read().strip()
-	kernelversion = popen('uname -r').read().strip()
-	ossystem = popen('uname -s').read().strip()
+	hardwaretype = popen('uname -m').read().rstrip()
+	hostname = popen('uname -n').read().rstrip()
+	kernelversion = popen('uname -r').read().rstrip()
+	ossystem = popen('uname -s').read().rstrip()
 	return ossystem, kernelversion, hardwaretype, hostname
 
 arch = architectures()[2]
@@ -131,7 +135,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
   <eLabel text="OscamSmartcard 2.4 by arn354 and Undertaker Mod team OPD" position="874,45" size="360,20" zPosition="1" font="Regular; 15" halign="right" backgroundColor="black" transparent="1" />
 <ePixmap pixmap="/usr/lib/enigma2/python/OPENDROID/OscamSmartcard/icons/oscamsmartcard.png" position="958,75" size="275,250" alphatest="blend" zPosition="2" />
 </screen>"""
-	def __init__(self, session, args = None, picPath = None):
+	def __init__(self, session, args=None, picPath=None):
 		self.config_lines = []
 		Screen.__init__(self, session)
 		self.session = session
@@ -160,7 +164,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self.oscamsmartcarddata = "/tmp/data/"
 		self.downloadurl()
 
-		if self.online == False:
+		if self.online==False:
 			list = []
 			self.headers = _("Error") + "\n"
 			self.headers += _("Your STB is not connected to the Internet") + "\n" + _("press color button or lame for exit")
@@ -323,7 +327,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		self.close()
 
 	def save(self):
-		if self.configcheck() == False:
+		if self.configcheck()==False:
 			return
 		msginfo = _("Oscam will be installed with the following settings") + "\n\n"
 		msginfo += "Webif Port\t"		+ str(config.OscamSmartcard.WebifPort.value)		+ "\n"
@@ -354,8 +358,8 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			else:
 				msginfo += "CCcam Import\t" + _("no") + "\n"
 		mm = ""
-		if self.hd34check() == True:
-			msginfo += "Binary\t" + "oscam r11400 special HD03/04" + "\n"
+		if self.hd34check()==True:
+			msginfo += "Binary\t" + "oscam r11400 special HD03/04" + b"\n"
 		else:
 			if self.installedversion[0:5] == "oscam":
 				mm = "Binary\t" + _("file already exists and use it")
@@ -363,7 +367,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 					if self.newversion(arch) > self.installedversion:
 						mm = "Binary\t" + _("file exists, becomes upgrade")
 			else:
-				mm = "Binary\t" + str( self.newversion(arch)).replace('-1.20-unstable_svn', '') + " " + _("will be installed")	+ "\n"
+				mm = "Binary\t" + str( self.newversion(arch)).replace('-1.20-unstable_svn', '') + " " + _("will be installed")	+ b"\n"
 		if mm != "":
 			msginfo += mm + "\n"
 		msginfo += "\n"
@@ -424,7 +428,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def getcurrent(self):
 		current = _("no")
 		if os.path.exists("/usr/bin/oscam_oscamsmartcard"):
-			current = popen("chmod 775 /usr/bin/oscam_oscamsmartcard && /usr/bin/oscam_oscamsmartcard -V | grep Version |awk '{print $2}'").read().strip()
+			current = popen("chmod 775 /usr/bin/oscam_oscamsmartcard && /usr/bin/oscam_oscamsmartcard -V | grep Version |awk '{print $2}'").read().rstrip()
 		if current ==_("no"):
 			return current
 		if "oscam" in current:
@@ -432,7 +436,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		else:
 			self.getcurrent()
 	def createoscamsmartcarddata(self):
-		dldata=str(base64.b64decode(self.getdl()[1])).strip()+ "data.zip"
+		dldata=str(base64.b64decode(self.getdl()[1])).rstrip()+ "data.zip"
 		system('wget -T5 --no-check-certificate -O /tmp/data.zip ' + dldata +  ' ' + null)
 		system('unzip -o -q -d /tmp /tmp/data.zip')
 		system('rm /tmp/data.zip')
@@ -572,7 +576,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def oscambinaryupdate(self):
 		if self.newversion(arch) != _("Download not avaible"):
 			system('killall -9 oscam_oscamsmartcard' + null)
-			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl().strip() + ' ' + null)
+			system('wget -T5 --no-check-certificate -q -O /tmp/oscam.tar.gz ' + self.downloadurl().rstrip() + ' ' + null)
 			system('tar -xzf /tmp/oscam.tar.gz -C /tmp' + null)
 			system('rm -f /usr/bin/oscam_oscamsmartcard' + null)
 			system('mv /tmp/oscam /usr/bin/oscam_oscamsmartcard' + null)
@@ -596,12 +600,12 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		if arch =='aarch64':
 			emu=''
 		if arch in archs:
-			downloadurl = base64.b64decode(self.getdl()[1]).strip() + binary + '_' + arch + emu + suffix
+			downloadurl = base64. urlsafe_b64decode(self.getdl()[1]).rstrip() + binary + '_' + arch + emu + suffix
 			#overwrite if Box is a WeTeKPLAY
 			if getMachineBrand() =='WeTeK':
-				downloadurl = base64.b64decode(self.getdl()[1]).strip() + binary + '_' + 'wetekplay' + suffix
+				downloadurl = base64. urlsafe_b64decode(self.getdl()[1]).rstrip() + binary + '_' + 'wetekplay' + suffix
 			if self.hd34check():
-				downloadurl = base64.b64decode(self.getdl()[1]).strip() + binary + '_' + arch + '_hd34' + suffix
+				downloadurl = base64. urlsafe_b64decode(self.getdl()[1]).rstrip() + binary + '_' + arch + '_hd34' + suffix
 		else:
 			downloadurl = 'unknown_' + arch
 		return downloadurl
@@ -621,11 +625,11 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		upgradeinfo = _("Download not avaible")
 		if self.online == True:
 			upgfile = '/tmp/version.zip'
-			system('wget -T5 --no-check-certificate -O ' + upgfile + ' ' + base64.b64decode(self.getdl()[2]).strip() + ' ' + null )
+			system('wget -T5 --no-check-certificate -O ' + upgfile + ' ' + base64.urlsafe_b64decode(self.getdl()[2]).rstrip() + ' ' + null )
 			popen('unzip -o -q -d /tmp ' + upgfile)
 			file = open("/tmp/version.info", "r")
 			for line in file.readlines():
-				line = line.strip().split(',')
+				line = line.rstrip().split(',')
 				if line[0] == arch:
 					upgradeinfo = line[1].replace("-unstable", "")
 			file.close()
@@ -652,7 +656,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 		liste=[]
 		f = popen('opkg list-installed |grep -i softcam')
 		for line in f:
-			line=line.strip().split()
+			line=line.rstrip().split()
 			if line[0] not in ignore:
 				liste.append(line[0])
 		f.close()
@@ -802,14 +806,14 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			userline = ('f', 'F')
 			datei = open("/etc/CCcam.cfg", "r")
 			for line in datei.readlines():
-				line = line.strip().split('#')[0]
+				line = line.rstrip().split('#')[0]
 				line = line.split('{')[0]
 				if line.startswith((c, C, l, L, F, f, 'SERVER LISTEN PORT')):
 					line=line.replace("\t", " ").replace(" :", ":").replace(": ", ":").replace(" :", ":").replace(": ", ":").replace("  ", " ")
 					if line.startswith(cclines) or line.startswith(camd35lines):
 						if line.startswith(cclines) :protokoll='cccam'
 						if line.startswith(camd35lines) :protokoll='cs357x'
-						line = line.strip().split(":")
+						line = line.rstrip().split(":")
 						line = line[1]
 						line = line.split()
 						if len(line)>3:
@@ -839,7 +843,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 							cccsrv += peer
 					elif line.startswith(userline):
 						zc=zc+1
-						line = line.strip().split(":")
+						line = line.rstrip().split(":")
 						line = line[1]
 						line = line.split()
 						if len(line)>1:
@@ -889,7 +893,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 			os.system('update-rc.d cardserver start 95 S .')
 
 	def getIP(self):
-		return str(popen('ip address |grep -v "inet6" |grep -v "127" |grep inet |cut -d " " -f6').read().strip().replace('/24',''))
+		return str(popen('ip address |grep -v "inet6" |grep -v "127" |grep inet |cut -d " " -f6').read().rstrip().replace('/24',''))
 
 	def getdl(self):
 		info  = 'aHR0cDovL29zYy50ZWFtYmx1ZS50ZWNoL29zYy92ZXJzaW9uLmluZm8gCg=='

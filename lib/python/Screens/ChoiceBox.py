@@ -15,12 +15,15 @@ config.misc.pluginlist.eventinfo_order = ConfigText(default="")
 config.misc.pluginlist.extension_order = ConfigText(default="")
 config.misc.pluginlist.fc_bookmarks_order = ConfigText(default="")
 
+
 class ChoiceBox(Screen):
-	def __init__(self, session, title="", list=None, keys=None, selection=0, skin_name=None, text="", reorderConfig="", var="", windowTitle = None, allow_cancel = True, titlebartext = _("Choice Box")):
+	def __init__(self, session, title="", list=None, keys=None, selection=0, skin_name=None, text="", reorderConfig="", var="", windowTitle=None, allow_cancel=True, titlebartext=_("Choice Box")):
 		if not windowTitle: #for compatibility
 			windowTitle = titlebartext
-		if not list: list = []
-		if not skin_name: skin_name = []
+		if not list:
+			list = []
+		if not skin_name:
+			skin_name = []
 		Screen.__init__(self, session)
 
 		self.allow_cancel = allow_cancel
@@ -58,7 +61,7 @@ class ChoiceBox(Screen):
 					while len(temptext) >= count:
 						if labeltext:
 							labeltext += '\n'
-						labeltext = labeltext + temptext[count-1]
+						labeltext = labeltext + temptext[count - 1]
 						count += 1
 						print('[Choicebox] count', count)
 					self["text"].setText(labeltext)
@@ -94,7 +97,7 @@ class ChoiceBox(Screen):
 				for x in self.__keys:
 					if (not x or x.isdigit()) and number <= 10:
 						new_keys.append(str(number % 10))
-						number+=1
+						number += 1
 					else:
 						new_keys.append(not x.isdigit() and x or "")
 				self.__keys = new_keys
@@ -199,12 +202,12 @@ class ChoiceBox(Screen):
 			self["list"].instance.resize(enigma.eSize(*listsize))
 
 		wsizex = textsize[0]
-		wsizey = textsize[1]+listsize[1]
+		wsizey = textsize[1] + listsize[1]
 		wsize = (wsizex, wsizey)
 		self.instance.resize(enigma.eSize(*wsize))
 
 		# center window
-		self.instance.move(enigma.ePoint((desktop_w-wsizex)//2, (desktop_h-wsizey)//2))
+		self.instance.move(enigma.ePoint((desktop_w - wsizex) // 2, (desktop_h - wsizey) // 2))
 
 	def left(self):
 		if len(self["list"].list) > 0:

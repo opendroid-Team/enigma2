@@ -12,6 +12,7 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
+from Tools.Directories import isPluginInstalled
 from ServiceReference import ServiceReference
 from enigma import eServiceReference, eActionMap
 from Components.Label import Label
@@ -261,9 +262,9 @@ def getButtonSetupFunctions():
         if os.path.isdir("/usr/script"):
                 for x in [x for x in os.listdir("/usr/script") if x.endswith(".sh")]:
                         x = x[:-3]
-        if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/EnhancedMovieCenter/plugin.py"):
+        if isPluginInstalled("EnhancedMovieCenter"):
                 ButtonSetupFunctions.append((_("EnhancedMovieCenter"), "EMC/", "Plugins"))
-        if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/Kodi/plugin.pyo"):
+        if isPluginInstalled("Kodi"):
                 ButtonSetupFunctions.append((_("Kodi MediaCenter"), "Kodi/", "Plugins"))
         ButtonSetupFunctions.append((_("OPD BluePanel"), "Module/OPENDROID.BluePanel/BluePanel", "OPD"))
         ButtonSetupFunctions.append((_("OPD Green Panel"), "Module/OPENDROID.GreenPanel/GreenPanel", "OPD"))
@@ -698,19 +699,19 @@ class InfoBarButtonSetup():
                                 except Exception as e:
                                         print('[EMCPlayer] showMovies exception:\n' + str(e))
                         elif selected[0] == "ScriptRunner":
-                                if os.path.isfile("/usr/lib/enigma2/python/OPENDROID/ScriptRunner.py"):
+                                if isPluginInstalled("OPENDROID", "ScriptRunner"):
                                         from OPENDROID.ScriptRunner import ScriptRunner
-                                        self.session.open (ScriptRunner)
+                                        self.session.open(ScriptRunner)
                         elif selected[0] == "Kodi":
-                                if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/Kodi/plugin.py"):
+                                if isPluginInstalled("Kodi"):
                                         from Plugins.Extensions.Kodi.plugin import KodiMainScreen
                                         self.session.open(KodiMainScreen)
                         elif selected[0] == "Bluetooth":
-                                if os.path.isfile("/usr/lib/enigma2/python/Plugins/SystemPlugins/BluetoothSetup/plugin.py"):
+                                if isPluginInstalled("BluetoothSetup"):
                                         from Plugins.SystemPlugins.BluetoothSetup.plugin import BluetoothSetup
                                         self.session.open(BluetoothSetup)
                         elif selected[0] == "YoutubeTV":
-                                if os.path.isfile("/usr/lib/enigma2/python/Plugins/Extensions/Chromium/plugin.py"):
+                                if isPluginInstalled("Chromium"):
                                         from Plugins.Extensions.Chromium.youtube import YoutubeTVWindow
                                         self.session.open(YoutubeTVWindow)
 

@@ -40,8 +40,8 @@ def InitParentalControl():
 	config.ParentalControl.config_sections.standby_menu = ConfigYesNo(default=False)
 	config.ParentalControl.config_sections.movie_list = ConfigYesNo(default=False)
 	config.ParentalControl.config_sections.context_menus = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.infopanel = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.quickmenu = ConfigYesNo(default=False)
+	config.ParentalControl.config_sections.OPD_panel = ConfigYesNo(default=False)
+	config.ParentalControl.config_sections.BluePanel= ConfigYesNo(default=False)
 
 	#Added for backwards compatibility with some 3rd party plugins that depend on this config
 	config.ParentalControl.servicepinactive = config.ParentalControl.configured

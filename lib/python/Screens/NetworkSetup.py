@@ -6,7 +6,7 @@ import time
 import six
 
 from enigma import eTimer, eConsoleAppContainer
-
+from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Standby import TryQuitMainloop
@@ -2380,7 +2380,7 @@ class NetworkOpenvpn(Screen):
 			self.config_file=_(word)
 			self['labconfigfilename'].setText(self.config_file)
 
-			
+
 class NetworkVpnLog(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -2558,7 +2558,7 @@ class NetworkSamba(Screen):
 		for cb in self.onChangedEntry:
 			cb(title, status_summary, autostartstatus_summary)
 
-			
+
 class NetworkSambaLog(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -3998,7 +3998,7 @@ class NetworkPassword(ConfigListScreen, Screen):
 		self["key_red"] = StaticText(_("Exit"))
 		self["key_green"] = StaticText(_("Save"))
 		self["key_yellow"] = StaticText(_("Random password"))
-		self["key_blue"] = StaticText("")
+		self["key_blue"] = StaticText("virt. Keyboard")
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "VirtualKeyboardActions"], {
 			"red": self.close,
@@ -4006,7 +4006,7 @@ class NetworkPassword(ConfigListScreen, Screen):
 			"green": self.SetPasswd,
 			"save": self.SetPasswd,
 			"yellow": self.newRandom,
-			'showVirtualKeyboard': self.KeyText
+			"blue": self.bluePressed,
 			})
 
 		self["description"] = Label()
@@ -4030,7 +4030,7 @@ class NetworkPassword(ConfigListScreen, Screen):
 	def newRandom(self):
 		self.password.value = self.GeneratePassword()
 		self["config"].invalidateCurrent()
-	
+
 	def updateList(self):
 		self.password = NoSave(ConfigPassword(default=""))
 		instructions = _("You must set a root password in order to be able to use network services,"
@@ -4039,10 +4039,10 @@ class NetworkPassword(ConfigListScreen, Screen):
 		self['config'].list = self.list
 		self['config'].l.setList(self.list)
 
-	def GeneratePassword(self): 
+	def GeneratePassword(self):
 		passwdChars = string.letters + string.digits
 		passwdLength = 10
-		return ''.join(Random().sample(passwdChars, passwdLength)) 
+		return ''.join(Random().sample(passwdChars, passwdLength))
 
 	def SetPasswd(self):
 		self.hideHelpWindow()
@@ -4073,7 +4073,7 @@ class NetworkPassword(ConfigListScreen, Screen):
 			if self["config"].getCurrent()[1].help_window.instance != None:
 				self["config"].getCurrent()[1].help_window.hide()
 
-	def KeyText(self):
+	def bluePressed(self):
 		if self['config'].getCurrent() and isinstance(self["config"].getCurrent()[1], ConfigText) or isinstance(self["config"].getCurrent()[1], ConfigPassword):
 			if self["config"].getCurrent()[1].help_window.instance != None:
 				self["config"].getCurrent()[1].help_window.hide()
@@ -4106,6 +4106,22 @@ class NetworkPassword(ConfigListScreen, Screen):
 		del self.container.appClosed[:]
 		del self.container
 		self.close()
+
+#	def bluePressed(self):
+#		self.session.openWithCallback(self.VirtualKeyBoardTextEntry, VirtualKeyBoard, title=_('Enter your password here:'), text=self.password)
+#
+#	def VirtualKeyBoardTextEntry(self, callback = None):
+#		if callback is not None:
+#			self.buildList(callback)
+#		return
+#
+#	def setWindowTitle(self, title = None):
+#		if not title:
+#			title = self.title
+#		try:
+#			self['title'] = StaticText(title)
+#		except:
+#			pass
 
 class NetworkSATPI(Screen):
 	def __init__(self, session):
