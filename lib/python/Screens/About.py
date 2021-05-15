@@ -34,6 +34,7 @@ import skin, os
 import time
 from os import path, popen, system
 from re import search
+
 import time
 import six
 try:
@@ -41,6 +42,7 @@ try:
 except ImportError:
 	from urllib.request import urlopen
 SIGN = '°' if six.PY3 else str('\xc2\xb0')
+
 
 def parse_ipv4(ip):
 	ret = ""
@@ -54,6 +56,7 @@ def parse_ipv4(ip):
 			idx += 1
 	return ret
 
+
 def parseFile(filename):
 	ret = "N/A"
 	try:
@@ -64,6 +67,7 @@ def parseFile(filename):
 		print("[ERROR] failed to open file %s" % filename)
 	return ret
 
+
 def parseLines(filename):
 	ret = ["N/A"]
 	try:
@@ -73,6 +77,7 @@ def parseLines(filename):
 	except IOError:
 		print("[ERROR] failed to open file %s" % filename)
 	return ret
+
 
 def MyDateConverter(StringDate):
 	## StringDate must be a string "YYYY-MM-DD"

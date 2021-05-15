@@ -1508,6 +1508,7 @@ class PluginDetails(Screen, PackageInfoHandler):
 			self.session.openWithCallback(self.UpgradeReboot, MessageBox, _("Installation finished.") + " " + _("Do you want to reboot your receiver?"), MessageBox.TYPE_YESNO)
 		else:
 			self.close(True)
+
 	def UpgradeReboot(self, result):
 		if result:
 			self.session.open(TryQuitMainloop, retvalue=3)

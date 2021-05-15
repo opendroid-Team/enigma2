@@ -3,7 +3,6 @@ from Components.Element import cached
 from Components.Sensors import sensors
 import os
 from Components.Converter.Poll import Poll
-
 from Tools.HardwareInfo import HardwareInfo
 
 class BoxInfo(Poll, Converter, object):

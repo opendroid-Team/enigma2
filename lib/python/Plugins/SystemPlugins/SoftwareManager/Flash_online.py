@@ -20,19 +20,20 @@ from enigma import eTimer, fbClass
 #import os, urllib2, shutil, math, time, zipfile, shutil
 from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
-from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
 import os
-import six
+import json
 import shutil
 import math
 import time
 import zipfile
 import shutil
 from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
 
-feedurl = 'https://opendroid.org/7.0'
-imagecat = [7.0]
+
+from boxbranding import getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel, getBoxType
+
+feedserver = 'opendroid.org/7.0'
+feedurl = 'https://%s/%s/%s/json' %(feedserver, getMachineBrand , getBoxType())
 
 def checkimagefiles(files):
 	return len([x for x in files if 'kernel' in x and '.bin' in x or x in ('zImage', 'uImage', 'root_cfe_auto.bin', 'root_cfe_auto.jffs2', 'oe_kernel.bin', 'oe_rootfs.bin', 'e2jffs2.img', 'rootfs.tar.bz2', 'rootfs.ubi', 'rootfs.bin')]) >= 2
@@ -48,6 +49,7 @@ class FlashOnline(Screen):
 		Screen.__init__(self, session)
 		self.session = session
 		self.selection = 0
+		self.jsonlist = {}
 		self.imagesList = {}
 		self.setIndex = 0
 		self.expanded = []
@@ -84,61 +86,27 @@ class FlashOnline(Screen):
 	def getImagesList(self):
 
 		def getImages(path, files):
-			try:
-				print(self.imagesList[("Downloaded Images")])
-			except:
-				self.imagesList[("Downloaded Images")] = {} 
-			try:
-				print(self.imagesList[("Fullbackup Images")])
-			except:        
-				self.imagesList[("Fullbackup Images")] = {}
 			for file in [x for x in files if os.path.splitext(x)[1] == ".zip" and box in x]:
 				try:
 					if checkimagefiles([x.split(os.sep)[-1] for x in zipfile.ZipFile(file).namelist()]):
+						imagetyp = _("Downloaded Images")
 						if 'backup' in file.split(os.sep)[-1]:
-							self.imagesList[("Fullbackup Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
-						else:
-							self.imagesList[("Downloaded Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
-
+							imagetyp = _("Fullbackup Images")
+						if imagetyp not in self.imagesList:
+							self.imagesList[imagetyp] = {}
+						self.imagesList[imagetyp][file] = {'link': file, 'name': file.split(os.sep)[-1]}
 				except:
 					pass
 
 		if not self.imagesList:
 			box = getBoxType()
 			brand = getMachineBrand()
-			for version in reversed(sorted(imagecat)):
-				newversion = _("Image Version %s") %version
-				the_page =""
-				url = '%s/%s/%s' % (feedurl,brand,box)
+			if not self.jsonlist:
 				try:
-					req = Request(url)
-					response = urlopen(req)
-				except urlopen.URLError as e:
-					print("URL ERROR: %s\n%s" % (e,url))
-					continue
-
-				try:
-					the_page = response.read()
-				except urlopen.HTTPError as e:
-					print("HTTP download ERROR: %s" % e.code)
-					continue
-
-				lines = the_page.split(b'\n')
-#				imagesList = six.ensure_str(lines())
-				tt = len(box)
-				b = len(brand)
-				countimage = []
-				for line in lines:
-					if line.find('<a href="o') != -1:
-						t = line.find('<a href="o')
-						e = line.find('zip"')
-						countimage.append(line[t+9:e+3])
-				if len(countimage) >= 1:
-					self.imagesList[newversion] = {}
-					for image in countimage:
-						self.imagesList[newversion][image] = {}
-						self.imagesList[newversion][image]["name"] = image
-						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s' % (feedurl,brand,box,image)
+					self.jsonlist = dict(json.load(urllib.request.urlopen('%s/%s/%s' % (feedurl, brand, box))))
+				except:
+					pass
+			self.imagesList = dict(self.jsonlist)
 
 			for media in ['/media/%s' % x for x in os.listdir('/media')] + (['/media/net/%s' % x for x in os.listdir('/media/net')] if os.path.isdir('/media/net') else []):
 				if not(SystemInfo['HasMMC'] and "/mmc" in media) and os.path.isdir(media):

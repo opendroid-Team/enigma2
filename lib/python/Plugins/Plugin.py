@@ -4,6 +4,7 @@ import os
 
 config.plugins = ConfigSubsection()
 
+
 class PluginDescriptor(object):
 	"""An object to describe a plugin."""
 
@@ -20,7 +21,7 @@ class PluginDescriptor(object):
 	# argument: session
 	WHERE_EXTENSIONSMENU = 1
 	WHERE_MAINMENU = 2
-	WHERE_PLUGINMENU  = 3
+	WHERE_PLUGINMENU = 3
 	# argument: session, serviceref (currently selected)
 	WHERE_MOVIELIST = 4
 	# argument: menuid. Fnc must return list with menuitems (4-tuple of name, fnc to call, entryid or None, weight or None)
@@ -81,7 +82,8 @@ class PluginDescriptor(object):
 	WHERE_EXTENSIONSINGLE = 22
 
 	def __init__(self, name="Plugin", where=None, description="", icon=None, fnc=None, wakeupfnc=None, needsRestart=None, internal=False, weight=0):
-		if not where: where = []
+		if not where:
+			where = []
 		self.name = name
 		self.internal = internal
 		self.needsRestart = needsRestart
@@ -89,7 +91,7 @@ class PluginDescriptor(object):
 		if isinstance(where, list):
 			self.where = where
 		else:
-			self.where = [ where ]
+			self.where = [where]
 		self.description = description
 
 		if icon is None or isinstance(icon, str):
@@ -146,10 +148,10 @@ class PluginDescriptor(object):
 			return False
 
 	def __gt__(self, other):
-		return other<self
+		return other < self
 
 	def __ge__(self, other):
-		return not self<other
+		return not self < other
 
 	def __le__(self, other):
-		return not other<self
+		return not other < self

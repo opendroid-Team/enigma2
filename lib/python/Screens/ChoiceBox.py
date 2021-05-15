@@ -83,14 +83,14 @@ class ChoiceBox(Screen):
 		if self.reorderConfig:
 			self.config_type = eval("config.misc.pluginlist." + self.reorderConfig)
 			if self.config_type.value:
-				prev_list = zip(list, self.__keys)
+				prev_list = [i for i in zip(list, self.__keys)]
 				new_list = []
 				for x in self.config_type.value.split(","):
 					for entry in prev_list:
 						if entry[0][0] == x:
 							new_list.append(entry)
 							prev_list.remove(entry)
-				list = zip(*(new_list + prev_list))
+				list = [i for i in zip(*(new_list + prev_list))]
 				list, self.__keys = list[0], list[1]
 				number = 1
 				new_keys = []
@@ -101,6 +101,7 @@ class ChoiceBox(Screen):
 					else:
 						new_keys.append(not x.isdigit() and x or "")
 				self.__keys = new_keys
+
 		for x in list:
 			strpos = str(self.__keys[pos])
 			self.list.append(ChoiceEntryComponent(key=strpos, text=x))
@@ -147,6 +148,7 @@ class ChoiceBox(Screen):
 			"back": self.cancel,
 		}, prio=-1)
 		self.onShown.append(self.onshow)
+
 
 	def onshow(self):
 		if self.skinName and 'SoftwareUpdateChoices' in self.skinName and self.var:
@@ -289,7 +291,7 @@ class ChoiceBox(Screen):
 		pos = 0
 		summarytext = ""
 		for entry in self.summarylist:
-			if curpos-2 < pos < curpos+5:
+			if curpos - 2 < pos < curpos + 5:
 				if pos == curpos:
 					summarytext += ">"
 					self["summary_selection"].setText(entry[1])

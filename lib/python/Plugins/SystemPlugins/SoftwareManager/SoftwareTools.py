@@ -1,4 +1,5 @@
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from enigma import eConsoleAppContainer
 from Components.Console import Console
 from Components.About import about
