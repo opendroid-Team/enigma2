@@ -17,7 +17,7 @@ config.misc.installwizard.channellistdownloaded = ConfigBoolean(default=False)
 class InstallWizard(Screen, ConfigListScreen):
 
 	STATE_UPDATE = 0
-	STATE_CHOICE_CHANNELLIST = 1
+	STATE_CHOISE_CHANNELLIST = 1
 	INSTALL_PLUGINS = 2
 	INSTALL_SKINS = 3
 	INSTALL_NETWORkPASSWORD = 4
@@ -47,7 +47,7 @@ class InstallWizard(Screen, ConfigListScreen):
 					break
 			if is_found is False:
 				self.createMenu()
-		elif self.index == self.STATE_CHOICE_CHANNELLIST:
+		elif self.index == self.STATE_CHOISE_CHANNELLIST:
 			self.enabled = ConfigYesNo(default=True)
 			modes = {"opendroid": "opendroid default(13e-19e)", "19e": "Astra 1", "23e": "Astra 3", "19e-23e": "Astra 1 Astra 3", "19e-23e-28e": "Astra 1 Astra 2 Astra 3", "13e-19e-23e-28e": "Astra 1 Astra 2 Astra 3 Hotbird"}
 			self.channellist_type = ConfigSelection(choices=modes, default="opendroid")
@@ -113,7 +113,7 @@ class InstallWizard(Screen, ConfigListScreen):
 		if self.index == self.STATE_UPDATE:
 			if config.misc.installwizard.hasnetwork.value:
 				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), IpkgComponent.CMD_UPDATE)
-		elif self.index == self.STATE_CHOICE_CHANNELLIST and self.enabled.value:
+		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value:
 			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
 		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
 			from Screens.PluginBrowser import PluginDownloadBrowser
