@@ -1,5 +1,4 @@
-from __future__ import print_function
-#from Plugins.Extensions.OPDBoot.plugin import *
+from Plugins.Extensions.OPDBoot.plugin import *
 from Components.config import config
 from Components.Label import Label
 from Components.Button import Button
@@ -12,32 +11,24 @@ from Components.ProgressBar import ProgressBar
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
-from Screens.MultiBootSelector import MultiBootSelector
 from Components.Console import Console
 from Tools.BoundFunction import boundFunction
 from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, getBoxType, GetBoxName
 from enigma import eTimer, fbClass
-#import os, urllib2, shutil, math, time, zipfile, shutil
-from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
-from Components.ConfigList import ConfigListScreen
-import os
-import json
-import shutil
-import math
-import time
-import zipfile
-import shutil
+import os, json, shutil, math, time, zipfile, shutil
 from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves import urllib
+import six
+from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
+from Components.ConfigList import ConfigListScreen
+from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
 
-
-from boxbranding import getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel, getBoxType
-
-feedserver = 'opendroid.org/7.0'
-feedurl = 'https://%s/%s/%s/json' %(feedserver, getMachineBrand , getBoxType())
+feedurl = 'https://opendroid.org/7.0'
+imagecat = [7.0]
 
 def checkimagefiles(files):
-	return len([x for x in files if 'kernel' in x and '.bin' in x or x in ('zImage', 'uImage', 'root_cfe_auto.bin', 'root_cfe_auto.jffs2', 'oe_kernel.bin', 'oe_rootfs.bin', 'e2jffs2.img', 'rootfs.tar.bz2', 'rootfs.ubi', 'rootfs.bin')]) >= 2
-
+	return len([x for x in files if 'kernel' in x and '.bin' in x or x in ('zImage', 'uImage', 'root_cfe_auto.bin', 'root_cfe_auto.jffs2', 'oe_kernel.bin', 'oe_rootfs.bin', 'e2jffs2.img', 'rootfs.tar.bz2', 'rootfs.ubi','rootfs.bin')]) >= 2
 
 class FlashOnline(Screen):
 	skin = """
@@ -49,7 +40,6 @@ class FlashOnline(Screen):
 		Screen.__init__(self, session)
 		self.session = session
 		self.selection = 0
-		self.jsonlist = {}
 		self.imagesList = {}
 		self.setIndex = 0
 		self.expanded = []
@@ -59,7 +49,7 @@ class FlashOnline(Screen):
 		self["key_yellow"] = StaticText()
 		self["key_blue"] = StaticText()
 		self["description"] = StaticText()
-		self["list"] = ChoiceList(list=[ChoiceEntryComponent('', ((_("Retrieving image list - Please wait...")), "Waiter"))])
+		self["list"] = ChoiceList(list=[ChoiceEntryComponent('',((_("Retrieving image list - Please wait...")), "Waiter"))])
 
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "KeyboardInputActions", "MenuActions"],
 		{
@@ -86,27 +76,60 @@ class FlashOnline(Screen):
 	def getImagesList(self):
 
 		def getImages(path, files):
+			try:
+				print(self.imagesList[("Downloaded Images")])
+			except:
+				self.imagesList[("Downloaded Images")] = {} 
+			try:
+				print(self.imagesList[("Fullbackup Images")])
+			except:
+				self.imagesList[("Fullbackup Images")] = {}
 			for file in [x for x in files if os.path.splitext(x)[1] == ".zip" and box in x]:
 				try:
 					if checkimagefiles([x.split(os.sep)[-1] for x in zipfile.ZipFile(file).namelist()]):
-						imagetyp = _("Downloaded Images")
 						if 'backup' in file.split(os.sep)[-1]:
-							imagetyp = _("Fullbackup Images")
-						if imagetyp not in self.imagesList:
-							self.imagesList[imagetyp] = {}
-						self.imagesList[imagetyp][file] = {'link': file, 'name': file.split(os.sep)[-1]}
+							self.imagesList[("Fullbackup Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
+						else:
+							self.imagesList[("Downloaded Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
+
 				except:
 					pass
 
 		if not self.imagesList:
 			box = getBoxType()
 			brand = getMachineBrand()
-			if not self.jsonlist:
+			for version in reversed(sorted(imagecat)):
+				newversion = _("Image Version %s") %version
+				the_page =""
+				url = '%s/%s/%s' % (feedurl,brand,box)
 				try:
-					self.jsonlist = dict(json.load(urllib.request.urlopen('%s/%s/%s' % (feedurl, brand, box))))
-				except:
-					pass
-			self.imagesList = dict(self.jsonlist)
+					req = Request(url)
+					response = urlopen(req)
+				except urllib.error.URLError as e:
+					print("URL ERROR: %s\n%s" % (e, url))
+					continue
+
+				try:
+					the_page = six.ensure_str(response.read())
+				except urllib.error.URLError as e:
+					print("HTTP download ERROR: %s" % e.code)
+					continue
+
+				lines = the_page.split('\n')
+				tt = len(box)
+				b = len(brand)
+				countimage = []
+				for line in lines:
+					if line.find('<a href="o') > -1:
+						t = line.find('<a href="o')
+						e = line.find('zip"')
+						countimage.append(line[t+9:e+3])
+				if len(countimage) >= 1:
+					self.imagesList[newversion] = {}
+					for image in countimage:
+						self.imagesList[newversion][image] = {}
+						self.imagesList[newversion][image]["name"] = image
+						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s' % (feedurl,brand,box,image)
 
 			for media in ['/media/%s' % x for x in os.listdir('/media')] + (['/media/net/%s' % x for x in os.listdir('/media/net')] if os.path.isdir('/media/net') else []):
 				if not(SystemInfo['HasMMC'] and "/mmc" in media) and os.path.isdir(media):
@@ -141,6 +164,7 @@ class FlashOnline(Screen):
 		else:
 			self.session.openWithCallback(self.close, MessageBox, _("Cannot find images - please try later"), type=MessageBox.TYPE_ERROR, timeout=3)
 
+
 	def keyOk(self):
 		currentSelected = self["list"].l.getCurrentSelection()
 		if currentSelected[0][1] == "Expander":
@@ -153,7 +177,7 @@ class FlashOnline(Screen):
 			self.session.openWithCallback(self.getImagesList, FlashImage, currentSelected[0][0], currentSelected[0][1])
 
 	def keyDelete(self):
-		currentSelected = self["list"].l.getCurrentSelection()[0][1]
+		currentSelected= self["list"].l.getCurrentSelection()[0][1]
 		if not("://" in currentSelected or currentSelected in ["Expander", "Waiter"]):
 			try:
 				os.remove(currentSelected)
@@ -198,7 +222,6 @@ class FlashOnline(Screen):
 		self["list"].instance.moveSelection(self["list"].instance.moveDown)
 		self.selectionChanged()
 
-
 class FlashImage(Screen):
 	skin = """<screen position="center,center" size="1200,600" flags="wfNoBorder" backgroundColor="#54242424">
 		<widget name="header" position="5,10" size="e-10,50" font="Regular;40" backgroundColor="#54242424"/>
@@ -206,7 +229,7 @@ class FlashImage(Screen):
 		<widget name="progress" position="5,e-39" size="e-10,24" backgroundColor="#54242424"/>
 	</screen>"""
 
-	def __init__(self, session, imagename, source):
+	def __init__(self, session,  imagename, source):
 		Screen.__init__(self, session)
 		self.containerbackup = None
 		self.containerofgwrite = None
@@ -250,13 +273,13 @@ class FlashImage(Screen):
 		choices = []
 		HIslot = len(imagedict) + 1
 		currentimageslot = GetCurrentImage()
-		print("[FlashOnline] Current Image Slot %s, Imagelist %s" % (currentimageslot, imagedict))
+		print("[FlashOnline] Current Image Slot %s, Imagelist %s"% ( currentimageslot, imagedict))
 		for x in list(range(1, HIslot)):
 			choices.append(((_("slot%s - %s (current image)") if x == currentimageslot else _("slot%s - %s")) % (x, imagedict[x]['imagename']), (x, True)))
 		choices.append((_("No, do not flash an image"), False))
 		self.session.openWithCallback(self.checkMedia, MessageBox, self.message, list=choices, default=currentimageslot, simple=True)
 
-	def backupQuestionCB(self, retval=True):
+	def backupQuestionCB(self, retval = True):
 		if retval:
 			self.checkMedia('backup')
 		else:
@@ -325,13 +348,13 @@ class FlashImage(Screen):
 		if retval:
 			if 'backup' == retval or True == retval:
 				from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen
-				self.session.openWithCallback(self.flashPostAction, BackupScreen, runBackup=True)
+				self.session.openWithCallback(self.flashPostAction, BackupScreen, runBackup = True)
 			else:
 				self.flashPostAction()
 		else:
 			self.abort()
 
-	def flashPostAction(self, retval=True):
+	def flashPostAction(self, retval = True):
 		if retval:
 			self.recordcheck = False
 			title =_("Please select what to do after flashing the image:\n(In addition, if it exists, a local script will be executed as well at /media/hdd/images/config/myrestore.sh)")
@@ -374,7 +397,7 @@ class FlashImage(Screen):
 			self.abort()
 
 	def postFlashActionCallback(self, answer):
-		restoreSettings = False
+		restoreSettings   = False
 		restoreAllPlugins = False
 		restoreSettingsnoPlugin = False
 		if answer is not None:
@@ -387,12 +410,12 @@ class FlashImage(Screen):
 					self.session.openWithCallback(self.recordWarning, MessageBox, _("Recording(s) are in progress or coming up in few seconds!") + '\n' + _("Really reflash your %s %s and reboot now?") % (getMachineBrand(), getMachineName()), default=False)
 					return
 			if answer[1] == "restoresettings":
-				restoreSettings = True
+				restoreSettings   = True
 			if answer[1] == "restoresettingsnoplugin":
 				restoreSettings = True
 				restoreSettingsnoPlugin = True
 			if answer[1] == "restoresettingsandallplugins":
-				restoreSettings = True
+				restoreSettings   = True
 				restoreAllPlugins = True
 			if restoreSettings:
 				self.SaveEPG()
@@ -471,7 +494,7 @@ class FlashImage(Screen):
 		if reply:
 			if "://" in self.source:
 				from Tools.Downloader import downloadWithProgress
-				self["header"].setText(_("Downloading Image"))
+				self["header"].setText(_("Downloading Image ... Please wait"))
 				self["info"].setText(self.imagename)
 				self["summary_header"].setText(self["header"].getText())
 				self.downloader = downloadWithProgress(self.source, self.zippedimage)
@@ -498,7 +521,7 @@ class FlashImage(Screen):
 	def unzip(self):
 		self["header"].setText(_("Unzipping Image"))
 		self["summary_header"].setText(self["header"].getText())
-		self["info"].setText("%s\n%s" % (self.imagename, _("Please wait")))
+		self["info"].setText("%s\n%s"% (self.imagename, _("Please wait")))
 		self["progress"].hide()
 		self.delay.callback.remove(self.confirmation)
 		self.delay.callback.append(self.doUnzip)
@@ -514,7 +537,6 @@ class FlashImage(Screen):
 	def flashimage(self):
 		self["header"].setText(_("Flashing Image"))
 		self["summary_header"].setText(self["header"].getText())
-
 		def findimagefiles(path):
 			for path, subdirs, files in os.walk(path):
 				if not subdirs and files:
@@ -524,8 +546,8 @@ class FlashImage(Screen):
 			self.ROOTFSSUBDIR = "none"
 			self.getImageList = self.saveImageList
 			if SystemInfo["canMultiBoot"]:
-				self.MTDKERNEL = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2]
-				self.MTDROOTFS = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2]
+				self.MTDKERNEL  = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2]
+				self.MTDROOTFS  = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2]
 				if SystemInfo["HasRootSubdir"]:
 					self.ROOTFSSUBDIR = SystemInfo["canMultiBoot"][self.multibootslot]['rootsubdir']
 			else:
@@ -549,12 +571,12 @@ class FlashImage(Screen):
 		if retval == 0:
 			self["header"].setText(_("Flashing image successful"))
 			self["summary_header"].setText(self["header"].getText())
-			self["info"].setText(_("%s\nPress ok for multiboot selection\nPress exit to close") % self.imagename)
+			self["info"].setText(_("%s\nPress ok to close") % self.imagename)
 		else:
 			self.session.openWithCallback(self.abort, MessageBox, _("Flashing image was not successful\n%s") % self.imagename, type=MessageBox.TYPE_ERROR, simple=True)
 
 	def abort(self, reply=None):
-		if self.getImageList or self.containerofgwrite:
+		if self.getImageList:
 			return 0
 		if self.downloader:
 			self.downloader.stop()
@@ -563,9 +585,6 @@ class FlashImage(Screen):
 	def ok(self):
 		fbClass.getInstance().unlock()
 		if self["header"].text == _("Flashing image successful"):
-			if SystemInfo["canMultiBoot"]:
-				self.session.openWithCallback(self.abort, MultiBootSelector)
-			else:
-				self.close()
+			self.close()
 		else:
 			return 0
