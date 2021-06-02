@@ -15,10 +15,14 @@ from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists, SCOPE_PLUGINS
 from Components.config import config, configfile, ConfigSubsection, ConfigText, ConfigSelection
-import urllib2
+from six.moves import urllib
+from six.moves.urllib.request import urlopen, Request
+import requests
+import six
 import os
 import shutil
 import math
+import re
 from boxbranding import getBoxType, getMachineBuild, getImageVersion, getBrandOEM, getMachineBrand, getImageArch
 
 class OPDChooseOnLineImage(Screen):
@@ -40,35 +44,43 @@ class OPDChooseOnLineImage(Screen):
                 mbimageValue = config.usage.mbimageversion.value
                 if returnValue is not None:
                         self.session.openWithCallback(self.quit, DownloadOnLineImage, returnValue, mbimageValue )
-                return    
+                return
 
         def KeyOk(self):
                 global returnValue
                 global mbimageValue
                 self.sel = self['list'].getCurrent()
                 returnValue = self.sel[2]
-                if returnValue in ('opennfr', 'openhdf', 'openatv', 'opendroid'): 
+                if returnValue in ('opennfr', 'openhdf', 'openatv', 'pure2', 'opendroid'): 
                         from Screens.Setup import Setup
-                        MBImagelist = [("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4"))]
-                        if returnValue ==  'opennfr':
-                                MBImagelist.append(("6.3", _("6.3")))
+                        MBImagelist = [("6.0", _("6.0")), ("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4")), ("6.5", _("6.5")), ("7.0", _("7.0")), ("7.1", _("7.1"))]
+                        if returnValue ==  'openatv':
+                                MBImagelist.remove(("6.0", _("6.0")))
                         elif returnValue ==  'opendroid':
-                                MBImagelist.append(("6.7", _("6.7")))
-                                MBImagelist.append(("6.8", _("6.8")))
+                                MBImagelist.append(("7.0", _("7.0")))
+                                MBImagelist.append(("7.1", _("7.1")))
+                        elif returnValue ==  'openhdf':
+                                MBImagelist.remove(("6.0", _("6.0")))
                                 MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.2", _("6.2")))
-                        elif returnValue ==  'openhdf':
-                                MBImagelist.append(("6.2", _("6.2")))
-                                MBImagelist.append(("6.3", _("6.3")))
-                                MBImagelist.append(("6.4", _("6.4")))
+                                MBImagelist.remove(("6.3", _("6.3")))
+                        elif returnValue ==  'opennfr':
+                                MBImagelist.remove(("6.0", _("6.0")))
+                                MBImagelist.remove(("6.1", _("6.1")))
+                                MBImagelist.remove(("6.2", _("6.2")))
+                                MBImagelist.remove(("6.3", _("6.3")))
+                        elif returnValue ==  'pure2':
+                                MBImagelist.remove(("6.0", _("6.0")))
+                                MBImagelist.remove(("6.1", _("6.1")))
+                                MBImagelist.remove(("6.4", _("6.4")))
                         if returnValue ==  'opendroid':
-                                config.usage.mbimageversion = ConfigSelection(default="6.8", choices = MBImagelist)	    
+                                config.usage.mbimageversion = ConfigSelection(default="7.0", choices = MBImagelist)	    
                         else:
-                                config.usage.mbimageversion = ConfigSelection(default="6.7", choices = MBImagelist)
+                                config.usage.mbimageversion = ConfigSelection(default="7.1", choices = MBImagelist)
                         self.session.openWithCallback(self.KeyOk1, Setup, "multiboot")
                         mbimageValue = config.usage.mbimageversion.value
                 else:
-                        config.usage.mbimageversion = ConfigSelection(default="6.7", choices = [("0.0", _("0.0"))]) 
+                        config.usage.mbimageversion = ConfigSelection(default="7.0", choices = [("0.0", _("0.0"))]) 
                         config.usage.mbimageversion.value = "0.0"
                         config.usage.mbimageversion.save()
                         self.KeyOk1() 
@@ -84,8 +96,8 @@ class OPDChooseOnLineImage(Screen):
                 idx = 'opendroid'
                 res = (name,
                        png,
-                       idx,
-                       desc)
+                 idx,
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'openvix.png'
                 png = LoadPixmap(mypixmap)
@@ -94,18 +106,8 @@ class OPDChooseOnLineImage(Screen):
                 idx = 'openvix'
                 res = (name,
                        png,
-                       idx,
-                       desc)
-                self.list.append(res)
-                mypixmap = mypath + 'egami.png'
-                png = LoadPixmap(mypixmap)
-                name = _('Egami')
-                desc = _('Download latest Egami Image')
-                idx = 'egami'
-                res = (name,
-                       png,
-                       idx,
-                       desc)
+                idx,
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'openatv.png'
                 png = LoadPixmap(mypixmap)
@@ -115,7 +117,7 @@ class OPDChooseOnLineImage(Screen):
                 res = (name,
                        png,
                        idx,
-                       desc)
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'openhdf.png'
                 png = LoadPixmap(mypixmap)
@@ -125,7 +127,7 @@ class OPDChooseOnLineImage(Screen):
                 res = (name,
                        png,
                        idx,
-                       desc)
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'openeight.png'
                 png = LoadPixmap(mypixmap)
@@ -135,27 +137,7 @@ class OPDChooseOnLineImage(Screen):
                 res = (name,
                        png,
                        idx,
-                       desc)
-                self.list.append(res)
-                mypixmap = mypath + 'satdreamgr.png'
-                png = LoadPixmap(mypixmap)
-                name = _('SatDreamgr')
-                desc = _('Download latest SatDreamgr Image')
-                idx = 'satdreamgr'
-                res = (name,
-                       png,
-                       idx,
-                       desc)
-                self.list.append(res)
-                mypixmap = mypath + 'hdmu.png'
-                png = LoadPixmap(mypixmap)
-                name = _('Hdmu')
-                desc = _('Download latest HDMU Image')
-                idx = 'hdmu'
-                res = (name,
-                       png,
-                       idx,
-                       desc)
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'pure2.png'
                 png = LoadPixmap(mypixmap)
@@ -165,7 +147,7 @@ class OPDChooseOnLineImage(Screen):
                 res = (name,
                        png,
                        idx,
-                       desc)
+                 desc)
                 self.list.append(res)
                 mypixmap = mypath + 'opennfr.png'
                 png = LoadPixmap(mypixmap)
@@ -182,6 +164,7 @@ class OPDChooseOnLineImage(Screen):
         def quit(self):
                 self.close()
 
+
 class DownloadOnLineImage(Screen):
         skin = '\n\t<screen position="center,center" size="560,500" title="OPDBoot - Download Image">\n\t\t<ePixmap position="0,460"   zPosition="1" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />\n\t\t<ePixmap position="140,460" zPosition="1" size="140,40" pixmap="skin_default/buttons/green.png" transparent="1" alphatest="on" />\n\t\t<widget name="key_red" position="0,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="key_green" position="140,460" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="imageList" position="10,10" zPosition="1" size="550,450" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" />\n\t</screen>'
 
@@ -194,6 +177,10 @@ class DownloadOnLineImage(Screen):
                 boxname = getBoxType()
                 if boxname == "twinboxlcdci5":
                         boxname = "twinboxlcd"
+                if boxname == 'sf8008t':
+                        boxname = "sf8008"
+                if boxname == 'sf8008s':
+                        boxname = "sf8008"
                 Screen.setTitle(self, _('OPDBoot - Download Image'))
                 self['key_green'] = Button(_('Install'))
                 self['key_red'] = Button(_('Exit'))
@@ -213,7 +200,7 @@ class DownloadOnLineImage(Screen):
                         BRANDOEM = 'gigablue'
                 elif boxname in ('mutant51'):
                         BRANDOEM = 'mutant'
-                elif boxname in ('sf128', 'sf208', 'sf3038', 'sf4008'):
+                elif boxname in ('sf128', 'sf208', 'sf3038', 'sf4008', 'sf8008', 'sf8008m'):
                         BRANDOEM = 'octagon'
                 elif boxname in ('osmega'):
                         BRANDOEM = 'xcore' 
@@ -229,7 +216,7 @@ class DownloadOnLineImage(Screen):
                 elif boxname in ('xpeedlx3'):
                         BRANDOEMDROID = 'GoldenInterstar'
                         MASCHINEBUILD = boxname
-                elif boxname in ('sf98', 'sf108', 'sf128', 'sf138', 'sf208', 'sf228', 'sf3038', 'sf4008', 'sf5008', 'sf8008'):
+                elif boxname in ('sf98', 'sf108', 'sf128', 'sf138', 'sf208', 'sf228', 'sf3038', 'sf4008', 'sf8008', 'sf8008m'):
                         BRANDOEMDROID = 'Octagon'
                         MASCHINEBUILD = boxname
                 elif boxname in ('mutant51', 'ax51'):
@@ -240,42 +227,27 @@ class DownloadOnLineImage(Screen):
                         MASCHINEBUILD = boxname
                 elif boxname in ('vusolo4k'):
                         BRANDOEMDROID = 'VU+'
-                elif boxname in ('zgemmahs', 'zgemmah2s', 'zgemmah2splus', 'zgemmah2h', 'zgemmah3ac', 'zgemmah32tc', 'zgemmah5', 'zgemmah52s', 'zgemmah52splus', 'zgemmah5ac', 'ozgemmah52tc', 'zgemmah6', 'zgemmah7', 'zgemmah9s', 'zgemmah9t', 'zgemmai55'):
-                        BRANDOEMDROID = 'Zgemma'
                         MASCHINEBUILD = boxname
                 self.distro = distro
-                if self.distro == 'egami':
-                        self.feed = 'egami'
-                        self.feedurl = 'http://image.egami-image.com'
-                elif self.distro == 'opennfr':
+                if self.distro == 'opennfr':
                         self.feed = 'opennfr'
                         self.feedurl = 'http://dev.nachtfalke.biz/nfr/feeds/%s/images' %ImageVersion
                 elif self.distro == 'openatv':
                         self.feed = 'openatv'
                         self.feedurl = 'http://images.mynonpublic.com/openatv/%s' %ImageVersion
-                elif self.distro == 'openmips':
-                        self.feed = 'openmips'
-                        self.feedurl = 'http://images.teamblue.tech/6.1-release'
                 elif self.distro == 'openvix':
                         self.feed = 'openvix'
-                        self.feedurl = 'http://www.openvix.co.uk/openvix-builds/'
+                        self.feedurl = 'http://openvix.co.uk'
                 elif self.distro == 'pure2':
                         self.feed = 'pure2'
-                        self.feedurl = 'http://pur-e2.club/OU/images/index.php?dir=6.2/'
+                        self.feedurl = 'http://pur-e2.club/OU/images/index.php?dir=%s' %ImageVersion 
                 elif self.distro == 'opendroid':
                         self.feed = 'opendroid'
-                        self.feedurl = 'http://images.opendroid.org/%s' %ImageVersion
-                elif self.distro == 'hdmu':
-                        self.feed = 'hdmu'
-                        self.feedurl = 'http://www.hdmedia-universe.com/board/pages.php?pageid=1&' 
+                        self.feedurl = 'https://opendroid.org/%s' %ImageVersion
                 elif self.distro == 'openhdf':
                         self.feed = 'openhdf'
-                        if ImageVersion == "6.3":
-                                hdfImageVersion = "v63"
-                        elif ImageVersion == "6.4":
-                                hdfImageVersion = "v64"
-                        elif ImageVersion == "6.2":
-                                hdfImageVersion = "v62"
+                        if ImageVersion == "6.5":
+                                hdfImageVersion = "v65"
                         else:
                                 hdfImageVersion = "v64"
                         self.feedurl = 'http://%s.hdfreaks.cc/%s' % (hdfImageVersion, boxname)
@@ -283,16 +255,11 @@ class DownloadOnLineImage(Screen):
                 elif self.distro == 'openeight':
                         self.feed = 'openeight'
                         self.feedurl = 'http://openeight.de'
-                elif self.distro == 'satdreamgr':
-                        if distri == "Vu+":
-                                distri = "vu"
-                        self.feed = 'satdreamgr'
-                        self.feedurl = 'http://sgcpm.com/satdreamgr-images-6/%s/%s' % (distri.lower(), boxname)                
                 else:
                         self.feed = 'opennfr'
-                        self.feedurl = 'http://dev.nachtfalke.biz/nfr/feeds/6.0/images'
+                        self.feedurl = 'http://dev.nachtfalke.biz/nfr/feeds/6.4/images'
                 self['imageList'] = MenuList(self.imagelist)
-                self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], 
+                self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'],
                 {
                     'green': self.green,
                     'red': self.quit,
@@ -306,227 +273,88 @@ class DownloadOnLineImage(Screen):
 
         def box(self):
                 box = getBoxType()
-                urlbox = getBoxType()
                 if box == "twinboxlcdci5":
                         box = "twinboxlcd"
                 urlbox = getBoxType()
                 if urlbox == "twinboxlcdci5":
                         urlbox = "twinboxlcd"
-                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'egami' or self.distro == 'openhdf' or self.distro == 'satdreamgr'or self.distro == 'openvix':
+                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'openhdf'or self.distro == 'opendrod':
                         if box in ('xpeedlx1', 'xpeedlx2'):
                                 box = 'xpeedlx'
-                        req = urllib2.Request(self.feedurl)
+                        if box in ('sf8008t', 'sf8008s'):
+                                box = 'sf8008'
+                        req = urllib.request.Request(self.feedurl)
+                        reg1 = requests.get(self.feedurl)
                         stb = 'no Image for this Box on this Side'
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(reg1.text, 'html.parser')
                         try:
-                                response = urllib2.urlopen(req)
-                                tmp = response.readlines()
-                                for line in tmp:
-                                        if '<a href="' in line:
-                                                if box in line:
-                                                        stb = '1'
-                                                        break
-                        except:
-                                stb = 'no Image for this Box on this Side'
-                if self.distro == 'egami':
-                        if box == "ax51":
-                                if box in ('ax51'):
-                                        box = 'ax51'
-                                        urlbox = 'hd51'
-                                        stb = '1'
-                        else:
-                                self.feedurl1 = self.feedurl + "/index.php?open=" + box
-                                req = urllib2.Request(self.feedurl1)
-                                stb = 'no Image for this Box on this Side'
-                                try:
-                                        response = urllib2.urlopen(req)
-                                        tmp = response.readlines()
-                                        for line in tmp:
-                                                if '<a href="' in line:
-                                                        if box in line:
-                                                                stb = '1'
-                                                                break
-                                except:
-                                        stb = 'no Image for this Box on this Side'
-                if self.distro == 'hdmu':
-                        if box == "formuler1":
-                                box = "FormulerF1"
-                        elif box == "formuler1": 
-                                box = "FormulerF3"
-                        self.feedurl1 = self.feedurl + "box=" + box
-                        req = urllib2.Request(self.feedurl1)
-                        stb = 'no Image for this Box on this Side'
-                        try:
-                                response = urllib2.urlopen(req)
-                                tmp = response.readlines()
-                                for line in tmp:
-                                        if '<a href="' in line:
-                                                if box == "sf4008":
-                                                        if box and "images/arm" in line:
-                                                                stb = '1'
-                                                                break
-                                                else:
-                                                        if box and "images/mips" in line:
-                                                                stb = '1'
-                                                                break
-                        except:
-                                stb = 'no Image for this Box on this Side'
-                if self.distro == 'pure2':
-                        self.feedurl1 = self.feedurl + "/" + BRANDOEM
-                        req = urllib2.Request(self.feedurl1)
-                        stb = 'no Image for this Box on this Side'
-                        try:
-                                response = urllib2.urlopen(req)
-                                tmp = response.readlines()
-                                for line in tmp:
-                                        if '/OU/images/index.php?dir=6.2' in line:
-                                                if box in line:
-                                                        stb = '1'
-                                                        break
-                        except:
-                                stb = 'no Image for this Box on this Side'
-                if self.distro == 'opendroid':
-                        if box == "ax51":
-                                box = "mutant51"
-                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD 
-                        req = urllib2.Request(self.feedurl1)
-                        stb = 'no Image for this Box on this Side'
-                        try:
-                                response = urllib2.urlopen(req)
-                                tmp = response.readlines()
-                                for line in tmp:
-                                        if "<a href='" in line:
-                                                if box in line:
-                                                        stb = '1'
-                                                        break
+                                for link in soup.find_all('a'):
+                                        lefts = link.get('href')
+                                        if box in lefts:
+                                                stb = '1'
+                                                break
                         except:
                                 stb = 'no Image for this Box on this Side'
                 if self.distro == 'openvix':
-                        if box in ('mbtwin', 'sezam5000hd'):
-                                box = 'mbtwin'
-                                urlbox = 'Miraclebox-Twin'
-                                stb = '1'
-                        elif box in ('xpeedlx3'):
-                                box = 'xpeedlx3'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('sf4008'):
-                                box = 'sf4008'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('mutant51', 'ax51'):
-                                box = 'mutant51'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'gbquadplus':
-                                box = 'gbquadplus'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'gb800ueplus':
-                                box = 'gb800ueplus'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'gb800seplus':
-                                box = 'gb800seplus'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('gbue4k'):
-                                box = 'gbue4k'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('gbquad4k'):
-                                box = 'gbquad4k'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in ('vuduo2'):
-                                box = 'vuduo2'
-                                urlbox = getBoxType() 
-                                stb = '1'
-                        elif box in ('vusolo4k'):
-                                box = 'vusolo4k'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osmini':
-                                box = 'osmini'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osminiplus':
-                                box = 'osminiplus'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osmega':
-                                box = 'osmega'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osmio4k':
-                                box = 'osmio4k'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osnino':
-                                box = 'osnino'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osninoplus':
-                                box = 'osninoplus'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'osninopro':
-                                box = 'osninopro'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box  in 'hd51':
-                                box = 'hd51'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'zgemmah7':
-                                box = 'zgemmah7'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'zgemmah9s':
-                                box = 'zgemmah9s'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'zgemmah9t':
-                                box = 'zgemmah9t'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'zgemmah92h':
-                                box = 'zgemmah92h'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'zgemmah92s':
-                                box = 'zgemmah92s'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'sf4008':
-                                box = 'sf4008'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'sf228':
-                                box = 'sf228'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'sf208':
-                                box = 'sf208'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'sf128':
-                                box = 'sf128'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        elif box in 'sf138':
-                                box = 'sf138'
-                                urlbox = getBoxType()
-                                stb = '1'
-                        else:
+                        if box in ('xpeedlx1', 'xpeedlx2'):
+                                box = 'xpeedlx'
+                        if box in ('sf8008t', 'sf8008s'):
+                                box = 'sf8008'
+                                urlbox = box	
+                        self.feedurl1 = self.feedurl + "/openvix-builds/"
+                        reg1 = requests.get(self.feedurl1)
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(reg1.text, 'html.parser')
+                        stb = 'no Image for this Box on this Side'
+                        try:
+                                for link in soup.find_all('a'):
+                                        lefts = link.get('href')
+                                        if box in lefts:
+                                                stb = '1'
+                                                break
+                        except:
+                                stb = 'no Image for this Box on this Side'
+                if self.distro == 'pure2':
+                        if box in ('sf8008t', 'sf8008s'):
+                                box = 'sf8008'	
+                        self.feedurl1 = self.feedurl + "/" + BRANDOEM
+                        reg1 = requests.get(self.feedurl1)
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(reg1.text, 'html.parser') 
+                        stb = 'no Image for this Box on this Side'
+                        try:
+                                for link in soup.find_all('a'):
+                                        lefts = link.get('href')
+                                        if box in lefts:
+                                                stb = '1'
+                                                break
+                        except:
+                                stb = 'no Image for this Box on this Side'
+                if self.distro == 'opendroid':
+#                        if box == "ax51":
+#                                box = "mutant51"
+                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD 
+                        req = urllib.request.Request(self.feedurl)
+                        reg1 = requests.get(self.feedurl)
+                        stb = 'no Image for this Box on this Side'
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(reg1.text, 'html.parser')
+                        stb = 'no Image for this Box on this Side'
+                        try:
+                                for link in soup.find_all('a'):
+                                        lefts = link.get('href')
+                                        if box in lefts:
+                                                stb = '1'
+                                                break
+                        except:
                                 stb = 'no Image for this Box on this Side'
                 elif self.distro == 'openeight':
-                        if box in ('sf208', 'sf228', 'sf108', 'sf3038', 'sf98', 'sf128', 'sf138', 'sf4008', 'sf8008'):
+                        if box in ('sf8008t', 'sf8008s'):
+                                box = 'sf8008'
+                        if box in ('sf208', 'sf228', 'sf108', 'sf3038', 'sf98', 'sf128', 'sf138', 'sf4008', 'sf8008', 'sf8008m'):
                                 if box in ('sf4008'):
                                         box = 'sf4008'
-                                        urlbox = getBoxType()
-                                        stb = '1'
-                                elif box in ('sf8008'):
-                                        box = 'sf8008'
                                         urlbox = getBoxType()
                                         stb = '1'
                                 elif box in ('sf228'):
@@ -557,6 +385,14 @@ class DownloadOnLineImage(Screen):
                                         box = 'sf138'
                                         urlbox = getBoxType()
                                         stb = '1'
+                                elif box in ('sf8008'):
+                                        box = 'sf8008'
+                                        urlbox = getBoxType()
+                                        stb = '1'
+                                elif box in ('sf8008m'):
+                                        box = 'sf8008m'
+                                        urlbox = getBoxType()
+                                        stb = '1'
                         else:   
                                 stb = 'no Image for this Box on this Side'
                 return (box, urlbox, stb)
@@ -573,36 +409,25 @@ class DownloadOnLineImage(Screen):
                         box = self.box()
                         self.hide()
                         if self.distro == 'openvix':
-                                url = self.feedurl + '/' + box[1] + '/' + sel
+                                url = self.feedurl + '/openvix-builds/' + box[0] + '/' + sel
                         elif self.distro == 'openeight':
                                 url = self.feedurl + '/images/' + box[0] + '/' + sel
                         elif self.distro == 'openhdf':
                                 url = self.feedurl + '/' + sel
-                                #url = 'http://images.hdfreaks.cc/' + box[0] + '/' + sel
                         elif self.distro == 'pure2':
-                                url = 'http://pur-e2.club/OU/images/6.2/' + BRANDOEM + '/' + sel
+                                url = 'http://pur-e2.club/OU/images/' + ImageVersion + '/' + BRANDOEM + '/' + sel
                         elif self.distro == 'opendroid':
-                                url = self.feedurl + '/' + BRANDOEMDROID + '/' + MASCHINEBUILD + '/' + sel				
-                        elif self.distro == 'satdreamgr':
-                                url = self.feedurl + '/' + sel
-                        elif self.distro == 'hdmu':
-                                self.feedurl2 = 'www.hdmedia-universe.com/images/'
-                                if "cortexa15hf" in getImageArch():
-                                        url = 'http://www.hdmedia-universe.com/images/arm/' + box[0] + '/' + sel					
-                                else:
-                                        url = 'http://www.hdmedia-universe.com/images/mips/' + box[0] + '/' + sel	
-                        elif self.distro == 'egami':
-                                if box[0] == "ax51":
-                                        url = 'http://image.egami-image.com/hd51/' + sel
-                                else: 
-                                        url = 'http://image.egami-image.com/' + box[0] + '/' + sel  				
+                                url = self.feedurl + '/' + BRANDOEMDROID + '/' + MASCHINEBUILD + '/' + sel
                         elif self.distro == 'opendroid':
-                                url = self.feedurl + '/' + box[0] + '/' + box[1] + '/' + sel            
+                                url = self.feedurl + '/' + box[0] + '/' + box[1] + '/' + sel
                         else:
                                 url = self.feedurl + '/' + box[0] + '/' + sel
                         print('[OPDBoot] Image download url: ', url)
                         try:
-                                u = urllib2.urlopen(url)
+                                user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+                                headers={'User-Agent':user_agent,}
+                                req = urllib.request.Request(url, None, headers)
+                                u = urllib.request.urlopen(req)
                         except:
                                 self.session.open(MessageBox, _('The URL to this image is not correct !!'), type=MessageBox.TYPE_ERROR)
                                 self.close()
@@ -610,8 +435,7 @@ class DownloadOnLineImage(Screen):
                         f = open(file_name, 'wb')
                         f.close()
                         try:
-                                meta = u.info()
-                                file_size = int(meta.getheaders('Content-Length')[0])
+                                file_size = int(u.getheader('Content-Length'))
                                 print('Downloading: %s Bytes: %s' % (sel, file_size))
                                 job = ImageDownloadJob(url, file_name, sel)
                                 job.afterEvent = 'close'
@@ -636,6 +460,7 @@ class DownloadOnLineImage(Screen):
                         else:
                                 self.session.open(MessageBox, _('Download Failed !!'), type=MessageBox.TYPE_ERROR)
                         return
+
         def startInstall(self, ret = None):
                 if ret:
                         from Plugins.Extensions.OPDBoot.plugin import OPDBootImageInstall
@@ -655,27 +480,25 @@ class DownloadOnLineImage(Screen):
                         url = self.feedurl
                 if self.distro in ('openatv', 'openeight'):
                         url = '%s/index.php?open=%s' % (self.feedurl, box)
-                elif self.distro == 'egami':
-                        url = '%s/index.php?open=%s' % (self.feedurl, urlbox)
                 elif self.distro == 'openvix':
-                        url = '%s/%s' % (self.feedurl, urlbox)
+                        url = '%s/openvix-builds/%s' % (self.feedurl, box)
                 elif self.distro == 'opendroid':
                         url = '%s/%s/index.php?open=%s' % (self.feedurl, BRANDOEMDROID, MASCHINEBUILD)			
                 elif self.distro == 'opennfr':
                         url = '%s/%s' % (self.feedurl, box)
                 elif self.distro == 'openhdf':
                         url = '%s/%s' % (self.feedurl1, box)
-                elif self.distro == 'hdmu':
-                        url = '%sbox=%s' % (self.feedurl, box)
                 elif self.distro == 'pure2':
                         url = '%s' % (self.feedurl1)
                 else:
                         url = self.feedurl
                 print('[OPDBoot] URL: ', url)
-                req = urllib2.Request(url)
+                user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'		
+                headers={'User-Agent':user_agent,} 
+                req = urllib.request.Request(url, None, headers)
                 try:
-                        response = urllib2.urlopen(req)
-                except urllib2.URLError as e:
+                        response = urllib.request.urlopen(req)
+                except urllib.error.URLError as e:
                         print('URL ERROR: %s' % e)
                         self.imagelist.append(stb)
                         self['imageList'].l.setList(self.imagelist)
@@ -683,73 +506,62 @@ class DownloadOnLineImage(Screen):
 
                 try:
                         the_page = response.read()
-                except urllib2.HTTPError as e:
+                except urllib.error.URLError as e:
                         print('HTTP download ERROR: %s' % e.code)
                         return
-                lines = the_page.split('\n')
+
+                lines = the_page.split(b'\n')
+
                 tt = len(box)
                 if stb == '1':
+                        box1 = box.encode()
+                        urlbox1 = urlbox.encode()
                         for line in lines:
                                 if self.feed == "openeight":
-                                        if line.find("/images/%s/" % box) > -1:
-                                                t = line.find('/images/%s/' % box)
-                                                self.imagelist.append(line[t+tt+9:t+tt+tt+40])
-                                        elif line.find("<a href='%s/" % box) > -1:
-                                                t = line.find("<a href='%s/" % box)
-                                                t2 = line.find("'>egami")
-                                                if self.feed in 'openatv':
-                                                        self.imagelist.append(line[t + tt + 10:t + tt + tt + 39])
-                                                elif self.feed in 'egami':
-                                                        self.imagelist.append(line[t + tt + 10:t2])
-                                elif line.find("<a href='%s/" % urlbox) > -1:
-                                        ttt = len(urlbox)
-                                        t = line.find("<a href='%s/" % urlbox) 
-                                        t5 = line.find(".zip'")
-                                        self.imagelist.append(line[t + ttt + 10 :t5 + 4])
-                                elif line.find('href="openvix-') > -1:
-                                        t4 = line.find('openvix-')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4:t5 + 4])
-                                elif line.find('file=openvix-') > -1:
-                                        t4 = line.find('file=')
-                                        self.imagelist.append(line[t4 + 5:-2])
-                                elif line.find('<a href="download.php?file=' + box + '/') > -1:
-                                        t4 = line.find('file=' + box)
-                                        t5 = line.find('.zip" class="')
-                                        self.imagelist.append(line[t4 + len(box) + 6:t5 + 4])
-                                elif line.find('<a class="autoindex_a" href="/OU/images/index.php?dir=6.2/' + BRANDOEM + "/&amp;file=" + box) > -1:
-                                        t4 = line.find(box + '-PurE2')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4 :t5+4])
-                                elif line.find("<a href='" + MASCHINEBUILD + "/opendroid") > -1:
-                                        t4 = line.find('opendroid-' + ImageVersion + '-' + box)
-                                        t5 = line.find(".zip'")
-                                        self.imagelist.append(line[t4 :t5+4])
-                                elif line.find("<a href='") > -1:
-                                        t4 = line.find('egami-')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4 :t5+4])
-                                elif line.find('href="opennfr-') > -1:
-                                        t4 = line.find('opennfr-')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4 :t5+4])
-                                elif line.find('href="openhdf-') > -1:
-                                        t4 = line.find('openhdf-')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4 :t5+4])
-                                elif line.find('<a href="http://www.hdmedia-universe.com/images/') > -1:
-                                        t4 = line.find('HDMU_')
-                                        t5 = line.find('.zip"')
-                                        if line[t4 :t5+4] != '':
-                                                self.imagelist.append(line[t4 :t5+4])  
-                                elif line.find('href="Satdreamgr-') > -1:
-                                        t4 = line.find('Satdreamgr-')
-                                        t5 = line.find('.zip"')
-                                        self.imagelist.append(line[t4 :t5+4])
+                                        if line.find(b"/images/%s/" % box1) > -1:
+                                                t = line.find(b'/images/%s/' % box1)
+                                                self.imagelist.append(line[t+tt+9:t+tt+tt+40].decode())
+                                elif line.find(b"<a href='%s/" % box1) > -1:
+                                        t = line.find(b"<a href='%s/" % box1)
+                                        if self.feed in 'openatv':
+                                                self.imagelist.append(line[t + tt + 10:t + tt + tt + 39].decode())
+                                elif line.find(b"<a href='%s/" % urlbox1) > -1:
+                                        ttt = len(urlbox1)
+                                        t = line.find(b"<a href='%s/" % urlbox1) 
+                                        t5 = line.find(b".zip'")
+                                        self.imagelist.append(line[t + ttt + 10 :t5 + 4].decode()) 
+                                elif line.find(b'href="openvix-') > -1:
+                                        t4 = line.find(b'openvix-')
+                                        t5 = line.find(b'.zip"')
+                                        self.imagelist.append(line[t4 :t5+4].decode())
+                                elif line.find(b'file=openvixhd-') > -1:
+                                        t4 = line.find(b'file=')
+                                        self.imagelist.append(line[t4 + 5:-2].decode())
+                                elif line.find(b'<a href="download.php?file=' + box1 + b'/') > -1:
+                                        t4 = line.find(b'file=' + box1)
+                                        t5 = line.find(b'.zip" class="')
+                                        self.imagelist.append(line[t4 + len(box1) + 6:t5 + 4].decode())
+                                elif line.find(b'<a class="autoindex_a" href="/OU/images/index.php?dir=' + ImageVersion.encode() + b'/' + BRANDOEM.encode() + b"/&amp;file=" + box1) > -1:
+                                        t4 = line.find(box1 + b'-PurE2')
+                                        t5 = line.find(b'.zip"')
+                                        self.imagelist.append(line[t4 :t5+4].decode())
+                                elif line.find(b'href="opennfr-') > -1:
+                                        t4 = line.find(b'opennfr-')
+                                        t5 = line.find(b'.zip"')
+                                        self.imagelist.append(line[t4 :t5+4].decode())
+                                elif line.find(b'href="openhdf-b') > -1:
+                                        t4 = line.find(b'openhdf-')
+                                        t5 = line.find(b'.zip"')
+                                        self.imagelist.append(line[t4 :t5+4].decode())
+                                elif line.find(b'<a href="opendroid-' + ImageVersion.encode() + b'/' + BRANDOEMDROID.encode()+ box1 + b'/') > -1:
+                                        t4 = line.find(b'opendroid-')
+                                        t5 = line.find(b'.zip"')
+                                        self.imagelist.append(line[t4 :t5+4].decode())
                 else:
                         self.imagelist.append(stb)
                 if "" in self.imagelist:
                         self.imagelist.remove('')
+                print("self.imagelist:", self.imagelist)
                 self['imageList'].l.setList(self.imagelist)
 
 
@@ -815,4 +627,3 @@ class ImageDownloadTask(Task):
                         self.finish(aborted=True)
                 else:
                         Task.processFinished(self, 0)
-
