@@ -278,7 +278,7 @@ class DownloadOnLineImage(Screen):
                 urlbox = getBoxType()
                 if urlbox == "twinboxlcdci5":
                         urlbox = "twinboxlcd"
-                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'openhdf'or self.distro == 'opendrod':
+                if self.distro == 'openatv' or self.distro == 'opennfr' or self.distro == 'openhdf'or self.distro == 'opendroid':
                         if box in ('xpeedlx1', 'xpeedlx2'):
                                 box = 'xpeedlx'
                         if box in ('sf8008t', 'sf8008s'):
