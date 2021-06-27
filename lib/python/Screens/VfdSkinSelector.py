@@ -1,4 +1,8 @@
+# -*- coding: iso-8859-1 -*-
+# (c) 2006 Stephan Reichholf
+# This Software is Free, use it where you want, when you want for whatever you want and modify it if you want but don't remove my copyright!
 from __future__ import print_function
+from __future__ import absolute_import
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.MessageBox import MessageBox
@@ -9,11 +13,12 @@ from Components.MenuList import MenuList
 from Plugins.Plugin import PluginDescriptor
 import Components.config
 from Components.Label import Label
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CONFIG
 from os import path, walk
 from enigma import eEnv
 from skin import *
 import os
+
 
 class VFDSkinSelector(Screen):
 	skin = """
@@ -31,21 +36,29 @@ class VFDSkinSelector(Screen):
 			<widget name="key_blue" position="520,350" zPosition="2" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" shadowColor="black" shadowOffset="-1,-1" />
 		</screen>"""
 
-	skinlist = []
 	root = eEnv.resolve("/usr/share/enigma2/display/")
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 
 		Screen.__init__(self, session)
 
 		self.list = []
 		self.previewPath = ""
 		self.actual = None
-		path.walk(self.root, self.find, "")
+
+		for root, dirs, files in walk(self.root, followlinks=True):
+			for x in files:
+				if x.startswith("skinvfd") and x.endswith(".xml"):
+					if root is not self.root:
+						subdir = root[19:]
+						skinname = x
+						self.list.append(skinname)
+					else:
+						skinname = x
+						self.list.append(skinname)
 
 		self["key_red"] = StaticText(_("Close"))
 		self["introduction"] = StaticText(_("Press OK to activate the selected skin."))
-		self.skinlist.sort()
 		self["SkinList"] = MenuList(self.list)
 		self["Preview"] = Pixmap()
 
@@ -70,8 +83,8 @@ class VFDSkinSelector(Screen):
 
 	def fill(self):
 		i = 0
-		self.filesArray = sorted(filter(lambda x: x.endswith('.xml'), os.listdir(self.root)))
-		config.skin.display_skin = ConfigSelection(choices = self.filesArray)
+		self.filesArray = sorted([x for x in os.listdir(self.root) if x.endswith('.xml')])
+		config.skin.display_skin = ConfigSelection(choices=self.filesArray)
 		while i < len(self.filesArray):
 			self.list.append((_(self.filesArray[i].split('.')[0]), "chose"))
 			i = i + 1
@@ -115,28 +128,16 @@ class VFDSkinSelector(Screen):
 		self.loadPreview()
 
 	def info(self):
-		aboutbox = self.session.open(MessageBox,_("\nVFD Skin-Selector\nby satinfo & henrylicious (thank you for support)\n\nPlugin to select skin for VFD-Display\n\n - for GigaBlue UE and GigaBlue Quad\n - for VU+ Ultimo and VU+ Duo2"), MessageBox.TYPE_INFO)
+		aboutbox = self.session.open(MessageBox, _("\nVFD Skin-Selector\nby satinfo & henrylicious (thank you for support)\n\nPlugin to select skin for VFD-Display\n\n - for GigaBlue UE and GigaBlue Quad\n - for VU+ Ultimo and VU+ Duo2"), MessageBox.TYPE_INFO)
 		aboutbox.setTitle(_("About..."))
-
-	def find(self, arg, dirname, names):
-		for x in names:
-			if x.startswith("skinvfd") and x.endswith(".xml"):
-				if dirname != self.root:
-					subdir = dirname[19:]
-					skinname = x
-					skinname = subdir + "/" + skinname
-					self.list.append(skinname)
-				else:
-					skinname = x
-					self.list.append(skinname)
 
 	def ok(self):
 		skinfile = self["SkinList"].getCurrent()[0] + ".xml"
-		addSkin(skinfile, SCOPE_CONFIG)
+		loadSkin(skinfile, SCOPE_CONFIG)
 		config.skin.display_skin.value = skinfile
 		config.skin.display_skin.save()
 		print("Selected Value", config.skin.display_skin.value)
-		restartbox = self.session.openWithCallback(self.restartGUI,MessageBox,_("GUI needs a restart to apply new skin.\nDo you want to Restart the GUI now?"), MessageBox.TYPE_YESNO)
+		restartbox = self.session.openWithCallback(self.restartGUI, MessageBox, _("GUI needs a restart to apply new skin.\nDo you want to Restart the GUI now?"), MessageBox.TYPE_YESNO)
 		restartbox.setTitle(_("Restart GUI now?"))
 
 	def loadPreview(self):
