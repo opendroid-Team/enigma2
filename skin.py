@@ -1,21 +1,27 @@
 from __future__ import division
 from __future__ import print_function
 import errno
+import os
 import xml.etree.cElementTree
 import six
 
 from boxbranding import getBoxType
+
 from enigma import addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gRGB
 from os import listdir, path, unlink
 from os.path import basename, dirname, isfile, join as pathjoin
 
-from Components.config import ConfigSubsection, ConfigText, config
+from Components.config import ConfigSubsection, ConfigText, config, ConfigSelection, ConfigNothing
 from Components.RcModel import rc_model
 from Components.Sources.Source import ObsoleteSource
 from Components.SystemInfo import SystemInfo
-from Tools.Directories import SCOPE_CONFIG, SCOPE_CURRENT_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_FONTS, SCOPE_SKIN, SCOPE_SKIN_IMAGE, pathExists, resolveFilename
+from Tools.Directories import SCOPE_CONFIG, SCOPE_CURRENT_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_FONTS, SCOPE_SKIN, SCOPE_SKIN_IMAGE, pathExists, resolveFilename, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
+config.vfd = ConfigSubsection()
+config.vfd.show = ConfigSelection([("skin_text.xml", _("Channel Name")), ("skin_text_clock.xml", _("Clock"))], "skin_text.xml")
+if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
+	config.vfd.show = ConfigNothing()
 
 #DEFAULT_SKIN = "Multibox/skin.xml"
 DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Steampunk/skin.xml" or "Multibox/skin.xml"
@@ -27,7 +33,7 @@ USER_SKIN_TEMPLATE = "skin_user_%s.xml"
 SUBTITLE_SKIN = "skin_subtitles.xml"
 
 GUI_SKIN_ID = 0  # Main frame-buffer.
-DISPLAY_SKIN_ID = 2 if getBoxType().startswith("dm") else 1  # Front panel / display / LCD.
+DISPLAY_SKIN_ID = 1  # Front panel / display / LCD.
 
 domScreens = {}  # Dictionary of skin based screens.
 colors = {  # Dictionary of skin color names.
@@ -109,7 +115,7 @@ def InitSkins():
 		result.append(skin)
 	# Add the activated optional skin parts.
 	if currentPrimarySkin != None:
-		cur_skin = config.skin.primary_skin.value.replace('/skin.xml', '')
+		config.skin.primary_skin.value.replace('/skin.xml', '')
 		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin", ""))
 		if pathExists(partsDir) and currentPrimarySkin != DEFAULT_SKIN:
 			for file in sorted(listdir(partsDir)):
