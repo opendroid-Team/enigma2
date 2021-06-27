@@ -332,11 +332,11 @@ class DownloadOnLineImage(Screen):
                         except:
                                 stb = 'no Image for this Box on this Side'
                 if self.distro == 'opendroid':
-#                        if box == "ax51":
-#                                box = "mutant51"
-                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD 
+                        if box == "ax51":
+                                box = "mutant51"
+                        self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD
                         req = urllib.request.Request(self.feedurl)
-                        reg1 = requests.get(self.feedurl)
+                        reg1 = requests.get(self.feedurl1)
                         stb = 'no Image for this Box on this Side'
                         from bs4 import BeautifulSoup
                         soup = BeautifulSoup(reg1.text, 'html.parser')
@@ -529,7 +529,7 @@ class DownloadOnLineImage(Screen):
                                         ttt = len(urlbox1)
                                         t = line.find(b"<a href='%s/" % urlbox1) 
                                         t5 = line.find(b".zip'")
-                                        self.imagelist.append(line[t + ttt + 10 :t5 + 4].decode()) 
+                                        self.imagelist.append(line[t + ttt + 10 :t5 + 4].decode())
                                 elif line.find(b'href="openvix-') > -1:
                                         t4 = line.find(b'openvix-')
                                         t5 = line.find(b'.zip"')
@@ -553,7 +553,7 @@ class DownloadOnLineImage(Screen):
                                         t4 = line.find(b'openhdf-')
                                         t5 = line.find(b'.zip"')
                                         self.imagelist.append(line[t4 :t5+4].decode())
-                                elif line.find(b'<a href="opendroid-' + ImageVersion.encode() + b'/' + BRANDOEMDROID.encode()+ box1 + b'/') > -1:
+                                elif line.find(b'<a href="opendroid-') > -1:
                                         t4 = line.find(b'opendroid-')
                                         t5 = line.find(b'.zip"')
                                         self.imagelist.append(line[t4 :t5+4].decode())

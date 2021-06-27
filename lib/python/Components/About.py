@@ -1,51 +1,43 @@
 from __future__ import print_function
+from sys import modules, version as pyversion
+from fcntl import ioctl
+from struct import pack
+from socket import socket, inet_ntoa, AF_INET, SOCK_DGRAM
+from time import localtime, strftime
+from os import stat
+
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
-import struct, socket, fcntl, re, sys, os, time
-from sys import modules, version_info
-from boxbranding import getBoxType, getMachineBuild
-import socket
-import fcntl
-import struct
-import time
-import os
+from Tools.Directories import fileReadLine, fileReadLines
+
+MODULE_NAME = __name__.split(".")[-1]
+
+def getImageVersionString():
+	return getImageVersion()
+
 
 def getVersionString():
 	return getImageVersion()
 
-def getImageVersionString():
-	try:
-		if os.path.isfile('/var/lib/opkg/status'):
-			st = os.stat('/var/lib/opkg/status')
-		else:
-			st = os.stat('/usr/lib/ipkg/status')
-		tm = time.localtime(st.st_mtime)
-		if tm.tm_year >= 2011:
-			return time.strftime(_("%Y-%m-%d %H:%M:%S"), tm)
-		else:
-			return _("unknown")
-	except:
-		return _("unavailable")
 
 def getFlashDateString():
 	try:
-		return time.strftime(_("%Y-%m-%d %H:%M:%S"), time.localtime(os.path.getatime("/bin")))
+		tm = localtime(stat("/boot").st_ctime)
+		if tm.tm_year >= 2011:
+			return strftime(_("%Y-%m-%d"), tm)
+		else:
+			return _("unknown")
 	except:
 		return _("unknown")
+
 
 def getEnigmaVersionString():
-	from boxbranding import getImageVersion
-	enigma_version = getImageVersion()
-	if '-(no branch)' in enigma_version:
-		enigma_version = enigma_version [:-12]
-	return enigma_version
+	return getImageVersion()
+
 
 def getGStreamerVersionString():
-	try:
-		from glob import glob
-		gst = [x.split("Version: ") for x in open(glob("/var/lib/opkg/info/gstreamer[0-9].[0-9].control")[0], "r") if x.startswith("Version:")][0]
-		return "%s" % gst[1].split("+")[0].replace("\n","")
-	except:
-		return _("unknown")
+	from enigma import getGStreamerVersionString
+	return getGStreamerVersionString()
+
 
 def getKernelVersionString():
 	try:
@@ -58,13 +50,9 @@ def getKernelVersionString():
 
 
 def getModelString():
-	try:
-		file = open("/proc/stb/info/boxtype", "r")
-		model = file.readline().strip()
-		file.close()
+		model = getBoxType()
 		return model
-	except IOError:
-		return "unknown"
+
 
 def getChipSetString():
 	if getMachineBuild() in ('dm7080', 'dm820'):
@@ -75,8 +63,8 @@ def getChipSetString():
 		return "7252S"
 	elif getMachineBuild() in ('hd51', 'vs1500', 'h7'):
 		return "7251S"
-	elif getMachineBuild() in ('vuduo4k',):
-		return "7278"
+	elif getMachineBuild() in ('alien5',):
+		return "S905D"
 	else:
 		try:
 			f = open('/proc/stb/info/chipset', 'r')
@@ -104,11 +92,11 @@ def getCPUSpeedString():
 		return "2,1 GHz"
 	elif getMachineBuild() in ('hd51', 'hd52', 'sf4008', 'vs1500', 'et1x000', 'h7', 'et13000', 'sf5008', 'osmio4k', 'osmio4kplus', 'osmini4k'):
 		try:
-			import binascii
+			from binascii import hexlify
 			f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
 			clockfrequency = f.read()
 			f.close()
-			CPUSpeed_Int = round(int(binascii.hexlify(clockfrequency), 16) / 1000000, 1)
+			CPUSpeed_Int = round(int(hexlify(clockfrequency), 16) / 1000000, 1)
 			if CPUSpeed_Int >= 1000:
 				return _("%s GHz") % str(round(CPUSpeed_Int / 1000, 1))
 			else:
@@ -133,10 +121,7 @@ def getCPUSpeedString():
 			return mhz
 		except IOError:
 			return "unavailable"
-def getCPUArch():
-	if "ARM" in getCPUString():
-		return getCPUString()
-	return _("Mipsel")
+
 
 def getCPUString():
 	if getMachineBuild() in ('vuduo4k', 'vuduo4kse', 'osmio4k', 'osmio4kplus', 'osmini4k', 'dags72604', 'vuuno4kse', 'vuuno4k', 'vuultimo4k', 'vusolo4k', 'vuzero4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'et1x000', 'xc7439', 'h7', '8100s', 'et13000', 'sf5008'):
@@ -186,26 +171,20 @@ def getCpuCoresString():
 	except IOError:
 		return "unavailable"
 
-def getImageTypeString():
-	try:
-		image_type = open("/etc/issue").readlines()[-2].strip()[:-6]
-		return image_type.capitalize()
-	except:
-		return _("undefined")
 
 def _ifinfo(sock, addr, ifname):
-	iface = struct.pack('256s', bytes(ifname[:15], 'utf-8'))
-	info = fcntl.ioctl(sock.fileno(), addr, iface)
+	iface = pack('256s', bytes(ifname[:15], 'utf-8'))
+	info = ioctl(sock.fileno(), addr, iface)
 	if addr == 0x8927:
 		return ''.join(['%02x:' % ord(chr(char)) for char in info[18:24]])[:-1].upper()
 	else:
-		return socket.inet_ntoa(info[20:24])
+		return inet_ntoa(info[20:24])
 
 
 def getIfConfig(ifname):
 	ifreq = {'ifname': ifname}
 	infos = {}
-	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock = socket(AF_INET, SOCK_DGRAM)
 	# offsets defined in /usr/include/linux/sockios.h on linux 2.6
 	infos['addr'] = 0x8915 # SIOCGIFADDR
 	infos['brdaddr'] = 0x8919 # SIOCGIFBRDADDR
@@ -230,27 +209,10 @@ def getIfTransferredData(ifname):
 			f.close()
 			return rx_bytes, tx_bytes
 
-def getDriverInstalledDate():
-	try:
-		from glob import glob
-		try:
-			driver = [x.split("-")[-2:-1][0][-8:] for x in open(glob("/var/lib/opkg/info/*-dvb-modules-*.control")[0], "r") if x.startswith("Version:")][0]
-			return  "%s-%s-%s" % (driver[:4], driver[4:6], driver[6:])
-		except:
-			driver = [x.split("Version:") for x in open(glob("/var/lib/opkg/info/*-dvb-proxy-*.control")[0], "r") if x.startswith("Version:")][0]
-			return  "%s" % driver[1].replace("\n","")
-	except:
-		return _("unknown")
 
 def getPythonVersionString():
 	try:
-		if version_info[0] >= 3:
-			import subprocess
-			status, output = subprocess.getstatusoutput("python3 -V")
-		else:
-			import commands
-			status, output = commands.getstatusoutput("python -V")
-		return output.split(' ')[1]
+		return pyversion.split(' ')[0]
 	except:
 		return _("unknown")
 
@@ -275,33 +237,31 @@ def getIsBroadcom():
 	except:
 		return False
 
-def GetIPsFromNetworkInterfaces():
-	import socket, fcntl, struct, array, sys
-	is_64bits = sys.maxsize > 2**32
-	struct_size = 40 if is_64bits else 32
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	max_possible = 8 # initial value
-	while True:
-		_bytes = max_possible * struct_size
-		names = array.array('B')
-		for i in range(0, _bytes):
-			names.append(0)
-		outbytes = struct.unpack('iL', fcntl.ioctl(
-			s.fileno(),
-			0x8912,  # SIOCGIFCONF
-			struct.pack('iL', _bytes, names.buffer_info()[0])
-		))[0]
-		if outbytes == _bytes:
-			max_possible *= 2
-		else:
-			break
-	namestr = names.tostring()
-	ifaces = []
-	for i in range(0, outbytes, struct_size):
-		iface_name = bytes.decode(namestr[i:i+16]).split('\0', 1)[0].encode('ascii')
-		if iface_name != 'lo':
-			iface_addr = socket.inet_ntoa(namestr[i+20:i+24])
-			ifaces.append((iface_name, iface_addr))
-	return ifaces
+def getBoxUptime():
+	upTime = fileReadLine("/proc/uptime", source=MODULE_NAME)
+	if upTime is None:
+		return "-"
+	secs = int(upTime.split(".")[0])
+	times = []
+	if secs > 86400:
+		days = secs // 86400
+		secs = secs % 86400
+		times.append(ngettext("%d day", "%d days", days) % days)
+	h = secs // 3600
+	m = (secs % 3600) // 60
+	times.append(ngettext("%d hour", "%d hours", h) % h)
+	times.append(ngettext("%d minute", "%d minutes", m) % m)
+	return " ".join(times)
+
+
+def getopensslVersionString():
+	lines = fileReadLines("/var/lib/opkg/info/openssl.control", source=MODULE_NAME)
+	if lines:
+		for line in lines:
+			if line[0:8] == "Version:":
+				return line[9:].split("+")[0]
+	return _("Not Installed")
+
+
 # For modules that do "from About import about"
 about = modules[__name__]

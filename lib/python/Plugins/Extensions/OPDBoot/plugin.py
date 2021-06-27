@@ -1,5 +1,5 @@
 from __future__ import print_function
-from __future__ import absolute_import
+from Plugins.Extensions.OPDBoot.info import info
 from boxbranding import getMachineProcModel, getMachineBuild, getBoxType, getMachineName, getImageDistro, getMachineBrand, getImageFolder, getMachineRootFile, getImageArch  
 from Screens.Screen import Screen
 from Screens.Console import Console
@@ -16,32 +16,28 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.config import *
 from Components.ConfigList import ConfigListScreen
-from Components.Harddisk import *
+import Components.Harddisk
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists
-from Tools.Directories import pathExists
 import os
 from skin import parseColor
-from enigma import getDesktop
-from Components.ScrollLabel import ScrollLabel
-
+PLUGINVERSION = 'V.3.1 - OPD Team'
 choicelist = [('0',_("Audio Selection")),('1',_("Default (Timeshift)")), ('2',_("Toggle Pillarbox <> Pan&Scan")),('3',_("Teletext"))]
 config.plugins.OPDBoot_yellowkey = ConfigSubsection()
 config.plugins.OPDBoot_yellowkey.list = ConfigSelection(default='1', choices = choicelist)
 config.plugins.OPDBoot_yellowkey.listLong = ConfigSelection(default='1', choices = choicelist)
 config.plugins.OPDBoot_yellowkey.list = ConfigSelection(default='0', choices = choicelist)
 config.plugins.OPDBoot_yellowkey.listLong = ConfigSelection(default='0', choices = choicelist)
-
-PLUGINVERSION = 'V.3.0 - OPD Team'
-OPDBootInstallation_Skin = '\n\t\t<screen name="OPDBootInstallation" position="center,center" size="902,380" title="OPDBoot - Installation" >\n\t\t      <widget name="label1" position="10,10" size="840,30" zPosition="1" halign="center" font="Regular;25" backgroundColor="#9f1313" transparent="1"/>\n\t\t      <widget name="label2" position="10,80" size="840,290" zPosition="1" halign="center" font="Regular;20" backgroundColor="#9f1313" transparent="1"/>\n\t\t      <widget name="config" position="10,160" size="840,200" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t      <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t      <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t      <ePixmap pixmap="skin_default/buttons/blue.png" position="300,290" size="140,40" alphatest="on" />\n\t\t      <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t      <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t      <widget name="key_blue" position="300,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t</screen>'
+OPDBootInstallation_Skin = '\n\t\t<screen name="OPDBootInstallation" position="center,center" size="902,380" title="OPDBoot - Installation" >\n\t\t	  <widget name="label1" position="10,10" size="840,30" zPosition="1" halign="center" font="Regular;25" backgroundColor="#9f1313" transparent="1"/>\n\t\t	  <widget name="label2" position="10,80" size="840,290" zPosition="1" halign="center" font="Regular;20" backgroundColor="#9f1313" transparent="1"/>\n\t\t	  <widget name="config" position="10,160" size="840,200" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t	  <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t	  <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t	  <ePixmap pixmap="skin_default/buttons/blue.png" position="300,290" size="140,40" alphatest="on" />\n\t\t	  <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t	  <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t	  <widget name="key_blue" position="300,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t</screen>'
 OPDBootImageChoose_Skin = '\n\t\t<screen name="OPDBootImageChoose" position="center,center" size="902,380" title="OPDBoot - Menu">\n\t\t\t<widget name="label2" position="145,10" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label3" position="145,35" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label4" position="145,60" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label5" position="145,85" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label6" position="420,10" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label7" position="420,35" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label8" position="420,60" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label9" position="420,85" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label10" position="145,110" size="440,30" zPosition="1" font="Regular;20" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="label11" position="420,110" size="440,30" zPosition="1" halign="right" font="Regular;20" backgroundColor="#9f1313" foregroundColor="#00389416" transparent="1" />\n\t\t\t<widget name="label1" position="25,145" size="840,22" zPosition="1" halign="center" font="Regular;18" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="device_icon" position="25,20" size="80,80" alphatest="on" />\n\t\t\t<widget name="free_space_progressbar" position="265,42" size="500,13" borderWidth="1" zPosition="3" />\n\t\t\t<widget name="config" position="25,180" size="840,150" scrollbarMode="showOnDemand" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="10,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="185,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/yellow.png" position="360,340" size="150,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/blue.png" position="535,340" size="150,40" alphatest="on" />\n\t\t\t<widget name="key_red" position="5,center" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_green" position="180,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_yellow" position="355,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t\t<widget name="key_blue" position="530,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t<widget name="key_menu" position="705,340" zPosition="1" size="160,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" /><ePixmap pixmap="skin_default/buttons/menu.png" position="710,340" size="150,40" alphatest="on" /></screen>'
-OPDBootImageInstall_Skin = '\n\t\t    <screen name="OPDBootImageInstall" position="center,center" size="770,340" title="OPDBoot - Image Installation" >\n\t\t\t      <widget name="config" position="10,10" size="750,220" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t\t      <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t\t      <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t\t      <ePixmap pixmap="skin_default/buttons/yellow.png" position="290,290" size="140,40" alphatest="on" />\n\t\t\t      <widget name="HelpWindow" position="330,310" zPosition="5" size="1,1" transparent="1" alphatest="on" />      \n\t\t\t      <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t      <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t      <widget name="key_yellow" position="290,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t    </screen>'
+OPDBootImageInstall_Skin = '\n\t\t	<screen name="OPDBootImageInstall" position="center,center" size="770,340" title="OPDBoot - Image Installation" >\n\t\t\t	  <widget name="config" position="10,10" size="750,220" scrollbarMode="showOnDemand" transparent="1"/>\n\t\t\t	  <ePixmap pixmap="skin_default/buttons/red.png" position="10,290" size="140,40" alphatest="on" />\n\t\t\t	  <ePixmap pixmap="skin_default/buttons/green.png" position="150,290" size="140,40" alphatest="on" />\n\t\t\t	  <ePixmap pixmap="skin_default/buttons/yellow.png" position="290,290" size="140,40" alphatest="on" />\n\t\t\t	  <widget name="HelpWindow" position="330,310" zPosition="5" size="1,1" transparent="1" alphatest="on" />	  \n\t\t\t	  <widget name="key_red" position="10,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t	  <widget name="key_green" position="150,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t	  <widget name="key_yellow" position="290,290" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t	</screen>'
 
 def Freespace(dev):
         statdev = os.statvfs(dev)
         space = statdev.f_bavail * statdev.f_frsize / 1024
-        print('[OPDBoot] Free space on %s = %i kilobytes' % (dev, space))
+        print("[OPDBoot] Free space on %s = %i kilobytes" % (dev, space))
         return space
+
 
 class OPDBootInstallation(Screen):
 
@@ -66,77 +62,47 @@ class OPDBootInstallation(Screen):
                 self.updateList()
 
         def updateList(self):
-                mycf, myusb, myusb2, myusb3, mysd, myhdd, mymmc = ('', '', '', '', '', '', '')
+                myusb, myhdd, mymmc = ('', '', '')
                 myoptions = []
                 if fileExists('/proc/mounts'):
                         fileExists('/proc/mounts')
                         f = open('/proc/mounts', 'r')
                         for line in f.readlines():
-                                if line.find('/media/cf') != -1:
-                                        mycf = '/media/cf/'
-                                        continue
                                 if line.find('/media/usb') != -1:
                                         myusb = '/media/usb/'
                                         continue
-                                if line.find('/media/usb2') != -1:
-                                        myusb2 = '/media/usb2/'
-                                        continue
-                                if line.find('/media/usb3') != -1:
-                                        myusb3 = '/media/usb3/'
-                                        continue
-                                if line.find('/media/card') != -1:
-                                        mysd = '/media/card/'
+                                if line.find('/media/mmc') != -1:
+                                        mymmc = '/media/mmc/'
                                         continue
                                 if line.find('/hdd') != -1:
                                         myhdd = '/media/hdd/'
-                                        continue
-                                if line.find('/media/mmc') != -1:
-                                        mymmc = '/media/mmc/'
                                         continue
 
                         f.close()
                 else:
                         self['label2'].setText(_('Sorry it seems that there are not Linux formatted devices mounted on your STB. To install OPDBoot you need a Linux formatted part1 device. Click on the blue button to open OPD Devices Panel'))
                         fileExists('/proc/mounts')
-                if mycf:
-                        self.list.append(mycf)
-                else:
-                        mycf
                 if myusb:
                         self.list.append(myusb)
                 else:
                         myusb
-                if myusb2:
-                        self.list.append(myusb2)
+                if mymmc:
+                        self.list.append(mymmc)
                 else:
-                        myusb2
-                if myusb3:
-                        self.list.append(myusb3)
-                else:
-                        myusb3
-                if mysd:
-                        mysd
-                        self.list.append(mysd)
-                else:
-                        mysd
+                        mymmc
                 if myhdd:
                         myhdd
                         self.list.append(myhdd)
                 else:
                         myhdd
-                if mymmc:
-                        self.list.append(mymmc)
-                else:
-                        mymmc
                 self['config'].setList(self.list)
 
         def devpanel(self):
                 try:
-
                         from OPENDROID.HddSetup import HddSetup
                         self.session.open(HddSetup)
                 except:
-                        self.session.open(MessageBox, _('You are not running opendroid Image. You must mount devices Your self.'), MessageBox.TYPE_INFO)
+                        self.session.open(MessageBox, _('You are not running OPD Image. You must mount devices Your self.'), MessageBox.TYPE_INFO)
 
         def myclose(self):
                 self.close()
@@ -186,25 +152,13 @@ class OPDBootInstallation(Screen):
                         fileExists('/proc/mounts')
                         f = open('/proc/mounts', 'r')
                         for line in f.readlines():
-                                if line.find('/media/cf') != -1:
-                                        check = True
-                                        continue
                                 if line.find('/media/usb') != -1:
                                         check = True
                                         continue
-                                if line.find('/media/usb2') != -1:
-                                        check = True
-                                        continue
-                                if line.find('/media/usb3') != -1:
-                                        check = True
-                                        continue
-                                if line.find('/media/card') != -1:
+                                if line.find('/media/mmc') != -1:
                                         check = True
                                         continue
                                 if line.find('/hdd') != -1:
-                                        check = True
-                                        continue
-                                if line.find('/media/mmc') != -1:
                                         check = True
                                         continue
 
@@ -226,12 +180,12 @@ class OPDBootInstallation(Screen):
         def install2(self, yesno):
                 config.OPDBootmanager = ConfigSubsection()
                 config.OPDBootmanager.bootmanagertimeout = ConfigSelection([('5',_("5 seconds")),('10',_("10 seconds")),('15',_("15 seconds")),('20',_("20 seconds")),('30',_("30 seconds"))], default='5')
-                if getMachineBuild() in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
+                if getMachineBuild() in ("u5", "u51", "u52", "u53", "u54", "u55", "u56", "u41", "u5pvr", "sf8008", "sf8008m"):
                         self.install3(False)
                 elif yesno:
                         self.MACHINEBRAND = getMachineBrand()
                         if  self.MACHINEBRAND == "Vu+":
-                                os.system("opkg install packagegroup-base-nfs")	
+                                os.system("opkg install packagegroup-base-nfs")
                         message = _('Do you want to use Bootmanager by booting?\nBox will reboot after choice ')
                         ybox = self.session.openWithCallback(self.install3, MessageBox, message, MessageBox.TYPE_YESNO)
                         ybox.setTitle(_('Install Confirmation'))
@@ -249,33 +203,33 @@ class OPDBootInstallation(Screen):
                                 for line in f.readlines():
                                         if line.find(self.mysel):
                                                 mntdev = line.split(' ')[0]
-                                f.close()
-                                mntid = os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
-                                os.system("mv /etc/fstab /etc/fstab1")
-                                os.system("grep -v  /media/opdboot /etc/fstab1 > /etc/fstab")
-                                os.system("rm /etc/fstab1")
-                                os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
-                                fstabuuid = os.popen('blkid -s UUID -o value ' + mntdev).read()
-                                fstabuuidwrite = 'UUID=' + fstabuuid.strip() + '        /media/opdboot        auto        defaults	       1        1'
-                                fileHandle = open ('/etc/fstab', 'a')
-                                fileHandle.write(fstabuuidwrite)
-                                fileHandle.close()
-                        cmd = 'mkdir ' + self.mysel + 'OPDBootI;mkdir ' + self.mysel + 'OPDBootUpload'
-                        os.system(cmd)
-                        os.system('cp /sbin/opd_multiboot /sbin/opdinit')
-                        os.system('chmod 777 /sbin/opdinit;chmod 777 /sbin/init;ln -sfn /sbin/opdinit /sbin/init')
-                        os.system('mv /etc/init.d/volatile-media.sh /etc/init.d/volatile-media.sh.back')
-                        out3 = open('/media/opdboot/OPDBootI/.timer', 'w')
-                        out3.write(config.OPDBootmanager.bootmanagertimeout.value)
-                        out3.close()
-                        out2 = open('/media/opdboot/OPDBootI/.opdboot', 'w')
-                        out2.write('Flash')
-                        out2.close()
-                        out = open('/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location', 'w')
-                        out.write(self.mysel)
-                        out.close()
-                        os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location /etc/opd/')
-                        image = getImageDistro()
+                                                f.close()
+                                                mntid = os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
+                                                os.system("mv /etc/fstab /etc/fstab1")
+                                                os.system("grep -v  /media/opdboot /etc/fstab1 > /etc/fstab")
+                                                os.system("rm /etc/fstab1")
+                                                os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
+                                                fstabuuid = os.popen('blkid -s UUID -o value ' + mntdev).read()
+                                                fstabuuidwrite = 'UUID=' + fstabuuid.strip() + '		/media/opdboot		auto		defaults		   1		1'
+                                                fileHandle = open ('/etc/fstab', 'a')
+                                                fileHandle.write(fstabuuidwrite)
+                                                fileHandle.close()
+                                                cmd = 'mkdir ' + self.mysel + 'OPDBootI;mkdir ' + self.mysel + 'OPDBootUpload'
+                                                os.system(cmd)
+                                                os.system('cp /sbin/opd_multiboot /sbin/opdinit')
+                                                os.system('chmod 777 /sbin/opdinit;chmod 777 /sbin/init;ln -sfn /sbin/opdinit /sbin/init')
+                                                os.system('mv /etc/init.d/volatile-media.sh /etc/init.d/volatile-media.sh.back')
+                                                out3 = open('/media/opdboot/OPDBootI/.timer', 'w')
+                                                out3.write(config.OPDBootmanager.bootmanagertimeout.value)
+                                                out3.close()
+                                                out2 = open('/media/opdboot/OPDBootI/.opdboot', 'w')
+                                                out2.write('Flash')
+                                                out2.close()
+                                                out = open('/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location', 'w')
+                                                out.write(self.mysel)
+                                                out.close()
+                                                os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location /etc/opd/')
+                                                image = getImageDistro()
                         if fileExists('/etc/image-version'):
                                 if 'build' not in image:
                                         f = open('/etc/image-version', 'r')
@@ -296,30 +250,30 @@ class OPDBootInstallation(Screen):
                                 for line in f.readlines():
                                         if line.find(self.mysel):
                                                 mntdev = line.split(' ')[0]
-                                f.close()
-                                mntid = os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
-                                os.system("mv /etc/fstab /etc/fstab1")
-                                os.system("grep -v  /media/opdboot /etc/fstab1 > /etc/fstab")
-                                os.system("rm /etc/fstab1")
-                                os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
-                                fstabuuid = os.popen('blkid -s UUID -o value ' + mntdev).read()
-                                fstabuuidwrite = 'UUID=' + fstabuuid.strip() + '        /media/opdboot        auto        defaults	       1        1'
-                                fileHandle = open('/etc/fstab', 'a')
-                                fileHandle.write(fstabuuidwrite)
-                                fileHandle.close()
-                        cmd = 'mkdir ' + self.mysel + 'OPDBootI;mkdir ' + self.mysel + 'OPDBootUpload'
-                        os.system(cmd)
-                        os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/opdinitnoboot /sbin/opdinit')
-                        os.system('chmod 777 /sbin/opdinit;chmod 777 /sbin/init;ln -sfn /sbin/opdinit /sbin/init')
-                        os.system('mv /etc/init.d/volatile-media.sh /etc/init.d/volatile-media.sh.back')
-                        out2 = open('/media/opdboot/OPDBootI/.opdboot', 'w')
-                        out2.write('Flash')
-                        out2.close()
-                        out = open('/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location', 'w')
-                        out.write(self.mysel)
-                        out.close()
-                        os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location /etc/opd/')
-                        image = getImageDistro()
+                                                f.close()
+                                                mntid = os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
+                                                os.system("mv /etc/fstab /etc/fstab1")
+                                                os.system("grep -v  /media/opdboot /etc/fstab1 > /etc/fstab")
+                                                os.system("rm /etc/fstab1")
+                                                os.system('blkid -s UUID -o value ' + mntdev + '>/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/install')
+                                                fstabuuid = os.popen('blkid -s UUID -o value ' + mntdev).read()
+                                                fstabuuidwrite = 'UUID=' + fstabuuid.strip() + '		/media/opdboot		auto		defaults		   1		1'
+                                                fileHandle = open('/etc/fstab', 'a')
+                                                fileHandle.write(fstabuuidwrite)
+                                                fileHandle.close()
+                                                cmd = 'mkdir ' + self.mysel + 'OPDBootI;mkdir ' + self.mysel + 'OPDBootUpload'
+                                                os.system(cmd)
+                                                os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/bin/opdinitnoboot /sbin/opdinit')
+                                                os.system('chmod 777 /sbin/opdinit;chmod 777 /sbin/init;ln -sfn /sbin/opdinit /sbin/init')
+                                                os.system('mv /etc/init.d/volatile-media.sh /etc/init.d/volatile-media.sh.back')
+                                                out2 = open('/media/opdboot/OPDBootI/.opdboot', 'w')
+                                                out2.write('Flash')
+                                                out2.close()
+                                                out = open('/usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location', 'w')
+                                                out.write(self.mysel)
+                                                out.close()
+                                                os.system('cp /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location /etc/opd/')
+                                                image = getImageDistro()
                         if fileExists('/etc/image-version'):
                                 if 'build' not in image:
                                         f = open('/etc/image-version', 'r')
@@ -367,13 +321,13 @@ class OPDBootImageChoose(Screen):
                    'yellow': self.remove,
                    'blue': self.advanced,
                    'menu': self.bootsetup,
-		   'info': self.info,
+                   'info': self.info,
                    'back': self.close})
                 self.onShow.append(self.updateList)
 
         def bootsetup(self):
                 menulist = []
-                if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u5pvr", "sf8008"):
+                if getMachineBuild() not in ("u5", "u51", "u52", "u53", "u54", "u55", "u56", "u41", "u5pvr", "sf8008", "sf8008m"):
                         menulist.append((_('Use Bootmanager by Booting'), 'withopdboot'))
                         menulist.append((_('Boot without Bootmanager'), 'withoutopdboot'))
                         menulist.append((_('Setup Bootmanagertimeout'), 'bootmanagertimeout'))
@@ -411,7 +365,6 @@ class OPDBootImageChoose(Screen):
                         out3 = open('/media/opdboot/OPDBootI/.timer', 'w')
                         out3.write(config.OPDBootmanager.bootmanagertimeout.value)
                         out3.close()
-
         def info(self):
                 self.session.open(info)
 
@@ -426,14 +379,8 @@ class OPDBootImageChoose(Screen):
                         mypath = '/media/hdd'
 
                 icon = 'dev_usb.png'
-                if 'card' in mypath or 'sd' in mypath:
-                        icon = 'dev_sd.png'
-                else:
-                        if 'hdd' in mypath:
-                                icon = 'dev_hdd.png'
-                        else:
-                                if 'cf' in mypath:
-                                        icon = 'dev_cf.png'
+                if 'hdd' in mypath:
+                        icon = 'dev_hdd.png'
                 icon = pluginpath + '/images/' + icon
                 png = LoadPixmap(icon)
                 self['device_icon'].instance.setPixmap(png)
@@ -456,7 +403,6 @@ class OPDBootImageChoose(Screen):
                                                 dev_free_space = parts[2]
                                                 def_free_space_percent = parts[3]
                                         break
-
                         f.close()
                         os.remove('/tmp/ninfo.tmp')
                 self.availablespace = dev_free_space[0:-3]
@@ -528,11 +474,8 @@ class OPDBootImageChoose(Screen):
         def boot(self):
                 self.mysel = self['config'].getCurrent()
                 if self.mysel:
-                        out = open('/media/opdboot/OPDBootI/.opdboot', 'w')
-                        out.write(self.mysel)
-                        out.close()
                         os.system('rm /tmp/.opdreboot')
-                        message = _('Are you sure you want to Boot Image:\n') + self.mysel + ' ?'
+                        message = _('Are you sure you want to start the image now?:\n') + self.mysel + ' ?'
                         ybox = self.session.openWithCallback(self.boot2, MessageBox, message, MessageBox.TYPE_YESNO)
                         ybox.setTitle(_('Boot Confirmation'))
                 else:
@@ -540,11 +483,24 @@ class OPDBootImageChoose(Screen):
 
         def boot2(self, yesno):
                 if yesno:
+                        out = open('/media/opdboot/OPDBootI/.opdboot', 'w')
+                        out.write(self.mysel)
+                        out.close()
                         os.system('touch /tmp/.opdreboot')
                         os.system('reboot -p')
                 else:
+                        message = _('Should the image be booted next time? \n')
+                        ybox = self.session.openWithCallback(self.nextboot, MessageBox, message, MessageBox.TYPE_YESNO)
+
+        def nextboot(self, yesno):
+                if yesno:
+                        out = open('/media/opdboot/OPDBootI/.opdboot', 'w')
+                        out.write(self.mysel)
+                        out.close()
                         os.system('touch /tmp/.opdreboot')
                         self.session.open(MessageBox, _('Image will be booted on the next STB boot!'), MessageBox.TYPE_INFO)
+                else:
+                        self.session.open(MessageBox, _('Boot image not changed.'), MessageBox.TYPE_INFO)
 
         def remove(self):
                 self.mysel = self['config'].getCurrent()
@@ -581,7 +537,7 @@ class OPDBootImageChoose(Screen):
                         self['config'].setList(self.list)
                         self.updateList()
                 except:
-                        pass
+                        print('  ')
 
         def remove2(self, yesno):
                 if yesno:
@@ -594,7 +550,7 @@ class OPDBootImageChoose(Screen):
         def installMedia(self):
                 images = False
                 myimages = os.listdir('/media/opdboot/OPDBootUpload')
-                print(myimages)
+                print( myimages)
                 for fil in myimages:
                         if fil.endswith('.zip'):
                                 images = True
@@ -621,8 +577,8 @@ class OPDBootImageChoose(Screen):
                 else:
                         menulist = []
                         menulist.append((_('Install from /media/opdboot/OPDBootUpload'), 'media'))
-                        menulist.append((_('Install from Internet (OpenOPD,OpenATV,Egami,OpenVIX,OpenHDF)'), 'internet'))
-                        self.session.openWithCallback(self.menuCallback, ChoiceBox, title='Choose they way for installation', list=menulist)
+                        menulist.append((_('Install from Internet (OpenOPD,OpenATV,OpenNFR,OpenVIX,OpenHDF)'), 'internet'))
+                        self.session.openWithCallback(self.menuCallback, ChoiceBox, title=_('Choose they way for installation!'), list=menulist)
 
         def menuCallback(self, choice):
                 self.show()
@@ -648,7 +604,7 @@ class OPDBootImageChoose(Screen):
                         return
                 else:
                         if choice[1] == 'rmopdboot':
-                                f = file('/etc/fstab','r')
+                                f = open('/etc/fstab','r')
                                 lines = f.readlines()
                                 f.close()
                                 print("lines:", lines)
@@ -656,7 +612,7 @@ class OPDBootImageChoose(Screen):
                                         if "/media/opdboot" in line:
                                                 lines.remove(line)
                                 os.system("/etc/fstab")
-                                f = file('/etc/fstab','w')  
+                                f = open('/etc/fstab','w')  
                                 for l in lines:
                                         f.write(l)
                                 f.close()
@@ -673,12 +629,24 @@ class OPDBootImageChoose(Screen):
                                 cmd7 = 'rm /media/opdboot/OPDBootI/.Flash'
                                 cmd8 = 'rm /usr/lib/enigma2/python/Plugins/Extensions/OPDBoot/.opdboot_location'
                                 cmd8a = "echo -e '\n\nOPDBoot remove complete....'"
-                                self.session.openWithCallback(self.close, Console, _('OPDBoot is removing...'), [cmd0, cmd1, cmd1a, cmd2, cmd3, cmd4, cmd4a, cmd5, cmd6, cmd7, cmd8, cmd8a])
+                                self.session.openWithCallback(self.close, Console, _('OPDBoot is removing...'), [cmd0,
+                                                                                                                 cmd1,
+                                 cmd1a,
+                                 cmd2,
+                                 cmd3,
+                                 cmd4,
+                                 cmd4a,
+                                 cmd5,
+                                 cmd6,
+                                 cmd7,
+                                 cmd8,
+                                 cmd8a])
                         if choice[1] == 'rmallimg':
                                 cmd = "echo -e '\n\nOPDBoot deleting images..... '"
                                 cmd1 = 'rm -rf /media/opdboot/OPDBootI/*'
                                 self.session.openWithCallback(self.updateList, Console, _('OPDBoot: Deleting All Images'), [cmd, cmd1])
                         return
+
 
 class OPDBootImageInstall(Screen, ConfigListScreen):
 
@@ -792,14 +760,14 @@ class OPDBootImageInstall(Screen, ConfigListScreen):
                                         cmd1 = 'python ' + pluginpath + '/ex_init.pyo'
                                 cmd = '%s %s %s %s %s %s %s %s %s' % (cmd1,
                                                                       source,
-                                                                      target.replace(' ', '.'),
-                                                                      str(self.sett.value),
-                                                                      str(self.bootquest.value),
-                                                                      str(self.zipdelete.value),
-                                                                      getImageFolder(),
-                                                                      getMachineRootFile(),
-                                                                      getImageArch())
-                                print('[OPD-BOOT]: ', cmd)
+                                 target.replace(' ', '.'),
+                                 str(self.sett.value),
+                                 str(self.bootquest.value),
+                                 str(self.zipdelete.value),
+                                 getImageFolder(),
+                                 getMachineRootFile(),
+                                 getImageArch())
+                                print( '[OPD-BOOT]: ', cmd)
                                 self.session.open(Console, _('OPDBoot: Install new image'), [message, cmd])
 
         def check_free_space(self):
@@ -858,45 +826,6 @@ def main(session, **kwargs):
                 session.open(MessageBox, _('Sorry: Wrong image in flash found. You have to install in flash OPD Image'), MessageBox.TYPE_INFO, 3)
 
 
-class info(Screen):
-        skin = """
-		<screen name="info" position="center,60" size="800,635" title="installation info" >
-		<widget name="lab1" position="80,100" size="710,350" zPosition="2" scrollbarMode="showOnDemand" transparent="1"/>
-		<widget name="key_red" position="135,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="red" backgroundColor="red" transparent="1" />		
-		<widget name="key_green" position="400,600" zPosition="1" size="100,45" font="Regular;18" foregroundColor="green" backgroundColor="green" transparent="1" />
-		<widget name="key_yellow" position="675,600" zPosition="1" size="180,45" font="Regular;18" foregroundColor="yellow" backgroundColor="yellow" transparent="1" />
-		</screen>"""
-
-        def __init__(self, session):
-                        Screen.__init__(self, session)
-                        self['lab1'] = ScrollLabel('')
-                        self.setTitle('OPDBoot %s - Menu' % PLUGINVERSION)
-                        self['actions'] = ActionMap(['WizardActions', 'ColorActions', 'DirectionActions'], 
-                        {
-                            'back': self.close,
-                            'ok': self.close,
-                            'up': self['lab1'].pageUp,
-                            'left': self['lab1'].pageUp,
-                            'down': self['lab1'].pageDown,
-                            'right': self['lab1'].pageDown})
-                        self['lab1'].hide()
-                        self.updatetext()
-
-        def updatetext(self):
-                message = _('GUIDE FOR CORRECT INSTALLATION OF OPDBOOT.\n\n')
-                message += _('Attention! During the entire installation process does not restart the receiver!\n\n')
-                message += _('Warning! for the correct functioning of OPDboot, a USB or HDD memory is required, formatted in the Linux ext3 or ext4 system files\n\n')
-                message += _('1. If you do not have a media formatted in ext3 or ext4, open menu, general configurations, system, storage device, select the drive and format it.\n\n')
-                message += _('2. Go to the mount device manager from the OPD panel, services, device mount management and install hdd and usb correctly.\n\n')
-                message += _('3. Now install OPDboot on the device by going to: menu, multiboot OPD.\n\n')
-                message += _('4. On OPDboot press: menu to choose the type of start. Attention select: Start without Bootmanager for 64Bit devices.\n\n')
-                message += _('5. Press the green button and select the source to install the multiboot image.\n\n')
-                message += _('6. Downloaded the image, we have the possibility to choose whether to copy the settings from the flash image! choose YES if we want to import the settings, the password, network configurations etc ...\n\n')
-                message += _('7. In case of problems with the installation, cancel and ask OpenDroid-Team for support on:\n\n')
-                message += _('https://droidsat.org/forum')
-                self['lab1'].show()
-                self['lab1'].setText(message)
-
 def menu(menuid, **kwargs):
         filename = '/etc/videomode2'
         if os.path.exists(filename):
@@ -910,8 +839,8 @@ def menu(menuid, **kwargs):
                 if menuid == 'mainmenu':
                         return [(_('OPD MultiBoot'),
                                  main,
-                                 'opd_boot',
-                                 1)]
+                          'opd_boot',
+                          1)]
                 return []
         else:
                 return []
