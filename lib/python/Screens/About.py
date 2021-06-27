@@ -974,19 +974,18 @@ class SystemNetworkInfo(Screen):
 
 	def createscreen(self):
 		def netspeed():
-			netspeed=""
+			netspeed = ""
 			for line in popen('ethtool eth0 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ', '')
+				line = line[1].replace(' ', '')
 				netspeed += line
 			return str(netspeed)
 
-
 		def netspeed_eth1():
-			netspeed=""
+			netspeed = ""
 			for line in popen('ethtool eth1 |grep Speed', 'r'):
 				line = line.strip().split(":")
-				line =line[1].replace(' ', '')
+				line = line[1].replace(' ', '')
 				netspeed += line
 			return str(netspeed)
 
@@ -1124,7 +1123,7 @@ class SystemNetworkInfo(Screen):
 
 						encryption_type = status[self.iface]["encryption_type"]
 						if "encryption_type" in self:
-							self.AboutText += '{:<35}'.format(_('Encryption Type:')) + '\t' + encryption_type + '\n'
+							self.AboutText += '{:<35}'.format(_('Encryption Type:')) + '\t' + encryption_type.upper() + '\n'
 
 						if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] is False:
 							self.LinkState = False
@@ -1222,6 +1221,7 @@ class AboutSummary(Screen):
 
 		self["AboutText"] = StaticText(AboutText)
 
+
 class ViewGitLog(Screen):
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
@@ -1287,6 +1287,7 @@ class ViewGitLog(Screen):
 
 	def closeRecursive(self):
 		self.close((_("Cancel"), ""))
+
 
 class TranslationInfo(Screen):
 	def __init__(self, session):
@@ -1360,12 +1361,11 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-			("opendroid-Team", "enigma2", "opendroid-Team Enigma2", "7.1", "github"),
-			("formiano", "enigma2", "formiano enigma2", "7.1", "github"),
-			("opendroid-Team", "Skins-for-openOPD", "opendroid-Team Skins-for-openOPD", "master", "github"),
-			("oe-alliance", "oe-alliance-core", "OE Alliance Core", "4.5", "github"),
-			("oe-alliance", "oe-alliance-plugins", "OE Alliance Plugins", "master", "github"),
-			("oe-alliance", "enigma2-plugins", "OE Alliance Enigma2 Plugins", "master", "github")
+                        ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.1",        "github"),
+			("stein17",      "Skins-for-openOPD",             "stein17 Skins-for-openOPD",   "python3", "github"),
+			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.0", "github"),
+			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
+			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -1375,8 +1375,8 @@ class CommitInfo(Screen):
 	def readGithubCommitLogs(self):
 		if self.projects[self.project][4] == "github":
 			url = 'https://api.github.com/repos/%s/%s/commits?sha=%s' % (self.projects[self.project][0], self.projects[self.project][1], self.projects[self.project][3])
-		if self.projects[self.project][4] == "github":
-			url1 = 'https://github.com/api/v4/projects/%s' % (self.projects[self.project][0])
+		if self.projects[self.project][4] == "gitlab":
+			url1 = 'https://gitlab.com/api/v4/projects/%s' % (self.projects[self.project][0])
 			url2 = '%2F'
 			url3 = '%s/repository/commits?ref_name=%s' % (self.projects[self.project][1], self.projects[self.project][3])
 			url = url1 + url2 + url3
@@ -1394,7 +1394,7 @@ class CommitInfo(Screen):
 					creator = c['commit']['author']['name']
 					title = c['commit']['message']
 					date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
-					if title.startswith ("Merge "):
+					if title.startswith("Merge "):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
@@ -1402,17 +1402,17 @@ class CommitInfo(Screen):
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		if self.projects[self.project][4] == "github":
+		if self.projects[self.project][4] == "gitlab":
 			try:
 				commitlog += 80 * '-' + '\n'
 				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
-				commitlog += 'URL: https://github.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
+				commitlog += 'URL: https://gitlab.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
 				commitlog += 80 * '-' + '\n'
 				for c in loads(urlopen(url, timeout=5).read()):
 					creator = c['author_name']
 					title = c['message']
 					date = datetime.strptime(c['committed_date'], '%Y-%m-%dT%H:%M:%S.000+02:00').strftime('%x %X')
-					if title.startswith ("Merge "):
+					if title.startswith("Merge "):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + '\n'
