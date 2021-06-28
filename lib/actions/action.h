@@ -6,7 +6,7 @@
 
 #include <lib/python/python.h>
 #include <string>
-#include <map>    
+#include <map>
 #include <vector>
 
 SWIG_IGNORE(eActionMap);
