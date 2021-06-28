@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
-
 import tokenize
 import sys
 
+
 def filter(g):
-	while 1:
+	while True:
 		t = next(g)
 		if t[1] == "/*":
 			while next(g)[1] != "*/":
@@ -32,10 +32,10 @@ def do_file(f, mode):
 
 	firsthit = 1
 
-	while 1:
+	while True:
 		try:
 			t = next(tokens)
-		except:
+		except Exception as e:
 			break
 
 		if t == "class":
@@ -64,7 +64,7 @@ def do_file(f, mode):
 						pass
 
 					try:
-						print(actionname)
+						print(classname)
 					except:
 						pass
 
@@ -72,7 +72,7 @@ def do_file(f, mode):
 
 				counter = 0
 
-				while 1:
+				while True:
 
 					t = next(tokens)
 
