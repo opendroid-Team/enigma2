@@ -1,6 +1,6 @@
 import struct
 UBIFS_NODE_MAGIC = '1\x18\x10\x06'
-UBIFS_CRC32_INIT = 4294967295L
+UBIFS_CRC32_INIT = '4294967295L'
 UBIFS_MIN_COMPR_LEN = 128
 UBIFS_MIN_COMPRESS_DIFF = 64
 UBIFS_ROOT_INO = 1
@@ -87,7 +87,7 @@ UBIFS_FLG_BIGLPT = 2
 UBIFS_FLG_SPACE_FIXUP = 4
 UBIFS_COMMON_HDR_FORMAT = '<IIQIBB2s'
 UBIFS_COMMON_HDR_FIELDS = ['magic',
- 'crc',
+                           'crc',
  'sqnum',
  'len',
  'node_type',
@@ -100,7 +100,7 @@ UBIFS_DEV_DESC_FIELDS = ['new', 'huge']
 UBIFS_DEV_DESC_SZ = struct.calcsize(UBIFS_DEV_DESC_FORMAT)
 UBIFS_INO_NODE_FORMAT = '<%ssQQQQQIIIIIIIIIII4sIH26s' % UBIFS_MAX_KEY_LEN
 UBIFS_INO_NODE_FIELDS = ['key',
- 'creat_sqnum',
+                         'creat_sqnum',
  'size',
  'atime_sec',
  'ctime_sec',
@@ -123,7 +123,7 @@ UBIFS_INO_NODE_FIELDS = ['key',
 UBIFS_INO_NODE_SZ = struct.calcsize(UBIFS_INO_NODE_FORMAT)
 UBIFS_DENT_NODE_FORMAT = '<%ssQBBH4s' % UBIFS_MAX_KEY_LEN
 UBIFS_DENT_NODE_FIELDS = ['key',
- 'inum',
+                          'inum',
  'padding1',
  'type',
  'nlen',
@@ -131,13 +131,13 @@ UBIFS_DENT_NODE_FIELDS = ['key',
 UBIFS_DENT_NODE_SZ = struct.calcsize(UBIFS_DENT_NODE_FORMAT)
 UBIFS_DATA_NODE_FORMAT = '<%ssIH2s' % UBIFS_MAX_KEY_LEN
 UBIFS_DATA_NODE_FIELDS = ['key',
- 'size',
+                          'size',
  'compr_type',
  'padding']
 UBIFS_DATA_NODE_SZ = struct.calcsize(UBIFS_DATA_NODE_FORMAT)
 UBIFS_TRUN_NODE_FORMAT = '<I12sQQ'
 UBIFS_TRUN_NODE_FIELDS = ['inum',
- 'padding',
+                          'padding',
  'old_size',
  'new_size']
 UBIFS_TRUN_NODE_SZ = struct.calcsize(UBIFS_TRUN_NODE_FORMAT)
@@ -146,7 +146,7 @@ UBIFS_PAD_NODE_FIELDS = ['pad_len']
 UBIFS_PAD_NODE_SZ = struct.calcsize(UBIFS_PAD_NODE_FORMAT)
 UBIFS_SB_NODE_FORMAT = '<2sBBIIIIIQIIIIIIIH2sIIQI16sI3968s'
 UBIFS_SB_NODE_FIELDS = ['padding',
- 'key_hash',
+                        'key_hash',
  'key_fmt',
  'flags',
  'min_io_size',
@@ -173,7 +173,7 @@ UBIFS_SB_NODE_FIELDS = ['padding',
 UBIFS_SB_NODE_SZ = struct.calcsize(UBIFS_SB_NODE_FORMAT)
 UBIFS_MST_NODE_FORMAT = '<QQIIIIIIIIQQQQQQIIIIIIIIIIII344s'
 UBIFS_MST_NODE_FIELDS = ['highest_inum',
- 'cmt_no',
+                         'cmt_no',
  'flags',
  'log_lnum',
  'root_lnum',
@@ -204,13 +204,13 @@ UBIFS_MST_NODE_FIELDS = ['highest_inum',
 UBIFS_MST_NODE_SZ = struct.calcsize(UBIFS_MST_NODE_FORMAT)
 UBIFS_REF_NODE_FORMAT = '<III28s'
 UBIFS_REF_NODE_FIELDS = ['lnum',
- 'offs',
+                         'offs',
  'jhead',
  'padding']
 UBIFS_REF_NODE_SZ = struct.calcsize(UBIFS_REF_NODE_FORMAT)
 UBIFS_BRANCH_FORMAT = '<III%ss' % UBIFS_SK_LEN
 UBIFS_BRANCH_FIELDS = ['lnum',
- 'offs',
+                       'offs',
  'len',
  'key']
 UBIFS_BRANCH_SZ = struct.calcsize(UBIFS_BRANCH_FORMAT)
