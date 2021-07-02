@@ -1,24 +1,25 @@
 from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
-from Components.config import config, configfile, ConfigSubsection, getConfigListEntry, ConfigSelectionNumber, ConfigSelection, ConfigSlider, ConfigYesNo, NoSave, ConfigNumber, ConfigText
+from Components.config import config, configfile, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.SystemInfo import SystemInfo
 from Components.Sources.StaticText import StaticText
 from Components.Pixmap import Pixmap
 from Components.Console import Console
 from Components.Label import Label
-from Components.Language import language
-from Tools.Directories import fileCheck, fileExists
+from Tools.Directories import fileExists
 from enigma import getDesktop
 from os import access, R_OK
 from boxbranding import getBoxType, getBrandOEM
+
 
 def getFilePath(setting):
 	if getBrandOEM() in ('dreambox',):
 		return "/proc/stb/vmpeg/0/dst_%s" % (setting)
 	else:
 		return "/proc/stb/fb/dst_%s" % (setting)
+
 
 def setPositionParameter(parameter, configElement):
 	f = open(getFilePath(parameter), "w")
@@ -28,6 +29,7 @@ def setPositionParameter(parameter, configElement):
 		f = open(getFilePath("apply"), "w")
 		f.write('1')
 		f.close()
+
 
 def InitOsd():
 	SystemInfo["CanChange3DOsd"] = access('/proc/stb/fb/3dmode', R_OK) and True or False
@@ -65,7 +67,7 @@ def InitOsd():
 		if SystemInfo["CanChangeOsdPosition"]:
 			setPositionParameter("height", configElement)
 	config.osd.dst_height.addNotifier(setOSDHeight)
-	print('[UserInterfacePositioner] Setting OSD position: %s %s %s %s' %  (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value))
+	print('[UserInterfacePositioner] Setting OSD position: %s %s %s %s' % (config.osd.dst_left.value, config.osd.dst_width.value, config.osd.dst_top.value, config.osd.dst_height.value))
 
 	def setOSDAlpha(configElement):
 		if SystemInfo["CanChangeOsdAlpha"]:
@@ -257,7 +259,6 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setup_title = _("Position Setup")
-		self.Console = Console()
 		self["status"] = StaticText()
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("save"))
@@ -292,10 +293,10 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		self["config"].l.setList(self.list)
 
 		self.onLayoutFinish.append(self.layoutFinished)
-		if self.welcomeWarning not in self.onShow:
-			self.onShow.append(self.welcomeWarning)
-		if self.selectionChanged not in self["config"].onSelectionChanged:
-			self.serviceRef = None
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
+		self.selectionChanged()
+
 	def selectionChanged(self):
 		if getBoxType().startswith('azbox'):
 			pass
@@ -306,31 +307,6 @@ class UserInterfacePositioner2(Screen, ConfigListScreen):
 		self.setTitle(_(self.setup_title))
 #		self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
 
-	def welcomeWarning(self):
-		if self.welcomeWarning in self.onShow:
-			self.onShow.remove(self.welcomeWarning)
-		popup = self.session.openWithCallback(self.welcomeAction, MessageBox, _("NOTE: This feature is intended for people who cannot disable overscan "
-			"on their television / display.  Please first try to disable overscan before using this feature.\n\n"
-			"USAGE: Adjust the screen size and position settings so that the shaded user interface layer *just* "
-			"covers the test pattern in the background.\n\n"
-			"Select Yes to continue or No to exit."), type=MessageBox.TYPE_YESNO, timeout=-1, default=False)
-		popup.setTitle(self.setup_title)
-
-	def welcomeAction(self, answer):
-		if answer:
-			self.serviceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			self.session.nav.stopService()
-			if self.restoreService not in self.onClose:
-				self.onClose.append(self.restoreService)
-			self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
-		else:
-			self.close()
-
-	def restoreService(self):
-		try:
-			self.session.nav.playService(self.serviceRef)
-		except:
-			pass
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
@@ -424,12 +400,10 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setup_title = _("Position Setup")
-		self.Console = Console()
 		self["status"] = StaticText()
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("save"))
 		self["key_yellow"] = StaticText(_("Defaults"))
-		
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
@@ -455,11 +429,8 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
-		self.serviceRef = None
 		self.onLayoutFinish.append(self.layoutFinished)
-		if self.welcomeWarning not in self.onShow:
-			self.onShow.append(self.welcomeWarning)
-		if self.selectionChanged not in self["config"].onSelectionChanged:
+		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
@@ -471,32 +442,6 @@ class UserInterfacePositioner(Screen, ConfigListScreen):
 
 	def layoutFinished(self):
 		self.setTitle(_(self.setup_title))
-
-	def welcomeWarning(self):
-		if self.welcomeWarning in self.onShow:
-			self.onShow.remove(self.welcomeWarning)
-		popup = self.session.openWithCallback(self.welcomeAction, MessageBox, _("NOTE: This feature is intended for people who cannot disable overscan "
-			"on their television / display.  Please first try to disable overscan before using this feature.\n\n"
-			"USAGE: Adjust the screen size and position settings so that the shaded user interface layer *just* "
-			"covers the test pattern in the background.\n\n"
-			"Select Yes to continue or No to exit."), type=MessageBox.TYPE_YESNO, timeout=-1, default=False)
-		popup.setTitle(self.setup_title)
-
-	def welcomeAction(self, answer):
-		if answer:
-			self.serviceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			self.session.nav.stopService()
-			if self.restoreService not in self.onClose:
-				self.onClose.append(self.restoreService)
-			self.Console.ePopen('/usr/bin/showiframe /usr/share/enigma2/hd-testcard.mvi')
-		else:
-			self.close()
-
-	def restoreService(self):
-		try:
-			self.session.nav.playService(self.serviceRef)
-		except:
-			pass
 
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
