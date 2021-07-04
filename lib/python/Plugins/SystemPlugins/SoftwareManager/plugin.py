@@ -1623,7 +1623,7 @@ class UpdatePlugin(Screen):
 		# TODO: Use Twisted's URL fetcher, urlopen is evil. And it can
 		# run in parallel to the package update.
 		try:
-			urlopenSTATUS = "https://opendroid/feeds-status/index.php"
+			urlopenSTATUS = "http://opendroid.org/status/index.php"
 			d = urlopen(urlopenSTATUS)
 			tmpStatus = d.read()
 			tmpStatus = six.ensure_str(tmpStatus)

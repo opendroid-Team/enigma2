@@ -1034,7 +1034,7 @@ class IconMain(Screen):
 		else:
 			self.openTest()
 
-	def key_up(self, focusLastPic = False):
+	def key_up(self, focusLastPic=False):
 		self.ipage = self.ipage - 1
 		if self.ipage < 1 and 7 > self.picnum > 0:
 			self.ipage = 1
@@ -1054,7 +1054,7 @@ class IconMain(Screen):
 			self.index = 0
 		self.openTest()
 
-	def key_down(self, focusLastPic = False):
+	def key_down(self, focusLastPic=False):
 		self.ipage = self.ipage + 1
 		if self.ipage == 2 and 7 > self.picnum > 0:
 			self.ipage = 1
@@ -1077,9 +1077,9 @@ class IconMain(Screen):
 	def keyNumberGlobal(self, number):
 		if number == 7:
 			self.key_up()
-		elif  number == 8:
+		elif number == 8:
 			self.closeNonRecursive()
-		elif  number == 9:
+		elif number == 9:
 			self.key_down()
 		else:
 			number -= 1
