@@ -106,7 +106,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				enigma.iPlayableService.evUpdatedEventInfo: self.__eventInfoChanged
 			})
 
-		self.current_begin_time=0
+		self.current_begin_time = 0
 		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
 		InfoBar.instance = self
 
@@ -133,7 +133,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			else:
 				self["key_red"].setText(_("ViX EPG"))
 
-			if not config.plisettings.Subservice.value:
+			if config.plisettings.Subservice.value == "0":
 				self["key_green"].setText(_("Timers"))
 			else:
 				self["key_green"].setText(_("Green Panel"))
@@ -161,7 +161,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		new = self.servicelist.newServicePlayed()
 		if self.execing:
 			InfoBarShowHide.serviceStarted(self)
-			self.current_begin_time=0
+			self.current_begin_time = 0
 		elif not self.__checkServiceStarted in self.onShown and new:
 			self.onShown.append(self.__checkServiceStarted)
 
@@ -219,10 +219,10 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	def toogleTvRadio(self):
 		if self.radioTV == 1:
 			self.radioTV = 0
-			self.showTv() 
-		else: 
+			self.showTv()
+		else:
 			self.radioTV = 1
-			self.showRadio() 
+			self.showRadio()
 
 	def ChannelSelectionRadioClosed(self, *arg):
 		self.rds_display.show()  # in InfoBarRdsDecoder
@@ -239,7 +239,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self.lastservice = self.session.nav.getCurrentlyPlayingServiceOrGroup()
 		if self.lastservice and ':0:/' in self.lastservice.toString():
 			self.lastservice = enigma.eServiceReference(config.movielist.curentlyplayingservice.value)
-		self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled = self.timeshiftEnabled())
+		self.session.openWithCallback(self.movieSelected, Screens.MovieSelection.MovieSelection, defaultRef, timeshiftEnabled=self.timeshiftEnabled())
 
 	def movieSelected(self, service):
 		ref = self.lastservice
@@ -248,7 +248,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			if ref and not self.session.nav.getCurrentlyPlayingServiceOrGroup():
 				self.session.nav.playService(ref)
 		else:
-			self.session.open(MoviePlayer, service, slist = self.servicelist, lastservice = ref)
+			self.session.open(MoviePlayer, service, slist=self.servicelist, lastservice=ref)
 
 	def showMediaPlayer(self):
 		try:
@@ -256,7 +256,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self.session.open(MediaPlayer)
 			no_plugin = False
 		except Exception as e:
-			self.session.open(MessageBox, _("The MediaPlayer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The MediaPlayer plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def showMediaCenter(self):
 		try:
@@ -264,7 +264,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self.session.open(DMC_MainMenu)
 			no_plugin = False
 		except Exception as e:
-			self.session.open(MessageBox, _("The MediaCenter plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The MediaCenter plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def openSleepTimer(self):
 		from Screens.SleepTimerEdit import SleepTimerEdit
@@ -284,7 +284,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					self.runPlugin(plugin)
 					break
 		except Exception as e:
-			self.session.open(MessageBox, _("The AutoTimer plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			self.session.open(MessageBox, _("The AutoTimer plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 	def openWeather(self):
 		try:
 			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
@@ -292,7 +292,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					self.runPlugin(plugin)
 					break
 		except Exception as e:
-			self.session.open(MessageBox, _("The Weather plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			self.session.open(MessageBox, _("The Weather plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO,timeout=10)
 	def openEPGSearch(self):
 		try:
 			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
@@ -300,7 +300,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					self.runPlugin(plugin)
 					break
 		except Exception as e:
-			self.session.open(MessageBox, _("The EPGSearch plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The EPGSearch plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def openIMDB(self):
 		try:
@@ -309,7 +309,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					self.runPlugin(plugin)
 					break
 		except Exception as e:
-			self.session.open(MessageBox, _("The IMDb plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The IMDb plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def ZoomInOut(self):
 		zoomval = 0
@@ -350,7 +350,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			MediaPortal(self.session)
 			no_plugin = False
 		except Exception as e:
-			self.session.open(MessageBox, _("The MediaPortal plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The MediaPortal plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def showSetup(self):
 		from Screens.Menu import MainMenu, mdom
@@ -382,7 +382,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			self.session.instantiateDialog(videoSetupMain)
 			no_plugin = False
 		except Exception as e:
-			self.session.open(MessageBox, _("The VideoMode plugin is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
+			self.session.open(MessageBox, _("The VideoMode plugin is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def showPluginBrowser(self):
 		from OPENDROID.GreenPanel import GreenPanel
@@ -410,7 +410,7 @@ def setAudioTrack(service):
 			if lang in langC:
 				lang = langC[lang][0]
 			desc = audioInfo.getDescription()
-			track = idx, lang,  desc
+			track = idx, lang, desc
 			idx += 1
 			trackList += [track]
 		seltrack = tracks.getCurrentTrack()
@@ -474,7 +474,8 @@ def tryAudioTrack(tracks, audiolang, caudiolang, trackList, seltrack, useAc3):
 					return True
 	return False
 
-class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG, \
+
+class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, InfoBarShowHide, InfoBarLongKeyDetection, InfoBarMenu, InfoBarEPG,
 		InfoBarSeek, InfoBarShowMovies, InfoBarInstantRecord, InfoBarAudioSelection, HelpableScreen, InfoBarNotifications,
 		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport,
 		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin,
@@ -485,7 +486,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 
 	instance = None
 
-	def __init__(self, session, service, slist = None, lastservice = None):
+	def __init__(self, session, service, slist=None, lastservice=None):
 		Screen.__init__(self, session)
 		InfoBarAspectSelection.__init__(self)
 		InfoBarAudioSelection.__init__(self)
@@ -518,7 +519,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 				InfoBarPlugins, InfoBarPiP, InfoBarZoom, InfoBarButtonSetup:
 			x.__init__(self)
 
-		self.onChangedEntry = [ ]
+		self.onChangedEntry = []
 		self.servicelist = slist
 		self.lastservice = lastservice or session.nav.getCurrentlyPlayingServiceOrGroup()
 		session.nav.playService(service)
@@ -589,7 +590,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 				)
 
 			from Screens.ChoiceBox import ChoiceBox
-			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list = list)
+			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list=list)
 		else:
 			self.leavePlayerConfirmed([True, how])
 
@@ -758,7 +759,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 							break
 			else:
 				slist.moveDown()
-			slist.zap(enable_pipzap = True)
+			slist.zap(enable_pipzap=True)
 		else:
 			InfoBarSeek.seekFwd(self)
 
@@ -780,7 +781,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 							break
 			else:
 				slist.moveUp()
-			slist.zap(enable_pipzap = True)
+			slist.zap(enable_pipzap=True)
 		else:
 			InfoBarSeek.seekBack(self)
 
@@ -807,7 +808,7 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 					self.session.pipshown = False
 					del self.session.pip
 			else:
-				self.session.open(MessageBox, _("Your %s %s does not support PiP HD") % (getMachineBrand(), getMachineName()), type = MessageBox.TYPE_INFO, timeout = 5 )
+				self.session.open(MessageBox, _("Your %s %s does not support PiP HD") % (getMachineBrand(), getMachineName()), type=MessageBox.TYPE_INFO, timeout=5)
 
 	def movePiP(self):
 		if self.session.pipshown:
@@ -848,17 +849,17 @@ class MoviePlayer(InfoBarAspectSelection, InfoBarSimpleEventView, InfoBarBase, I
 		for i, item in enumerate(playlist):
 			if item == service:
 				if config.usage.on_movie_eof.value == "repeatcurrent":
-					return i+1, len(playlist)
+					return i + 1, len(playlist)
 				i += 1
 				if i < len(playlist):
-					return playlist[i], i+1, len(playlist)
+					return playlist[i], i + 1, len(playlist)
 				elif config.usage.on_movie_eof.value == "loop":
 					return playlist[0], 1, len(playlist)
 		return None, 0, 0
 
 	def displayPlayedName(self, ref, index, n):
 		import Tools.Notifications
-		Tools.Notifications.AddPopup(text = _("%s/%s: %s") % (index, n, self.ref2HumanName(ref)), type = MessageBox.TYPE_INFO, timeout = 5)
+		Tools.Notifications.AddPopup(text=_("%s/%s: %s") % (index, n, self.ref2HumanName(ref)), type=MessageBox.TYPE_INFO, timeout=5)
 
 	def ref2HumanName(self, ref):
 		return enigma.eServiceCenter.getInstance().info(ref).getName(ref)
