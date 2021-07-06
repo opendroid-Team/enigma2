@@ -12483,10 +12483,10 @@ msgstr "Riavvio in corso dell'interfaccia utente del tuo %s %s"
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Riavvio in corso dell'interfaccia utente del tuo %s %s\n"
-"a causa di un errore in mytest.py"
+"a causa di un errore in StartEnigma.py"
 
 msgid ""
 "The wireless LAN plugin is not installed!\n"

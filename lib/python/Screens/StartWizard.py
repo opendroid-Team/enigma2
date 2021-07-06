@@ -42,7 +42,7 @@ class StartWizard(WizardLanguage, Rc):
 		configfile.save()
 
 
-# mytest.py#L528ff - RestoreSettings
+# StartEnigma.py#L528ff - RestoreSettings
 wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority=0)
 wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority=2)
 wizardManager.registerWizard(UserInterfacePositionerWizard, config.misc.firstrun.value, priority=4)

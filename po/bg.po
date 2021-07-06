@@ -13844,10 +13844,10 @@ msgstr "Потребителският интерфейс на вашия %s %s 
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Потребителският интерфейс на вашия %s %s е рестартиран\n"
-"поради грешка в mytest.py"
+"поради грешка в StartEnigma.py"
 
 msgid ""
 "The wireless LAN plugin is not installed!\n"

@@ -6,7 +6,6 @@ import xml.etree.cElementTree
 import six
 
 from boxbranding import getBoxType
-
 from enigma import addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gRGB
 from os import listdir, path, unlink
 from os.path import basename, dirname, isfile, join as pathjoin

@@ -15381,10 +15381,10 @@ msgstr "Brukergrensesnittet i din %s %s starter på nytt"
 
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Brukergrensesnitt på din %s %s starter om igjen\n"
-"grunnet en feil i mytest.py"
+"grunnet en feil i StartEnigma.py"
 
 msgid ""
 "The VideoMode plugin is not installed!\n"

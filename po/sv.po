@@ -14779,10 +14779,10 @@ msgstr "Användargränssnittet på din  %s %s startas om"
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Användargränssnittet på din %s %s startas om\n"
-"på grund av ett fel i mytest.py"
+"på grund av ett fel i StartEnigma.py"
 
 #
 msgid ""

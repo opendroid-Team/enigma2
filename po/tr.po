@@ -14608,10 +14608,10 @@ msgstr "%s %s arayüzü yeniden başlatılıyor."
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "%s %s Arayüzü yeniden başlatılıyor\n"
-"mytest.py deki bir hata nedeniyle"
+"StartEnigma.py deki bir hata nedeniyle"
 
 #
 msgid ""

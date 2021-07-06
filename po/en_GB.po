@@ -13507,10 +13507,10 @@ msgstr "The user interface of your %s %s is restarting"
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 
 msgid ""
 "The wireless LAN plugin is not installed!\n"

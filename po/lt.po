@@ -15236,7 +15236,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "\n"
 "Atkurti jūsų %s %s nustatymus."

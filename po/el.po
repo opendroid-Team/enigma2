@@ -13954,10 +13954,10 @@ msgstr "Γίνεται επανεκκίνηση της επιφάνειας χρ
 #, python-format
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Γίνεται επανεκκίνηση της επιφάνειας χρήστη του %s %s σας\n"
-"εξαιτίας σφάλματος στο mytest.py"
+"εξαιτίας σφάλματος στο StartEnigma.py"
 
 msgid ""
 "The wireless LAN plugin is not installed!\n"

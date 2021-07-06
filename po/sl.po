@@ -15530,10 +15530,10 @@ msgstr "Uporabniški vmesnik sprejemnika se bo v kratkem popolno zagnal!"
 #, fuzzy
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "Uporabniški vmesnik sprejemnika se bo v kratkem popolno zagnal!\n"
-"Razlog je napaka v datoteki mytest.py"
+"Razlog je napaka v datoteki StartEnigma.py"
 
 msgid ""
 "The VideoMode plugin is not installed!\n"
