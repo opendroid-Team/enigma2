@@ -4,7 +4,6 @@ import errno
 import os
 import xml.etree.cElementTree
 import six
-
 from boxbranding import getBoxType
 from enigma import addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gRGB
 from os import listdir, path, unlink
@@ -23,7 +22,7 @@ if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
 	config.vfd.show = ConfigNothing()
 
 #DEFAULT_SKIN = "Multibox/skin.xml"
-DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Steampunk/skin.xml" or "Multibox/skin.xml"
+DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Steampunk/skin.xml" or "OPD-Blue-Line/skin.xml"
 EMERGENCY_SKIN = "skin_default.xml"
 EMERGENCY_NAME = "Default OE-A"
 DEFAULT_DISPLAY_SKIN = "skin_display_grautec.xml" if SystemInfo["grautec"] else "skin_display.xml"
