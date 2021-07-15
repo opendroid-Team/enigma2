@@ -4,7 +4,9 @@ import errno
 import os
 import xml.etree.cElementTree
 import six
+
 from boxbranding import getBoxType
+
 from enigma import addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gRGB
 from os import listdir, path, unlink
 from os.path import basename, dirname, isfile, join as pathjoin
@@ -21,8 +23,8 @@ config.vfd.show = ConfigSelection([("skin_text.xml", _("Channel Name")), ("skin_
 if not os.path.exists("/usr/share/enigma2/skin_text.xml"):
 	config.vfd.show = ConfigNothing()
 
-#DEFAULT_SKIN = "Multibox/skin.xml"
-DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Steampunk/skin.xml" or "OPD-Blue-Line/skin.xml"
+#DEFAULT_SKIN = "Steampunk/skin.xml"
+DEFAULT_SKIN = SystemInfo["HasFullHDSkinSupport"] and "Multibox/skin.xml" or "Steampunk/skin.xml"
 EMERGENCY_SKIN = "skin_default.xml"
 EMERGENCY_NAME = "Default OE-A"
 DEFAULT_DISPLAY_SKIN = "skin_display_grautec.xml" if SystemInfo["grautec"] else "skin_display.xml"
@@ -115,7 +117,7 @@ def InitSkins():
 	if currentPrimarySkin != None:
 		config.skin.primary_skin.value.replace('/skin.xml', '')
 		partsDir = resolveFilename(SCOPE_CURRENT_SKIN, pathjoin(dirname(currentPrimarySkin), "mySkin", ""))
-		if pathExists(partsDir) and currentPrimarySkin != DEFAULT_SKIN:
+		if pathExists(partsDir) and currentPrimarySkin != USER_SKIN:
 			for file in sorted(listdir(partsDir)):
 				if file.startswith("skin_") and file.endswith(".xml"):
 					partsFile = pathjoin(partsDir, file)
@@ -132,7 +134,7 @@ def InitSkins():
 		loadSkin(USER_SKIN, scope=SCOPE_CURRENT_SKIN, desktop=getDesktop(GUI_SKIN_ID), screenID=GUI_SKIN_ID)
 	runCallbacks = True
 
-# Temporary entry point for older versions of mytest.py.
+# Temporary entry point for older versions of StartEnigma.py.
 #
 
 
@@ -156,12 +158,12 @@ def loadSkin(filename, scope=SCOPE_SKIN, desktop=getDesktop(GUI_SKIN_ID), screen
 				# the other in order of ascending priority.
 				loadSingleSkinData(desktop, screenID, domSkin, filename, scope=scope)
 				for element in domSkin:
-					if element.tag == "screen":  # If non-screen element, no need for it any longer.
+					if element.tag == "screen":  # Process all screen elements.
 						name = element.attrib.get("name", None)
 						if name:  # Without a name, it's useless!
 							scrnID = element.attrib.get("id", None)
 							if scrnID is None or scrnID == screenID:  # If there is a screen ID is it for this display.
-								 # print("[Skin] DEBUG: Extracting screen '%s' from '%s'.  (scope='%s')" % (name, filename, scope))
+								# print("[Skin] DEBUG: Extracting screen '%s' from '%s'.  (scope='%s')" % (name, filename, scope))
 								domScreens[name] = (element, "%s/" % dirname(filename))
 					elif element.tag == "windowstyle":  # Process the windowstyle element.
 						scrnID = element.attrib.get("id", None)
