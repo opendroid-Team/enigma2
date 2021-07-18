@@ -24,8 +24,10 @@ from boxbranding import getMachineBrand, getMachineName
 import sys
 import os
 import re
+import time
 from Tools.HardwareInfo import HardwareInfo
 import six
+import codecs
 version='1.2',
 author='Dimitrij openPLi',
 author_email='dima-73@inbox.lv',
@@ -42,11 +44,11 @@ sfdisk = os.path.exists('/usr/sbin/sfdisk')
 
 def DiskEntry(model, size, removable, rotational, internal):
         if not removable and internal and rotational:
-                picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"))
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"))
         elif internal and not rotational:
-                picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/ssddisk.png"))
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/ssddisk.png"))
         else:
-                picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"));
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"));
 
         return (picture, model, size)
 
@@ -247,12 +249,12 @@ class HddSetup(Screen):
                 if sfdisk and len(self.mdisks.disks) > 0:
                         self.sindex = self['menu'].getIndex()
                         self.session.openWithCallback(self.chooseFSType, ExtraMessageBox, _("Please select your preferred configuration.") + "\n" + _("Or use standard 'Harddisk Setup' to initialize your drive in ext4."), _("Partitioner"),
-                                                      [ [ _("One partition"), "partitionmanager.png" ],
-                                                        [ _("Two partitions (50% - 50%)"), "partitionmanager.png" ],
-                                                        [ _("Two partitions (75% - 25%)"), "partitionmanager.png" ],
-                                                        [ _("Three partitions (33% - 33% - 33%)"), "partitionmanager.png" ],
-                                                        [ _("Four partitions (25% - 25% - 25% - 25%)"), "partitionmanager.png" ],
-                                                        [ _("Cancel"), "cancel.png" ],
+                                                      [[_("One partition"), "partitionmanager.png"],
+                                                       [_("Two partitions (50% - 50%)"), "partitionmanager.png" ],
+                                                       [_("Two partitions (75% - 25%)"), "partitionmanager.png" ],
+                                                        [_("Three partitions (33% - 33% - 33%)"), "partitionmanager.png" ],
+                                                        [_("Four partitions (25% - 25% - 25% - 25%)"), "partitionmanager.png" ],
+                                                        [_("Cancel"), "cancel.png" ],
                                                         ], 1, 5)
 
         def green(self):
@@ -384,7 +386,7 @@ class HddPartitions(Screen):
                         index = self["menu"].getIndex()
                         if self.disk[5][index][3] == "83" or self.disk[5][index][3] == "7" or self.disk[5][index][3] == "b" or self.disk[5][index][3] == "c":
                                 self["key_blue"].setText(_("Check"))
-                                if sfdisk: 
+                                if sfdisk:
                                         self["key_yellow"].setText(_("Format"))
                                 mp = self.mountpoints.get(self.disk[0], index+1)
                                 rmp = self.mountpoints.getRealMount(self.disk[0], index+1)
@@ -456,28 +458,28 @@ class HddPartitions(Screen):
                         if self.disk[5][self.index][3] == "83":
                                 if self.isExt4Supported():
                                         self.session.openWithCallback(self.domkfs, ExtraMessageBox, _("Format as"), _("Partitioner"),
-                                                                      [ [ "Ext4", "partitionmanager.png" ],
-                                                                        [ "Ext3", "partitionmanager.png" ],
-                                                                        [ "Ext2", "partitionmanager.png" ],
-                                                                        [ _("Cancel"), "cancel.png" ],
+                                                                      [["Ext4", "partitionmanager.png"],
+                                                                       ["Ext3", "partitionmanager.png"],
+                                                                       ["Ext2", "partitionmanager.png"],
+                                                                        [_("Cancel"), "cancel.png"],
                                                                         ], 1, 3)
                                 else:
                                         self.session.openWithCallback(self.domkfs, ExtraMessageBox, _("Format as"), _("Partitioner"),
-                                                                      [ [ "Ext3", "partitionmanager.png" ],
-                                                                        [ "Ext2", "partitionmanager.png" ],
-                                                                        [ _("Cancel"), "cancel.png" ],
+                                                                      [["Ext3", "partitionmanager.png"],
+                                                                       ["Ext2", "partitionmanager.png"],
+                                                                       [_("Cancel"), "cancel.png"],
                                                                         ], 1, 2)
                         elif self.disk[5][self.index][3] == "7":
                                 self.session.openWithCallback(self.domkfs, ExtraMessageBox, _("Format as"), _("Partitioner"),
-                                                              [ [ "NTFS", "partitionmanager.png" ],
-                                                                [ "exFAT", "partitionmanager.png" ],
-                                                                [ _("Cancel"), "cancel.png" ],
+                                                              [["NTFS", "partitionmanager.png"],
+                                                               ["exFAT", "partitionmanager.png"],
+                                                               [_("Cancel"), "cancel.png"],
                                                                 ], 1, 2)
                         elif self.disk[5][self.index][3] == "b" or self.disk[5][self.index][3] == "c":
                                 self.session.openWithCallback(self.domkfs, ExtraMessageBox, _("Format as"), _("Partitioner"),
-                                                              [ [ "Fat32", "partitionmanager.png" ],
-                                                                [ _("Cancel"), "cancel.png" ],
-                                                                ], 1, 1)
+                                                              [["Fat32", "partitionmanager.png"],
+                                                               [_("Cancel"), "cancel.png"],
+                                                               ], 1, 1)
 
         def refreshMP(self, uirefresh=True):
                 self.partitions = []
@@ -675,9 +677,9 @@ class HddMountDevice(Screen):
                 self.cpath = path
                 if self.mountpoints.exist(path):
                         self.session.openWithCallback(self.setMountPointCb, ExtraMessageBox, _("Selected mount point is already used by another drive."), _("Mount point exist!"),
-                                                      [ [ _("Change old drive with this new drive"), "ok.png" ],
-                                                        [ _("Keep old drive"), "cancel.png" ],
-                                                        ])
+                                                      [[_("Change old drive with this new drive"), "ok.png"],
+                                                       [_("Keep old drive"), "cancel.png"],
+                                                       ])
                 else:
                         self.setMountPointCb(0)
 
@@ -714,7 +716,7 @@ class HddMountDevice(Screen):
                 self.close()
 
 def MountEntry(description, details):
-        picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/diskusb.png"));
+        picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/diskusb.png"));
         return (picture, description, details)
 
 class HddFastRemove(Screen):
@@ -1206,7 +1208,7 @@ class Disks:
                 os.system("/sbin/mdev -s")
                 return 0
 
-        def chkfs(self, device, partition, fstype = 0):
+        def chkfs(self, device, partition, fstype=0):
                 fdevice = '%s%d' % (device, partition)
                 print('[DeviceManager] checking device %s' % fdevice)
                 if self.isMountedP(device, partition):
@@ -1236,7 +1238,7 @@ class Disks:
                         return 0
                 return -2
 
-        def mkfs(self, device, partition, fstype = 0):
+        def mkfs(self, device, partition, fstype=0):
                 dev = "%s%d" % (device, partition)
                 size = 0
                 partitions = open("/proc/partitions")
@@ -1520,6 +1522,7 @@ class HddInfo(ConfigListScreen, Screen):
 
         def drawInfo(self):
                 device = "/dev/%s" % self.device
+                print("device:", device)
                 #regexps
                 modelRe = re.compile(r"Model Number:\s*([\w\-]+)")
                 serialRe = re.compile(r"Serial Number:\s*([\w\-]+)")
@@ -1567,11 +1570,22 @@ class HddInfo(ConfigListScreen, Screen):
                         if readCache:
                                 self["readCache"].setText(_("Read cache speed: %s") % readCache[0].lstrip())
                 hdparm.close()
-                hddtemp = os.popen("/usr/sbin/hddtemp -q %s" % device)
-                for line in hddtemp:
+                if os.path.exists("/tmp/tmpa.txt"):
+                        os.remove("/tmp/tmpa.txt")
+                else:
+                        os.system("touch /tmp/tmpa.txt")
+                        time.sleep(1)                        		
+                hddtemp = os.popen("/usr/sbin/hddtemp -q %s >/tmp/tmpa.txt" % device)
+                time.sleep(1)
+                with open("/tmp/tmpa.txt", 'r', encoding='windows-1252') as f:
+                        lines = f.readlines()
+                for line in lines:
                         temp = re.findall(tempRe, line)
                         if temp:
-                                self["temp"].setText(_("Disk temperature: %s") % temp[0].lstrip())
+                                self["temp"].setText("Disk temperature: %s" % temp[0].lstrip())
+                f.close()
+                if os.path.exists("/tmp/tmpa.txt"):
+                        os.remove("/tmp/tmpa.txt")                				
                 hddtemp.close()
 #######################################################################################################################
 FULLHD = False
