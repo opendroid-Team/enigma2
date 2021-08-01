@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+# takes a header file, outputs action ids
 from __future__ import print_function
 import tokenize
 import sys

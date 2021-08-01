@@ -1,4 +1,6 @@
+from __future__ import division
 from __future__ import absolute_import
+from builtins import round
 import math
 from Components.Renderer.Renderer import Renderer
 from skin import parseColor
@@ -16,7 +18,7 @@ if getBoxType() in ('gbquad4k', 'gbquadplus'):
 else:
 	LCDSIZE400 = False
 
-if getBoxType() in ('gbue4k', 'gbultraue'):
+if getBoxType() == ('gbue4k', 'gbultraue'):
 	LCDSIZE220 = True
 else:
 	LCDSIZE220 = False
@@ -57,9 +59,9 @@ class OMaClockLcd(Renderer):
 		z = (math.pi / 180)
 		x = int(round((r * math.sin((a * z)))))
 		y = int(round((r * math.cos((a * z)))))
-		return ((m + x),(m1 - y))
+		return ((m + x), (m1 - y))
 
-	def hand(self,opt):
+	def hand(self, opt):
 		if LCDSIZE400:
 			width = 396
 			height = 240
@@ -99,11 +101,11 @@ class OMaClockLcd(Renderer):
 	def line_draw(self, x0, y0, x1, y1):
 		steep = (abs((y1 - y0)) > abs((x1 - x0)))
 		if steep:
-			x0,y0 = y0,x0
-			x1,y1 = y1,x1
+			x0, y0 = y0, x0
+			x1, y1 = y1, x1
 		if (x0 > x1):
-			x0,x1 = x1,x0
-			y0,y1 = y1,y0
+			x0, x1 = x1, x0
+			y0, y1 = y1, y0
 		if (y0 < y1):
 			ystep = 1
 		else:
@@ -111,8 +113,8 @@ class OMaClockLcd(Renderer):
 		deltax = (x1 - x0)
 		deltay = abs((y1 - y0))
 		error = (-deltax / 2)
-		y = y0
-		for x in range(x0, (x1 + 1)):
+		y = int(y0)
+		for x in list(range(int(x0), (int(x1) + 1))):
 			if steep:
 				self.instance.fillRect(eRect(y, x, self.linewidth, self.linewidth), self.fColor)
 			else:
