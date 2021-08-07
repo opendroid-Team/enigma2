@@ -212,7 +212,7 @@ class About(Screen):
 			cpuMHz = _("   (1.5 GHz)")
 		elif getMachineBuild() in ('formuler1tc', 'formuler1', 'triplex', 'tiviaraplus'):
 			cpuMHz = _("   (1.3 GHz)")
-		elif getMachineBuild() in ('gbmv200', 'u51', 'u5', 'u53', 'u532', 'u533', 'u52', 'u54', 'u55', 'u56', 'u5pvr', 'h9', 'h9combo', 'h10', 'cc1', 'sf8008', 'sf8008m', 'hd60', 'hd61', 'i55plus', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'v8plus', 'multibox'):
+		elif getMachineBuild() in ('gbmv200', 'u51', 'u5', 'u53', 'u532', 'u533', 'u52', 'u54', 'u55', 'u56', 'u5pvr', 'cc1', 'sf8008', 'sf8008m', 'hd60', 'hd61', 'i55plus', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'v8plus', 'multibox'):
 			cpuMHz = _("   (1.6 GHz)")
 		elif getMachineBuild() in ('vuuno4kse', 'vuuno4k', 'dm900', 'dm920', 'gb7252', 'dags7252','xc7439', '8100s'):
 			cpuMHz = _("   (1.7 GHz)")
@@ -313,7 +313,7 @@ class About(Screen):
 		AboutText += _("Skin:\t%s (%s x %s)\n") % (config.skin.primary_skin.value.split('/')[0], getDesktop(0).size().width(), getDesktop(0).size().height())
 		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
-		if getMachineBuild() not in ('vuduo4k','osmio4k','h9','h9combo','h10','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','h7','xc7439','8100s','u5','u5pvr','u52','u53','u54','u55','u56','u51','sf8008','i55plus'):
+		if getMachineBuild() not in ('vuduo4k','osmio4k','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','xc7439','8100s','u5','u5pvr','u52','u53','u54','u55','u56','u51','sf8008'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
 #		AboutText += _("Network:")
 #		eth0 = about.getIfConfig('eth0')
@@ -516,64 +516,6 @@ class ModelPic(Screen):
 			model = "sf228.png"
 		elif getBoxType() in ('sf98'):
 			model = "sf98.png"
-		elif getBoxType() in ('zgemmah7'):
-			model = "zgemmah7.png"
-		elif getBoxType() in ('zgemmah7c'):
-			model = "zgemmah7c.png"
-		elif getBoxType() in ('zgemmah7s'):
-			model = "zgemmah7s.png"
-		elif getBoxType() in ('zgemmah2h'):
-			model = "zgemmah2h.png"
-		elif getBoxType() in ('zgemmah2s'):
-			model = "zgemmah2s.png"
-		elif getBoxType() in ('zgemmah2splus'):
-			model = "zgemmah2splus.png"
-		elif getBoxType() in ('zgemmah32tc'):
-			model = "zgemmah32tc.png"
-		elif getBoxType() in ('zgemmah3ac'):
-			model = "zgemmah3ac.png"
-		elif getBoxType() in ('zgemmah4'):
-			model = "zgemmah4.png"
-		elif getBoxType() in ('zgemmah5'):
-			model = "zgemmah5.png"
-		elif getBoxType() in ('zgemmah52s'):
-			model = "zgemmah52s.png"
-		elif getBoxType() in ('zgemmah7'):
-			model = "zgemmah7.png"
-		elif getBoxType() in ('zgemmah7c'):
-			model = "zgemmah7c.png"
-		elif getBoxType() in ('zgemmah7s'):
-			model = "zgemmah7s.png"
-		elif getBoxType() in ('zgemmah52splus'):
-			model = "zgemmah52splus.png"
-		elif getBoxType() in ('zgemmah52tc'):
-			model = "zgemmah52tc.png"
-		elif getBoxType() in ('zgemmah5ac'):
-			model = "zgemmah5ac.png"
-		elif getBoxType() in ('zgemmah6'):
-			model = "zgemmah6.png"
-		elif getBoxType() in ('zgemmah9s'):
-			model = "zgemmah9s.png"
-		elif getBoxType() in ('zgemmah9splus'):
-			model = "zgemmah9splus.png"
-		elif getBoxType() in ('zgemmah9t'):
-			model = "zgemmah9t.png"
-		elif getBoxType() in ('zgemmah92h'):
-			model = "zgemmah92h.png"
-		elif getBoxType() in ('zgemmah92s'):
-			model = "zgemmah92s.png"
-		elif getBoxType() in ('zgemmah9twin'):
-			model = "zgemmah9twin.png"
-		elif getBoxType() in ('zgemmah9combo'):
-			model = "zgemmah9combo.png"
-		elif getBoxType() in ('zgemmah10'):
-			model = "zgemmah10.png"
-		elif getBoxType() in ('zgemmahs'):
-			model = "zgemmahs.png"
-		elif getBoxType() in ('zgemmai55'):
-			model = "zgemmai55.png"
-		elif getBoxType() in ('zgemmai55plus'):
-			model = "zgemmai55plus.png"
 		elif getBoxType() in ('vuduo'):
 			model = "vuduo.png "
 		elif getBoxType() in ('vuduo2'):

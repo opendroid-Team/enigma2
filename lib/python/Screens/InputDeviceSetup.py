@@ -358,15 +358,10 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("17", _("XP3000")),
 				("18", _("F1/F3/F4/F4-TURBO/TRIPLEX")),
 				("19", _("HD2400")),
-				("20", _("Zgemma Star S/2S/H1/H2")),
-				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7 old Model")),
-				("22", _("Zgemma i55")),
 				("23", _("WWIO 4K")),
 				("24", _("Axas E4HD Ultra")),
-				("25", _("Zgemma H8/H0/H9/I55Plus old Model")),
 				("26", _("Protek 4K UHD/HD61")),
 				("27", _("HD60/Multibox/Multiboxse")),
-				("28", _("I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"))
 				]
 		defaultRcList = [
 				("default", 0),
@@ -398,15 +393,8 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("triplex", 18),
 				("xp1000", 14),
 				("xp3000", 17),
-				("sh1", 20),
-				("h3", 21),
-				("h5", 21),
-				#("h7", 21),# old model
-				("i55", 22),
 				("bre2ze4k", 23),
 				("e4hd", 24),
-				#("h9", 25),# old model
-				("i55plus", 25),
 				("hzero", 25),
 				("h8", 25),
 				("protek4k", 26),
@@ -414,14 +402,6 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("hd60", 27),
 				("multibox", 27),
 				("multiboxse", 27),
-				("h7", 28), # new model
-				("h9", 28), # new model
-				("h9se", 28), # new model
-				("h9combo", 28),
-				("h9combose", 28),
-				("i55se", 28),
-				("h10", 28),
-				("h11", 28)
 				]
 
 	def __init__(self, session):

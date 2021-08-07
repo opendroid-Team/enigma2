@@ -301,17 +301,6 @@ class ImageBackup(Screen):
 					cmdlist.append('echo "' + _("Create:") + " rescue dump" + '"')
 					cmdlist.append("dd if=/dev/mmcblk0p3 of=%s/rescue.bin" % self.WORKDIR)
 
-				if self.MACHINEBUILD in ("h9", "i55plus"):
-					cmdlist.append('echo "' + _("Create:") + " fastboot dump" + '"')
-					cmdlist.append("dd if=/dev/mtd0 of=%s/fastboot.bin" % self.WORKDIR)
-					cmdlist.append('echo "' + _("Create:") + " bootargs dump" + '"')
-					cmdlist.append("dd if=/dev/mtd1 of=%s/bootargs.bin" % self.WORKDIR)
-					cmdlist.append('echo "' + _("Create:") + " baseparam dump" + '"')
-					cmdlist.append("dd if=/dev/mtd2 of=%s/baseparam.bin" % self.WORKDIR)
-					cmdlist.append('echo "' + _("Create:") + " pq_param dump" + '"')
-					cmdlist.append("dd if=/dev/mtd3 of=%s/pq_param.bin" % self.WORKDIR)
-					cmdlist.append('echo "' + _("Create:") + " logo dump" + '"')
-					cmdlist.append("dd if=/dev/mtd4 of=%s/logo.bin" % self.WORKDIR)
 
 				if self.EMMCIMG == "usb_update.bin" and self.RECOVERY:
 					SEEK_CONT = (Harddisk.getFolderSize(self.backuproot) / 1024) + 100000
@@ -527,7 +516,7 @@ class ImageBackup(Screen):
 			cmdlist.append('echo "This file forces a reboot after the update." > %s/reboot.update' % self.MAINDEST)
 		elif self.MODEL in ("vuzero", "vusolose", "vuuno4k", "vuzero4k"):
 			cmdlist.append('echo "This file forces the update." > %s/force.update' % self.MAINDEST)
-		elif self.MODEL in ('viperslim', 'evoslimse', 'evoslimt2c', "novaip", "zgemmai55", "sf98", "xpeedlxpro", 'evoslim', 'vipert2c'):
+		elif self.MODEL in ('viperslim', 'evoslimse', 'evoslimt2c', "novaip", "sf98", "xpeedlxpro", 'evoslim', 'vipert2c'):
 			cmdlist.append('echo "This file forces the update." > %s/force' % self.MAINDEST)
 		elif SystemInfo["HasRootSubdir"]:
 			cmdlist.append('echo "Rename the unforce_%s.txt to force_%s.txt and move it to the root of your usb-stick" > %s/force_%s_READ.ME' % (self.MACHINEBUILD, self.MACHINEBUILD, self.MAINDEST, self.MACHINEBUILD))
@@ -539,13 +528,6 @@ class ImageBackup(Screen):
 			os.system('mv %s/boot.bin %s/boot.bin' % (self.WORKDIR, self.MAINDEST))
 			os.system('mv %s/rescue.bin %s/rescue.bin' % (self.WORKDIR, self.MAINDEST))
 			os.system('cp -f /usr/share/gpt.bin %s/gpt.bin' % (self.MAINDEST))
-
-		if self.MACHINEBUILD in ("h9", "i55plus"):
-			os.system('mv %s/fastboot.bin %s/fastboot.bin' % (self.WORKDIR, self.MAINDEST))
-			os.system('mv %s/pq_param.bin %s/pq_param.bin' % (self.WORKDIR, self.MAINDEST))
-			os.system('mv %s/bootargs.bin %s/bootargs.bin' % (self.WORKDIR, self.MAINDEST))
-			os.system('mv %s/baseparam.bin %s/baseparam.bin' % (self.WORKDIR, self.MAINDEST))
-			os.system('mv %s/logo.bin %s/logo.bin' % (self.WORKDIR, self.MAINDEST))
 
 		if self.MODEL in ("gbquad", "gbquadplus", "gb800ue", "gb800ueplus", "gbultraue", "gbultraueh", "twinboxlcd", "twinboxlcdci", "singleboxlcd", "sf208", "sf228"):
 			lcdwaitkey = '/usr/share/lcdwaitkey.bin'
@@ -566,10 +548,6 @@ class ImageBackup(Screen):
 			f.write("'rootfstype=jffs2 bmem=106M@150M root=/dev/mtdblock6 rw '")
 			f.write('"\n')
 			f.close()
-
-		if self.MACHINEBUILD in ("h9", "i55plus"):
-			cmdlist.append('cp -f /usr/share/fastboot.bin %s/fastboot.bin' % (self.MAINDESTROOT))
-			cmdlist.append('cp -f /usr/share/bootargs.bin %s/bootargs.bin' % (self.MAINDESTROOT))
 
 		if SystemInfo["canRecovery"] and self.RECOVERY:
 			cmdlist.append('7za a -r -bt -bd %s/%s-%s-%s-backup-%s_recovery_emmc.zip %s/*' % (self.DIRECTORY, self.IMAGEDISTRO, self.DISTROVERSION, self.MODEL, self.DATE, self.MAINDESTROOT))
