@@ -23,10 +23,10 @@ from six.moves import urllib
 import six
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
-from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel
+from boxbranding import getBoxType, getImageDistro, getMachineBuild, getMachineBrand, getMachineName, getMachineMtdRoot, getMachineMtdKernel, getImageVersion
 
-feedurl = 'https://opendroid.org/7.0'
-imagecat = [7.0, 7.1]
+feedurl = 'https://opendroid.org/'
+imagecat = [7.1, 7.0]
 
 def checkimagefiles(files):
 	return len([x for x in files if 'kernel' in x and '.bin' in x or x in ('zImage', 'uImage', 'root_cfe_auto.bin', 'root_cfe_auto.jffs2', 'oe_kernel.bin', 'oe_rootfs.bin', 'e2jffs2.img', 'rootfs.tar.bz2', 'rootfs.ubi', 'rootfs.bin')]) >= 2
@@ -100,10 +100,11 @@ class FlashOnline(Screen):
 		if not self.imagesList:
 			box = getBoxType()
 			brand = getMachineBrand()
+			version = getImageVersion()
 			for version in reversed(sorted(imagecat)):
 				newversion = _("Image Version %s") %version
 				the_page =""
-				url = '%s/%s/%s' % (feedurl,brand,box)
+				url = '%s/%s/%s/%s' % (feedurl, version,brand,box)
 				try:
 					req = Request(url)
 					response = urlopen(req)
@@ -131,7 +132,7 @@ class FlashOnline(Screen):
 					for image in countimage:
 						self.imagesList[newversion][image] = {}
 						self.imagesList[newversion][image]["name"] = image
-						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s' % (feedurl,brand,box,image)
+						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s/%s' % (feedurl,version,brand,box,image)
 
 			for media in ['/media/%s' % x for x in os.listdir('/media')] + (['/media/net/%s' % x for x in os.listdir('/media/net')] if os.path.isdir('/media/net') else []):
 				if not(SystemInfo['HasMMC'] and "/mmc" in media) and os.path.isdir(media):
