@@ -3,8 +3,6 @@ from boxbranding import getImageVersion
 import os
 from enigma import eTimer
 from os import system, listdir, chdir, getcwd, remove as os_remove
-import os
-import urllib
 from Screens.Screen import Screen
 from Components.PluginList import PluginList, PluginEntryComponent, PluginCategoryComponent, PluginDownloadComponent
 from Components.Harddisk import harddiskmanager
@@ -39,24 +37,30 @@ from ServiceReference import ServiceReference
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_SKIN_IMAGE, fileExists, pathExists, createDir, SCOPE_PLUGINS
 from Tools import Notifications
 from Tools.NumericalTextInput import NumericalTextInput
-from twisted.web.client import getPage, downloadPage
-import os
 from Components.Button import Button
 from Components.Task import Task, Job, job_manager as JobManager, Condition
 from Screens.TaskView import JobView
 from ServiceReference import ServiceReference
-import os, sys
+import sys
 from os import listdir
-from twisted.web.client import downloadPage 
-import urllib
+from twisted.web.client import downloadPage, getPage
 from enigma import *
-import sys,os
-import six
+import os
+import re
 from Tools.LoadPixmap import LoadPixmap
 from Components.Ipkg import IpkgComponent
 from Components.ScrollLabel import ScrollLabel
 from os import popen, system, remove, listdir, chdir, getcwd, statvfs, mkdir, path, walk
 from Components.ProgressBar import ProgressBar
+from sys import version_info
+from six.moves.urllib.parse import urlparse, urlunparse
+from six.moves.urllib.request import Request, urlopen
+from six.moves.urllib.parse import urlencode
+from six.moves import urllib
+import six
+
+global addons
+addons = 'list'
 def getVarSpaceKb():
 	try:
 		s = statvfs('/')
@@ -69,11 +73,11 @@ class RSList(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, True, eListboxPythonMultiContent)
 		try:
-			font = skin.fonts.get("RSList", ("Regular", 35, 50))
+			font = skin.fonts.get("RSList", ("Regular", 20, 30))
 			self.l.setFont(0, gFont(font[0], font[1]))
 			self.l.setItemHeight(font[2])
 		except:
-			self.l.setFont(0, gFont("Regular", 35))
+			self.l.setFont(0, gFont("Regular", 20))
 			self.l.setItemHeight(50)
 
 ##############################################################################
@@ -129,11 +133,10 @@ class AddonsUtility(Screen):
 			'back': self.close,
 			'green': self.Remove,
 			'yellow' : self.RestartE2,
-			
 		})
 		self.onLayoutFinish.append(self.updateList)
-		
-	
+
+
 	def Remove(self):
 		self.session.open(AddonsRemove)
 	def RestartE2(self):
@@ -191,7 +194,7 @@ class AddonsUtility(Screen):
 #Remove Addons
 ###################################################################################
 class	AddonsRemove(Screen):
-	
+
 	skin = """
 		<screen name="AddonsRemove" position="80,160" size="1100,450" title="Remove Plugins">
 				<widget name="list" position="5,0" size="560,300" itemHeight="49" foregroundColor="white" backgroundColor="black" transparent="1" scrollbarMode="showOnDemand" zPosition="2" enableWrapAround="1" />
@@ -206,8 +209,8 @@ class	AddonsRemove(Screen):
 				<eLabel name="spaceused" text="% Flash Used..." position="45,414" size="150,20" font="Regular;19" halign="left" foregroundColor="white" backgroundColor="black" transparent="1" zPosition="5" />
 				<widget name="spaceused" position="201,415" size="894,20" foregroundColor="white" backgroundColor="blue" zPosition="3" />
 			</screen>"""
-	
-	REMOVE = 1		  
+
+	REMOVE = 1
 	DOWNLOAD = 0
 	PLUGIN_PREFIX = 'enigma2-plugin-'
 	lastDownloadDate = None
@@ -235,9 +238,9 @@ class	AddonsRemove(Screen):
 		self.check_bootlogo = False
 		self.install_settings_name = ''
 		self.remove_settings_name = ''
-		self['spaceused'] = ProgressBar()		
+		self['spaceused'] = ProgressBar()
 		self["status"] = ScrollLabel()
-		self['key_green']  = Label(_('Remove'))	
+		self['key_green']  = Label(_('Remove'))
 		self['key_red']  = Label(_('Exit'))
 		
 		if self.type == self.DOWNLOAD:
@@ -415,7 +418,7 @@ class	AddonsRemove(Screen):
 
 	def doRemove(self, callback, pkgname):
 		self.session.openWithCallback(callback, Console, cmdlist = [self.ipkg_remove + Ipkg.opkgExtraDestinations() + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
-					
+
 	def doInstall(self, callback, pkgname):
 		self.session.openWithCallback(callback, Console, cmdlist = [self.ipkg_install + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
 
@@ -467,7 +470,7 @@ class	AddonsRemove(Screen):
 			self.container.execute(self.ipkg + " update")
 		elif self.type == self.REMOVE:
 			self.run = 1
-			self.startIpkgListInstalled()			
+			self.startIpkgListInstalled()
 
 	def installFinished(self):
 		if hasattr(self, 'postInstallCall'):
@@ -528,6 +531,7 @@ class	AddonsRemove(Screen):
 					self["text"].setText(_("Sorry feeds are down for maintenance"))
 
 	def dataAvail(self, str):
+		str = six.ensure_str(str)
 		if self.type == self.DOWNLOAD and ('wget returned 1' or 'wget returned 255' or '404 Not Found') in str:
 			self.run = 3
 			return
@@ -583,14 +587,14 @@ class	AddonsRemove(Screen):
 			split = x[3].split('-', 1)
 			if len(split) < 2:
 				continue
-			if not self.plugins.has_key(split[0]):
+			if not split[0] in self.plugins:
 				self.plugins[split[0]] = []
 
 			self.plugins[split[0]].append((PluginDescriptor(name = x[3], description = x[2], icon = verticallineIcon), split[1], x[1]))
 
 		temp = self.plugins.keys()
 		if config.usage.sort_pluginlist.value:
-			temp.sort()
+			sorted(temp)
 		for x in temp:
 			if x in self.expanded:
 				list.append(PluginCategoryComponent(x, expandedIcon, self.listWidth))
@@ -600,7 +604,7 @@ class	AddonsRemove(Screen):
 		self.list = list
 		self["list"].l.setList(list)
 		self["text"] = Label(_("Downloading plugin information complete."))
-			
+
 ###################
 #Download Addons
 ###################
@@ -656,10 +660,11 @@ class Connection_Server(Screen):
 
 		xurl = 'https://opendroid.org/Addons/'+ self.addon + '/list'
 		print("xurl =", xurl)
-		getPage(xurl).addCallback(self.gotPage).addErrback(self.getfeedError)
+		getPage(six.ensure_binary(xurl)).addCallback(self.gotPage).addErrback(self.getfeedError)
 
 	def gotPage(self, html):
 		print("html = ", html)
+		html = six.ensure_str(html)
 		self.data = []
 		icount = 0
 		self.data = html.splitlines()
@@ -677,8 +682,8 @@ class Connection_Server(Screen):
 			self["info"].setText("")
 
 	def getfeedError(self, error=""):
-		error = str(error)
-		print("Download error =", error)
+                print(str(error))
+                self["resulttext"].setText(_("Invalid response from server. Please report: %s") % str(error))
 
 
 	def getstate(self, ipkname):
@@ -710,10 +715,8 @@ class Connection_Server(Screen):
 
 class Installer_Addons(Screen):
 	skin = """
-		<screen position="center,center" size="800,500" title="Play Options" >
-			<!--widget name="text" position="0,0" size="550,25" font="Regular;20" /-->
+		<screen position="center,center" size="800,500" Install IPK" >
 			<widget name="list" position="10,20" size="750,350" scrollbarMode="showOnDemand" />
-			<!--widget name="pixmap" position="200,0" size="190,250" /-->
 			<eLabel position="70,100" zPosition="-1" size="100,69" backgroundColor="#222222" />
 			<widget name="info" position="50,50" zPosition="4" size="500,400" font="Regular;22" foregroundColor="#ffffff" transparent="1" halign="left" valign="top" />
 			<ePixmap name="red"    position="0,450"   zPosition="2" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />
@@ -729,7 +732,7 @@ class Installer_Addons(Screen):
 	def __init__(self, session, ipk, addon):
 		Screen.__init__(self, session)
 		self.skin = Installer_Addons.skin
-		title = "Addon Install"
+		title = "Install IPK"
 		self.setTitle(title)
 		self["list"] = MenuList([])
 		self["info"] = Label()
@@ -867,6 +870,7 @@ class downloadTask(Task):
 		
 	def processOutput(self, data):
 		try:
+			data = six.ensure_str(data)
 			if data.endswith('%)'):
 				startpos = data.rfind("sec (")+5
 				if startpos and startpos != -1:
