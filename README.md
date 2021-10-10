@@ -7,7 +7,7 @@
 
 ## openDroid 7.1 is build using oe-alliance build-environment and several git repositories: ##
 
-> [https://github.com/oe-alliance/oe-alliance-core/tree/nextp3](https://github.com/oe-alliance/oe-alliance-core/tree/nextp3 "OE-Alliance")
+> [https://github.com/oe-alliance/oe-alliance-core/tree/5.0](https://github.com/oe-alliance/oe-alliance-core/tree/5.0 "OE-Alliance")
 > 
 > [https://github.com/opendroid-Team/enigma2](https://github.com/opendroid-Team/enigma2/tree/7.1 "openDroid Enigma2")
 > 
