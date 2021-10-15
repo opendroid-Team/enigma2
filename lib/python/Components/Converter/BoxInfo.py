@@ -2,10 +2,10 @@ from Components.Converter.Converter import Converter
 from Components.Element import cached
 from Components.Sensors import sensors
 import os
-from Poll import Poll
+from Components.Converter.Poll import Poll
 from Tools.HardwareInfo import HardwareInfo
 
-class BoxInfo(Poll, Converter, object):
+class BoxInfo(Poll, Converter):
     BOXTYPE = 0
     LOAD = 1
     MEMINFO = 2

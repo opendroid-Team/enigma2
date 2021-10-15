@@ -14703,10 +14703,10 @@ msgstr "L’interface de votre %s %s redémarre."
 
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "L’interface de votre %s %s redémarre\n"
-"a cause d'une erreur dans mytest.py"
+"a cause d'une erreur dans StartEnigma.py"
 
 msgid ""
 "The VideoMode plugin is not installed!\n"

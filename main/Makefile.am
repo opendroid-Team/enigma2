@@ -13,8 +13,6 @@ enigma2_SOURCES = \
 	bsod.cpp \
 	bsod.h \
 	enigma.cpp \
-	xmlgenerator.cpp \
-	xmlgenerator.h \
 	version_info.cpp \
 	version_info.h \
 	version.h
@@ -35,6 +33,7 @@ enigma2_LDADD_WHOLE = \
 	$(top_builddir)/lib/service/libenigma_service.a
 
 enigma2_LDADD = \
+	@TUXTXT_LIBS@ \
 	@BASE_LIBS@ \
 	@LIBGIF_LIBS@ \
 	@LIBJPEG_LIBS@ \
@@ -42,14 +41,15 @@ enigma2_LDADD = \
 	@LIBSDL_LIBS@ \
 	@LIBXINE_LIBS@ \
 	@PTHREAD_LIBS@ \
-	@PYTHON_LDFLAGS@ \
+	@PYTHON_LIBS@ \
 	@LIBDDVD_LIBS@ \
 	@ALSA_LIBS@ \
 	@AMCODEC_LIBS@ \
 	@AMADEC_LIBS@ \
 	@DVBCSA_LIBS@ \
 	@AVAHI_LIBS@ \
-	-ltuxtxt -ltuxtxt32bpp -lcrypt -lrt -ldl
+	@LIBHIACCEL_LIBS@ \
+	-ltuxtxt32bpp -lcrypt -lrt -ldl
 
 enigma2_LDFLAGS = -Wl,--export-dynamic
 

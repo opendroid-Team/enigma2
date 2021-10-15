@@ -155,9 +155,8 @@
 	</screen>
 <!-- menus-->
 	<screen name="MenuSummary" position="fill">
-		<widget source="parent.title" render="Label" position="top" size="*,85" font="FdLcD;38" foregroundColor="#FF8C00" halign="center" valign="center" />
-		<eLabel position="top" size="*,1" backgroundColor="white" />
-		<widget source="parent.menu" render="Label" position="top" size="*,115" font="FdLcD;35" halign="center" valign="center">
+		<widget source="parent.title" render="Label" position="0,0" size="400,84" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.menu" render="Label" position="0,92" size="400,83" font="FdLcD;40" halign="center" valign="center" foregroundColor="#C0FFC0">
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
@@ -174,9 +173,9 @@
 	</screen>
 <!-- setup-->
 	<screen name="SetupSummary" position="fill">
-		<widget source="SetupTitle" render="Label" position="top" size="*,85" font="FdLcD;38" foregroundColor="#FF8C00" halign="left"  valign="center" />
-		<eLabel position="top" size="*,1" backgroundColor="white" />
-		<widget source="SetupEntry" render="Label" position="top" size="*,65" font="FdLcD;25" halign="left" valign="center" />
+		<widget source="SetupTitle" render="Label" position="0,0" size="400,57" font="FdLcD;50" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="SetupEntry" render="Label" position="0,65" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#C0FFC0" />
+		<widget source="SetupValue" render="Label" position="0,123" size="400,52" font="FdLcD;25" halign="center" valign="center" foregroundColor="#FFFFC0" />
 		<eLabel position="top" size="*,1" backgroundColor="white" />
 		<widget source="SetupValue" render="Label" position="top" size="*,65" font="FdLcD;25" foregroundColor="#F4FA58" halign="left" valign="center" />
 	</screen>	
@@ -236,11 +235,14 @@
 		</widget>
 	</screen>
 <!-- Plugin browser -->
-	<screen name="PluginBrowserSummary" position="fill">
-		<widget source="parent.Title" render="Label" position="top" size="*,28" font="FdLcD;25" noWrap="1" />
-		<widget source="entry" render="Label" position="top" size="*,38" font="FdLcD;32" foregroundColor="#FF8C00" noWrap="1" halign="left" />
-		<eLabel position="top" size="*,1" backgroundColor="white" />
-		<widget source="desc" render="Label" position="fill" font="FdLcD;22" valign="top" />
+	<screen name="PluginBrowserSummary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
+    </screen>
+<!-- Green Panel -->
+    	<screen name="GreenPanel_Summary" position="0,0" size="400,240">
+		<widget source="entry" render="Label" position="0,0" size="400,178" font="FdLcD;41" foregroundColor="#FFDD00" halign="center" valign="center" />
+		<panel name="SummaryClockPanel" />
 	</screen>
 <!-- JobView Summary -->
 	<screen name="JobView_summary" position="0,0" size="400,240">
@@ -455,5 +457,13 @@
 		</widget>
 		<panel name="RecordingPanel" />
 		<panel name="SummaryClockPanel" />
-	</screen>	
+	</screen>
+	<screen name="installedPlugins_summary" position="fill">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,57" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.summary_description" render="Label" position="0,65" size="400,110" font="FdLcD;30" halign="center" valign="center" />
+	</screen>
+		<screen name="GreenPanel_summary" position="fill">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,57" font="FdLcD;40" halign="center" valign="center" foregroundColor="#FFDD00" />
+		<widget source="parent.summary_description" render="Label" position="0,65" size="400,110" font="FdLcD;30" halign="center" valign="center" />
+	</screen>
 </skin>

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from time import localtime, mktime, time, strftime
 
 from enigma import eEPGCache, eTimer, eServiceReference, ePoint
@@ -20,6 +22,8 @@ from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from Screens.TimerEntry import TimerEntry
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
+import six
+
 
 class EventViewContextMenu(Screen):
 	def __init__(self, session, menu):
@@ -48,6 +52,7 @@ class EventViewContextMenu(Screen):
 
 	def cancelClick(self):
 		self.close(False)
+
 
 class EventViewBase:
 	ADD_TIMER = 1
@@ -104,12 +109,16 @@ class EventViewBase:
 		if self.cbFunc is not None:
 			self.cbFunc(self.setEvent, self.setService, +1)
 
+	def editTimer(self, timer):
+		self.session.open(TimerEntry, timer)
+
 	def removeTimer(self, timer):
+		self.closeChoiceBoxDialog()
 		timer.afterEvent = AFTEREVENT.NONE
 		self.session.nav.RecordTimer.removeEntry(timer)
 		self["key_green"].setText(_("Add timer"))
 		self.key_green_choice = self.ADD_TIMER
-	
+
 	def timerAdd(self):
 		if self.isRecording:
 			return
@@ -121,15 +130,18 @@ class EventViewBase:
 		refstr = ':'.join(serviceref.ref.toString().split(':')[:11])
 		for timer in self.session.nav.RecordTimer.timer_list:
 			if timer.eit == eventid and ':'.join(timer.service_ref.ref.toString().split(':')[:11]) == refstr:
+				# disable dialog box -> workaround for non closed dialog when press key green for delete Timer (bsod when again green, blue or ok key was pressed)
+				self.editTimer(timer)
+				break
 				cb_func1 = lambda ret: self.removeTimer(timer)
 				cb_func2 = lambda ret: self.editTimer(timer)
 				menu = [(_("Delete timer"), 'CALLFUNC', self.ChoiceBoxCB, cb_func1), (_("Edit timer"), 'CALLFUNC', self.ChoiceBoxCB, cb_func2)]
 				self.ChoiceBoxDialog = self.session.instantiateDialog(ChoiceBox, title=_("Select action for timer %s:") % event.getEventName(), list=menu, keys=['green', 'blue'], skin_name="RecordTimerQuestion")
-				self.ChoiceBoxDialog.instance.move(ePoint(self.instance.position().x()+self["key_green"].getPosition()[0],self.instance.position().y()+self["key_green"].getPosition()[1]-self["key_green"].instance.size().height()))
+				self.ChoiceBoxDialog.instance.move(ePoint(self.instance.position().x() + self["key_green"].getPosition()[0], self.instance.position().y() + self["key_green"].getPosition()[1] - self["key_green"].instance.size().height()))
 				self.showChoiceBoxDialog()
 				break
 		else:
-			newEntry = RecordTimerEntry(self.currentService, checkOldTimers = True, dirname = preferredTimerPath(), *parseEvent(self.event))
+			newEntry = RecordTimerEntry(self.currentService, checkOldTimers=True, dirname=preferredTimerPath(), *parseEvent(self.event))
 			self.session.openWithCallback(self.finishedAdd, TimerEntry, newEntry)
 
 	def ChoiceBoxCB(self, choice):
@@ -151,7 +163,7 @@ class EventViewBase:
 		self['actions'].setEnabled(True)
 
 	def finishedAdd(self, answer):
-		print "finished add"
+		print("finished add")
 		if answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.RecordTimer.record(entry)
@@ -184,13 +196,13 @@ class EventViewBase:
 		else:
 			self["key_green"].setText(_("Add timer"))
 			self.key_green_choice = self.ADD_TIMER
-			print "Timeredit aborted"
+			print("Timeredit aborted")
 
 	def finishSanityCorrection(self, answer):
 		self.finishedAdd(answer)
 
 	def setService(self, service):
-		self.currentService=service
+		self.currentService = service
 		self["Service"].newService(service.ref)
 		if self.isRecording:
 			self["channel"].setText(_("Recording"))
@@ -200,14 +212,6 @@ class EventViewBase:
 				self["channel"].setText(name)
 			else:
 				self["channel"].setText(_("unknown service"))
-
-	def sort_func(self,x,y):
-		if x[1] < y[1]:
-			return -1
-		elif x[1] == y[1]:
-			return 0
-		else:
-			return 1
 
 	def setEvent(self, event):
 		if event is None or not hasattr(event, 'getEventName'):
@@ -224,7 +228,9 @@ class EventViewBase:
 		if short == text:
 			short = ""
 
-		if short and extended:
+		if short and extended and extended.replace('\n', '') == short.replace('\n', ''):
+			pass #extended = extended
+		elif short and extended:
 			extended = short + '\n' + extended
 		elif short:
 			extended = short
@@ -241,24 +247,40 @@ class EventViewBase:
 
 		if not beginTimeString:
 			return
-		if beginTimeString.find(', ') > -1:
-			begintime = beginTimeString.split(', ')[1].split(':')
-			begindate = beginTimeString.split(', ')[0].split('.')
-		else:
-			if len(beginTimeString.split(' ')) > 1:
-				begintime = beginTimeString.split(' ')[1].split(':')
-			else:
-				return
-			begindate = beginTimeString.split(' ')[0].split('.')
+		begintime = begindate = []
+		for x in beginTimeString.split(' '):
+			x = x.rstrip(',').rstrip('.')
+			if ':' in x:
+				begintime = x.split(':')
+			elif '.' in x:
+				begindate = x.split('.')
+			elif '/' in x:
+				begindate = x.split('/')
+				begindate.reverse()
+		###check
+		fail = False
+		try:
+			if len(begintime) < 2 and len(begindate) < 2 or int(begintime[0]) > 23 or int(begintime[1]) > 59 or int(begindate[0]) > 31 or int(begindate[1]) > 12:
+				fail = True
+		except:
+			fail = True
+
+		if fail:
+			print('wrong timestamp detected: source = %s ,date = %s ,time = %s' % (beginTimeString, begindate, begintime))
+			return
+		###
+
 		nowt = time()
 		now = localtime(nowt)
+
 		begin = localtime(int(mktime((now.tm_year, int(begindate[1]), int(begindate[0]), int(begintime[0]), int(begintime[1]), 0, now.tm_wday, now.tm_yday, now.tm_isdst))))
 		end = localtime(int(mktime((now.tm_year, int(begindate[1]), int(begindate[0]), int(begintime[0]), int(begintime[1]), 0, now.tm_wday, now.tm_yday, now.tm_isdst))) + event.getDuration())
-		self["datetime"].setText(strftime(_("%d.%m.   "), begin) + strftime(_("%-H:%M - "), begin) + strftime(_("%-H:%M"), end))
-		self["duration"].setText(_("%d min")%(event.getDuration()/60))
+
+		self["datetime"].setText("%s - %s" % (strftime("%s, %s" % (config.usage.date.short.value, config.usage.time.short.value), begin), strftime(config.usage.time.short.value, end)))
+		self["duration"].setText(_("%d min") % (event.getDuration() / 60))
 		if self.SimilarBroadcastTimer is not None:
 			self.SimilarBroadcastTimer.start(400, True)
-			
+
 		serviceref = self.currentService
 		eventid = self.event.getEventId()
 		refstr = ':'.join(serviceref.ref.toString().split(':')[:11])
@@ -273,7 +295,6 @@ class EventViewBase:
 		elif not isRecordEvent and self.key_green_choice and self.key_green_choice != self.ADD_TIMER:
 			self["key_green"].setText(_("Add timer"))
 			self.key_green_choice = self.ADD_TIMER
-
 
 	def pageUp(self):
 		self["epg_description"].pageUp()
@@ -293,14 +314,13 @@ class EventViewBase:
 		ret = epgcache.search(('NB', 100, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, id))
 		if ret is not None:
 			text = '\n\n' + _('Similar broadcasts:')
-			ret.sort(self.sort_func)
-			for x in ret:
+			for x in sorted(ret, key=lambda x: x[1]):
 				t = localtime(x[1])
-				text += '\n%d.%d.%d, %2d:%02d  -  %s'%(t[2], t[1], t[0], t[3], t[4], x[0])
+				text += "\n%s - %s" % (strftime(config.usage.date.long.value + ", " + config.usage.time.short.value, t), x[0])
 			descr = self["epg_description"]
-			descr.setText(descr.getText()+text)
+			descr.setText(descr.getText() + text)
 			descr = self["FullDescription"]
-			descr.setText(descr.getText()+text)
+			descr.setText(descr.getText() + text)
 			self["key_red"].setText(_("Similar"))
 
 	def openSimilarList(self):
@@ -315,7 +335,7 @@ class EventViewBase:
 			menu = []
 			for p in plugins.getPlugins(PluginDescriptor.WHERE_EVENTINFO):
 				#only list service or event specific eventinfo plugins here, no servelist plugins
-				if 'servicelist' not in p.__call__.func_code.co_varnames:
+				if 'servicelist' not in p.__call__.__code__.co_varnames:
 					menu.append((p.name, boundFunction(self.runPlugin, p)))
 			if menu:
 				self.session.open(EventViewContextMenu, menu)
@@ -323,13 +343,15 @@ class EventViewBase:
 	def runPlugin(self, plugin):
 		plugin(session=self.session, service=self.currentService, event=self.event, eventName=self.event.getEventName())
 
+
 class EventViewSimple(Screen, EventViewBase):
 	def __init__(self, session, event, ref, callback=None, singleEPGCB=None, multiEPGCB=None, similarEPGCB=None, skin='EventViewSimple'):
 		Screen.__init__(self, session)
 		self.setTitle(_('Eventview'))
-		self.skinName = [skin,"EventView"]
+		self.skinName = [skin, "EventView"]
 		EventViewBase.__init__(self, event, ref, callback, similarEPGCB)
 		self.key_green_choice = None
+
 
 class EventViewEPGSelect(Screen, EventViewBase):
 	def __init__(self, session, event, ref, callback=None, singleEPGCB=None, multiEPGCB=None, similarEPGCB=None):
@@ -365,7 +387,7 @@ class EventViewEPGSelect(Screen, EventViewBase):
 		else:
 			self["key_yellow"] = Button("")
 			self["yellow"].hide()
-			
+
 		if multiEPGCB:
 			self["key_blue"] = Button(_("Multi EPG"))
 			self["epgactions3"] = ActionMap(["EventViewEPGActions"],
@@ -376,3 +398,46 @@ class EventViewEPGSelect(Screen, EventViewBase):
 		else:
 			self["key_blue"] = Button("")
 			self["blue"].hide()
+
+
+class EventViewMovieEvent(Screen):
+	def __init__(self, session, name=None, ext_desc=None, dur=None):
+		Screen.__init__(self, session)
+		self.screentitle = _("Eventview")
+		self.skinName = "EventView"
+		self.duration = ""
+		if dur:
+			self.duration = dur
+		self.ext_desc = ""
+		if name:
+			self.ext_desc = name + "\n\n"
+		if ext_desc:
+			self.ext_desc += ext_desc
+		self["epg_description"] = ScrollLabel()
+		self["datetime"] = Label()
+		self["channel"] = Label()
+		self["duration"] = Label()
+
+		self["key_red"] = Button("")
+		self["key_green"] = Button("")
+		self["key_yellow"] = Button("")
+		self["key_blue"] = Button("")
+		self["actions"] = ActionMap(["OkCancelActions", "EventViewActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"pageUp": self.pageUp,
+				"pageDown": self.pageDown,
+			})
+		self.onShown.append(self.onCreate)
+
+	def onCreate(self):
+		self.setTitle(self.screentitle)
+		self["epg_description"].setText(self.ext_desc)
+		self["duration"].setText(self.duration)
+
+	def pageUp(self):
+		self["epg_description"].pageUp()
+
+	def pageDown(self):
+		self["epg_description"].pageDown()

@@ -54,8 +54,8 @@ public:
 	std::string m_ApplicationName;
 public:
 	HbbTVApplicationInfo(int controlCode, int orgid, int appid, std::string hbbtvUrl, std::string applicationName,int profileCode)
-		: m_ControlCode(controlCode), m_HbbTVUrl(hbbtvUrl), m_ApplicationName(applicationName), m_OrgId(orgid), m_AppId(appid),
-		m_ProfileCode(profileCode)
+		: m_OrgId(orgid), m_AppId(appid), m_ControlCode(controlCode), m_ProfileCode(profileCode),
+		m_HbbTVUrl(hbbtvUrl), m_ApplicationName(applicationName)
 	{}
 };
 typedef std::list<HbbTVApplicationInfo *> HbbTVApplicationInfoList;
@@ -66,6 +66,7 @@ class eDVBServicePMTHandler: public eDVBPMTParser
 {
 #ifndef SWIG
 	friend class eDVBCAService;
+	friend class eRTSPStreamClient;
 	eServiceReferenceDVB m_reference;
 	ePtr<eDVBService> m_service;
 
@@ -192,6 +193,7 @@ private:
 		std::string name;
 	};
 	std::vector<struct aitInfo> m_aitInfoList;
+	int compareAudioSubtitleCode(const std::string &subtitleTrack, const std::string &audioTrack);
 #endif
 };
 

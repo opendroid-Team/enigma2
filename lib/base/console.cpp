@@ -38,8 +38,8 @@ int bidirpipe(int pfd[], const char *cmd , const char * const argv[], const char
 		for (unsigned int i=3; i < 90; ++i )
 			close(i);
 
-		if (cwd)
-			chdir(cwd);
+		if (cwd && chdir(cwd) < 0)
+			eDebug("[eConsoleAppContainer] failed to change directory to %s (%m)", cwd);
 
 		execvp(cmd, (char * const *)argv);
 				/* the vfork will actually suspend the parent thread until execvp is called. thus it's ok to use the shared arg/cmdline pointers here. */
@@ -237,13 +237,16 @@ void eConsoleAppContainer::readyRead(int what)
 //		eDebug("[eConsoleAppContainer] readyRead what = %d", what);
 		char* buf = &buffer[0];
 		int rd;
-		while((rd = read(fd[0], buf, buffer.size())) > 0)
+		while((rd = read(fd[0], buf, buffer.size()-1)) > 0)
 		{
 			buf[rd]=0;
 			/*emit*/ dataAvail(std::make_pair(buf, rd));
 			stdoutAvail(std::make_pair(buf, rd));
 			if ( filefd[1] >= 0 )
-				::write(filefd[1], buf, rd);
+			{
+				ssize_t ret = ::write(filefd[1], buf, rd);
+				if (ret < 0) eDebug("[eConsoleAppContainer] write failed: %m");
+			}
 			if (!hungup)
 				break;
 		}
@@ -276,7 +279,7 @@ void eConsoleAppContainer::readyErrRead(int what)
 //		eDebug("[eConsoleAppContainer] readyErrRead what = %d", what);
 		char* buf = &buffer[0];
 		int rd;
-		while((rd = read(fd[2], buf, buffer.size())) > 0)
+		while((rd = read(fd[2], buf, buffer.size()-1)) > 0)
 		{
 /*			for ( int i = 0; i < rd; i++ )
 				eDebug("[eConsoleAppContainer] %d = %c (%02x)", i, buf[i], buf[i] );*/

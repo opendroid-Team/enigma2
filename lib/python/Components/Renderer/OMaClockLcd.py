@@ -1,5 +1,8 @@
+from __future__ import division
+from __future__ import absolute_import
+from builtins import round
 import math
-from Renderer import Renderer
+from Components.Renderer.Renderer import Renderer
 from skin import parseColor
 from enigma import eCanvas, eSize, gRGB, eRect
 from Components.VariableText import VariableText
@@ -8,17 +11,17 @@ from Components.config import config
 from boxbranding import getBoxType
 
 LCDSIZE400 = []
-LCDSIZE390 = []
+LCDSIZE220 = []
 
 if getBoxType() in ('gbquad4k', 'gbquadplus'):
 	LCDSIZE400 = True
 else:
 	LCDSIZE400 = False
 
-if getBoxType() in ('dm900', 'dm920'):
-	LCDSIZE390 = True
+if getBoxType() == ('gbue4k', 'gbultraue'):
+	LCDSIZE220 = True
 else:
-	LCDSIZE390 = False
+	LCDSIZE220 = False
 
 #print "LCDSIZE400: ", LCDSIZE400
 
@@ -56,17 +59,17 @@ class OMaClockLcd(Renderer):
 		z = (math.pi / 180)
 		x = int(round((r * math.sin((a * z)))))
 		y = int(round((r * math.cos((a * z)))))
-		return ((m + x),(m1 - y))
+		return ((m + x), (m1 - y))
 
-	def hand(self,opt):
+	def hand(self, opt):
 		if LCDSIZE400:
 			width = 396
 			height = 240
 			l = 55
-		elif LCDSIZE390:
-			width = 390
-			height = 240
-			l = 53
+		elif LCDSIZE220:
+			width = 218
+			height = 176
+			l = 35
 		else:
 			width = 218
 			height = 176
@@ -77,16 +80,16 @@ class OMaClockLcd(Renderer):
 		if opt == 'sec':
 			if LCDSIZE400:
 				l = l + 60
-			elif LCDSIZE390:
-				l = l + 58
+			elif LCDSIZE220:
+				l = l + 35
 			else:
 				l = l + 50
 			self.fColor = self.fColors
 		elif opt == 'min':
 			if LCDSIZE400:
 				l = l + 50
-			elif LCDSIZE390:
-				l = l + 48
+			elif LCDSIZE220:
+				l = l + 35
 			else:
 				l = l + 40
 			self.fColor = self.fColorm
@@ -98,11 +101,11 @@ class OMaClockLcd(Renderer):
 	def line_draw(self, x0, y0, x1, y1):
 		steep = (abs((y1 - y0)) > abs((x1 - x0)))
 		if steep:
-			x0,y0 = y0,x0
-			x1,y1 = y1,x1
+			x0, y0 = y0, x0
+			x1, y1 = y1, x1
 		if (x0 > x1):
-			x0,x1 = x1,x0
-			y0,y1 = y1,y0
+			x0, x1 = x1, x0
+			y0, y1 = y1, y0
 		if (y0 < y1):
 			ystep = 1
 		else:
@@ -110,8 +113,8 @@ class OMaClockLcd(Renderer):
 		deltax = (x1 - x0)
 		deltay = abs((y1 - y0))
 		error = (-deltax / 2)
-		y = y0
-		for x in range(x0, (x1 + 1)):
+		y = int(y0)
+		for x in list(range(int(x0), (int(x1) + 1))):
 			if steep:
 				self.instance.fillRect(eRect(y, x, self.linewidth, self.linewidth), self.fColor)
 			else:
@@ -127,7 +130,7 @@ class OMaClockLcd(Renderer):
 			sopt = int(opt[0])
 			if len(opt) < 2:
 				opt.append('')
-		except Exception, e:
+		except Exception as e:
 			return
 
 		if (what[0] == self.CHANGED_CLEAR):

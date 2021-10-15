@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -7,10 +8,11 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Components.Ipkg import IpkgComponent
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from Tools.LoadPixmap import LoadPixmap
 from enigma import ePixmap
-from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, SCOPE_METADIR
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_GUISKIN, SCOPE_METADIR
+from os import path as os_path
 import os
 from boxbranding import getMachineBrand, getMachineName
 
@@ -35,8 +37,8 @@ class SoftwarePanel(Screen):
 					{"template": [
 							MultiContentEntryText(pos = (5, 1), size = (540, 28), font=0, flags = RT_HALIGN_LEFT, text = 0), # index 0 is the name
 							MultiContentEntryText(pos = (5, 26), size = (540, 20), font=1, flags = RT_HALIGN_LEFT, text = 2), # index 2 is the description
-							MultiContentEntryPixmapAlphaTest(pos = (545, 2), size = (48, 48), png = 4), # index 4 is the status pixmap
-							MultiContentEntryPixmapAlphaTest(pos = (5, 50), size = (610, 2), png = 5), # index 4 is the div pixmap
+							MultiContentEntryPixmapAlphaBlend(pos = (545, 2), size = (48, 48), png = 4), # index 4 is the status pixmap
+							MultiContentEntryPixmapAlphaBlend(pos = (5, 50), size = (610, 2), png = 5), # index 4 is the div pixmap
 						],
 					"fonts": [gFont("Regular", 22),gFont("Regular", 14)],
 					"itemHeight": 52
@@ -91,29 +93,29 @@ class SoftwarePanel(Screen):
 				self.session.open(UpdatePlugin)
 				self.close()
 			else:
-				print "DO NOT UPDATE !!!"
+				print("DO NOT UPDATE !!!")
 				message = _("There are to many update packages !!\n\n"
 				"There is a risk that your %s %s will not\n"
 				"boot after online-update, or will show disfunction in running Image.\n\n"
 				"You need to flash new !!\n\n"
 				"Do you want to flash-online ?") % (getMachineBrand(), getMachineName())
-				self.session.openWithCallback(self.checkPackagesCallback, MessageBox, message, default = True)
+				self.session.openWithCallback(self.checkPackagesCallback, MessageBox, message, default=True)
 
 	def checkPackagesCallback(self, ret):
-		print ret
+		print(ret)
 		if ret:
 			from Plugins.SystemPlugins.SoftwareManager.Flash_online import FlashOnline
 			self.session.open(FlashOnline)
 		self.close()
 
 	def layoutFinished(self):
-		self.checkTraficLight()
+		self.checkTrafficLight()
 		self.rebuildList()
 
 	def UpdatePackageNr(self):
 		self.packages = len(self.list)
-		print self.packages
-		print"packagenr" + str(self.packages)
+		print(self.packages)
+		print("packagenr" + str(self.packages))
 		self["packagenr"].setText(str(self.packages))
 		if self.packages == 0:
 			self['key_green'].hide()
@@ -122,9 +124,9 @@ class SoftwarePanel(Screen):
 			self['key_green'].show()
 			self['key_green_pic'].show()
 
-	def checkTraficLight(self):
-		print"checkTraficLight"
-		from urllib import urlopen
+	def checkTrafficLight(self):
+		print("checkTrafficLight")
+		from six.moves.urllib.request import urlopen
 		import socket
 		self['a_red'].hide()
 		self['a_yellow'].hide()
@@ -135,18 +137,18 @@ class SoftwarePanel(Screen):
 		currentTimeoutDefault = socket.getdefaulttimeout()
 		socket.setdefaulttimeout(3)
 		try:
-			urlopendroid = "http://ampel.mynonpublic.com/Ampel/index.php"
-			d = urlopen(urlopendroid)
+			urlopenOPD = "https://opendroid.org/ampel/index.php"
+			d = urlopen(urlopenOPD)
 			tmpStatus = d.read()
-			if 'rot.png' in tmpStatus:
+			if b'rot.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_red'].show()
 				self['feedstatusRED'].show()
-			elif 'gelb.png' in tmpStatus:
+			elif b'gelb.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_yellow'].show()
 				self['feedstatusYELLOW'].show()
-			elif 'gruen.png' in tmpStatus:
+			elif b'gruen.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_green'].show()
 				self['feedstatusGREEN'].show()
@@ -154,19 +156,28 @@ class SoftwarePanel(Screen):
 			self['a_off'].show()
 		socket.setdefaulttimeout(currentTimeoutDefault)
 
-	def setStatus(self,status = None):
+	def setStatus(self, status=None):
 		if status:
 			self.statuslist = []
-			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
 			if status == 'update':
-				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
-				self.statuslist.append(( _("Package list update"), '', _("Trying to download a new updatelist. Please wait..." ),'',statuspng, divpng ))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
+				else:
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
+				self.statuslist.append((_("Package list update"), '', _("Trying to download a new updatelist. Please wait..."), '', statuspng, divpng))
 			elif status == 'error':
-				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
-				self.statuslist.append(( _("Error"), '', _("There was an error downloading the updatelist. Please try again." ),'',statuspng, divpng ))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
+				else:
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
+				self.statuslist.append((_("Error"), '', _("There was an error downloading the updatelist. Please try again."), '', statuspng, divpng))
 			elif status == 'noupdate':
-				statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
-				self.statuslist.append(( _("Nothing to upgrade"), '', _("There are no updates available." ),'',statuspng, divpng ))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
+				else:
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
+				self.statuslist.append((_("Nothing to upgrade"), '', _("There are no updates available."), '', statuspng, divpng))
 
 			self['list'].setList(self.statuslist)
 
@@ -184,19 +195,28 @@ class SoftwarePanel(Screen):
 			else:
 				self.buildPacketList()
 		pass
-	
+
 	def buildEntryComponent(self, name, version, description, state):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
 		if not description:
 			description = "No description available."
 		if state == 'installed':
-			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
-			return((name, version, _(description), state, installedpng, divpng))	
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
+			else:
+				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
+			return((name, version, _(description), state, installedpng, divpng))
 		elif state == 'upgradeable':
-			upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgradeable.png"))
-			return((name, version, _(description), state, upgradeablepng, divpng))	
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgradeable.png")):
+				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgradeable.png"))
+			else:
+				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgradeable.png"))
+			return((name, version, _(description), state, upgradeablepng, divpng))
 		else:
-			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installable.png")):
+				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installable.png"))
+			else:
+				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
 			return((name, version, _(description), state, installablepng, divpng))
 
 	def buildPacketList(self):
@@ -209,7 +229,7 @@ class SoftwarePanel(Screen):
 				try:
 					self.list.append(self.buildEntryComponent(x[0], x[1], x[2], "upgradeable"))
 				except:
-					print "[SOFTWAREPANEL] " + x[0] + " no valid architecture, ignoring !!"
+					print("[SOFTWAREPANEL] " + x[0] + " no valid architecture, ignoring !!")
 #					self.list.append(self.buildEntryComponent(x[0], '', 'no valid architecture, ignoring !!', "installable"))
 #			if len(excludeList) > 0:
 #				for x in excludeList:

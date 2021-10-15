@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
@@ -12,6 +13,7 @@ from os import system, stat as mystat, path, remove, rename
 from enigma import eTimer
 from glob import glob
 import stat
+import six
 
 config.OPD_panel = ConfigSubsection()
 config.OPD_panel.swapautostart = ConfigYesNo(default = False)
@@ -22,7 +24,7 @@ def SwapAutostart(reason, session=None, **kwargs):
 	global startswap
 	if reason == 0:
 		if config.OPD_panel.swapautostart.value:
-			print "[SwapManager] autostart"
+			print("[SwapManager] autostart")
 			startswap = StartSwap()
 			startswap.start()
 	
@@ -34,34 +36,36 @@ class StartSwap:
 	 	self.Console.ePopen("sfdisk -l /dev/sd? 2>/dev/null | grep swap", self.startSwap2)
 
 	def startSwap2(self, result = None, retval = None, extra_args = None):
+		if result != None:
+			result = six.ensure_str(result)
 		swap_place = ""
 		if result and result.find('sd') != -1:
 			for line in result.split('\n'):
 				if line.find('sd') != -1:
 					parts = line.strip().split()
 					swap_place = parts[0]
-					file('/etc/fstab.tmp', 'w').writelines([l for l in file('/etc/fstab').readlines() if swap_place not in l])
-					rename('/etc/fstab.tmp','/etc/fstab')
-					print "[SwapManager] Found a swap partition:", swap_place
+					open('/etc/fstab.tmp', 'w').writelines([l for l in file('/etc/fstab').readlines() if swap_place not in l])
+					rename('/etc/fstab.tmp', '/etc/fstab')
+					print("[SwapManager] Found a swap partition:", swap_place)
 		else:
 			devicelist = []
 			for p in harddiskmanager.getMountedPartitions():
 				d = path.normpath(p.mountpoint)
-				if path.exists(p.mountpoint) and p.mountpoint != "/" and not p.mountpoint.startswith('/media/net'):
+				if path.exists(p.mountpoint) and p.mountpoint != "/" and not p.mountpoint.startswith('/media/net') and not p.mountpoint.startswith('/media/autofs'):
 					devicelist.append((p.description, d))
 			if len(devicelist):
 				for device in devicelist:
 					for filename in glob(device[1] + '/swap*'):
 						if path.exists(filename):
 							swap_place = filename
-							print "[SwapManager] Found a swapfile on ", swap_place
+							print("[SwapManager] Found a swapfile on ", swap_place)
 
-		f = file('/proc/swaps').read()
+		f = open('/proc/swaps').read()
 		if f.find(swap_place) == -1:
-			print "[SwapManager] Starting swapfile on ", swap_place
+			print("[SwapManager] Starting swapfile on ", swap_place)
 			system('swapon ' + swap_place)
 		else:
-			print "[SwapManager] Swapfile is already active on ", swap_place
+			print("[SwapManager] Swapfile is already active on ", swap_place)
 	
 #######################################################################
 class Swap(Screen):
@@ -136,6 +140,8 @@ class Swap(Screen):
 		self.Console.ePopen("sfdisk -l /dev/sd? 2>/dev/null | grep swap", self.updateSwap2)
 
 	def updateSwap2(self, result = None, retval = None, extra_args = None):
+		if result != None:
+			result = six.ensure_str(result)
 		self.swapsize = 0
 		self.swap_place = ''
 		self.swap_active = False
@@ -162,7 +168,7 @@ class Swap(Screen):
 			devicelist = []
 			for p in harddiskmanager.getMountedPartitions():
 				d = path.normpath(p.mountpoint)
-				if path.exists(p.mountpoint) and p.mountpoint != "/" and not p.mountpoint.startswith('/media/net'):
+				if path.exists(p.mountpoint) and p.mountpoint != "/" and not p.mountpoint.startswith('/media/net') and not p.mountpoint.startswith('/media/autofs'):
 					devicelist.append((p.description, d))
 			if len(devicelist):
 				for device in devicelist:
@@ -277,7 +283,7 @@ class Swap(Screen):
 	def doCSplace(self, name):
 		if name:
 			self.new_place = name[1]
-			myoptions = [[_("32 Mb"), '32768'], [_("64 Mb"), '65536'], [_("128 Mb"), '131072'], [_("256 Mb"), '262144'], [_("512 Mb"), '524288'], [_("1024 Mb"), '1048576'], [_("2048 Mb"), '2097152']]
+			myoptions = [[_("32 Mb"), '32768'], [_("64 Mb"), '65536'], [_("128 Mb"), '131072'], [_("256 Mb"), '262144'], [_("512 Mb"), '524288'], [_("1024 Mb"), '1048576'], [_("1536 Mb"), '1572864'], [_("2048 Mb"), '2097152']]
 			self.session.openWithCallback(self.doCSsize, ChoiceBox, title=_("Select the Swap File Size:"), list=myoptions)
 
 	def doCSsize(self, swapsize):

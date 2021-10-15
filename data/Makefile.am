@@ -5,6 +5,7 @@ dist_pkgdata_DATA = \
 	keymap.xml \
 	keymap.ntr \
 	keymap.u80 \
+	keytranslation.xml \
 	menu.xml \
 	black.mvi \
 	rcpositions.xml \
@@ -19,15 +20,15 @@ dist_pkgdata_DATA = \
 	hd-testcard.mvi \
 	distro-logo.png
 
-if HAVE_TEXTLCD
 if HAVE_7SEGMENT
 SUBDIRS += 7segment
-else
+endif
+
+if HAVE_TEXTLCD
 if SPARK
 SUBDIRS += displaydualtext
 else
 SUBDIRS += displaytext
-endif
 endif
 endif
 

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #
 #  Coded by Vali, updated by Mirakels for openpli
 #
@@ -8,9 +9,10 @@ from Components.Element import cached
 from Components.config import config
 from Tools.Transponder import ConvertToHumanReadable
 from Tools.GetEcmInfo import GetEcmInfo
-from Poll import Poll
+from Components.Converter.Poll import Poll
 
-class pliExpertInfo(Poll, Converter, object):
+
+class pliExpertInfo(Poll, Converter):
 	SMART_LABEL = 0
 	SMART_INFO_H = 1
 	SMART_INFO_V = 2
@@ -33,14 +35,15 @@ class pliExpertInfo(Poll, Converter, object):
 		self.poll_interval = 1000
 		self.poll_enabled = True
 		self.idnames = (
-			( "0x100", "0x1FF","Seca"   ,"S" ),
-			( "0x500", "0x5FF","Via"    ,"V" ),
-			( "0x600", "0x6FF","Irdeto" ,"I" ),
-			( "0x900", "0x9FF","NDS"    ,"Nd"),
-			( "0xB00", "0xBFF","Conax"  ,"Co"),
-			( "0xD00", "0xDFF","CryptoW","Cw"),
-			("0x1700","0x17FF","Beta"   ,"B" ),
-			("0x1800","0x18FF","Nagra"  ,"N" ))
+			("0x100", "0x1FF", "Seca", "S"),
+			("0x500", "0x5FF", "Via", "V"),
+			("0x600", "0x6FF", "Irdeto", "I"),
+			("0x900", "0x9FF", "NDS", "Nd"),
+			("0xB00", "0xBFF", "Conax", "Co"),
+			("0xD00", "0xDFF", "CryptoW", "Cw"),
+			("0x1700", "0x17FF", "Beta", "B"),
+			("0x1800", "0x18FF", "Nagra", "N"),
+			("0x2600", "0x26FF", "BISS", "Bi"))
 		self.ecmdata = GetEcmInfo()
 
 	@cached
@@ -174,7 +177,7 @@ class pliExpertInfo(Poll, Converter, object):
 							elif orbital_pos == 2120:
 								orb_pos = 'Echostar 2'
 							else:
-								orb_pos = str((float(3600 - orbital_pos))/10.0) + "W"
+								orb_pos = str((float(3600 - orbital_pos)) / 10.0) + "W"
 						elif orbital_pos > 0:
 							if orbital_pos == 192:
 								orb_pos = 'Astra 1F'
@@ -295,7 +298,7 @@ class pliExpertInfo(Poll, Converter, object):
 							elif orbital_pos == 30:
 								orb_pos = 'Telecom 2'
 							else:
-								orb_pos = str((float(orbital_pos))/10.0) + "E"
+								orb_pos = str((float(orbital_pos)) / 10.0) + "E"
 						Ret_Text += sep + orb_pos + "\n"
 						Ret_Text += frequency + sep + frontendData.get("polarization_abbreviation")
 						Ret_Text += sep + symbolrate
@@ -340,7 +343,8 @@ class pliExpertInfo(Poll, Converter, object):
 					Ret_Text += sep + "DVB-T" + sep + "Frequency:" + sep + frequency + " MHz"
 
 			if (feinfo is not None) and (xresol > 0):
-				Res_Text += ("MPEG2 ", "MPEG4 ", "MPEG1 ", "MPEG4-II ", "VC1 ", "VC1-SM ", "")[info.getInfo(iServiceInformation.sVideoType)]
+				from Components.Converter.PliExtraInfo import codec_data
+				Res_Text += codec_data.get(self.info.getInfo(iServiceInformation.sVideoType), "N/A")
 				Res_Text += str(xresol) + "x" + str(yresol)
 				Res_Text += ("i", "p", "")[info.getInfo(iServiceInformation.sProgressive)]
 				Res_Text += str((info.getInfo(iServiceInformation.sFrameRate) + 500) / 1000)
@@ -370,7 +374,7 @@ class pliExpertInfo(Poll, Converter, object):
 					else:
 						Sec_Text += ":"
 					if pid != '0':
-						Sec_Text += ":%04x:%04x" % (info.getInfo(iServiceInformation.sSID),int(pid, 16))
+						Sec_Text += ":%04x:%04x" % (info.getInfo(iServiceInformation.sSID), int(pid, 16))
 
 			elif not config.usage.show_cryptoinfo.value:
 				showCryptoInfo = True
@@ -379,13 +383,13 @@ class pliExpertInfo(Poll, Converter, object):
 			searchIDs = (info.getInfoObject(iServiceInformation.sCAIDs))
 			for idline in self.idnames:
 				if int(decCI, 16) >= int(idline[0], 16) and int(decCI, 16) <= int(idline[1], 16):
-					color="\c0000??00"
+					color = "\c0000??00"
 				else:
 					color = "\c007?7?7?"
 					try:
 						for oneID in searchIDs:
 							if oneID >= int(idline[0], 16) and oneID <= int(idline[1], 16):
-								color="\c00????00"
+								color = "\c00????00"
 					except:
 						pass
 				res += color + idline[3] + " "
@@ -408,7 +412,7 @@ class pliExpertInfo(Poll, Converter, object):
 		Converter.changed(self, what)
 
 	def short(self, langTxt):
-		if (self.type == self.SMART_INFO_V and len(langTxt)>23):
+		if (self.type == self.SMART_INFO_V and len(langTxt) > 23):
 			retT = langTxt[:20] + "..."
 			return retT
 		else:

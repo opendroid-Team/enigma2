@@ -46,6 +46,11 @@ eRCDevice::~eRCDevice()
 	eRCInput::getInstance()->removeDevice(id.c_str());
 }
 
+int eRCDevice::setKeyMapping(const std::unordered_map<unsigned int, unsigned int>& remaps)
+{
+	return eRCInput::remapUnsupported;
+}
+
 eRCDriver::eRCDriver(eRCInput *input): input(input), enabled(1)
 {
 }
@@ -128,7 +133,7 @@ eRCInputEventDriver::eRCInputEventDriver(const char *filename): eRCDriver(eRCInp
 			eDebugNoNewLine(" %02X", evCaps[i]);
 		eDebugNoNewLine("\n");
 #endif
-
+	m_remote_control = getDeviceName().find("remote control") != std::string::npos; /* assume remote control when name says so */
 	}
 }
 
@@ -161,21 +166,17 @@ bool eRCInputEventDriver::hasCap(unsigned char *caps, int bit)
 
 bool eRCInputEventDriver::isKeyboard()
 {
-#ifdef VUPLUS_RC_WORKAROUND
-	return(false);
-#else
+	if (m_remote_control)
+		return false;
 	/* check whether the input device has KEY_A, in which case we assume it is a keyboard */
 	return hasCap(keyCaps, KEY_A);
-#endif
 }
 
 bool eRCInputEventDriver::isPointerDevice()
 {
-#ifdef VUPLUS_RC_WORKAROUND
-	return(false);
-#else
+	if (m_remote_control)
+		return false;
 	return hasCap(evCaps, EV_REL) || hasCap(evCaps, EV_ABS);
-#endif
 }
 
 eRCInputEventDriver::~eRCInputEventDriver()
@@ -255,6 +256,26 @@ void eRCInput::addDevice(const std::string &id, eRCDevice *dev)
 void eRCInput::removeDevice(const std::string &id)
 {
 	devices.erase(id);
+}
+
+int eRCInput::setKeyMapping(const std::string &id, ePyObject keyRemap)
+{
+	eRCDevice *dev = getDevice(id);
+	if (dev)
+	{
+		std::unordered_map<unsigned int, unsigned int> remaps;
+		if (!PyDict_Check(keyRemap))
+			return remapFormatErr;
+		PyObject *from, *to;
+		Py_ssize_t pos=0;
+		while (PyDict_Next(keyRemap, &pos, &from, &to)) {
+			if (!PyInt_Check(from) || !PyInt_Check(to))
+				return remapFormatErr;
+			remaps[PyInt_AsLong(from)] = PyInt_AsLong(to);
+		}
+		return dev->setKeyMapping(remaps);
+	}
+	return remapNoSuchDevice;
 }
 
 eRCDevice *eRCInput::getDevice(const std::string &id)

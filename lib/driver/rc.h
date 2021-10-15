@@ -8,7 +8,9 @@
 
 #include <lib/base/ebase.h>
 #include <libsig_comp.h>
+#include <lib/python/python.h>
 #include <string>
+#include <unordered_map>
 
 class eRCInput;
 class eRCDriver;
@@ -35,7 +37,7 @@ public:
 	 * \param input The \ref eRCDriver where this remote gets its codes from.
 	 */
 	eRCDevice(std::string id, eRCDriver *input);
-	~eRCDevice();
+	virtual ~eRCDevice();
 	/**
 	 * \brief Handles a device specific code.
 	 *
@@ -56,6 +58,12 @@ public:
 	 * \result User readable description of given key.
 	 */
 	virtual void setExclusive(bool b) { };
+	/**
+	 * \brief set key remappngs.
+	 * \param remaps The the keyy remappings.
+	 * \result The status indicators defined in eRCInput.
+	 */
+	virtual int setKeyMapping(const std::unordered_map<unsigned int, unsigned int>& remaps);
 };
 
 /**
@@ -89,7 +97,7 @@ public:
 	{
 		listeners.remove(dev);
 	}
-	~eRCDriver();
+	virtual ~eRCDriver();
 
 	void enable(int en) { enabled=en; }
 	virtual void setExclusive(bool) { }
@@ -111,6 +119,7 @@ public:
 class eRCInputEventDriver: public eRCDriver
 {
 protected:
+	bool m_remote_control;
 	int handle;
 	unsigned char evCaps[(EV_MAX / 8) + 1];
 	unsigned char keyCaps[(KEY_MAX / 8) + 1];
@@ -243,8 +252,10 @@ public:
 	eRCConfig config;
 #endif
 	enum { kmNone, kmAscii, kmAll };
+	enum { remapOk, remapUnsupported, remapFormatErr, remapNoSuchDevice };
 	void setKeyboardMode(int mode) { keyboardMode = mode; }
 	int  getKeyboardMode() { return keyboardMode; }
+	int setKeyMapping(const std::string &id, SWIG_PYOBJECT(ePyObject) keyRemap);
 	static eRCInput *getInstance() { return instance; }
 	void lock();
 	void unlock();

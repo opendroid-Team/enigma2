@@ -1,4 +1,5 @@
-from Renderer import Renderer
+from __future__ import absolute_import
+from Components.Renderer.Renderer import Renderer
 from enigma import eListbox
 
 # the listbox renderer is the listbox, but no listbox content.
@@ -13,7 +14,8 @@ from enigma import eListbox
 # it should expose exactly the non-content related functions
 # of the eListbox class. more or less.
 
-class Listbox(Renderer, object):
+
+class Listbox(Renderer):
 	def __init__(self):
 		Renderer.__init__(self)
 		self.__content = None
@@ -82,7 +84,7 @@ class Listbox(Renderer, object):
 		self.__scrollbarMode = mode
 		if self.instance is not None:
 			self.instance.setScrollbarMode(int(
-				{ "showOnDemand": 0,
+				{"showOnDemand": 0,
 				  "showAlways": 1,
 				  "showNever": 2,
 				}[mode]))
@@ -95,6 +97,8 @@ class Listbox(Renderer, object):
 		if hasattr(self.source, "scrollbarMode"):
 			self.scrollbarMode = self.source.scrollbarMode
 		if len(what) > 1 and isinstance(what[1], str) and what[1] == "style":
+			return
+		if self.content:
 			return
 		self.content = self.source.content
 

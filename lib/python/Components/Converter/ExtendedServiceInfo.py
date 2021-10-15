@@ -4,7 +4,8 @@ from Components.Element import cached
 from enigma import eServiceCenter, eServiceReference, iServiceInformation
 from xml.etree.cElementTree import parse
 
-class ExtendedServiceInfo(Converter, object):
+
+class ExtendedServiceInfo(Converter):
     SERVICENAME = 0
     SERVICENUMBER = 1
     ORBITALPOSITION = 2
@@ -113,15 +114,15 @@ class ExtendedServiceInfo(Converter, object):
                     self.satNames[position] = name
 
     def getServiceNumber(self, name, ref):
-        list = []
+        _list = []
         if ref.startswith('1:0:2'):
-            list = self.radio_list
+            _list = self.radio_list
         elif ref.startswith('1:0:1'):
-            list = self.tv_list
+            _list = self.tv_list
         number = ''
-        if name in list:
-            for idx in range(1, len(list)):
-                if name == list[idx - 1]:
+        if name in _list:
+            for idx in list(range(1, len(_list))):
+                if name == _list[idx - 1]:
                     number = str(idx)
                     break
 
@@ -133,7 +134,7 @@ class ExtendedServiceInfo(Converter, object):
         if transponderData is not None:
             if isinstance(transponderData, float):
                 return ''
-            if transponderData.has_key('tuner_type'):
+            if 'tuner_type' in transponderData:
                 if transponderData['tuner_type'] == 'DVB-S' or transponderData['tuner_type'] == 'DVB-S2':
                     orbital = transponderData['orbital_position']
                     orbital = int(orbital)

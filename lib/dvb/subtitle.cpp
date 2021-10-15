@@ -505,7 +505,7 @@ int eDVBSubtitleParser::subtitle_process_segment(uint8_t *segment)
 			object->object_horizontal_position |= *segment++;
 			processed_length += 2;
 
-			object->object_vertical_position  = *segment++ << 8;
+			object->object_vertical_position  = (*segment++ & 0xF) << 8;
 			object->object_vertical_position |= *segment++ ;
 			processed_length += 2;
 
@@ -923,7 +923,7 @@ void eDVBSubtitleParser::subtitle_redraw(int page_id)
 				case subtitle_region::bpp2:
 					if (clut)
 						entries = clut->entries_2bit;
-					memset(palette, 0, 4 * sizeof(gRGB));
+					memset(static_cast<void*>(palette), 0, 4 * sizeof(gRGB));
 					// this table is tested on cyfra .. but in EN300743 the table palette[2] and palette[1] is swapped.. i dont understand this ;)
 					palette[0].a = 0xFF;
 					palette[2].r = palette[2].g = palette[2].b = 0xFF;
@@ -932,7 +932,7 @@ void eDVBSubtitleParser::subtitle_redraw(int page_id)
 				case subtitle_region::bpp4: // tested on cyfra... but the map is another in EN300743... dont understand this...
 					if (clut)
 						entries = clut->entries_4bit;
-					memset(palette, 0, 16*sizeof(gRGB));
+					memset(static_cast<void*>(palette), 0, 16*sizeof(gRGB));
 					for (int i=0; i < 16; ++i)
 					{
 						if (!i)
@@ -960,7 +960,7 @@ void eDVBSubtitleParser::subtitle_redraw(int page_id)
 				case subtitle_region::bpp8:  // completely untested.. i never seen 8bit DVB subtitles
 					if (clut)
 						entries = clut->entries_8bit;
-					memset(palette, 0, 256*sizeof(gRGB));
+					memset(static_cast<void*>(palette), 0, 256*sizeof(gRGB));
 					for (int i=0; i < 256; ++i)
 					{
 						switch (i & 17)
@@ -1041,15 +1041,10 @@ void eDVBSubtitleParser::subtitle_redraw(int page_id)
 						palette[i].r = MAX(MIN(((298 * y            + 460 * cr) / 256), 255), 0);
 						palette[i].g = MAX(MIN(((298 * y -  55 * cb - 137 * cr) / 256), 255), 0);
 						palette[i].b = yellow?0:MAX(MIN(((298 * y + 543 * cb  ) / 256), 255), 0);
-						if (bcktrans)
-						{
-							if (palette[i].r || palette[i].g || palette[i].b)
-								palette[i].a = (entries[i].T) & 0xFF;
-							else
-								palette[i].a = bcktrans;
-						}
-						else
+						if (palette[i].r || palette[i].g || palette[i].b)
 							palette[i].a = (entries[i].T) & 0xFF;
+						else
+							palette[i].a = bcktrans;
 					}
 					else
 					{

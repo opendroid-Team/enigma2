@@ -33,7 +33,7 @@ gLCDDC::gLCDDC()
 	{
 		surface.clut.colors = 256;
 		surface.clut.data = new gRGB[surface.clut.colors];
-		memset(surface.clut.data, 0, sizeof(*surface.clut.data)*surface.clut.colors);
+		memset(static_cast<void*>(surface.clut.data), 0, sizeof(*surface.clut.data)*surface.clut.colors);
 	}
 	else
 	{
@@ -63,7 +63,7 @@ void gLCDDC::exec(const gOpcode *o)
 		lcd->setPalette(surface);
 		break;
 	}
-#ifdef HAVE_TEXTLCD
+#if defined(HAVE_TEXTLCD) || defined(HAVE_7SEGMENT)
 	case gOpcode::renderText:
 		if (o->parm.renderText->text)
 		{

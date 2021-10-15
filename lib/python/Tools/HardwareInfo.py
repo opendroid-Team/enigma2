@@ -1,10 +1,11 @@
-from boxbranding import getBoxType, getBrandOEM
+from __future__ import print_function
+from boxbranding import getBoxType, getBrandOEM, getMachineName
 from Components.About import about
+
 
 class HardwareInfo:
 	device_name = None
 	device_version = None
-	device_model = None
 
 	def __init__(self):
 		if HardwareInfo.device_name is not None:
@@ -25,24 +26,21 @@ class HardwareInfo:
 			except:
 				pass
 		except:
-			print "----------------"
-			print "you should upgrade to new drivers for the hardware detection to work properly"
-			print "----------------"
-			print "fallback to detect hardware via /proc/cpuinfo!!"
+			print("----------------")
+			print("you should upgrade to new drivers for the hardware detection to work properly")
+			print("----------------")
+			print("fallback to detect hardware via /proc/cpuinfo!!")
 			try:
 				rd = open("/proc/cpuinfo", "r").read()
 				if "Brcm4380 V4.2" in rd:
 					HardwareInfo.device_name = "dm8000"
-					print "dm8000 detected!"
+					print("dm8000 detected!")
 				elif "Brcm7401 V0.0" in rd:
 					HardwareInfo.device_name = "dm800"
-					print "dm800 detected!"
+					print("dm800 detected!")
 				elif "MIPS 4KEc V4.8" in rd:
 					HardwareInfo.device_name = "dm7025"
-					print "dm7025 detected!"
-				elif "bcm7439" in rd:
-					HardwareInfo.device_name = "dm900"
-					print "dm900 detected!"
+					print("dm7025 detected!")
 			except:
 				pass
 
@@ -55,12 +53,18 @@ class HardwareInfo:
 	def get_device_model(self):
 		return getBoxType()
 
+	def get_vu_device_name(self):
+		return getBoxType()
+
+	def get_friendly_name(self):
+		return getMachineName()
+
 	def has_hdmi(self):
 		return not (HardwareInfo.device_name == 'dm800' or (HardwareInfo.device_name == 'dm8000' and HardwareInfo.device_version == None))
 
 	def linux_kernel(self):
 		try:
-			return open("/proc/version","r").read().split(' ', 4)[2].split('-',2)[0]
+			return open("/proc/version", "r").read().split(' ', 4)[2].split('-', 2)[0]
 		except:
 			return "unknown"
 
@@ -68,6 +72,6 @@ class HardwareInfo:
 		return getBoxType() != 'dm800'
 
 	def is_nextgen(self):
-		if about.getCPUString() in ('BCM7346B2', 'BCM7425B2', 'BCM7429B0', 'BCM7439'):
+		if about.getCPUString() in ('BCM7346B2', 'BCM7425B2', 'BCM7429B0'):
 			return True
 		return False

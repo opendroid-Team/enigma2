@@ -1,5 +1,7 @@
-from Wizard import wizardManager
+from __future__ import absolute_import
+from Screens.Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
+from Screens.WizardUserInterfacePositioner import UserInterfacePositionerWizard
 from Screens.VideoWizard import VideoWizard
 from Screens.Rc import Rc
 from Screens.Screen import Screen
@@ -9,16 +11,17 @@ from boxbranding import getBoxType
 from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile
 
-from LanguageSelection import LanguageWizard
+from Screens.LanguageSelection import LanguageWizard
 
-config.misc.firstrun = ConfigBoolean(default = True)
-config.misc.languageselected = ConfigBoolean(default = True)
-config.misc.videowizardenabled = ConfigBoolean(default = True)
+config.misc.firstrun = ConfigBoolean(default=True)
+config.misc.languageselected = ConfigBoolean(default=True)
+config.misc.videowizardenabled = ConfigBoolean(default=True)
+
 
 class StartWizard(WizardLanguage, Rc):
-	def __init__(self, session, silent = True, showSteps = False, neededTag = None):
+	def __init__(self, session, silent=True, showSteps=False, neededTag=None):
 		self.xmlfile = ["startwizard.xml"]
-		WizardLanguage.__init__(self, session, showSteps = False)
+		WizardLanguage.__init__(self, session, showSteps=False)
 		Rc.__init__(self)
 		self["wizard"] = Pixmap()
 		self["HelpWindow"] = Pixmap()
@@ -38,6 +41,12 @@ class StartWizard(WizardLanguage, Rc):
 		config.misc.firstrun.save()
 		configfile.save()
 
-wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority = 0)
-wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority = 2)
-wizardManager.registerWizard(StartWizard, config.misc.firstrun.value, priority = 20)
+
+# StartEnigma.py#L528ff - RestoreSettings
+wizardManager.registerWizard(VideoWizard, config.misc.videowizardenabled.value, priority=0)
+wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority=2)
+wizardManager.registerWizard(UserInterfacePositionerWizard, config.misc.firstrun.value, priority=4)
+# FrontprocessorUpgrade SystemMessage priority = 9
+wizardManager.registerWizard(StartWizard, config.misc.firstrun.value, priority=20)
+# StartWizard calls InstallWizard
+# NetworkWizard priority = 25

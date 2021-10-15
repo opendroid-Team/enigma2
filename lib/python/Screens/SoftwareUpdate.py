@@ -1,9 +1,10 @@
 from boxbranding import getImageVersion, getImageBuild, getImageDistro, getMachineBrand, getMachineName, getMachineBuild
 from os import rename, path, remove
 from gettext import dgettext
-import urllib
 
 from enigma import eTimer, eDVBDB
+from six.moves import urllib
+import six
 
 import Components.Task
 from Screens.ChoiceBox import ChoiceBox
@@ -23,8 +24,9 @@ from Components.Slider import Slider
 
 ocram = ''
 
+
 class SoftwareUpdateChanges(Screen):
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.setTitle(_("OE Changes"))
 		if path.exists('/tmp/oe-git.log'):
@@ -48,7 +50,7 @@ class SoftwareUpdateChanges(Screen):
 			"right": self.pageDown,
 			"down": self.pageDown,
 			"up": self.pageUp
-		},-1)
+		}, -1)
 		self.onLayoutFinish.append(self.getlog)
 
 	def changelogtype(self):
@@ -71,9 +73,9 @@ class SoftwareUpdateChanges(Screen):
 	def getlog(self):
 		global ocram
 		try:
-			sourcefile = 'http://www.openvix.co.uk/feeds/%s/%s/%s-git.log' % (getImageDistro(), getImageVersion(), self.logtype)
-			sourcefile,headers = urllib.urlretrieve(sourcefile)
-			rename(sourcefile,'/tmp/' + self.logtype + '-git.log')
+			sourcefile = 'https://www.openvix.co.uk/feeds/%s/%s/%s-git.log' % (getImageDistro(), getImageVersion(), self.logtype)
+			sourcefile, headers = urllib.urlretrieve(sourcefile)
+			rename(sourcefile, '/tmp/' + self.logtype + '-git.log')
 			fd = open('/tmp/' + self.logtype + '-git.log', 'r')
 			releasenotes = fd.read()
 			fd.close()
@@ -81,7 +83,7 @@ class SoftwareUpdateChanges(Screen):
 			releasenotes = '404 Not Found'
 		if '404 Not Found' not in releasenotes:
 			releasenotes = releasenotes.replace('[openvix] Zeus Release.', 'openvix: build 000')
-			releasenotes = releasenotes.replace('\nopenvix: build',"\n\nopenvix: build")
+			releasenotes = releasenotes.replace('\nopenvix: build', "\n\nopenvix: build")
 			releasenotes = releasenotes.split('\n\n')
 			ver = -1
 			releasever = ""
@@ -91,33 +93,33 @@ class SoftwareUpdateChanges(Screen):
 				releasever = releasenotes[int(ver)].split('\n')
 				releasever = releasever[0].split(' ')
 				if len(releasever) > 2:
-					releasever = releasever[2].replace(':',"")
+					releasever = releasever[2].replace(':', "")
 				else:
-					releasever = releasever[0].replace(':',"")
+					releasever = releasever[0].replace(':', "")
 			if self.logtype == 'oe':
 				if int(getImageBuild()) == 1:
-					imagever = int(getImageBuild())-1
+					imagever = int(getImageBuild()) - 1
 				else:
 					imagever = int(getImageBuild())
 			else:
-				imagever = int(getImageBuild())+905
+				imagever = int(getImageBuild()) + 905
 			while int(releasever) > int(imagever):
 				if ocram:
-					viewrelease += releasenotes[int(ver)]+'\n'+ocram+'\n'
+					viewrelease += releasenotes[int(ver)] + '\n' + ocram + '\n'
 					ocram = ""
 				else:
-					viewrelease += releasenotes[int(ver)]+'\n\n'
+					viewrelease += releasenotes[int(ver)] + '\n\n'
 				ver += 1
 				releasever = releasenotes[int(ver)].split('\n')
 				releasever = releasever[0].split(' ')
-				releasever = releasever[2].replace(':',"")
+				releasever = releasever[2].replace(':', "")
 			if not viewrelease and ocram:
 				viewrelease = ocram
 				ocram = ""
 			self["text"].setText(viewrelease)
 			summarytext = viewrelease.split(':\n')
 			try:
-				self['title_summary'].setText(summarytext[0]+':')
+				self['title_summary'].setText(summarytext[0] + ':')
 				self['text_summary'].setText(summarytext[1])
 			except:
 				self['title_summary'].setText("")
@@ -133,15 +135,16 @@ class SoftwareUpdateChanges(Screen):
 	def closeRecursive(self):
 		self.close(("menu", "menu"))
 
+
 class UpdatePlugin(Screen):
 	def __init__(self, session, *args):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Software Update"))
 
-		self.sliderPackages = { "dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3 }
+		self.sliderPackages = {"dreambox-dvb-modules": 1, "enigma2": 2, "tuxbox-image-info": 3}
 
 		self.setTitle(_("Software update"))
-		
+
 		self.slider = Slider(0, 4)
 		self["slider"] = self.slider
 		self.activityslider = Slider(0, 100)
@@ -159,7 +162,7 @@ class UpdatePlugin(Screen):
 		self['tl_green'] = Pixmap()
 		self.feedsStatus()
 		self['feedStatusMSG'] = Label(status_msgs[self.trafficLight])
-		
+
 		self.channellist_only = 0
 		self.channellist_name = ''
 		self.SettingsBackupDone = False
@@ -173,7 +176,7 @@ class UpdatePlugin(Screen):
 		self.checkNetworkState()
 
 	def feedsStatus(self):
-		from urllib import urlopen
+		from six.moves.urllib.request import urlopen
 		import socket
 		self['tl_red'].hide()
 		self['tl_yellow'].hide()
@@ -181,7 +184,7 @@ class UpdatePlugin(Screen):
 		currentTimeoutDefault = socket.getdefaulttimeout()
 		socket.setdefaulttimeout(3)
 		try:
-			d = urlopen("http://openvix.co.uk/TrafficLightState.php")
+			d = urlopen("https://openvix.co.uk/TrafficLightState.php")
 			self.trafficLight = d.read()
 			if self.trafficLight == 'unstable':
 				self['tl_off'].hide()
@@ -199,17 +202,18 @@ class UpdatePlugin(Screen):
 			self.trafficLight = 'unknown'
 			self['tl_off'].show()
 		socket.setdefaulttimeout(currentTimeoutDefault)
-		
+
 	def checkNetworkState(self):
 		cmd1 = "opkg update"
 		self.CheckConsole = Console()
 		self.CheckConsole.ePopen(cmd1, self.checkNetworkStateFinished)
 
-	def checkNetworkStateFinished(self, result, retval,extra_args=None):
+	def checkNetworkStateFinished(self, result, retval, extra_args=None):
+		result = six.ensure_str(result)
 		if 'bad address' in result:
 			self.session.openWithCallback(self.close, MessageBox, _("Your %s %s is not connected to the internet, please check your network settings and try again.") % (getMachineBrand(), getMachineName()), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		elif ('wget returned 1' or 'wget returned 255' or '404 Not Found') in result:
-			self.session.openWithCallback(self.close, MessageBox, _("Sorry feeds are down for maintenance, please try again later. If this issue persists please check openvix.co.uk or world-of-satellite.com."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+			self.session.openWithCallback(self.close, MessageBox, _("Sorry feeds are down for maintenance, please try again later. If this issue persists please check www.opena.tv"), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		elif 'Collected errors' in result:
 			self.session.openWithCallback(self.close, MessageBox, _("A background update check is in progress, please wait a few minutes and try again."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		else:
@@ -248,7 +252,7 @@ class UpdatePlugin(Screen):
 		if event == IpkgComponent.EVENT_DOWNLOAD:
 			self.status.setText(_("Downloading"))
 		elif event == IpkgComponent.EVENT_UPGRADE:
-			if self.sliderPackages.has_key(param):
+			if param in self.sliderPackages:
 				self.slider.setValue(self.sliderPackages[param])
 			self.package.setText(param)
 			self.status.setText(_("Upgrading") + ": %s/%s" % (self.packages, self.total_packages))
@@ -287,11 +291,11 @@ class UpdatePlugin(Screen):
 				self.updating = False
 				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
 			elif self.ipkg.currentCommand == IpkgComponent.CMD_UPGRADE_LIST:
-				from urllib import urlopen
+				from six.moves.urllib.request import urlopen
 				import socket
 				currentTimeoutDefault = socket.getdefaulttimeout()
 				socket.setdefaulttimeout(3)
-				status = urlopen('http://www.openvix.co.uk/feeds/status').read()
+				status = urlopen('https://www.openvix.co.uk/feeds/status').read()
 				if '404 Not Found' in status:
 					status = '1'
 				config.softwareupdate.updateisunstable.setValue(status)
@@ -313,14 +317,14 @@ class UpdatePlugin(Screen):
 					config.softwareupdate.updatefound.setValue(True)
 					choices = [(_("View the changes"), "changes"),
 						(_("Upgrade and reboot system"), "cold")]
-					if path.exists("/usr/lib/enigma2/python/Plugins/SystemPlugins/ViX/BackupManager.pyo"):
+					if path.exists("/usr/lib/enigma2/python/Plugins/SystemPlugins/ViX/BackupManager.py"):
 						if not config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value:
-							choices.append((_("Perform a settings backup,") + '\n\t' + _("making a backup before updating") + '\n\t' +_("is strongly advised."), "backup"))
+							choices.append((_("Perform a settings backup,") + '\n\t' + _("making a backup before updating") + '\n\t' + _("is strongly advised."), "backup"))
 						if not config.softwareupdate.autoimagebackup.value and config.imagemanager.backuplocation.value:
 							choices.append((_("Perform a full image backup"), "imagebackup"))
 					choices.append((_("Update channel list only"), "channels"))
 					choices.append((_("Cancel"), ""))
-					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
+					upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name="SoftwareUpdateChoices", var=self.trafficLight)
 					upgrademessage.setTitle(_('Software update'))
 				else:
 					upgrademessage = self.session.openWithCallback(self.close, MessageBox, _("Nothing to upgrade"), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
@@ -350,7 +354,7 @@ class UpdatePlugin(Screen):
 					error = _("No updates available. Please try again later.")
 				if self.updating:
 					error = _("Update failed. Your %s %s does not have a working internet connection.") % (getMachineBrand(), getMachineName())
-				self.status.setText(_("Error") +  " - " + error)
+				self.status.setText(_("Error") + " - " + error)
 		elif event == IpkgComponent.EVENT_LISTITEM:
 			if 'enigma2-plugin-settings-' in param[0] and self.channellist_only > 0:
 				self.channellist_name = param[0]
@@ -383,10 +387,10 @@ class UpdatePlugin(Screen):
 				choices.append((_("Perform a full image backup"), "imagebackup"))
 			choices.append((_("Update channel list only"), "channels"))
 			choices.append((_("Cancel"), ""))
-			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name = "SoftwareUpdateChoices", var=self.trafficLight)
+			upgrademessage = self.session.openWithCallback(self.startActualUpgrade, ChoiceBox, title=message, list=choices, skin_name="SoftwareUpdateChoices", var=self.trafficLight)
 			upgrademessage.setTitle(_('Software update'))
 		elif answer[1] == "changes":
-			self.session.openWithCallback(self.startActualUpgrade,SoftwareUpdateChanges)
+			self.session.openWithCallback(self.startActualUpgrade, SoftwareUpdateChanges)
 		elif answer[1] == "backup":
 			self.doSettingsBackup()
 		elif answer[1] == "imagebackup":
@@ -394,12 +398,12 @@ class UpdatePlugin(Screen):
 		elif answer[1] == "channels":
 			self.channellist_only = 1
 			self.slider.setValue(1)
-			self.ipkg.startCmd(IpkgComponent.CMD_LIST, args = {'installed_only': True})
+			self.ipkg.startCmd(IpkgComponent.CMD_LIST, args={'installed_only': True})
 		elif answer[1] == "cold":
 			if (config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value) or (config.softwareupdate.autoimagebackup.value and config.imagemanager.backuplocation.value):
 				self.doAutoBackup()
 			else:
-				self.session.open(TryQuitMainloop,retvalue=42)
+				self.session.open(TryQuitMainloop, retvalue=42)
 				self.close()
 
 	def modificationCallback(self, res):
@@ -427,14 +431,14 @@ class UpdatePlugin(Screen):
 				break
 		self.showJobView(job)
 
-	def doAutoBackup(self, val = False):
+	def doAutoBackup(self, val=False):
 		self.autobackuprunning = True
 		if config.softwareupdate.autosettingsbackup.value and config.backupmanager.backuplocation.value and not self.SettingsBackupDone:
 			self.doSettingsBackup()
 		elif config.softwareupdate.autoimagebackup.value and config.imagemanager.backuplocation.value and not self.ImageBackupDone:
 			self.doImageBackup()
 		else:
-			self.session.open(TryQuitMainloop,retvalue=42)
+			self.session.open(TryQuitMainloop, retvalue=42)
 			self.close()
 
 	def showJobView(self, job):
@@ -445,14 +449,14 @@ class UpdatePlugin(Screen):
 		from Screens.TaskView import JobView
 		Components.Task.job_manager.in_background = False
 		if not self.autobackuprunning:
-			self.session.openWithCallback(self.startActualUpgrade(("menu", "menu")), JobView, job,  cancelable = False, backgroundable = False, afterEventChangeable = False, afterEvent="close")
+			self.session.openWithCallback(self.startActualUpgrade(("menu", "menu")), JobView, job, cancelable=False, backgroundable=False, afterEventChangeable=False, afterEvent="close")
 		else:
-			self.session.openWithCallback(self.doAutoBackup, JobView, job,  cancelable = False, backgroundable = False, afterEventChangeable = False, afterEvent="close")
+			self.session.openWithCallback(self.doAutoBackup, JobView, job, cancelable=False, backgroundable=False, afterEventChangeable=False, afterEvent="close")
 
 	def exit(self):
 		if not self.ipkg.isRunning():
 			if self.packages != 0 and self.error == 0 and self.channellist_only == 0:
-				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s") % (getMachineBrand(), getMachineName()))
+				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s") % (getMachineBrand(), getMachineName()))
 			else:
 				self.close()
 		else:

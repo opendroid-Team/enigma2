@@ -84,7 +84,7 @@ struct eListboxStyle
 	int m_valign, m_halign, m_border_size, m_sliderborder_size, m_scrollbarsliderborder_size;
 	ePtr<gFont> m_font, m_secondfont;
 	ePoint m_text_offset;
-	bool m_use_vti_workaround;
+	bool m_use_opd_workaround;
 };
 #endif
 
@@ -107,6 +107,8 @@ public:
 	void setWrapAround(bool);
 
 	void setContent(iListboxContent *content);
+
+	void allowNativeKeys(bool allow);
 
 /*	enum Movement {
 		moveUp,
@@ -157,11 +159,13 @@ public:
 	void setVAlign(int align);
 	void setHAlign(int align);
 	void setTextOffset(const ePoint &textoffset);
-	void setUseVTIWorkaround(void);
+	void setUseOPDWorkaround(void);
 
 	void setSliderBorderColor(const gRGB &col);
 	void setSliderBorderWidth(int size);
 	void setSliderForegroundColor(gRGB &col);
+
+	int getScrollbarWidth() { return m_scrollbar_width; }
 
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
@@ -191,11 +195,17 @@ private:
 	int m_itemheight;
 	int m_items_per_page;
 	int m_selection_enabled;
+
+	bool m_native_keys_bound;
+
 	ePtr<iListboxContent> m_content;
 	eSlider *m_scrollbar;
 	eListboxStyle m_style;
 	ePtr<gPixmap> m_scrollbarpixmap, m_scrollbarbackgroundpixmap;
 	ePtr<gPixmap> m_scrollbarsliderpixmap;
+#ifdef USE_LIBVUGLES2
+	long m_dir;
+#endif
 #endif
 };
 

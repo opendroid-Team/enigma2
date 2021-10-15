@@ -14265,7 +14265,7 @@ msgstr "Uživateľské rozhranie %s %s sa reštartuje"
 
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 
 msgid ""

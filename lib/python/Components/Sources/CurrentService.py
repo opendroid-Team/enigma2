@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 from Components.PerServiceDisplay import PerServiceBase
 from enigma import iPlayableService
-from Source import Source
+from Components.Sources.Source import Source
 from Components.Element import cached
 import NavigationInstance
+
 
 class CurrentService(PerServiceBase, Source):
 	def __init__(self, navcore):
@@ -18,6 +20,7 @@ class CurrentService(PerServiceBase, Source):
 				iPlayableService.evNewProgramInfo: self.serviceEvent,
 				iPlayableService.evCuesheetChanged: self.serviceEvent,
 				iPlayableService.evVideoSizeChanged: self.serviceEvent,
+				iPlayableService.evVideoGammaChanged: self.serviceEvent,
 				iPlayableService.evHBBTVInfo: self.serviceEvent
 			}, with_event=True)
 		self.navcore = navcore
@@ -28,7 +31,7 @@ class CurrentService(PerServiceBase, Source):
 	@cached
 	def getCurrentService(self):
 		return self.navcore.getCurrentService()
-	
+
 	def getCurrentServiceReference(self):
 		return self.navcore.getCurrentlyPlayingServiceReference()
 
@@ -45,4 +48,3 @@ class CurrentService(PerServiceBase, Source):
 	def destroy(self):
 		PerServiceBase.destroy(self)
 		Source.destroy(self)
-

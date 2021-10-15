@@ -37,7 +37,7 @@ eDVBAllocatedFrontend::eDVBAllocatedFrontend(eDVBRegisteredFrontend *fe): m_fe(f
 		eFBCTunerManager* fbcmng = eFBCTunerManager::getInstance();
 		if (fbcmng)
 		{
-			fbcmng->unLink(m_fe);
+			fbcmng->Unlink(m_fe);
 		}
 	}
 }
@@ -175,6 +175,8 @@ eDVBResourceManager::eDVBResourceManager()
 	else if (!strncmp(tmp, "gbquad4k\n", rd))
 		m_boxtype = GIGABLUE;
 	else if (!strncmp(tmp, "gbue4k\n", rd))
+		m_boxtype = GIGABLUE;
+	else if (!strncmp(tmp, "gbx34k\n", rd))
 		m_boxtype = GIGABLUE;
 	else if (!strncmp(tmp, "ebox5000\n", rd))
 		m_boxtype = DM800;
@@ -979,10 +981,10 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 	{
 		int c = 0;
 		fbc_fe = NULL;
-		if (!check_fbc_linked && i->m_frontend->is_FBCTuner() && fbcmng && fbcmng->canLink(*i))
+		if (!check_fbc_linked && i->m_frontend->is_FBCTuner() && fbcmng && fbcmng->CanLink(*i))
 		{
 			check_fbc_linked = 1;
-			c = fbcmng->isCompatibleWith(feparm, *i, fbc_fe, simulate);
+			c = fbcmng->IsCompatibleWith(feparm, *i, fbc_fe, simulate);
 
 
 //			eDebug("[eDVBResourceManager::allocateFrontend] fbcmng->isCompatibleWith slotid : %p (%d), fbc_fe : %p (%d), score : %d", (eDVBRegisteredFrontend *)*i,  i->m_frontend->getSlotID(), fbc_fe, fbc_fe?fbc_fe->m_frontend->getSlotID():-1, c);			
@@ -1023,7 +1025,7 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 	{
 		if (fbcmng && best_fbc_fe)
 		{
-			fbcmng->addLink(best, best_fbc_fe, simulate);
+			fbcmng->AddLink(best, best_fbc_fe, simulate);
 		}
 
 		fe = new eDVBAllocatedFrontend(best);
@@ -1418,13 +1420,13 @@ RESULT eDVBResourceManager::allocateChannel(const eDVBChannelID &channelid, eUse
 			int slotid = fe->readFrontendData(iFrontendInformation_ENUMS::frontendNumber);
 			if (frontendPreferenceAllowsChannelUse(channelid,i->m_channel,simulate))
 			{
-				eDebugNoSimulate("[eDVBResourceManager] found shared channel.. i=%d, frontend=%d (preferred=%d)",std::distance(active_channels.begin(), i),slotid,eDVBFrontend::getPreferredFrontend());
+				eDebugNoSimulate("[eDVBResourceManager] found shared channel.. i=%ld, frontend=%d (preferred=%d)",std::distance(active_channels.begin(), i),slotid,eDVBFrontend::getPreferredFrontend());
 				channel = i->m_channel;
 				return 0;
 			}
 			else
 			{
-				eDebugNoSimulate("[eDVBResourceManager] strict frontend preference policy, don't use shared channel.. i=%d, frontend=%d (preferred=%d)",std::distance(active_channels.begin(), i),slotid,eDVBFrontend::getPreferredFrontend());
+				eDebugNoSimulate("[eDVBResourceManager] strict frontend preference policy, don't use shared channel.. i=%ld, frontend=%d (preferred=%d)",std::distance(active_channels.begin(), i),slotid,eDVBFrontend::getPreferredFrontend());
 			}
 		}
 	}
@@ -1620,10 +1622,10 @@ int eDVBResourceManager::canAllocateFrontend(ePtr<iDVBFrontendParameters> &fepar
 		{
 			int c = 0;
 			fbc_fe = NULL;
-			if (!check_fbc_linked && i->m_frontend->is_FBCTuner() && fbcmng && fbcmng->canLink(*i))
+			if (!check_fbc_linked && i->m_frontend->is_FBCTuner() && fbcmng && fbcmng->CanLink(*i))
 			{
 				check_fbc_linked = 1;
-				c = fbcmng->isCompatibleWith(feparm, *i, fbc_fe, simulate);
+				c = fbcmng->IsCompatibleWith(feparm, *i, fbc_fe, simulate);
 			}
 			else
 			{
@@ -1794,7 +1796,11 @@ class eDVBChannelFilePush: public eFilePushThread
 {
 public:
 	eDVBChannelFilePush(int packetsize = 188):
+#if HAVE_ALIEN5
+		eFilePushThread(IOPRIO_CLASS_BE, 0, packetsize, packetsize * 64),
+#else
 		eFilePushThread(IOPRIO_CLASS_BE, 0, packetsize, packetsize * 512),
+#endif
 		m_iframe_search(0),
 		m_iframe_state(0),
 		m_pid(0),

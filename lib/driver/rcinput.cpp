@@ -109,6 +109,27 @@ void eRCDeviceInputDev::handleCode(long rccode)
 		}
 	}
 
+	if (!remaps.empty())
+	{
+		std::unordered_map<unsigned int, unsigned int>::iterator i = remaps.find(ev->code);
+		if (i != remaps.end())
+		{
+			eDebug("[eRCDeviceInputDev] map: %u->%u", i->first, i->second);
+			ev->code = i->second;
+		}
+	}
+	else
+	{
+#if KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE
+		if (ev->code == KEY_PLAY)
+		{
+			if ((id == "dreambox advanced remote control (native)")  || (id == "bcm7325 remote control"))
+			{
+				ev->code = KEY_PLAYPAUSE;
+			}
+		}
+#endif
+
 #if TIVIARRC
 	if (ev->code == KEY_EPG) {
 		ev->code = KEY_INFO;
@@ -211,6 +232,31 @@ void eRCDeviceInputDev::handleCode(long rccode)
 	eDebug("[eRCDeviceInputDev] -->BackspaceFLAG %d", bflag);
 	eDebug("[eRCDeviceInputDev] -->after change %x %x %x", ev->value, ev->code, ev->type);
 */
+#endif
+
+#if KEY_F6_TO_KEY_FAVORITES
+	if (ev->code == KEY_F6) {
+		ev->code = KEY_FAVORITES;
+	}
+#endif
+
+#if KEY_HELP_TO_KEY_AUDIO
+	if (ev->code == KEY_HELP) {
+		ev->code = KEY_AUDIO;
+	}
+#endif
+
+
+#if KEY_WWW_TO_KEY_FILE
+	if (ev->code == KEY_WWW) {
+		ev->code = KEY_FILE;
+	}
+#endif
+
+#if KEY_CONTEXT_MENU_TO_KEY_BACK
+	if (ev->code == KEY_CONTEXT_MENU) {
+		ev->code = KEY_BACK;
+	}
 #endif
 
 #if KEY_VIDEO_TO_KEY_ANGLE
@@ -638,6 +684,24 @@ void eRCDeviceInputDev::handleCode(long rccode)
 	}
 #endif
 
+#if KEY_BOOKMARKS_IS_KEY_DIRECTORY
+	if (ev->code == KEY_BOOKMARKS)
+	{
+		/* Beyonwiz U4 RCU workaround to open pluginbrowser */
+		ev->code = KEY_DIRECTORY;
+	}
+#endif
+
+#if KEY_VIDEO_TO_KEY_BOOKMARKS
+	if (ev->code == KEY_VIDEO)
+	{
+		/* Axas Ultra have two keys open Movie folder , use Media key to open Mediaportal */
+		ev->code = KEY_BOOKMARKS;
+	}
+#endif
+
+	}
+	
 	switch (ev->value)
 	{
 		case 0:
@@ -650,6 +714,12 @@ void eRCDeviceInputDev::handleCode(long rccode)
 			input->keyPressed(eRCKey(this, ev->code, eRCKey::flagRepeat)); /*emit*/
 			break;
 	}
+}
+
+int eRCDeviceInputDev::setKeyMapping(const std::unordered_map<unsigned int, unsigned int>& remaps_p)
+{
+	remaps = remaps_p;
+	return eRCInput::remapOk;
 }
 
 eRCDeviceInputDev::eRCDeviceInputDev(eRCInputEventDriver *driver, int consolefd)

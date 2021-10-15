@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.Ipkg import IpkgComponent
 from Components.Label import Label
@@ -6,10 +7,13 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from enigma import eTimer
 
+
 class Ipkg(Screen):
 	def __init__(self, session, cmdList=None):
-		if not cmdList: cmdList = []
+		if not cmdList:
+			cmdList = []
 		Screen.__init__(self, session)
+		self.setTitle(_("Installing Software..."))
 
 		self.cmdList = cmdList
 
@@ -50,7 +54,7 @@ class Ipkg(Screen):
 			self.runningCmd = 0
 		else:
 			self.runningCmd += 1
-		print len(self.cmdList), self.runningCmd
+		print(len(self.cmdList), self.runningCmd)
 		if len(self.cmdList) - 1 < self.runningCmd:
 			self.activityslider.setValue(0)
 			self.slider.setValue(len(self.cmdList))
@@ -61,7 +65,7 @@ class Ipkg(Screen):
 		else:
 			cmd = self.cmdList[self.runningCmd]
 			self.slider.setValue(self.runningCmd)
-			self.ipkg.startCmd(cmd[0], args = cmd[1])
+			self.ipkg.startCmd(cmd[0], args=cmd[1])
 			self.startActivityTimer()
 
 	def doActivityTimer(self):
@@ -83,7 +87,7 @@ class Ipkg(Screen):
 		if event == IpkgComponent.EVENT_DOWNLOAD:
 			self.status.setText(_("Downloading"))
 		elif event == IpkgComponent.EVENT_UPGRADE:
-			if self.sliderPackages.has_key(param):
+			if param in self.sliderPackages:
 				self.slider.setValue(self.sliderPackages[param])
 			self.package.setText(param)
 			self.status.setText(_("Upgrading"))

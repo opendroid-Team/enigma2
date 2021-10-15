@@ -2,13 +2,12 @@
 #define __lib_driver_action_h
 
 #include <lib/base/object.h>
+#include <lib/gui/ewidget.h>
 
 #include <lib/python/python.h>
 #include <string>
-#include <map>    
+#include <map>
 #include <vector>
-
-class eWidget;
 
 SWIG_IGNORE(eActionMap);
 class eActionMap: public iObject
@@ -22,11 +21,11 @@ public:
 #ifndef SWIG
 	eActionMap();
 	~eActionMap();
-	void bindAction(const std::string &context, int priority, int id, eWidget *widget);
+	void bindAction(const std::string &context, int64_t priority, int id, eWidget *widget);
 	void unbindAction(eWidget *widget, int id);
 #endif
 
-	void bindAction(const std::string &context, int priority, SWIG_PYOBJECT(ePyObject) function);
+	void bindAction(const std::string &context, int64_t priority, SWIG_PYOBJECT(ePyObject) function);
 	void unbindAction(const std::string &context, SWIG_PYOBJECT(ePyObject) function);
 
 	void bindKey(const std::string &domain, const std::string &device, int key, int flags, const std::string &context, const std::string &action);
@@ -45,7 +44,7 @@ private:
 	struct eActionBinding
 	{
 		eActionBinding()
-			:m_prev_seen_make_key(-1)
+			:m_prev_seen_make_key(-1), m_long_key_pressed(false)
 		{}
 //		eActionContext *m_context;
 		std::string m_context; // FIXME
@@ -56,9 +55,10 @@ private:
 		eWidget *m_widget;
 		int m_id;
 		int m_prev_seen_make_key;
+		bool m_long_key_pressed;
 	};
 
-	std::multimap<int, eActionBinding> m_bindings;
+	std::multimap<int64_t, eActionBinding> m_bindings;
 
 	struct eTranslationBinding
 	{

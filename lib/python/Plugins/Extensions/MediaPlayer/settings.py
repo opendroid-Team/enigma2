@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
 from Components.FileList import FileList
@@ -19,17 +20,19 @@ def Load_defaults():
 	config.mediaplayer.alwaysHideInfoBar = ConfigYesNo(default=True)
 	config.mediaplayer.onMainMenu = ConfigYesNo(default=False)
 
-	config.mediaplayer.useAlternateUserAgent = NoSave(ConfigYesNo(default = False))
-	config.mediaplayer.alternateUserAgent = NoSave(ConfigText(default = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;openATV;;;)"))
+	config.mediaplayer.useAlternateUserAgent = NoSave(ConfigYesNo(default=False))
+	config.mediaplayer.alternateUserAgent = NoSave(ConfigText(default="Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;openATV;;;)"))
+
 
 Load_defaults()
+
 
 class DirectoryBrowser(Screen, HelpableScreen):
 
 	def __init__(self, session, currDir):
 		Screen.__init__(self, session)
 		# for the skin: first try MediaPlayerDirectoryBrowser, then FileBrowser, this allows individual skinning
-		self.skinName = ["MediaPlayerDirectoryBrowser", "FileBrowser" ]
+		self.skinName = ["MediaPlayerDirectoryBrowser", "FileBrowser"]
 
 		HelpableScreen.__init__(self)
 
@@ -66,14 +69,15 @@ class DirectoryBrowser(Screen, HelpableScreen):
 	def exit(self):
 		self.close(False)
 
-class MediaPlayerSettings(Screen,ConfigListScreen):
+
+class MediaPlayerSettings(Screen, ConfigListScreen):
 
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
 		# for the skin: first try MediaPlayerSettings, then Setup, this allows individual skinning
-		self.skinName = ["MediaPlayerSettings", "Setup" ]
-		self.setup_title = _("Edit settings")
-		self.onChangedEntry = [ ]
+		self.skinName = ["MediaPlayerSettings", "Setup"]
+		self.setTitle(_("Edit settings"))
+		self.onChangedEntry = []
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -81,7 +85,7 @@ class MediaPlayerSettings(Screen,ConfigListScreen):
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Save"))
 
-		ConfigListScreen.__init__(self, [], session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, [], session=session, on_change=self.changedEntry)
 		self.parent = parent
 		self.initConfigList()
 		config.mediaplayer.saveDirOnExit.addNotifier(self.initConfigList)
@@ -93,13 +97,9 @@ class MediaPlayerSettings(Screen,ConfigListScreen):
 		    "cancel": self.cancel,
 		    "ok": self.ok,
 		}, -2)
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def initConfigList(self, element=None):
-		print "[initConfigList]", element
+		print("[initConfigList]", element)
 		try:
 			self.list = []
 			self.list.append(getConfigListEntry(_("repeat playlist"), config.mediaplayer.repeat))
@@ -112,7 +112,7 @@ class MediaPlayerSettings(Screen,ConfigListScreen):
 			self.list.append(getConfigListEntry(_("show mediaplayer on mainmenu"), config.mediaplayer.onMainMenu))
 			self["config"].setList(self.list)
 		except KeyError:
-			print "keyError"
+			print("keyError")
 
 	def changedConfigList(self):
 		self.initConfigList()
@@ -122,7 +122,7 @@ class MediaPlayerSettings(Screen,ConfigListScreen):
 			self.session.openWithCallback(self.DirectoryBrowserClosed, DirectoryBrowser, self.parent.filelist.getCurrentDirectory())
 
 	def DirectoryBrowserClosed(self, path):
-		print "PathBrowserClosed:" + str(path)
+		print("PathBrowserClosed:" + str(path))
 		if path:
 			config.mediaplayer.defaultDir.setValue(path)
 

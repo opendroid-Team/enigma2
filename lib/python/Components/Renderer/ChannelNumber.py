@@ -1,6 +1,8 @@
+from __future__ import absolute_import
 from Components.VariableText import VariableText
 from enigma import eLabel, iPlayableService
-from Renderer import Renderer
+from Components.Renderer.Renderer import Renderer
+
 
 class ChannelNumber(Renderer, VariableText):
 	def __init__(self):
@@ -17,4 +19,3 @@ class ChannelNumber(Renderer, VariableText):
 				self.text = str(num)
 			else:
 				self.text = '---'
-

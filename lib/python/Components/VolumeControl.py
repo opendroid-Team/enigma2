@@ -1,27 +1,31 @@
+from __future__ import absolute_import
 from enigma import eDVBVolumecontrol, eTimer
 from Tools.Profile import profile
 from Screens.Volume import Volume
 from Screens.Mute import Mute
 from GlobalActions import globalActionMap
-from config import config, ConfigSubsection, ConfigInteger
+from Components.config import config, ConfigSubsection, ConfigInteger
 
 profile("VolumeControl")
 #TODO .. move this to a own .py file
+
+
 class VolumeControl:
 	instance = None
 	"""Volume control, handles volUp, volDown, volMute actions and display
 	a corresponding dialog"""
+
 	def __init__(self, session):
 		global globalActionMap
-		globalActionMap.actions["volumeUp"]=self.volUp
-		globalActionMap.actions["volumeDown"]=self.volDown
-		globalActionMap.actions["volumeMute"]=self.volMute
+		globalActionMap.actions["volumeUp"] = self.volUp
+		globalActionMap.actions["volumeDown"] = self.volDown
+		globalActionMap.actions["volumeMute"] = self.volMute
 
 		assert not VolumeControl.instance, "only one VolumeControl instance is allowed!"
 		VolumeControl.instance = self
 
 		config.audio = ConfigSubsection()
-		config.audio.volume = ConfigInteger(default = 50, limits = (0, 100))
+		config.audio.volume = ConfigInteger(default=50, limits=(0, 100))
 
 		self.volumeDialog = session.instantiateDialog(Volume)
 		self.volumeDialog.setAnimationMode(0)
@@ -39,6 +43,7 @@ class VolumeControl:
 		self.volumeDialog.setValue(vol)
 		self.volctrl = eDVBVolumecontrol.getInstance()
 		self.volctrl.setVolume(vol, vol)
+		self.last_vol = vol
 
 	def volSave(self):
 		if self.volctrl.isMuted():
@@ -53,12 +58,15 @@ class VolumeControl:
 		if vol < 3:
 			step = 1
 		elif vol < 9:
-			if step > 2: step = 2
+			if step > 2:
+				step = 2
 		elif vol < 18:
-			if step > 3: step = 3
+			if step > 3:
+				step = 3
 		elif vol < 30:
-			if step > 4: step = 4
-		self.setVolume(vol+step)
+			if step > 4:
+				step = 4
+		self.setVolume(vol + step)
 
 	def volDown(self):
 		vol = self.volctrl.getVolume()
@@ -66,20 +74,23 @@ class VolumeControl:
 		if vol <= 3:
 			step = 1
 		elif vol <= 9:
-			if step > 2: step = 2
+			if step > 2:
+				step = 2
 		elif vol <= 18:
-			if step > 3: step = 3
+			if step > 3:
+				step = 3
 		elif vol <= 30:
-			if step > 4: step = 4
-		self.setVolume(vol-step)
+			if step > 4:
+				step = 4
+		self.setVolume(vol - step)
 
 	def stepVolume(self):
 		if self.stepVolTimer.isActive():
-			step = config.usage.volume_step_fast.value
+			step = config.av.volume_stepsize_fastmode.value
 		else:
 			self.getInputConfig()
-			step = config.usage.volume_step_slow.value
-		self.stepVolTimer.start(self.repeat,True)
+			step = config.av.volume_stepsize.value
+		self.stepVolTimer.start(self.repeat, True)
 		return step
 
 	def getInputConfig(self):
@@ -93,7 +104,8 @@ class VolumeControl:
 		delay = 0
 		repeat = 0
 
-		for device in inputconfig.itervalues():
+		import six
+		for device in six.itervalues(inputconfig):
 			if "enabled" in device and bool(device["enabled"]):
 				if "delay" in device:
 					val = int(device["delay"])
@@ -113,6 +125,7 @@ class VolumeControl:
 		self.volctrl.setVolume(newvol, newvol)
 		is_muted = self.volctrl.isMuted()
 		vol = self.volctrl.getVolume()
+		self.last_vol = vol
 		self.volumeDialog.show()
 		if is_muted:
 			self.volMute() # unmute
@@ -127,7 +140,14 @@ class VolumeControl:
 
 	def volHide(self):
 		self.volumeDialog.hide()
-		self.muteDialog.hide()
+		#//set volume on if muted and volume is changed in webif
+		vol = self.volctrl.getVolume()
+		if self.volctrl.isMuted() and self.last_vol != vol:
+			self.volctrl.volumeUnMute()
+		self.last_vol = vol
+		#//
+		if not self.volctrl.isMuted() or config.av.volume_hide_mute.value:
+			self.muteDialog.hide()
 
 	def showMute(self):
 		if self.volctrl.isMuted():

@@ -154,6 +154,7 @@ RESULT eAMLTSMPEGDecoder::setVideoPID(int vpid, int type)
 		m_vpid = vpid;
 		m_vtype = type;
 		m_codec.video_type = VFORMAT_MPEG12;
+		int testv = MPEG1;
 		switch (type)
 		{
 		default:
@@ -169,14 +170,17 @@ RESULT eAMLTSMPEGDecoder::setVideoPID(int vpid, int type)
 			m_codec.video_type = VFORMAT_MPEG4; //maybe?
 			eDebug("%s() video type: MPEG4 Part2",__PRETTY_FUNCTION__);
 			break;
-#if defined(__aarch64__)
 		case H265_HEVC:
 			m_codec.video_type = VFORMAT_HEVC; //maybe?
 			eDebug("%s() video type: HEVC",__PRETTY_FUNCTION__);
 			break;
-#endif
 		}
-		eDebug("%s() vpid=%d, type=%d",__PRETTY_FUNCTION__, vpid, type);
+		eDebug("%s() vpid=%d, type=%d MPEG1 %d",__PRETTY_FUNCTION__, vpid, type,testv);
+		
+#if HAVE_ALIEN5
+
+		aml_change_vpid(vpid, m_codec.video_type);
+#endif
 	}
 	return 0;
 }
@@ -200,6 +204,10 @@ RESULT eAMLTSMPEGDecoder::setAudioPID(int apid, int type)
 			break;
 		case aAC3:
 			m_codec.audio_type = AFORMAT_AC3;
+			eDebug("%s() audio type: AC3",__PRETTY_FUNCTION__);
+			break;
+		case aDDP:
+			m_codec.audio_type = AFORMAT_EAC3;
 			eDebug("%s() audio type: AC3",__PRETTY_FUNCTION__);
 			break;
 		case aAAC:
@@ -263,6 +271,7 @@ RESULT eAMLTSMPEGDecoder::setSyncMaster(int who)
 RESULT eAMLTSMPEGDecoder::set()
 {
 	TRACE__
+
 	return 0;
 }
 
@@ -582,3 +591,11 @@ int eAMLTSMPEGDecoder::getVideoAspect()
 
 	return m_aspect == 1 ? 2 : 3;
 }
+int eAMLTSMPEGDecoder::getVideoGamma()
+{
+	//if (m_video)
+	//	return m_video->getGamma();
+	return -1;
+}
+
+

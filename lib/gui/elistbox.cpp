@@ -2,19 +2,20 @@
 #include <lib/gui/elistboxcontent.h>
 #include <lib/gui/eslider.h>
 #include <lib/actions/action.h>
+#ifdef USE_LIBVUGLES2
+#include "vuplus_gles.h"
+#endif
 
 eListbox::eListbox(eWidget *parent) :
 	eWidget(parent), m_scrollbar_mode(showNever), m_prev_scrollbar_page(-1),
-	m_content_changed(false), m_enabled_wrap_around(false), m_top(0), m_selected(0), m_itemheight(25),
-	m_items_per_page(0), m_selection_enabled(1), m_scrollbar(NULL), m_scrollbar_width(10)
+	m_content_changed(false), m_enabled_wrap_around(false), m_scrollbar_width(10), m_top(0), m_selected(0), m_itemheight(25),
+	m_items_per_page(0), m_selection_enabled(1), m_scrollbar(NULL), m_native_keys_bound(false)
 {
-	memset(&m_style, 0, sizeof(m_style));
+	memset(static_cast<void*>(&m_style), 0, sizeof(m_style));
 	m_style.m_text_offset = ePoint(1,1);
 //	setContent(new eListboxStringContent());
 
-	ePtr<eActionMap> ptr;
-	eActionMap::getInstance(ptr);
-	ptr->bindAction("ListboxActions", 0, 0, this);
+	allowNativeKeys(true);
 }
 
 eListbox::~eListbox()
@@ -22,9 +23,7 @@ eListbox::~eListbox()
 	if (m_scrollbar)
 		delete m_scrollbar;
 
-	ePtr<eActionMap> ptr;
-	eActionMap::getInstance(ptr);
-	ptr->unbindAction(this, 0);
+	allowNativeKeys(false);
 }
 
 void eListbox::setScrollbarMode(int mode)
@@ -47,7 +46,7 @@ void eListbox::setScrollbarMode(int mode)
 		m_scrollbar->setRange(0,100);
 		if (m_scrollbarbackgroundpixmap) m_scrollbar->setBackgroundPixmap(m_scrollbarbackgroundpixmap);
 		if (m_scrollbarpixmap) m_scrollbar->setPixmap(m_scrollbarpixmap);
-		if(m_style.m_sliderborder_color_set) m_scrollbar->setSliderBorderColor(m_style.m_sliderborder_color);
+		if (m_style.m_sliderborder_color_set) m_scrollbar->setSliderBorderColor(m_style.m_sliderborder_color);
 	}
 }
 
@@ -62,6 +61,20 @@ void eListbox::setContent(iListboxContent *content)
 	if (content)
 		m_content->setListbox(this);
 	entryReset();
+}
+
+void eListbox::allowNativeKeys(bool allow)
+{
+	if (m_native_keys_bound != allow)
+	{
+		ePtr<eActionMap> ptr;
+		eActionMap::getInstance(ptr);
+		if (allow)
+			ptr->bindAction("ListboxActions", (int64_t)0, 0, this);
+		else
+			ptr->unbindAction(this, 0);
+		m_native_keys_bound = allow;
+	}
 }
 
 bool eListbox::atBegin()
@@ -110,7 +123,9 @@ void eListbox::moveSelection(long dir)
 	int oldsel = m_selected;
 	int prevsel = oldsel;
 	int newsel;
-
+#ifdef USE_LIBVUGLES2
+	m_dir = dir;
+#endif
 	switch (dir)
 	{
 	case moveEnd:
@@ -298,10 +313,9 @@ void eListbox::updateScrollBar()
 		m_content_changed = false;
 		if (m_scrollbar_mode == showLeft)
 		{
-			int sbarwidth = m_scrollbar_width;
-			m_content->setSize(eSize(width-sbarwidth-5, m_itemheight));
+			m_content->setSize(eSize(width-m_scrollbar_width-5, m_itemheight));
 			m_scrollbar->move(ePoint(0, 0));
-			m_scrollbar->resize(eSize(sbarwidth, height));
+			m_scrollbar->resize(eSize(m_scrollbar_width, height));
 			if (entries > m_items_per_page)
 			{
 				m_scrollbar->show();
@@ -313,10 +327,9 @@ void eListbox::updateScrollBar()
 		}
 		else if (entries > m_items_per_page || m_scrollbar_mode == showAlways)
 		{
-			int sbarwidth = m_scrollbar_width;
-			m_scrollbar->move(ePoint(width-sbarwidth, 0));
-			m_scrollbar->resize(eSize(sbarwidth, height));
-			m_content->setSize(eSize(width-sbarwidth-5, m_itemheight));
+			m_scrollbar->move(ePoint(width-m_scrollbar_width, 0));
+			m_scrollbar->resize(eSize(m_scrollbar_width, height));
+			m_content->setSize(eSize(width-m_scrollbar_width-5, m_itemheight));
 			m_scrollbar->show();
 		}
 		else
@@ -385,7 +398,14 @@ int eListbox::event(int event, void *data, void *data2)
 
 			if (!entry_clip_rect.empty())
 				m_content->paint(painter, *style, ePoint(xoffset, y), m_selected == m_content->cursorGet() && m_content->size() && m_selection_enabled);
-
+#ifdef USE_LIBVUGLES2
+			if (m_selected == m_content->cursorGet() && m_content->size() && m_selection_enabled) {
+				ePoint pos = getAbsolutePosition();
+				painter.sendShowItem(m_dir, ePoint(pos.x(), pos.y() + y), eSize(m_scrollbar && m_scrollbar->isVisible() ? size().width() - m_scrollbar->size().width() : size().width(), m_itemheight));
+				gles_set_animation_listbox_current(pos.x(), pos.y() + y, m_scrollbar && m_scrollbar->isVisible() ? size().width() - m_scrollbar->size().width() : size().width(), m_itemheight);
+				m_dir = justCheck;
+			}
+#endif
 				/* (we could clip with entry_clip_rect, but
 				   this shouldn't change the behavior of any
 				   well behaving content, so it would just
@@ -587,9 +607,9 @@ void eListbox::setTextOffset(const ePoint &textoffset)
 	m_style.m_text_offset = textoffset;
 }
 
-void eListbox::setUseVTIWorkaround(void)
+void eListbox::setUseOPDWorkaround(void)
 {
-	m_style.m_use_vti_workaround = 1;
+	m_style.m_use_opd_workaround = 1;
 }
 
 void eListbox::setBackgroundColor(gRGB &col)
@@ -637,7 +657,6 @@ void eListbox::setScrollbarSliderBorderWidth(int size)
 void eListbox::setScrollbarWidth(int size)
 {
 	m_scrollbar_width = size;
-
 }
 
 void eListbox::setBackgroundPicture(ePtr<gPixmap> &pm)

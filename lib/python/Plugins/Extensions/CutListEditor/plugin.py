@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 
 from Screens.Screen import Screen
@@ -16,12 +17,13 @@ from Components.Sources.List import List
 try:
 	from Plugins.Extensions.MovieCut.plugin import main as MovieCut
 except:
-	print "[CutListEditor] import MovieCut failed"
+	print("[CutListEditor] import MovieCut failed")
 
 import bisect
 
 config.plugins.CutListEditor = ConfigSubsection()
 config.plugins.CutListEditor.showIntro = ConfigYesNo(default=True)
+
 
 def CutListEntry(where, what):
 	w = where / 90
@@ -43,6 +45,7 @@ def CutListEntry(where, what):
 		type_col = 0x000000
 	return ((where, what), "%dh:%02dm:%02ds:%03d" % (h, m, s, ms), type, type_col)
 
+
 class CutListContextMenu(FixedMenu):
 	RET_STARTCUT = 0
 	RET_ENDCUT = 1
@@ -54,12 +57,13 @@ class CutListContextMenu(FixedMenu):
 	RET_GRABFRAME = 7
 	RET_TOGGLEINTRO = 8
 	RET_MOVIECUT = 9
+	RET_REMOVEALL = 10
 
 	SHOW_STARTCUT = 0
 	SHOW_ENDCUT = 1
 	SHOW_DELETECUT = 2
 
-	def __init__(self, session, state, nearmark):
+	def __init__(self, session, state, nearmark, removeall=1):
 		menu = [(_("back"), self.close)] #, (None, )]
 
 		if state == self.SHOW_STARTCUT:
@@ -87,6 +91,11 @@ class CutListContextMenu(FixedMenu):
 		else:
 			menu.append((_("remove this mark"), self.removeMark))
 
+		if removeall:
+			menu.append((_("Remove all cuts and marks"), self.removeAll))
+		else:
+			menu.append((_("Remove all cuts and marks"), ))
+
 		menu.append((_("grab this frame as bitmap"), self.grabFrame))
 
 		if config.plugins.CutListEditor.showIntro.value:
@@ -97,7 +106,7 @@ class CutListContextMenu(FixedMenu):
 		menu.append((_("execute cuts (requires MovieCut plugin)"), self.callMovieCut))
 
 		FixedMenu.__init__(self, session, _("Cut"), menu)
-		self.skinName = ["CutListContextMenu", "Menu" ]
+		self.skinName = ["CutListContextMenu", "Menu"]
 
 	def startCut(self):
 		self.close(self.RET_STARTCUT)
@@ -120,14 +129,18 @@ class CutListContextMenu(FixedMenu):
 	def removeAfter(self):
 		self.close(self.RET_REMOVEAFTER)
 
+	def removeAll(self):
+		self.close(self.RET_REMOVEALL)
+
 	def grabFrame(self):
 		self.close(self.RET_GRABFRAME)
-		
+
 	def toggleIntro(self):
 		self.close(self.RET_TOGGLEINTRO)
-		
+
 	def callMovieCut(self):
 		self.close(self.RET_MOVIECUT)
+
 
 class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, HelpableScreen):
 	skin = """
@@ -158,16 +171,16 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 				}
 			</convert>
 		</widget>
-		<widget name="Timeline" position="50,485" size="615,20" backgroundColor="#505555" pointer="skin_default/position_arrow.png:3,5" foregroundColor="black" />
-		<ePixmap pixmap="skin_default/icons/mp_buttons.png" position="305,515" size="109,13" alphatest="on" />
+		<widget name="Timeline" position="50,485" size="615,20" backgroundColor="#505555" pointer="position_arrow.png:3,5" foregroundColor="black" />
+		<ePixmap pixmap="icons/mp_buttons.png" position="305,515" size="109,13" alphatest="on" />
 	</screen>"""
 
 	def __init__(self, session, service):
 		self.skin = CutListEditor.skin
 		Screen.__init__(self, session)
-		InfoBarSeek.__init__(self, actionmap = "CutlistSeekActions")
+		InfoBarSeek.__init__(self, actionmap="CutlistSeekActions")
 		InfoBarCueSheetSupport.__init__(self)
-		InfoBarBase.__init__(self, steal_current_service = True)
+		InfoBarBase.__init__(self, steal_current_service=True)
 		HelpableScreen.__init__(self)
 		self.old_service = session.nav.getCurrentlyPlayingServiceReference()
 		session.nav.playService(service)
@@ -176,7 +189,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		cue = service and service.cueSheet()
 		if cue is not None:
 			# disable cutlists. we want to freely browse around in the movie
-			print "cut lists disabled!"
+			print("cut lists disabled!")
 			cue.setCutListEnable(0)
 
 		self.downloadCuesheet()
@@ -189,7 +202,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		self.updateStateLabel(self.seekstate)
 
 		desktopSize = getDesktop(0).size()
-		self["Video"] = VideoWindow(decoder = 0, fb_width=desktopSize.width(), fb_height=desktopSize.height())
+		self["Video"] = VideoWindow(decoder=0, fb_width=desktopSize.width(), fb_height=desktopSize.height())
 
 		self["actions"] = HelpableActionMap(self, "CutListEditorActions",
 			{
@@ -198,6 +211,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 				"setMark": (self.setMark, _("Make this mark just a mark")),
 				"addMark": (self.__addMark, _("Add a mark")),
 				"removeMark": (self.__removeMark, _("Remove a mark")),
+				"removeAll": (self.__removeAll, _("Remove all cuts and marks")),
 				"leave": (self.exit, _("Exit editor")),
 				"showMenu": (self.showMenu, _("menu")),
 			}, prio=-4)
@@ -205,8 +219,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		self.tutorial_seen = False
 
 		self.onExecBegin.append(self.showTutorial)
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evCuesheetChanged: self.refillList
 			})
 
@@ -217,6 +230,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		self.onClose.append(self.__onClose)
 
 	def __onClose(self):
+		self.crashFix()
 		self.session.nav.playService(self.old_service, forceRestart=True)
 
 	def updateStateLabel(self, state):
@@ -225,7 +239,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 	def showTutorial(self):
 		if config.plugins.CutListEditor.showIntro.value and not self.tutorial_seen:
 			self.tutorial_seen = True
-			self.session.open(MessageBox,_("Welcome to the Cutlist editor.\n\nSeek to the start of the stuff you want to cut away. Press OK, select 'start cut'.\n\nThen seek to the end, press OK, select 'end cut'. That's it."), MessageBox.TYPE_INFO)
+			self.session.open(MessageBox, _("Welcome to the Cutlist editor.\n\nSeek to the start of the stuff you want to cut away. Press OK, select 'start cut'.\n\nThen seek to the end, press OK, select 'end cut'. That's it."), MessageBox.TYPE_INFO)
 
 	def checkSkipShowHideLock(self):
 		pass
@@ -259,11 +273,20 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		if m is not None:
 			self.removeMark(m)
 
+	def __removeAll(self):
+		if len(self.cut_list):
+			self.session.openWithCallback(self.__removeAllCallback, MessageBox, _("Are you sure to delete all cuts and marks?"), default=False)
+
+	def __removeAllCallback(self, ret):
+		if ret:
+			self.cut_list = []
+			self.uploadCuesheet()
+
 	def exit(self):
 		self.close()
 
 	def getCutlist(self):
-		r = [ ]
+		r = []
 		for e in self.cut_list:
 			r.append(CutListEntry(*e))
 		return r
@@ -272,17 +295,17 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		if not self.inhibit_seek:
 			where = self["cutlist"].getCurrent()
 			if where is None:
-				print "no selection"
+				print("no selection")
 				return
 			pts = where[0][0]
 			seek = self.getSeek()
 			if seek is None:
-				print "no seek"
+				print("no seek")
 				return
 			seek.seekTo(pts)
 
 	def refillList(self):
-		print "cue sheet changed, refilling"
+		print("cue sheet changed, refilling")
 		self.downloadCuesheet()
 
 		# get the first changed entry, counted from the end, and select it
@@ -291,9 +314,9 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 
 		l1 = len(new_list)
 		l2 = len(self.last_cuts)
-		for i in range(min(l1, l2)):
-			if new_list[l1-i-1] != self.last_cuts[l2-i-1]:
-				self["cutlist"].setIndex(l1-i-1)
+		for i in list(range(min(l1, l2))):
+			if new_list[l1 - i - 1] != self.last_cuts[l2 - i - 1]:
+				self["cutlist"].setIndex(l1 - i - 1)
 				break
 		self.last_cuts = new_list
 
@@ -324,13 +347,13 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 
 		cur_state = self.getStateForPosition(curpos)
 		if cur_state == 0:
-			print "currently in 'IN'"
+			print("currently in 'IN'")
 			if self.cut_start is None or self.context_position < self.cut_start:
 				state = CutListContextMenu.SHOW_STARTCUT
 			else:
 				state = CutListContextMenu.SHOW_ENDCUT
 		else:
-			print "currently in 'OUT'"
+			print("currently in 'OUT'")
 			state = CutListContextMenu.SHOW_DELETECUT
 
 		if self.context_nearest_mark is None:
@@ -338,7 +361,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		else:
 			nearmark = True
 
-		self.session.openWithCallback(self.menuCallback, CutListContextMenu, state, nearmark)
+		self.session.openWithCallback(self.menuCallback, CutListContextMenu, state, nearmark, len(self.cut_list))
 
 	def menuCallback(self, *result):
 		if not len(result):
@@ -350,7 +373,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		elif result == CutListContextMenu.RET_ENDCUT:
 			# remove in/out marks between the new cut
 			for (where, what) in self.cut_list[:]:
-				if self.cut_start <= where <= self.context_position and what in (0,1):
+				if self.cut_start <= where <= self.context_position and what in (0, 1):
 					self.cut_list.remove((where, what))
 
 			bisect.insort(self.cut_list, (self.cut_start, 1))
@@ -387,7 +410,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		elif result == CutListContextMenu.RET_REMOVEBEFORE:
 			# remove in/out marks before current position
 			for (where, what) in self.cut_list[:]:
-				if where <= self.context_position and what in (0,1):
+				if where <= self.context_position and what in (0, 1):
 					self.cut_list.remove((where, what))
 			# add 'in' point
 			bisect.insort(self.cut_list, (self.context_position, 0))
@@ -397,13 +420,15 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		elif result == CutListContextMenu.RET_REMOVEAFTER:
 			# remove in/out marks after current position
 			for (where, what) in self.cut_list[:]:
-				if where >= self.context_position and what in (0,1):
+				if where >= self.context_position and what in (0, 1):
 					self.cut_list.remove((where, what))
 			# add 'out' point
 			bisect.insort(self.cut_list, (self.context_position, 1))
 			self.inhibit_seek = True
 			self.uploadCuesheet()
 			self.inhibit_seek = False
+		elif result == CutListContextMenu.RET_REMOVEALL:
+			self.__removeAllCallback(True)
 		elif result == CutListContextMenu.RET_GRABFRAME:
 			self.grabFrame()
 		elif result == CutListContextMenu.RET_TOGGLEINTRO:
@@ -412,12 +437,20 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 			self.inhibit_seek = True
 			self.uploadCuesheet()
 			self.inhibit_seek = False
-			self.session.nav.playService(self.old_service, forceRestart=True) #required for actually writing the .cuts file
+			cservice = self.session.nav.getCurrentlyPlayingServiceReference()
+			self.crashFix()
+			#self.session.nav.playService(self.old_service, forceRestart=True) #required for actually writing the .cuts file
+			self.session.nav.playService(cservice, forceRestart=True) #required for actually writing the .cuts file
 			self.pauseService()
 			try:
-				MovieCut(session=self.session, service=self.session.nav.getCurrentlyPlayingServiceReference())
+				MovieCut(session=self.session, service=cservice)
 			except:
-				print "[CutListEditor] calling MovieCut failed"
+				print("[CutListEditor] calling MovieCut failed")
+
+	def crashFix(self):
+		# fix possible box freeze (e.g. OS1+)
+		if self.seekstate != self.SEEK_STATE_PLAY:
+			self.unPauseService()
 
 	# we modify the "play" behavior a bit:
 	# if we press pause while being in slowmotion, we will pause (and not play)
@@ -431,7 +464,7 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		path = self.session.nav.getCurrentlyPlayingServiceReference().getPath()
 		from Components.Console import Console
 		grabConsole = Console()
-		cmd = 'grab -vblpr%d "%s"' % (180, path.rsplit('.',1)[0] + ".png")
+		cmd = 'grab -vblpr%d "%s"' % (180, path.rsplit('.', 1)[0] + ".png")
 		grabConsole.ePopen(cmd)
 		self.playpauseService()
 
@@ -439,8 +472,10 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 		config.plugins.CutListEditor.showIntro.value = not config.plugins.CutListEditor.showIntro.value
 		config.plugins.CutListEditor.showIntro.save()
 
+
 def main(session, service, **kwargs):
 	session.open(CutListEditor, service)
 
+
 def Plugins(**kwargs):
- 	return PluginDescriptor(name="Cutlist Editor", description=_("Cutlist editor..."), where = PluginDescriptor.WHERE_MOVIELIST, needsRestart = False, fnc=main)
+ 	return PluginDescriptor(name=_("Cutlist Editor"), description=_("Cutlist editor..."), where=PluginDescriptor.WHERE_MOVIELIST, needsRestart=False, fnc=main)

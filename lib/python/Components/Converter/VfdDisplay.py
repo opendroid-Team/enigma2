@@ -1,12 +1,12 @@
+from __future__ import absolute_import
 from datetime import datetime
 
-from enigma import iPlayableService
-from Poll import Poll
+from Components.Converter.Poll import Poll
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 
 
-class VfdDisplay(Poll, Converter, object):
+class VfdDisplay(Poll, Converter):
 	def __init__(self, type):
 		Converter.__init__(self, type)
 		Poll.__init__(self)
@@ -30,17 +30,22 @@ class VfdDisplay(Poll, Converter, object):
 						break
 				if 'loop' in self.type and self.delay:
 					self.loop = self.delay
-			if 'nozero' in self.type:
-				self.hour = '%'
+			if '12h' in self.type and 'nozero' in self.type:
+				self.hour = '%l'
+			elif '12h' in self.type:
+				self.hour = '%I'
+			elif 'nozero' in self.type:
+				self.hour = '%k'
 			else:
-				self.hour = '%02'
-			if '12h' in self.type:
-				self.hour = self.hour + 'I'
-			else:
-				self.hour = self.hour + 'H'
+				self.hour = '%H'
 
 	@cached
 	def getText(self):
+		if hasattr(self.source, 'text'):
+			if 'nozero' in self.type:
+				return self.source.text.rjust(4)
+			else:
+				return self.source.text.zfill(4)
 		if self.showclock == 0:
 			if self.delay:
 				self.poll_interval = self.delay
@@ -71,13 +76,14 @@ class VfdDisplay(Poll, Converter, object):
 	text = property(getText)
 
 	def changed(self, what):
-		if what[0] is self.CHANGED_SPECIFIC and self.delay >= 0 and what[1] == iPlayableService.evStart:
+		if what[0] is self.CHANGED_SPECIFIC and self.delay >= 0:
 			self.showclock = 0
 			if self.loop != -1:
 				self.loop = self.delay
 			service = self.source.serviceref
-			self.num = service and ('%d' if 'nozero' in self.type else '%04d') % service.getChannelNum() or None
+			self.num = service and ('%4d' if 'nozero' in self.type else '%04d') % service.getChannelNum() or None
 			Converter.changed(self, what)
 		elif what[0] is self.CHANGED_POLL:
 			Converter.changed(self, what)
- 
+		elif what[0] is self.CHANGED_ALL:
+			Converter.changed(self, what)

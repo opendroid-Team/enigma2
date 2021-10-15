@@ -14271,10 +14271,10 @@ msgstr "%s %s kasutajaliides taaskäivitub"
 
 msgid ""
 "The user interface of your %s %s is restarting\n"
-"due to an error in mytest.py"
+"due to an error in StartEnigma.py"
 msgstr ""
 "%s %s kasutajaliides taaskäivitub\n"
-"vea tõttu 'mytest.py' failis"
+"vea tõttu 'StartEnigma.py' failis"
 
 msgid ""
 "The VideoMode plugin is not installed!\n"
