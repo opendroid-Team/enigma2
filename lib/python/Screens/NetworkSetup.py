@@ -6,6 +6,7 @@ import time
 import six
 
 from enigma import eTimer, eConsoleAppContainer
+
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Standby import TryQuitMainloop
@@ -354,7 +355,6 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 		if index < len(self.nameservers):
 			self.createConfig()
 			self.createSetup()
-
 
 
 class NetworkMacSetup(Screen, ConfigListScreen, HelpableScreen):

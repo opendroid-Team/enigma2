@@ -47,7 +47,7 @@ from RecordTimer import RecordTimer, RecordTimerEntry, parseEvent, AFTEREVENT, f
 from Screens.TimerEntry import TimerEntry as TimerEntry
 from Tools.Directories import SCOPE_VOD
 from Tools import Directories, Notifications
-from Tools.Directories import pathExists, fileExists, getRecordingFilename, copyfile, moveFiles, resolveFilename, SCOPE_TIMESHIFT, SCOPE_CURRENT_SKIN, isPluginInstalled
+from Tools.Directories import pathExists, fileExists, getRecordingFilename, copyfile, moveFiles, resolveFilename, SCOPE_TIMESHIFT, isPluginInstalled
 from Tools.KeyBindings import getKeyDescription
 from Tools.ServiceReference import hdmiInServiceRef
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, iPlayableService, eServiceReference, eEPGCache, eActionMap, eDVBVolumecontrol, getDesktop, quitMainloop, eDVBDB
@@ -2295,7 +2295,6 @@ class Seekbar(Screen):
 	def __init__(self, session, fwd):
 		Screen.__init__(self, session)
 		self.setTitle(_("Seek"))
-		self.session = session
 		self.fwd = fwd
 		self.percent = 0.0
 		self.length = None
@@ -2511,7 +2510,7 @@ class InfoBarSeek:
 			ext = ['.3g2', '.3gp', '.asf', '.asx', '.avi', '.flv', '.m2ts', '.mkv', '.mov', '.mp4', '.mpg', '.mpeg', '.rm', '.swf', '.vob', '.wmv']
 			if self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled() and name == False and str(url).endswith(tuple(ext)):
 				return False
-		elif self.getSeek() is None or isStandardInfoBar(self) and not self.timeshiftEnabled():
+		elif self.getSeek() is None or (isStandardInfoBar(self) and not self.timeshiftEnabled()):
 			return False
 		return True
 
@@ -2674,7 +2673,7 @@ class InfoBarSeek:
 			self.playpauseService()
 
 	def unPauseService(self):
-		SystemInfo["StatePlayPause"] = False
+		BoxInfo.setItem("StatePlayPause", False)
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			if self.seekAction != 0:
 				self.playpauseService()
@@ -3235,7 +3234,7 @@ class InfoBarExtensions:
 		return _("OSD 3D Setup")
 
 	def getOsd3DSetup(self):
-		if config.osd.show3dextensions .value:
+		if config.osd.show3dextensions.value:
 			return [((boundFunction(self.get3DSetupname), boundFunction(self.open3DSetup), lambda: True), None)]
 		else:
 			return []
@@ -3350,8 +3349,8 @@ class InfoBarExtensions:
 		self.session.open(LogManager)
 
 	def open3DSetup(self):
-		from Screens.UserInterfacePositioner import OSD3DSetupScreen
-		self.session.open(OSD3DSetupScreen)
+		from Screens.Setup import Setup
+		self.session.open(Setup, "osd3d")
 
 
 	def openRestartNetwork(self):
@@ -3729,45 +3728,11 @@ class InfoBarInstantRecord:
 			if InfoBarInstance:
 				self.recording = InfoBarInstance.recording
 		self.saveTimeshiftEventPopupActive = False
-		return
 
-	def moveToTrash(self, entry):
-		print("[InfoBarGenerics] instantRecord stop and delete recording: ", entry.name)
-		import Tools.Trashcan
-		trash = Tools.Trashcan.createTrashFolder(entry.Filename)
-		from MovieSelection import moveServiceFiles
-		moveServiceFiles(entry.Filename, trash, entry.name, allowCopy=False)
-
-	def stopCurrentRecording(self, entry = -1):
-		def confirm(answer = False):
-			if answer:
-				self.session.nav.RecordTimer.removeEntry(self.recording[entry])
-				if self.deleteRecording:
-					self.moveToTrash(self.recording[entry])
-				self.recording.remove(self.recording[entry])
+	def stopCurrentRecording(self, entry=-1):
 		if entry is not None and entry != -1:
-			msg =  _("Stop recording:")
-			if self.deleteRecording:
-				msg = _("Stop and delete recording:")
-			msg += "\n"
-			msg += " - " + self.recording[entry].name + "\n"
-			self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
-
-	def stopAllCurrentRecordings(self, list):
-		def confirm(answer = False):
-			if answer:
-				for entry in list:
-					self.session.nav.RecordTimer.removeEntry(entry[0])
-					self.recording.remove(entry[0])
-					if self.deleteRecording:
-						self.moveToTrash(entry[0])
-		msg =  _("Stop recordings:")
-		if self.deleteRecording:
-			msg = _("Stop and delete recordings:")
-		msg += "\n"
-		for entry in list:
-			msg += " - " + entry[0].name + "\n"
-		self.session.openWithCallback(confirm, MessageBox, msg, MessageBox.TYPE_YESNO)
+			self.session.nav.RecordTimer.removeEntry(self.recording[entry])
+			self.recording.remove(self.recording[entry])
 
 	def getProgramInfoAndEvent(self, info, name):
 		info["serviceref"] = hasattr(self, "SelectedInstantServiceRef") and self.SelectedInstantServiceRef or self.session.nav.getCurrentlyPlayingServiceOrGroup()
@@ -3858,102 +3823,87 @@ class InfoBarInstantRecord:
 		if answer is None or answer[1] == "no":
 			self.saveTimeshiftEventPopupActive = False
 			return
-		else:
-			list = []
-			recording = self.recording[:]
-			for x in recording:
-				if x not in self.session.nav.RecordTimer.timer_list:
-					self.recording.remove(x)
-				elif x.dontSave and x.isRunning():
-					list.append((x, False))
+		list = []
+		recording = self.recording[:]
+		for x in recording:
+			if not x in self.session.nav.RecordTimer.timer_list:
+				self.recording.remove(x)
+			elif x.dontSave and x.isRunning():
+				list.append((x, False))
 
-			self.deleteRecording = False
-			if answer[1] == "changeduration":
-				if len(self.recording) == 1:
-					self.changeDuration(0)
-				else:
-					self.session.openWithCallback(self.changeDuration, TimerSelection, list)
-			elif answer[1] == "addrecordingtime":
-				if len(self.recording) == 1:
-					self.addRecordingTime(0)
-				else:
-					self.session.openWithCallback(self.addRecordingTime, TimerSelection, list)
-			elif answer[1] == "changeendtime":
-				if len(self.recording) == 1:
-					self.setEndtime(0)
-				else:
-					self.session.openWithCallback(self.setEndtime, TimerSelection, list)
-			elif answer[1] == "timer":
-				import TimerEdit
-				self.session.open(TimerEdit.TimerEditList)
-			elif answer[1] == "stop":
-				if len(self.recording) == 1:
-					self.stopCurrentRecording(0)
-				else:
-					self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
-			elif answer[1] == "stopdelete":
-				self.deleteRecording = True
-				if len(self.recording) == 1:
-					self.stopCurrentRecording(0)
-				else:
-					self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
-			elif answer[1] == "stopall":
-				self.stopAllCurrentRecordings(list)
-			elif answer[1] == "stopdeleteall":
-				self.deleteRecording = True
-				self.stopAllCurrentRecordings(list)
-			elif answer[1] in ("indefinitely", "manualduration", "manualendtime", "event"):
-				from Components.About import about
-				if len(list) >= 2 and about.getChipSetString() in ('meson-6', 'meson-64'):
-					Notifications.AddNotification(MessageBox, _("Sorry only possible to record 2 channels at once"), MessageBox.TYPE_ERROR, timeout=5)
-					return
-				self.startInstantRecording(limitEvent=answer[1] in ("event", "manualendtime") or False)
-				if answer[1] == "manualduration":
-					self.changeDuration(len(self.recording) - 1)
-				elif answer[1] == "manualendtime":
-					self.setEndtime(len(self.recording) - 1)
-			elif answer[1] == "savetimeshift":
-				if self.isSeekable() and self.pts_eventcount != self.pts_currplaying:
-					InfoBarTimeshift.SaveTimeshift(self, timeshiftfile="pts_livebuffer_%s" % self.pts_currplaying)
-				else:
-					Notifications.AddNotification(MessageBox, _("Timeshift will get saved at the end of an event!"), MessageBox.TYPE_INFO, timeout=5)
-					self.save_current_timeshift = True
-					config.timeshift.isRecording.value = True
-			elif answer[1] == "savetimeshiftEvent":
-				InfoBarTimeshift.saveTimeshiftEventPopup(self)
-			elif answer[1].startswith("pts_livebuffer") is True:
-				InfoBarTimeshift.SaveTimeshift(self, timeshiftfile=answer[1])
-			elif answer[1] == "downloadvod":
-				self.saveTimeshiftEventPopupActive = False
-				name = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
-				url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
-				if url:
-					from six.moves.urllib.request import urlopen
-					from OPENDROID.OPD_panel import FileDownloadJob
-					from Screens.TaskView import JobView
-					try:
-						u = urllib.urlopen(url)
-					except:
-						self.session.open(MessageBox, _('The URL to this image is not correct !!'), type=MessageBox.TYPE_ERROR)
+		if answer[1] == "changeduration":
+			if len(self.recording) == 1:
+				self.changeDuration(0)
+			else:
+				self.session.openWithCallback(self.changeDuration, TimerSelection, list)
+		elif answer[1] == "changeendtime":
+			if len(self.recording) == 1:
+				self.setEndtime(0)
+			else:
+				self.session.openWithCallback(self.setEndtime, TimerSelection, list)
+		elif answer[1] == "timer":
+			from Screens.TimerEdit import TimerEditList
+			self.session.open(TimerEditList)
+		elif answer[1] == "stop":
+			self.session.openWithCallback(self.stopCurrentRecording, TimerSelection, list)
+		elif answer[1] in ("indefinitely", "manualduration", "manualendtime", "event"):
+			from Components.About import about
+			if len(list) >= 2 and about.getChipSetString() in ('meson-6', 'meson-64'):
+				Notifications.AddNotification(MessageBox, _("Sorry only possible to record 2 channels at once"), MessageBox.TYPE_ERROR, timeout=5)
+				return
+			self.startInstantRecording(limitEvent=answer[1] in ("event", "manualendtime") or False)
+			if answer[1] == "manualduration":
+				self.changeDuration(len(self.recording) - 1)
+			elif answer[1] == "manualendtime":
+				self.setEndtime(len(self.recording) - 1)
+		elif answer[1] == "savetimeshift":
+			# print 'test1'
+			if self.isSeekable() and self.pts_eventcount != self.pts_currplaying:
+				# print 'test2'
+				InfoBarTimeshift.SaveTimeshift(self, timeshiftfile="pts_livebuffer_%s" % self.pts_currplaying)
+			else:
+				# print 'test3'
+				Notifications.AddNotification(MessageBox, _("Timeshift will get saved at end of event!"), MessageBox.TYPE_INFO, timeout=5)
+				self.save_current_timeshift = True
+				config.timeshift.isRecording.value = True
+		elif answer[1] == "savetimeshiftEvent":
+			# print 'test4'
+			InfoBarTimeshift.saveTimeshiftEventPopup(self)
 
-					file_name = config.usage.vod_path.value + '/' + name.replace(' ', '_') + '.mkv'
-					f = open(file_name, "wb")
-					f.close()
-					job = FileDownloadJob(url, file_name, name.replace(' ', '_'))
-					job.afterEvent = 'close'
-					job_manager.AddJob(job)
-					job_manager.in_background = True
-					self.session.open(MessageBox, _('Downloading starded - VOD: ' + name.replace('_', ' ')), MessageBox.TYPE_INFO, timeout=5)
-				else:
-					self.session.open(MessageBox, _('Downloading filed, test another VOD title'), MessageBox.TYPE_INFO, timeout=5)
-			if answer[1] != 'savetimeshiftEvent':
-				self.saveTimeshiftEventPopupActive = False
-			return
+		elif answer[1].startswith("pts_livebuffer") is True:
+			# print 'test2'
+			InfoBarTimeshift.SaveTimeshift(self, timeshiftfile=answer[1])
+		elif answer[1] == "downloadvod":
+			self.saveTimeshiftEventPopupActive = False
+			name = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName()
+			url = ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getPath()
+			if url:
+				from six.moves.urllib.request import urlopen
+				from OPENDROID.OPD_panel import FileDownloadJob
+				from Screens.TaskView import JobView
+				try:
+					u = urllib.urlopen(url)
+				except:
+					self.session.open(MessageBox, _('The URL to this image is not correct !!'), type=MessageBox.TYPE_ERROR)
+
+				file_name = config.usage.vod_path.value + '/' + name.replace(' ', '_') + '.mkv'
+				f = open(file_name, "wb")
+				f.close()
+				job = FileDownloadJob(url, file_name, name.replace(' ', '_'))
+				job.afterEvent = 'close'
+				job_manager.AddJob(job)
+				job_manager.in_background = True
+				self.session.open(MessageBox, _('Downloading starded - VOD: ' + name.replace('_', ' ')), MessageBox.TYPE_INFO, timeout=5)
+			else:
+				self.session.open(MessageBox, _('Downloading filed, test another VOD title'), MessageBox.TYPE_INFO, timeout=5)
+		if answer[1] != 'savetimeshiftEvent':
+			self.saveTimeshiftEventPopupActive = False
+		return
 
 	def setEndtime(self, entry):
 		if entry is not None and entry >= 0:
 			self.selectedEntry = entry
-			self.endtime=ConfigClock(default=self.recording[self.selectedEntry].end)
+			self.endtime = ConfigClock(default=self.recording[self.selectedEntry].end)
 			dlg = self.session.openWithCallback(self.TimeDateInputClosed, TimeDateInput, self.endtime)
 			dlg.setTitle(_("Please change recording endtime"))
 
@@ -3968,34 +3918,23 @@ class InfoBarInstantRecord:
 	def changeDuration(self, entry):
 		if entry is not None and entry >= 0:
 			self.selectedEntry = entry
-			self.session.openWithCallback(self.inputCallback, InputBox, title=_("How many minutes do you want to record for?"), text="5  ", maxSize=True, type=Input.NUMBER)
-
-	def addRecordingTime(self, entry):
-		if entry is not None and entry >= 0:
-			self.selectedEntry = entry
-			self.session.openWithCallback(self.inputAddRecordingTime, InputBox, title=_("How many minutes do you want add to the recording?"), text="5  ", maxSize=True, type=Input.NUMBER)
-
-	def inputAddRecordingTime(self, value):
-		if value:
-			print("[InfoBarGenerics] added", int(value), "minutes for recording.")
-			entry = self.recording[self.selectedEntry]
-			if int(value) != 0:
-				entry.autoincrease = False
-			entry.end += 60 * int(value)
-			self.session.nav.RecordTimer.timeChanged(entry)
+			self.session.openWithCallback(self.inputCallback, InputBox, title=_("How many minutes do you want to record?"), text="5  ", maxSize=True, type=Input.NUMBER)
 
 	def inputCallback(self, value):
+#		print "stopping recording after", int(value), "minutes."
 		entry = self.recording[self.selectedEntry]
 		if value is not None:
-			print("[InfoBarGenerics] stopping recording after", int(value), "minutes.")
+			value = value.replace(" ", "")
+			if value == "":
+				value = "0"
 			if int(value) != 0:
 				entry.autoincrease = False
 			entry.end = int(time()) + 60 * int(value)
-		else:
-			if entry.end != int(time()):
-				entry.autoincrease = False
-			entry.end = int(time())
-		self.session.nav.RecordTimer.timeChanged(entry)
+		#else:
+		#	if entry.end != int(time()):
+		#		entry.autoincrease = False
+		#	entry.end = int(time())
+			self.session.nav.RecordTimer.timeChanged(entry)
 
 	def isTimerRecordRunning(self):
 		identical = timers = 0
@@ -4018,11 +3957,11 @@ class InfoBarInstantRecord:
 						 "\n" + _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
 			return
 		if isStandardInfoBar(self):
-			commonVOD = ((_('Download (remember to switch to a channel DVB-S2/T/T2/C)'), 'downloadvod'), (_('Add recording (stop after current event)'), 'event'))
-			common = ((_('Add recording (stop after current event)'), 'event'),
-				(_('Add recording (indefinitely)'), 'indefinitely'),
-				(_('Add recording (enter recording duration)'), 'manualduration'),
-		(_('Add recording (enter recording endtime)'), 'manualendtime'))
+			commonVOD = ((_("Download (remember to switch to a channel DVB-S2/T/T2/C)"), "downloadvod"), (_("Add recording (stop after current event)"), "event"))
+			common = ((_("Add recording (stop after current event)"), "event"),
+				(_("Add recording (indefinitely)"), "indefinitely"),
+				(_("Add recording (enter recording duration)"), "manualduration"),
+				(_("Add recording (enter recording endtime)"), "manualendtime"),)
 			timeshiftcommon = ((_("Timeshift save recording (stop after current event)"), "savetimeshift"),
 				(_("Timeshift save recording (Select event)"), "savetimeshiftEvent"),)
 		else:
@@ -4030,24 +3969,19 @@ class InfoBarInstantRecord:
 			commonVOD = ()
 			timeshiftcommon = ()
 		if self.isInstantRecordRunning():
-			title = _("A recording is currently in progress.\nWhat do you want to do?")
-			list = common + ((_("Change recording (duration)"), "changeduration"), (_("Change recording (add time)"), "addrecordingtime"), (_("Change recording (end time)"), "changeendtime"))
-			list += ((_("Stop recording"), "stop"),)
-			if config.usage.movielist_trashcan.value:
-				list += ((_("Stop and delete recording"), "stopdelete"),)
-			if len(self.recording) > 1:
-				list += ((_("Stop all current recordings"), "stopall"),)
-				if config.usage.movielist_trashcan.value:
-					list += ((_("Stop and delete all current recordings"), "stopdeleteall"),)
+			title = _("A recording is currently running.\nWhat do you want to do?")
+			list = ((_("Stop recording"), "stop"),) + common + \
+				((_("Change recording (duration)"), "changeduration"),
+				(_("Change recording (endtime)"), "changeendtime"),)
 			if self.isTimerRecordRunning():
 				list += ((_("Stop timer recording"), "timer"),)
 		elif self.session.nav.getCurrentlyPlayingServiceReference():
-			name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith('4097:')
+			name = self.session.nav.getCurrentlyPlayingServiceReference().toString().startswith("4097:")
 			if name == True:
 				title = _("Start recording?")
 				list = commonVOD
 			else:
-				title=_("Start recording?")
+				title = _("Start recording?")
 				list = common
 
 				if self.isTimerRecordRunning():
@@ -4057,10 +3991,8 @@ class InfoBarInstantRecord:
 
 			if isStandardInfoBar(self):
 				list = list + ((_("Do not record"), "no"),)
-		else:
-			return 0
 		if list:
-			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox,title=title,list=list)
+			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, title=title, list=list)
 		else:
 			return 0
 

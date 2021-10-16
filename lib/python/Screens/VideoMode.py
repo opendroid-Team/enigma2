@@ -62,7 +62,7 @@ class VideoSetup(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		# for the skin: first try VideoSetup, then Setup, this allows individual skinning
 		self.skinName = ["VideoSetup", "Setup"]
-		self.setup_title = _("Video settings")
+		self.setTitle(_("Video settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -83,21 +83,17 @@ class VideoSetup(Screen, ConfigListScreen):
 			{
 				"cancel": self.keyCancel,
 				"save": self.apply,
-				"menu": self.closeRecursive,
 			}, -2)
 
 		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("OK"))
+		self["key_green"] = StaticText(_("Save"))
 		self["description"] = Label("")
 
 		config.av.autores_preview.value = False
 		self.current_mode = None
 		self.createSetup()
 		self.grabLastGoodMode()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
+		self["config"].onSelectionChanged.append(self.selectionChanged)
 
 	def startHotplug(self):
 		self.hw.on_hotplug.append(self.createSetup)
@@ -443,13 +439,19 @@ class VideoSetup(Screen, ConfigListScreen):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
 
+	def selectionChanged(self):
+		if self["config"]:
+			self["description"].text = self.getCurrentDescription()
+		else:
+			self["description"].text = _("There are no items currently available for this screen.")
+
 
 class AudioSetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		# for the skin: first try AudioSetup, then Setup, this allows individual skinning
 		self.skinName = ["AudioSetup", "Setup"]
-		self.setup_title = _("Audio settings")
+		self.setTitle(_("Audio settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -470,18 +472,14 @@ class AudioSetup(Screen, ConfigListScreen):
 			{
 				"cancel": self.keyCancel,
 				"save": self.apply,
-				"menu": self.closeRecursive,
 			}, -2)
 
 		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("OK"))
+		self["key_green"] = StaticText(_("Save"))
 		self["description"] = Label("")
 
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
+		self["config"].onSelectionChanged.append(self.selectionChanged)
 
 	def startHotplug(self):
 		self.hw.on_hotplug.append(self.createSetup)
@@ -573,6 +571,12 @@ class AudioSetup(Screen, ConfigListScreen):
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
+
+	def selectionChanged(self):
+		if self["config"]:
+			self["description"].text = self.getCurrentDescription()
+		else:
+			self["description"].text = _("There are no items currently available for this screen.")
 
 
 class AutoVideoModeLabel(Screen):

@@ -3,15 +3,27 @@
 
 ## Our buildserver is currently running on: ##
 
-> Ubuntu 20.04.1 LTS (Kernel 5.4.0)
+## Current OS
+
+> Ubuntu 20.04.3 LTS (Kernel 5.4.0) 64-bit
+
+## Hardware requirements
+
+> RAM:  16GB
+>
+> SWAP: 8GB
+>
+> CPU:  Multi core\thread Model
+>
+> HDD:  for Single Build 250GB Free, for Multibuild 500GB or more
 
 ## openDroid 7.1 is build using oe-alliance build-environment and several git repositories: ##
 
-> [https://github.com/oe-alliance/oe-alliance-core/tree/5.0](https://github.com/oe-alliance/oe-alliance-core/tree/5.0 "OE-Alliance")
+> [OE Alliance Core](https://github.com/oe-alliance/oe-alliance-core/tree/5.0 "OE Alliance Core") - Core framework
 > 
 > [https://github.com/opendroid-Team/enigma2](https://github.com/opendroid-Team/enigma2/tree/7.1 "openDroid Enigma2")
 > 
-> [https://github.com/stein17/Skins-for-openOPD](https://github.com/stein17/Skins-for-openOPD "openDroid Skin")
+> [https://github.com/stein17/Skins-for-openOPD/tree/python3)
 
 > and a lot more...
 
@@ -22,8 +34,8 @@
 
 1 - Install packages on your buildserver
 
-    sudo apt-get install -y autoconf automake bison bzip2 chrpath coreutils cpio curl cvs debianutils default-jre default-jre-headless diffstat flex g++ gawk gcc gcc-8 gcc-multilib g++-multilib gettext git git-core gzip help2man info iputils-ping java-common libc6-dev libegl1-mesa libglib2.0-dev libncurses5-dev libperl4-corelibs-perl libproc-processtable-perl libsdl1.2-dev libserf-dev libtool libxml2-utils make ncurses-bin patch perl pkg-config psmisc python3 python3-git python3-jinja2 python3-pexpect python3-pip python-setuptools qemu quilt socat sshpass subversion tar texi2html texinfo unzip wget xsltproc xterm xz-utils zip zlib1g-dev 
-    
+    sudo apt-get install -y autoconf automake bison bzip2 chrpath coreutils cpio curl cvs debianutils default-jre default-jre-headless diffstat flex g++ gawk gcc gcc-8 gcc-multilib g++-multilib gettext git git-core gzip help2man info iputils-ping java-common libc6-dev libegl1-mesa libglib2.0-dev libncurses5-dev libperl4-corelibs-perl libproc-processtable-perl libsdl1.2-dev libserf-dev libtool libxml2-utils make ncurses-bin patch perl pkg-config psmisc python3 python3-git python3-jinja2 python3-pexpect python3-pip python-setuptools qemu quilt socat sshpass subversion tar texi2html texinfo unzip wget xsltproc xterm xz-utils zip zlib1g-dev zstd
+
 ----------
 2 - Set python3 as preferred provider for python
 
@@ -75,7 +87,7 @@
 ----------
 10 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b nextp3
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 5.0
 
 ----------
 11 - Switch to folder build-enviroment
@@ -90,4 +102,31 @@
 ----------
 13 - Finally you can start building a image
 
-    MACHINE=sf4008 DISTRO=opendroid make image
+* Build an image with feed (build time 5-12h)
+
+    ```sh
+ 15 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make image
+    ```
+
+> Build an image without feed (build time 1-2h)
+
+    ```sh
+ 16 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make enigma2-image
+    ```
+
+> Build the feeds
+
+    ```sh
+    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make feeds
+    ```
+
+> Build specific packages
+
+    ```sh
+ 17 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make init
+
+    cd builds/openatv/opendroid/sf4008/
+
+    source env.source
+
+    bitbake nfs-utils rcpbind ...

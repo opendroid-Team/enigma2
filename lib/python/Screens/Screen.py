@@ -1,4 +1,3 @@
-from __future__ import print_function
 from enigma import eRCInput, eTimer, eWindow, getDesktop
 
 from skin import GUI_SKIN_ID, applyAllAttributes
@@ -8,9 +7,10 @@ from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Tools.CList import CList
 
+
 # The lines marked DEBUG: are proposals for further fixes or improvements.
 # Other commented out code is historic and should probably be deleted if it is not going to be used.
-
+#
 class Screen(dict):
 	NO_SUSPEND, SUSPEND_STOPS, SUSPEND_PAUSES = list(range(3))
 	ALLOW_SUSPEND = NO_SUSPEND
@@ -294,7 +294,7 @@ class Screen(dict):
 
 class ScreenSummary(Screen):
 	skin = """
-	<screen position="fill" flags="wfNoBorder">
+	<screen name="ScreenSummary" position="fill" flags="wfNoBorder">
 		<widget source="global.CurrentTime" render="Label" position="0,0" size="e,20" font="Regular;16" halign="center" valign="center">
 			<convert type="ClockToText">WithSeconds</convert>
 		</widget>
@@ -304,9 +304,11 @@ class ScreenSummary(Screen):
 	def __init__(self, session, parent):
 		Screen.__init__(self, session, parent=parent)
 		self["Title"] = StaticText(parent.getTitle())
-		names = parent.skinName
-		if not isinstance(names, list):
-			names = [names]
-		self.skinName = ["%sSummary" % x for x in names]
+		skinNames = parent.skinName
+		if not isinstance(skinNames, list):
+			skinNames = [skinNames]
+		self.skinName = ["%sSummary" % x for x in skinNames]
 		self.skinName.append("ScreenSummary")
+		self.skinName += ["%s_summary" % x for x in skinNames]  # DEBUG: Old summary screens currently kept for compatibility.
+		self.skinName.append("SimpleSummary")  # DEBUG: Old summary screens currently kept for compatibility.
 		self.skin = parent.__dict__.get("skinSummary", self.skin)  # If parent has a "skinSummary" defined, use that as default.

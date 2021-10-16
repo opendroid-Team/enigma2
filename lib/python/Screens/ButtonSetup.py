@@ -3,7 +3,7 @@ from GlobalActions import globalActionMap
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Button import Button
 from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Components.config import config, ConfigSubsection, ConfigText, ConfigYesNo
 from Components.PluginComponent import plugins
 from Components.Sources.StaticText import StaticText
