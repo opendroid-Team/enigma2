@@ -623,7 +623,7 @@ class InfoBarShowHide(InfoBarScreenSaver):
 	skipToggleShow = False
 
 	def __init__(self):
-		self["ShowHideActions"] = HelpableActionMap(self, ["InfobarShowHideActions"], 
+		self["ShowHideActions"] = HelpableActionMap(self, ["InfobarShowHideActions"],
 			{
 			"LongOKPressed": (self.toggleShowLong, _("Toggle display of the InfoBar")),
 			"toggleShow": (self.OkPressed, _("Toggle display of the InfoBar")),

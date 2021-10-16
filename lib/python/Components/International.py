@@ -14,7 +14,7 @@ from Tools.Directories import SCOPE_LANGUAGE, resolveFilename
 PACKAGER = "/usr/bin/opkg"
 PACKAGE_TEMPLATE = "enigma2-locale-%s"
 
-PERMANENT_LOCALES = ["it_IT","de_DE", "en_US", "fr_FR"]
+PERMANENT_LOCALES = ["it_IT", "de_DE", "en_US", "fr_FR"]
 
 languagePath = resolveFilename(SCOPE_LANGUAGE)
 try:

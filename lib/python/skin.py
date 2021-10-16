@@ -55,7 +55,7 @@ variables = {}
 isOPDSkin = False  # Temporary flag to suppress errors in OPD.
 
 config.skin = ConfigSubsection()
-skin = resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)
+skin = resolveFilename(SCOPE_SKINS, DEFAULT_SKIN)
 if not isfile(skin):
 	print("[Skin] Error: Default skin '%s' is not readable or is not a file!  Using emergency skin." % skin)
 	DEFAULT_SKIN = EMERGENCY_SKIN

@@ -14,6 +14,10 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
+profile("LOAD:Tools")
+from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_PLUGIN, SCOPE_GUISKIN, SCOPE_CONFIG
+from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave
+InitFallbackFiles()
 
 # Session.open:
 # * Push current active dialog ("current_dialog") onto stack.
@@ -703,10 +707,6 @@ if getImageArch() in ("aarch64"):
 
 from traceback import print_exc
 
-profile("Geolocation")
-import Tools.Geolocation
-Tools.Geolocation.InitGeolocation()
-
 profile("SetupDevices")
 import Components.SetupDevices
 Components.SetupDevices.InitSetupDevices()
@@ -728,7 +728,7 @@ elif getMachineBrand() == 'Zgemma':
 elif getMachineBrand() == 'Beyonwiz':
 	defaultLanguage = "en_GB"
 else:
-	defaultLanguage = "de_DE"
+	defaultLanguage = "it_IT"
 
 defaultCountry = defaultLanguage[-2:]
 defaultShortLanguage = defaultLanguage[0:2]
@@ -854,6 +854,9 @@ import Components.InputDevice
 Components.InputDevice.InitInputDevices()
 import Components.InputHotplug
 
+profile("SetupDevices")
+import Components.SetupDevices
+Components.SetupDevices.InitSetupDevices()
 profile("AVSwitch")
 import Components.AVSwitch
 Components.AVSwitch.InitAVSwitch()

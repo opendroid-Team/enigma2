@@ -265,7 +265,7 @@ class	AddonsRemove(Screen):
 			return
 
 		sel = sel[0]
-		if isinstance(sel, str): 
+		if isinstance(sel, str):
 
 			if sel in self.expanded:
 
@@ -286,7 +286,7 @@ class	AddonsRemove(Screen):
 						list = self.setuplist
 						for item in list:
 							pluginfiles += item
-							pluginfiles += "\n" 
+							pluginfiles += "\n"
 							self.listplugininfo(pluginfiles)
 							self.list = []
 				else:
@@ -308,7 +308,7 @@ class	AddonsRemove(Screen):
 						list = self.setuplist
 						for item in list:
 							pluginfiles += item
-							pluginfiles += "\n" 
+							pluginfiles += "\n"
 							self.listplugininfo(pluginfiles)
 							self.list = []
 				else:
@@ -326,11 +326,10 @@ class	AddonsRemove(Screen):
 		for item in self.setuplist:
 			cmdList.append((IpkgComponent.CMD_REMOVE, { "package": PLUGIN_PREFIX + item }))
 		self.session.open(Ipkg_1, cmdList = cmdList)
-	
-		
+
 	def listplugininfo(self, pluginfiles):
 		try:
-			pluginfiles.split("/n")	
+			pluginfiles.split("/n")
 			self["status"].setText(pluginfiles)
 		except:
 			self["status"].setText("")
@@ -665,7 +664,7 @@ class Connection_Server(Screen):
 		self.data = html.splitlines()
 		list = []
 		for line in self.data:
-			ipkname = self.data[icount] 
+			ipkname = self.data[icount]
 			print("gotPage icount, ipk name =", icount, ipkname)
 			remname = ipkname
 			state = self.getstate(ipkname)

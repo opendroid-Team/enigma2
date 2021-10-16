@@ -102,7 +102,7 @@ class ManualPanel(Screen):
 		for i in self.entrylist:
 				res = [i]
 				res.append(MultiContentEntryText(pos=(110, 13), size=(700, 50), font=0, text=i[0]))
-				picture=LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, i[2]))
+				picture=LoadPixmap(resolveFilename(SCOPE_GUISKIN, i[2]))
 				res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 13), size=(100, 40), png=picture))
 				self.list.append(res)
 		self['list'].l.setList(self.list)

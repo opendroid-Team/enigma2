@@ -461,3 +461,28 @@ class ConfigListScreen:
 
 	def run(self):  # Allow ConfigList based screens to be processed from the Wizard.
 		self.keySave()
+
+	def dummyConfigActions(self, value):
+		self["configActions"].setEnabled(value)
+		self["navigationActions"].setEnabled(value)
+		self["menuConfigActions"].setEnabled(value)
+		self["charConfigActions"].setEnabled(value)
+		self["editConfigActions"].setEnabled(value)
+		self["eraseConfigActions"].setEnabled(value)
+
+	def dummyVKBActions(self, value):
+		self["virtualKeyBoardActions"].setEnabled(value)
+
+
+class DummyActions:
+	def setEnabled(self, enabled):
+		pass
+
+	def destroy(self):
+		pass
+
+	def execBegin(self):
+		pass
+
+	def execEnd(self):
+		pass

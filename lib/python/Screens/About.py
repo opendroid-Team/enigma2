@@ -174,7 +174,7 @@ class About(Screen):
 		AboutText += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
 
 		if path.exists('/proc/stb/info/chipset'):
-			if SystemInfo["HasHiSi"]:
+			if BoxInfo.getItem("HasHiSi"):
 				AboutText += _("Chipset:\tHiSilicon %s\n") % about.getChipSetString().upper()
 			elif about.getIsBroadcom():
 				AboutText += _("Chipset:\tBroadcom %s\n") % about.getChipSetString().upper()

@@ -384,6 +384,12 @@ def getRecordingFilename(basename, dirname=None):
 		path = "%s_%03d" % (filename, next)
 	return path
 
+def InitFallbackFiles():
+	resolveFilename(SCOPE_CONFIG, "userbouquet.favourites.tv")
+	resolveFilename(SCOPE_CONFIG, "bouquets.tv")
+	resolveFilename(SCOPE_CONFIG, "userbouquet.favourites.radio")
+	resolveFilename(SCOPE_CONFIG, "bouquets.radio")
+
 
 def copyFile(src, dst):
 	try:

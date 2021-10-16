@@ -110,7 +110,7 @@ def getButtonSetupKeys():
                 (_("Power"), "power", ""),
                 (_("Power long"), "power_long", ""),
                 (_("HDMIin"), "HDMIin", "Infobar/HDMIIn"),
-                (_("HDMIin") + " " + _("long"), "HDMIin_long", (SystemInfo["LcdLiveTV"] and "Infobar/ToggleLCDLiveTV") or ""),
+                (_("HDMIin") + " " + _("long"), "HDMIin_long", (BoxInfo.getItem("LcdLiveTV") and "Infobar/ToggleLCDLiveTV") or ""),
                 (_("Help"), "displayHelp", ""),
                 (_("Help long"), "displayHelp_long", ""),
                 (_("Context"), "contextMenu", "Infobar/showExtensionSelection"),
@@ -201,7 +201,7 @@ def getButtonSetupFunctions():
         ButtonSetupFunctions.append((_("Show subservice selection"), "Infobar/subserviceSelection", "InfoBar"))
         ButtonSetupFunctions.append((_("Letterbox zoom"), "Infobar/vmodeSelection", "InfoBar"))
         ButtonSetupFunctions.append((_("Aspect selection"), "Infobar/aspectSelection", "InfoBar"))
-        if SystemInfo["PIPAvailable"]:
+        if BoxInfo.getItem("PIPAvailable"):
                 ButtonSetupFunctions.append((_("Show PIP"), "Infobar/showPiP", "InfoBar"))
                 ButtonSetupFunctions.append((_("Swap PIP"), "Infobar/swapPiP", "InfoBar"))
                 ButtonSetupFunctions.append((_("Move PIP"), "Infobar/movePiP", "InfoBar"))
@@ -210,9 +210,9 @@ def getButtonSetupFunctions():
         if getHaveHDMIinHD() == 'True' or getHaveHDMIinFHD() == 'True':
                 ButtonSetupFunctions.append((_("Toggle HDMI-In full screen"), "Infobar/HDMIInFull", "InfoBar"))
                 ButtonSetupFunctions.append((_("Toggle HDMI-In PiP"), "Infobar/HDMIInPiP", "InfoBar"))
-        if SystemInfo["LcdLiveTV"]:
+        if BoxInfo.getItem("LcdLiveTV"):
                 ButtonSetupFunctions.append((_("Toggle LCD LiveTV"), "Infobar/ToggleLCDLiveTV", "InfoBar"))
-        if SystemInfo["canMultiBoot"]:
+        if BoxInfo.getItem("canMultiBoot"):
                 ButtonSetupFunctions.append((_("MultiBootSelector"), "Module/Screens.MultiBootSelector/MultiBootSelector", "InfoBar"))
         ButtonSetupFunctions.append((_("Do nothing"), "Void", "InfoBar"))
         ButtonSetupFunctions.append((_("Button setup"), "Module/Screens.ButtonSetup/ButtonSetup", "Setup"))
@@ -232,7 +232,7 @@ def getButtonSetupFunctions():
         ButtonSetupFunctions.append((_("Channel info"), "Module/Screens.ServiceInfo/ServiceInfo", "Setup"))
         ButtonSetupFunctions.append((_("Timers"), "Module/Screens.TimerEdit/TimerEditList", "Setup"))
         ButtonSetupFunctions.append((_("AutoTimer overview"), "Infobar/showAutoTimerList", "Setup"))
-        if SystemInfo["LCDSKINSetup"]:
+        if BoxInfo.getItem("LCDSKINSetup"):
                 ButtonSetupFunctions.append((_("LCD SkinSelector"), "Module/Screens.SkinSelector/LcdSkinSelector", "Setup"))
         ButtonSetupFunctions.append((_("Timer"), "Module/Screens.TimerEdit/TimerEditList", "Setup"))
         ButtonSetupFunctions.append((_("Open AutoTimer"), "Infobar/showAutoTimerList", "Setup"))
@@ -387,17 +387,15 @@ class ButtonSetup(Screen):
                 self.session.open(KeymapSel)
 
 class ButtonSetupSelect(Screen):
-        skin = '<screen name="ButtonSetupSelect" position="center,center" size="860,600" title="Quick button setup">\n\t\t\t<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />\n\t\t\t<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />\n\t\t\t<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />\n\t\t\t<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />\n\t\t\t<widget name="list" position="0,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t\t<widget name="choosen" position="430,45" size="430,550" scrollbarMode="showOnDemand" />\n\t\t</screen>'
 
         def __init__(self, session, key, args=None):
                 Screen.__init__(self, session)
                 self.skinName="ButtonSetupSelect"
                 self['description'] = Label(_('Select the desired function and click on "OK" to assign it. Use "CH+/-" to toggle between the lists. Select an assigned function and click on "OK" to de-assign it. Use "Next/Previous" to change the order of the assigned functions.'))
-                self.session = session
                 self.key = key
                 self.setTitle(_("button setup for") + ": " + key[0][0])
-                self["key_red"] = Label(_("Cancel"))
-                self["key_green"] = Label(_("Save"))
+                self["key_red"] = Button(_("Cancel"))
+                self["key_green"] = Button(_("Save"))
                 self.mode = "list"
                 self.ButtonSetupFunctions = getButtonSetupFunctions()
                 self.config = eval("config.misc.ButtonSetup." + key[0][1])

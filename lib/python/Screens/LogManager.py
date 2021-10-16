@@ -494,7 +494,6 @@ class LogManager(Screen):
 
 class LogManagerViewLog(Screen):
 	def __init__(self, session, selected):
-		self.session = session
 		Screen.__init__(self, session)
 		self.setTitle(selected)
 		self.logfile = config.crash.debug_path.value + selected
@@ -561,7 +560,6 @@ class LogManagerFb(Screen):
 			else:
 				logpath = "/"
 
-		self.session = session
 		Screen.__init__(self, session)
 
 		self["list"] = FileList(logpath, matchingPattern="^.*")

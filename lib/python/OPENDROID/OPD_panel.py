@@ -4,6 +4,7 @@ from Screens.PluginBrowser import *
 from Screens.Ipkg import Ipkg
 from Screens.HarddiskSetup import HarddiskSetup
 from Components.ProgressBar import ProgressBar
+from Screens.ParentalControlSetup import ProtectedScreen
 from Components.SelectionList import SelectionList
 from Screens.NetworkSetup import *
 from enigma import *
@@ -32,7 +33,7 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
 from Components.Button import Button
 from Components.ActionMap import ActionMap
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from OPENDROID.OscamSmartcard import *
@@ -72,7 +73,7 @@ def Check_Softcam():
 	return found
 
 def Check_SysSoftcam():
-	syscam="none"
+	syscam = "none"
 	if os.path.isfile('/etc/init.d/softcam'):
 		if (os.path.islink('/etc/init.d/softcam') and not os.readlink('/etc/init.d/softcam').lower().endswith('none')):
 			try:
@@ -97,7 +98,7 @@ def timerEvent():
 	pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
 	for p in pluginlist:
 		redSelection.append((p.name, _(p.name)))
-	if getBoxType() == "dm800":
+	if BoxInfo.getItem("model") == "dm800":
 		config.OPENDROID_redpanel.selection = ConfigSelection(redSelection, default='0')
 		config.OPENDROIDl_redpanel.selectionLong = ConfigSelection(redSelection, default='1')
 	else:
@@ -115,7 +116,8 @@ from OPENDROID.MountManager import *
 from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
-SystemInfo["SoftCam"] = Check_Softcam()
+from Plugins.SystemPlugins.SoftwareManager.BackupRestore import InitConfig as BackupRestore_InitConfig
+BoxInfo.setItem("SoftCam", Check_Softcam())
 
 if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):
 	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.usr")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.usr"):
@@ -232,11 +234,11 @@ from Screens.InfoBarGenerics import InfoBarPiP
 def InfoEntryComponent(file):
 	png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/" + file + ".png"))
 	if png == None:
-		png = LoadPixmap("/usr/lib/enigma2/python/Plugins/Extensions/Infopanel/icons/" + file + ".png")
+		png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/" + file + ".png")
 		if png == None:
 			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/default.png"))
 			if png == None:
-				png = LoadPixmap("/usr/lib/enigma2/python/Plugins/Extensions/Infopanel/icons/default.png")
+				png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/default.png")
 	res = (png)
 	return res
 
@@ -450,21 +452,21 @@ class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 		elif menu == "Password-Change":
 			self.session.open(PasswdScreen)
 		elif menu == "backup-settings":
-			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup = True)
+			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup=True)
 		elif menu == "restore-settings":
 			self.backuppath = getBackupPath()
 			self.backupfile = getBackupFilename()
 			self.fullbackupfilename = self.backuppath + "/" + self.backupfile
 			if os_path.exists(self.fullbackupfilename):
-				self.session.openWithCallback(self.startRestore, MessageBox, _("Are you sure you want to restore your STB backup?\nSTB will restart after the restore"), default = False)
+				self.session.openWithCallback(self.startRestore, MessageBox, _("Are you sure you want to restore your STB backup?\nSTB will restart after the restore"), default=False)
 			else:
-				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout = 10)
+				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout=10)
 		elif menu == "backup-files":
-			self.session.open(BackupSelection, title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
+			self.session.open(BackupSelection, title=_("Default files/folders to backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs_default, readOnly=True)
 		elif menu == "backup-files-additional":
-			self.session.open(BackupSelection, title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
+			self.session.open(BackupSelection, title=_("Additional files/folders to backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs, readOnly=False)
 		elif menu == "backup-files-excluded":
-			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
+			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude, readOnly=False)
 		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
@@ -691,7 +693,7 @@ class KeymapSel(ConfigListScreen, Screen):
 		return file[file.rfind('/') + 1:]
 
 	def changedFinished(self):
-		self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Keymap changed, you need to restart the GUI") + "\n" +_("Do you want to restart now?"), MessageBox.TYPE_YESNO)
+		self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Keymap changed, you need to restart the GUI") + "\n" + _("Do you want to restart now?"), MessageBox.TYPE_YESNO)
 		self.close()
 
 	def ExecuteRestart(self, result):
