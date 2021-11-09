@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 from __future__ import print_function
 from boxbranding import getImageVersion
 import os
@@ -34,7 +36,7 @@ from Components.Input import Input
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 from ServiceReference import ServiceReference
-from Tools.Directories import resolveFilename, SCOPE_GUISKIN, SCOPE_ACTIVE_SKIN, fileExists, pathExists, createDir, SCOPE_PLUGINS
+from Tools.Directories import resolveFilename, SCOPE_GUISKIN, SCOPE_ACTIVE_SKIN, fileExists, pathExists, createDir, SCOPE_PLUGINS, SCOPE_SKINS
 from Tools import Notifications
 from Tools.NumericalTextInput import NumericalTextInput
 from Components.Button import Button
@@ -97,9 +99,9 @@ def RSListEntry(download, state):
 		h1 = 38
 	res.append(MultiContentEntryText(pos=(x, y), size=(w, h), font=0, text=download))
 	if state == 0:
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(x1, y1), size=(w1,h1), png=LoadPixmap(cached=True, desktop=getDesktop(0), path=resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/buttons/button_green.png"))))
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(x1, y1), size=(w1,h1), png=LoadPixmap(cached=True, desktop=getDesktop(0), path=resolveFilename(SCOPE_SKINS, "skin_default/buttons/button_green.png"))))
 	else:
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(x1, y1), size=(w1,h1), png=LoadPixmap(cached=True, desktop=getDesktop(0), path=resolveFilename(SCOPE_SKIN_IMAGE, "skin_default/buttons/button_red.png"))))
+		res.append(MultiContentEntryPixmapAlphaTest(pos=(x1, y1), size=(w1,h1), png=LoadPixmap(cached=True, desktop=getDesktop(0), path=resolveFilename(SCOPE_SKINS, "skin_default/buttons/button_red.png"))))
 
 	print("res =", res)
 	return res
@@ -139,7 +141,7 @@ class AddonsUtility(Screen):
 	def Remove(self):
 		self.session.open(AddonsRemove)
 	def RestartE2(self):
-		msg="Do you want Restart GUI now ?" 
+		msg="Do you want Restart GUI now ?"
 		self.session.openWithCallback(self.Finish, MessageBox, msg, MessageBox.TYPE_YESNO)
 	def Finish(self, answer):
 		if answer is True:
@@ -151,30 +153,30 @@ class AddonsUtility(Screen):
 		print(selection)
 		if (selection == "Plg"):
 			addons = 'Plugins'
-			self.title = ' OPENDROID Downloader Plugins'
+			self.title = 'OPENDROID Downloader Plugins'
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Pcs"):
 			addons = 'Picons'
-			self.title = 'Picons'
+			self.title = 'OPENDROID Downloader Picons'
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Stg"):
 			addons = 'Settings'
-			self.title = ' OPENDROID Downloader Settings '
+			self.title = 'OPENDROID Downloader Settings '
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Sks"):
 			addons = 'Skins'
-			self.title = ' OPENDROID Downloader Skins '
+			self.title = 'OPENDROID Downloader Skins '
 			self.session.open(Connection_Server, addons, self.title)
 		elif (selection == "Logo"):
 			addons = 'BootLogo'
-			self.title = ' OPENDROID Downloader BootLogo '
+			self.title = 'OPENDROID Downloader BootLogo '
 			self.session.open(Connection_Server, addons, self.title)
 		else:
 			self.messpopup("Selection error")
 
 	def messpopup(self,msg):
 		self.session.open(MessageBox, msg , MessageBox.TYPE_INFO)
-	
+
 	def updateList(self):
 		for i in self.entrylist:
 				res = [i]
@@ -603,8 +605,6 @@ class	AddonsRemove(Screen):
 #Download Addons
 ###################
 class Connection_Server(Screen):
-
-
 	skin = """
 		<screen position="center,center" size="800,500" title=" " >
 			<widget name="text" position="100,20" size="200,30" font="Regular;20" halign="left" />
@@ -622,10 +622,8 @@ class Connection_Server(Screen):
 		</screen>"""
 
 	def __init__(self, session, addons, title):
-
 		self.skin = Connection_Server.skin
 		Screen.__init__(self, session)
-
 		self.list = []
 		self["text"] = Label()
 		self["list"] = List(self.list)
@@ -637,7 +635,7 @@ class Connection_Server(Screen):
 			"ok": self.okClicked,
 			"back": self.close,
 			"red": self.close,
-			"green": self.okClicked,
+			"green": self.okClicked
 		}, -1)
 		self["key_red"] = Button(_("Cancel"))
 		self["key_green"] = Button(_("Select"))
@@ -651,13 +649,11 @@ class Connection_Server(Screen):
 	def openTest(self):
 		self["info"].setText("Downloading list...")
 		testno = 1
-
-		xurl = 'https://opendroid.org/Addons/'+ self.addon + '/list'
+		xurl = 'https://opendroid.org/Addons/' + self.addon + '/list'
 		print("xurl =", xurl)
 		getPage(six.ensure_binary(xurl)).addCallback(self.gotPage).addErrback(self.getfeedError)
 
 	def gotPage(self, html):
-		print("html = ", html)
 		html = six.ensure_str(html)
 		self.data = []
 		icount = 0
@@ -699,10 +695,10 @@ class Connection_Server(Screen):
 
 	def keyLeft(self):
 		self["text"].left()
-	
+
 	def keyRight(self):
 		self["text"].right()
-	
+
 	def keyNumberGlobal(self, number):
 		print("pressed", number)
 		self["text"].number(number)
@@ -738,7 +734,7 @@ class Installer_Addons(Screen):
 			"green": self.okClicked,
 			"yellow": self.install,
 			"cancel": self.cancel,
-			"ok": self.close,
+			"ok": self.close
 		}, -2)
 		print("Installer_Addons : ipk =", ipk)
 		self.icount = 0
@@ -750,7 +746,7 @@ class Installer_Addons(Screen):
 		self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
 		self.onLayoutFinish.append(self.openTest)
 	def openTest(self):
-		if not os.path.exists("/etc/ipkinst"): 
+		if not os.path.exists("/etc/ipkinst"):
 			cmd = "mkdir -p /etc/ipkinst"
 			os.system(cmd)
 		xurl1 = 'https://opendroid.org/Addons/' + self.addon + '/'
@@ -762,7 +758,7 @@ class Installer_Addons(Screen):
 		self.cmd1 = 'wget -O "' + xdest + '" "' + xurl2 + '"'
 		self.cmd2 = "opkg install --force-overwrite /tmp/" + self.ipk
 		self.cmd3 = "touch /etc/ipkinst/" + self.ipk + " &"
-		self.okClicked()    
+		self.okClicked()
 	def okClicked(self):
 		plug = self.ipk
 		title = _("Installing addon %s" %(plug))
@@ -772,14 +768,13 @@ class Installer_Addons(Screen):
 		currentjob = None
 		for job in JobManager.getPendingJobs():
 			currentjob = job
-
 		if currentjob is not None:
 			self.session.open(JobView, currentjob)
- 
+
 	def install(self):
 		cmd = "opkg install --force-overwrite /tmp/" + self.ipk + ">/tmp/ipk.log"
 		print("cmd =", cmd)
-		title = _("Installing addon %s" %(plug))
+		title = _("Installing addon %s" % (plug))
 		self.session.open(Console,_(title),[cmd])
 		self.endinstall()
 
@@ -788,7 +783,7 @@ class Installer_Addons(Screen):
 		if os.path.isfile("/tmp/ipk.log")is not True :
 			cmd = "touch /tmp/ipk.log"
 			os.system(cmd)
-		else:	
+		else:
 			myfile = file(r"/tmp/ipk.log")
 			icount = 0
 			data = []
@@ -803,25 +798,24 @@ class Installer_Addons(Screen):
 			self.endinstall()
 
 	def endinstall(self):
-		path="/tmp"
+		path = "/tmp"
 		tmplist = []
-		ipkname = 0  
-		tmplist=os.listdir(path)
+		ipkname = 0
+		tmplist = os.listdir(path)
 		print("files in /tmp", tmplist)
 		icount = 0
 		for name in tmplist:
 			nipk = tmplist[icount]
-			if (nipk[-3:]=="ipk"):
+			if (nipk[-3:] == "ipk"):
 				ipkname = nipk
-			icount = icount+1       
-
+			icount = icount+1
 		if ipkname != 0:
 			print("endinstall ipk name =", ipkname)
 			ipos = ipkname.find("_")
 			remname = ipkname[:ipos]
 			print("endinstall remname =", remname)
-			f=open('/etc/ipklist_installed', 'a')
-			f1= remname + "\n"
+			f = open('/etc/ipklist_installed', 'a')
+			f1 = remname + "\n"
 			f.write(f1)
 			cmd = "rm /tmp/*.ipk"
 			os.system(cmd)
@@ -831,27 +825,26 @@ class Installer_Addons(Screen):
 
 	def keyLeft(self):
 		self["text"].left()
-	
+
 	def keyRight(self):
 		self["text"].right()
 
 	def keyNumberGlobal(self, number):
 		print("pressed", number)
-		self["text"].number(number)        
- 
+		self["text"].number(number)
+
 class downloadJob(Job):
 	def __init__(self, toolbox, cmdline, filename, filetitle):
 		Job.__init__(self, _("Downloading"))
 		self.toolbox = toolbox
 		self.retrycount = 0
-		
 		downloadTask(self, cmdline, filename, filetitle)
 
 	def retry(self):
 		assert self.status == self.FAILED
 		self.retrycount += 1
 		self.restart()
-	
+
 class downloadTask(Task):
 	ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = range(5)
 	def __init__(self, job, cmdline, filename, filetitle):
@@ -861,7 +854,7 @@ class downloadTask(Task):
 		self.toolbox = job.toolbox
 		self.error = None
 		self.lasterrormsg = None
-		
+
 	def processOutput(self, data):
 		try:
 			data = six.ensure_str(data)
@@ -877,12 +870,12 @@ class downloadTask(Task):
 			else:
 				Task.processOutput(self, data)
 		except (IOError, OSError) as errormsg:
-			print ("Error processOutput: " + str(errormsg))
+			print("Error processOutput: " + str(errormsg))
 			Task.processOutput(self, data)
 
 	def processOutputLine(self, line):
 			self.error = self.ERROR_SERVER
-			
+
 	def afterRun(self):
 		pass
 
