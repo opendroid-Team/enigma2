@@ -10,7 +10,7 @@ from ServiceReference import ServiceReference
 import socket
 
 
-class ClientsStreaming(Converter, Poll):
+class ClientsStreaming(Converter, Poll, object):
 	UNKNOWN = -1
 	REF = 0
 	IP = 1
@@ -79,11 +79,11 @@ class ClientsStreaming(Converter, Poll):
 			ips.append((ip))
 
 			if int(x[2]) == 0:
-				strtype = "S"
-				encoder = _('No')
+				strtype = "Streaming: "
+				encoder = _('NO')
 			else:
-				strtype = "T"
-				encoder = _('Yes')
+				strtype = "Transcoding: "
+				encoder = _('YES')
 
 			encoders.append((encoder))
 
@@ -102,7 +102,6 @@ class ClientsStreaming(Converter, Poll):
 			clients.append((ip, service_name, encoder))
 
 			extrainfo += ("%-8s\t%s\t%s") % (ip, encoder, service_name) + "\n"
-
 		if self.type == self.REF:
 			return ' '.join(refs)
 		elif self.type == self.IP:
@@ -122,7 +121,7 @@ class ClientsStreaming(Converter, Poll):
 		elif self.type == self.INFO or self.type == self.INFO_RESOLVE or self.type == self.INFO_RESOLVE_SHORT:
 			return info
 		else:
-			return "(unknown)"
+			return _("(unknown)")
 
 		return ""
 
@@ -132,7 +131,7 @@ class ClientsStreaming(Converter, Poll):
 	def getBoolean(self):
 		if self.streamServer is None:
 			return False
-		return self.streamServer.getConnectedClients() and True or False
+		return (self.streamServer.getConnectedClients() or StreamServiceList) and True or False
 
 	boolean = property(getBoolean)
 
