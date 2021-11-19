@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2020-05-07 01:08+0200\n"
+"PO-Revision-Date: 2021-11-19 18:46+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -13,7 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
@@ -327,6 +327,10 @@ msgstr "Premete VERDE per rimuovere"
 
 msgid "Press GREEN to remove all"
 msgstr "Premere VERDE per rimuovere tutti"
+
+#, fuzzy
+msgid "Press exit to close"
+msgstr "Premere Esci per chiudere"
 
 #: plugin.py:204 plugin.py:237
 msgid "INFORMATION: make your selection and press GREEN All config files are backed up automatically"
@@ -1037,6 +1041,13 @@ msgid ""
 msgstr ""
 "\n"
 "Premere OK sul telecomando per continuare."
+
+msgid ""
+"\n"
+"Press ok for multiboot selection"
+msgstr ""
+"\n"
+"Premere ok per selezionare multiboot"
 
 msgid ""
 "\n"
