@@ -7,7 +7,7 @@ from Components.ActionMap import ActionMap
 from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
 from Components.Task import Task, Job, job_manager, Condition
 from Components.Sources.StaticText import StaticText
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import SystemInfo
 from Components.ProgressBar import ProgressBar
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
@@ -135,7 +135,7 @@ class FlashOnline(Screen):
 						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s/%s' % (feedurl,version,brand,box,image)
 
 			for media in ['/media/%s' % x for x in os.listdir('/media')] + (['/media/net/%s' % x for x in os.listdir('/media/net')] if os.path.isdir('/media/net') else []):
-				if not(BoxInfo.getItem('HasMMC') and "/mmc" in media) and os.path.isdir(media):
+				if not(SystemInfo['HasMMC'] and "/mmc" in media) and os.path.isdir(media):
 					getImages(media, [os.path.join(media, x) for x in os.listdir(media) if os.path.splitext(x)[1] == ".zip" and box in x])
 					if "images" in os.listdir(media):
 						media = os.path.join(media, "images")
@@ -265,7 +265,7 @@ class FlashImage(Screen):
 
 	def confirmation(self):
 		self.message = _("Do you want to flash image\n%s") % self.imagename
-		if BoxInfo.getItem("canMultiBoot"):
+		if SystemInfo["canMultiBoot"]:
 			self.getImageList = GetImagelist(self.getImagelistCallback)
 		else:
 			self.checkMedia(True)
@@ -291,7 +291,7 @@ class FlashImage(Screen):
 	def checkMedia(self, retval):
 		if retval:
 			if not 'backup' in str(retval):
-				if BoxInfo.getItem("canMultiBoot"):
+				if SystemInfo["canMultiBoot"]:
 					self.multibootslot = retval[0]
 				self.session.openWithCallback(self.backupQuestionCB, MessageBox, _('Backup Settings') + '?', default=True, timeout=10)
 				return
@@ -548,16 +548,17 @@ class FlashImage(Screen):
 		imagefiles = findimagefiles(self.unzippedimage)
 		if imagefiles:
 			self.ROOTFSSUBDIR = "none"
-			if BoxInfo.getItem("canMultiBoot"):
-				self.MTDKERNEL = BoxInfo.getItem("canMultiBoot")[self.multibootslot]["kernel"].split('/')[2]
-				self.MTDROOTFS = BoxInfo.getItem("canMultiBoot")[self.multibootslot]["device"].split('/')[2]
-				if BoxInfo.getItem("HasRootSubdir"):
-					self.ROOTFSSUBDIR = BoxInfo.getItem("canMultiBoot")[self.multibootslot]['rootsubdir']
+			self.getImageList = self.saveImageList
+			if SystemInfo["canMultiBoot"]:
+				self.MTDKERNEL = SystemInfo["canMultiBoot"][self.multibootslot]["kernel"].split('/')[2]
+				self.MTDROOTFS = SystemInfo["canMultiBoot"][self.multibootslot]["device"].split('/')[2]
+				if SystemInfo["HasRootSubdir"]:
+					self.ROOTFSSUBDIR = SystemInfo["canMultiBoot"][self.multibootslot]['rootsubdir']
 			else:
 				self.MTDKERNEL = getMachineMtdKernel()
 				self.MTDROOTFS = getMachineMtdRoot()
 			CMD = "/usr/bin/ofgwrite -r -k '%s'" % imagefiles	#normal non multiboot receiver
-			if BoxInfo.getItem("canMultiBoot"):
+			if SystemInfo["canMultiBoot"]:
 				if (self.ROOTFSSUBDIR) is None:	# receiver with SD card multiboot
 					CMD = "/usr/bin/ofgwrite -r%s -k%s -m0 '%s'" % (self.MTDROOTFS, self.MTDKERNEL, imagefiles)
 				else:
@@ -588,7 +589,7 @@ class FlashImage(Screen):
 	def ok(self):
 		fbClass.getInstance().unlock()
 		if self["header"].text == _("Flashing image successful"):
-			if BoxInfo.getItem("canMultiBoot"):
+			if SystemInfo["canMultiBoot"]:
 				self.session.openWithCallback(self.abort, MultiBootSelector)
 			else:
 				self.close()
