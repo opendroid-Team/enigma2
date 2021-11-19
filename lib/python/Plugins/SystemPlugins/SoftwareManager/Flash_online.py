@@ -15,6 +15,7 @@ from Screens.Screen import Screen
 from Components.Console import Console
 from Tools.BoundFunction import boundFunction
 from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, getBoxType, GetBoxName
+from Screens.MultiBootSelector import MultiBootSelector
 from enigma import eTimer, fbClass
 import os, json, shutil, math, time, zipfile, shutil
 from six.moves.urllib.request import urlopen
