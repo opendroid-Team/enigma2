@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-11-19 18:46+0100\n"
+"PO-Revision-Date: 2021-11-21 13:50+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -6340,6 +6340,9 @@ msgstr "convertire in AC3"
 
 msgid "force AC3plus"
 msgstr "forza AC3 plus"
+
+msgid "If muted, hide mute icon or mute information after few seconds."
+msgstr "Se l'audio è disattivato, nascondi l'icona dell'audio o le informazioni sull'audio dopo pochi secondi."
 
 msgid "convert to DTS"
 msgstr "convertire in DTS"
@@ -15076,6 +15079,9 @@ msgstr "vuoto"
 msgid "enable"
 msgstr "abilitare"
 
+msgid "Enable BT Audio"
+msgstr "Abilita audio BT"
+
 msgid "enable bouquet edit"
 msgstr "abilitare edit bouquet"
 
@@ -18993,6 +18999,7 @@ msgstr "Seleziona audio"
 msgid "Use the cursor keys to select an installed image and then Start button."
 msgstr "Utilizzare i tasti cursore per selezionare un'immagine installata, quindi il pulsante Start."
 
+#, fuzzy
 msgid "slot%s - %s - %s as USB Recovery"
 msgstr "Posizione%s - %s - %s come recupero USB"
 
