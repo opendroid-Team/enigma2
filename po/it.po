@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-11-21 13:50+0100\n"
+"PO-Revision-Date: 2021-11-23 13:50+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -3138,7 +3138,7 @@ msgid "Backup Mode"
 msgstr "Modalità Backup"
 
 msgid "Backup Settings"
-msgstr "Backup Settings"
+msgstr "Impostazioni di backup"
 
 msgid "Backup completed."
 msgstr "Backup terminato."
@@ -19165,3 +19165,72 @@ msgstr "Impostazione meteo .... Premere il pulsante Menu per accedere al plug-in
 
 msgid "Help, Skin settings(Weather, Own user logo )"
 msgstr "Guida, Impostazioni skin (Meteo, Logo dell'utente)"
+
+msgid "Backup, flash and restore settings and selected plugins (ask user)"
+msgstr "Backup, flash, ripristino impostazioni e plugin (selezione utente)"
+
+msgid ""
+"The default backup selection cannot be changed.\n"
+"Please use the 'additional' and 'excluded' backup selection."
+msgstr ""
+"La selezione predefinita per il backup non può essere cambiata.\n"
+"Per favore usa la scelta dei file 'aggiuntivi' ed 'esclusi'."
+
+msgid "Do you want to delete the old settings in /etc/enigma2 first?"
+msgstr "Vuoi eliminare prima le vecchie impostazioni in /etc/enigma2?"
+
+msgid "Cannot find images - please try later"
+msgstr "Impossibile trovare le immagini. Riprova più tardi"
+
+msgid "Cannot delete downloaded image"
+msgstr "Impossibile eliminare l'immagine scaricata"
+
+msgid "Delete image"
+msgstr "Elimina immagine"
+
+msgid "Collapse"
+msgstr "Crollo"
+
+msgid "Expand"
+msgstr "Espandere"
+
+msgid "Save settings and EPG data"
+msgstr "Salva impostazioni e dati EPG"
+
+msgid ""
+"Do you want to flash image\n"
+"%s"
+msgstr ""
+"Vuoi lampeggiare l'immagine?\n"
+"%s"
+
+msgid "No, do not flash an image"
+msgstr "No, non lampeggiare un'immagine"
+
+msgid ""
+"Unable to create the required directories on the media (e.g. USB stick or "
+"Harddisk) - Please verify media and try again!"
+msgstr ""
+"Impossibile creare le directory richieste sul supporto (ad es. chiavetta USB "
+"o disco rigido) - Verificare il supporto e riprovare!"
+
+msgid ""
+"Please select what to do after flashing the image:\n"
+"(In addition, if it exists, a local script will be executed as well at /"
+"media/hdd/images/config/myrestore.sh)"
+msgstr ""
+"Si prega di selezionare cosa fare dopo aver lampeggiato l'immagine:\n"
+"(Inoltre, se esiste, verrà eseguito anche uno script locale su /media/hdd/"
+"images/config/myrestore.sh)"
+
+msgid "Upgrade (Backup, Flash & Restore All)"
+msgstr "Aggiorna (Backup, Flash e Ripristina tutto)"
+
+msgid "Clean (Just flash and start clean)"
+msgstr "Pulito (basta lampeggiare e iniziare a pulire)"
+
+msgid "Flash Backup (Just flash and start clean)"
+msgstr "Flash Backup (basta eseguire il flash e iniziare a pulire)"
+
+msgid "Backup, flash and restore settings and no plugins"
+msgstr "Backup, flash e ripristino delle impostazioni e nessun plugin"
