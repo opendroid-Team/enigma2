@@ -6,11 +6,11 @@ import unicodedata
 from Components.Renderer.Renderer import Renderer
 from enigma import ePixmap, ePicLoad
 from Tools.Alternatives import GetWithAlternative
-from Tools.Directories import pathExists, SCOPE_ACTIVE_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_GUISKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
 from boxbranding import getDisplayType
 from ServiceReference import ServiceReference
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 import six
 
 searchPaths = []
@@ -29,7 +29,7 @@ def initLcdPiconPaths():
 def onMountpointAdded(mountpoint):
 	global searchPaths
 	try:
-		if getDisplayType() in ('bwlcd255', 'bwlcd140') and not SystemInfo["grautec"] or os.path.isdir(mountpoint + 'piconlcd'):
+		if getDisplayType() in ('bwlcd255', 'bwlcd140') and not BoxInfo.getItem("grautec") or os.path.isdir(mountpoint + 'piconlcd'):
 			path = os.path.join(mountpoint, 'piconlcd') + '/'
 		else:
 			path = os.path.join(mountpoint, 'picon') + '/'
@@ -45,7 +45,7 @@ def onMountpointAdded(mountpoint):
 
 def onMountpointRemoved(mountpoint):
 	global searchPaths
-	if getDisplayType() in ('bwlcd255', 'bwlcd140') and not SystemInfo["grautec"] or os.path.isdir(mountpoint + 'piconlcd'):
+	if getDisplayType() in ('bwlcd255', 'bwlcd140') and not BoxInfo.getItem("grautec") or os.path.isdir(mountpoint + 'piconlcd'):
 		path = os.path.join(mountpoint, 'piconlcd') + '/'
 	else:
 		path = os.path.join(mountpoint, 'picon') + '/'
@@ -124,23 +124,23 @@ class LcdPicon(Renderer):
 		self.piconsize = (0, 0)
 		self.pngname = ""
 		self.lastPath = None
-		if getDisplayType() in ('bwlcd255', 'bwlcd140') and not SystemInfo["grautec"]:
+		if getDisplayType() in ('bwlcd255', 'bwlcd140') and not BoxInfo.getItem("grautec"):
 			pngname = findLcdPicon("lcd_picon_default")
 		else:
 			pngname = findLcdPicon("picon_default")
 		self.defaultpngname = None
 		if not pngname:
-			if getDisplayType() in ('bwlcd255', 'bwlcd140') and not SystemInfo["grautec"]:
-				tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "lcd_picon_default.png")
+			if getDisplayType() in ('bwlcd255', 'bwlcd140') and not BoxInfo.getItem("grautec"):
+				tmp = resolveFilename(SCOPE_GUISKIN, "lcd_picon_default.png")
 			else:
-				tmp = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
+				tmp = resolveFilename(SCOPE_GUISKIN, "picon_default.png")
 			if pathExists(tmp):
 				pngname = tmp
 			else:
-				if getDisplayType() in ('bwlcd255', 'bwlcd140') and not SystemInfo["grautec"]:
-					pngname = resolveFilename(SCOPE_ACTIVE_SKIN, "lcd_picon_default.png")
+				if getDisplayType() in ('bwlcd255', 'bwlcd140') and not BoxInfo.getItem("grautec"):
+					pngname = resolveFilename(SCOPE_GUISKIN, "lcd_picon_default.png")
 				else:
-					pngname = resolveFilename(SCOPE_ACTIVE_SKIN, "picon_default.png")
+					pngname = resolveFilename(SCOPE_GUISKIN, "picon_default.png")
 		if os.path.getsize(pngname):
 			self.defaultpngname = pngname
 

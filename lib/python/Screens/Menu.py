@@ -6,11 +6,11 @@ from Components.Sources.StaticText import StaticText
 from Components.config import configfile
 from Components.PluginComponent import plugins
 from Components.config import config, ConfigDictionarySet, NoSave
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Components.Label import Label
 from Tools.BoundFunction import boundFunction
 from Plugins.Plugin import PluginDescriptor
-from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_CURRENT_SKIN
+from Tools.Directories import resolveFilename, SCOPE_SKINS, SCOPE_GUISKIN
 from enigma import eTimer
 from Components.Pixmap import Pixmap, MovingPixmap
 from Components.Button import Button
@@ -26,11 +26,14 @@ from Screens.Setup import Setup, getSetupTitle, getSetupTitleLevel
 mainmenu = _("Main menu")
 lastMenuID = None
 
+nomainmenupath = False if os.path.exists(resolveFilename(SCOPE_GUISKIN, "mainmenu")) else True
 
 def MenuEntryPixmap(entryID, png_cache, lastMenuID):
+	if nomainmenupath:
+		return None
 	png = png_cache.get(entryID, None)
 	if png is None:
-		pngPath = resolveFilename(SCOPE_CURRENT_SKIN, 'mainmenu/' + entryID + '.png')
+		pngPath = resolveFilename(SCOPE_GUISKIN, 'mainmenu/' + entryID + '.png')
 		pos = config.skin.primary_skin.value.rfind('/')
 		if pos > -1:
 			current_skin = config.skin.primary_skin.value[:pos + 1]
@@ -45,7 +48,7 @@ def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	if png is None:
 		png = png_cache.get('missing', None)
 		if png is None:
-			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, 'mainmenu/missing.png'), cached=True)
+			png = LoadPixmap(resolveFilename(SCOPE_GUISKIN, 'mainmenu/missing.png'), cached=True)
 			png_cache['missing'] = png
 	return png
 
@@ -93,7 +96,7 @@ def MenuEntryName(name):
 
 
 # read the menu
-file = open(resolveFilename(SCOPE_SKIN, 'menu.xml'), 'r')
+file = open(resolveFilename(SCOPE_SKINS, 'menu.xml'), 'r')
 mdom = xml.etree.cElementTree.parse(file)
 file.close()
 
@@ -192,9 +195,9 @@ class Menu(Screen, ProtectedScreen):
 		requires = node.get("requires")
 		if requires:
 			if requires[0] == '!':
-				if SystemInfo.get(requires[1:], False):
+				if BoxInfo.getItem(requires[1:], False):
 					return
-			elif not SystemInfo.get(requires, False):
+			elif not BoxInfo.getItem(requires, False):
 				return
 		MenuTitle = _(six.ensure_str(node.get("text", "??")))
 		entryID = node.get("entryID", "undefined")
@@ -224,9 +227,9 @@ class Menu(Screen, ProtectedScreen):
 		requires = node.get("requires")
 		if requires:
 			if requires[0] == '!':
-				if SystemInfo.get(requires[1:], False):
+				if BoxInfo.getItem(requires[1:], False):
 					return
-			elif not SystemInfo.get(requires, False):
+			elif not BoxInfo.getItem(requires, False):
 				return
 		configCondition = node.get("configcondition")
 		if configCondition and not eval(configCondition + ".value"):
@@ -527,17 +530,6 @@ class Menu(Screen, ProtectedScreen):
 		self.session.open(IconMain, self.list, self.menu_title)
 		self.close()
 
-	def isProtected(self):
-		if config.ParentalControl.setuppinactive.value:
-			if config.ParentalControl.config_sections.main_menu.value and self.menuID == "mainmenu":
-				return True
-			elif config.ParentalControl.config_sections.configuration.value and self.menuID == "setup":
-				return True
-			elif config.ParentalControl.config_sections.timer_menu.value and self.menuID == "timermenu":
-				return True
-			elif config.ParentalControl.config_sections.standby_menu.value and self.menuID == "shutdown":
-				return True
-
 	def keyNumberGlobal(self, number):
 		self.number = self.number * 10 + number
 		if self.number and self.number <= len(self["menu"].list):
@@ -569,7 +561,7 @@ class Menu(Screen, ProtectedScreen):
 
 	def isProtected(self):
 		if config.ParentalControl.setuppinactive.value:
-			if config.ParentalControl.config_sections.main_menu.value:
+			if config.ParentalControl.config_sections.main_menu.value and not(hasattr(self.session, 'infobar') and self.session.infobar is None):
 				return self.menuID == "mainmenu"
 			elif config.ParentalControl.config_sections.configuration.value and self.menuID == "setup":
 				return True
@@ -879,6 +871,7 @@ class AnimMain(Screen):
 		if selection is not None:
 			selection[1]()
 
+
 class IconMain(Screen):
 
 	def __init__(self, session, tlist, menuTitle):
@@ -1115,6 +1108,7 @@ class IconMain(Screen):
 		selection = self.tlist[idx]
 		if selection is not None:
 			selection[1]()
+
 
 class MainMenu(Menu):
 	#add file load functions for the xml-file

@@ -12,15 +12,15 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.Boolean import Boolean
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigSubList, getConfigListEntry, KEY_LEFT, KEY_RIGHT, KEY_0, ConfigNothing, ConfigPIN, ConfigText, ConfigYesNo, NoSave
 from Components.ConfigList import ConfigList
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Tools.Directories import fileExists
 from os import path as os_path, remove, unlink, rename, chmod, access, X_OK
 from enigma import eTimer, eDVBCI_UI, eDVBCIInterfaces
 from Tools.BoundFunction import boundFunction
-from boxbranding import getBrandOEM, getBoxType
+from boxbranding import getBrandOEM
 import time
 
-if getBoxType() in ('zgemmah9combo',):
+if BoxInfo.getItem("model") in ('zgemmah9combo',):
 	MAX_NUM_CI = 1
 else:
 	MAX_NUM_CI = 4
@@ -57,14 +57,14 @@ def InitCiConfig():
 		config.ci[slot].use_static_pin = ConfigYesNo(default=True)
 		config.ci[slot].static_pin = ConfigPIN(default=0)
 		config.ci[slot].show_ci_messages = ConfigYesNo(default=True)
-		if SystemInfo["CommonInterfaceSupportsHighBitrates"]:
+		if BoxInfo.getItem("CommonInterfaceSupportsHighBitrates"):
 			if getBrandOEM() in ('dags', 'blackbox'):
 				config.ci[slot].canHandleHighBitrates = ConfigYesNo(default=True)
 			else:
 				config.ci[slot].canHandleHighBitrates = ConfigYesNo(default=False)
 			config.ci[slot].canHandleHighBitrates.slotid = slot
 			config.ci[slot].canHandleHighBitrates.addNotifier(setCIBitrate)
-		if SystemInfo["RelevantPidsRoutingSupport"]:
+		if BoxInfo.getItem("RelevantPidsRoutingSupport"):
 			global relevantPidsRoutingChoices
 			if not relevantPidsRoutingChoices:
 				relevantPidsRoutingChoices = [("no", _("No")), ("yes", _("Yes"))]
@@ -82,11 +82,11 @@ def InitCiConfig():
 			config.ci[slot].relevantPidsRouting = ConfigSelection(choices=relevantPidsRoutingChoices, default=default)
 			config.ci[slot].relevantPidsRouting.slotid = slot
 			config.ci[slot].relevantPidsRouting.addNotifier(setRelevantPidsRouting)
-	if SystemInfo["CommonInterfaceCIDelay"]:
+	if BoxInfo.getItem("CommonInterfaceCIDelay"):
 		config.cimisc.dvbCiDelay = ConfigSelection(default="256", choices=[("16", _("16")), ("32", _("32")), ("64", _("64")), ("128", _("128")), ("256", _("256"))])
 		config.cimisc.dvbCiDelay.addNotifier(setdvbCiDelay)
 	if getBrandOEM() in ('entwopia', 'tripledot', 'dreambox'):
-		if SystemInfo["HaveCISSL"]:
+		if BoxInfo.getItem("HaveCISSL"):
 			config.cimisc.civersion = ConfigSelection(default="ciplus1", choices=[("auto", _("Auto")), ("ciplus1", _("CI Plus 1.2")), ("ciplus2", _("CI Plus 1.3")), ("legacy", _("CI Legacy"))])
 		else:
 			config.cimisc.civersion = ConfigSelection(default="legacy", choices=[("legacy", _("CI Legacy"))])
@@ -98,7 +98,7 @@ class CISetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = ["Setup"]
-		self.setup_title = _("CI Basic settings")
+		self.setTitle(_("CI Basic settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -122,10 +122,6 @@ class CISetup(Screen, ConfigListScreen):
 		self["description"] = Label("")
 
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def createSetup(self):
 		level = config.usage.setup_level.index
@@ -133,9 +129,9 @@ class CISetup(Screen, ConfigListScreen):
 		self.list = []
 
 		if level >= 1:
-			if SystemInfo["CommonInterfaceCIDelay"]:
+			if BoxInfo.getItem("CommonInterfaceCIDelay"):
 				self.list.append(getConfigListEntry(_("DVB CI Delay"), config.cimisc.dvbCiDelay, _("Choose dvb wait delay for ci response.")))
-			if SystemInfo["HaveCISSL"]:
+			if BoxInfo.getItem("HaveCISSL"):
 				self.list.append(getConfigListEntry(_("CI Operation Mode"), config.cimisc.civersion, _("Choose the CI protocol operation mode for standard ci or ciplus.")))
 			else:
 				self.list.append(getConfigListEntry(_("CI Operation Mode"), config.cimisc.civersion, _("Your Hardware can detect ci mode self or work only in legacy mode.")))
@@ -233,10 +229,10 @@ class MMIDialog(Screen):
 			pinlength = entry[1]
 			if entry[3] == 1:
 				# masked pins:
-				x = ConfigPIN(0, len=pinlength, censor="*")
+				x = ConfigPIN(0, pinlength=pinlength, censor="*")
 			else:
 				# unmasked pins:
-				x = ConfigPIN(0, len=pinlength)
+				x = ConfigPIN(0, pinlength=pinlength)
 			self["subtitle"].setText(entry[2])
 			list.append(getConfigListEntry("", x))
 			self["bottom"].setText(_("please press OK when ready"))
@@ -420,28 +416,28 @@ class CiMessageHandler:
 		self.dlgs = {}
 		self.auto_close = False
 		eDVBCI_UI.getInstance().ciStateChanged.get().append(self.ciStateChanged)
-		if getBoxType() in ('vuzero',):
-			SystemInfo["CommonInterface"] = False
+		if BoxInfo.getItem("model") in ('vuzero',):
+			BoxInfo.setItem("CommonInterface", False)
 		else:
-			SystemInfo["CommonInterface"] = eDVBCIInterfaces.getInstance().getNumOfSlots() > 0
+			BoxInfo.setItem("CommonInterface", eDVBCIInterfaces.getInstance().getNumOfSlots() > 0)
 		try:
 			file = open("/proc/stb/tsmux/ci0_tsclk", "r")
 			file.close()
-			SystemInfo["CommonInterfaceSupportsHighBitrates"] = True
+			BoxInfo.setItem("CommonInterfaceSupportsHighBitrates", True)
 		except:
-			SystemInfo["CommonInterfaceSupportsHighBitrates"] = False
+			BoxInfo.setItem("CommonInterfaceSupportsHighBitrates", False)
 		try:
 			file = open("/proc/stb/tsmux/rmx_delay", "r")
 			file.close()
-			SystemInfo["CommonInterfaceCIDelay"] = True
+			BoxInfo.setItem("CommonInterfaceCIDelay", True)
 		except:
-			SystemInfo["CommonInterfaceCIDelay"] = False
+			BoxInfo.setItem("CommonInterfaceCIDelay", False)
 		try:
 			file = open("/proc/stb/tsmux/ci0_relevant_pids_routing", "r")
 			file.close()
-			SystemInfo["RelevantPidsRoutingSupport"] = True
+			BoxInfo.setItem("RelevantPidsRoutingSupport", True)
 		except:
-			SystemInfo["RelevantPidsRoutingSupport"] = False
+			BoxInfo.setItem("RelevantPidsRoutingSupport", False)
 
 	def setSession(self, session):
 		self.session = session
@@ -552,9 +548,9 @@ class CiSelection(Screen):
 		self.keyConfigEntry(KEY_RIGHT)
 
 	def createEntries(self, slot):
-		if SystemInfo["CommonInterfaceSupportsHighBitrates"]:
+		if BoxInfo.getItem("CommonInterfaceSupportsHighBitrates"):
 			self.HighBitrateEntry[slot] = getConfigListEntry(_("High bitrate support"), config.ci[slot].canHandleHighBitrates)
-		if SystemInfo["RelevantPidsRoutingSupport"]:
+		if BoxInfo.getItem("RelevantPidsRoutingSupport"):
 			self.RelevantPidsRoutingEntry[slot] = getConfigListEntry(_("Relevant PIDs Routing"), config.ci[slot].relevantPidsRouting)
 
 	def addToList(self, data, action, slotid):
@@ -583,9 +579,9 @@ class CiSelection(Screen):
 			self.addToList(getConfigListEntry(_("Show CI messages"), config.ci[slot].show_ci_messages), -1, slot)
 			self.addToList(getConfigListEntry(_("Multiple service support"), config.ci[slot].canDescrambleMultipleServices), -1, slot)
 
-			if SystemInfo["CommonInterfaceSupportsHighBitrates"]:
+			if BoxInfo.getItem("CommonInterfaceSupportsHighBitrates"):
 				self.addToList(self.HighBitrateEntry[slot], -1, slot)
-			if SystemInfo["RelevantPidsRoutingSupport"]:
+			if BoxInfo.getItem("RelevantPidsRoutingSupport"):
 				self.addToList(self.RelevantPidsRoutingEntry[slot], -1, slot)
 
 		self["entries"].list = self.list
@@ -641,7 +637,7 @@ class PermanentPinEntry(Screen, ConfigListScreen):
 	def __init__(self, session, pin, pin_slot):
 		Screen.__init__(self, session)
 		self.skinName = ["ParentalControlChangePin", "Setup"]
-		self.setup_title = _("Enter pin code")
+		self.setTitle(_("Enter pin code"))
 		self.onChangedEntry = []
 
 		self.slot = pin_slot
@@ -663,10 +659,6 @@ class PermanentPinEntry(Screen, ConfigListScreen):
 		}, -1)
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def valueChanged(self, pin, value):
 		if pin == 1:
@@ -820,7 +812,7 @@ class CIHelperSetup(Screen, ConfigListScreen):
 		Screen.setTitle(self, _("CIHelper Setup"))
 		self.onChangedEntry = []
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.selectionChanged)
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.selectionChanged)
 		Screen.setTitle(self, _("CIHelper Setup"))
 		self['key_red'] = Label(_("Save"))
 		self['actions'] = ActionMap(['WizardActions', 'ColorActions'], {'red': self.saveCIHelper, 'back': self.close})

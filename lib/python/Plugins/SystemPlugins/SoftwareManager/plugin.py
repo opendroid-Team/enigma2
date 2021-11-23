@@ -17,7 +17,7 @@ from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
 from Components.Sources.List import List
 from Components.Slider import Slider
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Components.Harddisk import harddiskmanager
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
@@ -27,10 +27,10 @@ from Components.SelectionList import SelectionList
 from Components.PluginComponent import plugins
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Components.PackageInfo import PackageInfoHandler
-from Components.Language import language
+from Components.International import international
 from Components.AVSwitch import AVSwitch
 from Components.Task import job_manager
-from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUGIN, SCOPE_ACTIVE_SKIN, SCOPE_METADIR, SCOPE_CURRENT_SKIN
+from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUGIN, SCOPE_GUISKIN, SCOPE_METADIR
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
 from enigma import eTimer, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, eListbox, gFont, getDesktop, ePicLoad, eRCInput, getPrevAsciiCode, eEnv, iRecordableService, getEnigmaVersionString
@@ -55,7 +55,7 @@ from six.moves.cPickle import dump, load
 from six.moves import reload_module, range
 
 
-boxtype = getBoxType()
+boxtype = BoxInfo.getItem("model")
 brandoem = getBrandOEM()
 
 if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/dFlash"):
@@ -198,7 +198,7 @@ class UpdatePluginMenu(Screen):
 				self.list.append(("flash-online", _("Flash Online"), _("\nFlash on the fly your %s %s.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
 			if not boxtype.startswith('az') and not brandoem.startswith('cube') and not brandoem.startswith('wetek') and not boxtype.startswith('alien'):
 				self.list.append(("backup-image", _("Backup Image"), _("\nBackup your running %s %s image to HDD or USB.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
-			if SystemInfo["canMultiBoot"]:
+			if BoxInfo.getItem("canMultiBoot"):
 				self.list.append(("multiboot-manager", _("Multiboot Manager"), _("\nMaintain your multiboot device.") + self.oktext, None))
 			self.list.append(("system-backup", _("Backup system settings"), _("\nBackup your %s %s settings.") % (getMachineBrand(), getMachineName()) + self.oktext + "\n\n" + self.infotext, None))
 			self.list.append(("system-restore", _("Restore system settings"), _("\nRestore your %s %s settings.") % (getMachineBrand(), getMachineName()) + self.oktext, None))
@@ -439,13 +439,12 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 
 	def __init__(self, session, skin_path=None):
 		Screen.__init__(self, session)
-		self.session = session
 		self.skin_path = skin_path
 		if self.skin_path == None:
 			self.skin_path = resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager")
 
 		self.onChangedEntry = []
-		self.setup_title = _("Software manager setup")
+		self.setTitle(_("Software manager setup"))
 		self.overwriteConfigfilesEntry = None
 		self.overwriteSettingsfilesEntry = None
 		self.overwriteDriversfilesEntry = None
@@ -474,10 +473,6 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 
 		Load_defaults()
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def createSetup(self):
 		self.list = []
@@ -606,7 +601,6 @@ class SoftwareManagerInfo(Screen):
 
 	def __init__(self, session, skin_path=None, mode=None, submode=None):
 		Screen.__init__(self, session)
-		self.session = session
 		self.mode = mode
 		self.submode = submode
 		self.skin_path = skin_path
@@ -687,7 +681,6 @@ class PluginManager(Screen, PackageInfoHandler):
 	def __init__(self, session, plugin_path=None, args=None):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Extensions management"))
-		self.session = session
 		self.skin_path = plugin_path
 		if self.skin_path == None:
 			self.skin_path = resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager")
@@ -761,23 +754,23 @@ class PluginManager(Screen, PackageInfoHandler):
 			self["key_green"].setText("")
 			self["key_blue"].setText("")
 			self["key_yellow"].setText("")
-			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
+			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
 			if status == 'update':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
 				self.statuslist.append((_("Updating software catalog"), '', _("Searching for available updates. Please wait..."), '', '', statuspng, divpng, None, ''))
 			elif status == 'sync':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
 				self.statuslist.append((_("Package list update"), '', _("Searching for new installed or removed packages. Please wait..."), '', '', statuspng, divpng, None, ''))
 			elif status == 'error':
 				self["key_green"].setText(_("Continue"))
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
 				self.statuslist.append((_("Error"), '', _("An error occurred while downloading the packetlist. Please try again."), '', '', statuspng, divpng, None, ''))
@@ -937,21 +930,21 @@ class PluginManager(Screen, PackageInfoHandler):
 				iSoftwareTools.startIpkgListInstalled(self.rebuildList)
 
 	def buildEntryComponent(self, name, details, description, packagename, state, selected=False):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png")):
-			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
 		else:
 			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png")):
-			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installable.png")):
+			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installable.png"))
 		else:
 			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 		else:
 			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png")):
-			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/install.png")):
+			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/install.png"))
 		else:
 			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/install.png"))
 		if state == 'installed':
@@ -1028,7 +1021,7 @@ class PluginManager(Screen, PackageInfoHandler):
 		self.selectionChanged()
 
 	def buildCategoryComponent(self, tag=None):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
 		if tag is not None:
 			if tag == 'System':
 				return((_("System"), _("View list of available system extensions"), tag, divpng))
@@ -1149,7 +1142,6 @@ class PluginManagerInfo(Screen):
 	def __init__(self, session, plugin_path, cmdlist=None):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Plugin manager activity information"))
-		self.session = session
 		self.skin_path = plugin_path
 		self.cmdlist = cmdlist
 
@@ -1199,17 +1191,17 @@ class PluginManagerInfo(Screen):
 			self['list'].updateList(self.list)
 
 	def buildEntryComponent(self, action, info):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png")):
-			upgradepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+			upgradepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
 		else:
 			upgradepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png")):
-			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/install.png")):
+			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/install.png"))
 		else:
 			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/install.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 		else:
 			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
 
@@ -1261,7 +1253,6 @@ class PluginManagerHelp(Screen):
 	def __init__(self, session, plugin_path):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Plugin manager help"))
-		self.session = session
 		self.skin_path = plugin_path
 
 		self["shortcuts"] = ActionMap(["ShortcutActions", "WizardActions"],
@@ -1291,21 +1282,21 @@ class PluginManagerHelp(Screen):
 		self['list'].updateList(self.list)
 
 	def buildEntryComponent(self, state):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png")):
-			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
 		else:
 			installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png")):
-			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installable.png")):
+			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installable.png"))
 		else:
 			installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 		else:
 			removepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
-		if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png")):
-			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/install.png"))
+		if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/install.png")):
+			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/install.png"))
 		else:
 			installpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/install.png"))
 
@@ -1340,7 +1331,7 @@ class PluginDetails(Screen, PackageInfoHandler):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("Plugin details"))
 		self.skin_path = plugin_path
-		self.language = language.getLanguage()[:2] # getLanguage returns e.g. "fi_FI" for "language_country"
+		self.language = international.getLanguage()
 		self.attributes = None
 		PackageInfoHandler.__init__(self, self.statusCallback, blocking=False)
 		self.directory = resolveFilename(SCOPE_METADIR)
@@ -1454,8 +1445,8 @@ class PluginDetails(Screen, PackageInfoHandler):
 		if not noScreenshot:
 			filename = self.thumbnail
 		else:
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "noprev.png")):
-				filename = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "noprev.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "noprev.png")):
+				filename = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "noprev.png"))
 			else:
 				filename = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/noprev.png"))
 
@@ -1559,8 +1550,8 @@ class UpdatePlugin(Screen):
 		self.processed_packages = []
 		self.total_packages = None
 		self.skin_path = plugin_path
-		self.TraficCheck = False
-		self.TraficResult = False
+		self.TrafficCheck = False
+		self.TrafficResult = False
 		self.CheckDateDone = False
 
 		self.activity = 0
@@ -1611,7 +1602,7 @@ class UpdatePlugin(Screen):
 			self.close()
 			return
 
-	def checkTraficLight(self):
+	def checkTrafficLight(self):
 		from six.moves.urllib.request import urlopen
 		import socket
 		currentTimeoutDefault = socket.getdefaulttimeout()
@@ -1623,16 +1614,16 @@ class UpdatePlugin(Screen):
 		# TODO: Use Twisted's URL fetcher, urlopen is evil. And it can
 		# run in parallel to the package update.
 		try:
-			urlopenSTATUS = "http://opendroid.org/status/index.php"
-			d = urlopen(urlopenSTATUS)
+			urlopenOPD = "https://opendroid.org/ampel/index.php"
+			d = urlopen(urlopenOPD)
 			tmpStatus = d.read()
 			tmpStatus = six.ensure_str(tmpStatus)
 			if (os.path.exists("/etc/.beta") and 'rot.png' in tmpStatus) or 'gelb.png' in tmpStatus:
-				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://droidsat") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
+				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://droidsat.org") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
 				picon = MessageBox.TYPE_ERROR
 				default = False
 			elif 'rot.png' in tmpStatus:
-				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://droidsat")# + "\n\n" + _("Last Status Date") + ": " + statusDate
+				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://droidsat.org")# + "\n\n" + _("Last Status Date") + ": " + statusDate
 				picon = MessageBox.TYPE_ERROR
 				default = False
 				doUpdate = False
@@ -1656,12 +1647,12 @@ class UpdatePlugin(Screen):
 				self.runUpgrade(False)
 
 	def runUpgrade(self, result):
-		self.TraficResult = result
+		self.TrafficResult = result
 		if result:
-			self.TraficCheck = True
+			self.TrafficCheck = True
 			self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
 		else:
-			self.TraficCheck = False
+			self.TrafficCheck = False
 			self.activityTimer.stop()
 			self.activityslider.setValue(0)
 			self.exit()
@@ -1720,10 +1711,11 @@ class UpdatePlugin(Screen):
 				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE_LIST)
 			elif self.ipkg.currentCommand == IpkgComponent.CMD_UPGRADE_LIST:
 				self.total_packages = len(self.ipkg.getFetchedList())
-				if self.total_packages and not self.TraficCheck:
-					self.checkTraficLight()
+				if self.total_packages and not self.TrafficCheck:
+					self.checkTrafficLight()
 					return
-				if self.total_packages and self.TraficCheck and self.TraficResult:
+				if self.total_packages and self.TrafficCheck and self.TrafficResult:
+					#message = _("Do you want to update your %s %s?") % (getMachineBrand(), getMachineName()) + "                 \n(%s " % self.total_packages + _("Packages") + ")"
 					try:
 						if config.plugins.softwaremanager.updatetype.value == "cold":
 							self.startActualUpgrade("cold")
@@ -1771,8 +1763,10 @@ class UpdatePlugin(Screen):
 		if not self.ipkg.isRunning():
 			if self.packages != 0 and self.error == 0:
 				if fileExists("/etc/enigma2/.removelang"):
-					language.delLanguage()
-				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
+					packages = international.getPurgablePackages(config.osd.language.value)
+					if packages:
+						international.deleteLanguagePackages(packages)
+					os_system("touch /etc/enigma2/.removelang")
 			else:
 				self.close()
 		else:
@@ -1870,7 +1864,6 @@ class IPKGSource(Screen):
 
 	def __init__(self, session, configfile=None):
 		Screen.__init__(self, session)
-		self.session = session
 		self.configfile = configfile
 		text = ""
 		if self.configfile:
@@ -1984,7 +1977,6 @@ class PacketManager(Screen, NumericalTextInput):
 	def __init__(self, session, plugin_path, args=None):
 		Screen.__init__(self, session)
 		NumericalTextInput.__init__(self)
-		self.session = session
 		self.skin_path = plugin_path
 
 		self.setUseableChars(u'1234567890abcdefghijklmnopqrstuvwxyz')
@@ -2081,17 +2073,17 @@ class PacketManager(Screen, NumericalTextInput):
 	def setStatus(self, status=None):
 		if status:
 			self.statuslist = []
-			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
+			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
 			if status == 'update':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
 				self.statuslist.append((_("Package list update"), '', _("Trying to download a new packetlist. Please wait..."), '', statuspng, divpng))
 				self['list'].setList(self.statuslist)
 			elif status == 'error':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
 				self.statuslist.append((_("Error"), '', _("An error occurred while downloading the packetlist. Please try again."), '', statuspng, divpng))
@@ -2239,24 +2231,24 @@ class PacketManager(Screen, NumericalTextInput):
 		self.buildPacketList()
 
 	def buildEntryComponent(self, name, version, description, state):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
 		if not description:
 			description = "No description available."
 		if state == 'installed':
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png")):
-				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
 			else:
 				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
 			return((name, version, _(description), state, installedpng, divpng))
 		elif state == 'upgradeable':
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgradeable.png")):
-				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgradeable.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgradeable.png")):
+				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgradeable.png"))
 			else:
 				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgradeable.png"))
 			return((name, version, _(description), state, upgradeablepng, divpng))
 		else:
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png")):
-				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installable.png")):
+				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installable.png"))
 			else:
 				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
 			return((name, version, _(description), state, installablepng, divpng))
@@ -2393,7 +2385,6 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 	def __init__(self, session, plugin_path, args=None):
 		Screen.__init__(self, session)
 		NumericalTextInput.__init__(self)
-		self.session = session
 		self.skin_path = plugin_path
 
 		self.setUseableChars(u'1234567890abcdefghijklmnopqrstuvwxyz')
@@ -2468,17 +2459,17 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 	def setStatus(self, status=None):
 		if status:
 			self.statuslist = []
-			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+			divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
 			if status == 'update':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgrade.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgrade.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgrade.png"))
 				self.statuslist.append((_("Package list update"), '', _("Trying to download a new updatelist. Please wait..."), '', statuspng, divpng))
 				self['list'].setList(self.statuslist)
 			elif status == 'error':
-				if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png")):
-					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/remove.png"))
+				if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/remove.png")):
+					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/remove.png"))
 				else:
 					statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/remove.png"))
 				self.statuslist.append((_("Error"), '', _("There was an error downloading the updatelist. Please try again."), '', statuspng, divpng))
@@ -2497,24 +2488,24 @@ class ShowUpdatePackages(Screen, NumericalTextInput):
 		pass
 
 	def buildEntryComponent(self, name, version, description, state):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
 		if not description:
 			description = "No description available."
 		if state == 'installed':
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png")):
-				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installed.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installed.png")):
+				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installed.png"))
 			else:
 				installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installed.png"))
 			return((name, version, _(description), state, installedpng, divpng))
 		elif state == 'upgradeable':
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgradeablepng.png")):
-				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/upgradeablepng.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/upgradeablepng.png")):
+				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/upgradeablepng.png"))
 			else:
 				upgradeablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/upgradeablepng.png"))
 			return((name, version, _(description), state, upgradeablepng, divpng))
 		else:
-			if os_path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png")):
-				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "icons/installable.png"))
+			if os_path.exists(resolveFilename(SCOPE_GUISKIN, "icons/installable.png")):
+				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/installable.png"))
 			else:
 				installablepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "SystemPlugins/SoftwareManager/installable.png"))
 			return((name, version, _(description), state, installablepng, divpng))

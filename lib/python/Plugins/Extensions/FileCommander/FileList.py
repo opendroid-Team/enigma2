@@ -4,7 +4,7 @@ import re
 from Components.FileList import FileList as FileListBase, EXTENSIONS as BASE_EXTENSIONS
 from Components.Harddisk import harddiskmanager
 
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
+from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_GUISKIN
 
 from enigma import RT_HALIGN_LEFT, BT_SCALE, eListboxPythonMultiContent, \
 	eServiceReference, eServiceReferenceFS, eServiceCenter
@@ -34,7 +34,7 @@ LOCAL_EXTENSIONS.update(((ext[1:], "txt") for ext in TEXT_EXTENSIONS if ext[1:] 
 EXTENSIONS = BASE_EXTENSIONS.copy()
 EXTENSIONS.update(LOCAL_EXTENSIONS)
 
-imagePath = resolveFilename(SCOPE_CURRENT_SKIN, 'FCimages')
+imagePath = resolveFilename(SCOPE_GUISKIN, 'FCimages')
 if not os.path.isdir(imagePath):
 	imagePath = resolveFilename(SCOPE_PLUGINS, base="Extensions/FileCommander/images/")
 

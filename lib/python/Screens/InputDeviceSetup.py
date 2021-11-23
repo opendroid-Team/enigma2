@@ -9,10 +9,11 @@ from Components.Sources.List import List
 from Components.config import config, ConfigYesNo, getConfigListEntry, ConfigSelection
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap, HelpableActionMap
-from Tools.Directories import resolveFilename, SCOPE_ACTIVE_SKIN
+from Tools.Directories import resolveFilename, SCOPE_GUISKIN
 from Tools.LoadPixmap import LoadPixmap
 from Components.Pixmap import Pixmap
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM
+
 
 class InputDeviceSelection(Screen, HelpableScreen):
 	def __init__(self, session):
@@ -57,7 +58,7 @@ class InputDeviceSelection(Screen, HelpableScreen):
 		self.currentIndex = 0
 
 	def buildInterfaceList(self, device, description, type, isinputdevice=True):
-		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png"))
+		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "div-h.png"))
 		activepng = None
 		devicepng = None
 		enabled = iInputDevices.getDeviceAttribute(device, 'enabled')
@@ -65,26 +66,26 @@ class InputDeviceSelection(Screen, HelpableScreen):
 		if type == 'remote':
 			if config.misc.rcused.value == 0:
 				if enabled:
-					devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_rcnew-configured.png"))
+					devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_rcnew-configured.png"))
 				else:
-					devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_rcnew.png"))
+					devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_rcnew.png"))
 			else:
 				if enabled:
-					devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_rcold-configured.png"))
+					devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_rcold-configured.png"))
 				else:
-					devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_rcold.png"))
+					devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_rcold.png"))
 		elif type == 'keyboard':
 			if enabled:
-				devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_keyboard-configured.png"))
+				devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_keyboard-configured.png"))
 			else:
-				devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_keyboard.png"))
+				devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_keyboard.png"))
 		elif type == 'mouse':
 			if enabled:
-				devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_mouse-configured.png"))
+				devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_mouse-configured.png"))
 			else:
-				devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_mouse.png"))
+				devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_mouse.png"))
 		elif isinputdevice:
-			devicepng = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/input_rcnew.png"))
+			devicepng = LoadPixmap(resolveFilename(SCOPE_GUISKIN, "icons/input_rcnew.png"))
 		return device, description, devicepng, divpng
 
 	def updateList(self):
@@ -119,7 +120,7 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 		self.inputDevice = device
 		iInputDevices.currentDevice = self.inputDevice
 		self.onChangedEntry = []
-		self.setup_title = (_("Setup InputDevice"))
+		self.setTitle(_("Setup InputDevice"))
 		self.isStepSlider = None
 		self.enableEntry = None
 		self.repeatEntry = None
@@ -151,7 +152,6 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 		self.onClose.append(self.cleanup)
 
 	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 		listWidth = self["config"].l.getItemSize().width()
 		# use 20% of list width for sliders
 		self["config"].l.setSeperation(int(listWidth * .8))
@@ -242,6 +242,7 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 		else:
 			self.close()
 	# for summary:
+
 	def changedEntry(self):
 		for x in self.onChangedEntry:
 			x()
@@ -358,10 +359,15 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("17", _("XP3000")),
 				("18", _("F1/F3/F4/F4-TURBO/TRIPLEX")),
 				("19", _("HD2400")),
+				("20", _("Zgemma Star S/2S/H1/H2")),
+				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7 old Model")),
+				("22", _("Zgemma i55")),
 				("23", _("WWIO 4K")),
 				("24", _("Axas E4HD Ultra")),
+				("25", _("Zgemma H8/H0/H9/I55Plus old Model")),
 				("26", _("Protek 4K UHD/HD61")),
 				("27", _("HD60/Multibox/Multiboxse")),
+				("28", _("I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"))
 				]
 		defaultRcList = [
 				("default", 0),
@@ -393,8 +399,15 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("triplex", 18),
 				("xp1000", 14),
 				("xp3000", 17),
+				("sh1", 20),
+				("h3", 21),
+				("h5", 21),
+				#("h7", 21),# old model
+				("i55", 22),
 				("bre2ze4k", 23),
 				("e4hd", 24),
+				#("h9", 25),# old model
+				("i55plus", 25),
 				("hzero", 25),
 				("h8", 25),
 				("protek4k", 26),
@@ -402,6 +415,14 @@ class RemoteControlType(Screen, ConfigListScreen):
 				("hd60", 27),
 				("multibox", 27),
 				("multiboxse", 27),
+				("h7", 28), # new model
+				("h9", 28), # new model
+				("h9se", 28), # new model
+				("h9combo", 28),
+				("h9combose", 28),
+				("i55se", 28),
+				("h10", 28),
+				("h11", 28)
 				]
 
 	def __init__(self, session):
@@ -423,7 +444,7 @@ class RemoteControlType(Screen, ConfigListScreen):
 		self["description"] = StaticText()
 
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session)
+		ConfigListScreen.__init__(self, self.list, session=session)
 
 		rctype = config.plugins.remotecontroltype.rctype.value
 		self.rctype = ConfigSelection(choices=self.rcList, default=str(rctype))

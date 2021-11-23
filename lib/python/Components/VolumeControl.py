@@ -140,10 +140,12 @@ class VolumeControl:
 
 	def volHide(self):
 		self.volumeDialog.hide()
+		#//set volume on if muted and volume is changed in webif
 		vol = self.volctrl.getVolume()
 		if self.volctrl.isMuted() and self.last_vol != vol:
 			self.volctrl.volumeUnMute()
 		self.last_vol = vol
+		#//
 		if not self.volctrl.isMuted() or config.av.volume_hide_mute.value:
 			self.muteDialog.hide()
 

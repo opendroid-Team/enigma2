@@ -16,8 +16,8 @@ from Tools.Directories import pathExists, createDir
 from Tools.BoundFunction import boundFunction
 from Tools.LoadPixmap import LoadPixmap
 
-from Tools.Directories import resolveFilename, SCOPE_SKIN
-SkinDefaultPath = resolveFilename(SCOPE_SKIN, "skin_default/")
+from Tools.Directories import resolveFilename, SCOPE_GUISKIN
+SkinDefaultPath = resolveFilename(SCOPE_GUISKIN, "skin_default/")
 
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigInteger, ConfigYesNo, ConfigText, ConfigSelection, NoSave

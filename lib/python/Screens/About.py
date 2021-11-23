@@ -13,7 +13,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType, getBrandOEM
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from skin import isOPDSkin
 
 from Components.Pixmap import MultiPixmap
@@ -174,7 +174,7 @@ class About(Screen):
 		AboutText += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
 
 		if path.exists('/proc/stb/info/chipset'):
-			if SystemInfo["HasHiSi"]:
+			if BoxInfo.getItem("HasHiSi"):
 				AboutText += _("Chipset:\tHiSilicon %s\n") % about.getChipSetString().upper()
 			elif about.getIsBroadcom():
 				AboutText += _("Chipset:\tBroadcom %s\n") % about.getChipSetString().upper()
@@ -272,18 +272,18 @@ class About(Screen):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
 			f.close()
-		if SystemInfo["canMultiBoot"]:
+		if BoxInfo.getItem("canMultiBoot"):
 			slot = image = GetCurrentImage()
 			bootmode = ""
 			part = _("eMMC slot %s") % slot
-			if SystemInfo["canMode12"]:
+			if BoxInfo.getItem("canMode12"):
 				bootmode = _(" bootmode = %s") % GetCurrentImageMode()
-			if SystemInfo["HasHiSi"] and "sda" in SystemInfo["canMultiBoot"][slot]['device']:
+			if BoxInfo.getItem("HasHiSi") and "sda" in BoxInfo.getItem("canMultiBoot")[slot]['device']:
 				if slot > 4:
 					image -=4
 				else:
 					image -=1
-				part = "SDcard slot %s (%s) " %(image, SystemInfo["canMultiBoot"][slot]['device'])
+				part = "SDcard slot %s (%s) " %(image, BoxInfo.getItem("canMultiBoot")[slot]['device'])
 			AboutText += _("Selected Image:\t%s") % _("STARTUP_") + str(slot) + "  " + part + " " + bootmode + "\n"
 
 		if path.isfile("/etc/issue"):
@@ -425,7 +425,7 @@ class About(Screen):
 		pass
 
 	def showID(self):
-		if SystemInfo["HaveID"]:
+		if BoxInfo.getItem("HaveID"):
 			try:
 				f = open("/etc/.id")
 				id = f.read()[:-1].split('=')

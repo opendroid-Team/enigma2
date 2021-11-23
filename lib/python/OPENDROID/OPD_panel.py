@@ -4,6 +4,7 @@ from Screens.PluginBrowser import *
 from Screens.Ipkg import Ipkg
 from Screens.HarddiskSetup import HarddiskSetup
 from Components.ProgressBar import ProgressBar
+from Screens.ParentalControlSetup import ProtectedScreen
 from Components.SelectionList import SelectionList
 from Screens.NetworkSetup import *
 from enigma import *
@@ -20,7 +21,7 @@ from GlobalActions import globalActionMap
 from Screens.ChoiceBox import ChoiceBox
 from Tools.BoundFunction import boundFunction
 from Tools.LoadPixmap import LoadPixmap
-from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS, fileExists, pathExists
+from Tools.Directories import resolveFilename, SCOPE_GUISKIN, SCOPE_PLUGINS, fileExists, pathExists, isPluginInstalled
 from Components.MenuList import MenuList
 from Components.FileList import FileList
 from Components.Label import Label
@@ -32,7 +33,7 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
 from Components.Button import Button
 from Components.ActionMap import ActionMap
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from OPENDROID.OscamSmartcard import *
@@ -72,17 +73,17 @@ def Check_Softcam():
 	return found
 
 def Check_SysSoftcam():
-	syscam="none"
+	syscam = "none"
 	if os.path.isfile('/etc/init.d/softcam'):
 		if (os.path.islink('/etc/init.d/softcam') and not os.readlink('/etc/init.d/softcam').lower().endswith('none')):
 			try:
 				syscam = os.readlink('/etc/init.d/softcam').rsplit('.', 1)[1]
 				if syscam.lower().startswith('oscam'):
-					syscam="oscam"
+					syscam = "oscam"
 				if syscam.lower().startswith('ncam'):
-					syscam="ncam"
+					syscam = "ncam"
 				if syscam.lower().startswith('cccam'):
-					syscam="cccam"
+					syscam = "cccam"
 			except:
 				pass
 	return syscam
@@ -97,7 +98,7 @@ def timerEvent():
 	pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_PLUGINMENU)
 	for p in pluginlist:
 		redSelection.append((p.name, _(p.name)))
-	if getBoxType() == "dm800":
+	if BoxInfo.getItem("model") == "dm800":
 		config.OPENDROID_redpanel.selection = ConfigSelection(redSelection, default='0')
 		config.OPENDROIDl_redpanel.selectionLong = ConfigSelection(redSelection, default='1')
 	else:
@@ -115,7 +116,8 @@ from OPENDROID.MountManager import *
 from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
-SystemInfo["SoftCam"] = Check_Softcam()
+from Plugins.SystemPlugins.SoftwareManager.BackupRestore import InitConfig as BackupRestore_InitConfig
+BoxInfo.setItem("SoftCam", Check_Softcam())
 
 if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):
 	if not os.path.isfile(eEnv.resolve("${datadir}/enigma2/keymap.usr")) and config.usage.keymap.value == eEnv.resolve("${datadir}/enigma2/keymap.usr"):
@@ -156,26 +158,26 @@ machinebrand = getMachineBrand()
 OEMname = getBrandOEM()
 OPD_panel_Version = 'OPD PANEL V1.5 (By OPD-Team)'
 print("[OPD_panel] machinebrand: %s"  % (machinebrand))
-print("[OPD_panel] machinename: %s"  % (machinename))
-print("[OPD_panel] oem name: %s"  % (OEMname))
-print("[OPD_panel] boxtype: %s"  % (boxversion))
+print("[OPD_panel] machinename: %s" % (machinename))
+print("[OPD_panel] oem name: %s" % (OEMname))
+print("[OPD_panel] boxtype: %s" % (boxversion))
 panel = open("/tmp/OPD_panel.ver", "w")
 panel.write(OPD_panel_Version + '\n')
-panel.write("Machinebrand: %s " % (machinebrand)+ '\n')
-panel.write("Machinename: %s " % (machinename)+ '\n')
-panel.write("oem name: %s " % (OEMname)+ '\n')
-panel.write("Boxtype: %s " % (boxversion)+ '\n')
+panel.write("Machinebrand: %s " % (machinebrand) + '\n')
+panel.write("Machinename: %s " % (machinename) + '\n')
+panel.write("oem name: %s " % (OEMname) + '\n')
+panel.write("Boxtype: %s " % (boxversion) + '\n')
 try:
 	panel.write("Keymap: %s " % (config.usage.keymap.value)+ '\n')
 except:
 	panel.write("Keymap: keymap file not found !!" + '\n')
 panel.close()
-ExitSave = "[Exit] = " +_("Cancel") +"              [Ok] =" +_("Save")
+ExitSave = "[Exit] = " +_("Cancel") + "              [Ok] =" +_("Save")
 
 class ConfigPORT(ConfigSequence):
 
 	def __init__(self, default):
-		ConfigSequence.__init__(self, seperator = ".", limits = [(1, 65535)], default = default)
+		ConfigSequence.__init__(self, seperator=".", limits = [(1, 65535)], default = default)
 
 def main(session, **kwargs):
 		session.open(OPD_panel)
@@ -230,34 +232,39 @@ from Screens.PiPSetup import PiPSetup
 from Screens.InfoBarGenerics import InfoBarPiP
 
 def InfoEntryComponent(file):
-	png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "icons/" + file + ".png"))
+	png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/" + file + ".png"))
 	if png == None:
 		png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/" + file + ".png")
 		if png == None:
-			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "icons/default.png"))
+			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/default.png"))
 			if png == None:
 				png = LoadPixmap("/usr/lib/enigma2/python/OPENDROID/icons/default.png")
-	res = png
+	res = (png)
 	return res
 
 
-class OPD_panel(Screen, InfoBarPiP):
+class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 	servicelist = None
 
-	def __init__(self, session, services = None):
-		global menu
-		global inOPD_panel
-		global pluginlist
-		global INFOCONF
+	def __init__(self, session, services=None):
 		Screen.__init__(self, session)
-		self.session = session
+		config.plugins.configurationbackup = BackupRestore_InitConfig()
+		if config.ParentalControl.configured.value:
+			ProtectedScreen.__init__(self)
 		self.skin = MENU_SKIN
 		self.onShown.append(self.setWindowTitle)
+		ProtectedScreen.__init__(self)
 		self.service = None
+		global pluginlist
+		global videomode
+		global infook
+		global INFOCONF
+		global menu
 		INFOCONF = 0
 		pluginlist="False"
 		try:
 			print('[OPD_panel] SHOW')
+			global OPD_panel
 			OPD_panel = self
 		except:
 			print('[OPD_Panel] Error Hide')
@@ -274,7 +281,7 @@ class OPD_panel(Screen, InfoBarPiP):
 				"down": self.down,
 				"ok": self.ok,
 			}, 1)
-		
+
 		self["label1"] = Label(OPD_panel_Version)
 		self["summary_description"] = StaticText("")
 
@@ -296,10 +303,19 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infobar_Setup'), _('Infobar_Setup'), 'Infobar_Setup')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Decoding_Setup'), _('Decoding_Setup'), 'Decoding_Setup')))
 		self.onChangedEntry = []
-		self["Mlist"] = PanelList([])
+		if getSkinFactor() == 1:
+			self["Mlist"] = PanelList([])
+		else:
+			self["Mlist"] = PanelList([], font0=24, font1=15, itemHeight=50)
 		self["Mlist"].l.setList(self.Mlist)
 		menu = 0
 		self["Mlist"].onSelectionChanged.append(self.selectionChanged)
+
+	def isProtected(self):
+		return config.ParentalControl.setuppinactive.value and not config.ParentalControl.config_sections.main_menu.value and config.ParentalControl.config_sections.infopanel.value
+
+	def createSummary(self):
+		pass
 
 	def getCurrentEntry(self):
 		if self['Mlist'].l.getCurrentSelection():
@@ -329,6 +345,7 @@ class OPD_panel(Screen, InfoBarPiP):
 
 	def Red(self):
 		self.showExtensionSelection1(Parameter="run")
+		pass
 
 	def Green(self):
 		pass
@@ -435,21 +452,21 @@ class OPD_panel(Screen, InfoBarPiP):
 		elif menu == "Password-Change":
 			self.session.open(PasswdScreen)
 		elif menu == "backup-settings":
-			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup = True)
+			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup=True)
 		elif menu == "restore-settings":
 			self.backuppath = getBackupPath()
 			self.backupfile = getBackupFilename()
 			self.fullbackupfilename = self.backuppath + "/" + self.backupfile
 			if os_path.exists(self.fullbackupfilename):
-				self.session.openWithCallback(self.startRestore, MessageBox, _("Are you sure you want to restore your STB backup?\nSTB will restart after the restore"), default = False)
+				self.session.openWithCallback(self.startRestore, MessageBox, _("Are you sure you want to restore your STB backup?\nSTB will restart after the restore"), default=False)
 			else:
-				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout = 10)
+				self.session.open(MessageBox, _("Sorry no backups found!"), MessageBox.TYPE_INFO, timeout=10)
 		elif menu == "backup-files":
-			self.session.open(BackupSelection, title=_("Default files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_default,readOnly=True)
+			self.session.open(BackupSelection, title=_("Default files/folders to backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs_default, readOnly=True)
 		elif menu == "backup-files-additional":
-			self.session.open(BackupSelection, title=_("Additional files/folders to backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs,readOnly=False)
+			self.session.open(BackupSelection, title=_("Additional files/folders to backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs, readOnly=False)
 		elif menu == "backup-files-excluded":
-			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"),configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude,readOnly=False)
+			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude, readOnly=False)
 		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
@@ -507,7 +524,7 @@ class OPD_panel(Screen, InfoBarPiP):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Network'), _("Network"), 'Network')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('Ram'), _("Ram"), 'Ram')))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent('SystemInfo'), _("SystemInfo"), 'SystemInfo')))
-		if SystemInfo["HAVEEDIDDECODE"]:
+		if BoxInfo.getItem("HAVEEDIDDECODE"):
 			self.tlist.append(MenuEntryItem((InfoEntryComponent('Edid'), _("EDID decode"), 'Edid')))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
@@ -569,7 +586,6 @@ class OPD_panel(Screen, InfoBarPiP):
 class KeymapSel(ConfigListScreen, Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.session = session
 		self.skinName = ["SetupInfo", "Setup"]
 		Screen.setTitle(self, _("Keymap Selection") + "...")
 		self.setup_title = _("Keymap Selection") + "..."
@@ -601,7 +617,7 @@ class KeymapSel(ConfigListScreen, Screen):
 
 		self.onChangedEntry = []
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
 		self.createSetup()
 		self["actions"] = ActionMap(["SetupActions", 'ColorActions'],
 		{
@@ -674,10 +690,10 @@ class KeymapSel(ConfigListScreen, Screen):
 			self.close()
 
 	def getKeymap(self, file):
-		return file[file.rfind('/') +1:]
+		return file[file.rfind('/') + 1:]
 
 	def changedFinished(self):
-		self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Keymap changed, you need to restart the GUI") +"\n"+_("Do you want to restart now?"), MessageBox.TYPE_YESNO)
+		self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("Keymap changed, you need to restart the GUI") + "\n" + _("Do you want to restart now?"), MessageBox.TYPE_YESNO)
 		self.close()
 
 	def ExecuteRestart(self, result):
@@ -807,7 +823,7 @@ class Info(Screen):
 			info1 = "Name = " + info[0] + "\n"
 			info2 = "Owner = " + info[1].replace(')', '') + "\n"
 			info3 = "Mainimage = " + info[2][0:info[2].find(')')] + "\n"
-			info4 = "Date = " + info[3][info[3].find('SMP')+4:len(info[3])]
+			info4 = "Date = " + info[3][info[3].find('SMP') + 4:len(info[3])]
 			info5 = self.Do_cut(info1 + info2 + info3 + info4)
 			self["label1"].setText(info5)
 		except:

@@ -1,54 +1,70 @@
 from __future__ import print_function
-from boxbranding import getMachineBrand, getMachineName, getBoxType, getMachineBuild
-from os import system, rename, path, mkdir, remove, listdir, remove as os_remove
-from time import sleep
-import re
-from re import search
-from enigma import eTimer, getDesktop
-from Screens.ChoiceBox import ChoiceBox
-from Screens.InputBox import InputBox
 from Screens.Screen import Screen
+from enigma import eTimer
+from boxbranding import getMachineBrand, getMachineName, getBoxType, getMachineBuild
 from Screens.MessageBox import MessageBox
 from Screens.Standby import TryQuitMainloop
 from Components.ActionMap import ActionMap
 from Components.Label import Label
+from Components.Pixmap import Pixmap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, config, ConfigSelection, NoSave, configfile
-from Components.Pixmap import Pixmap
 from Components.Console import Console
-from Screens.Console import Console as ConsoleScreen
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from Components.Harddisk import Harddisk
 from Tools.LoadPixmap import LoadPixmap
-from Tools.Directories import fileExists
+from os import system, rename, path, mkdir, remove
+from time import sleep
+from re import search
 import six
+
+
 class DeviceManager(Screen):
-	screenwidth = getDesktop(0).size().width()
-	if screenwidth and screenwidth == 1920:
-		skin = '\n\t\t\t<screen name="DeviceManager" position="center,center" size="1040,680">\n\t\t\t\t<widget source="list" render="Listbox" position="10,0" size="1020,510" scrollbarMode="showOnDemand" >\n\t\t\t\t\t<convert type="TemplatedMultiContent">\n\t\t\t\t\t{"template": [\n\t\t\t\t\tMultiContentEntryText(pos = (90, 0), size = (990, 30), font=0, text = 0),\n\t\t\t\t\tMultiContentEntryText(pos = (110, 30), size = (970, 50), font=1, flags = RT_VALIGN_TOP, text = 1),\n\t\t\t\t\tMultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (80, 80), png = 2),\n\t\t\t\t\t],\n\t\t\t\t\t"fonts": [gFont("Regular", 32),gFont("Regular", 26)],\n\t\t\t\t\t"itemHeight": 100\n\t\t\t\t\t}\n\t\t\t\t\t</convert>\n\t\t\t\t</widget>\n\t\t\t\t<widget name="lab1" zPosition="2" position="50,40" size="700,40" font="Regular;32" halign="center" transparent="1"/>\n\t\t\t\t<ePixmap position="40,604" size="100,40" zPosition="0" pixmap="buttons/red.png" transparent="1" alphatest="blend"/>\n\t\t\t\t<ePixmap position="200,604" size="100,40" zPosition="0" pixmap="buttons/green.png" transparent="1" alphatest="blend"/>\n\t\t\t\t<ePixmap position="450,604" size="100,40" zPosition="0" pixmap="buttons/yellow.png" transparent="1" alphatest="blend"/>\n\t\t\t\t<ePixmap position="730,604" size="100,40" zPosition="0" pixmap="buttons/blue.png" transparent="1" alphatest="blend"/>\n\t\t\t\t<widget name="key_red" position="80,604" zPosition="1" size="270,35" font="Regular;32" valign="top" halign="left" backgroundColor="red" transparent="1" />\n\t\t\t\t<widget name="key_green" position="240,604" zPosition="1" size="270,35" font="Regular;32" valign="top" halign="left" backgroundColor="green" transparent="1" />\n\t\t\t\t<widget name="key_yellow" position="490,604" zPosition="1" size="270,35" font="Regular;32" valign="top" halign="left" backgroundColor="yellow" transparent="1" />\n\t\t\t\t<widget name="key_blue" position="770,604" zPosition="1" size="270,35" font="Regular;32" valign="top" halign="left" backgroundColor="blue" transparent="1" />\n\t\t\t</screen>'
-	else:
-		skin = '\n\t\t\t<screen name="DeviceManager" position="center,center" size="800,560" title="Devices Manager">\n\t\t\t\t<widget source="list" render="Listbox" position="10,0" size="780,510" scrollbarMode="showOnDemand" >\n\t\t\t\t\t<convert type="TemplatedMultiContent">\n\t\t\t\t\t{"template": [\n\t\t\t\t\tMultiContentEntryText(pos = (90, 0), size = (690, 30), font=0, text = 0),\n\t\t\t\t\tMultiContentEntryText(pos = (110, 30), size = (670, 50), font=1, flags = RT_VALIGN_TOP, text = 1),\n\t\t\t\t\tMultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (80, 80), png = 2),\n\t\t\t\t\t],\n\t\t\t\t\t"fonts": [gFont("Regular", 24),gFont("Regular", 20)],\n\t\t\t\t\t"itemHeight": 85\n\t\t\t\t\t}\n\t\t\t\t\t</convert>\n\t\t\t\t</widget>\n\t\t\t\t<widget name="lab1" zPosition="2" position="50,40" size="700,40" font="Regular;24" halign="center" transparent="1"/>\n\t\t\t\t<widget name="key_red" position="70,524" zPosition="1" size="200,40" font="Regular;20" halign="left" valign="top" backgroundColor="#9f1313" transparent="1" />\n\t\t\t\t<widget name="key_green" position="240,524" zPosition="1" size="200,40" font="Regular;20" halign="left" valign="top" backgroundColor="#9f1313" transparent="1" />\n\t\t\t\t<widget name="key_yellow" position="390,524" zPosition="1" size="140,40" font="Regular;20" halign="left" valign="top" backgroundColor="#a08500" transparent="1" />\n\t\t\t\t<widget name="key_blue" position="540,524" zPosition="1" size="140,40" font="Regular;20" halign="left" valign="top" backgroundColor="#a08500" transparent="1" />\n\t\t\t</screen>'
+	skin = """
+	<screen position="center,center" size="640,460" title="Devices Manager">
+		<ePixmap pixmap="skin_default/buttons/red.png" position="25,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/green.png" position="175,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="325,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/blue.png" position="475,0" size="140,40" alphatest="on" />
+		<widget name="key_red" position="25,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+		<widget name="key_green" position="175,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+		<widget name="key_yellow" position="325,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
+		<widget name="key_blue" position="475,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
+		<widget source="list" render="Listbox" position="10,50" size="620,450" scrollbarMode="showOnDemand" >
+			<convert type="TemplatedMultiContent">
+				{"template": [
+				 MultiContentEntryText(pos = (90, 0), size = (600, 30), font=0, text = 0),
+				 MultiContentEntryText(pos = (110, 30), size = (600, 50), font=1, flags = RT_VALIGN_TOP, text = 1),
+				 MultiContentEntryPixmapAlphaBlend(pos = (0, 0), size = (80, 80), png = 2),
+				],
+				"fonts": [gFont("Regular", 24),gFont("Regular", 20)],
+				"itemHeight": 85
+				}
+			</convert>
+		</widget>
+		<widget name="lab1" zPosition="2" position="50,90" size="600,40" font="Regular;22" halign="center" transparent="1"/>
+	</screen>"""
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		Screen.setTitle(self, _('Devices Manager'))
-		self['key_red'] = Label(_('saveMypoints'))
-		self['key_green'] = Label(_('Setup Mounts'))
-		self['key_yellow'] = Label(_('Unmount'))
-		self['key_blue'] = Label(_('Mount'))
+		Screen.setTitle(self, _("Devices Manager"))
+		self['key_red'] = StaticText(" ")
+		self['key_green'] = Label(_("Setup Mounts"))
+		self['key_yellow'] = Label(_("Unmount"))
+		self['key_blue'] = Label(_("Mount"))
 		self['lab1'] = Label()
 		self.onChangedEntry = []
 		self.list = []
 		self['list'] = List(self.list)
-		self['list'].onSelectionChanged.append(self.selectionChanged)
-		self['actions'] = ActionMap(['WizardActions', 'ColorActions', 'MenuActions'], {'back': self.close, 'green': self.SetupMounts, 'red': self.saveMypoints, 'yellow': self.Unmount, 'blue': self.Mount, 'menu': self.close})
+		self["list"].onSelectionChanged.append(self.selectionChanged)
+		self['actions'] = ActionMap(['WizardActions', 'ColorActions', "MenuActions"], {'back': self.close, 'green': self.SetupMounts, 'red': self.saveMypoints, 'yellow': self.Unmount, 'blue': self.Mount, "menu": self.close})
 		self.activityTimer = eTimer()
 		self.activityTimer.timeout.get().append(self.updateList2)
 		self.updateList()
 
 	def createSummary(self):
 		return DevicesPanelSummary
+
 	def selectionChanged(self):
 		if len(self.list) == 0:
 			return
@@ -58,7 +74,7 @@ class DeviceManager(Screen):
 			self["key_red"].setText(_("Use as HDD"))
 		else:
 			self["key_red"].setText(" ")
-			
+
 		if self.sel:
 			try:
 				name = str(self.sel[0])
@@ -72,7 +88,7 @@ class DeviceManager(Screen):
 		for cb in self.onChangedEntry:
 			cb(name, desc)
 
-	def updateList(self, result = None, retval = None, extra_args = None):
+	def updateList(self, result=None, retval=None, extra_args=None):
 		scanning = _("Wait please while scanning for devices...")
 		self['lab1'].setText(scanning)
 		self.activityTimer.start(10)
@@ -89,7 +105,7 @@ class DeviceManager(Screen):
 			device = parts[3]
 			if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
 				continue
-			if getMachineBuild() in ('gbmv200', 'h9combo', 'h10', 'v8plus', 'hd60', 'hd61', 'vuduo4k', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'sf8008', 'sf8008m', 'cc1', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'vuzero4k', 'u5', 'sf5008', 'et13000', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s') and search('mmcblk0p[1-9]', device):
+			if getMachineBuild() in ('multibox', 'multiboxse', 'dagsmv200', 'gbmv200', 'i55se', 'h9se', 'h9combose', 'h9combo', 'h10', 'h11', 'v8plus', 'hd60', 'hd61', 'pulse4k', 'pulse4kmini', 'vuduo4k', 'vuduo4kse', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'sf8008', 'sf8008m', 'sf8008opt', 'cc1', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'u57', 'u571', 'vuzero4k', 'u5', 'sf5008', 'et13000', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s') and search('mmcblk0p[1-9]', device):
 				continue
 			if getMachineBuild() in ('xc7439', 'osmio4k', 'osmio4kplus', 'osmini4k') and search('mmcblk1p[1-9]', device):
 				continue
@@ -193,11 +209,13 @@ class DeviceManager(Screen):
 				model = open('/sys/block/' + device2 + '/device/name').read()
 			except:
 				model = ''
-
 			mypixmap = '/usr/lib/enigma2/python/OPENDROID/icons/dev_mmc.png'
 			name = 'MMC: '
 		else:
-			model = open('/sys/block/' + device2 + '/device/model').read()
+			try:
+				model = open('/sys/block/' + device2 + '/device/model').read()
+			except:
+				model = ''
 		model = str(model).replace('\n', '')
 		des = ''
 		if devicetype.find('/devices/pci') != -1 or devicetype.find('ahci') != -1:
@@ -247,9 +265,9 @@ class DeviceManager(Screen):
 				if (((float(size) / 1024) / 1024) / 1024) > 1:
 					des = _("Size: ") + str(round((((float(size) / 1024) / 1024) / 1024), 2)) + _("TB")
 				elif ((size / 1024) / 1024) > 1:
-					des = _("Size: ") + str((size / 1024) / 1024) + _("GB")
+					des = _("Size: ") + str(round(((float(size) / 1024) / 1024), 2)) + _("GB")
 				else:
-					des = _("Size: ") + str(size / 1024) + _("MB")
+					des = _("Size: ") + str(round((float(size) / 1024), 2)) + _("MB")
 			else:
 				try:
 					size = open('/sys/block/' + device2 + '/' + device + '/size').read()
@@ -260,9 +278,9 @@ class DeviceManager(Screen):
 				if ((((float(size) / 2) / 1024) / 1024) / 1024) > 1:
 					des = _("Size: ") + str(round(((((float(size) / 2) / 1024) / 1024) / 1024), 2)) + _("TB")
 				elif (((size / 2) / 1024) / 1024) > 1:
-					des = _("Size: ") + str(((size / 2) / 1024) / 1024) + _("GB")
+					des = _("Size: ") + str(round((((float(size) / 2) / 1024) / 1024), 2)) + _("GB")
 				else:
-					des = _("Size: ") + str((size / 2) / 1024) + _("MB")
+					des = _("Size: ") + str(round(((float(size) / 2) / 1024), 2)) + _("MB")
 		f.close()
 		if des != '':
 			if rw.startswith('rw'):
@@ -286,7 +304,7 @@ class DeviceManager(Screen):
 		if sel:
 			mountp = sel[3]
 			device = sel[4]
-			system ('mount ' + device)
+			system('mount ' + device)
 			mountok = False
 			f = open('/proc/mounts', 'r')
 			for line in f.readlines():
@@ -301,7 +319,7 @@ class DeviceManager(Screen):
 		if sel:
 			mountp = sel[3]
 			device = sel[4]
-			system ('umount ' + mountp)
+			system('umount ' + mountp)
 			try:
 				mounts = open("/proc/mounts")
 			except IOError:
@@ -328,9 +346,9 @@ class DeviceManager(Screen):
 				self.Console.ePopen('mount ' + self.device + ' /media/hdd')
 				self.Console.ePopen("/sbin/blkid | grep " + self.device, self.add_fstab, [self.device, self.mountp])
 			else:
-				self.session.open(MessageBox, _("This Device is already mounted as HDD."), MessageBox.TYPE_INFO, timeout = 10, close_on_any_key = True)
+				self.session.open(MessageBox, _("This Device is already mounted as HDD."), MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 
-	def add_fstab(self, result = None, retval = None, extra_args = None):
+	def add_fstab(self, result=None, retval=None, extra_args=None):
 		self.device = extra_args[0]
 		self.mountp = extra_args[1]
 		self.device_uuid_tmp = six.ensure_str(result).split('UUID=')
@@ -361,11 +379,18 @@ class DeviceManager(Screen):
 
 
 class DeviceManager_Setup(Screen, ConfigListScreen):
+	skin = """
+	<screen position="center,center" size="640,460" title="Choose where to mount your devices to:">
+		<ePixmap pixmap="skin_default/buttons/red.png" position="25,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/green.png" position="175,0" size="140,40" alphatest="on" />
+		<widget name="key_red" position="25,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+		<widget name="key_green" position="175,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+		<widget name="config" position="30,60" size="580,275" scrollbarMode="showOnDemand"/>
+		<widget name="Linconn" position="30,375" size="580,20" font="Regular;18" halign="center" valign="center" backgroundColor="#9f1313"/>
+	</screen>"""
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		Screen.setTitle(self, _('Devices Manager - Setup'))
-		self.skinName = ['Setup']
 		self.list = []
 		self.device_type = 'auto'
 		self.device_uuid = ""
@@ -398,7 +423,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 			device = parts[3]
 			if not search('sd[a-z][1-9]', device) and not search('mmcblk[0-9]p[1-9]', device):
 				continue
-			if getMachineBuild() in ('gbmv200', 'multibox', 'h9combo', 'h10', 'v8plus', 'hd60', 'hd61', 'vuduo4k', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'sf8008', 'sf8008m', 'cc1', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'vuzero4k', 'u5', 'sf5008', 'et13000', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s') and search('mmcblk0p[1-9]', device):
+			if getMachineBuild() in ('dagsmv200', 'gbmv200', 'multibox', 'multiboxse', 'i55se', 'h9se', 'h9combose', 'h9combo', 'h10', 'h11', 'v8plus', 'hd60', 'hd61', 'pulse4k', 'pulse4kmini', 'vuduo4k', 'vuduo4kse', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'sf8008', 'sf8008m', 'sf8008opt', 'cc1', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'u57', 'u571', 'vuzero4k', 'u5', 'sf5008', 'et13000', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'dm820', 'dm7080', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s') and search('mmcblk0p[1-9]', device):
 				continue
 			if getMachineBuild() in ('xc7439', 'osmio4k', 'osmio4kplus', 'osmini4k') and search('mmcblk1p[1-9]', device):
 				continue
@@ -506,7 +531,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 			model = open('/sys/block/' + device2 + '/device/model').read()
 		model = str(model).replace('\n', '')
 		des = ''
-		print("test:") 
+		print("test:")
 		if devicetype.find('/devices/pci') != -1 or devicetype.find('ahci') != -1:
 			name = _("HARD DISK: ")
 			mypixmap = '/usr/lib/enigma2/python/OPENDROID/icons/dev_hdd.png'
@@ -566,6 +591,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 		item.value = d1.strip()
 		text = name + ' ' + des + ' /dev/' + device
 		res = getConfigListEntry(text, item, device, dtype)
+
 		if des != '' and self.list.append(res):
 			pass
 
@@ -577,9 +603,9 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 			self.mountp = x[1].value
 			self.type = x[3]
 			self.Console.ePopen('umount ' + self.device)
-			self.Console.ePopen("/sbin/blkid | grep " + self.device, self.add_fstab, [self.device, self.mountp] )
+			self.Console.ePopen("/sbin/blkid | grep " + self.device, self.add_fstab, [self.device, self.mountp])
 		message = _("Updating mount locations.")
-		ybox = self.session.openWithCallback(self.delay, MessageBox, message, type=MessageBox.TYPE_INFO, timeout=5, enable_input = False)
+		ybox = self.session.openWithCallback(self.delay, MessageBox, message, type=MessageBox.TYPE_INFO, timeout=5, enable_input=False)
 		ybox.setTitle(_("Please wait."))
 
 	def delay(self, val):
@@ -587,9 +613,12 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 		ybox = self.session.openWithCallback(self.restartBox, MessageBox, message, MessageBox.TYPE_YESNO)
 		ybox.setTitle(_("Restart %s %s.") % (getMachineBrand(), getMachineName()))
 
-	def add_fstab(self, result = None, retval = None, extra_args = None):
+	def add_fstab(self, result=None, retval=None, extra_args=None):
 		self.device = extra_args[0]
 		self.mountp = extra_args[1]
+		if len(result) == 0:
+			print("[MountManager] error get UUID for device %s" % self.device)
+			return
 		self.device_tmp = six.ensure_str(result).split(' ')
 		if self.device_tmp[0].startswith('UUID='):
 			self.device_uuid = self.device_tmp[0].replace('"', "")
@@ -626,6 +655,7 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 				self.device_type = self.device_type.replace('\n', "")
 		except:
 			self.device_type = 'auto'
+
 		if self.device_type.startswith('ext'):
 			self.device_type = 'auto'
 
@@ -646,9 +676,10 @@ class DeviceManager_Setup(Screen, ConfigListScreen):
 		else:
 			self.close()
 
+
 class DevicesPanelSummary(Screen):
 	def __init__(self, session, parent):
-		Screen.__init__(self, session, parent = parent)
+		Screen.__init__(self, session, parent=parent)
 		self["entry"] = StaticText("")
 		self["desc"] = StaticText("")
 		self.onShow.append(self.addWatcher)

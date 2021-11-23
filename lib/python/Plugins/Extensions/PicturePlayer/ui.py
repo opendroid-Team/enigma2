@@ -4,7 +4,7 @@ from boxbranding import getMachineBrand
 from enigma import ePicLoad, eTimer, getDesktop, gMainDC, eSize
 
 from Screens.Screen import Screen
-from Tools.Directories import resolveFilename, pathExists, SCOPE_MEDIA, SCOPE_ACTIVE_SKIN
+from Tools.Directories import resolveFilename, pathExists, SCOPE_MEDIA, SCOPE_GUISKIN
 
 from Components.Pixmap import Pixmap, MovingPixmap
 from Components.ActionMap import ActionMap
@@ -151,12 +151,10 @@ class Pic_Setup(Screen, ConfigListScreen):
 
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.setTitle(_("PicturePlayer"))
 		# for the skin: first try MediaPlayerSettings, then Setup, this allows individual skinning
 		self.skinName = ["PicturePlayerSetup", "Setup"]
-		self.setup_title = _("Settings")
+		self.setTitle(_("Settings"))
 		self.onChangedEntry = []
-		self.session = session
 		ConfigListScreen.__init__(self, [], session=session, on_change=self.changedEntry)
 		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
 			{
@@ -172,10 +170,6 @@ class Pic_Setup(Screen, ConfigListScreen):
 		self["footnote"] = StaticText("")
 		self["description"] = StaticText("")
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def createSetup(self):
 		setup_list = [
@@ -277,7 +271,7 @@ class Pic_Thumb(Screen):
 		self.color = config.pic.bgcolor.value
 		self.spaceX, self.picX, self.spaceY, self.picY, textsize, thumtxt = skin.parameters.get("PicturePlayerThumb", (35, 190, 30, 200, 20, 14))
 
-		pic_frame = resolveFilename(SCOPE_ACTIVE_SKIN, "icons/pic_frame.png")
+		pic_frame = resolveFilename(SCOPE_GUISKIN, "icons/pic_frame.png")
 
 		self.size_w = getDesktop(0).size().width()
 		self.size_h = getDesktop(0).size().height()

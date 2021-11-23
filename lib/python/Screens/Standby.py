@@ -6,11 +6,11 @@ from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.Console import Console
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Components.Harddisk import harddiskmanager
 from GlobalActions import globalActionMap
 from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference
-from boxbranding import getMachineBrand, getMachineName, getBoxType, getBrandOEM, getMachineBuild
+from boxbranding import getMachineBrand, getMachineName, getBrandOEM, getMachineBuild
 import Tools.Notifications
 from time import localtime, time
 import Screens.InfoBar
@@ -107,12 +107,12 @@ def setLCDModeMinitTV(value):
 class Standby2(Screen):
 	def Power(self):
 		print("[Standby] leave standby")
-		SystemInfo["StandbyState"] = False
+		BoxInfo.setItem("StandbyState", False)
 
 		if os.path.exists("/usr/script/StandbyLeave.sh"):
 			Console().ePopen("/usr/script/StandbyLeave.sh &")
 
-		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
+		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
 			try:
 				open("/proc/stb/hdmi/output", "w").write("on")
 			except:
@@ -123,7 +123,7 @@ class Standby2(Screen):
 		#unmute adc
 		self.leaveMute()
 		# set LCDminiTV
-		if SystemInfo["Display"] and SystemInfo["LCDMiniTV"]:
+		if BoxInfo.getItem("Display") and BoxInfo.getItem("LCDMiniTV"):
 			setLCDModeMinitTV(config.lcd.modeminitv.value)
 		#kill me
 		self.close(True)
@@ -171,7 +171,7 @@ class Standby2(Screen):
 		self.avswitch = AVSwitch()
 
 		print("[Standby] enter standby")
-		SystemInfo["StandbyState"] = True
+		BoxInfo.setItem("StandbyState", True)
 
 		if os.path.exists("/usr/script/StandbyEnter.sh"):
 			Console().ePopen("/usr/script/StandbyEnter.sh &")
@@ -196,7 +196,7 @@ class Standby2(Screen):
 		#mute adc
 		self.setMute()
 
-		if SystemInfo["Display"] and SystemInfo["LCDMiniTV"]:
+		if BoxInfo.getItem("Display") and BoxInfo.getItem("LCDMiniTV"):
 			# set LCDminiTV off
 			setLCDModeMinitTV("0")
 
@@ -225,11 +225,11 @@ class Standby2(Screen):
 			InfoBar.instance and hasattr(InfoBar.instance, "showPiP") and InfoBar.instance.showPiP()
 
 		#set input to vcr scart
-		if SystemInfo["ScartSwitch"]:
+		if BoxInfo.getItem("ScartSwitch"):
 			self.avswitch.setInput("SCART")
 		else:
 			self.avswitch.setInput("AUX")
-		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
+		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
 			try:
 				open("/proc/stb/hdmi/output", "w").write("off")
 			except:
@@ -431,11 +431,11 @@ class TryQuitMainloop(MessageBox):
 			self.quitScreen.show()
 			print("[Standby] quitMainloop #1")
 			quitMainloopCode = self.retval
-			if SystemInfo["Display"] and SystemInfo["LCDMiniTV"]:
+			if BoxInfo.getItem("Display") and BoxInfo.getItem("LCDMiniTV"):
 				# set LCDminiTV off / fix a deep-standby-crash on some boxes / gb4k
 				print("[Standby] LCDminiTV off")
 				setLCDModeMinitTV("0")
-			if getBoxType() == "vusolo4k":  #workaround for white display flash
+			if BoxInfo.getItem("model") == "vusolo4k":  #workaround for white display flash
 				open("/proc/stb/fp/oled_brightness", "w").write("0")
 			quitMainloop(self.retval)
 		else:
@@ -448,3 +448,26 @@ class TryQuitMainloop(MessageBox):
 	def __onHide(self):
 		global inTryQuitMainloop
 		inTryQuitMainloop = False
+
+class DualMode(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self["myActionMap"] = ActionMap(["SetupActions", "ColorActions"],
+		{
+			"ok": self.goAndroid,
+			"cancel": self.close,
+		}, -1)
+		self.onShown.append(self.switchAndroid)
+
+	def goAndroid(self, answer):
+		if answer is True:
+			with open('/dev/block/by-name/flag', 'wb') as f:
+				f.write(struct.pack("B", 0))
+			self.session.open(TryQuitMainloop, 2)
+		else:
+			self.close()
+
+	def switchAndroid(self):
+		self.onShown.remove(self.switchAndroid)
+		self.session.openWithCallback(self.goAndroid, MessageBox, _("\n Do you want to switch Enigma2 with Android...?"))
+		

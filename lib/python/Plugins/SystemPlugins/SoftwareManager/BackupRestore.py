@@ -51,7 +51,7 @@ def InitConfig():
 	# BACKUPFILES contains all files and folders to back up, for wildcard entries ALWAYS use eEnv_resolve_multi!
 	BACKUPFILES = ['/etc/enigma2/', '/etc/CCcam.cfg', '/usr/keys/',
 		'/etc/tuxbox/config/', '/etc/auto.network', '/etc/machine-id', 
-		'/etc/openvpn/',  
+		'/etc/openvpn/', 
 		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
 		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
 		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
@@ -106,9 +106,9 @@ def getBackupFilename():
 
 def SettingsEntry(name, checked):
 	if checked:
-		picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_on.png"))
+		picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/icons/lock_on.png"))
 	else:
-		picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_off.png"))
+		picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/icons/lock_off.png"))
 
 	return (name, picture, checked)
 
@@ -121,7 +121,6 @@ class BackupScreen(Screen, ConfigListScreen):
 
 	def __init__(self, session, runBackup=False):
 		Screen.__init__(self, session)
-		self.session = session
 		self.runBackup = runBackup
 		self["actions"] = ActionMap(["WizardActions", "DirectionActions"],
 		{
@@ -457,7 +456,6 @@ class RestoreScreen(Screen, ConfigListScreen):
 
 	def __init__(self, session, runRestore=False):
 		Screen.__init__(self, session)
-		self.session = session
 		self.runRestore = runRestore
 		self["actions"] = ActionMap(["WizardActions", "DirectionActions"],
 		{
@@ -709,7 +707,7 @@ class RestorePlugins(Screen):
 		if len(self.myipklistfirst) > 0:
 			self.session.open(Console, title=_("Installing feeds from IPK ..."), cmdlist=['opkg install ' + ' '.join(self.myipklistfirst) + ' ; opkg update'], finishedCallback=self.installLocalIPK, closeOnSuccess=True)
 		else:
-			self.installPlugins()
+			self.installLocalIPK()
 
 	def installLocalIPK(self):
 		if len(self.myipklist) > 0:

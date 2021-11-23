@@ -19,7 +19,7 @@ import os
 from Tools.NumericalTextInput import NumericalTextInput
 
 # GUI (Components)
-from Components.ActionMap import NumberActionMap, HelpableActionMap
+from Components.ActionMap import HelpableNumberActionMap, HelpableActionMap
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.Button import Button
@@ -147,19 +147,19 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 			}, -2)
 
 		# Actions used by quickselect
-		self["NumberActions"] = NumberActionMap(["NumberActions"],
-		{
-			"1": self.keyNumberGlobal,
-			"2": self.keyNumberGlobal,
-			"3": self.keyNumberGlobal,
-			"4": self.keyNumberGlobal,
-			"5": self.keyNumberGlobal,
-			"6": self.keyNumberGlobal,
-			"7": self.keyNumberGlobal,
-			"8": self.keyNumberGlobal,
-			"9": self.keyNumberGlobal,
-			"0": self.keyNumberGlobal
-		})
+		smsMsg = _("SMS style QuickSelect location selection")
+		self["numberActions"] = HelpableNumberActionMap(self, "NumberActions", {
+			"1": (self.keyNumberGlobal, smsMsg),
+			"2": (self.keyNumberGlobal, smsMsg),
+			"3": (self.keyNumberGlobal, smsMsg),
+			"4": (self.keyNumberGlobal, smsMsg),
+			"5": (self.keyNumberGlobal, smsMsg),
+			"6": (self.keyNumberGlobal, smsMsg),
+			"7": (self.keyNumberGlobal, smsMsg),
+			"8": (self.keyNumberGlobal, smsMsg),
+			"9": (self.keyNumberGlobal, smsMsg),
+			"0": (self.keyNumberGlobal, smsMsg)
+		}, prio=0, description=_("Quick Select Actions"))
 
 		# Run some functions when shown
 		self.onShown.extend((
@@ -535,30 +535,4 @@ class TimeshiftLocationBox(LocationBox):
 		if ret:
 			config.usage.timeshift_path.value = self.getPreferredFolder()
 			config.usage.timeshift_path.save()
-			LocationBox.selectConfirmed(self, ret)
-
-
-class AutorecordLocationBox(LocationBox):
-	def __init__(self, session):
-		LocationBox.__init__(
-				self,
-				session,
-				text=_("Where to save temporary timeshift recordings?"),
-				currDir=config.usage.autorecord_path.value,
-				bookmarks=config.usage.allowed_autorecord_paths,
-				autoAdd=True,
-				editDir=True,
-				inhibitDirs=defaultInhibitDirs,
-				minFree=1024 # the same requirement is hardcoded in servicedvb.cpp
-		)
-		self.skinName = "LocationBox"
-
-	def cancel(self):
-		config.usage.autorecord_path.cancel()
-		LocationBox.cancel(self)
-
-	def selectConfirmed(self, ret):
-		if ret:
-			config.usage.autorecord_path.setValue(self.getPreferredFolder())
-			config.usage.autorecord_path.save()
 			LocationBox.selectConfirmed(self, ret)

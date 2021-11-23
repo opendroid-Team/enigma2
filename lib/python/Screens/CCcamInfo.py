@@ -21,7 +21,7 @@ from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.Directories import fileExists, SCOPE_ACTIVE_SKIN, resolveFilename
+from Tools.Directories import fileExists, SCOPE_GUISKIN, resolveFilename
 from six.moves.urllib.parse import urlparse, urlunparse
 from twisted.internet import reactor
 from twisted.web.client import HTTPClientFactory
@@ -213,13 +213,13 @@ menu_list = [
 
 #############################################################
 
-if path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_on.png")):
-	lock_on = loadPNG(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_on.png"))
+if path.exists(resolveFilename(SCOPE_GUISKIN, "icons/lock_on.png")):
+	lock_on = loadPNG(resolveFilename(SCOPE_GUISKIN, "icons/lock_on.png"))
 else:
 	lock_on = loadPNG("/usr/share/enigma2/skin_default/icons/lock_on.png")
 
-if path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_off.png")):
-	lock_off = loadPNG(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/lock_off.png"))
+if path.exists(resolveFilename(SCOPE_GUISKIN, "icons/lock_off.png")):
+	lock_off = loadPNG(resolveFilename(SCOPE_GUISKIN, "icons/lock_off.png"))
 else:
 	lock_off = loadPNG("/usr/share/enigma2/skin_default/icons/lock_off.png")
 
@@ -287,8 +287,8 @@ def CCcamListEntry(name, idx):
 		idx = "menu"
 	elif idx == 15:
 		idx = "info"
-	if path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_%s.png" % str(idx))):
-		png = resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_%s.png" % str(idx))
+	if path.exists(resolveFilename(SCOPE_GUISKIN, "buttons/key_%s.png" % str(idx))):
+		png = resolveFilename(SCOPE_GUISKIN, "buttons/key_%s.png" % str(idx))
 	else:
 		png = "/usr/share/enigma2/skin_default/buttons/key_%s.png" % str(idx)
 	if fileExists(png):
@@ -301,8 +301,8 @@ def CCcamListEntry(name, idx):
 
 def CCcamServerListEntry(name, color):
 	res = [name]
-	if path.exists(resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_%s.png" % color)):
-		png = resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_%s.png" % color)
+	if path.exists(resolveFilename(SCOPE_GUISKIN, "buttons/key_%s.png" % color)):
+		png = resolveFilename(SCOPE_GUISKIN, "buttons/key_%s.png" % color)
 	else:
 		png = "/usr/share/enigma2/skin_default/buttons/key_%s.png" % color
 	if fileExists(png):
@@ -379,7 +379,6 @@ class CCcamInfoMain(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _("CCcam Info"))
-		self.session = session
 
 		self["menu"] = CCcamList([])
 
@@ -833,7 +832,6 @@ class CCcamShareViewMenu(Screen, HelpableScreen):
 	def __init__(self, session, url):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Share Info"))
 		self.url = url
 		self.list = []
@@ -1153,7 +1151,6 @@ class CCcamShareViewMenu(Screen, HelpableScreen):
 class CCcamInfoSubMenu(Screen):
 	def __init__(self, session, list, infoList, set_title):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _(set_title))
 		self.infoList = infoList
 		self["list"] = MenuList(list)
@@ -1192,7 +1189,6 @@ class CCcamInfoSubMenu(Screen):
 class CCcamInfoServerMenu(Screen):
 	def __init__(self, session, infoList, url):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Server Info"))
 		self.infoList = infoList
 		self.url = url
@@ -1280,7 +1276,6 @@ class CCcamInfoConfigMenu(ConfigListScreen, Screen):
 class CCcamInfoRemoteBoxMenu(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Remote Info"))
 		self.list = []
 		self.profiles = []
@@ -1402,7 +1397,6 @@ class CCcamInfoRemoteBoxMenu(Screen):
 class CCcamInfoShareInfo(Screen):
 	def __init__(self, session, hostname, url):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Share Info"))
 		self.hostname = hostname
 		self.url = url
@@ -1553,7 +1547,6 @@ class CCcamInfoShareInfo(Screen):
 class CCcamInfoConfigSwitcher(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Config Switcher"))
 		self["key_red"] = Label(_("Delete"))
 		self["key_green"] = Label(_("Activate"))
@@ -1668,7 +1661,6 @@ class CCcamInfoConfigSwitcher(Screen):
 class CCcamInfoMenuConfig(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.session = session
 		Screen.setTitle(self, _("CCcam Info Config"))
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("Save"))

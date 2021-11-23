@@ -1,6 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
-from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_GUISKIN, resolveFilename
 from enigma import *
 from enigma import getDesktop
 from Screens.Screen import Screen
@@ -44,11 +44,11 @@ sfdisk = os.path.exists('/usr/sbin/sfdisk')
 
 def DiskEntry(model, size, removable, rotational, internal):
         if not removable and internal and rotational:
-                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"))
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"))
         elif internal and not rotational:
-                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/ssddisk.png"))
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/ssddisk.png"))
         else:
-                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"));
+                picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/disk.png"));
 
         return (picture, model, size)
 
@@ -280,7 +280,7 @@ if getDesktop(0).size().width() >= 1920:
 sfdisk = os.path.exists('/usr/sbin/sfdisk')
 
 def PartitionEntry(description, size):
-        picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/partitionmanager.png"))
+        picture = LoadPixmap(cached = True, path = resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/partitionmanager.png"))
         return (picture, description, size)
 
 class HddPartitions(Screen):
@@ -716,7 +716,7 @@ class HddMountDevice(Screen):
                 self.close()
 
 def MountEntry(description, details):
-        picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/diskusb.png"));
+        picture = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/diskusb.png"));
         return (picture, description, details)
 
 class HddFastRemove(Screen):
@@ -1619,7 +1619,7 @@ class ExtraActionBox(Screen):
 
         def __setTitle(self):
                 if self["logo"].instance is not None:
-                        self["logo"].instance.setPixmapFromFile(resolveFilename(SCOPE_CURRENT_SKIN, '/usr/lib/enigma2/python/OPENDROID/icons/run.png'))
+                        self["logo"].instance.setPixmapFromFile(resolveFilename(SCOPE_GUISKIN, '/usr/lib/enigma2/python/OPENDROID/icons/run.png'))
                 self.setTitle(self.ctitle)
                 self.timer = eTimer()
                 self.timer.callback.append(self.__start)
@@ -1629,9 +1629,9 @@ class ExtraActionBox(Screen):
                 self.close(self.caction())
 #############################################################################################################################
 def MessageBoxEntry(name, picture):
-        pixmap = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/" + picture));
+        pixmap = LoadPixmap(cached = True, path = resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/" + picture));
         if not pixmap:
-                pixmap = LoadPixmap(cached = True, path = resolveFilename(SCOPE_CURRENT_SKIN, "/usr/lib/enigma2/python/OPENDROID/icons/empty.png"));
+                pixmap = LoadPixmap(cached = True, path = resolveFilename(SCOPE_GUISKIN, "/usr/lib/enigma2/python/OPENDROID/icons/empty.png"));
 
         return (pixmap, name)
 

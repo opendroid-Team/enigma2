@@ -18,7 +18,7 @@ from Screens.Console import Console
 from Plugins.Plugin import PluginDescriptor
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_GUISKIN, resolveFilename
 from enigma import getDesktop
 
 ####################################################################################
@@ -102,7 +102,7 @@ class ManualPanel(Screen):
 		for i in self.entrylist:
 				res = [i]
 				res.append(MultiContentEntryText(pos=(110, 13), size=(700, 50), font=0, text=i[0]))
-				picture=LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, i[2]))
+				picture=LoadPixmap(resolveFilename(SCOPE_GUISKIN, i[2]))
 				res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 13), size=(100, 40), png=picture))
 				self.list.append(res)
 		self['list'].l.setList(self.list)
@@ -119,7 +119,7 @@ class PanelTGzInstaller(Screen):
 		<widget source="key_green" render="Label" position="220,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="green" transparent="1" />
 		<widget source="key_yellow" render="Label" position="400,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="yellow" transparent="1" />
 		</screen>"""
-	  
+
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
@@ -132,37 +132,40 @@ class PanelTGzInstaller(Screen):
 				"ok": self.okInst,
 				"green": self.okInst,
 				"red": self.cancel,
-				"yellow": self.okInstAll,
 			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
-		self["key_yellow"] = StaticText(_("Install All"))
-		
+
 	def nList(self):
+		global fileplace1
 		self.list = []
-		ipklist = os.popen("ls -lh  /tmp/*.tar.gz /tmp/*.bh.tgz /tmp/*.nab.tgz")
+		ipklist = os.popen('ls -lh  /tmp/*.tar.gz /tmp/*.bh.tgz /tmp/*.nab.tgz /media/usb/*.tar.gz /media/usb/*.bh.tgz /media/usb/*.nab.tgz /media/hdd/*.tar.gz /media/hdd/*.bh.tgz /media/hdd/*.nab.tgz /media/mmc/*.tar.gz /media/mmc/*.bh.tgz /media/mmc/*.nab.tgz /media/sda1/*.tar.gz /media/sda1/*.bh.tgz /media/sda1/*.nab.tgz')
 		png = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, "/usr/lib/enigma2/python/OPENDROID/icons/plugin.png"))
 		for line in ipklist.readlines():
 			dstring = line.split("/")
-			try:
+		try:
+			if dstring[1] == 'tmp':
 				endstr = len(dstring[0] + dstring[1]) + 2
+				fileplace1 = dstring[1]       
+			else:
+				endstr = len(dstring[0] + dstring[1] + dstring[2]) + 3
+				fileplace1 = dstring[1] + "/" + dstring[2]  
 				self.list.append((line[endstr:], dstring[0], png))
-			except:
-				pass
-		self["menu"].setList(self.list)
-		
+		except:
+			pass
+
+		self['menu'].setList(self.list)
+
 	def okInst(self):
 		try:
 			item = self["menu"].getCurrent()
 			name = item[0]
-			self.session.open(Console,title = _("Install tar.gz, bh.tgz, nab.tgz"), cmdlist = ["tar -C/ -xzpvf /tmp/%s" % name])
+			pecommand1 = 'tar -C/ -xzpvf /%s/%s' % (fileplace1, name)
+			self.session.open(Console, title = _('Install tar.gz , bh.tgz , nab.tgz'), cmdlist = [
+			pecommand1])
 		except:
 			pass
-			
-	def okInstAll(self):
-			ipklist = os.popen("ls -1  /tmp/*.tar.gz /tmp/*.bh.tgz")#posizione ipk
-			self.session.open(Console,title = _("Install tar.gz, bh.tgz, nab.tgz"), cmdlist = ["tar -C/ -xzpvf /tmp/*.tar.gz", "tar -C/ -xzpvf /tmp/*.bh.tgz", "tar -C/ -xzpvf /tmp/*.nab.tgz"])
 
 	def cancel(self):
 		self.close()
@@ -179,51 +182,57 @@ class PanelIPKInstaller(Screen):
 		<widget source="key_green" render="Label" position="220,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="green" transparent="1" />
 		<widget source="key_yellow" render="Label" position="400,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="yellow" transparent="1" />
 		</screen>"""
-	  
+
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
 		self.list = []
 		self["menu"] = List(self.list)
 		self.nList()
-		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
-			{
-				"cancel": self.cancel,
-				"ok": self.okInst,
-				"green": self.okInst,
-				"red": self.cancel,
-				"yellow": self.okInstAll,
-			}, -1)
-		self.list = [ ]
-		self["key_red"] = StaticText(_("Close"))
-		self["key_green"] = StaticText(_("Install"))
-		self["key_yellow"] = StaticText(_("Install All"))
-		
-	def nList(self):
+		self['actions'] = ActionMap([
+			'OkCancelActions',
+			'ColorActions'], {
+			'cancel': self.cancel,
+			'ok': self.okInst,
+			'green': self.okInst,
+			'red': self.cancel}, -1)
 		self.list = []
-		ipklist = os.popen("ls -lh  /tmp/*.ipk")#cerca ipk
+		self['key_red'] = StaticText(_('Close'))
+		self['key_green'] = StaticText(_('Install'))
+
+	def nList(self):
+		global fileplace2
+		self.list = []
+		ipklist = os.popen('ls -lh  /tmp/*.ipk /media/usb/*.ipk /media/hdd/*.ipk /media/mmc/*.ipk /media/sda1/*.ipk')
 		png = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, '/usr/lib/enigma2/python/OPENDROID/icons/plugin.png'))
 		for line in ipklist.readlines():
-			dstring = line.split("/")
+			dstring = line.split('/')
 			try:
-				endstr = len(dstring[0] + dstring[1]) + 2
-				self.list.append((line[endstr:], dstring[0], png))
+				if dstring[1] == 'tmp':
+					endstr = len(dstring[0] + dstring[1]) + 2
+					fileplace2 = dstring[1]  
+				else:
+					endstr = len(dstring[0] + dstring[1] + dstring[2]) + 3
+					fileplace2 = dstring[1] + "/" + dstring[2]
+					self.list.append((line[endstr:], dstring[0], png))
 			except:
 				pass
 		self["menu"].setList(self.list)
-		
+
 	def okInst(self):
 		try:
 			item = self["menu"].getCurrent()
 			name = item[0]
-			self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
+			pecommand1 = 'opkg install /%s/%s' % (fileplace2, name)
+			self.session.open(Console, title = 'Install ipk Packages', cmdlist = [
+			pecommand1])
 		except:
 			pass
-			
-	def okInstAll(self):
-		name = "*.ipk"
-		self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
-		
+
+	def cancel(self):
+		self.close()
+
+
 	def cancel(self):
 		self.close()
 ####################################################################################
@@ -239,7 +248,7 @@ class AdvInstallIpk(Screen):
 		<widget source="key_green" render="Label" position="220,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="green" transparent="1" />
 		<widget source="key_yellow" render="Label" position="400,360" zPosition="2" size="170,30" font="Regular;20" foregroundColor="yellow" transparent="1" />
 		</screen>"""
-	  
+
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
@@ -252,40 +261,42 @@ class AdvInstallIpk(Screen):
 				"ok": self.okInst,
 				"green": self.okInst,
 				"red": self.cancel,
-				"yellow": self.okInstAll,
 			}, -1)
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
-		self["key_yellow"] = StaticText(_("Install All"))
-		
+
 	def nList(self):
+		global fileplace4
 		self.list = []
-		ipklist = os.popen("ls -lh  /tmp/*.ipk")#cerca ipk
+		ipklist = os.popen('ls -lh  /tmp/*.ipk /media/usb/*.ipk /media/hdd/*.ipk /media/mmc/*.ipk /media/sda1/*.ipk')
 		png = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, '/usr/lib/enigma2/python/OPENDROID/icons/plugin.png'))
 		for line in ipklist.readlines():
 			dstring = line.split("/")
 			try:
-				endstr = len(dstring[0] + dstring[1]) + 2
-				self.list.append((line[endstr:], dstring[0], png))
+				if dstring[1] == 'tmp':
+					endstr = len(dstring[0] + dstring[1]) + 2
+					fileplace4 = dstring[1] 
+				else:
+					endstr = len(dstring[0] + dstring[1] + dstring[2]) + 3
+					fileplace4 = dstring[1] + "/" + dstring[2]
+					self.list.append((line[endstr:], dstring[0], png))
 			except:
 				pass
 		self["menu"].setList(self.list)
-		
+
 	def okInst(self):
 		try:
 			item = self["menu"].getCurrent()
 			name = item[0]
-			self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
+			pecommand1 = 'opkg install --force-reinstall --force-overwrite /%s/%s' % (fileplace4, name)
+			self.session.open(Console, title = 'Install ipk Packages', cmdlist = [
+			pecommand1])
 		except:
 			pass
-		
-	def okInstAll(self):
-		name = "*.ipk"
-		self.session.open(Console,title = "Install ipk packets", cmdlist = ["opkg install /tmp/%s" % name])
-		
 	def cancel(self):
 		self.close()
+
 ####################################################################################
 #                                     RemoveIPK                                    #
 ####################################################################################
@@ -316,8 +327,8 @@ class RemoveIPK(Screen):
 				"green": self.Remove,
 				"red": self.cancel,
 				"yellow": self.ARemove,
-			},-1)
-		
+			}, -1)
+
 	def nList(self):
 		self.list = []
 		ipklist = os.popen("opkg list-installed")
@@ -369,7 +380,7 @@ class downfeed(Screen):
 				</convert>
 			</widget>
 		</screen>"""
-	  
+
 	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.session = session
@@ -386,7 +397,7 @@ class downfeed(Screen):
 		self.list = [ ]
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Install"))
-		
+
 	def nList(self):
 		self.list = []
 		os.system("opkg update")#Downloading di tutti i feed 
@@ -394,20 +405,24 @@ class downfeed(Screen):
 			ipklist = os.popen("opkg list")
 		except:
 			pass
-		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_PLUGINS, "/usr/lib/enigma2/python/OPENDROID/icons/plugin.png"))
+		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_SKIN_IMAGE, "/usr/lib/enigma2/python/OPENDROID/icons/plugin.png"))
 		for line in ipklist.readlines():
 			dstring = line.split(" ")
 			try:
-				endstr = len(dstring[0] + dstring[1]+ dstring[2]+dstring[3]) + 4
-
-				self.list.append((dstring[0]  + " " + dstring[1] + " " + dstring[2], line[endstr:], png))
+				if dstring[1] == 'tmp':
+					endstr = len(dstring[0] + dstring[1]) + 2
+					fileplace5 = dstring[1] 
+				else:
+					endstr = len(dstring[0] + dstring[1] + dstring[2]) + 3
+					fileplace5 = dstring[1] + "/" + dstring[2]
+					self.list.append((line[endstr:], dstring[0], png))
 			except:
 				pass
 		self["menu"].setList(self.list)
-		
+
 	def cancel(self):
 		self.close()
-		
+
 	def setup(self):
 		item = self["menu"].getCurrent()
 		name = item[0]

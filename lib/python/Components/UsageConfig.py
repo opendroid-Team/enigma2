@@ -9,13 +9,13 @@ from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTun
 from Components.About import about
 from Components.Harddisk import harddiskmanager
 from Components.config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigFloat, ConfigDictionarySet, ConfigDirectory
-from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists, isPluginInstalled
+from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_VOD, SCOPE_SYSETC, defaultRecordingLocation, isPluginInstalled, fileContains
 from Components.NimManager import nimmanager
 from Components.RcModel import rc_model
 from Components.ServiceList import refreshServiceList
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Tools.HardwareInfo import HardwareInfo
-from boxbranding import getBoxType, getDisplayType
+from boxbranding import getDisplayType
 from keyids import KEYIDS
 from sys import maxsize
 import glob
@@ -68,7 +68,7 @@ def InitUsageConfig():
 	config.usage.showdish = ConfigSelection(default="flashing", choices=[("flashing", _("Flashing")), ("normal", _("Not Flashing")), ("off", _("Off"))])
 	config.usage.multibouquet = ConfigYesNo(default=True)
 	config.usage.maxchannelnumlen = ConfigSelection(default="4", choices=[("1", _("1")), ("2", _("2")), ("3", _("3")), ("4", _("4")), ("5", _("5"))])
-	config.usage.numzaptimeoutmode = ConfigSelection(default="standard", choices=[("standard", _("Standard")), ("userdefined", _("User defined")), ("off", _("off"))])
+	config.usage.numzaptimeoutmode = ConfigSelection(default="standard", choices=[("standard", _("Standard")), ("userdefined", _("User defined")), ("off", _("Off"))])
 	config.usage.numzaptimeout1 = ConfigSlider(default=3000, increment=250, limits=(500, 5000))
 	config.usage.numzaptimeout2 = ConfigSlider(default=1000, increment=250, limits=(0, 5000))
 	config.usage.numzappicon = ConfigYesNo(default=False)
@@ -77,6 +77,24 @@ def InitUsageConfig():
 	config.misc.ecm_info = ConfigYesNo(default=False)
 	config.usage.menu_show_numbers = ConfigYesNo(default=False)
 	config.usage.showScreenPath = ConfigSelection(default="off", choices=[("off", _("None")), ("small", _("Small")), ("large", _("Large"))])
+	if fileContains("/etc/network/interfaces", "iface eth0 inet static") and not fileContains("/etc/network/interfaces", "iface wlan0 inet dhcp") or fileContains("/etc/network/interfaces", "iface wlan0 inet static") and fileContains("/run/ifstate", "wlan0=wlan0"):
+		config.usage.dns = ConfigSelection(default="custom", choices=[
+			("custom", _("Static IP or Custom")),
+			("google", _("Google DNS")),
+			("cloudflare", _("Cloudflare")),
+			("opendns-familyshield", _("OpenDNS FamilyShield")),
+			("opendns-home", _("OpenDNS Home"))
+		])
+	else:
+		config.usage.dns = ConfigSelection(default="dhcp-router", choices=[
+			("dhcp-router", _("DHCP Router")),
+			("custom", _("Static IP or Custom")),
+			("google", _("Google DNS")),
+			("cloudflare", _("Cloudflare")),
+			("opendns-familyshield", _("OpenDNS FamilyShield")),
+			("opendns-home", _("OpenDNS Home"))
+		])
+
 	config.usage.subnetwork = ConfigYesNo(default=True)
 	config.usage.subnetwork_cable = ConfigYesNo(default=True)
 	config.usage.subnetwork_terrestrial = ConfigYesNo(default=True)
@@ -146,6 +164,7 @@ def InitUsageConfig():
 		("reverseB", _("Reverse bouquet buttons")),
 		("keep reverseB", _("Keep service") + " + " + _("Reverse bouquet buttons"))])
 	config.usage.show_dvdplayer = ConfigYesNo(default=False)
+	config.usage.multiepg_ask_bouquet = ConfigYesNo(default=False)
 	config.usage.showpicon = ConfigYesNo(default=True)
 
 #########  Workaround for VTI Skins   ##############
@@ -186,9 +205,9 @@ def InitUsageConfig():
 
 	def showsecondinfobarChanged(configElement):
 		if config.usage.show_second_infobar.value != "INFOBAREPG":
-			SystemInfo["InfoBarEpg"] = True
+			BoxInfo.setItem("InfoBarEpg", True)
 		else:
-			SystemInfo["InfoBarEpg"] = False
+			BoxInfo.setItem("InfoBarEpg", False)
 	config.usage.show_second_infobar.addNotifier(showsecondinfobarChanged, immediate_feedback=True)
 	config.usage.infobar_frontend_source = ConfigSelection(default="tuner", choices=[("settings", _("Settings")), ("tuner", _("Tuner"))])
 
@@ -244,7 +263,7 @@ def InitUsageConfig():
 	config.usage.sort_extensionslist = ConfigYesNo(default=False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default=True)
 	config.usage.movieplayer_pvrstate = ConfigYesNo(default=False)
-	config.usage.rc_model = ConfigSelection(default=DefaultRemote, choices=RemoteChoices)
+#	config.usage.rc_model = ConfigSelection(default=DefaultRemote, choices=RemoteChoices)
 
 	choicelist = []
 	for i in (10, 30):
@@ -271,74 +290,57 @@ def InitUsageConfig():
 		m = i / 60
 		choicelist.append(("%d" % i, ngettext("%d minute", "%d minutes", m) % m))
 	config.usage.pip_last_service_timeout = ConfigSelection(default="-1", choices=choicelist)
-	if not os.path.exists(resolveFilename(SCOPE_HDD)):
+
+	defaultValue = resolveFilename(SCOPE_HDD)
+	if not os.path.exists(defaultValue):
 		try:
-			os.mkdir(resolveFilename(SCOPE_HDD), 0o755)
-		except:
+			os.mkdir(defaultValue, 0o755)
+		except (IOError, OSError) as err:
 			pass
-	config.usage.default_path = ConfigText(default=resolveFilename(SCOPE_HDD))
-	if not config.usage.default_path.value.endswith('/'):
-		tmpvalue = config.usage.default_path.value
-		config.usage.default_path.setValue(tmpvalue + '/')
-		config.usage.default_path.save()
+	config.usage.default_path = ConfigSelection(default=defaultValue, choices=[(defaultValue, defaultValue)])
+	config.usage.default_path.load()
+	if config.usage.default_path.saved_value:
+		savedValue = os.path.join(config.usage.default_path.saved_value, "")
+		if savedValue and savedValue != defaultValue:
+			config.usage.default_path.setChoices([(defaultValue, defaultValue), (savedValue, savedValue)], default=defaultValue)
+			config.usage.default_path.value = savedValue
+	config.usage.default_path.save()
 
-	def defaultpathChanged(configElement):
-		tmpvalue = config.usage.default_path.value
+	choiceList = [("<default>", "<default>"), ("<current>", "<current>"), ("<timer>", "<timer>")]
+	config.usage.timer_path = ConfigSelection(default="<default>", choices=choiceList)
+	config.usage.timer_path.load()
+	if config.usage.timer_path.saved_value:
+		savedValue = config.usage.timer_path.saved_value if config.usage.timer_path.saved_value.startswith("<") else os.path.join(config.usage.timer_path.saved_value, "")
+		if savedValue and savedValue not in choiceList:
+			config.usage.timer_path.setChoices(choiceList + [(savedValue, savedValue)], default="<default>")
+			config.usage.timer_path.value = savedValue
+	config.usage.timer_path.save()
+
+	config.usage.instantrec_path = ConfigSelection(default="<default>", choices=choiceList)
+	config.usage.instantrec_path.load()
+	if config.usage.instantrec_path.saved_value:
+		savedValue = config.usage.instantrec_path.saved_value if config.usage.instantrec_path.saved_value.startswith("<") else os.path.join(config.usage.instantrec_path.saved_value, "")
+		if savedValue and savedValue not in choiceList:
+			config.usage.instantrec_path.setChoices(choiceList + [(savedValue, savedValue)], default="<default>")
+			config.usage.instantrec_path.value = savedValue
+	config.usage.instantrec_path.save()
+
+	defaultValue = resolveFilename(SCOPE_TIMESHIFT)
+	if not os.path.exists(defaultValue):
 		try:
-			if not os.path.exists(tmpvalue):
-				os.system("mkdir -p %s" % tmpvalue)
-		except:
-			print("Failed to create recording path: %s" % tmpvalue)
-		if not config.usage.default_path.value.endswith('/'):
-			config.usage.default_path.setValue(tmpvalue + '/')
-			config.usage.default_path.save()
-	config.usage.default_path.addNotifier(defaultpathChanged, immediate_feedback=False)
-
-	config.usage.timer_path = ConfigText(default="<default>")
-	config.usage.autorecord_path = ConfigText(default="<default>")
-	config.usage.instantrec_path = ConfigText(default="<default>")
-
-	if not os.path.exists(resolveFilename(SCOPE_TIMESHIFT)):
-		try:
-			os.mkdir(resolveFilename(SCOPE_TIMESHIFT), 0o755)
-		except:
+			os.mkdir(defaultValue, 0o755)
+		except (IOError, OSError) as err:
 			pass
-	config.usage.timeshift_path = ConfigText(default=resolveFilename(SCOPE_TIMESHIFT))
-	if not config.usage.default_path.value.endswith('/'):
-		tmpvalue = config.usage.timeshift_path.value
-		config.usage.timeshift_path.setValue(tmpvalue + '/')
-		config.usage.timeshift_path.save()
+	config.usage.timeshift_path = ConfigSelection(default=defaultValue, choices=[(defaultValue, defaultValue)])
+	config.usage.timeshift_path.load()
+	if config.usage.timeshift_path.saved_value:
+		savedValue = os.path.join(config.usage.timeshift_path.saved_value, "")
+		if savedValue and savedValue != defaultValue:
+			config.usage.timeshift_path.setChoices([(defaultValue, defaultValue), (savedValue, savedValue)], default=defaultValue)
+			config.usage.timeshift_path.value = savedValue
+	config.usage.timeshift_path.save()
+	config.usage.allowed_timeshift_paths = ConfigLocations(default=[defaultValue])
 
-	def timeshiftpathChanged(configElement):
-		if not config.usage.timeshift_path.value.endswith('/'):
-			tmpvalue = config.usage.timeshift_path.value
-			config.usage.timeshift_path.setValue(tmpvalue + '/')
-			config.usage.timeshift_path.save()
-	config.usage.timeshift_path.addNotifier(timeshiftpathChanged, immediate_feedback=False)
-	config.usage.allowed_timeshift_paths = ConfigLocations(default=[resolveFilename(SCOPE_TIMESHIFT)])
-
-	if not os.path.exists(resolveFilename(SCOPE_AUTORECORD)):
-		try:
-			os.mkdir(resolveFilename(SCOPE_AUTORECORD), 0o755)
-		except:
-			pass
-	config.usage.autorecord_path = ConfigText(default=resolveFilename(SCOPE_AUTORECORD))
-	if not config.usage.default_path.value.endswith('/'):
-		tmpvalue = config.usage.autorecord_path.value
-		config.usage.autorecord_path.setValue(tmpvalue + '/')
-		config.usage.autorecord_path.save()
-
-	def autorecordpathChanged(configElement):
-		if not config.usage.autorecord_path.value.endswith('/'):
-			tmpvalue = config.usage.autorecord_path.value
-			config.usage.autorecord_path.setValue(tmpvalue + '/')
-			config.usage.autorecord_path.save()
-	config.usage.autorecord_path.addNotifier(autorecordpathChanged, immediate_feedback=False)
-	config.usage.allowed_autorecord_paths = ConfigLocations(default=[resolveFilename(SCOPE_AUTORECORD)])
-	config.usage.trashsort_deltime = ConfigSelection(default = "no", choices = [
-		("no", _("no")),
-		("show record time", _("Yes, show record time")),
-		("show delete time", _("Yes, show delete time"))])
 	config.usage.movielist_trashcan = ConfigYesNo(default=True)
 	config.usage.movielist_trashcan_network_clean = ConfigYesNo(default=False)
 	config.usage.movielist_trashcan_days = ConfigSelectionNumber(min=1, max=31, stepwidth=1, default=8, wraparound=True)
@@ -362,6 +364,27 @@ def InitUsageConfig():
 		("simple", _("Simple")),
 		("intermediate", _("Intermediate")),
 		("expert", _("Expert"))])
+
+	config.usage.setupShowDefault = ConfigSelection(default="newline", choices=[
+		("", _("Don't show default")),
+		("spaces", _("Show default after description")),
+		("newline", _("Show default on new line"))
+	])
+
+	config.usage.helpSortOrder = ConfigSelection(default="headings+alphabetic", choices=[
+		("headings+alphabetic", _("Alphabetical under headings")),
+		("flat+alphabetic", _("Flat alphabetical")),
+		("flat+remotepos", _("Flat by position on remote")),
+		("flat+remotegroups", _("Flat by key group on remote"))
+	])
+
+	config.usage.helpAnimationSpeed = ConfigSelection(default="10", choices=[
+		("1", _("Very fast")),
+		("5", _("Fast")),
+		("10", _("Default")),
+		("20", _("Slow")),
+		("50", _("Very slow"))
+	])
 
 	choicelist = [("standby", _("Standby")), ("deepstandby", _("Deep Standby"))]
 	config.usage.sleep_timer_action = ConfigSelection(default="deepstandby", choices=choicelist)
@@ -612,7 +635,7 @@ def InitUsageConfig():
 		("30000", "30 " + _("seconds")),
 		("60000", "1 " + _("minute")),
 		("300000", "5 " + _("minutes")),
-		("noscrolling", _("off"))])
+		("noscrolling", _("Off"))])
 	config.usage.lcd_scroll_speed = ConfigSelection(default="300", choices=[
 		("500", _("slow")),
 		("300", _("normal")),
@@ -1103,6 +1126,8 @@ def InitUsageConfig():
 	config.misc.epgcachepath.addNotifier(EpgCacheChanged, immediate_feedback=False)
 	config.misc.epgcachefilename.addNotifier(EpgCacheChanged, immediate_feedback=False)
 
+	config.misc.epgratingcountry = ConfigSelection(default="", choices=[("", _("Auto Detect")), ("ETSI", _("Generic")), ("AUS", _("Australia"))])
+	config.misc.epggenrecountry = ConfigSelection(default="", choices=[("", _("Auto Detect")), ("ETSI", _("Generic")), ("AUS", _("Australia"))])
 
 	config.misc.showradiopic = ConfigYesNo(default=True)
 
@@ -1111,7 +1136,7 @@ def InitUsageConfig():
 			hdd[1].setIdleTime(int(configElement.value))
 	config.usage.hdd_standby.addNotifier(setHDDStandby, immediate_feedback=False)
 
-	if SystemInfo["12V_Output"]:
+	if BoxInfo.getItem("12V_Output"):
 		def set12VOutput(configElement):
 			Misc_Options.getInstance().set_12V_output(configElement.value == "on" and 1 or 0)
 		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
@@ -1121,12 +1146,12 @@ def InitUsageConfig():
 	config.usage.keymap_usermod = ConfigText(default=eEnv.resolve("${datadir}/enigma2/keymap_usermod.xml"))
 
 	config.network = ConfigSubsection()
-	if SystemInfo["WakeOnLAN"]:
+	if BoxInfo.getItem("WakeOnLAN"):
 		def wakeOnLANChanged(configElement):
-			if getBoxType() in ('multibox', 'multiboxse', 'hd61', 'pulse4k', 'hd60', 'et7000', 'et7100', 'et7500', 'gbx1', 'gbx2', 'gbx3', 'gbx3h', 'et10000', 'gbquadplus', 'gbquad', 'gb800ueplus', 'gb800seplus', 'gbultraue', 'gbultraueh', 'gbultrase', 'gbipbox', 'quadbox2400', 'mutant2400', 'et7x00', 'et8500', 'et8500s', 'hzero', 'h8'):
-				open(SystemInfo["WakeOnLAN"], "w").write(configElement.value and "on" or "off")
+			if BoxInfo.getItem("model") in ('multibox', 'multiboxse', 'hd61', 'pulse4k', 'pulse4kmini', 'hd60', 'h9twin', 'i55se', 'h9se', 'h9combose', 'h9combo', 'h10', 'h11', 'h9', 'et7000', 'et7100', 'et7500', 'gbx1', 'gbx2', 'gbx3', 'gbx3h', 'et10000', 'gbquadplus', 'gbquad', 'gb800ueplus', 'gb800seplus', 'gbultraue', 'gbultraueh', 'gbultrase', 'gbipbox', 'quadbox2400', 'mutant2400', 'et7x00', 'et8500', 'et8500s', 'hzero', 'h8'):
+				open(BoxInfo.getItem("WakeOnLAN"), "w").write(configElement.value and "on" or "off")
 			else:
-				open(SystemInfo["WakeOnLAN"], "w").write(configElement.value and "enable" or "disable")
+				open(BoxInfo.getItem("WakeOnLAN"), "w").write(configElement.value and "enable" or "disable")
 		config.network.wol = ConfigYesNo(default=False)
 		config.network.wol.addNotifier(wakeOnLANChanged)
 	config.network.AFP_autostart = ConfigYesNo(default=False)
@@ -1157,7 +1182,6 @@ def InitUsageConfig():
 	config.timeshift.showinfobar = ConfigYesNo(default=True)
 	config.timeshift.stopwhilerecording = ConfigYesNo(default=False)
 	config.timeshift.favoriteSaveAction = ConfigSelection([("askuser", _("Ask user")), ("savetimeshift", _("Save and stop")), ("savetimeshiftandrecord", _("Save and record")), ("noSave", _("Don't save"))], "askuser")
-	config.timeshift.autorecord = ConfigYesNo(default=False)
 	config.timeshift.isRecording = NoSave(ConfigYesNo(default=False))
 	config.timeshift.timeshiftMaxHours = ConfigSelectionNumber(min=1, max=999, stepwidth=1, default=12, wraparound=True)
 	config.timeshift.timeshiftMaxEvents = ConfigSelectionNumber(min=1, max=999, stepwidth=1, default=12, wraparound=True)
@@ -1203,6 +1227,10 @@ def InitUsageConfig():
 	#//
 
 	config.crash.enabledebug = ConfigYesNo(default=False)
+	config.crash.debugActionMaps = ConfigYesNo(default=False)
+	config.crash.debugKeyboards = ConfigYesNo(default=False)
+	config.crash.debugRemoteControls = ConfigYesNo(default=False)
+	config.crash.debugScreens = ConfigYesNo(default=False)
 	config.crash.debugloglimit = ConfigSelectionNumber(min=1, max=10, stepwidth=1, default=4, wraparound=True)
 	config.crash.daysloglimit = ConfigSelectionNumber(min=1, max=30, stepwidth=1, default=8, wraparound=True)
 	config.crash.sizeloglimit = ConfigSelectionNumber(min=1, max=20, stepwidth=1, default=10, wraparound=True)
@@ -1283,26 +1311,11 @@ def InitUsageConfig():
 		("3", _("Everywhere"))])
 	config.misc.erase_flags.addNotifier(updateEraseFlags, immediate_feedback=False)
 
-	if SystemInfo["ZapMode"]:
-		try:
-			if os.path.exists("/proc/stb/video/zapping_mode"):
-				zapoptions = [("mute", _("Black screen")), ("hold", _("Hold screen"))]
-				zapfile = "/proc/stb/video/zapping_mode"
-			else:
-				zapoptions = [("mute", _("Black screen")), ("hold", _("Hold screen")), ("mutetilllock", _("Black screen till locked")), ("holdtilllock", _("Hold till locked"))]
-				zapfile = "/proc/stb/video/zapmode"
-		except:
-			zapoptions = [("mute", _("Black screen")), ("hold", _("Hold screen")), ("mutetilllock", _("Black screen till locked")), ("holdtilllock", _("Hold till locked"))]
-			zapfile = "/proc/stb/video/zapmode"
-
+	if BoxInfo.getItem("ZapMode"):
 		def setZapmode(el):
-			try:
-				file = open(zapfile, "w")
-				file.write(el.value)
-				file.close()
-			except:
-				pass
-		config.misc.zapmode = ConfigSelection(default = "mute", choices = zapoptions )
+			open(BoxInfo.getItem("ZapMode"), "w").write(el.value)
+		config.misc.zapmode = ConfigSelection(default="mute", choices=[
+			("mute", _("Black screen")), ("hold", _("Hold screen")), ("mutetilllock", _("Black screen till locked")), ("holdtilllock", _("Hold till locked"))])
 		config.misc.zapmode.addNotifier(setZapmode, immediate_feedback=False)
 
 	config.usage.historymode = ConfigSelection(default="1", choices=[("0", _("Just zap")), ("1", _("Show menu"))])
@@ -1529,7 +1542,7 @@ def InitUsageConfig():
 	config.epgselection.sort = ConfigSelection(default="0", choices=[("0", _("Time")), ("1", _("Alphanumeric"))])
 	config.epgselection.overjump = ConfigYesNo(default=False)
 	config.epgselection.infobar_type_mode = ConfigSelection(choices=[("text", _("Text")), ("graphics", _("Multi EPG")), ("single", _("Single EPG"))], default="text")
-	if SystemInfo.get("NumVideoDecoders", 1) > 1:
+	if BoxInfo.getItem("NumVideoDecoders", 1) > 1:
 		config.epgselection.infobar_preview_mode = ConfigSelection(choices=[("0", _("Disabled")), ("1", _("Fullscreen")), ("2", _("PiP"))], default="1")
 	else:
 		config.epgselection.infobar_preview_mode = ConfigSelection(choices=[("0", _("Disabled")), ("1", _("Fullscreen"))], default="1")
@@ -1665,7 +1678,7 @@ def InitUsageConfig():
 	config.oscaminfo.ip = ConfigIP(default=[127, 0, 0, 1], auto_jump=True)
 	config.oscaminfo.port = ConfigInteger(default=16002, limits=(0, 65536))
 	config.oscaminfo.intervall = ConfigSelectionNumber(min=1, max=600, stepwidth=1, default=10, wraparound=True)
-	SystemInfo["OScamInstalled"] = False
+	BoxInfo.setItem("OScamInstalled", False)
 
 	config.cccaminfo = ConfigSubsection()
 	config.cccaminfo.showInExtensions = ConfigYesNo(default=False)

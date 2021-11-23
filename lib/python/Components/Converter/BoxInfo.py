@@ -5,7 +5,7 @@ import os
 from Components.Converter.Poll import Poll
 from Tools.HardwareInfo import HardwareInfo
 
-class BoxInfo(Poll, Converter, object):
+class BoxInfo(Poll, Converter):
     BOXTYPE = 0
     LOAD = 1
     MEMINFO = 2

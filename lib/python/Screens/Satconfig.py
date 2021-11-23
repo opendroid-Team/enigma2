@@ -2,7 +2,7 @@ from __future__ import print_function
 from __future__ import division
 from enigma import eDVBDB, eDVBResourceManager, getLinkedSlotID, isFBCLink
 from Screens.Screen import Screen
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.NimManager import nimmanager
@@ -19,7 +19,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.ServiceStopScreen import ServiceStopScreen
 from Screens.AutoDiseqc import AutoDiseqc
 from Tools.BoundFunction import boundFunction
-from boxbranding import getBoxType, getMachineBrand
+from boxbranding import getMachineBrand
 
 from time import mktime, localtime
 from datetime import datetime
@@ -48,11 +48,11 @@ def setForceToneBurstChanged(configElement):
 
 
 config.tunermisc = ConfigSubsection()
-if SystemInfo["ForceLNBPowerChanged"]:
+if BoxInfo.getItem("ForceLNBPowerChanged"):
 	config.tunermisc.forceLnbPower = ConfigYesNo(default=False)
 	config.tunermisc.forceLnbPower.addNotifier(setForceLNBPowerChanged)
 
-if SystemInfo["ForceToneBurstChanged"]:
+if BoxInfo.getItem("ForceToneBurstChanged"):
 	config.tunermisc.forceToneBurst = ConfigYesNo(default=False)
 	config.tunermisc.forceToneBurst.addNotifier(setForceToneBurstChanged)
 
@@ -61,7 +61,7 @@ class TunerSetup(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skinName = ["Setup"]
-		self.setup_title = _("Tuner settings")
+		self.setTitle(_("Tuner settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -85,10 +85,6 @@ class TunerSetup(Screen, ConfigListScreen):
 		self["description"] = Label("")
 
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def createSetup(self):
 		level = config.usage.setup_level.index
@@ -96,9 +92,9 @@ class TunerSetup(Screen, ConfigListScreen):
 		self.list = []
 
 		if level >= 1:
-			if SystemInfo["ForceLNBPowerChanged"]:
+			if BoxInfo.getItem("ForceLNBPowerChanged"):
 				self.list.append(getConfigListEntry(_("Force LNB Power"), config.tunermisc.forceLnbPower, _("Force LNB Tuner Power settings.")))
-			if SystemInfo["ForceToneBurstChanged"]:
+			if BoxInfo.getItem("ForceToneBurstChanged"):
 				self.list.append(getConfigListEntry(_("Force ToneBurst"), config.tunermisc.forceToneBurst, _("Force LNB Tuner ToneBurst settings.")))
 
 		self["config"].list = self.list
@@ -166,7 +162,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		list.append(getConfigListEntry(" ", nim.longitudeOrientation, _("Enter if you are in the east or west hemisphere.")))
 		list.append(getConfigListEntry(_("Latitude"), nim.latitude, _("Enter your current latitude. This is the number of degrees you are from the equator as a decimal.")))
 		list.append(getConfigListEntry(" ", nim.latitudeOrientation, _("Enter if you are north or south of the equator.")))
-		if SystemInfo["CanMeasureFrontendInputPower"]:
+		if BoxInfo.getItem("CanMeasureFrontendInputPower"):
 			self.advancedPowerMeasurement = getConfigListEntry(_("Use power measurement"), nim.powerMeasurement, _("Power management. Consult your receiver's manual for more information."))
 			list.append(self.advancedPowerMeasurement)
 			if nim.powerMeasurement.value:
@@ -420,7 +416,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.terrestrialRegionsEntry = getConfigListEntry(_("Region"), self.terrestrialRegions, _("Select your region. If not available change 'Country' to 'all' and select one of the default alternatives."))
 				self.list.append(self.terrestrialCountriesEntry)
 				self.list.append(self.terrestrialRegionsEntry)
-				if not getBoxType() in ('spycat',):
+				if not BoxInfo.getItem("model") in ('spycat',):
 					self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.dvbt.terrestrial_5V, _("Enable this setting if your aerial system needs power")))
 		elif self.nim.isCompatible("ATSC"):
 			self.configMode = getConfigListEntry(_("Configuration mode"), self.nimConfig.atsc.configMode, _("Select 'enabled' if this tuner has a signal cable connected, otherwise select 'nothing connected'."))
@@ -627,7 +623,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 						self.list.append(getConfigListEntry(_("DiSEqC 1.1 repeats"), currLnb.diseqcRepeats, _("If using multiple uncommitted switches the DiSEqC commands must be sent multiple times. Set to the number of uncommitted switches in the chain minus one.")))
 				self.list.append(getConfigListEntry(_("Sequence repeat"), currLnb.sequenceRepeat, _("Set sequence repeats if your aerial system requires this. Normally if the aerial system has been configured correctly sequence repeats will not be necessary. If yours does, recheck you have command order set correctly.")))
 				if currLnb.diseqcMode.value == "1_2":
-					if SystemInfo["CanMeasureFrontendInputPower"]:
+					if BoxInfo.getItem("CanMeasureFrontendInputPower"):
 						self.advancedPowerMeasurement = getConfigListEntry(_("Use power measurement"), currLnb.powerMeasurement, _("Power management. Consult your receiver's manual for more information."))
 						self.list.append(self.advancedPowerMeasurement)
 						if currLnb.powerMeasurement.value:

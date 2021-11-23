@@ -575,12 +575,12 @@ class DiseqcTesterTestTypeSelection(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		# for the skin: first try MediaPlayerSettings, then Setup, this allows individual skinning
 		self.skinName = ["DiseqcTesterTestTypeSelection", "Setup"]
-		self.setup_title = _("DiSEqC-tester settings")
+		self.setTitle(_("DiSEqC-tester settings"))
 		self.onChangedEntry = []
 		self.feid = feid
 
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
 
 		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
 			{
@@ -594,10 +594,6 @@ class DiseqcTesterTestTypeSelection(Screen, ConfigListScreen):
 		self["key_green"] = StaticText(_("OK"))
 
 		self.createSetup()
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		self.setTitle(self.setup_title)
 
 	def createSetup(self):
 		self.testtype = ConfigSelection(choices={"quick": _("Quick"), "random": _("Random"), "complete": _("Complete")}, default="quick")

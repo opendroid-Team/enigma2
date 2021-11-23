@@ -1,15 +1,15 @@
 from __future__ import print_function
+from Screens.HelpMenu import ShowRemoteControl
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
-from Screens.Rc import Rc
 from Components.AVSwitch import iAVSwitch
 from Screens.Screen import Screen
 
 from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo
 
-from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_ACTIVE_SKIN
+from Tools.Directories import resolveFilename, SCOPE_SKINS, SCOPE_GUISKIN
 from Tools.HardwareInfo import HardwareInfo
 
 
@@ -21,10 +21,10 @@ has_jack = False
 has_scart = False
 
 
-has_rca = SystemInfo["HaveRCA"]
-has_dvi = SystemInfo["HaveDVI"]
-has_jack = SystemInfo["HaveAVJACK"]
-has_scart = SystemInfo["HAVESCART"]
+has_rca = BoxInfo.getItem("HaveRCA")
+has_dvi = BoxInfo.getItem("HaveDVI")
+has_jack = BoxInfo.getItem("HaveAVJACK")
+has_scart = BoxInfo.getItem("HAVESCART")
 
 
 class VideoWizardSummary(WizardSummary):
@@ -49,7 +49,7 @@ class VideoWizardSummary(WizardSummary):
 		self["pic"].instance.setPixmapFromFile(file)
 
 
-class VideoWizard(WizardLanguage, Rc):
+class VideoWizard(WizardLanguage, ShowRemoteControl):
 	skin = """
 		<screen position="fill" title="Welcome..." flags="wfNoBorder" >
 			<panel name="WizardMarginsTemplate"/>
@@ -75,11 +75,11 @@ class VideoWizard(WizardLanguage, Rc):
 
 	def __init__(self, session):
 		# FIXME anyone knows how to use relative paths from the plugin's directory?
-		self.xmlfile = resolveFilename(SCOPE_SKIN, "videowizard.xml")
+		self.xmlfile = resolveFilename(SCOPE_SKINS, "videowizard.xml")
 		self.hw = iAVSwitch
 
 		WizardLanguage.__init__(self, session, showSteps=False, showStepSlider=False)
-		Rc.__init__(self)
+		ShowRemoteControl.__init__(self)
 		self["wizard"] = Pixmap()
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
@@ -138,7 +138,7 @@ class VideoWizard(WizardLanguage, Rc):
 				picname = "RCA"
 			if picname == 'Scart' and has_jack:
 				picname = "JACK"
-			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/" + picname + ".png"))
+			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_GUISKIN, "icons/" + picname + ".png"))
 
 	def inputSelect(self, port):
 		print("inputSelect:", port)
@@ -185,7 +185,7 @@ class VideoWizard(WizardLanguage, Rc):
 			print(mode)
 			if mode[0] == querymode:
 				for rate in mode[1]:
-					if rate in ("auto") and not SystemInfo["have24hz"]:
+					if rate in ("auto") and not BoxInfo.getItem("have24hz"):
 						continue
 					if self.port == "DVI-PC":
 						print("rate:", rate)

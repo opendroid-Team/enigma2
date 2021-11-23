@@ -13,7 +13,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Sources.List import List
 from Components.Pixmap import MultiPixmap
 from Tools.LoadPixmap import LoadPixmap
-from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, fileExists
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_GUISKIN, fileExists
 from Tools.GetEcmInfo import GetEcmInfo
 from Components.Sources.StaticText import StaticText
 from OPENDROID.OscamSmartcard import *
@@ -393,7 +393,7 @@ class ShowSoftcamPackages(Screen):
         def setStatus(self, status=None):
                 if status:
                         self.statuslist = []
-                        divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+                        divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
                         if status == 'update':
                                 statuspng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "/usr/lib/enigma2/python/OPENDROID/icons/upgrade.png"))
                                 self.statuslist.append((_("Package list update"), '', _("Trying to download a new updatelist. Please wait..."), '', statuspng, divpng))
@@ -436,7 +436,7 @@ class ShowSoftcamPackages(Screen):
                         self.setStatus('error')
 
         def buildEntryComponent(self, name, version, description, state):
-                divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
+                divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "skin_default/div-h.png"))
                 if not description:
                         description = ""
                 installedpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_PLUGIN, "/usr/lib/enigma2/python/OPENDROID/icons/installed.png"))

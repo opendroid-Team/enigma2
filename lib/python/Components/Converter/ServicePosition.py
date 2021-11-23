@@ -8,7 +8,7 @@ from Components.Element import cached, ElementError
 from Components.config import config
 
 
-class ServicePosition(Poll, Converter, object):
+class ServicePosition(Poll, Converter):
 	TYPE_LENGTH = 0
 	TYPE_POSITION = 1
 	TYPE_REMAINING = 2
@@ -278,7 +278,7 @@ class ServicePosition(Poll, Converter, object):
 				if not self.detailed:
 					if not self.vfd:
 						if self.showHours:
-							if self.showNoSeconds and self.showNoSeconds2:
+							if self.showNoSeconds or self.showNoSeconds2:
 								if self.type == self.TYPE_LENGTH:
 									return sign_l + "%d:%02d" % (l / 3600, l % 3600 / 60)
 								elif self.type == self.TYPE_POSITION:

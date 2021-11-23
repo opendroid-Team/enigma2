@@ -7,7 +7,7 @@ from Components.Label import Label
 from Components.config import config, configfile
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
-from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_GUISKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 from Components.UsageConfig import *
 from Components.ConfigList import ConfigListScreen

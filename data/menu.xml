@@ -93,10 +93,10 @@ self.session.open(RemoteControlCode)
 		</menu>
 
 		<!-- Menu / Settings / Recordings -->
-		<menu weight="20" level="1" text="Recordings &amp; Timeshift" entryID="rec_setup">
+		<menu weight="20" level="1" text="Recording &amp; Timeshift" entryID="rec_setup">
 			<id val="rec" />
-			<item weight="10" level="0" text="Timeshift settings" entryID="timshift_setup"><screen module="Timershift" screen="TimeshiftSettings" /></item>
-			<item weight="15" level="0" text="Recording settings" entryID="recording_setup"><screen module="Recordings" screen="RecordingSettings" /></item>
+			<item weight="10" level="0" text="Timeshift settings" entryID="timshift_setup"><screen module="Timeshift" screen="TimeshiftSettings" /></item>
+			<item weight="15" level="0" text="Recording settings" entryID="recording_setup"><screen module="Recording" screen="RecordingSettings" /></item>
 			<item weight="16" level="0" text="VOD settings" entryID="vod_setup"><setup id="vodsetup"/></item>
 			<item weight="20" level="0" text="HDMI-IN Recording settings" entryID="hdmirecord_setup" requires="HDMIin"><setup id="HDMIRecord"/></item>
 		</menu>
@@ -288,6 +288,7 @@ else:
 		<item weight="25" level="0" text="Restart" entryID="restart"><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
 		<item weight="30" level="0" text="Restart enigma2" entryID="restart_enigma"><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
 		<item weight="35" level="0" text="Recovery Mode" requires="RecoveryMode" entryID="maintenance_mode"><screen module="Standby" screen="TryQuitMainloop">16</screen></item>
+		<item weight="24" level="0" text="Dual Mode" requires="canDualBoot" entryID="dual_mode"><screen module="Standby" screen="DualMode" /></item>
 	</menu>
 
 </menu>

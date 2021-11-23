@@ -6,7 +6,7 @@ from Components.Converter.Poll import Poll
 from Components.Element import cached
 
 
-class CpuUsage(Converter, object):
+class CpuUsage(Converter):
 	CPU_ALL = -2
 	CPU_TOTAL = -1
 

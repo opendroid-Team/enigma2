@@ -11,7 +11,7 @@ from Components.ConfigList import ConfigList, ConfigListScreen
 from Components.MenuList import MenuList
 
 from Tools.LoadPixmap import LoadPixmap
-from Tools.Directories import SCOPE_ACTIVE_SKIN, resolveFilename, fileExists
+from Tools.Directories import SCOPE_GUISKIN, resolveFilename, fileExists
 
 from enigma import eTimer, RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop, eSize, ePoint
 from xml.etree import ElementTree
@@ -394,7 +394,6 @@ class oscMenuList(MenuList):
 
 class OscamInfoMenu(Screen):
 	def __init__(self, session):
-		self.session = session
 		self.menu = [_("Show /tmp/ecm.info"), _("Show Clients"), _("Show Readers/Proxies"), _("Show Log"), _("Card infos (CCcam-Reader)"), _("ECM Statistics"), _("Setup")]
 		Screen.__init__(self, session)
 		self.osc = OscamInfo()
@@ -521,7 +520,7 @@ class OscamInfoMenu(Screen):
 		for t in mlist:
 			res = [t]
 			if t.startswith("--"):
-				png = resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png")
+				png = resolveFilename(SCOPE_GUISKIN, "div-h.png")
 				if fileExists(png):
 					png = LoadPixmap(png)
 				if png is not None:
@@ -529,7 +528,7 @@ class OscamInfoMenu(Screen):
 					res.append((eListboxPythonMultiContent.TYPE_PIXMAP, x, y, w, h, png))
 					x, y, w, h = skin.parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
 					res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, t[2:]))
-					png2 = resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_" + keys[k] + ".png")
+					png2 = resolveFilename(SCOPE_GUISKIN, "buttons/key_" + keys[k] + ".png")
 					if fileExists(png2):
 						png2 = LoadPixmap(png2)
 					if png2 is not None:
@@ -538,7 +537,7 @@ class OscamInfoMenu(Screen):
 			else:
 				x, y, w, h = skin.parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
 				res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, t))
-				png2 = resolveFilename(SCOPE_ACTIVE_SKIN, "buttons/key_" + keys[k] + ".png")
+				png2 = resolveFilename(SCOPE_GUISKIN, "buttons/key_" + keys[k] + ".png")
 				if fileExists(png2):
 					png2 = LoadPixmap(png2)
 				if png2 is not None:
@@ -582,7 +581,7 @@ class oscECMInfo(Screen, OscamInfo):
 		return [
 			"",
 			(eListboxPythonMultiContent.TYPE_TEXT, 10 * sf, 2 * sf, 300 * sf, 30 * sf, 0, RT_HALIGN_LEFT, listentry[0]),
-			(eListboxPythonMultiContent.TYPE_TEXT, 300 * sf, 2 * sf, 300 * sf, 30 * sf, 0, RT_HALIGN_LEFT, listentry[1])
+			(eListboxPythonMultiContent.TYPE_TEXT, 280 * sf, 2 * sf, 320 * sf, 30 * sf, 0, RT_HALIGN_LEFT, listentry[1])
 			]
 
 	def showData(self):
@@ -599,7 +598,6 @@ class oscECMInfo(Screen, OscamInfo):
 class oscInfo(Screen, OscamInfo):
 	def __init__(self, session, what):
 		global HDSKIN, sizeH
-		self.session = session
 		self.what = what
 		self.firstrun = True
 		self.listchange = True
@@ -735,7 +733,7 @@ class oscInfo(Screen, OscamInfo):
 			useFont = 3
 		else:
 			self.fieldsize = [150 * sf, 150 * sf, 150 * sf, 300 * sf, 150 * sf, 200 * sf]
-			self.startPos = [50 * sf, 200 * sf, 350 * sf, 500 * sf, 800 * sf, 950 * sf]
+			self.startPos = [10 * sf, 240 * sf, 420 * sf, 540 * sf, 860 * sf, 1000 * sf]
 			useFont = 2
 
 		ypos = 2
@@ -761,7 +759,7 @@ class oscInfo(Screen, OscamInfo):
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, xpos, ypos * sf, xsize, self.itemheight * sf, useFont, RT_HALIGN_LEFT, i, int(colour, 16)))
 			x += 1
 		if heading:
-			png = resolveFilename(SCOPE_ACTIVE_SKIN, "div-h.png")
+			png = resolveFilename(SCOPE_GUISKIN, "div-h.png")
 			if fileExists(png):
 				png = LoadPixmap(png)
 			if png is not None:
@@ -1154,7 +1152,6 @@ class oscReaderStats(Screen, OscamInfo):
 class OscamInfoConfigScreen(Screen, ConfigListScreen):
 	def __init__(self, session, msg=None):
 		Screen.__init__(self, session)
-		self.session = session
 		if msg is not None:
 			self.msg = "Error:\n%s" % msg
 		else:
@@ -1172,7 +1169,7 @@ class OscamInfoConfigScreen(Screen, ConfigListScreen):
 			"cancel": self.cancel,
 			"ok": self.save,
 		}, -2)
-		ConfigListScreen.__init__(self, self.oscamconfig, session=self.session)
+		ConfigListScreen.__init__(self, self.oscamconfig, session=session)
 		self.createSetup()
 		config.oscaminfo.userdatafromconf.addNotifier(self.elementChanged, initial_call=False)
 		config.oscaminfo.autoupdate.addNotifier(self.elementChanged, initial_call=False)

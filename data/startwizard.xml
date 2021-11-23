@@ -261,7 +261,7 @@ self.selectKey("RIGHT")
 		<step id="channels">
 			<condition>
 from Components.NimManager import nimmanager
-self.condition = nimmanager.somethingConnected() and config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = nimmanager.somethingConnected() and nimmanager.hasNimType("DVB-S")
 			</condition>
 			<text value="Do you want to install a channel list?" />
 			<displaytext value="Do you want to install a channel list?" />
@@ -280,9 +280,6 @@ self.selectKey("RIGHT")
 from Components.NimManager import nimmanager
 self.condition = nimmanager.somethingConnected() and not config.misc.installwizard.channellistdownloaded.value
 			</condition>
-			<code>
-self.hideRc()
-			</code>
 			<list>
 				<listentry caption="No, scan later manually" step="plugins" />
 				<listentry caption="Yes, do an automatic scan now" step="scan" />
@@ -405,14 +402,14 @@ self.selectKey("OK")
 			</code>
 		</step>
 		<step id="timezone">
-			<text value="Please set your time zone" />
-			<displaytext value="Please set your time zone" />
-			<config screen="Setup" module="Setup" args="'timezone'" type="ConfigList" />
+			<text value="Please set your time options.\n\nPress YELLOW to set the time zone via geolocation."/>
+			<displaytext value="Please set your time options"/>
+			<config screen="Time" module="Time" type="ConfigList"/>
 			<code>
 self.clearSelectedKeys()
 self.selectKey("LEFT")
 self.selectKey("RIGHT")
-self.selectKey("OK")
+self.selectKey("YELLOW")
 			</code>
 		</step>
 		<step id="end" laststep="true">

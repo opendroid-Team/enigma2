@@ -9,7 +9,7 @@ weather_city = '711665'
 time_update = 20
 time_update_ms = 30000
 
-class YWeather(Poll, Converter, object):
+class YWeather(Poll, Converter):
         city = 0
         country = 1
         direction = 2

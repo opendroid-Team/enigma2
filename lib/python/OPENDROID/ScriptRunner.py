@@ -8,7 +8,7 @@ from Components.Language import language
 from Components.Button import Button
 from Components.MenuList import MenuList
 from Components.Sources.List import List
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
+from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_GUISKIN
 from os import listdir, remove, mkdir, path, access, X_OK, chmod
 import datetime, time
 
