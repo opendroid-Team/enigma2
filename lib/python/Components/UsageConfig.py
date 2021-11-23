@@ -1025,7 +1025,7 @@ def InitUsageConfig():
 		config.usage.time.enabled_display.value = False
 		config.usage.time.display.value = config.usage.time.display.default
 
-	config.usage.boolean_graphic = ConfigYesNo(default=False)
+	config.usage.boolean_graphic = ConfigYesNo(default=True)
 	config.usage.show_slider_value = ConfigYesNo(default=True)
 	config.usage.cursorscroll = ConfigSelectionNumber(min=0, max=50, stepwidth=5, default=0, wraparound=True)
 
