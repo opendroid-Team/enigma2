@@ -3882,7 +3882,7 @@ class InfoBarInstantRecord:
 				from OPENDROID.OPD_panel import FileDownloadJob
 				from Screens.TaskView import JobView
 				try:
-					u = urllib.urlopen(url)
+					u = urlopen(url)
 				except:
 					self.session.open(MessageBox, _('The URL to this image is not correct !!'), type=MessageBox.TYPE_ERROR)
 

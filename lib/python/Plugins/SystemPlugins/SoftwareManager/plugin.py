@@ -51,6 +51,9 @@ from .SoftwareTools import iSoftwareTools
 import os
 from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM
 import six
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves import urllib
 from six.moves.cPickle import dump, load
 from six.moves import reload_module, range
 
@@ -1618,11 +1621,11 @@ class UpdatePlugin(Screen):
 			d = urlopen(urlopenOPD)
 			tmpStatus = d.read()
 			tmpStatus = six.ensure_str(tmpStatus)
-			if (os.path.exists("/etc/.beta") and 'rot.png' in tmpStatus) or 'gelb.png' in tmpStatus:
+			if (os.path.exists("/etc/.beta") and 'yellow.png' in tmpStatus) or 'green.png' in tmpStatus:
 				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://droidsat.org") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
 				picon = MessageBox.TYPE_ERROR
 				default = False
-			elif 'rot.png' in tmpStatus:
+			elif 'yellow.png' in tmpStatus:
 				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://droidsat.org")# + "\n\n" + _("Last Status Date") + ": " + statusDate
 				picon = MessageBox.TYPE_ERROR
 				default = False

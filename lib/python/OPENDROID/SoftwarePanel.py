@@ -140,15 +140,15 @@ class SoftwarePanel(Screen):
 			urlopenOPD = "https://opendroid.org/ampel/index.php"
 			d = urlopen(urlopenOPD)
 			tmpStatus = d.read()
-			if b'rot.png' in tmpStatus:
+			if b'red.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_red'].show()
 				self['feedstatusRED'].show()
-			elif b'gelb.png' in tmpStatus:
+			elif b'yellow.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_yellow'].show()
 				self['feedstatusYELLOW'].show()
-			elif b'gruen.png' in tmpStatus:
+			elif b'green.png' in tmpStatus:
 				self['a_off'].hide()
 				self['a_green'].show()
 				self['feedstatusGREEN'].show()

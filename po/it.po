@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-11-23 13:50+0100\n"
+"PO-Revision-Date: 2021-11-27 16:40+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -1987,6 +1987,12 @@ msgstr "<Percorso predefinito Film>"
 
 msgid "<Last timer location>"
 msgstr "<Ultimo percorso Timer>"
+
+msgid "Last E2 update:\t%s"
+msgstr "Ultimo aggiornamento:\t%s"
+
+msgid " bootmode = %s"
+msgstr " modalità di avvio = %s"
 
 msgid "<unknown>"
 msgstr "<sconosciuto>"
@@ -9162,6 +9168,12 @@ msgstr "Seleziona la tua skin e premere OK per attivare la skin selezionata"
 msgid "Select Skin:"
 msgstr "Seleziona la skin:"
 
+msgid "Select softcam"
+msgstr "Seleziona softcam"
+
+msgid "Select Card Server"
+msgstr "Seleziona il card server"
+
 msgid "Preview:"
 msgstr "Anteprima:"
 
@@ -9733,6 +9745,24 @@ msgstr "Riavviare GUI"
 
 msgid "Restart GUI now?"
 msgstr "Riavviare la GUI adesso?"
+
+msgid "Restart softcam"
+msgstr "Riavvia la softcam"
+
+msgid "Restart cardserver"
+msgstr "Riavvia il card server"
+
+msgid "Restart both"
+msgstr "Riavvia entrambi"
+
+msgid "Please wait, restarting softcam and cardserver."
+msgstr "Riavvio Softcam e Cardserver in corso. Attendere."
+
+msgid "Please wait, restarting softcam."
+msgstr "Riavvio Softcam in corso. Attendere."
+
+msgid "Please wait, restarting cardserver."
+msgstr "Riavvio CardServer in corso. Attender."
 
 msgid "Configure for which types of recordings a warning about active recordings is shown when attempting to restart the box or the GUI."
 msgstr "Configurare per quali tipi di registrazioni viene visualizzato un avviso sulle registrazioni attive quando si tenta di riavviare la casella o la GUI."
@@ -12119,8 +12149,8 @@ msgid "System"
 msgstr "Sistema"
 
 #, python-format
-msgid "System temperature: %s"
-msgstr "Temperatura del sistema: %s"
+msgid "System temperature:\t%s"
+msgstr "Temperatura sistema:\t%s"
 
 msgid "System:"
 msgstr "Sistema:"
@@ -13893,7 +13923,7 @@ msgid "WSS on 4:3"
 msgstr "WSS su 4:3"
 
 msgid "Wait please while scanning for devices..."
-msgstr "Attendere la scansione per i dispositivi ..."
+msgstr "Attendere scansione dispositivi in corso..."
 
 msgid "Wait time before start Cam 2"
 msgstr "Tempo d’attesa prima dell’avvio di CAM 2"
@@ -18023,6 +18053,9 @@ msgstr "/ Media / custom"
 msgid "Selected mount point is already used by another drive."
 msgstr "Il punto di montaggio selezionato è già utilizzato da un'altra unità."
 
+msgid "Selected Image:\t%s"
+msgstr "Immagine selezionata:\t%s"
+
 msgid "Mount point exist!"
 msgstr "Il punto di montaggio esiste!"
 
@@ -18849,6 +18882,9 @@ msgstr "Tempo richiesto per questo processo:"
 
 msgid "Multiboot Image created on: %s"
 msgstr "Immagine avvio multiplo creata su: %s"
+
+msgid "Flashed:\tMultiboot active\n"
+msgstr "Flashed:\tAvvio multiplo attivo\n"
 
 msgid "Please wait...almost ready! "
 msgstr "Per favore aspetta ... quasi fatto! "

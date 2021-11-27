@@ -15,7 +15,6 @@ from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType, getBrandOEM
 from Components.SystemInfo import BoxInfo
 from skin import isOPDSkin
-
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
 from Components.Button import Button
@@ -37,11 +36,8 @@ from re import search
 
 import time
 import six
-try:
-	from urllib2 import urlopen
-except ImportError:
-	from urllib.request import urlopen
-SIGN = '°' if six.PY3 else str('\xc2\xb0')
+
+SIGN = u"\u00B0"
 
 
 def parse_ipv4(ip):
@@ -167,10 +163,10 @@ class About(Screen):
 				freeflash += line
 				return str(freeflash)
 		self["lab1"] = StaticText(_("OpenDroid by OPD Image Team"))
-		self["lab2"] = StaticText(_("Support at") + " www.droidsat.org")
+		self["lab2"] = StaticText(_("Support at") + " https://droidsat.org")
 		model = None
 		AboutText = ""
-		self["lab2"] = StaticText(_("Support:") + " www.droidsat.org")
+		self["lab2"] = StaticText(_("Support:") + " https://droidsat.org")
 		AboutText += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
 
 		if path.exists('/proc/stb/info/chipset'):
@@ -369,8 +365,8 @@ class About(Screen):
 #				tempinfo = tempinfo[:-4]
 #				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-			mark = str('\xc2\xb0')
-			AboutText += _("System Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
+#			mark = str('\xc2\xb0')
+			AboutText += _("System temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 
 		tempinfo = ""
 		if path.exists('/proc/stb/fp/temp_sensor_avs'):
@@ -402,8 +398,8 @@ class About(Screen):
 			except:
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-			mark = str('\xc2\xb0')
-			AboutText += ("Processor Temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + mark + "C\n"
+#			mark = str('\xc2\xb0')
+			AboutText += ("Processor temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
@@ -1158,8 +1154,8 @@ class AboutSummary(Screen):
 		elif path.exists('/proc/stb/fp/temp_sensor'):
 			tempinfo = open('/proc/stb/fp/temp_sensor', 'r').read()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-			mark = str('\xc2\xb0')
-			AboutText += _("Temperature: %s") % tempinfo.replace('\n', '') + mark + "C"
+#			mark = str('\xc2\xb0')
+			AboutText += _("System temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 
 		self["AboutText"] = StaticText(AboutText)
 
