@@ -1770,6 +1770,7 @@ class UpdatePlugin(Screen):
 					if packages:
 						international.deleteLanguagePackages(packages)
 					os_system("touch /etc/enigma2/.removelang")
+				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s?") % (getMachineBrand(), getMachineName()))
 			else:
 				self.close()
 		else:
