@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-11-27 16:40+0100\n"
+"PO-Revision-Date: 2021-11-28 08:52+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -330,7 +330,7 @@ msgstr "Premere VERDE per rimuovere tutti"
 
 #, fuzzy
 msgid "Press exit to close"
-msgstr "Premere Esci per chiudere"
+msgstr "Premi esci per chiudere"
 
 #: plugin.py:204 plugin.py:237
 msgid "INFORMATION: make your selection and press GREEN All config files are backed up automatically"
@@ -4120,6 +4120,30 @@ msgstr "Selezionare il numero"
 msgid "Select a receiver to use for fallback tuners. If the host receiver is not listed, manually enter the URL or IP address"
 msgstr "Scegli un ricevitore da utilizzare come sintonizzatore fallback. Se il destinatario ospite non viene visualizzato, è possibile inserire manualmente l'URL o l'indirizzo IP"
 
+msgid "Select your time zone area or region."
+msgstr "Imposta la zona del fuso orario."
+
+msgid "Select the time zone within the area or region."
+msgstr "Impostare il tempo di visualizzazione della Infobar."
+
+msgid "Select the shifted character set for the next character only"
+msgstr "Seleziona il set di caratteri secondario della tastiera virtuale solo per il carattere successivo"
+
+msgid "Select the shifted character set"
+msgstr "Seleziona il set di caratteri della tastiera virtuale"
+
+msgid "Geolocation has been used to set the time zone."
+msgstr "La geolocalizzazione è stata utilizzata per impostare il fuso orario."
+
+msgid "Geolocation is not available."
+msgstr "La geolocalizzazione non è disponibile."
+
+msgid "Use Geolocation"
+msgstr "Usa la geolocalizzazione"
+
+msgid "Use geolocation to set the current time zone location"
+msgstr "Usa la geolocalizzazione per impostare la posizione del fuso orario corrente"
+
 msgid "Configure the gateway."
 msgstr "Opzione per impostare il gateway."
 
@@ -4164,6 +4188,15 @@ msgstr "Tempo intervallo di ripetizione salto per avanti / indietro veloce"
 
 msgid "Time jump avoid zero step size"
 msgstr "Tempo salto, evitare passo pari a zero"
+
+msgid "Time zone settings"
+msgstr "Impostazioni del fuso orario"
+
+msgid "Time zone"
+msgstr "Fuso orario"
+
+msgid "Time zone area"
+msgstr "Fuso orario"
 
 msgid "Avoid getting stuck (at the expense of some stuttering) when the jump time is smaller than the time between I-frames."
 msgstr "Evita video trailer (possibilmente con piccolo Stocken) quando il tempo salto è più breve del tempo che intercorre tra I-frame."
@@ -4632,19 +4665,19 @@ msgid "Debug Logs"
 msgstr "Log di debug"
 
 msgid "Deep Standby"
-msgstr "Modalità di spegnimento Deep Standby"
+msgstr "Spegnimento"
 
 msgid "Sleep Timer"
 msgstr "Sleep Timer"
 
 msgid "deep standby"
-msgstr "modalità di spegnimento Deep Standby"
+msgstr "spegnimento"
 
 msgid "auto and deep standby"
-msgstr "auto e deep standby"
+msgstr "spegnimento automatico"
 
 msgid "Deep standby"
-msgstr "Modalità di spegnimento Deep Standby"
+msgstr "Spegnimento"
 
 msgid "Default"
 msgstr "Predefinito"
@@ -4786,8 +4819,8 @@ msgstr "Gestore Dispositivi"
 msgid "Device mounts"
 msgstr "Mounts dispositivo"
 
-msgid "Device setup"
-msgstr "Dispositivo"
+msgid "Device Setup"
+msgstr "Impostazioni scheda di rete"
 
 msgid "Device name:"
 msgstr "Nome dispositivo:"
@@ -8630,6 +8663,9 @@ msgstr "Password (httpwd)"
 msgid "Password:"
 msgstr "Password:"
 
+msgid "Password Setup"
+msgstr "Impostazione password"
+
 msgid "Pause"
 msgstr "Pausa"
 
@@ -12140,10 +12176,10 @@ msgid "Sync failure moving back to origin !"
 msgstr "Fallimento Sync tornando alle origini!"
 
 msgid "Sync time using"
-msgstr "Tempo di sincronizzazione con"
+msgstr "Sincronizzazione orario"
 
-msgid "Synchronize system time using transponder or internet."
-msgstr "Sincronizzare ora del sistema tramite transponder o internet."
+msgid "Synchronize systemtime using transponder or internet."
+msgstr "Sincronizza l'ora di sistema usando transponder o internet."
 
 msgid "System"
 msgstr "Sistema"
@@ -13267,6 +13303,12 @@ msgstr "Transponder"
 
 msgid "Transponder type"
 msgstr "Tipo transponder"
+
+msgid "Transponder Time"
+msgstr "Orario Transponder"
+
+msgid "Transport Stream Type"
+msgstr "Tipo di trasporto del flusso"
 
 msgid "Trashcan"
 msgstr "Cestino"
@@ -16965,6 +17007,15 @@ msgstr "Se questa opzione è impostata su 'sì' gli elenchi dei canali mostrano 
 msgid "MultiBoot Selector"
 msgstr "Selettore MultiBoot"
 
+msgid "MultiBoot Image Selector"
+msgstr "Selettore immagini multiboot"
+
+msgid "MultiBootSelector Actions"
+msgstr "Selettore immagini multiboot"
+
+msgid "MultiBoot Image Manager"
+msgstr "Gestore immagini multiboot"
+
 msgid "Select Image: STARTUP_1"
 msgstr "Selettore Image: STARTUP_1"
 
@@ -19035,12 +19086,11 @@ msgstr "Seleziona audio"
 msgid "Use the cursor keys to select an installed image and then Start button."
 msgstr "Utilizzare i tasti cursore per selezionare un'immagine installata, quindi il pulsante Start."
 
-#, fuzzy
 msgid "slot%s - %s - %s as USB Recovery"
-msgstr "Posizione%s - %s - %s come recupero USB"
+msgstr "posizione%s - %s - %s come recupero USB"
 
 msgid "slot%s - %s - %s (current image)"
-msgstr "Posizione%s - %s - %s (immagine corrente)"
+msgstr "posizione%s - %s - %s (immagine corrente)"
 
 msgid "Slot %s - %s - %s (current image)"
 msgstr "Posizione %s - %s - %s (immagine corrente)"
@@ -19243,21 +19293,15 @@ msgstr ""
 msgid "No, do not flash an image"
 msgstr "No, non lampeggiare un'immagine"
 
-msgid ""
-"Unable to create the required directories on the media (e.g. USB stick or "
-"Harddisk) - Please verify media and try again!"
-msgstr ""
-"Impossibile creare le directory richieste sul supporto (ad es. chiavetta USB "
-"o disco rigido) - Verificare il supporto e riprovare!"
+msgid "Unable to create the required directories on the media (e.g. USB stick or Harddisk) - Please verify media and try again!"
+msgstr "Impossibile creare le directory richieste sul supporto (ad es. chiavetta USB o disco rigido) - Verificare il supporto e riprovare!"
 
 msgid ""
 "Please select what to do after flashing the image:\n"
-"(In addition, if it exists, a local script will be executed as well at /"
-"media/hdd/images/config/myrestore.sh)"
+"(In addition, if it exists, a local script will be executed as well at /media/hdd/images/config/myrestore.sh)"
 msgstr ""
 "Si prega di selezionare cosa fare dopo aver lampeggiato l'immagine:\n"
-"(Inoltre, se esiste, verrà eseguito anche uno script locale su /media/hdd/"
-"images/config/myrestore.sh)"
+"(Inoltre, se esiste, verrà eseguito anche uno script locale su /media/hdd/images/config/myrestore.sh)"
 
 msgid "Upgrade (Backup, Flash & Restore All)"
 msgstr "Aggiorna (Backup, Flash e Ripristina tutto)"
