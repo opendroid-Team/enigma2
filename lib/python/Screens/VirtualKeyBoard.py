@@ -1,5 +1,6 @@
 from __future__ import division
 from copy import copy, deepcopy
+from six import PY2
 
 from enigma import BT_SCALE, RT_HALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_VALIGN_BOTTOM, RT_VALIGN_CENTER, RT_VALIGN_TOP, eListboxPythonMultiContent, getPrevAsciiCode, gFont
 import six
@@ -18,6 +19,8 @@ from Screens.Screen import Screen
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
+
+pyunichr = unichr if PY2 else chr
 
 VKB_DONE_ICON = 0
 VKB_ENTER_ICON = 1
@@ -38,7 +41,7 @@ class VirtualKeyBoardList(MenuList):
 		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 		font = fonts.get("VirtualKeyBoard", ("Regular", 28, 45))
 		self.l.setFont(0, gFont(font[0], font[1]))
-		self.l.setFont(1, gFont(font[0], font[1] * 5 // 9))  # Smaller font is 56% the height of bigger font
+		self.l.setFont(1, gFont(font[0], int(font[1] * 5 // 9)))  # Smaller font is 56% the height of bigger font
 		self.l.setItemHeight(font[2])
 
 
@@ -50,10 +53,10 @@ class VirtualKeyBoardEntryComponent:
 # For more information about using VirtualKeyBoard see /doc/VIRTUALKEYBOARD
 #
 class VirtualKeyBoard(Screen, HelpableScreen):
-	def __init__(self, session, title=_("Virtual KeyBoard Text:"), text="", maxSize=False, visible_width=False, type=Input.TEXT, currPos=None, allMarked=False, style=VKB_ENTER_ICON):
+	def __init__(self, session, title=_("Virtual KeyBoard Text:"), text="", maxSize=False, visible_width=False, type=Input.TEXT, currPos=None, allMarked=False, style=VKB_ENTER_ICON, windowTitle=None):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		self.setTitle(_("Virtual keyboard"))
+		self.setTitle(_("Virtual keyboard") if windowTitle is None else windowTitle)
 		prompt = title  # Title should only be used for screen titles!
 		greenLabel, self.green = {
 			VKB_DONE_ICON: ("Done", u"ENTERICON"),
@@ -227,9 +230,9 @@ class VirtualKeyBoard(Screen, HelpableScreen):
 			u"SAVE": "self.save()",
 			u"SHIFT": "self.shiftSelected()",
 			u"SHIFTICON": "self.shiftSelected()",
-			u"SPACE": "self['text'].char(' '.encode('UTF-8'))",
-			u"SPACEICON": "self['text'].char(' '.encode('UTF-8'))",
-			u"SPACEICONALT": "self['text'].char(' '.encode('UTF-8'))"
+			u"SPACE": "self.space()",
+			u"SPACEICON": "self.space()",
+			u"SPACEICONALT": "self.space()"
 		}
 		self.footer = [u"EXITICON", u"LEFTICON", u"RIGHTICON", SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, u"SHIFTICON", u"LOCALEICON", u"CLEARICON", u"DELETEICON"]
 		self.czech = [

@@ -1241,6 +1241,17 @@ def InitUsageConfig():
 	config.crash.sizeloglimit = ConfigSelectionNumber(min=1, max=20, stepwidth=1, default=10, wraparound=True)
 	config.crash.lastfulljobtrashtime = ConfigInteger(default=-1)
 
+	# The config.crash.debugTimeFormat item is used to set ENIGMA_DEBUG_TIME environmental variable on enigma2 start from enigma2.sh.
+	config.crash.debugTimeFormat = ConfigSelection(choices=[
+		("0", _("None")),
+		("1", _("Boot time")),
+		("2", _("Local time")),
+		("3", _("Boot time and local time")),
+		("6", _("Local date/time")),
+		("7", _("Boot time and local date/time"))
+	], default="2")
+	config.crash.debugTimeFormat.save_forced = True
+
 	debugpath = [('/home/root/logs/', '/home/root/')]
 	for p in harddiskmanager.getMountedPartitions():
 		if os.path.exists(p.mountpoint):
@@ -1396,7 +1407,7 @@ def InitUsageConfig():
 		("ces cze", _("Czech")),
 		("dan", _("Danish")),
 		("dut ndl nld Dutch", _("Dutch")),
-		("eng qaa Englisch", _("English")),
+		("eng Englisch", _("English")),
 		("est", _("Estonian")),
 		("fin", _("Finnish")),
 		("fra fre", _("French")),
@@ -1422,7 +1433,8 @@ def InitUsageConfig():
 		("swe", _("Swedish")),
 		("tha", _("Thai")),
 		("tur Audio_TUR", _("Turkish")),
-		("ukr Ukr", _("Ukrainian"))]
+		("ukr Ukr", _("Ukrainian")),
+		("NAR qad", _("Visual impaired commentary"))]
 
 	epg_language_choices = audio_language_choices[:1] + audio_language_choices[2:]
 

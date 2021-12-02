@@ -125,7 +125,7 @@
     ```sh
  17 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make init
 
-    cd builds/openatv/opendroid/sf4008/
+    cd builds/opendroid/sf4008/
 
     source env.source
 

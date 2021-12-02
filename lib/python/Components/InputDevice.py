@@ -1,5 +1,5 @@
 from fcntl import ioctl
-from os import listdir, open as osopen, close as osclose, write as oswrite, O_RDWR, O_NONBLOCK
+from os import O_NONBLOCK, O_RDWR, close as osclose, listdir, open as osopen, write as oswrite
 from os.path import isdir, isfile
 from platform import machine
 from boxbranding import getBoxType, getBrandOEM
@@ -9,6 +9,7 @@ from enigma import eRCInput
 
 from keyids import KEYIDS, KEYIDNAMES
 from Components.config import ConfigSubsection, ConfigInteger, ConfigSelection, ConfigYesNo, ConfigText, ConfigSlider, config
+from Components.Console import Console
 from Components.SystemInfo import BoxInfo
 from Tools.Directories import SCOPE_KEYMAPS, SCOPE_SKINS, fileReadLine, fileWriteLine, fileReadLines, fileReadXML, resolveFilename, pathExists
 
@@ -25,11 +26,10 @@ config.inputDevices = ConfigSubsection()
 
 class InputDevices:
 	def __init__(self):
-		self.Devices = {}
-		self.currentDevice = ""
-		devices = listdir("/dev/input/")
+		self.devices = {}
+		self.currentDevice = None
+		for device in sorted(listdir("/dev/input/")):
 
-		for device in devices:
 			if isdir("/dev/input/%s" % device):
 				continue
 			try:
@@ -46,11 +46,20 @@ class InputDevices:
 				self.name = None
 
 			if self.name:
-				self.Devices[device] = {
-					'name': self.name,
-					'type': self.getInputDeviceType(self.name),
-					'enabled': False,
-					'configuredName': None
+				devType = self.getInputDeviceType(self.name.lower())
+				print("[InputDevice] Found device '%s' with name '%s' of type '%s'." % (device, self.name, "Unknown" if devType is None else devType.capitalize()))
+				# What was this for?
+				# if self.name == "aml_keypad":
+				# 	print("[InputDevice] ALERT: Old code flag for 'aml_keypad'.")
+				# 	self.name = "dreambox advanced remote control (native)"
+				# if self.name in BLACKLIST:
+				# 	print("[InputDevice] ALERT: Old code flag for device in blacklist.")
+				# 	continue
+				self.devices[device] = {
+					"name": self.name,
+					"type": devType,
+					"enabled": False,
+					"configuredName": None
 				}
 
 				# load default remote control "delay" and "repeat" values for ETxxxx ("QuickFix Scrollspeed Menues" proposed by Xtrend Support)
@@ -77,11 +86,11 @@ class InputDevices:
 		elif "mouse" in name:
 			return "mouse"
 		else:
-			print("[InputDevices] Unknown device type: %s" % name)
+			print("[InputDevice] Warning: Unknown device type: '%s'!" % name)
 			return None
 
 	def getDeviceList(self):
-		return sorted(list(self.Devices.keys()))
+		return sorted(list(self.devices.keys()))
 
 	# struct input_event {
 	# 	struct timeval time;    -> ignored
@@ -91,8 +100,8 @@ class InputDevices:
 	# }; -> size = 16
 	#
 	def setDeviceDefaults(self, device):
-		print("[InputDevices] setDeviceDefaults for device %s" % device)
-		self.setDeviceAttribute(device, 'configuredName', None)
+		print("[InputDevice] setDeviceDefaults DEBUG: Device '%s'." % device)
+		self.setDeviceAttribute(device, "configuredName", None)
 		eventRepeat = pack("LLHHi", 0, 0, 0x14, 0x01, 100)
 		eventDelay = pack("LLHHi", 0, 0, 0x14, 0x00, 700)
 		fd = osopen("/dev/input/%s" % device, O_RDWR)
@@ -101,47 +110,103 @@ class InputDevices:
 		osclose(fd)
 
 	def setDeviceEnabled(self, device, value):
-		oldVal = self.getDeviceAttribute(device, 'enabled')
+		oldVal = self.getDeviceAttribute(device, "enabled")
 		# print "[InputDevices] setDeviceEnabled for device %s to %s from %s" % (device,value,oldval)
-		self.setDeviceAttribute(device, 'enabled', value)
+		self.setDeviceAttribute(device, "enabled", value)
 		if oldVal is True and value is False:
 			self.setDeviceDefaults(device)
 
 	def getDeviceName(self, device):
-		if device in list(self.Devices.keys()):
-			return self.Devices[device].get("name", device)
+		if device in list(self.devices.keys()):
+			return self.devices[device].get("name", device)
 		return "Unknown device name"
 
 	def setDeviceName(self, device, value):
 		# print "[InputDevices] setDeviceName for device %s to %s" % (device,value)
-		self.setDeviceAttribute(device, 'configuredName', value)
+		self.setDeviceAttribute(device, "configuredName", value)
 
 	def setDeviceDelay(self, device, value): # REP_DELAY
-		if self.getDeviceAttribute(device, 'enabled'):
+		if self.getDeviceAttribute(device, "enabled"):
 			# print("[InputDevices] setDeviceDelay for device %s to %d ms" % (device, value))
-			event = pack('LLHHi', 0, 0, 0x14, 0x00, int(value))
-			fd = osopen("/dev/input/" + device, O_RDWR)
+			event = pack("LLHHi", 0, 0, 0x14, 0x00, int(value))
+			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
 			osclose(fd)
 
 	def setDeviceRepeat(self, device, value): # REP_PERIOD
-		if self.getDeviceAttribute(device, 'enabled'):
+		if self.getDeviceAttribute(device, "enabled"):
 			# print("[InputDevices] setDeviceRepeat for device %s to %d ms" % (device, value))
-			event = pack('LLHHi', 0, 0, 0x14, 0x01, int(value))
-			fd = osopen("/dev/input/" + device, O_RDWR)
+			event = pack("LLHHi", 0, 0, 0x14, 0x01, int(value))
+			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
 			osclose(fd)
 
 	def getDeviceAttribute(self, device, attribute):
-		if device in self.Devices and attribute in self.Devices[device]:
-			return self.Devices[device][attribute]
+		if device in self.devices and attribute in self.devices[device]:
+			return self.devices[device][attribute]
 		return None
 
 	def setDeviceAttribute(self, device, attribute, value):
 		# print "[InputDevices] setting for device", device, "attribute", attribute, " to value", value
-		if device in self.Devices:
-			self.Devices[device][attribute] = value
+		if device in self.devices:
+			self.devices[device][attribute] = value
 
+
+class Keyboard:
+	def __init__(self):
+		self.keyboardMaps = []
+		for keyboardMapInfo in sorted(listdir(resolveFilename(SCOPE_KEYMAPS))):
+			if keyboardMapInfo.endswith(".info"):
+				lines = []
+				lines = fileReadLines(resolveFilename(SCOPE_KEYMAPS, keyboardMapInfo), lines, source=MODULE_NAME)
+				keyboardMapFile = None
+				keyboardMapName = None
+				for line in lines:
+					key, val = [x.strip() for x in line.split("=", 1)]
+					if key == "kmap":
+						keyboardMapFile = val
+					elif key == "name":
+						keyboardMapName = val
+				if keyboardMapFile and keyboardMapName:
+					keyboardMapPath = resolveFilename(SCOPE_KEYMAPS, keyboardMapFile)
+					if isfile(keyboardMapPath):
+						if config.crash.debugKeyboards.value:
+							print("[InputDevice] Adding keyboard keymap '%s' in '%s'." % (keyboardMapName, keyboardMapFile))
+						self.keyboardMaps.append((keyboardMapFile, keyboardMapName))
+					else:
+						print("[InputDevice] Error: Keyboard keymap file '%s' doesn't exist!" % keyboardMapPath)
+				else:
+					print("[InputDevice] Error: Invalid keyboard keymap information file '%s'!" % keyboardMapInfo)
+
+	def activateKeyboardMap(self, index):
+		try:
+			keymap = self.keyboardMaps[index]
+			print("[Keyboard] Activating keymap: '%s'." % keymap[1])
+			keymapPath = resolveFilename(SCOPE_KEYMAPS, keymap[0])
+			if pathExists(keymapPath):
+				Console().ePopen("loadkmap < %s" % keymapPath)
+		except IndexError:
+			print("[Keyboard] Error: Selected keymap does not exist!")
+
+	def getKeyboardMaplist(self):
+		return self.keyboardMaps
+
+	def getDefaultKeyboardMap(self):
+		# This is a code proposal to make the default keymap respond
+		# to the currently defined locale.  OpenATV initialises the
+		# keymap based on hardware manufacturer.  Making the
+		# selection based on language locale makes more sense.  There
+		# are other code changes coming that will allow this to happen.
+		#
+		# locale = language.getLocale()
+		# if locale.startswith("de_") and "de.kmap" in self.keyboardMaps:
+		# 	return "de.kmap"
+		from boxbranding import getMachineBrand
+		if getMachineBrand() in ("Zgemma", "Atto.TV"):
+			return "us.kmap"
+		elif getMachineBrand() == "Beyonwiz":
+			return "eng.kmap"
+		return "de.kmap"
 
 
 
@@ -222,7 +287,7 @@ class RemoteControl:
 				if logRemaps:
 					for remap in logRemaps:
 						print("[InputDevice] Remapping '%s' to '%s'." % (remap[0], remap[1]))
-					for evdev, evdevinfo in sorted(iInputDevices.Devices.items()):
+					for evdev, evdevinfo in sorted(inputDevices.devices.items()):
 						if evdevinfo["type"] == "remote":
 							result = eRCInput.getInstance().setKeyMapping(evdevinfo["name"], remapButtons)
 							resStr = {
@@ -291,67 +356,58 @@ class RemoteControl:
 
 class InitInputDevices:
 	def __init__(self):
-		self.currentDevice = ""
-		for device in sorted(list(iInputDevices.Devices.keys())):
-			# print "[InitInputDevices] -> creating config entry for device: %s -> %s  " % (self.currentDevice, iInputDevices.Devices[device]["name"])
+		self.currentDevice = None
+		for device in sorted(list(inputDevices.devices.keys())):
+			print("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"]))
 			self.currentDevice = device
 			self.setupConfigEntries(self.currentDevice)
-			self.currentDevice = ""
+			self.currentDevice = None
 
 	def setupConfigEntries(self, device):
 		setattr(config.inputDevices, device, ConfigSubsection())
 		configItem = getattr(config.inputDevices, device)
-		model = BoxInfo.getItem("model")
-		configItem.enabled = ConfigYesNo(default=(model == 'dm800' or model == 'azboxhd'))
+		configItem.enabled = ConfigYesNo(default=BoxInfo.getItem("RemoteEnable", False))
 		configItem.enabled.addNotifier(self.inputDevicesEnabledChanged)
 		configItem.name = ConfigText(default="")
 		configItem.name.addNotifier(self.inputDevicesNameChanged)
-		repeat = 100
-		if model in ('maram9', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo', 'galaxym6'):
-			repeat = 400
-		elif model == 'azboxhd':
-			repeat = 150
-		configItem.repeat = ConfigSlider(default=repeat, increment = 10, limits=(0, 500))
+		configItem.repeat = ConfigSlider(default=BoxInfo.getItem("RemoteRepeat", 100), increment = 10, limits=(0, 500))
 		configItem.repeat.addNotifier(self.inputDevicesRepeatChanged)
-		if model in ('maram9', 'classm', 'axodin', 'axodinc', 'starsatlx', 'genius', 'evo', 'galaxym6'):
-			delay = 200
-		else:
-			delay = 700
-		configItem.delay = ConfigSlider(default=delay, increment = 100, limits=(0, 5000))
+		configItem.delay = ConfigSlider(default=BoxInfo.getItem("RemoteDelay", 700), increment = 100, limits=(0, 5000))
 		configItem.delay.addNotifier(self.inputDevicesDelayChanged)
 
 	def inputDevicesEnabledChanged(self, configElement):
-		if self.currentDevice != "" and iInputDevices.currentDevice == "":
-			iInputDevices.setDeviceEnabled(self.currentDevice, configElement.value)
-		elif iInputDevices.currentDevice != "":
-			iInputDevices.setDeviceEnabled(iInputDevices.currentDevice, configElement.value)
+		if self.currentDevice and inputDevices.currentDevice is None:
+			inputDevices.setDeviceEnabled(self.currentDevice, configElement.value)
+		elif inputDevices.currentDevice:
+			inputDevices.setDeviceEnabled(inputDevices.currentDevice, configElement.value)
 
 	def inputDevicesNameChanged(self, configElement):
-		if self.currentDevice != "" and iInputDevices.currentDevice == "":
-			iInputDevices.setDeviceName(self.currentDevice, configElement.value)
-			if configElement.value != "":
-				devname = iInputDevices.getDeviceAttribute(self.currentDevice, 'name')
-				if devname != configElement.value:
+		if self.currentDevice and inputDevices.currentDevice is None:
+			inputDevices.setDeviceName(self.currentDevice, configElement.value)
+			if configElement.value:
+				devName = inputDevices.getDeviceAttribute(self.currentDevice, "name")
+				if devName != configElement.value:
 					configItem = getattr(config.inputDevices, "%s.enabled" % self.currentDevice)
 					configItem.value = False
 					configItem.save()
-		elif iInputDevices.currentDevice != "":
-			iInputDevices.setDeviceName(iInputDevices.currentDevice, configElement.value)
+		elif inputDevices.currentDevice:
+			inputDevices.setDeviceName(inputDevices.currentDevice, configElement.value)
 
 	def inputDevicesDelayChanged(self, configElement):
-		if self.currentDevice != "" and iInputDevices.currentDevice == "":
-			iInputDevices.setDeviceDelay(self.currentDevice, configElement.value)
-		elif iInputDevices.currentDevice != "":
-			iInputDevices.setDeviceDelay(iInputDevices.currentDevice, configElement.value)
+		if self.currentDevice and inputDevices.currentDevice is None:
+			inputDevices.setDeviceDelay(self.currentDevice, configElement.value)
+		elif inputDevices.currentDevice:
+			inputDevices.setDeviceDelay(inputDevices.currentDevice, configElement.value)
 
 	def inputDevicesRepeatChanged(self, configElement):
-		if self.currentDevice != "" and iInputDevices.currentDevice == "":
-			iInputDevices.setDeviceRepeat(self.currentDevice, configElement.value)
-		elif iInputDevices.currentDevice != "":
-			iInputDevices.setDeviceRepeat(iInputDevices.currentDevice, configElement.value)
+		if self.currentDevice and inputDevices.currentDevice is None:
+			inputDevices.setDeviceRepeat(self.currentDevice, configElement.value)
+		elif inputDevices.currentDevice:
+			inputDevices.setDeviceRepeat(inputDevices.currentDevice, configElement.value)
 
 
-iInputDevices = InputDevices()
+inputDevices = InputDevices()
+iInputDevices = inputDevices # Deprecated support old plugins
 
 
 class RcTypeControl():
@@ -374,4 +430,5 @@ class RcTypeControl():
 
 
 iRcTypeControl = RcTypeControl()
+keyboard = Keyboard()
 remoteControl = RemoteControl()

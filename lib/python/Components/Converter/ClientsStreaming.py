@@ -10,7 +10,7 @@ from ServiceReference import ServiceReference
 import socket
 
 
-class ClientsStreaming(Converter, Poll, object):
+class ClientsStreaming(Converter, Poll):
 	UNKNOWN = -1
 	REF = 0
 	IP = 1
