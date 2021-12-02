@@ -265,6 +265,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 				itemLevel = int(x.get("level", 0))
 				if itemLevel <= config.usage.setup_level.index:
 					self.addItem(self.menuList, x)
+					global count
 					count += 1
 			elif x.tag == "menu":
 				itemLevel = int(x.get("level", 0))
