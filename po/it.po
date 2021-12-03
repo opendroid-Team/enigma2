@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-11-28 08:52+0100\n"
+"PO-Revision-Date: 2021-12-03 20:17+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -970,7 +970,7 @@ msgstr ""
 "Dopo aver premuto OK, attendere!"
 
 msgid "After pressing OK, please wait!"
-msgstr "Dopo aver premuto OK, Attendere!"
+msgstr "Dopo aver premuto SI, Attendere!"
 
 #, python-format
 msgid ""
@@ -5184,6 +5184,9 @@ msgstr ""
 msgid "Do you want to update your %s %s ?"
 msgstr "Vuoi aggiornare il tuo % s%s ?"
 
+msgid "Do you want to update your box?"
+msgstr "Vuoi aggiornare il tuo box?"
+
 #, python-format
 msgid "Do you want to update your %s %s?"
 msgstr "Volete aggiornare il vostro %s %s?"
@@ -5896,8 +5899,8 @@ msgstr "I processi seguenti saranno eseguiti premendo Ok!"
 msgid "Fontsize"
 msgstr "Dimensione Font"
 
-msgid "For more information see https://www.droidsat.org"
-msgstr "Per maggiori informazioni, visita https://www.droidsat.org"
+msgid "For more information see https://droidsat.org"
+msgstr "Per maggiori informazioni, visita https://droidsat.org"
 
 msgid "Format"
 msgstr "Formattare"
@@ -16278,13 +16281,13 @@ msgstr "Sovrascrivere i file spinner durante l'aggiornamento del software?"
 msgid "Update is reported as faulty !!!"
 msgstr "Aggiornamento viene segnalato come guasto !!!"
 
-msgid "Caution update not tested yet !!"
-msgstr "Aggiornamento Attenzione non ancora testato !!"
+msgid "Caution update not yet tested !!"
+msgstr "Attenzione aggiornamento non ancora testato!!"
 
 msgid "Update at your own risk"
 msgstr "Aggiornamento a proprio rischio"
 
-msgid "For more information see http://www.droidsat.org"
+msgid "For more information see http://droidsat.org"
 msgstr "Per ulteriori informazioni consultare http://www.droidsat.org"
 
 msgid "But you have activated Install unstable updates"
