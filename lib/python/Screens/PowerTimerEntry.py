@@ -58,7 +58,7 @@ class TimerEntry(Screen, ConfigListScreen):
 
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session=session)
-		self.setTitle(_("PowerManager entry"))
+		self.setTitle(_("PowerTimer Entry"))
 		self.createSetup("config")
 
 	def createConfig(self):
@@ -89,10 +89,10 @@ class TimerEntry(Screen, ConfigListScreen):
 		traffic_table = [(10, "10"), (50, "50"), (100, "100"), (500, "500"), (1000, "1000")]
 
 		# calculate default values
-		day = []
+		days = []
 		weekday = 0
 		for x in (0, 1, 2, 3, 4, 5, 6):
-			day.append(0)
+			days.append(False)
 		if self.timer.repeated: # repeated
 			type = "repeated"
 			if self.timer.repeated == 31: # Mon-Fri
@@ -108,10 +108,10 @@ class TimerEntry(Screen, ConfigListScreen):
 						print("Set to weekday " + str(x))
 						weekday = x
 					if flags & 1 == 1: # set user defined flags
-						day[x] = 1
+						days[x] = True
 						count += 1
 					else:
-						day[x] = 0
+						days[x] = False
 					flags >>= 1
 				if count == 1:
 					repeated = "weekly"
@@ -119,13 +119,13 @@ class TimerEntry(Screen, ConfigListScreen):
 			type = "once"
 			repeated = None
 			weekday = int(strftime("%u", localtime(self.timer.begin))) - 1
-			day[weekday] = 1
+			days[weekday] = True
 
 		if BoxInfo.getItem("DeepstandbySupport"):
 			shutdownString = _("go to deep standby")
 		else:
 			shutdownString = _("shut down")
-		self.timerentry_timertype = ConfigSelection(choices=[("nothing", _("do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("autostandby", _("auto standby")), ("autodeepstandby", _("auto deepstandby")), ("standby", _("go to standby")), ("deepstandby", shutdownString), ("reboot", _("reboot system")), ("restart", _("restart GUI"))], default=timertype)
+		self.timerentry_timertype = ConfigSelection(choices=[("nothing", _("do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("autostandby", _("auto standby")), ("autodeepstandby", _("auto deepstandby")), ("standby", _("go to standby")), ("deepstandby", shutdownString), ("reboot", _("reboot system")), ("restart", _("Restart GUI"))], default=timertype)
 		self.timerentry_afterevent = ConfigSelection(choices=[("nothing", _("do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("standby", _("go to standby")), ("deepstandby", shutdownString)], default=afterevent)
 		self.timerentry_type = ConfigSelection(choices=[("once", _("once")), ("repeated", _("repeated"))], default=type)
 
@@ -148,7 +148,7 @@ class TimerEntry(Screen, ConfigListScreen):
 
 		self.timerentry_day = ConfigSubList()
 		for x in (0, 1, 2, 3, 4, 5, 6):
-			self.timerentry_day.append(ConfigYesNo(default=day[x]))
+			self.timerentry_day.append(ConfigYesNo(default=days[x]))
 
 		self.timerrntry_showExtended = ConfigSelection(default=(self.timer.nettraffic == "yes" or self.timer.netip == "yes"), choices=[(True, _("yes")), (False, _("no"))])
 		self.timerrntry_nettraffic = ConfigSelection(choices=[("yes", _("Yes")), ("no", _("No"))], default=self.timer.nettraffic)
@@ -447,7 +447,7 @@ class TimerLog(Screen):
 			"red": self.deleteEntry,
 			"blue": self.clearLog
 		}, -1)
-		self.setTitle(_("PowerManager log"))
+		self.setTitle(_("PowerTimer Log"))
 
 	def deleteEntry(self):
 		cur = self["loglist"].getCurrent()

@@ -140,9 +140,9 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 		num_configured_if = len(iNetwork.getConfiguredAdapters())
 		if num_configured_if >= 2:
 			if default == True:
-				defaultpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "buttons/button_blue.png"))
+				defaultpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "buttons/button_green.png"))
 			elif default == False:
-				defaultpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "buttons/button_blue_off.png"))
+				defaultpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "buttons/button_green_off.png"))
 		if active == True:
 			activepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/lock_on.png"))
 		elif active == False:
@@ -2913,7 +2913,7 @@ class NetworkInadynSetup(Screen, ConfigListScreen):
 		self.ina_pass = NoSave(ConfigText(fixed_size=False))
 		self.ina_alias = NoSave(ConfigText(fixed_size=False))
 		self.ina_period = NoSave(ConfigNumber())
-		self.ina_sysactive = NoSave(ConfigYesNo(default='False'))
+		self.ina_sysactive = NoSave(ConfigYesNo(default=False))
 		self.ina_system = NoSave(ConfigSelection(default="dyndns@dyndns.org", choices=[("dyndns@dyndns.org", "dyndns@dyndns.org"), ("statdns@dyndns.org", "statdns@dyndns.org"), ("custom@dyndns.org", "custom@dyndns.org"), ("default@no-ip.com", "default@no-ip.com")]))
 
 		if fileExists('/etc/inadyn.conf'):
@@ -3028,7 +3028,7 @@ class NetworkInadynLog(Screen):
 
 
 config.networkushare = ConfigSubsection()
-config.networkushare.mediafolders = NoSave(ConfigLocations(default=""))
+config.networkushare.mediafolders = NoSave(ConfigLocations(default=None))
 
 
 class NetworkuShare(Screen):
@@ -3297,10 +3297,10 @@ class NetworkuShareSetup(Screen, ConfigListScreen):
 		self.ushare_iface = NoSave(ConfigText(fixed_size=False))
 		self.ushare_port = NoSave(ConfigNumber())
 		self.ushare_telnetport = NoSave(ConfigNumber())
-		self.ushare_web = NoSave(ConfigYesNo(default='True'))
-		self.ushare_telnet = NoSave(ConfigYesNo(default='True'))
-		self.ushare_xbox = NoSave(ConfigYesNo(default='True'))
-		self.ushare_ps3 = NoSave(ConfigYesNo(default='True'))
+		self.ushare_web = NoSave(ConfigYesNo(default=True))
+		self.ushare_telnet = NoSave(ConfigYesNo(default=True))
+		self.ushare_xbox = NoSave(ConfigYesNo(default=True))
+		self.ushare_ps3 = NoSave(ConfigYesNo(default=True))
 		self.ushare_system = NoSave(ConfigSelection(default="dyndns@dyndns.org", choices=[("dyndns@dyndns.org", "dyndns@dyndns.org"), ("statdns@dyndns.org", "statdns@dyndns.org"), ("custom@dyndns.org", "custom@dyndns.org")]))
 
 		if fileExists('/etc/ushare.conf'):
@@ -3531,7 +3531,7 @@ class NetworkuShareLog(Screen):
 
 
 config.networkminidlna = ConfigSubsection()
-config.networkminidlna.mediafolders = NoSave(ConfigLocations(default=""))
+config.networkminidlna.mediafolders = NoSave(ConfigLocations(default=None))
 
 
 class NetworkMiniDLNA(Screen):
@@ -3787,10 +3787,10 @@ class NetworkMiniDLNASetup(Screen, ConfigListScreen):
 		self.minidlna_iface = NoSave(ConfigText(fixed_size=False))
 		self.minidlna_port = NoSave(ConfigNumber())
 		self.minidlna_serialno = NoSave(ConfigNumber())
-		self.minidlna_web = NoSave(ConfigYesNo(default='True'))
-		self.minidlna_inotify = NoSave(ConfigYesNo(default='True'))
-		self.minidlna_tivo = NoSave(ConfigYesNo(default='True'))
-		self.minidlna_strictdlna = NoSave(ConfigYesNo(default='True'))
+		self.minidlna_web = NoSave(ConfigYesNo(default=True))
+		self.minidlna_inotify = NoSave(ConfigYesNo(default=True))
+		self.minidlna_tivo = NoSave(ConfigYesNo(default=True))
+		self.minidlna_strictdlna = NoSave(ConfigYesNo(default=True))
 
 		if fileExists('/etc/minidlna.conf'):
 			f = open('/etc/minidlna.conf', 'r')
