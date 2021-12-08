@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import print_function, division
 from Plugins.Plugin import PluginDescriptor
 from Screens.PluginBrowser import *
 from Screens.Ipkg import Ipkg
@@ -117,6 +118,7 @@ from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import InitConfig as BackupRestore_InitConfig
+from Plugins.SystemPlugins.SoftwareManager.plugin import SoftwareManagerSetup, Load_defaults
 BoxInfo.setItem("SoftCam", Check_Softcam())
 
 if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):
@@ -204,13 +206,13 @@ INFO_SKIN2 = '<screen name="OPD_panel"  position="center,center" size="530,400" 
 
 class PanelList(MenuList):
 	if (getDesktop(0).size().width() == 1920):
-		def __init__(self, list, font0 = 38, font1 = 28, itemHeight = 60, enableWrapAround = True):
+		def __init__(self, list, font0 = 38, font1 = 38, itemHeight = 60, enableWrapAround = True):
 			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 			self.l.setFont(0, gFont("Regular", font0))
 			self.l.setFont(1, gFont("Regular", font1))
 			self.l.setItemHeight(itemHeight)
 	else:
-		def __init__(self, list, font0 = 24, font1 = 16, itemHeight = 50, enableWrapAround = True):	        
+		def __init__(self, list, font0=24, font1=16, itemHeight=50, enableWrapAround = True):
 			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 			self.l.setFont(0, gFont("Regular", font0))
 			self.l.setFont(1, gFont("Regular", font1))
@@ -219,12 +221,12 @@ class PanelList(MenuList):
 def MenuEntryItem(entry):
 	if (getDesktop(0).size().width() == 1920):
 		res = [entry]
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 10), size=(60, 60), png=entry[0]))  
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(0, 10), size=(60, 60), png=entry[0]))  
 		res.append(MultiContentEntryText(pos=(110, 5), size=(690, 50), font=0, text=entry[1]))  
 		return res
 	else:
 		res = [entry]
-		res.append(MultiContentEntryPixmapAlphaTest(pos=(0, 5), size=(100, 40), png=entry[0]))  
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(0, 5), size=(100, 40), png=entry[0]))  
 		res.append(MultiContentEntryText(pos=(110, 10), size=(440, 40), font=0, text=entry[1]))  
 		return res
 
@@ -303,10 +305,7 @@ class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Infobar_Setup'), _('Infobar_Setup'), 'Infobar_Setup')))
 		self.Mlist.append(MenuEntryItem((InfoEntryComponent('Decoding_Setup'), _('Decoding_Setup'), 'Decoding_Setup')))
 		self.onChangedEntry = []
-		if getSkinFactor() == 1:
-			self["Mlist"] = PanelList([])
-		else:
-			self["Mlist"] = PanelList([], font0=24, font1=15, itemHeight=50)
+		self["Mlist"] = PanelList([])
 		self["Mlist"].l.setList(self.Mlist)
 		menu = 0
 		self["Mlist"].onSelectionChanged.append(self.selectionChanged)
@@ -453,7 +452,7 @@ class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 			self.session.open(PasswdScreen)
 		elif menu == "backup-settings":
 			self.session.openWithCallback(self.backupDone, BackupScreen, runBackup=True)
-		elif menu == "restore-settings":
+		elif menu == "Restore Settings":
 			self.backuppath = getBackupPath()
 			self.backupfile = getBackupFilename()
 			self.fullbackupfilename = self.backuppath + "/" + self.backupfile
@@ -467,6 +466,8 @@ class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 			self.session.open(BackupSelection, title=_("Additional files/folders to backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs, readOnly=False)
 		elif menu == "backup-files-excluded":
 			self.session.open(BackupSelection, title=_("Files/folders to exclude from backup"), configBackupDirs=config.plugins.configurationbackup.backupdirs_exclude, readOnly=False)
+		elif menu == "SoftwareManagerSetup":
+			self.session.open(SoftwareManagerSetup)
 		elif menu == "MultiQuickButton":
 			self.session.open(MultiQuickButton)
 		elif menu == "MountManager":
@@ -569,6 +570,7 @@ class OPD_panel(Screen, InfoBarPiP, ProtectedScreen):
 		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFiles"), _("Show default backup files"), ("backup-files"))))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFilesAdditional"), _("Select additional backup files"), ("backup-files-additional"))))
 		self.tlist.append(MenuEntryItem((InfoEntryComponent("BackupFilesExcluded"), _("Select excluded backup files"), ("backup-files-excluded"))))
+		self.tlist.append(MenuEntryItem((InfoEntryComponent("SoftwareManagerSetup"), _("Manage your online update files"), ("SoftwareManagerSetup"))))
 		self["Mlist"].moveToIndex(0)
 		self["Mlist"].l.setList(self.tlist)
 
