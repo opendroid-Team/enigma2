@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: https://droidsat.org/forum/\n"
 "POT-Creation-Date: 2011-1-05 14:38+0200\n"
-"PO-Revision-Date: 2021-12-03 21:12+0100\n"
+"PO-Revision-Date: 2021-12-10 19:36+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -17010,8 +17010,8 @@ msgstr "Se questa opzione è impostata su 'sì' gli elenchi dei canali mostrano 
 msgid "MultiBoot Selector"
 msgstr "Selettore MultiBoot"
 
-msgid "MultiBoot Image Selector"
-msgstr "Selettore immagini multiboot"
+msgid "Multiboot Image Selector"
+msgstr "Selettore di immagini Multiboot"
 
 msgid "MultiBootSelector Actions"
 msgstr "Selettore immagini multiboot"
@@ -19091,6 +19091,9 @@ msgstr "Utilizzare i tasti cursore per selezionare un'immagine installata, quind
 
 msgid "slot%s - %s - %s as USB Recovery"
 msgstr "posizione%s - %s - %s come recupero USB"
+
+msgid "slot%s - %s (current image)"
+msgstr "posizione%s - %s (immagine corrente)"
 
 msgid "slot%s - %s - %s (current image)"
 msgstr "posizione%s - %s - %s (immagine corrente)"
