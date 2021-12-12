@@ -106,7 +106,7 @@ class LocaleSelection(Screen, HelpableScreen):
 			"select": (self.keySelect, _("Select the currently highlighted locale/language for the user interface")),
 			"close": (self.closeRecursive, _("Cancel any changes the active locale/language and exit all menus")),
 			"cancel": (self.keyCancel, _("Cancel any changes to the active locale/language and exit")),
-			"save": (self.keySave, _("Apply any changes to the active locale/langauge and exit"))
+			"save": (self.keySave, _("Apply any changes to the active locale/language and exit"))
 		}, prio=0, description=_("Locale/Language Selection Actions"))
 		self["manageActions"] = HelpableActionMap(self, "LocaleSelectionActions", {
 			"manage": (self.keyManage, (_("Purge all but / Add / Delete the currently highlighted locale/language"), _("Purge all but the current and permanent locales/languages.  Add the current locale/language if it is not installed.  Delete the current locale/language if it is installed.")))
@@ -215,8 +215,6 @@ class LocaleSelection(Screen, HelpableScreen):
 				self["description"].text = _("Press OK to use this language.  [%s]") % detail
 			else:
 				self["description"].text = _("This is the currently selected language.  [%s]") % detail
-			deleteButton = _("Delete Lang")
-			installButton = _("Install Lang")
 		else:
 			detail = "%s (%s) %s" % (international.getLanguageTranslated(locale), international.getCountryTranslated(locale), locale)
 			if status == self.PACK_AVAILABLE:
@@ -225,11 +223,9 @@ class LocaleSelection(Screen, HelpableScreen):
 				self["description"].text = _("Press OK to use this locale.  [%s]") % detail
 			else:
 				self["description"].text = _("This is the currently selected locale.  [%s]") % detail
-			deleteButton = _("Delete Loc")
-			installButton = _("Install Loc")
 		if package != international.getPackage(self.currentLocale):
 			self["manageActions"].setEnabled(True)
-			self["key_yellow"].text = deleteButton if status == self.PACK_INSTALLED else installButton
+			self["key_yellow"].text = _("Delete") if status == self.PACK_INSTALLED else _("Install")
 		elif international.getPurgablePackages(self.currentLocale):
 			self["manageActions"].setEnabled(True)
 			self["key_yellow"].text = _("Purge")

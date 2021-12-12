@@ -6,6 +6,7 @@ from Components.MenuList import MenuList
 from Components.Sources.List import List
 from Components.PluginList import resolveFilename
 from Components.Task import Task, Job, job_manager, Condition
+from Components.ConfigList import ConfigListScreen, ConfigList
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -14,7 +15,7 @@ from Screens.TaskView import JobView
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import fileExists, SCOPE_PLUGINS
-from Components.config import config, configfile, ConfigSubsection, ConfigText, ConfigSelection
+from Components.config import getConfigListEntry, config, configfile, ConfigSubsection, ConfigText, ConfigSelection, ConfigSubList, choicesList, ConfigSelectionNumber, ConfigBoolean
 from six.moves import urllib
 from six.moves.urllib.request import urlopen, Request
 import requests
@@ -56,9 +57,14 @@ class OPDChooseOnLineImage(Screen):
                         MBImagelist = [("6.0", _("6.0")), ("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4")), ("6.5", _("6.5")), ("7.0", _("7.0")), ("7.1", _("7.1"))]
                         if returnValue ==  'openatv':
                                 MBImagelist.remove(("6.0", _("6.0")))
+                                MBImagelist.remove(("6.1", _("6.1")))
+                                MBImagelist.remove(("6.2", _("6.2")))
+                                MBImagelist.remove(("6.3", _("6.3")))
+                                MBImagelist.remove(("6.4", _("6.4")))
+                                MBImagelist.remove(("6.5", _("6.5")))
                         elif returnValue ==  'opendroid':
-                                MBImagelist.append(("7.0", _("7.0")))
-                                MBImagelist.append(("7.1", _("7.1")))
+                                MBImagelist.remove(("6.0", _("6.0")))
+                                MBImagelist.remove(("6.1", _("6.1")))
                         elif returnValue ==  'openhdf':
                                 MBImagelist.remove(("6.0", _("6.0")))
                                 MBImagelist.remove(("6.1", _("6.1")))
@@ -69,14 +75,15 @@ class OPDChooseOnLineImage(Screen):
                                 MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.2", _("6.2")))
                                 MBImagelist.remove(("6.3", _("6.3")))
+                                MBImagelist.remove(("6.4", _("6.4")))
                         elif returnValue ==  'pure2':
                                 MBImagelist.remove(("6.0", _("6.0")))
                                 MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.4", _("6.4")))
-                        if returnValue ==  'opendroid':
-                                config.usage.mbimageversion = ConfigSelection(default="7.0", choices = MBImagelist)	    
+                        if returnValue ==  'opennfr':
+                                config.usage.mbimageversion = ConfigSelection(default="6.4", choices = MBImagelist)	    
                         else:
-                                config.usage.mbimageversion = ConfigSelection(default="7.1", choices = MBImagelist)
+                                config.usage.mbimageversion = ConfigSelection(default="6.5", choices = MBImagelist)
                         self.session.openWithCallback(self.KeyOk1, Setup, "multiboot")
                         mbimageValue = config.usage.mbimageversion.value
                 else:

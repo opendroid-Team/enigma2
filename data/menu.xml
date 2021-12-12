@@ -76,7 +76,7 @@ self.session.open(GreenPanel)
 		<menu weight="30" level="1" text="Extended GUI" entryID="osd_setup">
 				<id val="osd_menu" />
 				<item weight="10" level="1" text="OSD Position" entryID="osdsetup" requires="CanChangeOsdPosition"><screen module="UserInterfacePositioner" screen="UserInterfacePositioner2"/></item>
-				<item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item>
+				<!-- <item weight="10" level="0" entryID="dvdplayer_setup"><setup id="dvdplayer" /></item> -->
 				<item weight="20" level="2" text="Button setup" entryID="buttonsetup_setup"><screen module="ButtonSetup" screen="ButtonSetup"/></item>
 				<item weight="30" level="1" text="Input devices" entryID="input_device_setup"><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
 				<item weight="80" level="1" text="Remote Control Code" entryID="remotecode" requires="RemoteCode">
@@ -270,10 +270,10 @@ else:
 	self.session.open(TryQuitMainloop, 1)
 </code>
 		</item>
-		<item weight="5" level="0" text="Shutdown" requires="!DeepstandbySupport" entryID="deep_standby"><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
-		<item weight="6" level="0" text="Multiboot Image Selector" entryID="restart" requires="canMultiBoot"><screen module="MultiBootSelector" screen="MultiBootSelector">1</screen></item>
+		<item weight="5" level="0" text="Shutdown" requires="!DeepstandbySupport" entryID="shutdown"><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
+		<item weight="6" level="0" text="Multiboot Image Selector" entryID="multiboot" requires="canMultiBoot"><screen module="MultiBootSelector" screen="MultiBootSelector">1</screen></item>
 		<!--item weight="7" level="0" text="SDroot" entryID="SDswap" requires="HasSDswap"><screen module="SDswap" screen="SDswap">1</screen></item-->
-		<item weight="10" level="0" text="WOL Standby" requires="GBWOL" entryID="deep_standby">
+		<item weight="10" level="0" text="WOL Standby" requires="GBWOL" entryID="wol_standby">
 			<code>
 from Screens.Standby import TryQuitMainloop
 from Screens.MessageBox import MessageBox

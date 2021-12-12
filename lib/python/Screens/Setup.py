@@ -4,7 +4,7 @@ from six import PY2
 from xml.etree.cElementTree import ParseError, fromstring, parse
 
 from skin import setups
-from Components.config import ConfigBoolean, ConfigNothing, ConfigSelection, config
+from Components.config import ConfigBoolean, ConfigNothing, ConfigSelection, config, ConfigSubsection, ConfigText
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.Pixmap import Pixmap

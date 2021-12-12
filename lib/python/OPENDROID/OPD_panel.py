@@ -206,7 +206,7 @@ INFO_SKIN2 = '<screen name="OPD_panel"  position="center,center" size="530,400" 
 
 class PanelList(MenuList):
 	if (getDesktop(0).size().width() == 1920):
-		def __init__(self, list, font0 = 38, font1 = 38, itemHeight = 60, enableWrapAround = True):
+		def __init__(self, list, font0 = 38, font1 = 38, itemHeight = 55, enableWrapAround = True):
 			MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 			self.l.setFont(0, gFont("Regular", font0))
 			self.l.setFont(1, gFont("Regular", font1))
@@ -221,7 +221,7 @@ class PanelList(MenuList):
 def MenuEntryItem(entry):
 	if (getDesktop(0).size().width() == 1920):
 		res = [entry]
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(0, 10), size=(60, 60), png=entry[0]))  
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 10), size=(40, 40), png=entry[0]))  
 		res.append(MultiContentEntryText(pos=(110, 5), size=(690, 50), font=0, text=entry[1]))  
 		return res
 	else:
