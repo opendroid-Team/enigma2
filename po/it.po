@@ -7747,6 +7747,9 @@ msgstr "Mtd"
 msgid "Multi EPG"
 msgstr "Multi-EPG"
 
+msgid "Mode for autorestore"
+msgstr "Modalità per ripristino automatico"
+
 msgid "Load/Save/Delete"
 msgstr "Carica EPG/Salva/Cancella"
 
@@ -16249,7 +16252,7 @@ msgid "PTS-Plugin: Restarting Timeshift!"
 msgstr "PTS-Plugin: Riavviare Timeshift!"
 
 msgid "Select Software Update"
-msgstr "Selezionare Aggiornamento software"
+msgstr "Selezionare aggiornamento online"
 
 msgid "Overwrite Configuration Files ?"
 msgstr "Sovrascrivere i File di Configurazione?"
@@ -16277,6 +16280,15 @@ msgstr "Sovrascrivere i File Spinner?"
 
 msgid "Overwrite spinner files during software upgrade?"
 msgstr "Sovrascrivere i file spinner durante l'aggiornamento del software?"
+
+msgid ""
+"Turbo: One reboot after flash\n"
+"Fast: One reboot after flash, one reboot after restore\n"
+"Slow: One reboot after flash, one reboot after restore in GUI"
+msgstr ""
+"Turbo: un riavvio dopo il flash\n"
+"Veloce: un riavvio dopo il flash, un riavvio dopo il ripristino\n"
+"Lento: un riavvio dopo il flash, un riavvio dopo il ripristino nella GUI"
 
 msgid "Update is reported as faulty !!!"
 msgstr "Aggiornamento viene segnalato come guasto !!!"
@@ -16377,6 +16389,9 @@ msgstr "Sovrascrivere i file Softcam durante l'aggiornamento del software?"
 
 msgid "Overwrite picon files during software upgrade?"
 msgstr "Sovrascrivi picon file durante l'aggiornamento del software?"
+
+msgid "Overwrite bootlogo files during software upgrade?"
+msgstr "Sovrascrivere il bootlogo durante l’aggiornamento software?"
 
 msgid "Choose backup files"
 msgstr "Scegli file di backup"
