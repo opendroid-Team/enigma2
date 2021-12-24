@@ -122,6 +122,10 @@ def getCPUSpeedString():
 		except IOError:
 			return "unavailable"
 
+def getCPUArch():
+	if "ARM" in getCPUString():
+		return getCPUString()
+	return _("Mipsel")
 
 def getCPUString():
 	if getMachineBuild() in ('vuduo4k', 'vuduo4kse', 'osmio4k', 'osmio4kplus', 'osmini4k', 'dags72604', 'vuuno4kse', 'vuuno4k', 'vuultimo4k', 'vusolo4k', 'vuzero4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'dm920', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'et1x000', 'xc7439', 'h7', '8100s', 'et13000', 'sf5008'):
