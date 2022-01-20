@@ -585,10 +585,6 @@ def localeNotifier(configElement):
 	international.activateLocale(configElement.value)
 
 
-def setLoadUnlinkedUserbouquets(configElement):
-	enigma.eDVBDB.getInstance().setLoadUnlinkedUserbouquets(configElement.value)
-
-
 def useSyncUsingChanged(configelement):
 	if config.misc.SyncTimeUsing.value == "0":
 		print("[Time By]: Transponder")
@@ -787,9 +783,16 @@ from Screens import InfoBar
 from Screens.SimpleSummary import SimpleSummary
 
 profile("Bouquets")
+from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, NoSave
 config.misc.load_unlinked_userbouquets = ConfigYesNo(default=False)
+
+def setLoadUnlinkedUserbouquets(configElement):
+	enigma.eDVBDB.getInstance().setLoadUnlinkedUserbouquets(configElement.value)
+
+
 config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
-enigma.eDVBDB.getInstance().reloadBouquets()
+if config.clientmode.enabled.value == False:
+	enigma.eDVBDB.getInstance().reloadBouquets()
 
 profile("ParentalControl")
 import Components.ParentalControl

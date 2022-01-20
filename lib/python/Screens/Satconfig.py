@@ -1037,6 +1037,8 @@ class NimSelection(Screen):
 
 		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = StaticText(_("Select"))
+		self["key_blue"] = StaticText(_("Client mode"))
+		self["key_info"] = StaticText(_("INFO"))
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions", "ChannelSelectEPGActions"],
 		{
@@ -1047,6 +1049,7 @@ class NimSelection(Screen):
 			"red": self.close,
 			"green": self.okbuttonClick,
 			"menu": self.exit,
+			"blue": self.clientmode,
 		}, -2)
 		self.setTitle(_("Choose Tuner"))
 
@@ -1065,6 +1068,10 @@ class NimSelection(Screen):
 						else:
 							nimConfig.configMode.value = "loopthrough"
 							nimConfig.connectedTo.value = str(link)
+
+	def clientmode(self):
+		from Screens.ClientMode import ClientModeScreen
+		self.session.open(ClientModeScreen)
 
 	def exit(self):
 		self.close(True)
