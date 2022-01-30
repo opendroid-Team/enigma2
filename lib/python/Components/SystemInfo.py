@@ -258,7 +258,7 @@ SystemInfo["Power4x7Suspend"] = fileExists("/proc/stb/fp/power4x7suspend")
 SystemInfo["PowerOffDisplay"] = model not in ('formuler1','hitube4k') and fileCheck("/proc/stb/power/vfd") or fileCheck("/proc/stb/lcd/vfd")
 SystemInfo["LEDButtons"] = model == "vuultimo"
 SystemInfo["WakeOnLAN"] = fileCheck("/proc/stb/power/wol") or fileCheck("/proc/stb/fp/wol")
-SystemInfo["HDMICEC"] = (fileExists("/dev/hdmi_cec") or fileExists("/dev/misc/hdmi_cec0")) and fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/HdmiCEC/plugin.py")
+SystemInfo["HDMICEC"] = fileExists("/dev/hdmi_cec") or fileExists("/dev/misc/hdmi_cec0")
 SystemInfo["SABSetup"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/SABnzbd/plugin.py")
 SystemInfo["SeekStatePlay"] = False
 SystemInfo["StatePlayPause"] = False
