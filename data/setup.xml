@@ -393,10 +393,13 @@
 		<!--item level="0" text="OPENDROID Blue button mode" description="Select what you want the Blue button to activate:">config.usage.bluebutton_mode</item-->
 		<!--item level="0" text="Select Yellow Key Action" description="Select what you want the YELLOW button to activate:">config.OPD_panel_yellowkey.list</item-->
 	        <item level="0" text="Select Yellow Key Action long" description="Select what you want the YELLOW-Long button to activate:">config.plugins.OPDBoot_yellowkey.listLong</item>
-		</setup>
-	<setup level="2" key="softcamsetup" title="Softcam settings">
-		<item level="2" text="Show CCcam in extensions ?" description="Allows you to show/hide CCcam in extensions (blue button).">config.cccaminfo.showInExtensions</item>
-		<item level="2" text="Show OScam in extensions ?" description="Allows you to show/hide OScam in extensions (blue button).">config.oscaminfo.showInExtensions</item>
+	</setup>
+	<setup key="Softcam" title="Softcam Settings" showOpenWebIf="1">
+		<item level="0" text="Select softcam" description="Select a softcam from the available list.">config.misc.softcams</item>
+		<item level="0" text="Select cardserver" description="Select a cardserver from the available list." conditional="config.misc.cardservers.value != ''">config.misc.cardservers</item>
+		<item level="0" text="Restart" description="Reset the selected devices and save changes of your config when the GREEN button is pressed.">config.misc.restarts</item>
+		<item level="2" text="Show CCcam in extensions" description="Allows you to show/hide CCcam in extensions (BLUE button)." conditional="'cccam' in config.misc.softcams.value.lower()">config.cccaminfo.showInExtensions</item>
+		<item level="2" text="Show OScam in extensions" description="Allows you to show/hide OScam in extensions (BLUE button)." conditional="'oscam' in config.misc.softcams.value.lower()">config.oscaminfo.showInExtensions</item>
 	</setup>
 	<setup level="2" key="logs" title="Logs settings">
 		<item level="2" text="Logs location" description="Choose the location for crash and debuglogs.">config.crash.debug_path</item>

@@ -2,8 +2,7 @@ from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
-from Components.config import config, configfile, getConfigListEntry
-from Components.ConfigList import ConfigList, ConfigListScreen
+from Screens.Setup import Setup
 
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Sources.List import List
@@ -109,7 +108,7 @@ class OscamInfo:
 		ipconfigured = ipcompiled
 		user = pwd = None
 
-		ret = _("oscam webif disabled")
+		ret = _("OScam webif disabled")
 
 		if webif and port is not None:
 		# oscam reports it got webif support and webif is running (Port != 0)
@@ -500,7 +499,7 @@ class OscamInfoMenu(Screen):
 						self.callbackmode = "readers"
 						self.session.openWithCallback(self.chooseReaderCallback, ChoiceBox, title=_("Please choose reader"), list=reader)
 		elif entry == 6:
-			self.session.open(OscamInfoConfigScreen)
+			self.session.open(OscamInfoSetup)
 
 	def chooseReaderCallback(self, retval):
 		print(retval)
@@ -512,7 +511,7 @@ class OscamInfoMenu(Screen):
 
 	def ErrMsgCallback(self, retval):
 		print(retval)
-		self.session.open(OscamInfoConfigScreen)
+		self.session.open(OscamInfoSetup)
 
 	def buildMenu(self, mlist):
 		keys = ["red", "green", "yellow", "blue", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ""]
@@ -1150,62 +1149,17 @@ class oscReaderStats(Screen, OscamInfo):
 		self.setTitle(" ".join(title))
 
 
-class OscamInfoConfigScreen(Screen, ConfigListScreen):
+class OscamInfoSetup(Setup):
 	def __init__(self, session, msg=None):
-		Screen.__init__(self, session)
-		if msg is not None:
-			self.msg = "Error:\n%s" % msg
-		else:
-			self.msg = ""
-		self.oscamconfig = [ ]
-		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("OK"))
-		self["status"] = StaticText(self.msg)
-		self["config"] = ConfigList(self.oscamconfig)
-		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
-		{
-			"red": self.cancel,
-			"green": self.save,
-			"save": self.save,
-			"cancel": self.cancel,
-			"ok": self.save,
-		}, -2)
-		ConfigListScreen.__init__(self, self.oscamconfig, session = self.session)
-		self.createSetup()
-		config.oscaminfo.userdatafromconf.addNotifier(self.elementChanged, initial_call = False)
-		config.oscaminfo.autoupdate.addNotifier(self.elementChanged, initial_call = False)
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def elementChanged(self, instance):
-		self.createSetup()
-		try:
-			self["config"].l.setList(self.oscamconfig)
-		except KeyError:
-			pass
+		Setup.__init__(self, session, setup="OscamInfo")
+		self.setTitle(_("Oscam Info Settings"))
+		self.msg = msg
+		if self.msg:
+			self.msg = "Error:\n%s" % self.msg
 
 	def layoutFinished(self):
-		self.setTitle(_("Oscam Info - Configuration"))
-		self["config"].l.setList(self.oscamconfig)
+		Setup.layoutFinished(self)
+		if self.msg:
+			self.setFootnote(self.msg)
+			self.msg = None
 
-	def createSetup(self):
-		self.oscamconfig = []
-		self.oscamconfig.append(getConfigListEntry(_("Read Userdata from oscam.conf"), config.oscaminfo.userdatafromconf))
-		if not config.oscaminfo.userdatafromconf.value:
-			self.oscamconfig.append(getConfigListEntry(_("Username (httpuser)"), config.oscaminfo.username))
-			self.oscamconfig.append(getConfigListEntry(_("Password (httpwd)"), config.oscaminfo.password))
-			self.oscamconfig.append(getConfigListEntry(_("IP address"), config.oscaminfo.ip))
-			self.oscamconfig.append(getConfigListEntry(_("Port"), config.oscaminfo.port))
-		self.oscamconfig.append(getConfigListEntry(_("Automatically update Client/Server View?"), config.oscaminfo.autoupdate))
-		if config.oscaminfo.autoupdate.value:
-			self.oscamconfig.append(getConfigListEntry(_("Update interval (in seconds)"), config.oscaminfo.intervall))
-
-	def save(self):
-		for x in self.oscamconfig:
-			x[1].save()
-		configfile.save()
-		self.close()
-
-	def cancel(self):
-		for x in self.oscamconfig:
-			x[1].cancel()
-		self.close()

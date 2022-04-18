@@ -67,13 +67,13 @@ class BluePanel(Screen, ConfigListScreen):
                 self.setTitle(self.setup_title)
 
                 self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "CiSelectionActions"],
-                                {
-                                                    "cancel": self.cancel,
-                          "green": self.save,
+			{
+                                "cancel": self.cancel,
+                                "green": self.save,
                                 "red": self.cancel,
                                 "yellow": self.Yellow,
                                 "blue": self.ppanelShortcut,
-                                }, -1)
+			}, -1)
 
                 self.list = []
                 ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
@@ -163,16 +163,16 @@ class BluePanel(Screen, ConfigListScreen):
 
         def ppanelShortcut(self):
                 ppanelFileName = '/etc/ppanels/' + self.softcams.value + '.xml'
-                if "oscam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.py'):
+                if "oscam" in self.softcams.value.lower():
                         from Screens.OScamInfo import OscamInfoMenu
                         self.session.open(OscamInfoMenu)
-                elif "cccam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/CCcamInfo.py'):
+                elif "cccam" in self.softcams.value.lower():
                         from Screens.CCcamInfo import CCcamInfoMain
                         self.session.open(CCcamInfoMain)
-                elif "ncam" in self.softcams.value.lower() and os.path.isfile('/usr/lib/enigma2/python/Screens/OScamInfo.py'):
+                elif "ncam" in self.softcams.value.lower():
                         from Screens.OScamInfo import OscamInfoMenu
                         self.session.open(OscamInfoMenu)
-                elif os.path.isfile(ppanelFileName) and os.path.isfile('/usr/lib/enigma2/python/Plugins/Extensions/PPanel/plugin.py'):
+                elif os.path.isfile(ppanelFileName):
                         from Plugins.Extensions.PPanel.ppanel import PPanel
                         self.session.open(PPanel, name=self.softcams.value + ' PPanel', node=None, filename=ppanelFileName, deletenode=None)
                 else:
@@ -191,12 +191,7 @@ class BluePanel(Screen, ConfigListScreen):
                 self.activityTimer = eTimer()
                 self.activityTimer.timeout.get().append(self.doStop)
                 self.activityTimer.start(100, False)
-                softcams=self.softcam.getList()
-                cardservers=self.cardserver.getList()
 
-                self.softcams=ConfigSelection(choices=softcams)
-                self.softcams.value=self.softcam.current()
-                self.session.openWithCallback(self.myclose, startcam, softcams)
         def doStop(self):
                 self.activityTimer.stop()
                 if "c" in self.what:
@@ -331,12 +326,12 @@ class ShowSoftcamPackages(Screen):
                 self.session = session
 
                 self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
-                                {
-                                                    "red": self.exit,
-                  "ok": self.go,
-                        "cancel": self.exit,
-                        "green": self.startupdateList,
-                        "yellow": self.oscamsmartcard,
+			{
+				"red": self.exit,
+				"ok": self.go,
+				"cancel": self.exit,
+				"green": self.startupdateList,
+				"yellow": self.oscamsmartcard,
                         }, -1)
 
                 self.list = []
@@ -477,7 +472,7 @@ class startcam(Screen):
         def __init__(self, session, title):
                 Screen.__init__(self, session)
                 msg = _("Please wait, restarting softcam.")
-                self['starting'] = MultiPixmap()
+                self['connect'] = MultiPixmap()
                 self['text'] = Label(msg)
                 self.activityTimer = eTimer()
                 self.activityTimer.timeout.get().append(self.updatepix)
@@ -487,7 +482,7 @@ class startcam(Screen):
         def startShow(self):
                 self.curpix=0
                 self.count=0
-                self['starting'].setPixmapNum(0)
+                self['connect'].setPixmapNum(0)
                 self.activityTimer.start(120)
 
         def updatepix(self):
@@ -496,7 +491,7 @@ class startcam(Screen):
                         self.curpix=0
                 if self.count > 120:
                         self.curpix = 23
-                self['starting'].setPixmapNum(self.curpix)
+                self['connect'].setPixmapNum(self.curpix)
                 if self.count == 35:
                         self.hide()
                         self.close()
