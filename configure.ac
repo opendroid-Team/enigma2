@@ -61,15 +61,11 @@ AC_ARG_WITH(e2rev,
 AC_SUBST(E2REV)
 AC_DEFINE_UNQUOTED(E2REV,"$E2REV",[enigma2 revision])
 
-AC_ARG_WITH(arch,
-	[  --with-arch=NAME box arch [[none,ah4,mipsel...]]],
-	[ARCH="$withval"],[ARCH="mipsel"])
-AC_SUBST(ARCH)
-AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[box arch])
-
-AM_CONDITIONAL(SH4, test `echo "$ARCH" | cut -b 1-3` == "sh4")
-AM_CONDITIONAL(MIPSEL, test `echo "$ARCH" | cut -b 1-6` == "mipsel")
-AM_CONDITIONAL(ARM, test `echo "$ARCH" | cut -b 1-3` == "arm")
+AC_ARG_WITH(oarev,
+	AS_HELP_STRING([--with-oarev],[value of OAREV, $withval]),
+	[OAREV="$withval"],[OAREV=""])
+AC_SUBST(OAREV)
+AC_DEFINE_UNQUOTED(OAREV,"$OAREV",[oa-core revision])
 
 AC_ARG_WITH(boxtype,
 	[  --with-boxtype=NAME box type [[none,dm7025,dm800...]]],
