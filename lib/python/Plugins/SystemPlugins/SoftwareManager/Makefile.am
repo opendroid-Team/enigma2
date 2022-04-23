@@ -2,7 +2,7 @@ installdir = $(pkglibdir)/python/Plugins/SystemPlugins/SoftwareManager
 
 SUBDIRS = meta
 
-install_PYTHON =	\
+install_PYTHON = \
 	__init__.py \
 	plugin.py \
 	BackupRestore.py \

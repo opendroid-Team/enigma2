@@ -13,7 +13,6 @@ from Components.SystemInfo import BoxInfo
 from Components.Label import Label
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from Components.NimManager import nimmanager
 from Plugins.Plugin import PluginDescriptor
 from Screens.HelpMenu import HelpableScreen
 from Screens.ParentalControlSetup import ProtectedScreen
@@ -31,7 +30,7 @@ file = open(resolveFilename(SCOPE_SKINS, "menu.xml"), "r")
 mdom = parse(file)
 file.close()
 
-mainmenu = _("Main menu")
+mainmenu = _("Main Menu")
 lastMenuID = None
 
 nomainmenupath = False if exists(resolveFilename(SCOPE_GUISKIN, "mainmenu")) else True
@@ -514,7 +513,12 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 
 	def __onExecBegin(self):
 		self.onExecBegin.remove(self.__onExecBegin)
-		self.okbuttonClick()
+		if config.usage.menutype.value == "horzanim" and findSkinScreen("Animmain"):
+			return
+		elif config.usage.menutype.value == "horzicon" and findSkinScreen("Iconmain"):
+			return
+		else:
+			self.okbuttonClick()
 
 	def keyNumberGlobal(self, number):
 		self.number = self.number * 10 + number

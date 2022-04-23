@@ -13,7 +13,7 @@ from Components.Sources.StaticText import StaticText
 from Components.Pixmap import Pixmap
 from Components.Sources.Boolean import Boolean
 from Components.ServiceEventTracker import ServiceEventTracker
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from Tools.Directories import isPluginInstalled
 from Tools.HardwareInfo import HardwareInfo
 from Components.AVSwitch import iAVSwitch
 
@@ -62,7 +62,7 @@ class VideoSetup(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		# for the skin: first try VideoSetup, then Setup, this allows individual skinning
 		self.skinName = ["VideoSetup", "Setup"]
-		self.setTitle(_("Video settings"))
+		self.setTitle(_("Video Settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -96,10 +96,14 @@ class VideoSetup(Screen, ConfigListScreen):
 		self["config"].onSelectionChanged.append(self.selectionChanged)
 
 	def startHotplug(self):
-		self.hw.on_hotplug.append(self.createSetup)
+		self.hw.on_hotplug.append(self._createSetup)
 
 	def stopHotplug(self):
-		self.hw.on_hotplug.remove(self.createSetup)
+		self.hw.on_hotplug.remove(self._createSetup)
+
+	# FIXME
+	def _createSetup(self, what):
+		self.createSetup()
 
 	def createSetup(self):
 		level = config.usage.setup_level.index
@@ -225,7 +229,7 @@ class VideoSetup(Screen, ConfigListScreen):
 				if BoxInfo.getItem("ScartSwitch"):
 					self.list.append(getConfigListEntry(_("Auto scart switching"), config.av.vcrswitch, _("When enabled, your receiver will detect activity on the VCR SCART input.")))
 
-		if not isinstance(config.av.scaler_sharpness, ConfigNothing) and not path.exists("/usr/lib/enigma2/python/Plugins/SystemPlugins/VideoEnhancement/plugin.py"):
+		if not isinstance(config.av.scaler_sharpness, ConfigNothing) and not isPluginInstalled("VideoEnhancement"):
 			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness, _("This option configures the picture sharpness.")))
 
 		if BoxInfo.getItem("havecolorspace"):
@@ -425,139 +429,6 @@ class VideoSetup(Screen, ConfigListScreen):
 					self.getVerify_videomode(config.av.autores_mode_uhd, config.av.autores_rate_uhd)
 				if cur == 'check' or (cur == 'check_sd' and self.prev_sd) or (cur == 'check_hd' and self.prev_hd) or (cur == 'check_fhd' and self.prev_fhd) or (cur == 'check_uhd' and self.prev_uhd):
 					AutoVideoMode(None).VideoChangeDetect()
-
-	def getCurrentEntry(self):
-		return self["config"].getCurrent()[0]
-
-	def getCurrentValue(self):
-		return str(self["config"].getCurrent()[1].getText())
-
-	def getCurrentDescription(self):
-		return self["config"].getCurrent() and len(self["config"].getCurrent()) > 2 and self["config"].getCurrent()[2] or ""
-
-	def createSummary(self):
-		from Screens.Setup import SetupSummary
-		return SetupSummary
-
-	def selectionChanged(self):
-		if self["config"]:
-			self["description"].text = self.getCurrentDescription()
-		else:
-			self["description"].text = _("There are no items currently available for this screen.")
-
-
-class AudioSetup(Screen, ConfigListScreen):
-	def __init__(self, session):
-		Screen.__init__(self, session)
-		# for the skin: first try AudioSetup, then Setup, this allows individual skinning
-		self.skinName = ["AudioSetup", "Setup"]
-		self.setTitle(_("Audio settings"))
-		self["HelpWindow"] = Pixmap()
-		self["HelpWindow"].hide()
-		self["VKeyIcon"] = Boolean(False)
-		self['footnote'] = Label()
-
-		self.hw = iAVSwitch
-		self.onChangedEntry = []
-
-		# handle hotplug by re-creating setup
-		self.onShow.append(self.startHotplug)
-		self.onHide.append(self.stopHotplug)
-
-		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
-
-		from Components.ActionMap import ActionMap
-		self["actions"] = ActionMap(["SetupActions", "MenuActions", "ColorActions"],
-			{
-				"cancel": self.keyCancel,
-				"save": self.apply,
-			}, -2)
-
-		self["key_red"] = StaticText(_("Cancel"))
-		self["key_green"] = StaticText(_("Save"))
-		self["description"] = Label("")
-
-		self.createSetup()
-		self["config"].onSelectionChanged.append(self.selectionChanged)
-
-	def startHotplug(self):
-		self.hw.on_hotplug.append(self.createSetup)
-
-	def stopHotplug(self):
-		self.hw.on_hotplug.remove(self.createSetup)
-
-	def createSetup(self):
-		level = config.usage.setup_level.index
-
-		self.list = []
-
-		if level >= 1:
-			if BoxInfo.getItem("CanPcmMultichannel"):
-				self.list.append(getConfigListEntry(_("PCM Multichannel"), config.av.pcm_multichannel, _("Choose whether multi channel sound tracks should be output as PCM.")))
-			if BoxInfo.getItem("CanDownmixAC3"):
-				self.list.append(getConfigListEntry(_("AC3 downmix"), config.av.downmix_ac3, _("Choose whether AC3 sound tracks should be downmixed to stereo.")))
-			if BoxInfo.getItem("CanAC3plusTranscode"):
-				self.list.append(getConfigListEntry(_("AC3 plus transcoding"), config.av.transcodeac3plus, _("Choose whether AC3 Plus sound tracks should be transcoded to AC3.")))
-			if BoxInfo.getItem("CanDownmixDTS"):
-				self.list.append(getConfigListEntry(_("DTS downmix"), config.av.downmix_dts, _("Choose whether DTS channel sound tracks should be downmixed to stereo.")))
-			if BoxInfo.getItem("CanDTSHD"):
-				self.list.append(getConfigListEntry(_("DTS/DTS-HD HR/DTS-HD MA/DTS:X"), config.av.dtshd, _("Choose whether DTS channel sound tracks should be downmixed or transcoded.")))
-			if BoxInfo.getItem("CanWMAPRO"):
-				self.list.append(getConfigListEntry(_("WMA Pro"), config.av.wmapro, _("Choose whether WMA Pro channel sound tracks should be downmixed or transcoded.")))
-			if BoxInfo.getItem("CanDownmixAAC"):
-				self.list.append(getConfigListEntry(_("AAC downmix"), config.av.downmix_aac, _("Choose whether multi channel sound tracks should be downmixed to stereo.")))
-			if BoxInfo.getItem("CanDownmixAACPlus"):
-				self.list.append(getConfigListEntry(_("AAC plus downmix"), config.av.downmix_aacplus, _("Configure whether multi channel sound tracks should be downmixed to stereo.")))
-			if BoxInfo.getItem("Canaudiosource"):
-				self.list.append(getConfigListEntry(_("Audio Source"), config.av.audio_source, _("Choose whether multi channel sound tracks should be convert to PCM or SPDIF.")))
-			if BoxInfo.getItem("CanAACTranscode"):
-				self.list.append(getConfigListEntry(_("AAC transcoding"), config.av.transcodeaac, _("Choose whether AAC sound tracks should be transcoded.")))
-			self.list.extend((
-				getConfigListEntry(_("General AC3 delay"), config.av.generalAC3delay, _("This option configures the general audio delay of Dolby Digital sound tracks.")),
-				getConfigListEntry(_("General PCM delay"), config.av.generalPCMdelay, _("This option configures the general audio delay of stereo sound tracks."))
-			))
-
-			if BoxInfo.getItem("Can3DSurround"):
-				self.list.append(getConfigListEntry(_("3D Surround"), config.av.surround_3d, _("This option allows you to enable 3D Surround Sound.")))
-
-			if BoxInfo.getItem("Can3DSpeaker") and config.av.surround_3d.value != "none":
-				self.list.append(getConfigListEntry(_("3D Surround Speaker Position"), config.av.surround_3d_speaker, _("This option allows you to change the virtuell loadspeaker position.")))
-
-			if BoxInfo.getItem("CanAutoVolume"):
-				self.list.append(getConfigListEntry(_("Audio Auto Volume Level"), config.av.autovolume, _("This option configures you can set Auto Volume Level.")))
-			self.list.append(getConfigListEntry(_("Audio volume step size"), config.av.volume_stepsize, _("Configure the general audio volume step size (limit 1-10).")))
-			self.list.append(getConfigListEntry(_("Audio volume step size fast mode"), config.av.volume_stepsize_fastmode, _("Configure the fast mode audio volume step size (limit 1-10). Activated when volume key permanent press or press fast in a row.")))
-			self.list.append(getConfigListEntry(_("Hide mute notification"), config.av.volume_hide_mute, _("If muted, hide mute icon or mute information after few seconds.")))
-
-			if BoxInfo.getItem("CanBTAudio"):
-				self.list.append(getConfigListEntry(_("Enable BT Audio"), config.av.btaudio, _("This Option allows you to switch Audio to BT Speakers.")))
-			if BoxInfo.getItem("CanBTAudioDelay"):
-				self.list.append(getConfigListEntry(_("General BT Audio delay"), config.av.btaudiodelay, _("This option configures the general audio delay for BT Speakers.")))
-
-		self["config"].list = self.list
-		self["config"].l.setList(self.list)
-		if config.usage.sort_settings.value:
-			self["config"].list.sort()
-
-	def keyLeft(self):
-		ConfigListScreen.keyLeft(self)
-		self.createSetup()
-
-	def keyRight(self):
-		ConfigListScreen.keyRight(self)
-		self.createSetup()
-
-	def confirm(self, confirmed):
-		self.keySave()
-
-	def apply(self):
-		self.keySave()
-
-	# for summary:
-	def changedEntry(self):
-		for x in self.onChangedEntry:
-			x()
 
 	def getCurrentEntry(self):
 		return self["config"].getCurrent()[0]
@@ -930,7 +801,7 @@ class AutoVideoMode(Screen):
 
 			elif config.av.autores.value == 'all' or (config.av.autores.value == 'hd' and int(new_res) >= 720):
 				autorestyp = 'all or hd'
-				if (config.av.autores_deinterlace.value and HardwareInfo().is_nextgen()) or (config.av.autores_deinterlace.value and not HardwareInfo().is_nextgen() and int(new_res) <= 720):
+				if config.av.autores_deinterlace.value:
 					new_pol = new_pol.replace('i', 'p')
 				if new_res + new_pol + new_rate in iAVSwitch.readAvailableModes():
 					new_mode = new_res + new_pol + new_rate
@@ -960,13 +831,14 @@ class AutoVideoMode(Screen):
 				write_mode = new_mode
 			elif config.av.autores.value == 'hd' and int(new_res) <= 576:
 				autorestyp = 'hd'
-				if (config.av.autores_deinterlace.value and HardwareInfo().is_nextgen()) or (config.av.autores_deinterlace.value and not HardwareInfo().is_nextgen() and not config.av.autores_sd.value == '1080i'):
+				if new_pol == "p":
 					new_mode = config.av.autores_sd.value.replace('i', 'p') + new_rate
 				else:
-					if new_pol in 'p':
-						new_mode = config.av.autores_sd.value.replace('i', 'p') + new_rate
-					else:
-						new_mode = config.av.autores_sd.value + new_rate
+					new_mode = config.av.autores_sd.value + new_rate
+					if config.av.autores_deinterlace.value:
+						test_new_mode = config.av.autores_sd.value.replace('i', 'p') + new_rate
+						if test_new_mode in iAVSwitch.readAvailableModes():
+							new_mode = test_new_mode
 
 				if new_mode == '720p24':
 					new_mode = config.av.autores_720p24.value

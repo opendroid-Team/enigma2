@@ -208,10 +208,10 @@ class Harddisk:
 			if dev:
 				stat = os.statvfs(dev)
 				cap = int(stat.f_blocks * stat.f_bsize)
-				return cap / 1000 / 1000
+				return cap // 1000 // 1000
 			else:
 				return cap
-		return cap / 1000 * 512 / 1000
+		return cap // 1000 * 512 // 1000
 
 	def capacity(self):
 		cap = self.diskSize()
@@ -219,7 +219,7 @@ class Harddisk:
 			return ""
 		if cap < 1000:
 			return _("%03d MB") % cap
-		return _("%d.%03d GB") % (cap / 1000, cap % 1000)
+		return _("%d.%03d GB") % (cap // 1000, cap % 1000)
 
 	def model(self):
 		try:
@@ -812,7 +812,7 @@ class HarddiskManager:
 		error = False
 		removable = False
 		BLACKLIST = []
-		if getMachineBuild() in ('dagsmv200', 'gbmv200', 'multibox', 'multiboxse', 'i55se', 'h9se', 'h9combose', 'h9combo', 'h10', 'h11', 'v8plus', 'hd60', 'hd61', 'pulse4k', 'pulse4kmini', 'vuduo4k', 'ustym4kpro', 'beyonwizv2', 'viper4k', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'u57', 'u571', 'u5', 'u5pvr', 'cc1', 'sf8008', 'sf8008m', 'sf8008opt', 'vuzero4k', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'dm7080', 'dm820', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s', 'et13000', 'sf5008'):
+		if getMachineBuild() in ('dagsmv200', 'gbmv200', 'multibox', 'multiboxse', 'i55se', 'h9se', 'h9combose', 'h9combo', 'h10', 'h11', 'v8plus', 'hd60', 'hd61', 'hd66se', 'pulse4k', 'pulse4kmini', 'vuduo4k', 'ustym4kpro', 'ustym4kottpremium', 'beyonwizv2', 'viper4k', 'dags72604', 'u51', 'u52', 'u53', 'u532', 'u533', 'u54', 'u56', 'u57', 'u571', 'u5', 'u5pvr', 'cc1', 'sf8008', 'sf8008m', 'sf8008opt', 'sx988', 'vuzero4k', 'et1x000', 'vuuno4k', 'vuuno4kse', 'vuultimo4k', 'vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'dm7080', 'dm820', 'gb7252', 'gb72604', 'dags7252', 'vs1500', 'h7', '8100s', 'et13000', 'sf5008', 'og2ott4k'):
 			BLACKLIST = ["mmcblk0"]
 		elif getMachineBuild() in ('xc7439', 'osmio4k', 'osmio4kplus', 'osmini4k'):
 			BLACKLIST = ["mmcblk1"]
@@ -875,23 +875,32 @@ class HarddiskManager:
 					self.addHotplugPartition(part)
 				self.devices_scanned_on_init.append((blockdev, removable, is_cdrom, medium_found))
 
-	def enumerateNetworkMounts(self):
+	def enumerateNetworkMounts(self, refresh=False):
 		print("[Harddisk] enumerating network mounts...")
 		netmount = (os.path.exists('/media/net') and os.listdir('/media/net')) or ""
 		if len(netmount) > 0:
 			for fil in netmount:
 				if os.path.ismount('/media/net/' + fil):
 					print("[Harddisk] new Network Mount", fil, '->', os.path.join('/media/net/', fil))
-					self.partitions.append(Partition(mountpoint=os.path.join('/media/net/', fil + '/'), description=fil))
+					if refresh:
+						self.addMountedPartition(device=os.path.join('/media/net/', fil + '/'), desc=fil)
+					else:
+						self.partitions.append(Partition(mountpoint=os.path.join('/media/net/', fil + '/'), description=fil))
 		autofsmount = (os.path.exists('/media/autofs') and os.listdir('/media/autofs')) or ""
 		if len(autofsmount) > 0:
 			for fil in autofsmount:
 				if os.path.ismount('/media/autofs/' + fil) or os.path.exists('/media/autofs/' + fil):
 					print("[Harddisk] new Network Mount", fil, '->', os.path.join('/media/autofs/', fil))
-					self.partitions.append(Partition(mountpoint=os.path.join('/media/autofs/', fil + '/'), description=fil))
+					if refresh:
+						self.addMountedPartition(device=os.path.join('/media/autofs/', fil + '/'), desc=fil)
+					else:
+						self.partitions.append(Partition(mountpoint=os.path.join('/media/autofs/', fil + '/'), description=fil))
 		if os.path.ismount('/media/hdd') and '/media/hdd/' not in [p.mountpoint for p in self.partitions]:
 			print("[Harddisk] new Network Mount being used as HDD replacement -> /media/hdd/")
-			self.partitions.append(Partition(mountpoint='/media/hdd/', description='/media/hdd'))
+			if refresh:
+				self.addMountedPartition(device='/media/hdd/', desc='/media/hdd/')
+			else:
+				self.partitions.append(Partition(mountpoint='/media/hdd/', description='/media/hdd'))
 
 	def getAutofsMountpoint(self, device):
 		r = self.getMountpoint(device)
@@ -1037,7 +1046,9 @@ class HarddiskManager:
 			if x.mountpoint == device:
 				#already_mounted
 				return
-		self.partitions.append(Partition(mountpoint=device, description=desc))
+		newpartion = Partition(mountpoint=device, description=desc)
+		self.partitions.append(newpartion)
+		self.on_partition_list_change("add", newpartion)
 
 	def removeMountedPartition(self, mountpoint):
 		for x in self.partitions[:]:

@@ -43,8 +43,6 @@ class ScrollLabel(GUIComponent):
 				elif "scrollbarMode" in attrib:
 					self.scrollbarmode = value
 					self.skinAttributes.remove((attrib, value))
-				elif "borderColor" in attrib or "borderWidth" in attrib:
-					scrollbar_attribs.append((attrib, value))
 				elif "transparent" in attrib or "backgroundColor" in attrib:
 					widget_attribs.append((attrib, value))
 				elif "scrollbarWidth" in attrib:
@@ -124,10 +122,21 @@ class ScrollLabel(GUIComponent):
 		self.setPos(0)
 		self.updateScrollbar()
 
+	def homePage(self):
+		return self.moveTop()
+
 	def pageUp(self):
 		if self.TotalTextHeight > self.pageHeight:
 			self.setPos(self.curPos - self.pageHeight)
 			self.updateScrollbar()
+
+	def moveUp(self):
+		self.setPos(self.curPos - int(self.lineheight))
+		self.updateScrollbar()
+
+	def moveDown(self):
+		self.setPos(self.curPos + int(self.lineheight))
+		self.updateScrollbar()
 
 	def pageDown(self):
 		if self.TotalTextHeight > self.pageHeight:
@@ -138,13 +147,8 @@ class ScrollLabel(GUIComponent):
 		self.lastPage()
 		self.updateScrollbar()
 
-	def homePage(self):
-		self.setPos(0)
-		self.updateScrollbar()
-
 	def endPage(self):
-		self.lastPage()
-		self.updateScrollbar()
+		return self.moveBottom()
 
 	def lastPage(self):
 		self.setPos(self.TotalTextHeight - self.pageHeight)
@@ -154,7 +158,7 @@ class ScrollLabel(GUIComponent):
 
 	def updateScrollbar(self):
 		vis = max(100 * self.pageHeight // self.TotalTextHeight, 3)
-		start = (100 - vis) * self.curPos // (self.TotalTextHeight - self.pageHeight)
+		start = (100 - vis) * self.curPos // ((self.TotalTextHeight - self.pageHeight) or 1)
 		self.scrollbar.setStartEnd(start, start + vis)
 
 	def GUIcreate(self, parent):

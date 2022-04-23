@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 # shamelessly copied from pliExpertInfo (Vali, Mirakels, Littlesat)
 
 from os import path
@@ -121,22 +120,22 @@ class PliExtraInfo(Poll, Converter):
 
 		for caid_entry in caid_data:
 			if int(caid_entry[0], 16) <= int(self.current_caid, 16) <= int(caid_entry[1], 16):
-				color = "\c0000??00"
+				color = "\c0000ff00"
 			else:
-				color = "\c007?7?7?"
+				color = "\c007f7f7f"
 				try:
 					for caid in available_caids:
 						if int(caid_entry[0], 16) <= caid <= int(caid_entry[1], 16):
-							color = "\c00????00"
+							color = "\c00ffff00"
 				except:
 					pass
 
-			if color != "\c007?7?7?" or caid_entry[4]:
+			if color != "\c007f7f7f" or caid_entry[4]:
 				if res:
 					res += " "
 				res += color + caid_entry[3]
 
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoSeca(self, info):
@@ -144,7 +143,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x100', 16) <= int(self.current_caid, 16) <= int('0x1ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x100', 16) <= caid <= int('0x1ff', 16):
@@ -152,7 +151,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'S'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoVia(self, info):
@@ -160,7 +159,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x500', 16) <= int(self.current_caid, 16) <= int('0x5ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x500', 16) <= caid <= int('0x5ff', 16):
@@ -168,7 +167,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'V'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoIrdeto(self, info):
@@ -176,7 +175,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x600', 16) <= int(self.current_caid, 16) <= int('0x6ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x600', 16) <= caid <= int('0x6ff', 16):
@@ -184,7 +183,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'I'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoNDS(self, info):
@@ -192,7 +191,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x900', 16) <= int(self.current_caid, 16) <= int('0x9ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x900', 16) <= caid <= int('0x9ff', 16):
@@ -200,7 +199,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'NDS'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoConax(self, info):
@@ -208,7 +207,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0xb00', 16) <= int(self.current_caid, 16) <= int('0xbff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0xb00', 16) <= caid <= int('0xbff', 16):
@@ -216,7 +215,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'CO'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoCryptoW(self, info):
@@ -224,7 +223,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0xd00', 16) <= int(self.current_caid, 16) <= int('0xdff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0xd00', 16) <= caid <= int('0xdff', 16):
@@ -232,7 +231,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'CW'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoPowerVU(self, info):
@@ -240,7 +239,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0xe00', 16) <= int(self.current_caid, 16) <= int('0xeff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0xe00', 16) <= caid <= int('0xeff', 16):
@@ -248,7 +247,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'P'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoTandberg(self, info):
@@ -256,7 +255,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x1010', 16) <= int(self.current_caid, 16) <= int('0x1010', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x1010', 16) <= caid <= int('0x1010', 16):
@@ -264,7 +263,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'T'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoBeta(self, info):
@@ -272,7 +271,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x1700', 16) <= int(self.current_caid, 16) <= int('0x17ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x1700', 16) <= caid <= int('0x17ff', 16):
@@ -280,7 +279,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'B'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoNagra(self, info):
@@ -288,7 +287,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x1800', 16) <= int(self.current_caid, 16) <= int('0x18ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x1800', 16) <= caid <= int('0x18ff', 16):
@@ -296,7 +295,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'N'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoBiss(self, info):
@@ -304,7 +303,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x2600', 16) <= int(self.current_caid, 16) <= int('0x26ff', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x2600', 16) <= caid <= int('0x26ff', 16):
@@ -312,7 +311,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'BI'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoDre(self, info):
@@ -320,7 +319,7 @@ class PliExtraInfo(Poll, Converter):
 		if int('0x4ae0', 16) <= int(self.current_caid, 16) <= int('0x4ae1', 16):
 			color = "\c004c7d3f"
 		else:
-			color = "\c009?9?9?"
+			color = "\c009f9f9f"
 			try:
 				for caid in available_caids:
 					if int('0x4ae0', 16) <= caid <= int('0x4ae1', 16):
@@ -328,7 +327,7 @@ class PliExtraInfo(Poll, Converter):
 			except:
 				pass
 		res = color + 'DC'
-		res += "\c00??????"
+		res += "\c00ffffff"
 		return res
 
 	def createCryptoSpecial(self, info):

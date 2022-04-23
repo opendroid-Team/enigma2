@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from Components.Renderer.Renderer import Renderer
 from enigma import ePositionGauge
 
@@ -21,7 +20,7 @@ class PositionGauge(Renderer):
 
 	def changed(self, what):
 		if what[0] == self.CHANGED_CLEAR:
-			(self.length, self.position) = 0
+			(self.length, self.position) = (0, 0)
 		else:
 			(self.length, self.position) = (self.source.length or 0, self.source.position or 0)
 

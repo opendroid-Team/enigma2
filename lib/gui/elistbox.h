@@ -151,9 +151,9 @@ public:
 
 	void setSliderPicture(ePtr<gPixmap> &pm);
 	void setScrollbarBackgroundPicture(ePtr<gPixmap> &pm);
-	void setScrollbarSliderPicture(ePtr<gPixmap> &pm);
 	void setScrollbarSliderBorderWidth(int size);
 	void setScrollbarWidth(int size);
+	void setScrollbarOffset(int size);
 
 	void setFont(gFont *font);
 	void setSecondFont(gFont *font);
@@ -166,14 +166,21 @@ public:
 	void setSliderBorderWidth(int size);
 	void setSliderForegroundColor(gRGB &col);
 
-	int getScrollbarWidth() { return m_scrollbar_width; }
-
 	static void setScrollbarStyle(int width = -1, int offset = -1) { 
 			if (width != -1)
 				Defaultwidth = width; 
 			if (offset != -1)
 				Defaultoffset = offset; 
 		}
+
+	bool getWrapAround() { return m_enabled_wrap_around; }
+	int getScrollbarWidth() { return m_scrollbar_width; }
+	int getScrollbarOffset() { return m_scrollbar_offset; }
+	int getItemHeight() { return m_itemheight; }
+	bool getSelectionEnable() {return m_selection_enabled; }
+	gFont* getFont() {return m_style.m_font; }
+	gFont* getSecondFont() {return m_style.m_secondfont; }
+
 
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
@@ -218,7 +225,6 @@ private:
 	eSlider *m_scrollbar;
 	eListboxStyle m_style;
 	ePtr<gPixmap> m_scrollbarpixmap, m_scrollbarbackgroundpixmap;
-	ePtr<gPixmap> m_scrollbarsliderpixmap;
 #ifdef USE_LIBVUGLES2
 	long m_dir;
 #endif

@@ -1,15 +1,14 @@
 from errno import ENOENT
 from os.path import basename, dirname, isfile, join as pathjoin, splitext
 from os import listdir, unlink
-from six import PY2
 from xml.etree.cElementTree import Element, ElementTree, fromstring
 
-from enigma import BT_ALPHABLEND, BT_ALPHATEST, BT_HALIGN_CENTER, BT_HALIGN_LEFT, BT_HALIGN_RIGHT, BT_KEEP_ASPECT_RATIO, BT_SCALE, BT_VALIGN_BOTTOM, BT_VALIGN_CENTER, BT_VALIGN_TOP, addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gMainDC, gRGB
+from enigma import BT_ALPHABLEND, BT_ALPHATEST, BT_HALIGN_CENTER, BT_HALIGN_LEFT, BT_HALIGN_RIGHT, BT_KEEP_ASPECT_RATIO, BT_SCALE, BT_VALIGN_BOTTOM, BT_VALIGN_CENTER, BT_VALIGN_TOP, addFont, eLabel, ePixmap, ePoint, eRect, eSize, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gMainDC, gRGB, setListBoxScrollbarStyle
 
 from Components.config import ConfigSubsection, ConfigText, config, ConfigSelection, ConfigNothing
 from Components.RcModel import rc_model
-from Components.Sources.Source import ObsoleteSource
 from Components.SystemInfo import BoxInfo
+from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import SCOPE_CONFIG, SCOPE_LCDSKIN, SCOPE_GUISKIN, SCOPE_FONTS, SCOPE_SKINS, pathExists, resolveFilename, fileReadXML
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
@@ -29,7 +28,7 @@ USER_SKIN_TEMPLATE = "skin_user_%s.xml"
 SUBTITLE_SKIN = "skin_subtitles.xml"
 
 GUI_SKIN_ID = 0  # Main frame-buffer.
-DISPLAY_SKIN_ID = 1  # Front panel / display / LCD.
+DISPLAY_SKIN_ID = 2 if BoxInfo.getItem("model").startswith("dm") else 1  # Front panel / display / LCD.
 
 domScreens = {}  # Dictionary of skin based screens.
 colors = {  # Dictionary of skin color names.
@@ -74,10 +73,10 @@ runCallbacks = False
 # with a higher priority.
 #
 # GUI skins are saved in the settings file as the path relative to
-# SCOPE_SKIN.  The full path is NOT saved.  E.g. "MySkin/skin.xml"
+# SCOPE_SKINS.  The full path is NOT saved.  E.g. "MySkin/skin.xml"
 #
 # Display skins are saved in the settings file as the path relative to
-# SCOPE_CURRENT_LCDSKIN.  The full path is NOT saved.
+# SCOPE_LCDSKIN.  The full path is NOT saved.
 # E.g. "MySkin/skin_display.xml"
 #
 def InitSkins():
@@ -111,7 +110,6 @@ def InitSkins():
 		result.append(skin)
 	# Add the activated optional skin parts.
 	if currentPrimarySkin != None:
-		config.skin.primary_skin.value.replace('/skin.xml', '')
 		partsDir = resolveFilename(SCOPE_GUISKIN, pathjoin(dirname(currentPrimarySkin), "mySkin", ""))
 		if pathExists(partsDir) and currentPrimarySkin != USER_SKIN:
 			for file in sorted(listdir(partsDir)):
@@ -183,6 +181,7 @@ def loadSkin(filename, scope=SCOPE_SKINS, desktop=getDesktop(GUI_SKIN_ID), scree
 
 
 def reloadSkins():
+	global colors, domScreens, fonts, menus, parameters, setups, switchPixmap
 	domScreens.clear()
 	colors.clear()
 	colors = {
@@ -242,6 +241,10 @@ def getParentSize(object, desktop):
 		elif desktop:
 			return desktop.size()  # Widget has no parent, use desktop size instead for relative coordinates.
 	return eSize()
+
+
+def parseBoolean(attribute, value):
+	return value.lower() in ("1", attribute, "enabled", "on", "true", "yes")
 
 
 def parseColor(value):
@@ -421,7 +424,7 @@ def loadPixmap(path, desktop):
 	option = path.find("#")
 	if option != -1:
 		path = path[:option]
-	if rc_model.rcIsDefault() is False and basename(path) in ("rc.png", "rc0.png", "rc1.png", "rc2.png", "oldrc.png"):
+	if basename(path) in ("rc.png", "rc0.png", "rc1.png", "rc2.png", "oldrc.png") and rc_model.rcIsDefault() is False:
 		path = rc_model.getRcImg()
 	pixmap = LoadPixmap(path, desktop)
 	if pixmap is None:
@@ -449,14 +452,14 @@ def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), f
 			# listbox; when the scrollbar setting is applied after the size, a scrollbar
 			# will not be shown until the selection moves for the first time.
 			if attrib == "size":
-				size = value.encode("UTF-8", errors="ignore") if PY2 else value
+				size = value
 			elif attrib == "position":
-				pos = value.encode("UTF-8", errors="ignore") if PY2 else value
+				pos = value
 			elif attrib == "font":
-				font = value.encode("UTF-8", errors="ignore") if PY2 else value
+				font = value
 				skinAttributes.append((attrib, font))
 			else:
-				value = value.encode("UTF-8", errors="ignore") if PY2 else value
+				value = value
 				skinAttributes.append((attrib, value))
 	if pos is not None:
 		pos, size = context.parse(pos, size, font)
@@ -592,8 +595,10 @@ class AttributeParser:
 		raise AttribDeprecatedError("divideChar")
 
 	def enableWrapAround(self, value):
-		value = value.lower() in ("1", "enabled", "enablewraparound", "on", "true", "yes")
-		self.guiObject.setWrapAround(value)
+		self.guiObject.setWrapAround(parseBoolean("enablewraparound", value))
+
+	def excludes(self, value):
+		pass
 
 	def flags(self, value):
 		if value in variables:
@@ -642,6 +647,9 @@ class AttributeParser:
 		except KeyError:
 			raise AttribValueError("'left', 'center'/'centre', 'right' or 'block'")
 
+	def includes(self, value):  # Same as conditional.  Created to partner new "excludes" attribute.
+		pass
+
 	def itemHeight(self, value):
 		# print("[Skin] DEBUG: Scale itemHeight %d -> %d." % (int(value), self.applyVerticalScale(value)))
 		self.guiObject.setItemHeight(self.applyVerticalScale(value))
@@ -650,8 +658,7 @@ class AttributeParser:
 		self.horizontalAlignment(value)
 
 	def noWrap(self, value):
-		value = 1 if value.lower() in ("1", "enabled", "nowrap", "on", "true", "yes") else 0
-		self.guiObject.setNoWrap(value)
+		self.guiObject.setNoWrap(1 if parseBoolean("nowrap", value) else 0)
 
 	def objectTypes(self, value):
 		pass
@@ -696,8 +703,7 @@ class AttributeParser:
 		self.horizontalAlignment(value)
 
 	def scale(self, value):
-		value = 1 if value.lower() in ("1", "enabled", "on", "scale", "true", "yes") else 0
-		self.guiObject.setScale(value)
+		self.guiObject.setScale(1 if parseBoolean("scale", value) else 0)
 
 	def scaleFlags(self, value):
 		base = BT_SCALE | BT_KEEP_ASPECT_RATIO
@@ -710,16 +716,16 @@ class AttributeParser:
 				"scaleLeftCenter": base | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 				"scaleLeftCentre": base | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 				"scaleLeftMiddle": base | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
-				"scaleLeftBotton": base | BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
+				"scaleLeftBottom": base | BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
 				"scaleCenterTop": base | BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"scaleCentreTop": base | BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"scaleMiddleTop": base | BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"scaleCenter": base | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 				"scaleCentre": base | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 				"scaleMiddle": base | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
-				"scaleCenterBotton": base | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+				"scaleCenterBottom": base | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 				"scaleCentreBottom": base | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
-				"scaleMiddleBotton": base | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+				"scaleMiddleBottom": base | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 				"scaleRightTop": base | BT_HALIGN_RIGHT | BT_VALIGN_TOP,
 				"scaleRightCenter": base | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
 				"scaleRightCentre": base | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
@@ -729,16 +735,16 @@ class AttributeParser:
 				"moveLeftCenter": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 				"moveLeftCentre": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 				"moveLeftMiddle": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
-				"moveLeftBotton": BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
+				"moveLeftBottom": BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
 				"moveCenterTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"moveCentreTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"moveMiddleTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
 				"moveCenter": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 				"moveCentre": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 				"moveMiddle": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
-				"moveCenterBotton": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+				"moveCenterBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 				"moveCentreBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
-				"moveMiddleBotton": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+				"moveMiddleBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 				"moveRightTop": BT_HALIGN_RIGHT | BT_VALIGN_TOP,
 				"moveRightCenter": BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
 				"moveRightCentre": BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
@@ -746,7 +752,7 @@ class AttributeParser:
 				"moveRightBottom": BT_HALIGN_RIGHT | BT_VALIGN_BOTTOM
 			}[value])
 		except KeyError:
-			raise AttribValueError("'none', 'scale', 'scaleKeepAspect', 'scaleLeftTop', 'scaleLeftCenter', 'scaleLeftBotton', 'scaleCenterTop', 'scaleCenter', 'scaleCenterBotton', 'scaleRightTop', 'scaleRightCenter', 'scaleRightBottom', 'moveLeftTop', 'moveLeftCenter', 'moveLeftBotton', 'moveCenterTop', 'moveCenter', 'moveCenterBotton', 'moveRightTop', 'moveRightCenter', 'moveRightBottom' ('Center'/'Centre'/'Middle' are equivalent)")
+			raise AttribValueError("'none', 'scale', 'scaleKeepAspect', 'scaleLeftTop', 'scaleLeftCenter', 'scaleLeftBottom', 'scaleCenterTop', 'scaleCenter', 'scaleCenterBottom', 'scaleRightTop', 'scaleRightCenter', 'scaleRightBottom', 'moveLeftTop', 'moveLeftCenter', 'moveLeftBottom', 'moveCenterTop', 'moveCenter', 'moveCenterBottom', 'moveRightTop', 'moveRightCenter', 'moveRightBottom' ('Center'/'Centre'/'Middle' are equivalent)")
 
 	def scrollbarBackgroundPixmap(self, value):
 		self.guiObject.setScrollbarBackgroundPicture(loadPixmap(value, self.desktop))
@@ -849,8 +855,7 @@ class AttributeParser:
 		self.guiObject.setTitle(_(value))
 
 	def transparent(self, value):
-		value = 1 if value.lower() in ("1", "enabled", "on", "transparent", "true", "yes") else 0
-		self.guiObject.setTransparent(value)
+		self.guiObject.setTransparent(1 if parseBoolean("transparent", value) else 0)
 
 	def valign(self, value):  # This legacy definition uses an inconsistent name, use 'verticalAlignment' instead!
 		self.verticalAlignment(value)
@@ -983,7 +988,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 				setups[key] = image
 				# print("[Skin] DEBUG: Setup key='%s', image='%s'." % (key, image))
 			else:
-				raise SkinError("Tag setup needs key and image, got key='%s' and image='%s'" % (key, image))
+				raise SkinError("Tag 'setup' needs key and image, got key='%s' and image='%s'" % (key, image))
 	for tag in domSkin.findall("constant-widgets"):
 		for constant_widget in tag.findall("constant-widget"):
 			name = constant_widget.attrib.get("name")
@@ -1050,6 +1055,10 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 			except Exception:
 				raise SkinError("Unknown color type '%s'" % colorType)
 			# print("[Skin] DEBUG: WindowStyle color type, color -" % (colorType, str(color)))
+		for scrollbar in tag.findall("scrollbar"):
+			offset = int(scrollbar.attrib.get("scrollbarOffset", 5))
+			width = int(scrollbar.attrib.get("scrollbarWidth", 20))
+			setListBoxScrollbarStyle(width, offset)
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(scrnID, style)
 	for tag in domSkin.findall("margin"):
@@ -1373,7 +1382,7 @@ def readSkin(screen, skin, names, desktop):
 		screen.additionalWidgets.append(w)
 
 	def processScreen(widget, context):
-		widgets = widget.getchildren() if PY2 else widget
+		widgets = widget
 		for w in widgets.findall('constant-widget'):
 			processConstant(w, context)
 		for w in widgets:
@@ -1382,6 +1391,12 @@ def readSkin(screen, skin, names, desktop):
 				continue
 			objecttypes = w.attrib.get("objectTypes", "").split(",")
 			if len(objecttypes) > 1 and (objecttypes[0] not in screen.keys() or not [i for i in objecttypes[1:] if i == screen[objecttypes[0]].__class__.__name__]):
+				continue
+			includes = w.attrib.get("includes")
+			if includes and not [i for i in includes.split(",") if i in screen.keys()]:
+				continue
+			excludes = w.attrib.get("excludes")
+			if excludes and [i for i in excludes.split(",") if i in screen.keys()]:
 				continue
 			p = processors.get(w.tag, processNone)
 			try:

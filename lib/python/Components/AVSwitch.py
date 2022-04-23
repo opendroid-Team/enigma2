@@ -1,6 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
-from Components.config import config, ConfigSlider, ConfigSelection, ConfigSubDict, ConfigYesNo, ConfigEnableDisable, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
+from Components.config import config, ConfigSlider, ConfigSelection, ConfigSubDict, ConfigYesNo, ConfigEnableDisable, ConfigOnOff, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
 from Components.About import about
 from Tools.CList import CList
 from Tools.HardwareInfo import HardwareInfo
@@ -110,7 +110,7 @@ class AVSwitch:
 	elif (about.getChipSetString() in ('7252', '7251', '7251S', '7252S', '7251s', '7252s', '72604', '7278', '7444s', '3798mv200', '3798mv200h', '3798cv200', 'hi3798mv200', 'hi3798mv200h', 'hi3798cv200')):
 		modes["HDMI"] = ["720p", "1080p", "2160p", "2160p30", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i", "2160p", "2160p30"}
-	elif (about.getChipSetString() in ('7241', '7358', '7362', '73625', '7346', '7356', '73565', '7424', '7425', '7435', '7552', '7581', '7584', '75845', '7585', 'pnx8493', '7162', '7111', '3716mv410', 'hi3716mv410', 'hi3716mv430')) or (getBrandOEM() in ('azbox')):
+	elif (about.getChipSetString() in ('7241', '7358', '7362', '73625', '7346', '7356', '73565', '7424', '7425', '7435', '7552', '7581', '7584', '75845', '7585', 'pnx8493', '7162', '7111', '3716mv410', 'hi3716mv410', 'hi3716mv430', '3716mv430')) or (getBrandOEM() in ('azbox')):
 		modes["HDMI"] = ["720p", "1080p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i"}
 	elif about.getChipSetString() in ('meson-6',):
@@ -277,7 +277,7 @@ class AVSwitch:
 		map = {"cvbs": 0, "rgb": 1, "svideo": 2, "yuv": 3}
 		self.setColorFormat(map[config.av.colorformat.value])
 
-		if about.getCPUString().startswith('STx'):
+		if BoxInfo.getItem("STi"):
 			#call setResolution() with -1,-1 to read the new scrren dimensions without changing the framebuffer resolution
 			from enigma import gMainDC
 			gMainDC.getInstance().setResolution(-1, -1)
@@ -320,7 +320,6 @@ class AVSwitch:
 
 	def createConfig(self, *args):
 		hw_type = HardwareInfo().get_device_name()
-		has_hdmi = HardwareInfo().has_hdmi()
 		lst = []
 
 		config.av.videomode = ConfigSubDict()
@@ -562,7 +561,7 @@ def InitAVSwitch():
 			"4_3_letterbox": _("4:3 Letterbox"),
 			"4_3_panscan": _("4:3 PanScan"),
 			"16_9": _("16:9"),
-			"16_9_always": _("16:9 always"),
+			"16_9_always": _("16:9 Always"),
 			"16_10_letterbox": _("16:10 Letterbox"),
 			"16_10_panscan": _("16:10 PanScan"),
 			"16_9_letterbox": _("16:9 Letterbox")},
@@ -1243,10 +1242,9 @@ def InitAVSwitch():
 	if can_btaudio:
 		def setBTAudio(configElement):
 			f = open("/proc/stb/audio/btaudio", "w")
-			f.write(configElement.value)
+			f.write("on" if configElement.value else "off")
 			f.close()
-		choice_list = [("off", _("Off")), ("on", _("On"))]
-		config.av.btaudio = ConfigSelection(choices=choice_list, default="off")
+		config.av.btaudio = ConfigOnOff(default=False)
 		config.av.btaudio.addNotifier(setBTAudio)
 	else:
 		config.av.btaudio = ConfigNothing()
@@ -1319,6 +1317,11 @@ class VideomodeHotplug:
 				return
 			mode = modelist[0][0]
 			rate = modelist[0][1]
+			# FIXME The rate needs to be a single value
+			if isinstance(rate, list):
+				print("[AVSwitch] ERROR rate is a list and needs to be a single value")
+				rate = rate[0]
+
 			print("[AVSwitch] setting %s/%s/%s" % (port, mode, rate))
 			iAVSwitch.setMode(port, mode, rate)
 

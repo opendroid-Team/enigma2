@@ -1,13 +1,14 @@
 from hashlib import md5
-from os import R_OK, access, listdir, walk
-from os.path import exists as fileAccess, isdir, isfile, join as pathjoin
+from os import R_OK, access, listdir, walk, readlink
+from os.path import exists as fileAccess, isdir, isfile, join as pathjoin, islink
 from re import findall
 from subprocess import PIPE, Popen
 
-from boxbranding import getBrandOEM, getDisplayType, getHaveAVJACK, getHaveDVI, getHaveHDMI, getHaveRCA, getHaveSCART, getHaveSCARTYUV, getHaveYUV, getMachineBuild, getMachineMtdRoot
+from boxbranding import getBrandOEM, getDisplayType, getHaveAVJACK, getHaveDVI, getHaveHDMI, getHaveRCA, getHaveSCART, getHaveSCARTYUV, getHaveYUV, getMachineBuild, getMachineMtdRoot, getMachineName, getBoxType
 from enigma import Misc_Options, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl
 
-from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKINS, fileCheck, fileReadLine, fileReadLines, resolveFilename, fileExists, fileHas, fileReadLine, pathExists
+from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKINS, isPluginInstalled, fileCheck, fileReadLine, fileReadLines, resolveFilename, fileExists, fileHas, fileReadLine, pathExists
+from Tools.MultiBoot import MultiBoot
 
 MODULE_NAME = __name__.split(".")[-1]
 
@@ -160,12 +161,10 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 
 BoxInfo = BoxInformation()
 
-from Tools.Multiboot import getMBbootdevice, getMultibootslots  # This import needs to be here to avoid a SystemInfo load loop!
-
-
 # Parse the boot commandline.
 cmdline = fileReadLine("/proc/cmdline", source=MODULE_NAME)
 cmdline = {k: v.strip('"') for k, v in findall(r'(\S+)=(".*?"|\S+)', cmdline)}
+
 
 def getNumVideoDecoders():
 	numVideoDecoders = 0
@@ -208,7 +207,46 @@ def getModuleLayout():
 					return detail.split("\t")[0]
 	return None
 
+
+def GetBoxName():
+	box = getBoxType()
+	machinename = getMachineName()
+	if box in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3'):
+		box = "ventonhdx"
+	elif box == 'odinm6':
+		box = getMachineName().lower()
+	elif box == "inihde" and machinename.lower() == "xpeedlx":
+		box = "xpeedlx"
+	elif box in ('xpeedlx1', 'xpeedlx2'):
+		box = "xpeedlx"
+	elif box == "inihde" and machinename.lower() == "hd-1000":
+		box = "sezam-1000hd"
+	elif box == "ventonhdx" and machinename.lower() == "hd-5000":
+		box = "sezam-5000hd"
+	elif box == "ventonhdx" and machinename.lower() == "premium twin":
+		box = "miraclebox-twin"
+	elif box == "xp1000" and machinename.lower() == "sf8 hd":
+		box = "sf8"
+	elif box.startswith('et') and not box in ('et8000', 'et8500', 'et8500s', 'et10000'):
+		box = box[0:3] + 'x00'
+	elif box == 'odinm9':
+		box = 'maram9'
+	elif box.startswith('sf8008m'):
+		box = "sf8008m"
+	elif box.startswith('sf8008opt'):
+		box = "sf8008opt"
+	elif box.startswith('sf8008'):
+		box = "sf8008"
+	elif box.startswith('ustym4kpro'):
+		box = "ustym4kpro"
+	elif box.startswith('twinboxlcdci'):
+		box = "twinboxlcd"
+	return box
+
+
 model = BoxInfo.getItem("model")
+socfamily = BoxInfo.getItem("socfamily")
+architecture = BoxInfo.getItem("architecture")
 
 BoxInfo.setItem("DebugLevel", eGetEnigmaDebugLvl())
 BoxInfo.setItem("InDebugMode", eGetEnigmaDebugLvl() >= 4)
@@ -237,14 +275,12 @@ SystemInfo["LCDSKINSetup"] = fileExists("/usr/share/enigma2/display")
 SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
 SystemInfo["ZapMode"] = fileCheck("/proc/stb/video/zapmode") or fileCheck("/proc/stb/video/zapping_mode")
 SystemInfo["NumFrontpanelLEDs"] = countFrontpanelLEDs()
-SystemInfo["FrontpanelDisplay"] = fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0")
 SystemInfo["OledDisplay"] = fileExists("/dev/dbox/oled0") or model in ("osminiplus",)
 SystemInfo["LcdDisplay"] = fileExists("/dev/dbox/lcd0")
 SystemInfo["FBLCDDisplay"] = fileCheck("/proc/stb/fb/sd_detach")
 SystemInfo["DeepstandbySupport"] = model != 'dm800'
 SystemInfo["Fan"] = fileCheck("/proc/stb/fp/fan")
 SystemInfo["FanPWM"] = SystemInfo["Fan"] and fileCheck("/proc/stb/fp/fan_pwm")
-SystemInfo["FBLCDDisplay"] = fileCheck("/proc/stb/fb/sd_detach")
 SystemInfo["PowerLed"] = fileExists("/proc/stb/power/powerled")
 SystemInfo["PowerLed2"] = fileExists("/proc/stb/power/powerled2")
 SystemInfo["StandbyPowerLed"] = fileExists("/proc/stb/power/standbyled")
@@ -255,17 +291,16 @@ SystemInfo["LedSuspendColor"] = fileExists("/proc/stb/fp/ledsuspendledcolor")
 SystemInfo["Power4x7On"] = fileExists("/proc/stb/fp/power4x7on")
 SystemInfo["Power4x7Standby"] = fileExists("/proc/stb/fp/power4x7standby")
 SystemInfo["Power4x7Suspend"] = fileExists("/proc/stb/fp/power4x7suspend")
-SystemInfo["PowerOffDisplay"] = model not in ('formuler1','hitube4k') and fileCheck("/proc/stb/power/vfd") or fileCheck("/proc/stb/lcd/vfd")
 SystemInfo["LEDButtons"] = model == "vuultimo"
 SystemInfo["WakeOnLAN"] = fileCheck("/proc/stb/power/wol") or fileCheck("/proc/stb/fp/wol")
 SystemInfo["HDMICEC"] = fileExists("/dev/hdmi_cec") or fileExists("/dev/misc/hdmi_cec0")
-SystemInfo["SABSetup"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/SABnzbd/plugin.py")
+SystemInfo["SABSetup"] = isPluginInstalled("SABnzbd")
 SystemInfo["SeekStatePlay"] = False
 SystemInfo["StatePlayPause"] = False
 SystemInfo["StandbyState"] = False
 SystemInfo["GraphicLCD"] = model in ("vuultimo", "xpeedlx3", "et10000", "mutant2400", "quadbox2400", "sezammarvel", "atemionemesis", "mbultra", "beyonwizt4", "osmio4kplus")
-SystemInfo["Blindscan"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Blindscan/plugin.py")
-SystemInfo["Satfinder"] = fileExists("/usr/lib/enigma2/python/Plugins/SystemPlugins/Satfinder/plugin.py")
+SystemInfo["Blindscan"] = isPluginInstalled("Blindscan")
+SystemInfo["Satfinder"] = isPluginInstalled("Satfinder")
 SystemInfo["HasExternalPIP"] = getMachineBuild() not in ("et9x00", "et6x00", "et5x00") and fileCheck("/proc/stb/vmpeg/1/external")
 SystemInfo["hasPIPVisibleProc"] = fileCheck("/proc/stb/vmpeg/1/visible")
 SystemInfo["VideoDestinationConfigurable"] = fileExists("/proc/stb/vmpeg/0/dst_left")
@@ -285,14 +320,12 @@ SystemInfo["grautec"] = fileExists("/tmp/usbtft")
 SystemInfo["3DMode"] = fileCheck("/proc/stb/fb/3dmode") or fileCheck("/proc/stb/fb/primary/3d")
 SystemInfo["3DZNorm"] = fileCheck("/proc/stb/fb/znorm") or fileCheck("/proc/stb/fb/primary/zoffset")
 SystemInfo["CanUse3DModeChoices"] = fileExists("/proc/stb/fb/3dmode_choices") and True or False
+SystemInfo["CanNotDoSimultaneousTranscodeAndPIP"] = model in ("vusolo4k", "gbquad4k", "gbue4k")
 SystemInfo["need_dsw"] = model not in ("osminiplus", "osmega")
-SystemInfo["HasFullHDSkinSupport"] = model == "True"
 SystemInfo["HaveCISSL"] = fileCheck("/etc/ssl/certs/customer.pem") and fileCheck("/etc/ssl/certs/device.pem")
 SystemInfo["HaveID"] = fileCheck("/etc/.id")
 SystemInfo["HaveTouchSensor"] = model in ("dm520", "dm525", "dm900", "dm920")
 SystemInfo["DefaultDisplayBrightness"] = model in ("dm900", "dm920") and 8 or 5
-SystemInfo["LCDsymbol_circle"] = fileCheck("/proc/stb/lcd/symbol_circle")
-SystemInfo["HasFullHDSkinSupport"] = model not in ("et4000", "et5000", "sh1", "hd500c", "hd1100", "xp1000", "lc")
 SystemInfo["ForceLNBPowerChanged"] = fileCheck("/proc/stb/frontend/fbc/force_lnbon")
 SystemInfo["ForceToneBurstChanged"] = fileCheck("/proc/stb/frontend/fbc/force_toneburst")
 SystemInfo["USETunersetup"] = SystemInfo["ForceLNBPowerChanged"] or SystemInfo["ForceToneBurstChanged"]
@@ -309,13 +342,17 @@ SystemInfo["HAVEHDMI"] = getHaveHDMI() == "True"
 SystemInfo["HasMMC"] = fileHas("/proc/cmdline", "root=/dev/mmcblk") or "mmcblk" in getMachineMtdRoot()
 SystemInfo["CanProc"] = SystemInfo["HasMMC"] and getBrandOEM() != "vuplus"
 SystemInfo["HasHiSi"] = pathExists("/proc/hisi")
-SystemInfo["MBbootdevice"] = getMBbootdevice()
-SystemInfo["canMultiBoot"] = getMultibootslots()
-SystemInfo["canDualBoot"] = fileExists("/dev/block/by-name/flag")
-SystemInfo["canMode12"] = getMachineBuild() in ("hd51", "vs1500", "h7") and ("brcm_cma=440M@328M brcm_cma=192M@768M", "brcm_cma=520M@248M brcm_cma=200M@768M")
-SystemInfo["HAScmdline"] = fileCheck("/boot/cmdline.txt")
-SystemInfo["HasMMC"] = fileHas("/proc/cmdline", "root=/dev/mmcblk") or SystemInfo["canMultiBoot"] and fileHas("/proc/cmdline", "root=/dev/sda")
-SystemInfo["HasSDmmc"] = SystemInfo["canMultiBoot"] and "sd" in SystemInfo["canMultiBoot"] and "mmcblk" in getMachineMtdRoot()
+SystemInfo["canMultiBoot"] = MultiBoot.getBootSlots()
+SystemInfo["HasMMC"] = fileHas("/proc/cmdline", "root=/dev/mmcblk") or MultiBoot.canMultiBoot() and fileHas("/proc/cmdline", "root=/dev/sda")
+SystemInfo["HasSDmmc"] = MultiBoot.canMultiBoot() and "sd" in MultiBoot.getBootSlots()["2"] and "mmcblk" in getMachineMtdRoot()
 SystemInfo["HasSDswap"] = getMachineBuild() in ("h9", "i55plus") and pathExists("/dev/mmcblk0p1")
+SystemInfo["HasFullHDSkinSupport"] = model not in ("et4000", "et5000", "sh1", "hd500c", "hd1100", "xp1000", "lc")
 SystemInfo["CanProc"] = SystemInfo["HasMMC"] and getBrandOEM() != "vuplus"
-SystemInfo["canRecovery"] = getMachineBuild() in ("hd51", "vs1500", "h7", "8100s") and ("disk.img", "mmcblk0p1") or getMachineBuild() in ("xc7439", "osmio4k", "osmio4kplus", "osmini4k") and ("emmc.img", "mmcblk1p1") or getMachineBuild() in ("gbmv200", "cc1", "sf8008", "sf8008m", "sf8008opt", "ustym4kpro", "beyonwizv2", "viper4k") and ("usb_update.bin", "none")
+SystemInfo["canRecovery"] = getMachineBuild() in ("hd51", "vs1500", "h7", "8100s") and ("disk.img", "mmcblk0p1") or getMachineBuild() in ("xc7439", "osmio4k", "osmio4kplus", "osmini4k") and ("emmc.img", "mmcblk1p1") or getMachineBuild() in ("gbmv200", "cc1", "sf8008", "sf8008m", "sf8008opt", "sx988", "ustym4kpro", "ustym4kottpremium", "beyonwizv2", "viper4k", "og2ott4k") and ("usb_update.bin", "none")
+SystemInfo["SmallFlash"] = BoxInfo.getItem("smallflash")
+SystemInfo["MiddleFlash"] = BoxInfo.getItem("middleflash") and not BoxInfo.getItem("smallflash")
+SystemInfo["HiSilicon"] = socfamily.startswith("hisi") or fileAccess("/proc/hisi") or fileAccess("/usr/bin/hihalt") or fileAccess("/usr/lib/hisilicon")
+SystemInfo["AmlogicFamily"] = socfamily.startswith(("aml", "meson")) or fileAccess("/proc/device-tree/amlogic-dt-id") or fileAccess("/usr/bin/amlhalt") or fileAccess("/sys/module/amports")
+SystemInfo["ArchIsARM64"] = architecture == "aarch64" or "64" in architecture
+SystemInfo["ArchIsARM"] = architecture.startswith(("arm", "cortex"))
+SystemInfo["STi"] = socfamily.startswith("sti")

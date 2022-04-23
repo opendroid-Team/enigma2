@@ -139,6 +139,8 @@ static unsigned char *color_resize(unsigned char * orgin, int ox, int oy, int dx
 					b += q[2];
 				}
 			}
+			if (sq == 0) // prevent Division by zero
+				sq = 1;
 			p[0] = r / sq;
 			p[1] = g / sq;
 			p[2] = b / sq;
@@ -316,6 +318,7 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 			break;
 		}
 		default:
+			delete [] pic_buffer;
 			close(fd);
 			return NULL;
 	}
@@ -325,8 +328,17 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 
 }
 
-//---------------------------------------------------------------------
-
+/**
+ * @brief Load a png
+ *
+ * If you make change to png_load, check the functionality with PngSuite  
+ * http://www.schaik.com/pngsuite/  
+ * These are test images in all standard PNG.
+ *
+ * @param filepara
+ * @param background
+ * @return void
+ */
 static void png_load(Cfilepara* filepara, unsigned int background)
 {
 	png_uint_32 width, height;
@@ -693,6 +705,7 @@ static void svg_load(Cfilepara* filepara, bool forceRGB = false)
 		unsigned char *pic_buffer2 = (unsigned char*)malloc(w*h*3); // 24bit RGB
 		if (pic_buffer2 == nullptr)
 		{
+			free(pic_buffer);
 			return;
 		}
 		for (int i=0; i<w*h; i++)
@@ -1429,15 +1442,21 @@ RESULT ePicLoad::setPara(PyObject *val)
 		ePyObject fast		= PySequence_Fast(val, "");
 		int width		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 0));
 		int height		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 1));
-		double aspectRatio 	= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 2));
+
+		ePyObject pas = PySequence_Fast_GET_ITEM(fast, 2);
+
+		#if PY_VERSION_HEX >= 0x030a0000
+			double aspectRatio 	= PyFloat_Check(pas) ? PyFloat_AsDouble(pas) : PyLong_AsDouble(pas); 
+		#else
+			double aspectRatio 	= PyInt_AsLong(pas);
+		#endif
+		
 		int as			= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 3));
 		bool useCache		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 4));
 		int resizeType	        = PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 5));
 		const char *bg_str	= PyString_AsString(PySequence_Fast_GET_ITEM(fast, 6));
-
 		return setPara(width, height, aspectRatio, as, useCache, resizeType, bg_str);
 	}
-	return 1;
 }
 
 RESULT ePicLoad::setPara(int width, int height, double aspectRatio, int as, bool useCache, int resizeType, const char *bg_str)

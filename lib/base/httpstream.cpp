@@ -17,10 +17,14 @@ eHttpStream::eHttpStream()
 	partialPktSz = 0;
 	tmpBufSize = 32;
 	tmpBuf = (char*)malloc(tmpBufSize);
+	startDelay = 0;
 	if (eConfigManager::getConfigBoolValue("config.usage.remote_fallback_enabled", false))
 		startDelay = 500000;
-	else
-		startDelay = 0;
+	else {
+		int _startDelay = eConfigManager::getConfigIntValue("config.usage.http_startdelay");
+		if (_startDelay > 0)
+			startDelay = _startDelay * 1000;
+	}
 }
 
 eHttpStream::~eHttpStream()
@@ -48,7 +52,7 @@ int eHttpStream::openUrl(const std::string &url, std::string &newurl)
 
 	close();
 
-	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;opendroid;;;)";
+	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenDroid;;;)";
 	std::string extra_headers = "";
 	size_t pos = uri.find('#');
 	if (pos != std::string::npos)

@@ -1,32 +1,27 @@
 from __future__ import print_function
-from __future__ import absolute_import
-from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
-from Screens.Console import Console
-from Screens.Standby import TryQuitMainloop
+from os import popen, makedirs, listdir, stat, rename, remove
+from os.path import exists as pathexists, isdir
+from datetime import date
+from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageDistro
+from enigma import eTimer, eEnv, eConsoleAppContainer, eEPGCache
+from six import ensure_str
 from Components.ActionMap import ActionMap, NumberActionMap
-from Components.Pixmap import Pixmap
-from Tools.LoadPixmap import LoadPixmap
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from Components.MenuList import MenuList
 from Components.Sources.List import List
 from Components.Button import Button
-from Components.config import NoSave, getConfigListEntry, configfile, ConfigSelection, ConfigSubsection, ConfigText, ConfigLocations
+from Components.config import NoSave, configfile, ConfigSubsection, ConfigText, ConfigLocations
 from Components.config import config
-from Components.ConfigList import ConfigList, ConfigListScreen
+from Components.ConfigList import ConfigListScreen
 from Components.FileList import MultiFileSelectList
-from Components.Network import iNetwork
-from Plugins.Plugin import PluginDescriptor
-from enigma import eTimer, eEnv, eConsoleAppContainer, eEPGCache
+from Screens.Screen import Screen
+from Screens.MessageBox import MessageBox
+from Screens.Console import Console
+from Screens.RestartNetwork import RestartNetwork
+from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import *
-from os import system, popen, makedirs, listdir, access, stat, rename, remove, W_OK, R_OK
-from os.path import exists as pathexists, isdir
-from time import gmtime, strftime, localtime, sleep
-from datetime import date
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageDistro
 from . import ShellCompatibleFunctions
-import six
 
 boxtype = getBoxType()
 distro = getImageDistro()
@@ -483,7 +478,7 @@ class RestoreScreen(Screen, ConfigListScreen):
 	def doRestore(self):
 		tarcmd = "tar -C / -xzvf " + self.fullbackupfilename
 		for f in BLACKLISTED:
-				tarcmd = tarcmd + " --exclude " + f.strip("/")
+			tarcmd = tarcmd + " --exclude " + f.strip("/")
 		restorecmdlist = ["rm -R /etc/enigma2", tarcmd, MANDATORY_RIGHTS]
 		if pathexists("/proc/stb/vmpeg/0/dst_width"):
 			restorecmdlist += ["echo 0 > /proc/stb/vmpeg/0/dst_height", "echo 0 > /proc/stb/vmpeg/0/dst_left", "echo 0 > /proc/stb/vmpeg/0/dst_top", "echo 0 > /proc/stb/vmpeg/0/dst_width"]
@@ -589,7 +584,7 @@ class installedPlugins(Screen):
 		self.container.execute("opkg list-installed | egrep 'enigma2-plugin-|task-base|packagegroup-base'")
 
 	def dataAvail(self, strData):
-		strData = six.ensure_str(strData)
+		strData = ensure_str(strData)
 		if self.type == self.LIST:
 			strData = self.remainingdata + strData
 			lines = strData.split('\n')

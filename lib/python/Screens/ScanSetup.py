@@ -191,7 +191,7 @@ class CableTransponderSearchSupport:
 	def tryGetRawFrontend(self, feid, delsys=None):
 		res_mgr = eDVBResourceManager.getInstance()
 		if res_mgr:
-			raw_channel = res_mgr.allocateRawChannel(self.feid)
+			raw_channel = res_mgr.allocateRawChannel(feid)
 			if raw_channel:
 				frontend = raw_channel.getFrontend()
 				if frontend:
@@ -1375,7 +1375,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		self.scan_typeterrestrial = ConfigSelection(default=defaultTerrSearchType, choices=[("single_transponder", _("User defined transponder")), ("predefined_transponder", _("Predefined transponder")), ("complete", _("Complete"))])
 		self.scan_typeatsc = ConfigSelection(default=defaultATSCSearchType, choices=[("single_transponder", _("User defined transponder")), ("predefined_transponder", _("Predefined transponder")), ("complete", _("Complete"))])
 		self.scan_input_as = ConfigSelection(default="channel", choices=[("frequency", _("Frequency")), ("channel", _("Channel"))])
-		self.scan_clearallservices = ConfigSelection(default="no", choices=[("no", _("no")), ("yes", _("yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
+		self.scan_clearallservices = ConfigSelection(default="no", choices=[("no", _("No")), ("yes", _("Yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
 		self.scan_onlyfree = ConfigYesNo(default=False)
 		self.scan_networkScan = ConfigYesNo(default=False)
 
@@ -1603,7 +1603,7 @@ class ScanSetup(ConfigListScreen, Screen, CableTransponderSearchSupport, Terrest
 		elif nim.isCompatible("DVB-T"):
 			if self.scan_typeterrestrial.value == "single_transponder":
 				if self.scan_input_as.value == "channel":
-					frequency = channel2frequency(self.scan_ter.channel.value, self.ter_tnumber)
+					frequency = int(channel2frequency(self.scan_ter.channel.value, self.ter_tnumber))
 				else:
 					frequency = self.scan_ter.frequency.floatint * 1000
 				self.addTerTransponder(tlist,
@@ -1998,7 +1998,7 @@ class ScanSimple(ConfigListScreen, Screen, CableTransponderSearchSupport, Terres
 
 		if len(nims_to_scan):
 			self.scan_networkScan = ConfigYesNo(default=True)
-			self.scan_clearallservices = ConfigSelection(default="yes", choices=[("no", _("no")), ("yes", _("yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
+			self.scan_clearallservices = ConfigSelection(default="yes", choices=[("no", _("No")), ("yes", _("Yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
 			self.list.append(getConfigListEntry(_("Network scan"), self.scan_networkScan))
 			self.list.append(getConfigListEntry(_("Clear before scan"), self.scan_clearallservices))
 

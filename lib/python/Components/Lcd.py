@@ -6,7 +6,7 @@ from usb import busses
 
 from enigma import eActionMap, eDBoxLCD, eTimer
 
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigSlider, ConfigYesNo, ConfigNothing
+from Components.config import config, ConfigYesNo, ConfigNothing, ConfigOnOff, ConfigSelection, ConfigSlider, ConfigSubsection
 from Components.SystemInfo import BoxInfo
 from Screens.InfoBar import InfoBar
 from Screens.Screen import Screen
@@ -192,7 +192,7 @@ class LCD:
 		if exists("/proc/stb/lcd/show_symbols"):
 			print("[Lcd] setLCDMode='%s'." % value)
 			fileWriteLine("/proc/stb/lcd/show_symbols", value)
-		if config.lcd.mode.value == "0":
+		if value == "0":
 			BoxInfo.setItem("SeekStatePlay", False)
 			BoxInfo.setItem("StatePlayPause", False)
 			if exists("/proc/stb/lcd/symbol_hdd"):
@@ -280,6 +280,8 @@ def InitLcd():
 	# FIXME remove getBoxType
 	if getBoxType() in ('gbx34k', 'force4', 'alien5', 'viperslim', 'lunix', 'lunix4k', 'purehdse', 'vipert2c', 'evoslimse', 'evoslimt2c', 'valalinux', 'tmtwin4k', 'tmnanom3', 'mbmicrov2', 'revo4k', 'force3uhd', 'force2nano', 'evoslim', 'wetekplay', 'wetekplay2', 'wetekhub', 'ultrabox', 'novaip', 'dm520', 'dm525', 'purehd', 'mutant11', 'xpeedlxpro', 'zgemmai55', 'sf98', 'et7x00mini', 'xpeedlxcs2', 'xpeedlxcc', 'e4hd', 'e4hdhybrid', 'mbmicro', 'beyonwizt2', 'amikomini', 'dynaspark', 'amiko8900', 'sognorevolution', 'arguspingulux', 'arguspinguluxmini', 'arguspinguluxplus', 'sparkreloaded', 'sabsolo', 'sparklx', 'gis8120', 'gb800se', 'gb800solo', 'gb800seplus', 'gbultrase', 'gbipbox', 'tmsingle', 'tmnano2super', 'iqonios300hd', 'iqonios300hdv2', 'optimussos1plus', 'optimussos1', 'vusolo', 'et4x00', 'et5x00', 'et6x00', 'et7000', 'et7100', 'mixosf7', 'mixoslumi', 'gbx1', 'gbx2', 'gbx3', 'gbx3h'):
 		detected = False
+	elif getBoxType() in ('pulse4kmini',):
+		detected = True
 	else:
 		detected = eDBoxLCD.getInstance().detected()
 	BoxInfo.setItem("Display", detected)
@@ -364,18 +366,6 @@ def InitLcd():
 		def setLCDflipped(configElement):
 			ilcd.setFlipped(configElement.value)
 
-		def setLCDmode(configElement):
-			ilcd.setMode(configElement.value)
-
-		def setLCDpower(configElement):
-			ilcd.setPower(configElement.value)
-
-		def setfblcddisplay(configElement):
-			ilcd.setfblcddisplay(configElement.value)
-
-		def setLCDshowoutputresolution(configElement):
-			ilcd.setShowoutputresolution(configElement.value)
-
 		def setLCDminitvmode(configElement):
 			ilcd.setLCDMiniTVMode(configElement.value)
 
@@ -396,19 +386,19 @@ def InitLcd():
 
 		def setPowerLEDstate(configElement):
 			if exists("/proc/stb/power/powerled"):
-				fileWriteLine("/proc/stb/power/powerled", configElement.value)
+				fileWriteLine("/proc/stb/power/powerled", "on" if configElement.value else "off")
 
 		def setPowerLEDstate2(configElement):
 			if exists("/proc/stb/power/powerled2"):
-				fileWriteLine("/proc/stb/power/powerled2", configElement.value)
+				fileWriteLine("/proc/stb/power/powerled2", "on" if configElement.value else "off")
 
 		def setPowerLEDstanbystate(configElement):
 			if exists("/proc/stb/power/standbyled"):
-				fileWriteLine("/proc/stb/power/standbyled", configElement.value)
+				fileWriteLine("/proc/stb/power/standbyled", "on" if configElement.value else "off")
 
 		def setPowerLEDdeepstanbystate(configElement):
 			if exists("/proc/stb/power/suspendled"):
-				fileWriteLine("/proc/stb/power/suspendled", configElement.value)
+				fileWriteLine("/proc/stb/power/suspendled", "on" if configElement.value else "off")
 
 		def setLedPowerColor(configElement):
 			if exists("/proc/stb/fp/ledpowercolor"):
@@ -440,15 +430,15 @@ def InitLcd():
 
 		def setPower4x7On(configElement):
 			if exists("/proc/stb/fp/power4x7on"):
-				fileWriteLine("/proc/stb/fp/power4x7on", configElement.value)
+				fileWriteLine("/proc/stb/fp/power4x7on", "on" if configElement.value else "off")
 
 		def setPower4x7Standby(configElement):
 			if exists("/proc/stb/fp/power4x7standby"):
-				fileWriteLine("/proc/stb/fp/power4x7standby", configElement.value)
+				fileWriteLine("/proc/stb/fp/power4x7standby", "on" if configElement.value else "off")
 
 		def setPower4x7Suspend(configElement):
 			if exists("/proc/stb/fp/power4x7suspend"):
-				fileWriteLine("/proc/stb/fp/power4x7suspend", configElement.value)
+				fileWriteLine("/proc/stb/fp/power4x7suspend", "on" if configElement.value else "off")
 
 		def setXcoreVFD(configElement):
 			if exists("/sys/module/brcmstb_osmega/parameters/pt6302_cgram"):
@@ -465,25 +455,13 @@ def InitLcd():
 			("1", _("8 character"))
 		], default="0")
 		config.usage.vfd_xcorevfd.addNotifier(setXcoreVFD)
-		config.usage.lcd_powerled = ConfigSelection(choices=[
-			("off", _("Off")),
-			("on", _("On"))
-		], default="on")
+		config.usage.lcd_powerled = ConfigOnOff(default=True)
 		config.usage.lcd_powerled.addNotifier(setPowerLEDstate)
-		config.usage.lcd_powerled2 = ConfigSelection(choices=[
-			("off", _("Off")),
-			("on", _("On"))
-		], default="on")
+		config.usage.lcd_powerled2 = ConfigOnOff(default=True)
 		config.usage.lcd_powerled2.addNotifier(setPowerLEDstate2)
-		config.usage.lcd_standbypowerled = ConfigSelection(choices=[
-			("off", _("Off")),
-			("on", _("On"))
-		], default="on")
+		config.usage.lcd_standbypowerled = ConfigOnOff(default=True)
 		config.usage.lcd_standbypowerled.addNotifier(setPowerLEDstanbystate)
-		config.usage.lcd_deepstandbypowerled = ConfigSelection(choices=[
-			("off", _("Off")),
-			("on", _("On"))
-		], default="on")
+		config.usage.lcd_deepstandbypowerled = ConfigOnOff(default=True)
 		config.usage.lcd_deepstandbypowerled.addNotifier(setPowerLEDdeepstanbystate)
 
 		if getBoxType() in ('dual',):
@@ -505,13 +483,13 @@ def InitLcd():
 			config.usage.lcd_ledsuspendcolor = ConfigSelection(default="2", choices=[("0", _("Off")), ("1", _("blue")), ("2", _("red")), ("3", _("violet"))])
 			config.usage.lcd_ledsuspendcolor.addNotifier(setLedSuspendColor)
 
-		config.usage.lcd_power4x7on = ConfigSelection(default="on", choices=[("off", _("Off")), ("on", _("On"))])
+		config.usage.lcd_power4x7on = ConfigOnOff(default=True)
 		config.usage.lcd_power4x7on.addNotifier(setPower4x7On)
 
-		config.usage.lcd_power4x7standby = ConfigSelection(default="on", choices=[("off", _("Off")), ("on", _("On"))])
+		config.usage.lcd_power4x7standby = ConfigOnOff(default=True)
 		config.usage.lcd_power4x7standby.addNotifier(setPower4x7Standby)
 
-		config.usage.lcd_power4x7suspend = ConfigSelection(default="on", choices=[("off", _("Off")), ("on", _("On"))])
+		config.usage.lcd_power4x7suspend = ConfigOnOff(default=True)
 		config.usage.lcd_power4x7suspend.addNotifier(setPower4x7Suspend)
 
 		if model in ('dm900', 'dm920', 'e4hdultra', 'protek4k'):
@@ -601,7 +579,7 @@ def InitLcd():
 					open(BoxInfo.getItem("VFD_scroll_delay"), "w").write(str(el.value))
 			config.usage.vfd_scroll_delay = ConfigSlider(default=150, increment=10, limits=(0, 500))
 			config.usage.vfd_scroll_delay.addNotifier(scroll_delay, immediate_feedback=False)
-			config.lcd.hdd = ConfigSelection([("0", _("No")), ("1", _("Yes"))], "1")
+			config.lcd.hdd = ConfigYesNo(default=True)
 		else:
 			config.lcd.hdd = ConfigNothing()
 			config.usage.vfd_scroll_delay = ConfigNothing()
@@ -646,34 +624,34 @@ def InitLcd():
 		else:
 			config.usage.vfd_final_scroll_delay = ConfigNothing()
 		if exists("/proc/stb/lcd/show_symbols"):
-			config.lcd.mode = ConfigSelection(choices=[
-				("0", _("No")),
-				("1", _("Yes"))
-			], default="1")
+			def setLCDmode(configElement):
+				ilcd.setMode("1" if configElement.value else "0")
+
+			config.lcd.mode = ConfigYesNo(default=True)
 			config.lcd.mode.addNotifier(setLCDmode)
 		else:
 			config.lcd.mode = ConfigNothing()
 		if exists("/proc/stb/power/vfd") or exists("/proc/stb/lcd/vfd"):
-			config.lcd.power = ConfigSelection(choices=[
-				("0", _("No")),
-				("1", _("Yes"))
-			], default="1")
+			def setLCDpower(configElement):
+				ilcd.setPower("1" if configElement.value else "0")
+
+			config.lcd.power = ConfigYesNo(default=True)
 			config.lcd.power.addNotifier(setLCDpower)
 		else:
 			config.lcd.power = ConfigNothing()
 		if exists("/proc/stb/fb/sd_detach"):
-			config.lcd.fblcddisplay = ConfigSelection(choices=[
-				("1", _("No")),
-				("0", _("Yes"))
-			], default="1")
+			def setfblcddisplay(configElement):
+				ilcd.setfblcddisplay("1" if configElement.value else "0")
+
+			config.lcd.fblcddisplay = ConfigYesNo(default=True)
 			config.lcd.fblcddisplay.addNotifier(setfblcddisplay)
 		else:
 			config.lcd.fblcddisplay = ConfigNothing()
 		if exists("/proc/stb/lcd/show_outputresolution"):
-			config.lcd.showoutputresolution = ConfigSelection(choices=[
-				("0", _("No")),
-				("1", _("Yes"))
-			], default="1")
+			def setLCDshowoutputresolution(configElement):
+				ilcd.setShowoutputresolution("1" if configElement.value else "0")
+
+			config.lcd.showoutputresolution = ConfigYesNo(default=True)
 			config.lcd.showoutputresolution.addNotifier(setLCDshowoutputresolution)
 		else:
 			config.lcd.showoutputresolution = ConfigNothing()

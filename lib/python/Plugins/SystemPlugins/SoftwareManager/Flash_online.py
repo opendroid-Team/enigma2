@@ -2,20 +2,19 @@ from __future__ import print_function
 from Plugins.Extensions.OPDBoot.plugin import *
 from Components.config import config
 from Components.Label import Label
-from Components.Button import Button
 from Components.ActionMap import ActionMap
 from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
 from Components.Task import Task, Job, job_manager, Condition
 from Components.Sources.StaticText import StaticText
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import BoxInfo, GetBoxName
 from Components.ProgressBar import ProgressBar
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
-from Screens.MultiBootSelector import MultiBootSelector
+from Screens.MultiBootManager import MultiBootManager
 from Components.Console import Console
 from Tools.BoundFunction import boundFunction
-from Tools.Multiboot import GetImagelist, GetCurrentImage, GetCurrentImageMode, getBoxType, GetBoxName
+from Tools.MultiBoot import MultiBoot
 from enigma import eTimer, fbClass
 import os
 import json
@@ -84,22 +83,15 @@ class FlashOnline(Screen):
 	def getImagesList(self):
 
 		def getImages(path, files):
-			try:
-				print(self.imagesList[("Downloaded Images")])
-			except:
-				self.imagesList[("Downloaded Images")] = {} 
-			try:
-				print(self.imagesList[("Fullbackup Images")])
-			except:
-				self.imagesList[("Fullbackup Images")] = {}
 			for file in [x for x in files if os.path.splitext(x)[1] == ".zip" and box in x]:
 				try:
 					if checkimagefiles([x.split(os.sep)[-1] for x in zipfile.ZipFile(file).namelist()]):
+						imagetyp = _("Downloaded Images")
 						if 'backup' in file.split(os.sep)[-1]:
-							self.imagesList[("Fullbackup Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
-						else:
-							self.imagesList[("Downloaded Images")][file] = {'link': file, 'name': file.split(os.sep)[-1]}
-
+							imagetyp = _("Fullbackup Images")
+						if imagetyp not in self.imagesList:
+							self.imagesList[imagetyp] = {}
+						self.imagesList[imagetyp][file] = {'link': file, 'name': file.split(os.sep)[-1]}
 				except:
 					pass
 
@@ -143,12 +135,13 @@ class FlashOnline(Screen):
 			for media in ['/media/%s' % x for x in os.listdir('/media')] + (['/media/net/%s' % x for x in os.listdir('/media/net')] if os.path.isdir('/media/net') else []):
 				if not(BoxInfo.getItem('HasMMC') and "/mmc" in media) and os.path.isdir(media):
 					getImages(media, [os.path.join(media, x) for x in os.listdir(media) if os.path.splitext(x)[1] == ".zip" and box in x])
-					if "images" in os.listdir(media):
-						media = os.path.join(media, "images")
-						if os.path.isdir(media) and not os.path.islink(media) and not os.path.ismount(media):
-							getImages(media, [os.path.join(media, x) for x in os.listdir(media) if os.path.splitext(x)[1] == ".zip" and box in x])
-							for dir in [dir for dir in [os.path.join(media, dir) for dir in os.listdir(media)] if os.path.isdir(dir) and os.path.splitext(dir)[1] == ".unzipped"]:
-								shutil.rmtree(dir)
+					for folder in ["images", "downloaded_images", "imagebackups"]:
+						if folder in os.listdir(media):
+							subfolder = os.path.join(media, folder)
+							if os.path.isdir(subfolder) and not os.path.islink(subfolder) and not os.path.ismount(subfolder):
+								getImages(subfolder, [os.path.join(subfolder, x) for x in os.listdir(subfolder) if os.path.splitext(x)[1] == ".zip" and box in x])
+								for dir in [dir for dir in [os.path.join(subfolder, dir) for dir in os.listdir(subfolder)] if os.path.isdir(dir) and os.path.splitext(dir)[1] == ".unzipped"]:
+									shutil.rmtree(dir)
 
 		_list = []
 		for catagorie in reversed(sorted(self.imagesList.keys())):
@@ -243,12 +236,10 @@ class FlashImage(Screen):
 		self.containerbackup = None
 		self.containerofgwrite = None
 		self.getImageList = None
-		self.saveImageList = None
 		self.downloader = None
 		self.source = source
 		self.imagename = imagename
-		self["key_red"] = Label(_("Cancel"))
-		self["key_green"] = Label(_("ok"))
+
 		self["header"] = Label(_("Backup settings"))
 		self["info"] = Label(_("Save settings and EPG data"))
 		self["summary_header"] = StaticText(self["header"].getText())
@@ -271,20 +262,22 @@ class FlashImage(Screen):
 
 	def confirmation(self):
 		self.message = _("Do you want to flash image\n%s") % self.imagename
-		if BoxInfo.getItem("canMultiBoot"):
-			self.getImageList = GetImagelist(self.getImagelistCallback)
+		if MultiBoot.canMultiBoot():
+			self.getImageList = MultiBoot.getSlotImageList(self.getImagelistCallback)
 		else:
 			self.checkMedia(True)
 
 	def getImagelistCallback(self, imagedict):
-		self.saveImageList = imagedict
 		self.getImageList = None
 		choices = []
-		HIslot = len(imagedict) + 1
-		currentimageslot = GetCurrentImage()
-		print("[FlashOnline] Current Image Slot %s, Imagelist %s" % (currentimageslot, imagedict))
-		for x in list(range(1, HIslot)):
-			choices.append(((_("slot%s - %s (current image)") if x == currentimageslot else _("slot%s - %s")) % (x, imagedict[x]['imagename']), (x, True)))
+		for item in imagedict.copy():
+			if not item.isdecimal():
+				imagedict.pop(item)
+		currentimageslot = int(MultiBoot.getCurrentSlotCode())
+		print("[FlashOnline] Current image slot %s." % currentimageslot)
+		for slotCode in imagedict.keys():
+			print("[FlashOnline] Image Slot %s: %s" % (slotCode, str(imagedict)))
+			choices.append(((_("slot%s - %s (current image)") if slotCode == currentimageslot else _("slot%s - %s")) % (slotCode, imagedict[slotCode]['imagename']), (slotCode, True)))
 		choices.append((_("No, do not flash an image"), False))
 		self.session.openWithCallback(self.checkMedia, MessageBox, self.message, list=choices, default=currentimageslot, simple=True)
 
@@ -297,7 +290,7 @@ class FlashImage(Screen):
 	def checkMedia(self, retval):
 		if retval:
 			if not 'backup' in str(retval):
-				if BoxInfo.getItem("canMultiBoot"):
+				if MultiBoot.canMultiBoot():
 					self.multibootslot = retval[0]
 				self.session.openWithCallback(self.backupQuestionCB, MessageBox, _('Backup Settings') + '?', default=True, timeout=10)
 				return
@@ -370,7 +363,6 @@ class FlashImage(Screen):
 			title = _("Please select what to do after flashing the image:\n(In addition, if it exists, a local script will be executed as well at /media/hdd/images/config/myrestore.sh)")
 			choices = ((_("Upgrade (Backup, Flash & Restore All)"), "restoresettingsandallplugins"),
 			(_("Clean (Just flash and start clean)"), "wizard"),
-			(_("Flash Backup (Just flash and start clean)"), "wizard"),
 			(_("Backup, flash and restore settings and no plugins"), "restoresettingsnoplugin"),
 			(_("Backup, flash and restore settings and selected plugins (ask user)"), "restoresettings"),
 			(_("Do not flash image"), "abort"))
@@ -555,16 +547,25 @@ class FlashImage(Screen):
 		imagefiles = findimagefiles(self.unzippedimage)
 		if imagefiles:
 			self.ROOTFSSUBDIR = "none"
-			if BoxInfo.getItem("canMultiBoot"):
-				self.MTDKERNEL = BoxInfo.getItem("canMultiBoot")[self.multibootslot]["kernel"].split('/')[2]
-				self.MTDROOTFS = BoxInfo.getItem("canMultiBoot")[self.multibootslot]["device"].split('/')[2]
-				if BoxInfo.getItem("HasRootSubdir"):
-					self.ROOTFSSUBDIR = BoxInfo.getItem("canMultiBoot")[self.multibootslot]['rootsubdir']
+			bootSlots = MultiBoot.getBootSlots()
+			if bootSlots:
+				self.MTDKERNEL = bootSlots[self.multibootslot]["kernel"].split('/')[2]
+				if bootSlots[self.multibootslot].get("ubi"):
+					self.MTDROOTFS = bootSlots[self.multibootslot]["device"]
+				else:
+					self.MTDROOTFS = bootSlots[self.multibootslot]["device"].split('/')[2]
+				if MultiBoot.hasRootSubdir():
+					self.ROOTFSSUBDIR = bootSlots[self.multibootslot]["rootsubdir"]
 			else:
 				self.MTDKERNEL = getMachineMtdKernel()
 				self.MTDROOTFS = getMachineMtdRoot()
-			CMD = "/usr/bin/ofgwrite -r -k '%s'" % imagefiles	#normal non multiboot receiver
-			if BoxInfo.getItem("canMultiBoot"):
+			if getMachineBuild() in ("dm820", "dm7080"): # temp solution ofgwrite autodetection not ready
+				CMD = "/usr/bin/ofgwrite -rmmcblk0p1 '%s'" % imagefiles
+			elif self.MTDKERNEL == self.MTDROOTFS:	# receiver with kernel and rootfs on one partition
+				CMD = "/usr/bin/ofgwrite -r '%s'" % imagefiles
+			else:
+				CMD = "/usr/bin/ofgwrite -r -k '%s'" % imagefiles	#normal non multiboot receiver
+			if MultiBoot.canMultiBoot():
 				if (self.ROOTFSSUBDIR) is None:	# receiver with SD card multiboot
 					CMD = "/usr/bin/ofgwrite -r%s -k%s -m0 '%s'" % (self.MTDROOTFS, self.MTDKERNEL, imagefiles)
 				else:
@@ -595,8 +596,8 @@ class FlashImage(Screen):
 	def ok(self):
 		fbClass.getInstance().unlock()
 		if self["header"].text == _("Flashing image successful"):
-			if BoxInfo.getItem("canMultiBoot"):
-				self.session.openWithCallback(self.abort, MultiBootSelector)
+			if MultiBoot.canMultiBoot():
+				self.session.openWithCallback(self.abort, MultiBootManager)
 			else:
 				self.close()
 		else:

@@ -1,23 +1,26 @@
 from __future__ import division
 from __future__ import print_function
-import os
-from boxbranding import getMachineBrand, getMachineName
-import xml.etree.cElementTree
-from datetime import datetime
-from time import ctime, time, strftime, localtime, mktime
 from bisect import insort
+from boxbranding import getMachineBrand, getMachineName
+from datetime import datetime
+from os import fsync, remove, rename, system
+from os.path import exists
+from time import ctime, time, strftime, localtime, mktime
 
 from enigma import eActionMap, quitMainloop
 
+import NavigationInstance
+import six
+from timer import Timer, TimerEntry
 from Components.config import config
 from Components.TimerSanityCheck import TimerSanityCheck
 from Screens.MessageBox import MessageBox
 import Screens.Standby
-from Tools import Directories, Notifications
+from Tools.Directories import SCOPE_CONFIG, fileExists, fileReadXML, resolveFilename
+from Tools import Notifications
 from Tools.XMLTools import stringToXML
-import timer
-import NavigationInstance
-import six
+
+MODULE_NAME = __name__.split(".")[-1]
 
 #global variables begin
 DSsave = False
@@ -56,20 +59,18 @@ debug = False
 
 def resetTimerWakeup():
 	global wasTimerWakeup
-	if os.path.exists("/tmp/was_powertimer_wakeup"):
-		os.remove("/tmp/was_powertimer_wakeup")
+	if exists("/tmp/was_powertimer_wakeup"):
+		remove("/tmp/was_powertimer_wakeup")
 		if debug:
 			print("[POWERTIMER] reset wakeup state")
 	wasTimerWakeup = False
 
-# parses an event, and gives out a (begin, end, name, duration, eit)-tuple.
-# begin and end will be corrected
-
-
-def parseEvent(ev):
-	begin = ev.getBeginTime()
-	end = begin + ev.getDuration()
-	return begin, end
+# Parses an event, and gives out a (begin, end)-tuple.
+#
+def parseEvent(event):
+	begin = event.getBeginTime()
+	end = begin + event.getDuration()
+	return (begin, end)
 
 
 class AFTEREVENT:
@@ -97,12 +98,335 @@ class TIMERTYPE:
 	REBOOT = 7
 	RESTART = 8
 
-# please do not translate log messages
+
+class PowerTimer(Timer):
+	def __init__(self):
+		Timer.__init__(self)
+		self.timersFilename = resolveFilename(SCOPE_CONFIG, "pm_timers.xml")
+		self.loadTimers()
+
+	def loadTimers(self):
+		timersDom = fileReadXML(self.timersFilename, source=MODULE_NAME)
+		if timersDom is None:
+			if not exists(self.timersFilename):
+				return
+			Notifications.AddPopup(_("The timer file (pm_timers.xml) is corrupt and could not be loaded."), type=MessageBox.TYPE_ERROR, timeout=0, id="TimerLoadFailed")
+			print("[PowerTimer] Error: Loading 'pm_timers.xml' failed!")
+			try:
+				rename(self.timersFilename, "%s_old" % self.timersFilename)
+			except (IOError, OSError) as err:
+				print("[PowerTimer] Error %d: Renaming broken timer file failed!  (%s)" % (err.errno, err.strerror))
+			return
+		# put out a message when at least one timer overlaps
+		check = True
+		for timer in timersDom.findall("timer"):
+			newTimer = self.createTimer(timer)
+			if (self.record(newTimer, True, dosave=False) is not None) and (check == True):
+				Notifications.AddPopup(_("Timer overlap in pm_timers.xml detected!\nPlease recheck it!"), type=MessageBox.TYPE_ERROR, timeout=0, id="TimerLoadFailed")
+				check = False # at moment it is enough when the message is displayed one time
+
+	def loadTimer(self):
+		return self.loadTimers()
+
+	def saveTimers(self):
+		savedays = 3600 * 24 * 7	#logs older 7 Days will not saved
+		timerList = ["<?xml version=\"1.0\" ?>", "<timers>"]
+		for timer in self.timer_list + self.processed_timers:
+			if timer.dontSave:
+				continue
+			timerEntry = []
+			timerEntry.append("timertype=\"%s\"" % stringToXML({
+				TIMERTYPE.NONE: "nothing",
+				TIMERTYPE.WAKEUP: "wakeup",
+				TIMERTYPE.WAKEUPTOSTANDBY: "wakeuptostandby",
+				TIMERTYPE.AUTOSTANDBY: "autostandby",
+				TIMERTYPE.AUTODEEPSTANDBY: "autodeepstandby",
+				TIMERTYPE.STANDBY: "standby",
+				TIMERTYPE.DEEPSTANDBY: "deepstandby",
+				TIMERTYPE.REBOOT: "reboot",
+				TIMERTYPE.RESTART: "restart"
+			}[timer.timerType]))
+			timerEntry.append("begin=\"%d\"" % timer.begin)
+			timerEntry.append("end=\"%d\"" % timer.end)
+			timerEntry.append("repeated=\"%d\"" % timer.repeated)
+			timerEntry.append("afterevent=\"%s\"" % stringToXML({
+				AFTEREVENT.NONE: "nothing",
+				AFTEREVENT.WAKEUP: "wakeup",
+				AFTEREVENT.WAKEUPTOSTANDBY: "wakeuptostandby",
+				AFTEREVENT.STANDBY: "standby",
+				AFTEREVENT.DEEPSTANDBY: "deepstandby"
+				}[timer.afterEvent]))
+			timerEntry.append("disabled=\"%d\"" % timer.disabled)
+			timerEntry.append("autosleepinstandbyonly=\"%s\"" % timer.autosleepinstandbyonly)
+			timerEntry.append("autosleepdelay=\"%s\"" % timer.autosleepdelay)
+			timerEntry.append("autosleeprepeat=\"%s\"" % timer.autosleeprepeat)
+			timerEntry.append("autosleepwindow=\"%s\"" % timer.autosleepwindow)
+			timerEntry.append("autosleepbegin=\"%d\"" % int(timer.autosleepbegin))
+			timerEntry.append("autosleepend=\"%d\"" % int(timer.autosleepend))
+			timerEntry.append("nettraffic=\"%s\"" % timer.nettraffic)
+			timerEntry.append("trafficlimit=\"%s\"" % timer.trafficlimit)
+			timerEntry.append("netip=\"%s\"" % timer.netip)
+			timerEntry.append("ipadress=\"%s\"" % timer.ipadress)
+			timerList.append("\t<timer %s>" % " ".join(timerEntry))
+
+			for logTime, logCode, logMsg in timer.log_entries:
+				if logTime > time() - savedays:
+					timerList.append("\t\t<log code=\"%d\" time=\"%d\">%s</log>" % (logCode, logTime, stringToXML(logMsg)))
+
+			timerList.append("\t</timer>")
+		timerList.append("</timers>\n")
+		# Should this code also use a writeLock as for the regular timers?
+		file = open("%s.writing" % self.timersFilename, "w")
+		file.write("\n".join(timerList))
+		file.flush()
+		fsync(file.fileno())
+		file.close()
+		rename("%s.writing" % self.timersFilename, self.timersFilename)
+
+	def saveTimer(self):
+		return self.saveTimers()
+
+	def createTimer(self, timerDom):
+		begin = int(timerDom.get("begin"))
+		end = int(timerDom.get("end"))
+		disabled = int(timerDom.get("disabled") or "0")
+		afterevent = {
+			"nothing": AFTEREVENT.NONE,
+			"wakeup": AFTEREVENT.WAKEUP,
+			"wakeuptostandby": AFTEREVENT.WAKEUPTOSTANDBY,
+			"standby": AFTEREVENT.STANDBY,
+			"deepstandby": AFTEREVENT.DEEPSTANDBY
+		}.get(timerDom.get("afterevent", "nothing"), "nothing")
+		timertype = {
+			"nothing": TIMERTYPE.NONE,
+			"wakeup": TIMERTYPE.WAKEUP,
+			"wakeuptostandby": TIMERTYPE.WAKEUPTOSTANDBY,
+			"autostandby": TIMERTYPE.AUTOSTANDBY,
+			"autodeepstandby": TIMERTYPE.AUTODEEPSTANDBY,
+			"standby": TIMERTYPE.STANDBY,
+			"deepstandby": TIMERTYPE.DEEPSTANDBY,
+			"reboot": TIMERTYPE.REBOOT,
+			"restart": TIMERTYPE.RESTART
+		}.get(timerDom.get("timertype", "wakeup"), "wakeup")
+		repeated = six.ensure_str(timerDom.get("repeated"))
+		autosleepbegin = int(timerDom.get("autosleepbegin") or begin)
+		autosleepend = int(timerDom.get("autosleepend") or end)
+
+		entry = PowerTimerEntry(begin, end, disabled, afterevent, timertype)
+		entry.repeated = int(repeated)
+		entry.autosleepinstandbyonly = timerDom.get("autosleepinstandbyonly", "no")
+		entry.autosleepdelay = int(timerDom.get("autosleepdelay", "0"))
+		entry.autosleeprepeat = timerDom.get("autosleeprepeat", "once")
+		entry.autosleepwindow = timerDom.get("autosleepwindow", "no")
+		entry.autosleepbegin = autosleepbegin
+		entry.autosleepend = autosleepend
+
+		entry.nettraffic = timerDom.get("nettraffic", "no")
+		entry.trafficlimit = int(timerDom.get("trafficlimit", "100"))
+		entry.netip = timerDom.get("netip", "no")
+		entry.ipadress = timerDom.get("ipadress", "0.0.0.0")
+
+		for log in timerDom.findall("log"):
+			msg = six.ensure_str(log.text).strip()
+			entry.log_entries.append((int(log.get("time")), int(log.get("code")), msg))
+
+		return entry
+
+	def doActivate(self, w):
+		# When activating a timer which has already passed, simply
+		# abort the timer.  Don't run trough all the stages.
+		if w.shouldSkip():
+			w.state = PowerTimerEntry.StateEnded
+		else:
+			# When active returns true, this means "accepted".
+			# Otherwise, the current state is kept.
+			# The timer entry itself will fix up the delay.
+			if w.activate():
+				w.state += 1
+		try:
+			self.timer_list.remove(w)
+		except Exception:
+			print("[PowerTimer] Remove list failed!")
+		if w.state < PowerTimerEntry.StateEnded:  # Did this timer reached the last state?
+			insort(self.timer_list, w)  # No, sort it into active list.
+		else:  # Yes, process repeated, and re-add.
+			if w.repeated:
+				w.processRepeated()
+				w.state = PowerTimerEntry.StateWaiting
+				self.addTimerEntry(w)
+			else:
+				# Remove old timers as set in config.
+				self.cleanupDaily(config.recording.keep_timers.value)  # DEBUG: This method does not appear to be defined!!!
+				insort(self.processed_timers, w)
+		self.stateChanged(w)
 
 
-class PowerTimerEntry(timer.TimerEntry, object):
+	def isAutoDeepstandbyEnabled(self):
+		ret = True
+		if Screens.Standby.inStandby:
+			now = time()
+			for timer in self.timer_list:
+				if timer.timerType == TIMERTYPE.AUTODEEPSTANDBY:
+					if timer.begin <= now + 900:
+						ret = not (timer.getNetworkTraffic() or timer.getNetworkAdress())
+					elif timer.autosleepwindow == 'yes':
+						ret = timer.autosleepbegin <= now + 900
+				if not ret:
+					break
+		return ret
+
+	def isProcessing(self, exceptTimer=None, endedTimer=None):
+		isRunning = False
+		for timer in self.timer_list:
+			if timer.timerType != TIMERTYPE.AUTOSTANDBY and timer.timerType != TIMERTYPE.AUTODEEPSTANDBY and timer.timerType != exceptTimer and timer.timerType != endedTimer:
+				if timer.isRunning():
+					isRunning = True
+					break
+		return isRunning
+
+	def getNextZapTime(self):
+		now = time()
+		for timer in self.timer_list:
+			if timer.begin < now:
+				continue
+			return timer.begin
+		return -1
+
+	def getNextPowerManagerTimeOld(self, getNextStbPowerOn=False):
+		now = int(time())
+		nextPTlist = [(-1, None, None, None)]
+		for timer in self.timer_list:
+			if timer.timerType != TIMERTYPE.AUTOSTANDBY and timer.timerType != TIMERTYPE.AUTODEEPSTANDBY:
+				next_act = timer.getNextWakeup(getNextStbPowerOn)
+				if next_act + 3 < now:
+					continue
+				if getNextStbPowerOn and debug:
+					print("[Powertimer] next stb power up", strftime("%a, %Y/%m/%d %H:%M", localtime(next_act)))
+				next_timertype = next_afterevent = None
+				if nextPTlist[0][0] == -1:
+					if abs(next_act - timer.begin) <= 30:
+						next_timertype = timer.timerType
+					elif abs(next_act - timer.end) <= 30:
+						next_afterevent = timer.afterEvent
+					nextPTlist = [(next_act, next_timertype, next_afterevent, timer.state)]
+				else:
+					if abs(next_act - timer.begin) <= 30:
+						next_timertype = timer.timerType
+					elif abs(next_act - timer.end) <= 30:
+						next_afterevent = timer.afterEvent
+					nextPTlist.append((next_act, next_timertype, next_afterevent, timer.state))
+		nextPTlist.sort()
+		return nextPTlist
+
+	def getNextPowerManagerTime(self, getNextStbPowerOn=False, getNextTimerTyp=False):
+		#getNextStbPowerOn = True returns tuple -> (timer.begin, set standby)
+		#getNextTimerTyp = True returns next timer list -> [(timer.begin, timer.timerType, timer.afterEvent, timer.state)]
+		global DSsave, RSsave, RBsave, aeDSsave
+		nextrectime = self.getNextPowerManagerTimeOld(getNextStbPowerOn)
+		faketime = int(time()) + 300
+
+		if getNextStbPowerOn:
+			if config.timeshift.isRecording.value:
+				if 0 < nextrectime[0][0] < faketime:
+					return nextrectime[0][0], int(nextrectime[0][1] == 2 or nextrectime[0][2] == 2)
+				else:
+					return faketime, 0
+			else:
+				return nextrectime[0][0], int(nextrectime[0][1] == 2 or nextrectime[0][2] == 2)
+		elif getNextTimerTyp:
+			#check entrys and plausibility of shift state (manual canceled timer has shift/save state not reset)
+			tt = ae = []
+			now = time()
+			if debug:
+				print("+++++++++++++++")
+			for entry in nextrectime:
+				if entry[0] < now + 900:
+					tt.append(entry[1])
+				if entry[0] < now + 900:
+					ae.append(entry[2])
+				if debug:
+					print(ctime(entry[0]), entry)
+			if not TIMERTYPE.RESTART in tt:
+				RSsave = False
+			if not TIMERTYPE.REBOOT in tt:
+				RBsave = False
+			if not TIMERTYPE.DEEPSTANDBY in tt:
+				DSsave = False
+			if not AFTEREVENT.DEEPSTANDBY in ae:
+				aeDSsave = False
+			if debug:
+				print("RSsave=%s, RBsave=%s, DSsave=%s, aeDSsave=%s, wasTimerWakeup=%s" % (RSsave, RBsave, DSsave, aeDSsave, wasTimerWakeup))
+			if debug:
+				print("+++++++++++++++")
+			###
+			if config.timeshift.isRecording.value:
+				if 0 < nextrectime[0][0] < faketime:
+					return nextrectime
+				else:
+					nextrectime.append((faketime, None, None, None))
+					nextrectime.sort()
+					return nextrectime
+			else:
+				return nextrectime
+		else:
+			if config.timeshift.isRecording.value:
+				if 0 < nextrectime[0][0] < faketime:
+					return nextrectime[0][0]
+				else:
+					return faketime
+			else:
+				return nextrectime[0][0]
+
+	def isNextPowerManagerAfterEventActionAuto(self):
+		for timer in self.timer_list:
+			if timer.timerType == TIMERTYPE.WAKEUPTOSTANDBY or timer.afterEvent == AFTEREVENT.WAKEUPTOSTANDBY or timer.timerType == TIMERTYPE.WAKEUP or timer.afterEvent == AFTEREVENT.WAKEUP:
+				return True
+		return False
+
+	def record(self, entry, ignoreTSC=False, dosave=True):		#wird von loadTimer mit dosave=False aufgerufen
+		entry.timeChanged()
+		print("[PowerTimer] Entry '%s'." % str(entry))
+		entry.Timer = self
+		self.addTimerEntry(entry)
+		if dosave:
+			self.saveTimers()
+		return None
+
+	def removeEntry(self, entry):
+		print("[PowerTimer] Remove entry '%s'." % str(entry))
+		entry.repeated = False  # Avoid re-enqueuing.
+		entry.autoincrease = False
+		entry.abort()  # Abort timer.  This sets the end time to current time, so timer will be stopped.
+		if entry.state != entry.StateEnded:
+			self.timeChanged(entry)
+		# print("[PowerTimer] State: %s." % entry.state)
+		# print("[PowerTimer] In processed: %s." % entry in self.processed_timers)
+		# print("[PowerTimer] In running: %s." % entry in self.timer_list)
+		if entry.state != 3:  # Disable timer first.
+			entry.disable()
+		if not entry.dontSave:  # Auto increase instant timer if possible.
+			for timer in self.timer_list:
+				if timer.setAutoincreaseEnd():
+					self.timeChanged(timer)
+		if entry in self.processed_timers:  # Now the timer should be in the processed_timers list, remove it from there.
+			self.processed_timers.remove(entry)
+		self.saveTimers()
+
+	def shutdown(self):
+		self.saveTimers()
+
+	def cleanup(self):
+		Timer.cleanup(self)
+		self.saveTimers()
+
+	def cleanupDaily(self, days):
+		Timer.cleanupDaily(self, days)
+		self.saveTimers()
+
+
+class PowerTimerEntry(TimerEntry, object):
 	def __init__(self, begin, end, disabled=False, afterEvent=AFTEREVENT.NONE, timerType=TIMERTYPE.WAKEUP, checkOldTimers=False, autosleepdelay=60):
-		timer.TimerEntry.__init__(self, int(begin), int(end))
+		TimerEntry.__init__(self, int(begin), int(end))
 		if checkOldTimers:
 			if self.begin < time() - 1209600:
 				self.begin = int(time())
@@ -122,17 +446,17 @@ class PowerTimerEntry(timer.TimerEntry, object):
 		self.timerType = timerType
 		self.afterEvent = afterEvent
 		self.autoincrease = False
-		self.autoincreasetime = 3600 * 24 # 1 day
-		self.autosleepinstandbyonly = 'no'
+		self.autoincreasetime = 3600 * 24  # 1 day.
+		self.autosleepinstandbyonly = "no"
 		self.autosleepdelay = autosleepdelay
-		self.autosleeprepeat = 'once'
-		self.autosleepwindow = 'no'
+		self.autosleeprepeat = "once"
+		self.autosleepwindow = "no"
 		self.autosleepbegin = self.begin
 		self.autosleepend = self.end
 
-		self.nettraffic = 'no'
+		self.nettraffic = "no"
 		self.trafficlimit = 100
-		self.netip = 'no'
+		self.netip = "no"
 		self.ipadress = "0.0.0.0"
 
 		self.log_entries = []
@@ -186,7 +510,7 @@ class PowerTimerEntry(timer.TimerEntry, object):
 		isRecTimerWakeup = breakPT = shiftPT = False
 		now = time()
 		next_state = self.state + 1
-		self.log(5, "activating state %d" % next_state)
+		self.log(5, "Activating state %d." % next_state)
 		if next_state == self.StatePrepared and (self.timerType == TIMERTYPE.AUTOSTANDBY or self.timerType == TIMERTYPE.AUTODEEPSTANDBY):
 			eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keyPressed)
 			if self.autosleepwindow == 'yes':
@@ -230,11 +554,11 @@ class PowerTimerEntry(timer.TimerEntry, object):
 				isRecTimerWakeup = NavigationInstance.instance.RecordTimer.isRecTimerWakeup()
 			if isRecTimerWakeup:
 				wasTimerWakeup = True
-			elif os.path.exists("/tmp/was_powertimer_wakeup") and not wasTimerWakeup:
+			elif exists("/tmp/was_powertimer_wakeup") and not wasTimerWakeup:
 				wasTimerWakeup = int(open("/tmp/was_powertimer_wakeup", "r").read()) and True or False
 
 		if next_state == self.StatePrepared:
-			self.log(6, "prepare ok, waiting for begin: %s" % ctime(self.begin))
+			self.log(6, "Prepare ok, waiting for begin: %s" % ctime(self.begin))
 			self.backoff = 0
 			return True
 
@@ -647,7 +971,6 @@ class PowerTimerEntry(timer.TimerEntry, object):
 			new_end = int(time()) + self.autoincreasetime
 		else:
 			new_end = entry.begin - 30
-
 		dummyentry = PowerTimerEntry(self.begin, new_end, disabled=True, afterEvent=self.afterEvent, timerType=self.timerType)
 		dummyentry.disabled = self.disabled
 		timersanitycheck = TimerSanityCheck(NavigationInstance.instance.PowerManager.timer_list, dummyentry)
@@ -809,14 +1132,14 @@ class PowerTimerEntry(timer.TimerEntry, object):
 		self.backoff = 0
 
 		if int(old_prepare) > 60 and int(old_prepare) != int(self.start_prepare):
-			self.log(15, "time changed, start prepare is now: %s" % ctime(self.start_prepare))
+			self.log(15, "Time changed, start preparing is now %s." % ctime(self.start_prepare))
 
 	def getNetworkAdress(self):
 		ret = False
 		if self.netip == 'yes':
 			try:
 				for ip in self.ipadress.split(','):
-					if not os.system("ping -q -w1 -c1 " + ip):
+					if not system("ping -q -w1 -c1 " + ip):
 						ret = True
 						break
 			except:
@@ -828,7 +1151,7 @@ class PowerTimerEntry(timer.TimerEntry, object):
 		newbytes = 0
 		if self.nettraffic == 'yes':
 			try:
-				if os.path.exists('/proc/net/dev'):
+				if exists('/proc/net/dev'):
 					f = open('/proc/net/dev', 'r')
 					temp = f.readlines()
 					f.close()
@@ -858,373 +1181,3 @@ class PowerTimerEntry(timer.TimerEntry, object):
 		return False
 
 
-def createTimer(xml):
-	timertype = str(xml.get("timertype") or "wakeup")
-	timertype = {
-		"nothing": TIMERTYPE.NONE,
-		"wakeup": TIMERTYPE.WAKEUP,
-		"wakeuptostandby": TIMERTYPE.WAKEUPTOSTANDBY,
-		"autostandby": TIMERTYPE.AUTOSTANDBY,
-		"autodeepstandby": TIMERTYPE.AUTODEEPSTANDBY,
-		"standby": TIMERTYPE.STANDBY,
-		"deepstandby": TIMERTYPE.DEEPSTANDBY,
-		"reboot": TIMERTYPE.REBOOT,
-		"restart": TIMERTYPE.RESTART
-		}[timertype]
-	begin = int(xml.get("begin"))
-	end = int(xml.get("end"))
-	# FIXME WHY NOT str()
-	repeated = six.ensure_str(xml.get("repeated"))
-	disabled = int(xml.get("disabled") or "0")
-	afterevent = str(xml.get("afterevent") or "nothing")
-	afterevent = {
-		"nothing": AFTEREVENT.NONE,
-		"wakeup": AFTEREVENT.WAKEUP,
-		"wakeuptostandby": AFTEREVENT.WAKEUPTOSTANDBY,
-		"standby": AFTEREVENT.STANDBY,
-		"deepstandby": AFTEREVENT.DEEPSTANDBY
-		}[afterevent]
-	autosleepinstandbyonly = str(xml.get("autosleepinstandbyonly") or "no")
-	autosleepdelay = str(xml.get("autosleepdelay") or "0")
-	autosleeprepeat = str(xml.get("autosleeprepeat") or "once")
-	autosleepwindow = str(xml.get("autosleepwindow") or "no")
-	autosleepbegin = int(xml.get("autosleepbegin") or begin)
-	autosleepend = int(xml.get("autosleepend") or end)
-
-	nettraffic = str(xml.get("nettraffic") or "no")
-	trafficlimit = int(xml.get("trafficlimit") or 100)
-	netip = str(xml.get("netip") or "no")
-	ipadress = str(xml.get("ipadress") or "0.0.0.0")
-
-	entry = PowerTimerEntry(begin, end, disabled, afterevent, timertype)
-	entry.repeated = int(repeated)
-	entry.autosleepinstandbyonly = autosleepinstandbyonly
-	entry.autosleepdelay = int(autosleepdelay)
-	entry.autosleeprepeat = autosleeprepeat
-	entry.autosleepwindow = autosleepwindow
-	entry.autosleepbegin = autosleepbegin
-	entry.autosleepend = autosleepend
-
-	entry.nettraffic = nettraffic
-	entry.trafficlimit = trafficlimit
-	entry.netip = netip
-	entry.ipadress = ipadress
-
-	for l in xml.findall("log"):
-		ltime = int(l.get("time"))
-		code = int(l.get("code"))
-		msg = six.ensure_str(l.text).strip()
-		entry.log_entries.append((ltime, code, msg))
-
-	return entry
-
-
-class PowerTimer(timer.Timer):
-	def __init__(self):
-		timer.Timer.__init__(self)
-
-		self.Filename = Directories.resolveFilename(Directories.SCOPE_CONFIG, "pm_timers.xml")
-
-		try:
-			self.loadTimer()
-		except IOError:
-			print("unable to load timers from file!")
-
-	def doActivate(self, w):
-		# when activating a timer which has already passed,
-		# simply abort the timer. don't run trough all the stages.
-		if w.shouldSkip():
-			w.state = PowerTimerEntry.StateEnded
-		else:
-			# when active returns true, this means "accepted".
-			# otherwise, the current state is kept.
-			# the timer entry itself will fix up the delay then.
-			if w.activate():
-				w.state += 1
-
-		try:
-			self.timer_list.remove(w)
-		except:
-			print('[PowerManager]: Remove list failed')
-
-		# did this timer reached the last state?
-		if w.state < PowerTimerEntry.StateEnded:
-			# no, sort it into active list
-			insort(self.timer_list, w)
-		else:
-			# yes. Process repeated, and re-add.
-			if w.repeated:
-				w.processRepeated()
-				w.state = PowerTimerEntry.StateWaiting
-				self.addTimerEntry(w)
-			else:
-				# Remove old timers as set in config
-				self.cleanupDaily(config.recording.keep_timers.value)
-				insort(self.processed_timers, w)
-		self.stateChanged(w)
-
-	def loadTimer(self):
-		# TODO: PATH!
-		if not Directories.fileExists(self.Filename):
-			return
-		try:
-			file = open(self.Filename, 'r')
-			doc = xml.etree.cElementTree.parse(file)
-			file.close()
-		except SyntaxError:
-			from Tools.Notifications import AddPopup
-			from Screens.MessageBox import MessageBox
-
-			AddPopup(_("The timer file (pm_timers.xml) is corrupt and could not be loaded."), type=MessageBox.TYPE_ERROR, timeout=0, id="TimerLoadFailed")
-
-			print("pm_timers.xml failed to load!")
-			try:
-				import os
-				os.rename(self.Filename, self.Filename + "_old")
-			except (IOError, OSError):
-				print("renaming broken timer failed")
-			return
-		except IOError:
-			print("pm_timers.xml not found!")
-			return
-
-		root = doc.getroot()
-
-		# put out a message when at least one timer overlaps
-		checkit = True
-		for timer in root.findall("timer"):
-			newTimer = createTimer(timer)
-			if (self.record(newTimer, True, dosave=False) is not None) and (checkit == True):
-				from Tools.Notifications import AddPopup
-				from Screens.MessageBox import MessageBox
-				AddPopup(_("Timer overlap in pm_timers.xml detected!\nPlease recheck it!"), type=MessageBox.TYPE_ERROR, timeout=0, id="TimerLoadFailed")
-				checkit = False # at moment it is enough when the message is displayed one time
-
-	def saveTimer(self):
-		savedays = 3600 * 24 * 7	#logs older 7 Days will not saved
-		list = ['<?xml version="1.0" ?>\n', '<timers>\n']
-		for timer in self.timer_list + self.processed_timers:
-			if timer.dontSave:
-				continue
-			list.append('<timer')
-			list.append(' timertype="' + str(stringToXML({
-				TIMERTYPE.NONE: "nothing",
-				TIMERTYPE.WAKEUP: "wakeup",
-				TIMERTYPE.WAKEUPTOSTANDBY: "wakeuptostandby",
-				TIMERTYPE.AUTOSTANDBY: "autostandby",
-				TIMERTYPE.AUTODEEPSTANDBY: "autodeepstandby",
-				TIMERTYPE.STANDBY: "standby",
-				TIMERTYPE.DEEPSTANDBY: "deepstandby",
-				TIMERTYPE.REBOOT: "reboot",
-				TIMERTYPE.RESTART: "restart"
-				}[timer.timerType])) + '"')
-			list.append(' begin="' + str(int(timer.begin)) + '"')
-			list.append(' end="' + str(int(timer.end)) + '"')
-			list.append(' repeated="' + str(int(timer.repeated)) + '"')
-			list.append(' afterevent="' + str(stringToXML({
-				AFTEREVENT.NONE: "nothing",
-				AFTEREVENT.WAKEUP: "wakeup",
-				AFTEREVENT.WAKEUPTOSTANDBY: "wakeuptostandby",
-				AFTEREVENT.STANDBY: "standby",
-				AFTEREVENT.DEEPSTANDBY: "deepstandby"
-				}[timer.afterEvent])) + '"')
-			list.append(' disabled="' + str(int(timer.disabled)) + '"')
-			list.append(' autosleepinstandbyonly="' + str(timer.autosleepinstandbyonly) + '"')
-			list.append(' autosleepdelay="' + str(timer.autosleepdelay) + '"')
-			list.append(' autosleeprepeat="' + str(timer.autosleeprepeat) + '"')
-			list.append(' autosleepwindow="' + str(timer.autosleepwindow) + '"')
-			list.append(' autosleepbegin="' + str(int(timer.autosleepbegin)) + '"')
-			list.append(' autosleepend="' + str(int(timer.autosleepend)) + '"')
-
-			list.append(' nettraffic="' + str(timer.nettraffic) + '"')
-			list.append(' trafficlimit="' + str(int(timer.trafficlimit)) + '"')
-			list.append(' netip="' + str(timer.netip) + '"')
-			list.append(' ipadress="' + str(timer.ipadress) + '"')
-
-			list.append('>\n')
-
-			for ltime, code, msg in timer.log_entries:
-				if ltime > time() - savedays:
-					list.append('<log')
-					list.append(' code="' + str(code) + '"')
-					list.append(' time="' + str(ltime) + '"')
-					list.append('>')
-					list.append(str(stringToXML(msg)))
-					list.append('</log>\n')
-
-			list.append('</timer>\n')
-
-		list.append('</timers>\n')
-
-		file = open(self.Filename + ".writing", "w")
-		for x in list:
-			file.write(x)
-		file.flush()
-
-		os.fsync(file.fileno())
-		file.close()
-		os.rename(self.Filename + ".writing", self.Filename)
-
-	def isAutoDeepstandbyEnabled(self):
-		ret = True
-		if Screens.Standby.inStandby:
-			now = time()
-			for timer in self.timer_list:
-				if timer.timerType == TIMERTYPE.AUTODEEPSTANDBY:
-					if timer.begin <= now + 900:
-						ret = not (timer.getNetworkTraffic() or timer.getNetworkAdress())
-					elif timer.autosleepwindow == 'yes':
-						ret = timer.autosleepbegin <= now + 900
-				if not ret:
-					break
-		return ret
-
-	def isProcessing(self, exceptTimer=None, endedTimer=None):
-		isRunning = False
-		for timer in self.timer_list:
-			if timer.timerType != TIMERTYPE.AUTOSTANDBY and timer.timerType != TIMERTYPE.AUTODEEPSTANDBY and timer.timerType != exceptTimer and timer.timerType != endedTimer:
-				if timer.isRunning():
-					isRunning = True
-					break
-		return isRunning
-
-	def getNextZapTime(self):
-		now = time()
-		for timer in self.timer_list:
-			if timer.begin < now:
-				continue
-			return timer.begin
-		return -1
-
-	def getNextPowerManagerTimeOld(self, getNextStbPowerOn=False):
-		now = int(time())
-		nextPTlist = [(-1, None, None, None)]
-		for timer in self.timer_list:
-			if timer.timerType != TIMERTYPE.AUTOSTANDBY and timer.timerType != TIMERTYPE.AUTODEEPSTANDBY:
-				next_act = timer.getNextWakeup(getNextStbPowerOn)
-				if next_act + 3 < now:
-					continue
-				if getNextStbPowerOn and debug:
-					print("[powertimer] next stb power up", strftime("%a, %Y/%m/%d %H:%M", localtime(next_act)))
-				next_timertype = next_afterevent = None
-				if nextPTlist[0][0] == -1:
-					if abs(next_act - timer.begin) <= 30:
-						next_timertype = timer.timerType
-					elif abs(next_act - timer.end) <= 30:
-						next_afterevent = timer.afterEvent
-					nextPTlist = [(next_act, next_timertype, next_afterevent, timer.state)]
-				else:
-					if abs(next_act - timer.begin) <= 30:
-						next_timertype = timer.timerType
-					elif abs(next_act - timer.end) <= 30:
-						next_afterevent = timer.afterEvent
-					nextPTlist.append((next_act, next_timertype, next_afterevent, timer.state))
-		nextPTlist.sort()
-		return nextPTlist
-
-	def getNextPowerManagerTime(self, getNextStbPowerOn=False, getNextTimerTyp=False):
-		#getNextStbPowerOn = True returns tuple -> (timer.begin, set standby)
-		#getNextTimerTyp = True returns next timer list -> [(timer.begin, timer.timerType, timer.afterEvent, timer.state)]
-		global DSsave, RSsave, RBsave, aeDSsave
-		nextrectime = self.getNextPowerManagerTimeOld(getNextStbPowerOn)
-		faketime = int(time()) + 300
-
-		if getNextStbPowerOn:
-			if config.timeshift.isRecording.value:
-				if 0 < nextrectime[0][0] < faketime:
-					return nextrectime[0][0], int(nextrectime[0][1] == 2 or nextrectime[0][2] == 2)
-				else:
-					return faketime, 0
-			else:
-				return nextrectime[0][0], int(nextrectime[0][1] == 2 or nextrectime[0][2] == 2)
-		elif getNextTimerTyp:
-			#check entrys and plausibility of shift state (manual canceled timer has shift/save state not reset)
-			tt = ae = []
-			now = time()
-			if debug:
-				print("+++++++++++++++")
-			for entry in nextrectime:
-				if entry[0] < now + 900:
-					tt.append(entry[1])
-				if entry[0] < now + 900:
-					ae.append(entry[2])
-				if debug:
-					print(ctime(entry[0]), entry)
-			if not TIMERTYPE.RESTART in tt:
-				RSsave = False
-			if not TIMERTYPE.REBOOT in tt:
-				RBsave = False
-			if not TIMERTYPE.DEEPSTANDBY in tt:
-				DSsave = False
-			if not AFTEREVENT.DEEPSTANDBY in ae:
-				aeDSsave = False
-			if debug:
-				print("RSsave=%s, RBsave=%s, DSsave=%s, aeDSsave=%s, wasTimerWakeup=%s" % (RSsave, RBsave, DSsave, aeDSsave, wasTimerWakeup))
-			if debug:
-				print("+++++++++++++++")
-			###
-			if config.timeshift.isRecording.value:
-				if 0 < nextrectime[0][0] < faketime:
-					return nextrectime
-				else:
-					nextrectime.append((faketime, None, None, None))
-					nextrectime.sort()
-					return nextrectime
-			else:
-				return nextrectime
-		else:
-			if config.timeshift.isRecording.value:
-				if 0 < nextrectime[0][0] < faketime:
-					return nextrectime[0][0]
-				else:
-					return faketime
-			else:
-				return nextrectime[0][0]
-
-	def isNextPowerManagerAfterEventActionAuto(self):
-		for timer in self.timer_list:
-			if timer.timerType == TIMERTYPE.WAKEUPTOSTANDBY or timer.afterEvent == AFTEREVENT.WAKEUPTOSTANDBY or timer.timerType == TIMERTYPE.WAKEUP or timer.afterEvent == AFTEREVENT.WAKEUP:
-				return True
-		return False
-
-	def record(self, entry, ignoreTSC=False, dosave=True):		#wird von loadTimer mit dosave=False aufgerufen
-		entry.timeChanged()
-		print("[PowerTimer]", str(entry))
-		entry.Timer = self
-		self.addTimerEntry(entry)
-		if dosave:
-			self.saveTimer()
-		return None
-
-	def removeEntry(self, entry):
-		print("[PowerTimer] Remove", str(entry))
-
-		# avoid re-enqueuing
-		entry.repeated = False
-
-		# abort timer.
-		# this sets the end time to current time, so timer will be stopped.
-		entry.autoincrease = False
-		entry.abort()
-
-		if entry.state != entry.StateEnded:
-			self.timeChanged(entry)
-
-# 		print "state: ", entry.state
-# 		print "in processed: ", entry in self.processed_timers
-# 		print "in running: ", entry in self.timer_list
-		# disable timer first
-		if entry.state != 3:
-			entry.disable()
-		# autoincrease instanttimer if possible
-		if not entry.dontSave:
-			for x in self.timer_list:
-				if x.setAutoincreaseEnd():
-					self.timeChanged(x)
-		# now the timer should be in the processed_timers list. remove it from there.
-		if entry in self.processed_timers:
-			self.processed_timers.remove(entry)
-		self.saveTimer()
-
-	def shutdown(self):
-		self.saveTimer()

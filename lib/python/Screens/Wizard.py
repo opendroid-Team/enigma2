@@ -14,7 +14,7 @@ from Components.Slider import Slider
 from Components.ActionMap import NumberActionMap
 from Components.ConfigList import ConfigList
 from Components.Sources.List import List
-
+from Components.SystemInfo import BoxInfo
 
 class WizardSummary(Screen):
 	def __init__(self, session, parent):
@@ -244,6 +244,7 @@ class Wizard(Screen):
 		}, -2)
 
 		self["VirtualKB"].setEnabled(False)
+		self["key_yellow"] = StaticText()
 
 	def red(self):
 		# print("[Wizard] In red.")
@@ -636,7 +637,8 @@ class Wizard(Screen):
 							self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"])
 						else:
 							self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"], eval(self.wizard[self.currStep]["config"]["args"]))
-						self.configInstance.setAnimationMode(0)
+						if BoxInfo.getItem("OSDAnimation"):
+							self.configInstance.setAnimationMode(0)
 						self["config"].l.setList(self.configInstance["config"].list)
 						callbacks = self.configInstance["config"].onSelectionChanged
 						self.configInstance["config"].destroy()

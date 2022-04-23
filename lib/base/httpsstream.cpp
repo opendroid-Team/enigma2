@@ -19,10 +19,14 @@ eHttpsStream::eHttpsStream()
 	partialPktSz = 0;
 	tmpBufSize = 32;
 	tmpBuf = (char*)malloc(tmpBufSize);
+	startDelay = 0;
 	if (eConfigManager::getConfigBoolValue("config.usage.remote_fallback_enabled", false))
 		startDelay = 500000;
-	else
-		startDelay = 0;
+	else {
+		int _startDelay = eConfigManager::getConfigIntValue("config.usage.http_startdelay");
+		if (_startDelay > 0)
+			startDelay = _startDelay * 1000;
+	}
 
 	ctx = NULL;
 	ssl = NULL;
@@ -57,7 +61,7 @@ int eHttpsStream::openUrl(const std::string &url, std::string &newurl)
 
 	close();
 
-	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenPLi;;;)";
+	std::string user_agent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenDroid;;;)";
 	std::string extra_headers = "";
 	size_t pos = uri.find('#');
 	if (pos != std::string::npos)
@@ -154,7 +158,7 @@ int eHttpsStream::openUrl(const std::string &url, std::string &newurl)
 		goto error;
 	}
 
-	retval = SSL_connect(ssl);
+	retval = SSL_connect(ssl); //NOSONAR
 	if (retval <= 0)
 	{
 		errstr = ERR_reason_error_string(ERR_get_error());
@@ -625,5 +629,4 @@ ssize_t eHttpsStream::SSL_readLine(SSL *ssl, char** buffer, size_t* bufsize)
 		}
 		if ((*buffer)[i] != '\r') i++;
 	}
-	return -1;
 }

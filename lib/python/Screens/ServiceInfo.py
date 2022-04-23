@@ -218,7 +218,7 @@ class ServiceInfo(Screen):
 			if posi > 1800:
 				posi = 3600 - posi
 				EW = "W"
-		return "%s - %s%s%s" % (namespace, (float(posi) / 10.0), SIGN, EW)
+		return "%s - %s%s%s" % (namespace, (float(posi) / 10.0), SIGN, _(EW))
 
 	def getTrackList(self):
 		trackList = []
@@ -316,8 +316,8 @@ class ServiceInfo(Screen):
 				return (tuner,
 					(_("System & Modulation"), frontendData["system"] + " " + frontendData["modulation"], TYPE_TEXT),
 					(_("Orbital position"), frontendData["orbital_position"], TYPE_VALUE_DEC),
-					(_("Frequency & Polarization"), _("%s MHz") % (frontendData.get("frequency", 0) / 1000) + " - " + frontendData["polarization"], TYPE_TEXT),
-					(_("Symbol rate & FEC"), _("%s KSymb/s") % (frontendData.get("symbol_rate", 0) / 1000) + " - " + frontendData["fec_inner"], TYPE_TEXT),
+					(_("Frequency & Polarization"), _("%s MHz") % (frontendData.get("frequency", 0) // 1000) + " - " + frontendData["polarization"], TYPE_TEXT),
+					(_("Symbol rate & FEC"), _("%s KSymb/s") % (frontendData.get("symbol_rate", 0) // 1000) + " - " + frontendData["fec_inner"], TYPE_TEXT),
 					(_("Inversion, Pilot & Roll-off"), frontendData["inversion"] + " - " + str(frontendData.get("pilot", None)) + " - " + str(frontendData.get("rolloff", None)), TYPE_TEXT),
 					(_("Input Stream ID"), issy(frontendData.get("is_id", 0)), TYPE_VALUE_DEC),
 					(_("PLS Mode"), frontendData.get("pls_mode", None), TYPE_TEXT),
@@ -328,7 +328,7 @@ class ServiceInfo(Screen):
 				return (tuner,
 					(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
 					(_("Frequency"), frontendData.get("frequency", 0), TYPE_VALUE_FREQ_FLOAT),
-					(_("Symbol rate & FEC"), _("%s KSymb/s") % (frontendData.get("symbol_rate", 0) / 1000) + " - " + frontendData["fec_inner"], TYPE_TEXT),
+					(_("Symbol rate & FEC"), _("%s KSymb/s") % (frontendData.get("symbol_rate", 0) // 1000) + " - " + frontendData["fec_inner"], TYPE_TEXT),
 					(_("Inversion"), frontendData["inversion"], TYPE_TEXT))
 			elif frontendDataOrg["tuner_type"] == "DVB-T":
 				return (tuner,
@@ -389,15 +389,16 @@ class ServiceInfo(Screen):
 					if provid:
 						extra_info = "provid=%s" % provid
 					else:
-						extra_info = "extra data=%s" % caid[2]
+						extra_info = "extra=%s" % caid[2]
 				from Tools.GetEcmInfo import GetEcmInfo
 				ecmdata = GetEcmInfo().getEcmData()
-				formatstring = "ECMPid %04X (%d) %04X-%s %s"
+				left = "ECMPid %04X (%d)" % (caid[1], caid[1])
+				right = "%04X-%s %s" % (caid[0], CaIdDescription, extra_info)
 				altColor = False
 				if caid[0] == int(ecmdata[1], 16) and (caid[1] == int(ecmdata[3], 16) or str(int(ecmdata[2], 16)) in provid):
-					formatstring = "%s (%s)" % (formatstring, _("active"))
+					right = "%s (%s)" % (right, _("active"))
 					altColor = True
-				tlist.append(ServiceInfoListEntry(formatstring % (caid[1], caid[1], caid[0], CaIdDescription, extra_info)))
+				tlist.append(ServiceInfoListEntry(left, right))
 			if not tlist:
 				tlist.append(ServiceInfoListEntry(_("No ECMPids available")))
 				tlist.append(ServiceInfoListEntry(_("(FTA Service)")))

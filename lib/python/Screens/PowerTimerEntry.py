@@ -60,6 +60,9 @@ class TimerEntry(Screen, ConfigListScreen):
 		ConfigListScreen.__init__(self, self.list, session=session)
 		self.setTitle(_("PowerTimer Entry"))
 		self.createSetup("config")
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
+		self.selectionChanged()
 
 	def createConfig(self):
 		afterevent = {
@@ -122,11 +125,11 @@ class TimerEntry(Screen, ConfigListScreen):
 			days[weekday] = True
 
 		if BoxInfo.getItem("DeepstandbySupport"):
-			shutdownString = _("go to deep standby")
+			shutdownString = _("Go to deep standby")
 		else:
-			shutdownString = _("shut down")
-		self.timerentry_timertype = ConfigSelection(choices=[("nothing", _("do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("autostandby", _("auto standby")), ("autodeepstandby", _("auto deepstandby")), ("standby", _("go to standby")), ("deepstandby", shutdownString), ("reboot", _("reboot system")), ("restart", _("Restart GUI"))], default=timertype)
-		self.timerentry_afterevent = ConfigSelection(choices=[("nothing", _("do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("standby", _("go to standby")), ("deepstandby", shutdownString)], default=afterevent)
+			shutdownString = _("Shut down")
+		self.timerentry_timertype = ConfigSelection(choices=[("nothing", _("Do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("autostandby", _("auto standby")), ("autodeepstandby", _("auto deepstandby")), ("standby", _("Go to standby")), ("deepstandby", shutdownString), ("reboot", _("reboot system")), ("restart", _("Restart GUI"))], default=timertype)
+		self.timerentry_afterevent = ConfigSelection(choices=[("nothing", _("Do nothing")), ("wakeup", _("wakeup")), ("wakeuptostandby", _("wakeup to standby")), ("standby", _("Go to standby")), ("deepstandby", shutdownString)], default=afterevent)
 		self.timerentry_type = ConfigSelection(choices=[("once", _("once")), ("repeated", _("repeated"))], default=type)
 
 		self.timerentry_repeated = ConfigSelection(default=repeated, choices=[("daily", _("daily")), ("weekly", _("weekly")), ("weekdays", _("Mon-Fri")), ("user", _("user defined"))])
@@ -140,7 +143,7 @@ class TimerEntry(Screen, ConfigListScreen):
 		self.timerentry_date = ConfigDateTime(default=self.timer.begin, formatstring=config.usage.date.full.value, increment=86400)
 		self.timerentry_starttime = ConfigClock(default=self.timer.begin)
 		self.timerentry_endtime = ConfigClock(default=self.timer.end)
-		self.timerentry_showendtime = ConfigSelection(default=(((self.timer.end - self.timer.begin) / 60) > 4), choices=[(True, _("yes")), (False, _("no"))])
+		self.timerentry_showendtime = ConfigSelection(default=(((self.timer.end - self.timer.begin) / 60) > 4), choices=[(True, _("Yes")), (False, _("No"))])
 
 		self.timerentry_repeatedbegindate = ConfigDateTime(default=self.timer.repeatedbegindate, formatstring=config.usage.date.full.value, increment=86400)
 
@@ -150,7 +153,7 @@ class TimerEntry(Screen, ConfigListScreen):
 		for x in (0, 1, 2, 3, 4, 5, 6):
 			self.timerentry_day.append(ConfigYesNo(default=days[x]))
 
-		self.timerrntry_showExtended = ConfigSelection(default=(self.timer.nettraffic == "yes" or self.timer.netip == "yes"), choices=[(True, _("yes")), (False, _("no"))])
+		self.timerrntry_showExtended = ConfigSelection(default=(self.timer.nettraffic == "yes" or self.timer.netip == "yes"), choices=[(True, _("Yes")), (False, _("No"))])
 		self.timerrntry_nettraffic = ConfigSelection(choices=[("yes", _("Yes")), ("no", _("No"))], default=self.timer.nettraffic)
 		self.timerrntry_trafficlimit = ConfigSelection(choices=traffic_table, default=self.timer.trafficlimit)
 		self.timerrntry_netip = ConfigSelection(choices=[("yes", _("Yes")), ("no", _("No"))], default=self.timer.netip)
@@ -385,6 +388,8 @@ class TimerEntry(Screen, ConfigListScreen):
 		self.saveTimer()
 		self.close((True, self.timer))
 
+# The following four functions check for the item to be changed existing
+# as for auto[deep]standby timers it doesn't, so we'll crash otherwise.
 	def incrementStart(self):
 		self.timerentry_starttime.increment()
 		self["config"].invalidate(self.entryStartTime)
@@ -415,84 +420,10 @@ class TimerEntry(Screen, ConfigListScreen):
 	def keyCancel(self):
 		self.close((False,))
 
+	def selectionChanged(self):
+		if self["config"].getCurrent():
+			if len(self["config"].getCurrent()) > 2 and self["config"].getCurrent()[2]:
+				self["description"].setText(self["config"].getCurrent()[2])
+			elif len(self["config"].getCurrent()) > 1:
+				self["description"].setText(self["config"].getCurrent()[0])
 
-class TimerLog(Screen):
-	def __init__(self, session, timer):
-		Screen.__init__(self, session)
-		self.skinName = "TimerLog"
-		self.timer = timer
-		self.log_entries = self.timer.log_entries[:]
-
-		self.fillLogList()
-
-		self["loglist"] = MenuList(self.list)
-		self["logentry"] = Label()
-		self["summary_description"] = StaticText("")
-
-		self["key_red"] = Button(_("Delete entry"))
-		self["key_green"] = Button()
-		self["key_yellow"] = Button("")
-		self["key_blue"] = Button(_("Clear log"))
-
-		self.onShown.append(self.updateText)
-
-		self["actions"] = NumberActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
-		{
-			"ok": self.keyClose,
-			"cancel": self.keyClose,
-			"up": self.up,
-			"down": self.down,
-			"left": self.left,
-			"right": self.right,
-			"red": self.deleteEntry,
-			"blue": self.clearLog
-		}, -1)
-		self.setTitle(_("PowerTimer Log"))
-
-	def deleteEntry(self):
-		cur = self["loglist"].getCurrent()
-		if cur is None:
-			return
-		self.log_entries.remove(cur[1])
-		self.fillLogList()
-		self["loglist"].l.setList(self.list)
-		self.updateText()
-
-	def fillLogList(self):
-		self.list = [(str(strftime(_("%Y-%m-%d %H-%M"), localtime(x[0])) + " - " + x[2]), x) for x in self.log_entries]
-
-	def clearLog(self):
-		self.log_entries = []
-		self.fillLogList()
-		self["loglist"].l.setList(self.list)
-		self.updateText()
-
-	def keyClose(self):
-		if self.timer.log_entries != self.log_entries:
-			self.timer.log_entries = self.log_entries
-			self.close((True, self.timer))
-		else:
-			self.close((False,))
-
-	def up(self):
-		self["loglist"].instance.moveSelection(self["loglist"].instance.moveUp)
-		self.updateText()
-
-	def down(self):
-		self["loglist"].instance.moveSelection(self["loglist"].instance.moveDown)
-		self.updateText()
-
-	def left(self):
-		self["loglist"].instance.moveSelection(self["loglist"].instance.pageUp)
-		self.updateText()
-
-	def right(self):
-		self["loglist"].instance.moveSelection(self["loglist"].instance.pageDown)
-		self.updateText()
-
-	def updateText(self):
-		if self.list:
-			self["logentry"].setText(str(self["loglist"].getCurrent()[1][2]))
-			self["summary_description"].setText(str(self["loglist"].getCurrent()[1][2]))
-		else:
-			self["logentry"].setText("")
