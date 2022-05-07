@@ -35,7 +35,7 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 	FEED_UNSTABLE = 2
 	FEED_STABLE = 3
 
-	skin = """
+	skin = ["""
 	<screen name="SoftwarePanel" position="center,center" size="%d,%d" >
 		<widget name="traffic_off" position="%d,%d" size="%d,%d" alphatest="blend" pixmap="icons/traffic_off.png" scale="1" />
 		<widget name="traffic_red" position="%d,%d" size="%d,%d" alphatest="blend" pixmap="icons/traffic_red.png" scale="1" />

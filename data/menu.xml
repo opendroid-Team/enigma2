@@ -14,8 +14,8 @@
 		"exec"s code
 -->
 
-<!-- Menu -->
-<menu text="Mainmenu" title="Main menu">
+<!-- Main Menu -->
+<menu text="Mainmenu" title="Main Menu">
 	<id val="mainmenu" />
 		<item weight="0" level="1" text="Blue Panel" entryID="BluePanel_selection">
 <code>
@@ -186,45 +186,29 @@ self.session.open(UsbFormat)
 			</menu>
 
 			<!-- Menu / Settings / System / Network -->
-			<menu weight="50" level="0" text="Network" entryID="network_menu">
+			<menu entryID="network_menu" level="0" text="Network" weight="50">
 				<id val="network" />
-				<item weight="0" level="0" text="Device Setup" entryID="device_setup"><screen module="NetworkSetup" screen="NetworkAdapterSelection"/></item>
-				<item weight="5" level="1" text="Mounts Setup" entryID="netmounts_setup"><screen module="NetworkSetup" screen="NetworkMountsMenu"/></item>
-				<item weight="3"  level="2" text="Password Setup" entryID="password_setup"><screen module="NetworkSetup" screen="NetworkPassword"/></item>
-				<item weight="10" level="2" text="SATPI Setup" entryID="netsatpi_setup"><screen module="NetworkSetup" screen="NetworkSATPI"/></item>
-				<item weight="15" level="2" text="CIFS/Samba Setup" entryID="netsmba_setup"><screen module="NetworkSetup" screen="NetworkSamba"/></item>
-				<item weight="20" level="2" text="FTP Setup" entryID="netftp_setup"><screen module="NetworkSetup" screen="NetworkFtp"/></item>
-				<item weight="25" level="2" text="Inadyn Setup" entryID="Inadyn_setup"><screen module="NetworkSetup" screen="NetworkInadyn"/></item>
-				<item weight="30" level="2" text="MiniDLNA Setup" entryID="minidlna_setup"><screen module="NetworkSetup" screen="NetworkMiniDLNA"/></item>
-				<item weight="35" level="2" text="NFS Setup" entryID="netnfs_setup"><screen module="NetworkSetup" screen="NetworkNfs"/></item>
-				<item weight="40" level="2" text="OpenVPN Setup" entryID="netvpn_setup"><screen module="NetworkSetup" screen="NetworkOpenvpn"/></item>
-				<item weight="45" level="2" text="SABnzbd Setup" entryID="netsabnzbd_setup"><screen module="NetworkSetup" screen="NetworkSABnzbd"/></item>
-				<item weight="50" level="2" text="Telnet Setup" entryID="nettelnet_setup"><screen module="NetworkSetup" screen="NetworkTelnet"/></item>
-				<item weight="55" level="2" text="uShare Setup" entryID="netushare_setup"><screen module="NetworkSetup" screen="NetworkuShare"/></item>
-				<item weight="60" level="2" text="AFP Setup" entryID="netafp_setup"><screen module="NetworkSetup" screen="NetworkAfp"/></item>
+				<item entryID="device_setup" level="0" text="Device Settings" weight="0"><screen module="NetworkSetup" screen="NetworkAdapterSelection" /></item>
+				<item entryID="netmounts_setup" level="1" text="Mounts Settings" weight="5"><screen module="NetworkSetup" screen="NetworkMountsMenu" /></item>
+				<item entryID="password_setup" level="2" text="Password Settings" weight="8"><screen module="NetworkSetup" screen="NetworkPassword" /></item>
+				<item entryID="netsatpi_setup" level="2" text="SATPI Settings" weight="10"><screen module="NetworkSetup" screen="NetworkSATPI" /></item>
+				<item entryID="netsmba_setup" level="2" text="CIFS/Samba Settings" weight="15"><screen module="NetworkSetup" screen="NetworkSamba" /></item>
+				<item entryID="netftp_setup" level="2" text="FTP Settings" weight="20"><screen module="NetworkSetup" screen="NetworkFtp" /></item>
+				<item entryID="Inadyn_setup" level="2" text="Inadyn Settings" weight="25"><screen module="NetworkSetup" screen="NetworkInadyn" /></item>
+				<item entryID="minidlna_setup" level="2" text="MiniDLNA Settings" weight="30"><screen module="NetworkSetup" screen="NetworkMiniDLNA" /></item>
+				<item entryID="netnfs_setup" level="2" text="NFS Settings" weight="35"><screen module="NetworkSetup" screen="NetworkNfs" /></item>
+				<item entryID="netvpn_setup" level="2" text="OpenVPN Settings" weight="40"><screen module="NetworkSetup" screen="NetworkOpenvpn" /></item>
+				<item entryID="netsabnzbd_setup" level="2" text="SABnzbd Settings" weight="45"><screen module="NetworkSetup" screen="NetworkSABnzbd" /></item>
+				<item entryID="nettelnet_setup" level="2" text="Telnet Settings" weight="50"><screen module="NetworkSetup" screen="NetworkTelnet" /></item>
+				<item entryID="netushare_setup" level="2" text="uShare Settings" weight="55"><screen module="NetworkSetup" screen="NetworkuShare" /></item>
+				<item entryID="netafp_setup" level="2" text="AFP Settings" weight="60"><screen module="NetworkSetup" screen="NetworkAfp" /></item>
 			</menu>
-			<item weight="55" level="0" text="HDMI-CEC Setup" entryID="hdmicec" requires="HDMICEC"><screen module="HDMICEC" screen="HDMICECSetup"/></item>
-			<item weight="60" level="0" text="Time" entryID="time_setup"><screen module="Time" screen="Time" /></item>
-			<item weight="70" level="0" entryID="logs_setup"><setup id="logs" /></item>
-			<item weight="80" level="1" entryID="rfmod_setup" requires="RfModulator"><setup id="RFmod"/></item>
-			<item weight="99" level="0" text="Factory reset" entryID="factory_reset">
-				<code>
-from __future__ import print_function
-from Screens.FactoryReset import FactoryReset
-def msgClosed(ret):
-	if ret:
-		from os import system, path, _exit
-		print("[FACTORY RESET] remove dir /etc/enigma2")
-		system("rm -R /etc/enigma2")
-		if path.exists("/media/hdd/images/config"):
-			system("rm -R /media/hdd/images/config")
-		print("[FACTORY RESET] set network to DHCP")
-		system("cp -f /usr/share/enigma2/defaults/interfaces /etc/network/interfaces")
-		system("/etc/init.d/networking restart")
-		_exit(0)
-self.session.openWithCallback(msgClosed, FactoryReset)
-</code>
-			</item>
+			<item entryID="hdmicec" level="0" text="HDMI-CEC Settings" weight="55" requires="HDMICEC"><screen module="HDMICEC" screen="HDMICECSetup" /></item>
+			<item entryID="script_manager" level="1" text="Script Manager" weight="56"><screen module="ScriptRunner" screen="ScriptRunner" /></item>
+			<item entryID="time_setup" level="0" text="Time Settings" weight="60"><screen module="Time" screen="Time" /></item>
+			<item entryID="logs_setup" level="0" text="Logs Settings" weight="70"><setup id="Logs" /></item>
+			<item entryID="rfmod_setup" level="1" text="RF Output Settings" weight="80" requires="RfModulator"><setup id="RFModulator" /></item>
+			<item entryID="factory_reset" level="0" text="Factory Reset" weight="99"><screen module="FactoryReset" screen="FactoryReset" /></item>
 		</menu>
 	</menu>
 
@@ -252,39 +236,39 @@ self.session.openWithCallback(msgClosed, FactoryReset)
 	<item weight="20" level="1" text="VCR scart" entryID="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 	<item weight="10" level="1" text="Plugins" entryID="plugin_selection"><screen module="PluginBrowser" screen="PluginBrowser" /></item>
 	<!-- Menu / Standby Restart -->
-	<menu weight="99" level="0" text="Standby / Restart" entryID="standby_restart_list">
+	<menu entryID="standby_restart_list" level="0" text="Standby / Restart" weight="99">
 		<id val="shutdown" />
-		<item weight="0" level="0" text="Deep Standby" requires="DeepstandbySupport" entryID="deep_standby">
+		<item entryID="deep_standby" level="0" text="Deep Standby" weight="0" requires="DeepstandbySupport">
 			<code>
-from Screens.Standby import TryQuitMainloop
 from Screens.MessageBox import MessageBox
+from Screens.Standby import QUIT_SHUTDOWN, TryQuitMainloop
 recordings = self.session.nav.getRecordingsCheckBeforeActivateDeepStandby()
 if recordings:
-	self.session.openWithCallback(self.gotoStandby,MessageBox,_("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type = MessageBox.TYPE_INFO, close_on_any_key = True, timeout = 10)
+	self.session.openWithCallback(self.gotoStandby, MessageBox, _("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type=MessageBox.TYPE_INFO, close_on_any_key=True, timeout=10)
 else:
-	self.session.open(TryQuitMainloop, 1)
-</code>
+	self.session.open(TryQuitMainloop, QUIT_SHUTDOWN)
+			</code>
 		</item>
-		<item weight="5" level="0" text="Shutdown" requires="!DeepstandbySupport" entryID="shutdown"><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
-		<item weight="6" level="0" text="Multiboot Image Selector" entryID="multiboot" requires="canMultiBoot"><screen module="MultiBootSelector" screen="MultiBootSelector">1</screen></item>
-		<!--item weight="7" level="0" text="SDroot" entryID="SDswap" requires="HasSDswap"><screen module="SDswap" screen="SDswap">1</screen></item-->
-		<item weight="10" level="0" text="WOL Standby" requires="GBWOL" entryID="wol_standby">
+		<item entryID="shutdown" level="0" text="Shutdown" weight="5" requires="!DeepstandbySupport"><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
+		<item entryID="multiboot" level="0" text="MultiBoot Manager" weight="6" requires="canMultiBoot"><screen module="MultiBootManager" screen="MultiBootManager" /></item>
+		<!--item entryID="SDswap" level="0" text="SDroot" weight="7" requires="HasSDswap"><screen module="SDswap" screen="SDswap">1</screen></item-->
+		<item entryID="wol_standby" level="0" text="WOL Standby" weight="10" requires="GBWOL">
 			<code>
-from Screens.Standby import TryQuitMainloop
 from Screens.MessageBox import MessageBox
+from Screens.Standby import QUIT_WOLSHUTDOWN, TryQuitMainloop
 recordings = self.session.nav.getRecordingsCheckBeforeActivateDeepStandby()
 if recordings:
-	self.session.openWithCallback(self.gotoStandby,MessageBox,_("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type = MessageBox.TYPE_INFO, close_on_any_key = True, timeout = 10)
+	self.session.openWithCallback(self.gotoStandby, MessageBox, _("Recording(s) are in progress or coming up in few seconds!\nEntering standby, after recording the box will shutdown."), type=MessageBox.TYPE_INFO, close_on_any_key=True, timeout=10)
 else:
-	self.session.open(TryQuitMainloop, 45)
-</code>
+	self.session.open(TryQuitMainloop, QUIT_WOLSHUTDOWN)
+			</code>
 		</item>
-		<item weight="15" level="0" text="Standby" entryID="standby"><screen module="Standby" screen="Standby"/></item>
-		<item weight="20" level="0" text="Sleep Timer" requires="DeepstandbySupport" entryID="sleep"><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
-		<item weight="25" level="0" text="Restart" entryID="restart"><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
-		<item weight="30" level="0" text="Restart enigma2" entryID="restart_enigma"><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
-		<item weight="35" level="0" text="Recovery Mode" requires="RecoveryMode" entryID="maintenance_mode"><screen module="Standby" screen="TryQuitMainloop">16</screen></item>
-		<item weight="24" level="0" text="Dual Mode" requires="canDualBoot" entryID="dual_mode"><screen module="Standby" screen="DualMode" /></item>
+		<item entryID="standby" level="0" text="Standby" weight="15"><screen module="Standby" screen="Standby" /></item>
+		<item entryID="sleep" level="0" text="Sleep Timer" weight="20" requires="DeepstandbySupport"><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
+		<item entryID="restart" level="0" text="Restart" weight="25"><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
+		<item entryID="restart_enigma" level="0" text="Restart enigma2" weight="30"><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
+		<item entryID="maintenance_mode" level="0" text="Recovery Mode" weight="24" requires="RecoveryMode"><screen module="Standby" screen="TryQuitMainloop">16</screen></item>
+		<item entryID="dual_mode" level="0" text="Dual Mode" weight="24" requires="canDualBoot"><screen module="Standby" screen="DualMode" /></item>
 	</menu>
 
 </menu>

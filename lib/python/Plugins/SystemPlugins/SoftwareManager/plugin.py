@@ -330,7 +330,7 @@ class UpdatePluginMenu(Screen):
 			currentEntry = current[0]
 			if self.menu == 0:
 				if (currentEntry == "software-update"):
-					self.session.open(SoftwareUpdate, self.skin_path)
+					self.session.open(SoftwarePanel, self.skin_path)
 				elif (currentEntry == "software-restore"):
 					self.session.open(ImageWizard)
 				elif (currentEntry == "install-extensions"):
@@ -1767,7 +1767,7 @@ class UpdatePlugin(Screen):
 				self.close()
 		else:
 			if not self.updating:
-				self.ipkg.stop()
+				self.opkg.stop()
 				self.close()
 
 	def exitAnswer(self, result):

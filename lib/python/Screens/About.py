@@ -22,7 +22,7 @@ from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 import re
 from Tools.StbHardware import getFPVersion
-from Tools.Multiboot import GetCurrentImage, GetCurrentImageMode
+from Tools.MultiBoot import MultiBoot
 from enigma import ePicLoad, getDesktop, eSize, eTimer, eLabel, eConsoleAppContainer
 from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap

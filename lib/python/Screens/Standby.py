@@ -6,10 +6,11 @@ from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.Console import Console
+from Components.Sources.StreamService import StreamServiceList
 from Components.SystemInfo import BoxInfo
 from Components.Harddisk import harddiskmanager
 from GlobalActions import globalActionMap
-from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference
+from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer
 from boxbranding import getMachineBrand, getMachineName, getBrandOEM, getMachineBuild
 from Tools.Directories import mediaFilesInUse
 import Tools.Notifications
@@ -113,7 +114,7 @@ class Standby2(Screen):
 		if os.path.exists("/usr/script/StandbyLeave.sh"):
 			Console().ePopen("/usr/script/StandbyLeave.sh &")
 
-		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
+		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'sx988', 'ustym4kpro', 'ustym4kottpremium', 'beyonwizv2', 'viper4k', 'og2ott4k', 'sfx6008')):
 			try:
 				open("/proc/stb/hdmi/output", "w").write("on")
 			except:
@@ -179,8 +180,7 @@ class Standby2(Screen):
 
 		self["actions"] = ActionMap(["StandbyActions"],
 		{
-			"power": self.Power,
-			"power_make": self.Power_make,
+			"power": self.Power_make,
 			"power_break": self.Power_break,
 			"power_long": self.Power_long,
 			"power_repeat": self.Power_repeat,
@@ -230,7 +230,7 @@ class Standby2(Screen):
 			self.avswitch.setInput("SCART")
 		else:
 			self.avswitch.setInput("AUX")
-		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'ustym4kpro', 'beyonwizv2', 'viper4k')):
+		if (getBrandOEM() in ('fulan', 'clap', 'dinobot') or getMachineBuild() in ('gbmv200', 'sf8008', 'sf8008m', 'sf8008opt', 'sx988', 'ustym4kpro', 'ustym4kottpremium', 'beyonwizv2', 'viper4k', 'og2ott4k', 'sfx6008')):
 			try:
 				open("/proc/stb/hdmi/output", "w").write("off")
 			except:
@@ -374,10 +374,10 @@ class TryQuitMainloop(MessageBox):
 			reason = _("Recording(s) are in progress or coming up in few seconds!") + '\n'
 			default_yes = False
 			timeout = 30
-#		elif eStreamServer.getInstance().getConnectedClients() or StreamServiceList:
-#			reasons = _("Client is streaming from this box!")
-#			default_yes = False
-#			timeout = 30
+		elif eStreamServer.getInstance().getConnectedClients() or StreamServiceList:
+			reason = _("Client is streaming from this box!")
+			default_yes = False
+			timeout = 30
 		elif mediaFilesInUse(session) and retvalue in (QUIT_SHUTDOWN, QUIT_REBOOT, QUIT_UPGRADE_FP, QUIT_UPGRADE_PROGRAM, QUIT_UPGRADE_FRONTPANEL):
 			reason = _("A file from media is in use!")
 			default_yes = False
@@ -419,12 +419,11 @@ class TryQuitMainloop(MessageBox):
 				if not recordings: # no more recordings exist
 					rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
 					if rec_time > 0 and (rec_time - time()) < 360:
-						self.initTimeout(360) # wait for next starting timer
-						self.startTimer()
+						self.timer.start(360) # wait for next starting timer
 					else:
 						self.close(True) # immediate shutdown
 			elif event == iRecordableService.evStart:
-				self.stopTimer()
+				self.stopTimer("getRecordEvent")
 
 	def close(self, value):
 		global quitMainloopCode
@@ -446,6 +445,8 @@ class TryQuitMainloop(MessageBox):
 				setLCDModeMinitTV("0")
 			if BoxInfo.getItem("model") == "vusolo4k":  #workaround for white display flash
 				open("/proc/stb/fp/oled_brightness", "w").write("0")
+			if BoxInfo.getItem("model") == "pulse4k":
+				open("/proc/stb/lcd/oled_brightness", "w").write("0")
 			quitMainloop(self.retval)
 		else:
 			MessageBox.close(self, True)
@@ -457,6 +458,9 @@ class TryQuitMainloop(MessageBox):
 	def __onHide(self):
 		global inTryQuitMainloop
 		inTryQuitMainloop = False
+
+	def createSummary(self):  # Suppress the normal MessageBox ScreenSummary screen.
+ 		return None
 
 class DualMode(Screen):
 	def __init__(self, session):

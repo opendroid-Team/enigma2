@@ -9,9 +9,9 @@ from Screens.Screen import Screen
 from Components.PluginList import PluginList, PluginEntryComponent, PluginCategoryComponent, PluginDownloadComponent
 from Components.Harddisk import harddiskmanager
 from Components.Sources.StaticText import StaticText
-from Components import Ipkg
+from Components import Opkg
 from Components.config import config, ConfigSubsection, ConfigYesNo, getConfigListEntry, configfile, ConfigText
-from Screens.Ipkg import Ipkg as Ipkg_1
+from Screens.Opkg import Opkg as Opkg_1
 from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_ACTIVE_SKIN
 from Screens.MessageBox import MessageBox
@@ -50,7 +50,7 @@ from enigma import getDesktop
 import os
 import re
 from Tools.LoadPixmap import LoadPixmap
-from Components.Ipkg import IpkgComponent
+from Components.Opkg import OpkgComponent
 from Components.ScrollLabel import ScrollLabel
 from os import popen, system, remove, listdir, chdir, getcwd, statvfs, mkdir, path, walk
 from Components.ProgressBar import ProgressBar
@@ -285,13 +285,13 @@ class	AddonsRemove(Screen):
 
                 })
                 if os.path.isfile('/usr/bin/opkg'):
-                        self.ipkg = '/usr/bin/opkg'
-                        self.ipkg_install = self.ipkg + ' install --force-overwrite'
-                        self.ipkg_remove =  self.ipkg + ' remove --autoremove --force-depends'
+                        self.opkg = '/usr/bin/opkg'
+                        self.opkg_install = self.opkg + ' install --force-overwrite'
+                        self.opkg_remove =  self.opkg + ' remove --autoremove --force-depends'
                 else:
-                        self.ipkg = 'ipkg'
-                        self.ipkg_install = 'ipkg install --force-overwrite -force-defaults'
-                        self.ipkg_remove =  self.ipkg + ' remove --autoremove --force-depends'
+                        self.opkg = 'opkg'
+                        self.opkg_install = 'opkg install --force-overwrite -force-defaults'
+                        self.opkg_remove =  self.opkg + ' remove --autoremove --force-depends'
 
         def go(self):
                 sel = self["list"].l.getCurrentSelection()
@@ -358,8 +358,8 @@ class	AddonsRemove(Screen):
                 PLUGIN_PREFIX = 'enigma2-plugin-'
                 cmdList = []
                 for item in self.setuplist:
-                        cmdList.append((IpkgComponent.CMD_REMOVE, { "package": PLUGIN_PREFIX + item }))
-                self.session.open(Ipkg_1, cmdList = cmdList)
+                        cmdList.append((OpkgComponent.CMD_REMOVE, { "package": PLUGIN_PREFIX + item }))
+                self.session.open(Opkg_1, cmdList = cmdList)
 
         def listplugininfo(self, pluginfiles):
                 try:
@@ -395,7 +395,7 @@ class	AddonsRemove(Screen):
 
                                 dest = os.path.normpath(dest)
                                 extra = '--add-dest %s:%s -d %s' % (dest,dest,dest)
-                                Ipkg.opkgAddDestination(dest)
+                                Opkg.opkgAddDestination(dest)
                         else:
                                 extra = '-d ' + dest
                         self.doInstall(self.installFinished, pluginnames + ' ' + extra)
@@ -435,20 +435,20 @@ class	AddonsRemove(Screen):
                                 self.install_bootlogo_name = pluginnames
                                 if pluginnames.startswith('enigma2-plugin-settings-'):
                                         self.check_settings = True
-                                        self.startIpkgListInstalled(self.PLUGIN_PREFIX + 'settings-*')
+                                        self.startOpkgListInstalled(self.PLUGIN_PREFIX + 'settings-*')
                                 elif pluginnames.startswith('enigma2-plugin-bootlogo-'):
                                         self.check_bootlogo = True
-                                        self.startIpkgListInstalled(self.PLUGIN_PREFIX + 'bootlogo-*')
+                                        self.startOpkgListInstalled(self.PLUGIN_PREFIX + 'bootlogo-*')
                                 else:
                                         self.runSettingsInstall()
                         elif self.type == self.REMOVE:
                                 self.doRemove(self.installFinished, pluginnames + " --force-remove --force-depends")
 
         def doRemove(self, callback, pkgname):
-                self.session.openWithCallback(callback, Console, cmdlist = [self.ipkg_remove + Ipkg.opkgExtraDestinations() + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
+                self.session.openWithCallback(callback, Console, cmdlist = [self.opkg_remove + Opkg.opkgExtraDestinations() + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
 
         def doInstall(self, callback, pkgname):
-                self.session.openWithCallback(callback, Console, cmdlist = [self.ipkg_install + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
+                self.session.openWithCallback(callback, Console, cmdlist = [self.opkg_install + " " + self.PLUGIN_PREFIX + pkgname, "sync"], closeOnSuccess = True)
 
         def runSettingsRemove(self, val):
                 if val:
@@ -483,11 +483,11 @@ class	AddonsRemove(Screen):
                  percFree))
                 self['spaceused'].setValue(percUsed)
 
-        def startIpkgListInstalled(self, pkgname = PLUGIN_PREFIX + '*'):
-                self.container.execute(self.ipkg + Ipkg.opkgExtraDestinations() + " list_installed '%s'" % pkgname)
+        def startOpkgListInstalled(self, pkgname = PLUGIN_PREFIX + '*'):
+                self.container.execute(self.opkg + Opkg.opkgExtraDestinations() + " list_installed '%s'" % pkgname)
 
-        def startIpkgListAvailable(self):
-                self.container.execute(self.ipkg + Ipkg.opkgExtraDestinations() + " list '" + self.PLUGIN_PREFIX + "*'")
+        def startOpkgListAvailable(self):
+                self.container.execute(self.opkg + Opkg.opkgExtraDestinations() + " list '" + self.PLUGIN_PREFIX + "*'")
 
         def startRun(self):
                 listsize = self["list"].instance.size()
@@ -495,10 +495,10 @@ class	AddonsRemove(Screen):
                 self.listWidth = listsize.width()
                 self.listHeight = listsize.height()
                 if self.type == self.DOWNLOAD:
-                        self.container.execute(self.ipkg + " update")
+                        self.container.execute(self.opkg + " update")
                 elif self.type == self.REMOVE:
                         self.run = 1
-                        self.startIpkgListInstalled()
+                        self.startOpkgListInstalled()
 
         def installFinished(self):
                 if hasattr(self, 'postInstallCall'):
@@ -535,7 +535,7 @@ class	AddonsRemove(Screen):
                 if self.run == 0:
                         self.run = 1
                         if self.type == self.DOWNLOAD:
-                                self.startIpkgListInstalled()
+                                self.startOpkgListInstalled()
                 elif self.run == 1 and self.type == self.DOWNLOAD:
                         self.run = 2
                         from Components import opkg

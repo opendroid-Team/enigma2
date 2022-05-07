@@ -17,12 +17,15 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_PLUGIN, SCOPE_GUISK
 from Tools.GetEcmInfo import GetEcmInfo
 from Components.Sources.StaticText import StaticText
 from OPENDROID.OscamSmartcard import *
+from os.path import isfile
+from enigma import eConsoleAppContainer, eTimer
+from os import listdir, readlink, symlink, unlink
+from os.path import exists, split as pathsplit
 import os
 import enigma
 from ServiceReference import ServiceReference
 from enigma import eTimer, iServiceInformation, getDesktop
 from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo
-from enigma import eTimer, eConsoleAppContainer
 
 def command(comandline, strip=1):
         comandline = comandline + " >/tmp/command.txt"
@@ -239,59 +242,60 @@ class BluePanel(Screen, ConfigListScreen):
         def cancel(self):
                 self.close()
 
-        def myclose(self):
-                self.close()
+#       def myclose(self):
+#               self.close()
 
 class CamControl:
-        '''CAM convention is that a softlink named /etc/init.c/softcam.* points
-        to the start/stop script.'''
+	'''CAM convention is that a softlink named /etc/init.c/softcam.* points
+	to the start/stop script.'''
 
-        def __init__(self, name):
-                self.name = name
-                self.link = '/etc/init.d/' + name
-                if not os.path.exists(self.link):
-                        print("[CamControl] No softcam link?", self.link)
+	def __init__(self, name):
+		self.name = name
+		self.link = '/etc/init.d/' + name
+		if not exists(self.link):
+			print("[CamControl] No softcam link: '%s'" % self.link)
 
-        def getList(self):
-                result = []
-                prefix = self.name + '.'
-                for f in os.listdir("/etc/init.d"):
-                        if f.startswith(prefix):
-                                result.append(f[len(prefix):])
-                return result
+	def getList(self):
+		result = []
+		prefix = self.name + '.'
+		for f in listdir("/etc/init.d"):
+			if f.startswith(prefix):
+				result.append(f[len(prefix):])
+		return result
 
-        def current(self):
-                try:
-                        l = os.readlink(self.link)
-                        prefix = self.name + '.'
-                        return os.path.split(l)[1].split(prefix, 2)[1]
-                except:
-                        pass
-                return None
+	def current(self):
+		try:
+			l = readlink(self.link)
+			prefix = self.name + '.'
+			return pathsplit(l)[1].split(prefix, 2)[1]
+		except:
+			pass
+		return None
 
-        def command(self, cmd):
-                if os.path.exists(self.link):
-                        print("Executing", self.link + ' ' + cmd)
-                        enigma.eConsoleAppContainer().execute(self.link + ' ' + cmd)
+	def command(self, cmd):
+		if exists(self.link):
+			cmd = "%s %s" % (self.link, cmd)
+			print("[CamControl] Executing Command '%s'" % cmd)
+			eConsoleAppContainer().execute(cmd)
 
-        def select(self, which):
-                print("Selecting CAM:", which)
-                if not which:
-                        which = "None"
-                dst = self.name + '.' + which
-                if not os.path.exists('/etc/init.d/' + dst):
-                        print("[CamControl] init script does not exist:", dst)
-                        return
-                try:
-                        os.unlink(self.link)
-                except:
-                        pass
-                try:
-                        os.symlink(dst, self.link)
-                except:
-                        print("Failed to create symlink for softcam:", dst)
-                        import sys
-                        print(sys.exc_info()[:2])
+	def select(self, which):
+		print("[CamControl] Select Cam: %s" % which)
+		if not which:
+			which = "None"
+		dst = "%s.%s" % (self.name, which)
+		if not exists('/etc/init.d/%s' % dst):
+			print("[CamControl] init script '%s' does not exist" % dst)
+			return
+		try:
+			unlink(self.link)
+		except:
+			pass
+		try:
+			symlink(dst, self.link)
+		except:
+			print("[CamControl] Failed to create symlink for softcam: %s" % dst)
+			import sys
+			print(sys.exc_info()[:2])
 
 
 class ShowSoftcamPackages(Screen):
@@ -462,42 +466,42 @@ class ShowSoftcamPackages(Screen):
                 else:
                         self.setStatus('error')
 
-class startcam(Screen):
-        skin = """
-	<screen name="startcam" position="center,center" size="484, 150" title="Starting Softcam">
-	<widget name="connect" position="217, 0" size="64,64" zPosition="2" pixmaps="OPENDROID/icons/sc1.png,OPENDROID/icons/sc2.png,OPENDROID/icons/sc3.png,OPENDROID/icons/sc4.png,OPENDROID/icons/sc5.png,OPENDROID/icons/sc6.png,OPENDROID/icons/sc7.png,OPENDROID/icons/sc8.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc10.png,OPENDROID/icons/sc11.png,OPENDROID/icons/sc12.png,OPENDROID/icons/sc13.png,OPENDROID/icons/sc14.png,OPENDROID/icons/sc15.png,OPENDROID/icons/sc17.png,OPENDROID/icons/sc18.png,OPENDROID/icons/sc19.png,OPENDROID/icons/sc20.png,OPENDROID/icons/sc21.png,OPENDROID/icons/sc22.png,OPENDROID/icons/sc23.png,OPENDROID/icons/sc24.png"  transparent="1" alphatest="blend"/>
-	<widget name="text" position="10, 80" halign="center" size="460, 60" zPosition="1" font="Regular;20" valign="top" transparent="1"/>
-	</screen>"""
+#class startcam(Screen):
+#        skin = """
+#	<screen name="startcam" position="center,center" size="484, 150" title="Starting Softcam">
+#	<widget name="connect" position="217, 0" size="64,64" zPosition="2" pixmaps="OPENDROID/icons/sc1.png,OPENDROID/icons/sc2.png,OPENDROID/icons/sc3.png,OPENDROID/icons/sc4.png,OPENDROID/icons/sc5.png,OPENDROID/icons/sc6.png,OPENDROID/icons/sc7.png,OPENDROID/icons/sc8.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc9.png,OPENDROID/icons/sc10.png,OPENDROID/icons/sc11.png,OPENDROID/icons/sc12.png,OPENDROID/icons/sc13.png,OPENDROID/icons/sc14.png,OPENDROID/icons/sc15.png,OPENDROID/icons/sc17.png,OPENDROID/icons/sc18.png,OPENDROID/icons/sc19.png,OPENDROID/icons/sc20.png,OPENDROID/icons/sc21.png,OPENDROID/icons/sc22.png,OPENDROID/icons/sc23.png,OPENDROID/icons/sc24.png"  transparent="1" alphatest="blend"/>
+#	<widget name="text" position="10, 80" halign="center" size="460, 60" zPosition="1" font="Regular;20" valign="top" transparent="1"/>
+#	</screen>"""
 
-        def __init__(self, session, title):
-                Screen.__init__(self, session)
-                msg = _("Please wait, restarting softcam.")
-                self['connect'] = MultiPixmap()
-                self['text'] = Label(msg)
-                self.activityTimer = eTimer()
-                self.activityTimer.timeout.get().append(self.updatepix)
-                self.onShow.append(self.startShow)
-                self.onClose.append(self.delTimer)
+#        def __init__(self, session, title):
+#                Screen.__init__(self, session)
+#                msg = _("Please wait, restarting softcam.")
+#                self['connect'] = MultiPixmap()
+#                self['text'] = Label(msg)
+#                self.activityTimer = eTimer()
+#                self.activityTimer.timeout.get().append(self.updatepix)
+#                self.onShow.append(self.startShow)
+#                self.onClose.append(self.delTimer)
 
-        def startShow(self):
-                self.curpix=0
-                self.count=0
-                self['connect'].setPixmapNum(0)
-                self.activityTimer.start(120)
+#        def startShow(self):
+#                self.curpix=0
+#                self.count=0
+#                self['connect'].setPixmapNum(0)
+#                self.activityTimer.start(120)
 
-        def updatepix(self):
-                self.activityTimer.stop()
-                if self.curpix > 23:
-                        self.curpix=0
-                if self.count > 120:
-                        self.curpix = 23
-                self['connect'].setPixmapNum(self.curpix)
-                if self.count == 35:
-                        self.hide()
-                        self.close()
-                self.activityTimer.start(140)
-                self.curpix += 1
-                self.count += 1
+#        def updatepix(self):
+#                self.activityTimer.stop()
+#                if self.curpix > 23:
+#                        self.curpix=0
+#                if self.count > 120:
+#                        self.curpix = 23
+#                self['connect'].setPixmapNum(self.curpix)
+#                if self.count == 35:
+#                        self.hide()
+#                        self.close()
+#                self.activityTimer.start(140)
+#                self.curpix += 1
+#                self.count += 1
 
-        def delTimer(self):
-                del self.activityTimer
+#        def delTimer(self):
+#                del self.activityTimer

@@ -638,9 +638,9 @@ def InitUsageConfig():
 	config.usage.frontend_priority.addNotifier(PreferredTunerChanged)
 	config.usage.frontend_priority_multiselect.addNotifier(PreferredTunerChanged)
 	config.usage.frontend_priority_strictly.addNotifier(PreferredTunerChanged)
-	if not os.path.exists(resolveFilename(SCOPE_VOD)):
+	if not exists(resolveFilename(SCOPE_VOD)):
 	 try:
-	  os.mkdir(resolveFilename(SCOPE_VOD), 493)
+	  mkdir(resolveFilename(SCOPE_VOD), 493)
 	 except:
 	  pass
 	config.usage.vod_path = ConfigText(default = resolveFilename(SCOPE_VOD))
@@ -1215,6 +1215,7 @@ def InitUsageConfig():
 	config.crash.enabledebug = ConfigYesNo(default=False)
 	config.crash.debugActionMaps = ConfigYesNo(default=False)
 	config.crash.debugKeyboards = ConfigYesNo(default=False)
+	config.crash.debugOpkg = ConfigYesNo(default=False)
 	config.crash.debugRemoteControls = ConfigYesNo(default=False)
 	config.crash.debugScreens = ConfigYesNo(default=False)
 	config.crash.debugloglimit = ConfigSelectionNumber(min=1, max=10, stepwidth=1, default=4, wraparound=True)

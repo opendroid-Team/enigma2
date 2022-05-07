@@ -112,9 +112,9 @@ class InstallWizard(Screen, ConfigListScreen):
 	def run(self):
 		if self.index == self.STATE_UPDATE:
 			if config.misc.installwizard.hasnetwork.value:
-				self.session.open(InstallWizardOpkgUpdater, self.index, _('Please wait (updating packages)'), OpkgComponent.CMD_UPDATE)
+				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), OpkgComponent.CMD_UPDATE)
 		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value:
-			self.session.open(InstallWizardOpkgUpdater, self.index, _('Please wait (downloading channel list)'), OpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
+			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), OpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
 		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
 			from Screens.PluginBrowser import PluginDownloadBrowser
 			self.session.open(PluginDownloadBrowser, 0)
@@ -127,7 +127,7 @@ class InstallWizard(Screen, ConfigListScreen):
 		return
 
 
-class InstallWizardOpkgUpdater(Screen):
+class InstallWizardIpkgUpdater(Screen):
 	def __init__(self, session, index, info, cmd, pkg=None):
 		Screen.__init__(self, session)
 
@@ -148,7 +148,7 @@ class InstallWizardOpkgUpdater(Screen):
 	def opkgCallback(self, event, param):
 		if event == OpkgComponent.EVENT_DONE:
 			if self.index == InstallWizard.STATE_UPDATE:
-				config.misc.installwizard.opkgloaded.value = True
+				config.misc.installwizard.ipkgloaded.value = True
 			elif self.index == InstallWizard.STATE_CHOISE_CHANNELLIST:
 				if self.state == 0:
 					self.opkg.startCmd(OpkgComponent.CMD_INSTALL, self.pkg)

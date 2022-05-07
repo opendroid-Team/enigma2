@@ -2,7 +2,7 @@ from __future__ import print_function
 from __future__ import print_function, division
 from Plugins.Plugin import PluginDescriptor
 from Screens.PluginBrowser import *
-from Screens.Ipkg import Ipkg
+from Screens.Opkg import Opkg
 from Screens.HarddiskSetup import HarddiskSetup
 from Components.ProgressBar import ProgressBar
 from Screens.ParentalControlSetup import ProtectedScreen

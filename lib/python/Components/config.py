@@ -1,8 +1,7 @@
 from copy import copy as shallowcopy
 from os import fsync, rename, sep
 from os.path import realpath
- strftime, struct_time
-
+from time import localtime, strftime, struct_time
 from enigma import getPrevAsciiCode
 
 from Components.SystemInfo import BoxInfo
@@ -446,25 +445,21 @@ class descriptionsList(choicesList):
 
 # This is the control, and base class, for triggering action settings.
 #
-# class ConfigAction(ConfigElement):
-# 	def __init__(self, action, *args):
-# 		ConfigElement.__init__(self)
-# 		self.value = "(OK)"
-# 		self.action = action
-# 		self.actionargs = args
-#
-# 	def handleKey(self, key):
-# 		if (key == ACTIONKEY_SELECT):
-# 			self.action(*self.actionargs)
-#
-# 	def getMulti(self, selected):
-# 		return ("text", _("<Press OK to perform action>") if selected else "")
 
+class ConfigAction(ConfigElement):
+	def __init__(self, action, *args):
+		ConfigElement.__init__(self)
+		self.value = "(OK)"
+		self.action = action
+		self.actionargs = args
 
-# This is the control, and base class, for binary decision settings.
-#
-# Several customized versions exist for different descriptions.
-#
+	def handleKey(self, key):
+		if (key == KEY_OK):
+			self.action(*self.actionargs)
+
+	def getMulti(self, dummy):
+		pass
+
 class ConfigBoolean(ConfigElement):
 	def __init__(self, default=False, descriptions=None, graphic=True):
 		ConfigElement.__init__(self)

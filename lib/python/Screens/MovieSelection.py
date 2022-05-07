@@ -57,6 +57,7 @@ config.movielist.settings_per_directory = ConfigYesNo(default=True)
 config.movielist.root = ConfigSelection(default="/media", choices=["/", "/media", "/media/hdd", "/media/hdd/movie", "/media/usb", "/media/usb/movie"])
 config.movielist.hide_extensions = ConfigYesNo(default=False)
 config.movielist.stop_service = ConfigYesNo(default=True)
+config.movielist.show_underscores = ConfigYesNo(default=False)
 
 userDefinedButtons = None
 last_selected_dest = []
@@ -78,8 +79,8 @@ l_moviesort = [
 config.movielist.moviesort = ConfigSelection(default=MovieList.SORT_GROUPWISE, choices=l_moviesort)
 
 l_desc = [
-	(MovieList.SHOW_DESCRIPTION, _("yes")),
-	(MovieList.HIDE_DESCRIPTION, _("no"))]
+	(MovieList.SHOW_DESCRIPTION, _("Yes")),
+	(MovieList.HIDE_DESCRIPTION, _("No"))]
 
 config.movielist.description = ConfigSelection(default=MovieList.SHOW_DESCRIPTION, choices=l_desc)
 
@@ -1125,7 +1126,7 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo, InfoBarBase, Pr
 		self.close(None)
 
 	def saveconfig(self):
-		config.movielist.last_selected_tags.value = self.selected_tags
+		config.movielist.last_selected_tags.value = self.selected_tags if self.selected_tags else []
 
 	def configure(self):
 		self.session.openWithCallback(self.configureDone, MovieSelectionSetup)
@@ -1824,11 +1825,11 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo, InfoBarBase, Pr
 		cleanAll(split(current.getPath())[0])
 
 	def showNetworkMounts(self):
-		import NetworkSetup
-		self.session.open(NetworkSetup.NetworkMountsMenu)
+		from Screens.NetworkSetup import NetworkMountsMenu
+		self.session.open(NetworkMountsMenu)
 
 	def showDeviceMounts(self):
-		from Plugins.Extensions.Infopanel.MountManager import HddMount
+		from Screens.MountManager import HddMount
 		self.session.open(HddMount)
 
 	def showActionFeedback(self, text):
@@ -1987,7 +1988,7 @@ class MovieContextMenu(Screen, ProtectedScreen):
 		Screen.__init__(self, session)
 		ProtectedScreen.__init__(self)
 		self.skinName = "Setup"
-		self.setTitle(_("Movie List Setup"))
+		self.setTitle(_("Movie List Settings"))
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
 		self["VKeyIcon"] = Boolean(False)
@@ -2078,7 +2079,7 @@ class MovieContextMenuSummary(Screen):
 class MovieSelectionSetup(Setup):
 	def __init__(self, session):
 		Setup.__init__(self, session, setup="MovieSelection")
-		self.setTitle(_("Movie List Setup"))
+		self.setTitle(_("Movie List Settings"))
 
 	def keySave(self):
 		self.saveAll()

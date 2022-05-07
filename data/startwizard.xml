@@ -400,7 +400,6 @@ self.condition = config.misc.installwizard.hasnetwork.value and config.misc.inst
 self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
-		</step>
 		<step id="timezone">
 			<text value="Please set your time options.\n\nPress YELLOW to set the time zone via geolocation."/>
 			<displaytext value="Please set your time options"/>
@@ -410,6 +409,10 @@ self.clearSelectedKeys()
 self.selectKey("LEFT")
 self.selectKey("RIGHT")
 self.selectKey("YELLOW")
+self["key_yellow"].text = _("Use Geolocation")
+			</code>
+			<code pos="after">
+self["key_yellow"].text = ""
 			</code>
 		</step>
 		<step id="end" laststep="true">
