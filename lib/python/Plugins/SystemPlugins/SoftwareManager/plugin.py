@@ -1618,14 +1618,14 @@ class UpdatePlugin(Screen):
 			tmpStatus = d.read()
 			tmpStatus = six.ensure_str(tmpStatus)
 			if (os.path.exists("/etc/.beta") and 'rot.png' in tmpStatus) or 'gelb.png' in tmpStatus:
-				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://www.opena.tv") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
+				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://droidsat.org") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
 				default = False
 			elif 'rot.png' in tmpStatus:
-				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://www.opena.tv")# + "\n\n" + _("Last Status Date") + ": " + statusDate
+				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://droidsat.org")# + "\n\n" + _("Last Status Date") + ": " + statusDate
 				default = False
 				doUpdate = False
 		except:
-			message = _("The status of the current update could not be checked because https://www.opena.tv could not be reached for some reason") + "\n"
+			message = _("The status of the current update could not be checked because https://droidsat.org could not be reached for some reason") + "\n"
 			default = False
 		socket.setdefaulttimeout(currentTimeoutDefault)
 

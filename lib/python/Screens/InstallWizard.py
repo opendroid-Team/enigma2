@@ -117,10 +117,10 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), OpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
 		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
 			from Screens.PluginBrowser import PluginDownloadBrowser
-			self.session.open(PluginDownloadBrowser, 0)
+			self.session.open(PluginDownloadBrowser, 0, True, "PluginDownloadBrowserWizard")
 		elif self.index == self.INSTALL_SKINS and self.enabled.value:
 			from Screens.SkinSelector import SkinSelector
-			self.session.open(SkinSelector)
+			self.session.open(SkinSelector, skin_name="SkinSelectorWizard")
 		elif self.index == self.INSTALL_NETWORkPASSWORD and self.enabled.value:
 			from Screens.NetworkSetup import NetworkPassword
 			self.session.open(NetworkPassword)

@@ -204,7 +204,6 @@ self.session.open(UsbFormat)
 				<item entryID="netafp_setup" level="2" text="AFP Settings" weight="60"><screen module="NetworkSetup" screen="NetworkAfp" /></item>
 			</menu>
 			<item entryID="hdmicec" level="0" text="HDMI-CEC Settings" weight="55" requires="HDMICEC"><screen module="HDMICEC" screen="HDMICECSetup" /></item>
-			<item entryID="script_manager" level="1" text="Script Manager" weight="56"><screen module="ScriptRunner" screen="ScriptRunner" /></item>
 			<item entryID="time_setup" level="0" text="Time Settings" weight="60"><screen module="Time" screen="Time" /></item>
 			<item entryID="logs_setup" level="0" text="Logs Settings" weight="70"><setup id="Logs" /></item>
 			<item entryID="rfmod_setup" level="1" text="RF Output Settings" weight="80" requires="RfModulator"><setup id="RFModulator" /></item>

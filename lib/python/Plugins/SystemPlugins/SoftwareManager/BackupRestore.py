@@ -15,6 +15,7 @@ from Components.config import NoSave, configfile, ConfigSubsection, ConfigText, 
 from Components.config import config
 from Components.ConfigList import ConfigListScreen
 from Components.FileList import MultiFileSelectList
+from Components.Network import iNetwork
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Console import Console
@@ -47,7 +48,7 @@ def InitConfig():
 	BACKUPFILES = ['/etc/enigma2/', '/etc/CCcam.cfg', '/usr/keys/',
 		'/etc/tuxbox/config/', '/etc/auto.network', '/etc/machine-id', 
 		'/etc/openvpn/', 
-		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf', 
+		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf',
 		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
 		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
 		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\

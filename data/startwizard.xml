@@ -1,6 +1,5 @@
 <!--suppress XmlUnboundNsPrefix -->
 <wizard>
-
 		<step id="start" nextstep="introduction">
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your %s %s.\nPress the OK button on your remote control to move to the next step." />
 			<displaytext value="Welcome.\n\nThis start wizard will guide you through the basic setup of your %s %s.\nPress the OK button on your remote control to move to the next step." />
@@ -9,12 +8,11 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-
 		<step id="introduction" >
 			<text value="Use the up/down keys on your remote control to select an option. After that, press OK." />
 			<displaytext value="Use the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
-				<listentry caption="Use the wizard to set up basic features" step="network" />
+				<listentry caption="Use the wizard to set up basic features" step="nima" />
 				<listentry caption="Exit the wizard" step="end" />
 			</list>
 			<code>
@@ -23,7 +21,6 @@ self.selectKey("UP")
 self.selectKey("DOWN")
 			</code>
 		</step>
-
 		<step id="network" >
 			<text value="Please connect your %s %s to the internet" />
 			<displaytext value="Please connect your %s %s to the internet" />
@@ -37,7 +34,6 @@ self.selectKey("UP")
 self.selectKey("DOWN")
 			</code>
 		</step>
-
 		<step id="update">
 			<text value="Checking the internet connection" />
 			<displaytext value="Checking the internet connection" />
@@ -47,7 +43,6 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-
 		<step id="networkfailed" >
 			<condition>
 self.condition = not config.misc.installwizard.ipkgloaded.value
@@ -140,7 +135,6 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
-
 		<step id="nimf">
 			<condition>
 from Components.NimManager import nimmanager
@@ -295,7 +289,6 @@ self.condition = nimmanager.somethingConnected() and not config.misc.installwiza
 			<displaytext value="What do you want to scan?" />
 			<config screen="ScanSimple" module="ScanSetup" type="ConfigList" />
 		</step>
-
 		<step id="manualscan">
 			<condition>
 from Components.NimManager import nimmanager
@@ -305,7 +298,6 @@ self.condition = nimmanager.somethingConnected() and not config.misc.installwiza
 			<displaytext value="What do you want to scan?" />
 			<config screen="ScanSetup" module="ScanSetup" type="ConfigList" />
 		</step>
-
 		<step id="nextscan">
 			<condition>
 from Components.NimManager import nimmanager
@@ -318,7 +310,6 @@ self.condition = nimmanager.somethingConnected() and not config.misc.installwiza
 				<listentry caption="Yes, do another manual scan now" step="manualscan" />
 			</list>
 		</step>
-
 <!--
 		<step id="finisheddefaultsatlists">
 			<text value="Do you want to enable the parental control feature on your %s %s?" />
@@ -400,6 +391,7 @@ self.condition = config.misc.installwizard.hasnetwork.value and config.misc.inst
 self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
+		</step>
 		<step id="timezone">
 			<text value="Please set your time options.\n\nPress YELLOW to set the time zone via geolocation."/>
 			<displaytext value="Please set your time options"/>
@@ -409,10 +401,6 @@ self.clearSelectedKeys()
 self.selectKey("LEFT")
 self.selectKey("RIGHT")
 self.selectKey("YELLOW")
-self["key_yellow"].text = _("Use Geolocation")
-			</code>
-			<code pos="after">
-self["key_yellow"].text = ""
 			</code>
 		</step>
 		<step id="end" laststep="true">
@@ -426,5 +414,4 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-
 </wizard>
