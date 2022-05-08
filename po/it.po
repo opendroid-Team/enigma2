@@ -10405,6 +10405,33 @@ msgstr "Selezionare cartella video"
 msgid "Select the sleep timer action."
 msgstr "Selezionare cosa fare, non appena sarà trascorso l'intervallo di minuti scelto."
 
+msgid "Sleep timer action"
+msgstr "Azione del timer di spegnimento"
+
+msgid "Select the type of shutdown desired when the steep timer activates."
+msgstr "Selezionare il tipo di spegnimento desiderato quando si attiva il timer ripido."
+
+msgid "Energy saver activation delay"
+msgstr "Ritardo di attivazione del risparmio energetico"
+
+msgid "Energy timer"
+msgstr "Timer energetico"
+
+msgid "Select the type of shutdown desired when the energy timer activates."
+msgstr "Selezionare il tipo di spegnimento desiderato all'attivazione del timer di energia."
+
+msgid "Sleep Timer Settings"
+msgstr "Impostazioni del timer di spegnimento"
+
+msgid "Configure the duration, in minutes, before the energy saver timer activates."
+msgstr "Configurare la durata, in minuti, prima dell'attivazione del timer di risparmio energetico."
+
+msgid "Sleep timer activation delay"
+msgstr "Ritardo di attivazione del timer di spegnimento"
+
+msgid "Configure the duration, in minutes, before the sleep timer activates."
+msgstr "Configura la durata, in minuti, prima dell'attivazione del timer di spegnimento."
+
 msgid "Select upgrade source"
 msgstr "Seleziona l'origine di aggiornamento"
 

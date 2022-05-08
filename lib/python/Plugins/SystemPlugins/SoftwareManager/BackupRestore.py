@@ -46,19 +46,21 @@ BLACKLISTED = ShellCompatibleFunctions.BLACKLISTED
 def InitConfig():
 	# BACKUPFILES contains all files and folders to back up, for wildcard entries ALWAYS use eEnv_resolve_multi!
 	BACKUPFILES = ['/etc/enigma2/', '/etc/CCcam.cfg', '/usr/keys/',
-		'/etc/tuxbox/config/', '/etc/auto.network', '/etc/machine-id', 
-		'/etc/openvpn/', 
-		'/etc/dropbear/', '/etc/default/dropbear', '/home/root/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf',
-		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf', '/etc/opkg/secret-feed.conf',
-		'/etc/wpa_supplicant.wlan0.conf', '/etc/resolv.conf', '/etc/hostname', '/etc/epgimport/',
+		'/etc/davfs2/', '/etc/tuxbox/config/', '/etc/auto.network', '/etc/feeds.xml', '/etc/machine-id', '/etc/rc.local',
+		'/etc/openvpn/', '/etc/ipsec.conf', '/etc/ipsec.secrets', '/etc/ipsec.user', '/etc/strongswan.conf', '/etc/vtuner.conf',
+		'/etc/default/crond', '/etc/dropbear/', '/etc/default/dropbear', '/home/', '/etc/samba/', '/etc/fstab', '/etc/inadyn.conf',
+		'/etc/network/interfaces', '/etc/wpa_supplicant.conf', '/etc/wpa_supplicant.ath0.conf',
+		'/etc/wpa_supplicant.wlan0.conf', '/etc/wpa_supplicant.wlan1.conf', '/etc/resolv.conf', '/etc/enigma2/nameserversdns.conf', '/etc/default_gw', '/etc/hostname', '/etc/epgimport/', '/etc/exports',
 		eEnv.resolve("${datadir}/enigma2/keymap.usr")]\
+		+ eEnv_resolve_multi("${sysconfdir}/opkg/*-secret-feed.conf")\
 		+ eEnv_resolve_multi("${datadir}/enigma2/*/mySkin_off")\
 		+ eEnv_resolve_multi("${datadir}/enigma2/*/mySkin")\
 		+ eEnv_resolve_multi("${datadir}/enigma2/*/skin_user_*.xml")\
 		+ eEnv_resolve_multi("/usr/bin/*cam*")\
-		+ eEnv_resolve_multi("/etc/cron*")\
 		+ eEnv_resolve_multi("/etc/*.emu")\
-		+ eEnv_resolve_multi("/etc/init.d/softcam*")
+		+ eEnv_resolve_multi("${sysconfdir}/cron*")\
+		+ eEnv_resolve_multi("${sysconfdir}/init.d/softcam*")\
+		+ eEnv_resolve_multi("${sysconfdir}/init.d/cardserver*")\
 
 	tmpfiles = []
 	for f in BACKUPFILES:

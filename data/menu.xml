@@ -42,7 +42,7 @@ self.session.open(GreenPanel)
 		<!-- Menu / Settings / Audio Menu -->
 		<menu weight="5" level="1" text="Audio Settings" entryID="audio_menu">
 			<id val="audio_menu" />
-			<item weight="0" level="1" text="Basic settings" entryID="audio_setup"><screen module="VideoMode" screen="AudioSetup" /></item>
+			<item entryID="audio_setup" level="1" text="Basic settings" weight="0"><setup id="Audio" /></item>
 			<item weight="10" level="2" entryID="subtitle_setup"><setup id="subtitlesetup" /></item>
 			<item weight="15" level="1" entryID="autolanguage_setup"><setup id="autolanguagesetup" /></item>
 		</menu>
@@ -228,7 +228,7 @@ self.session.open(UsbFormat)
 		<id val="timermenu" />
 		<item weight="0" level="0" text="Timers" entryID="timer_edit"><screen module="TimerEdit" screen="TimerEditList" /></item>
 		<item weight="5" level="0" text="PowerTimers" entryID="powertimer_edit"><screen module="PowerTimerEdit" screen="PowerTimerEditList" /></item>
-                <item weight="20" level="0" text="Sleep Timer" requires="DeepstandbySupport" entryID="sleep"><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
+                <item weight="20" level="0" text="Sleep Timer" requires="DeepstandbySupport" entryID="sleep"><screen module="SleepTimer" screen="SleepTimer" /></item>
 		<item weight="10" level="0" text="CronTimers" entryID="crontimer_edit"><screen module="CronTimer" screen="CronTimers" /></item>
 	</menu>
 	<!-- Menu / VCR -->
@@ -263,7 +263,7 @@ else:
 			</code>
 		</item>
 		<item entryID="standby" level="0" text="Standby" weight="15"><screen module="Standby" screen="Standby" /></item>
-		<item entryID="sleep" level="0" text="Sleep Timer" weight="20" requires="DeepstandbySupport"><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
+		<item entryID="sleep" level="0" text="Sleep Timer" weight="20" requires="DeepstandbySupport"><screen module="SleepTimer" screen="SleepTimer" /></item>
 		<item entryID="restart" level="0" text="Restart" weight="25"><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
 		<item entryID="restart_enigma" level="0" text="Restart enigma2" weight="30"><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
 		<item entryID="maintenance_mode" level="0" text="Recovery Mode" weight="24" requires="RecoveryMode"><screen module="Standby" screen="TryQuitMainloop">16</screen></item>
