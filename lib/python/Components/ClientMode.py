@@ -1,16 +1,17 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText, ConfigSelection, ConfigIP, ConfigInteger, ConfigSubList, ConfigClock
+from __future__ import absolute_import
+
+from Components.config import ConfigClock, ConfigInteger, ConfigIP, ConfigSelection, ConfigSubList, ConfigSubsection, ConfigText, ConfigYesNo, config
 from Components.SystemInfo import SystemInfo
 
 def InitClientMode():
 	config.clientmode = ConfigSubsection()
 	config.clientmode.enabled = ConfigYesNo(default=False)
+
 	def clientModeChanged(configElement):
 		SystemInfo["ClientModeEnabled"] = configElement.value == True
 		SystemInfo["ClientModeDisabled"] = configElement.value != True
-	config.clientmode.enabled.addNotifier(clientModeChanged, immediate_feedback=True, initial_call=True)
+
+	config.clientmode.enabled.addNotifier(clientModeChanged)
 	config.clientmode.serverAddressType = ConfigSelection(default="ip", choices=[("ip", _("IP")), ("domain", _("Domain"))])
 	config.clientmode.serverIP = ConfigIP(default=[0, 0, 0, 0], auto_jump=True)
 	config.clientmode.serverDomain = ConfigText(default="", fixed_size=False)
@@ -25,4 +26,3 @@ def InitClientMode():
 	config.clientmode.nim_cache = ConfigText(default="", fixed_size=False)
 	config.clientmode.remote_fallback_enabled_cache = ConfigYesNo(default=False)
 	config.clientmode.remote_fallback_cache = ConfigText(default="", fixed_size=False)
-	print("[ClientMode] Client mode data initialised.")

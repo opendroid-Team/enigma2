@@ -672,7 +672,6 @@ def InitUsageConfig():
 	config.usage.show_vcr_scart = ConfigYesNo(default=False)
 	config.usage.pic_resolution = ConfigSelection(default=None, choices=[(None, _("Same resolution as skin")), ("(720, 576)", "720x576"), ("(1280, 720)", "1280x720"), ("(1920, 1080)", "1920x1080")])
 	config.usage.enable_delivery_system_workaround = ConfigYesNo(default=False)
-
 	config.usage.date = ConfigSubsection()
 	config.usage.date.enabled = NoSave(ConfigBoolean(default=False))
 	config.usage.date.enabled_display = NoSave(ConfigBoolean(default=False))
@@ -985,7 +984,7 @@ def InitUsageConfig():
 		config.usage.time.enabled_display.value = False
 		config.usage.time.display.value = config.usage.time.display.default
 
-	config.usage.boolean_graphic = ConfigYesNo(default=False)
+	config.usage.boolean_graphic = ConfigYesNo(default=True)
 	config.usage.show_slider_value = ConfigYesNo(default=True)
 	config.usage.cursorscroll = ConfigSelectionNumber(min=0, max=50, stepwidth=5, default=0, wraparound=True)
 
@@ -998,7 +997,6 @@ def InitUsageConfig():
 	config.epg.virgin = ConfigYesNo(default=False)
 	config.epg.opentv = ConfigYesNo(default=True)
 	config.epg.saveepg = ConfigYesNo(default=True)
-
 	config.misc.showradiopic = ConfigYesNo(default=True)
 	config.misc.bootvideo = ConfigYesNo(default=True)
 

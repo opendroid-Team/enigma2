@@ -3,10 +3,12 @@ from sys import modules, version as pyversion
 from fcntl import ioctl
 from struct import pack
 from socket import socket, inet_ntoa, AF_INET, SOCK_DGRAM
+from subprocess import PIPE, Popen
 from time import localtime, strftime
-from os import stat
+from os import popen, stat
 
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
+from Components.SystemInfo import BoxInfo
 from Tools.Directories import fileReadLine, fileReadLines
 
 MODULE_NAME = __name__.split(".")[-1]
@@ -25,9 +27,9 @@ def getFlashDateString():
 		if tm.tm_year >= 2011:
 			return strftime(_("%Y-%m-%d"), tm)
 		else:
-			return _("unknown")
+			return _("Unknown")
 	except:
-		return _("unknown")
+		return _("Unknown")
 
 
 def getEnigmaVersionString():
@@ -123,8 +125,10 @@ def getCPUSpeedString():
 			return "unavailable"
 
 def getCPUArch():
-	if "ARM" in getCPUString():
-		return getCPUString()
+	if BoxInfo.getItem("ArchIsARM64"):
+		return _("ARM64")
+	elif BoxInfo.getItem("ArchIsARM"):
+		return _("ARM")
 	return _("Mipsel")
 
 def getCPUString():
@@ -256,6 +260,34 @@ def getBoxUptime():
 	times.append(ngettext("%d hour", "%d hours", h) % h)
 	times.append(ngettext("%d minute", "%d minutes", m) % m)
 	return " ".join(times)
+
+
+def getGlibcVersion():
+	process = Popen(("/lib/libc.so.6"), stdout=PIPE, stderr=PIPE, universal_newlines=True)
+	stdout, stderr = process.communicate()
+	if process.returncode == 0:
+		for line in stdout.split("\n"):
+			if line.startswith("GNU C Library"):
+				data = line.split()[-1]
+				if data.endswith("."):
+					data = data[0:-1]
+				return data
+	print("[About] Get glibc version failed.")
+	return _("Unknown")
+
+
+def getGccVersion():
+	process = Popen(("/lib/libc.so.6"), stdout=PIPE, stderr=PIPE, universal_newlines=True)
+	stdout, stderr = process.communicate()
+	if process.returncode == 0:
+		for line in stdout.split("\n"):
+			if line.startswith("Compiled by GNU CC version"):
+				data = line.split()[-1]
+				if data.endswith("."):
+					data = data[0:-1]
+				return data
+	print("[About] Get gcc version failed.")
+	return _("Unknown")
 
 
 def getopensslVersionString():

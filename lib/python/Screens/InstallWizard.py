@@ -10,11 +10,11 @@ from enigma import eDVBDB
 
 config.misc.installwizard = ConfigSubsection()
 config.misc.installwizard.hasnetwork = ConfigBoolean(default=False)
-config.misc.installwizard.ipkgloaded = ConfigBoolean(default=False)
+config.misc.installwizard.opkgloaded = ConfigBoolean(default=False)
 config.misc.installwizard.channellistdownloaded = ConfigBoolean(default=False)
 
 
-class InstallWizard(Screen, ConfigListScreen):
+class InstallWizard(ConfigListScreen, Screen):
 
 	STATE_UPDATE = 0
 	STATE_CHOISE_CHANNELLIST = 1
@@ -31,7 +31,7 @@ class InstallWizard(Screen, ConfigListScreen):
 
 		if self.index == self.STATE_UPDATE:
 			config.misc.installwizard.hasnetwork.value = False
-			config.misc.installwizard.ipkgloaded.value = False
+			config.misc.installwizard.opkgloaded.value = False
 			modes = {0: " "}
 			self.enabled = ConfigSelection(choices=modes, default=0)
 			self.adapters = [(iNetwork.getFriendlyAdapterName(x), x) for x in iNetwork.getAdapterList()]
@@ -112,22 +112,22 @@ class InstallWizard(Screen, ConfigListScreen):
 	def run(self):
 		if self.index == self.STATE_UPDATE:
 			if config.misc.installwizard.hasnetwork.value:
-				self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (updating packages)'), OpkgComponent.CMD_UPDATE)
+				self.session.open(InstallWizardOpkgUpdater, self.index, _('Please wait (updating packages)'), OpkgComponent.CMD_UPDATE)
 		elif self.index == self.STATE_CHOISE_CHANNELLIST and self.enabled.value:
-			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), OpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
+			self.session.open(InstallWizardOpkgUpdater, self.index, _('Please wait (downloading channel list)'), OpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-' + self.channellist_type.value})
 		elif self.index == self.INSTALL_PLUGINS and self.enabled.value:
 			from Screens.PluginBrowser import PluginDownloadBrowser
-			self.session.open(PluginDownloadBrowser, 0, True, "PluginDownloadBrowserWizard")
+			self.session.open(PluginDownloadBrowser, 0)
 		elif self.index == self.INSTALL_SKINS and self.enabled.value:
 			from Screens.SkinSelector import SkinSelector
-			self.session.open(SkinSelector, skin_name="SkinSelectorWizard")
+			self.session.open(SkinSelector)
 		elif self.index == self.INSTALL_NETWORkPASSWORD and self.enabled.value:
 			from Screens.NetworkSetup import NetworkPassword
 			self.session.open(NetworkPassword)
 		return
 
 
-class InstallWizardIpkgUpdater(Screen):
+class InstallWizardOpkgUpdater(Screen):
 	def __init__(self, session, index, info, cmd, pkg=None):
 		Screen.__init__(self, session)
 
@@ -148,7 +148,7 @@ class InstallWizardIpkgUpdater(Screen):
 	def opkgCallback(self, event, param):
 		if event == OpkgComponent.EVENT_DONE:
 			if self.index == InstallWizard.STATE_UPDATE:
-				config.misc.installwizard.ipkgloaded.value = True
+				config.misc.installwizard.opkgloaded.value = True
 			elif self.index == InstallWizard.STATE_CHOISE_CHANNELLIST:
 				if self.state == 0:
 					self.opkg.startCmd(OpkgComponent.CMD_INSTALL, self.pkg)

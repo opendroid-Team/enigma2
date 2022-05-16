@@ -139,6 +139,8 @@ class OpkgComponent:
 			config.plugins.softwaremanager.overwritePiconsFiles = ConfigYesNo(default=True)
 			config.plugins.softwaremanager.overwriteBootlogoFiles = ConfigYesNo(default=True)
 			config.plugins.softwaremanager.overwriteSpinnerFiles = ConfigYesNo(default=True)
+			config.plugins.softwaremanager.overwriteSkinsFiles = ConfigYesNo(default=True)
+			config.plugins.softwaremanager.overwriteskinsFiles = ConfigYesNo(default=True)
 		self.opkg = opkg
 		self.cmd = eConsoleAppContainer()
 		self.callbackList = []
@@ -286,6 +288,8 @@ class OpkgComponent:
 		elif item.find("-bootlogo") > -1 and not config.plugins.softwaremanager.overwriteBootlogoFiles.value:
 			exclude = True
 		elif item.find("%s-spinner" % BoxInfo.getItem("distro")) > -1 and not config.plugins.softwaremanager.overwriteSpinnerFiles.value:
+			exclude = True
+		elif item.find("%s-skins" % BoxInfo.getItem("distro")) > -1 and not config.plugins.softwaremanager.overwriteskinsFiles.value:
 			exclude = True
 		else:
 			exclude = False

@@ -33,8 +33,9 @@ import skin, os
 import time
 from os import path, popen, system
 from re import search
-
+from datetime import datetime
 import time
+from locale import format_string
 import six
 
 SIGN = u"\u00B0"
@@ -76,8 +77,9 @@ def parseLines(filename):
 
 
 def MyDateConverter(StringDate):
-	## StringDate must be a string "YYYY-MM-DD"
 	try:
+		if type(StringDate) == int:
+			StringDate = str(StringDate)
 		if len(StringDate) == 8:
 			year = StringDate[0:4]
 			month = StringDate[4:6]
@@ -85,7 +87,7 @@ def MyDateConverter(StringDate):
 			StringDate = ' '.join((year, month, day))
 		else:
 			StringDate = StringDate.replace("-", " ")
-		StringDate = time.strftime(config.usage.date.full.value, time.strptime(StringDate, "%Y %m %d"))
+		StringDate = strftime(config.usage.date.full.value, strptime(StringDate, "%Y %m %d"))
 		return StringDate
 	except:
 		return _("unknown")
@@ -300,11 +302,14 @@ class About(Screen):
 		gstcmd2 = os.system(gstcmd)
 		AboutText += _("Drivers:\t%s") % driversdate + "\n"
 		AboutText += _("GStreamer:\t%s") % about.getGStreamerVersionString() + "\n"
-		AboutText += _("Python:\t%s\n") % about.getPythonVersionString()
+		AboutText += _("Python:\t%s") % about.getPythonVersionString() + "\n"
+		AboutText += _("Glibc version:\t%s") % about.getGlibcVersion() + "\n"
+		AboutText += _("GCC version:\t%s") % about.getGccVersion() + "\n"
+		AboutText += _("OpenSSL:\t%s") % about.getopensslVersionString() + "\n"
 		if path.exists('/boot/STARTUP'):
 			AboutText += _("Flashed:\tMultiboot active\n")
 		else:
-			AboutText += _("Flashed:\t%s\n") % about.getFlashDateString()
+			AboutText += _("Flashed:\t%s\n") % MyDateConverter(about.getFlashDateString())
 		AboutText += _("Free Flash:\t%s\n") % freeflash()
 		AboutText += _("Skin:\t%s (%s x %s)\n") % (config.skin.primary_skin.value.split('/')[0], getDesktop(0).size().width(), getDesktop(0).size().height())
 		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
@@ -1299,9 +1304,11 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-                        ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.1",        "github"),
+#                       ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.1",        "github"),
+                       ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.2",        "github"),
 			("stein17",      "Skins-for-openOPD",             "stein17 Skins-for-openOPD",   "python3", "github"),
-			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.0", "github"),
+#			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.0", "github"),
+			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.1", "github"),
 			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
 			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
 		]
