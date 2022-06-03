@@ -143,7 +143,7 @@ def InitUsageConfig():
 		])
 	config.usage.servicelist_eventprogress_view_mode.addNotifier(refreshServiceList)
 	################
-	config.usage.servicelist_infokey = ConfigSelection(default="event", choices=[("epg", _("Single EPG")), ("event", _("Eventview"))])
+	config.usage.servicelist_infokey = ConfigSelection(default="event", choices=[("epg", _("Single EPG")), ("event", _("Event View"))])
 
 	config.usage.service_icon_enable = ConfigYesNo(default=False)
 	config.usage.service_icon_enable.addNotifier(refreshServiceList)
@@ -1068,7 +1068,7 @@ def InitUsageConfig():
 	choiceoptions = [("mode1", _("Mode 1")), ("mode2", _("Mode 2"))]
 	config.osd.threeDsetmode = ConfigSelection(default='mode1', choices=choiceoptions)
 
-	hddchoises = [('/etc/enigma2/', _('Internal Flash'))]
+	hddchoises = [("/etc/enigma2/", _("Internal Flash"))]
 	for p in harddiskmanager.getMountedPartitions():
 		if exists(p.mountpoint):
 			d = normpath(p.mountpoint)
@@ -1091,7 +1091,7 @@ def InitUsageConfig():
 	config.misc.epgcachefilename.addNotifier(EpgCacheChanged, immediate_feedback=False)
 
 	def partitionListChanged(action, device):
-		hddchoises = [('/etc/enigma2/', _('Internal Flash'))]
+		hddchoises = [("/etc/enigma2/", _("Internal Flash"))]
 		for p in harddiskmanager.getMountedPartitions():
 			if exists(p.mountpoint):
 				d = normpath(p.mountpoint)
@@ -1596,22 +1596,22 @@ def InitUsageConfig():
 	config.epgselection.graph_servicewidth = ConfigSelectionNumber(default=250, stepwidth=1, min=70, max=500, wraparound=True)
 	config.epgselection.graph_piconwidth = ConfigSelectionNumber(default=100, stepwidth=1, min=50, max=500, wraparound=True)
 	config.epgselection.graph_infowidth = ConfigSelectionNumber(default=25, stepwidth=25, min=0, max=150, wraparound=True)
-	config.epgselection.graph_rec_icon_height = ConfigSelection(choices=[("bottom", _("bottom")), ("top", _("top")), ("middle", _("middle")), ("hide", _("hide"))], default="bottom")
+	config.epgselection.graph_rec_icon_height = ConfigSelection(choices=[("bottom", _("bottom")), ("top", _("top")), ("middle", _("middle")), ("hide", _("Hide"))], default="bottom")
 
-	epg_colorkeys = [('24minus', _('24- Hours')),
-					('prevpage', _('Previous page')),
-					('prevbouquet', _('Previous bouquet')),
-					('24plus', _('24+ Hours')),
-					('nextpage', _('Next page')),
-					('nextbouquet', _('Next bouquet')),
-					('autotimer', _('Auto Timer')),
-					('timer', _('Add/Remove Timer')),
-					('imdb', _('IMDb Search')),
-					('bouquetlist', _('Bouquet List')),
-					('showmovies', _('Show Movies List')),
-					('record', _('Record - same as record button')),
-					('gotodatetime', _('Goto Date/Timer')),
-					('epgsearch', _('EPG search'))]
+	epg_colorkeys = [("24minus", _("24- Hours")),
+					("prevpage", _("Previous page")),
+					("prevbouquet", _("Previous bouquet")),
+					("24plus", _("24+ Hours")),
+					("nextpage", _("Next page")),
+					("nextbouquet", _("Next bouquet")),
+					("autotimer", _("Auto Timer")),
+					("timer", _("Add/Remove Timer")),
+					("imdb", _("IMDb Search")),
+					("bouquetlist", _("Bouquet List")),
+					("showmovies", _("Show Movies List")),
+					("record", _("Record - same as record button")),
+					("gotodatetime", _("Goto Date/Timer")),
+					("epgsearch", _("EPG Search"))]
 	config.epgselection.graph_red = ConfigSelection(default='imdb', choices=epg_colorkeys)
 	config.epgselection.graph_green = ConfigSelection(default='timer', choices=epg_colorkeys)
 	config.epgselection.graph_yellow = ConfigSelection(default='epgsearch', choices=epg_colorkeys)
@@ -1636,18 +1636,18 @@ def InitUsageConfig():
 	config.epgselection.vertical_showlines = ConfigYesNo(default=True)
 	config.epgselection.vertical_startmode = ConfigSelection(default="standard", choices=[("standard", _("Standard")), ("primetime", _("Primetime")), ("channel1", _("Channel 1")), ("channel1+primetime", _("Channel 1 with Primetime"))])
 	config.epgselection.vertical_prevtime = ConfigClock(default=time())
-	vertical_colorkeys = [('autotimer', _('Auto Timer')),
-					('timer', _('Add/Remove Timer')),
-					('24plus', _('24+ Hours')),
-					('24minus', _('24- Hours')),
-					('imdb', _('IMDb Search')),
-					('bouquetlist', _('Bouquet List')),
-					('showmovies', _('Show Movies List')),
-					('record', _('Record - same as record button')),
-					('gotodatetime', _('Goto Date/Timer')),
-					('gotoprimetime', _('Goto Primetime')),
-					('setbasetime', _('Set Basetime')),
-					('epgsearch', _('EPG search'))]
+	vertical_colorkeys = [("autotimer", _("Auto Timer")),
+					("timer", _("Add/Remove Timer")),
+					("24plus", _("24+ Hours")),
+					("24minus", _("24- Hours")),
+					("imdb", _("IMDb Search")),
+					("bouquetlist", _("Bouquet List")),
+					("showmovies", _("Show Movies List")),
+					("record", _("Record - same as record button")),
+					("gotodatetime", _("Goto Date/Timer")),
+					("gotoprimetime", _("Goto Primetime")),
+					("setbasetime", _("Set Basetime")),
+					("epgsearch", _("EPG Search"))]
 	config.epgselection.vertical_red = ConfigSelection(default='imdb', choices=vertical_colorkeys)
 	config.epgselection.vertical_green = ConfigSelection(default='timer', choices=vertical_colorkeys)
 	config.epgselection.vertical_yellow = ConfigSelection(default='epgsearch', choices=vertical_colorkeys)

@@ -197,11 +197,11 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 			message = ""
 			with urlopen("https://opendroid.org/ampel/index.php") as fd:
 				tmpStatus = fd.read()
-				if b"rot.png" in tmpStatus:
+				if b"red.png" in tmpStatus:
 					status = "YELLOW" if exists("/etc/.beta") else "RED"
-				elif b"gelb.png" in tmpStatus:
+				elif b"yellow.png" in tmpStatus:
 					status = "YELLOW"
-				elif b"gruen.png" in tmpStatus:
+				elif b"green.png" in tmpStatus:
 					status = "GREEN"
 			self["traffic_off"].hide()
 			if status == "RED":

@@ -118,6 +118,7 @@ class MessageBox(Screen, HelpableScreen):
 				self.skinName.insert(0, skinName)
 			else:
 				self.skinName = skinName + self.skinName
+		self.timerRunning = None  # DEBG: See note above!
 		self.timer = eTimer()
 		self.timer.callback.append(self.processTimer)
 		self.onLayoutFinish.append(self.layoutFinished)

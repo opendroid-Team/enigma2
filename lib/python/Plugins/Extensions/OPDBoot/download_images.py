@@ -199,7 +199,7 @@ class DownloadOnLineImage(Screen):
                 global BRANDOEMDROID
                 global MASCHINEBUILD
                 BRANDOEM = getBrandOEM()
-                BRANDOEMDROID = getBrandOEM()
+                BRANDOEMDROID = getMachineBrand()
                 MASCHINEBUILD = boxname
                 if boxname in ('ax51', 'triplex'):
                         BRANDOEM = 'ax'
@@ -227,7 +227,7 @@ class DownloadOnLineImage(Screen):
                         BRANDOEMDROID = 'Octagon'
                         MASCHINEBUILD = boxname
                 elif boxname in ('mutant51', 'ax51'):
-                        BRANDOEMDROID = 'Mut@nt'
+                        BRANDOEMDROID = 'gfutures'
                         MASCHINEBUILD = 'HD51'
                 elif boxname in ('optimussos1plus', 'optimussos2plus', 'optimussos3plus', 'optimussos1', 'optimussos2', 'osmega', 'osmini'):
                         BRANDOEMDROID = 'Edision'
@@ -257,8 +257,8 @@ class DownloadOnLineImage(Screen):
                                 hdfImageVersion = "v65"
                         else:
                                 hdfImageVersion = "v64"
-                        self.feedurl = 'http://%s.hdfreaks.cc/%s' % (hdfImageVersion, boxname)
-                        self.feedurl1 = 'http://%s.hdfreaks.cc' % hdfImageVersion
+                        self.feedurl = 'https://%s.hdfreaks.cc/%s' % (hdfImageVersion, boxname)
+                        self.feedurl1 = 'https://%s.hdfreaks.cc/' % hdfImageVersion
                 elif self.distro == 'openeight':
                         self.feed = 'openeight'
                         self.feedurl = 'http://openeight.de'

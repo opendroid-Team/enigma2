@@ -111,7 +111,7 @@ def write_cache(cache_file, cache_data):
 		try:
 			mkdir(os_path.dirname(cache_file))
 		except OSError:
-			    print(os_path.dirname(cache_file), 'is a file')
+			print(os_path.dirname(cache_file), 'is a file')
 	fd = open(cache_file, 'wb')
 	dump(cache_data, fd, -1)
 	fd.close()
@@ -1617,10 +1617,10 @@ class UpdatePlugin(Screen):
 			d = urlopen(urlopenOPD)
 			tmpStatus = d.read()
 			tmpStatus = six.ensure_str(tmpStatus)
-			if (os.path.exists("/etc/.beta") and 'rot.png' in tmpStatus) or 'gelb.png' in tmpStatus:
+			if (os.path.exists("/etc/.beta") and 'red.png' in tmpStatus) or 'yellow.png' in tmpStatus:
 				message = _("Caution update not yet tested !!") + "\n" + _("Update at your own risk") + "\n\n" + _("For more information see https://droidsat.org") + "\n\n"# + _("Last Status Date") + ": "  + statusDate + "\n\n"
 				default = False
-			elif 'rot.png' in tmpStatus:
+			elif 'red.png' in tmpStatus:
 				message = _("Update is reported as faulty !!") + "\n" + _("Aborting updateprogress") + "\n\n" + _("For more information see https://droidsat.org")# + "\n\n" + _("Last Status Date") + ": " + statusDate
 				default = False
 				doUpdate = False

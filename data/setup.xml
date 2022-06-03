@@ -18,10 +18,10 @@
 			<item text="Energy saver activation delay" description="Configure the duration, in minutes, before the energy saver timer activates.">config.usage.energyTimer</item>
 			<item text="Energy saver action" description="Select the type of shutdown desired when the energy timer activates.">config.usage.energyTimerAction</item>
 		</if>
-	</setup>
+	<!--/setup>
 	<setup key="timezone" title="Time zone settings">
 		<item level="0" text="Time zone area" description="Select your time zone area or region.">config.timezone.area</item>
-		<item level="0" text="Time zone" description="Select the time zone within the area or region.">config.timezone.val</item>
+		<item level="0" text="Time zone" description="Select the time zone within the area or region.">config.timezone.val</item> -->
 	</setup>
 	<setup key="audio_setup" title="Audio settings">
 		<!-- this is just a placeholder, the Videomode plugin implements this submenu -->

@@ -11,7 +11,6 @@ from Components.NimManager import nimmanager
 from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
-from enigma import eTimer, getEnigmaVersionString, getDesktop
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType, getBrandOEM
 from Components.SystemInfo import BoxInfo
 from skin import isOPDSkin
@@ -23,7 +22,7 @@ from Components.ProgressBar import ProgressBar
 import re
 from Tools.StbHardware import getFPVersion
 from Tools.MultiBoot import MultiBoot
-from enigma import ePicLoad, getDesktop, eSize, eTimer, eLabel, eConsoleAppContainer
+from enigma import eConsoleAppContainer, eDVBResourceManager, eGetEnigmaDebugLvl, eStreamServer, eTimer, getDesktop, getE2Rev, ePicLoad, getDesktop, eSize, eLabel
 from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap
 from Components.AVSwitch import AVSwitch
@@ -76,7 +75,8 @@ def parseLines(filename):
 	return ret
 
 
-def MyDateConverter(StringDate):
+def convertDate(StringDate):
+	## StringDate must be a string "YYYY-MM-DD" or "YYYYMMDD" / or integer YYYYMMDD
 	try:
 		if type(StringDate) == int:
 			StringDate = str(StringDate)
@@ -90,8 +90,7 @@ def MyDateConverter(StringDate):
 		StringDate = strftime(config.usage.date.full.value, strptime(StringDate, "%Y %m %d"))
 		return StringDate
 	except:
-		return _("unknown")
-
+		return _("Unknown")
 def read_startup(FILE):
 	file = FILE
 	try:
@@ -309,11 +308,12 @@ class About(Screen):
 		if path.exists('/boot/STARTUP'):
 			AboutText += _("Flashed:\tMultiboot active\n")
 		else:
-			AboutText += _("Flashed:\t%s\n") % MyDateConverter(about.getFlashDateString())
+			AboutText += _("Flashed:\t%s\n") % convertDate(about.getFlashDateString())
 		AboutText += _("Free Flash:\t%s\n") % freeflash()
 		AboutText += _("Skin:\t%s (%s x %s)\n") % (config.skin.primary_skin.value.split('/')[0], getDesktop(0).size().width(), getDesktop(0).size().height())
-		AboutText += _("Last update:\t%s") % getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
+		AboutText += _("Last update:\t%s") % about.getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
+		AboutText += _("Enigma2 debug level:\t%s") % eGetEnigmaDebugLvl() + "\n"
 		if getMachineBuild() not in ('vuduo4k','osmio4k','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','xc7439','8100s','u5','u5pvr','u52','u53','u54','u55','u56','u51','sf8008'):
 			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
 #		AboutText += _("Network:")
@@ -1151,7 +1151,7 @@ class AboutSummary(Screen):
 		day = string[6:8]
 		driversdate = '-'.join((year, month, day))
 		AboutText += _("Drivers: %s") % driversdate + "\n"
-		AboutText += _("Last update: %s") % getEnigmaVersionString()
+		AboutText += _("Last update: %s") % about.getEnigmaVersionString()
 
 		tempinfo = ""
 		if path.exists('/proc/stb/sensors/temp0/value'):
