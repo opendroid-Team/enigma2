@@ -169,3 +169,6 @@ class VolumeControl:
 			else:
 				self.muteDialog.hide()
 				self.volumeDialog.setValue(vol)
+
+	def volMuteLong(self):
+		self.muteDialog.hide()
