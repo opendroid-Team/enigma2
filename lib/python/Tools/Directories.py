@@ -103,7 +103,7 @@ def resolveFilename(scope, base="", path_prefix=None):
 	if flag == PATH_CREATE and not pathExists(path):
 		try:
 			makedirs(path)
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror))
 			return None
 	suffix = None  # Remove any suffix data and restore it at the end.
@@ -226,7 +226,7 @@ def fileReadLine(filename, default=None, source=DEFAULT_MODULE_NAME, debug=False
 		with open(filename, "r") as fd:
 			line = fd.read().strip().replace("\0", "")
 		msg = "Read"
-	except (IOError, OSError) as err:
+	except OSError as err:
 		if err.errno != ENOENT:  # ENOENT - No such file or directory.
 			print("[%s] Error %d: Unable to read a line from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
 		line = default
@@ -242,7 +242,7 @@ def fileWriteLine(filename, line, source=DEFAULT_MODULE_NAME, debug=False):
 			fd.write(str(line))
 		msg = "Wrote"
 		result = 1
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[%s] Error %d: Unable to write a line to file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
 		msg = "Failed to write"
 		result = 0
@@ -257,7 +257,7 @@ def fileReadLines(filename, default=None, source=DEFAULT_MODULE_NAME, debug=Fals
 		with open(filename, "r") as fd:
 			lines = fd.read().splitlines()
 		msg = "Read"
-	except (IOError, OSError) as err:
+	except OSError as err:
 		if err.errno != ENOENT:  # ENOENT - No such file or directory.
 			print("[%s] Error %d: Unable to read lines from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
 		lines = default
@@ -277,7 +277,7 @@ def fileWriteLines(filename, lines, source=DEFAULT_MODULE_NAME, debug=False):
 			fd.write(lines)
 		msg = "Wrote"
 		result = 1
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[%s] Error %d: Unable to write %d lines to file '%s'!  (%s)" % (source, err.errno, len(lines), filename, err.strerror))
 		msg = "Failed to write"
 		result = 0
@@ -303,7 +303,7 @@ def fileReadXML(filename, default=None, source=DEFAULT_MODULE_NAME, debug=False)
 				print("[%s] XML Parse Error: '%s^%s'" % (source, "-" * column, " " * (len(data) - column - 1)))
 			except Exception as err:
 				print("[%s] Error: Unable to parse data in '%s' - '%s'!" % (source, filename, err))
-	except (IOError, OSError) as err:
+	except OSError as err:
 		if err.errno == ENOENT:  # ENOENT - No such file or directory.
 			print("[%s] Warning: File '%s' does not exist!" % (source, filename))
 		else:
@@ -330,7 +330,7 @@ def defaultRecordingLocation(candidate=None):
 		return candidate
 	try:
 		path = readlink("/hdd")  # First, try whatever /hdd points to, or /media/hdd.
-	except (IOError, OSError) as err:
+	except OSError as err:
 		path = "/media/hdd"
 	if not pathExists(path):  # Find the largest local disk.
 		from Components import Harddisk
@@ -356,7 +356,7 @@ def bestRecordingLocation(candidates):
 				if size > biggest:
 					biggest = size
 					path = candidate[1]
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Directories] Error %d: Couldn't get free space for '%s'!  (%s)" % (err.errno, candidate[1], err.strerror))
 	return path
 
@@ -387,17 +387,11 @@ def getRecordingFilename(basename, dirname=None):
 		path = "%s_%03d" % (filename, next)
 	return path
 
-def InitFallbackFiles():
-	resolveFilename(SCOPE_CONFIG, "userbouquet.favourites.tv")
-	resolveFilename(SCOPE_CONFIG, "bouquets.tv")
-	resolveFilename(SCOPE_CONFIG, "userbouquet.favourites.radio")
-	resolveFilename(SCOPE_CONFIG, "bouquets.radio")
-
 
 def copyFile(src, dst):
 	try:
 		copy2(src, dst)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Copying file '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
 		return -1
 	return 0
@@ -415,15 +409,15 @@ def copyFile(src, dst):
 	# 		status = stat(src)
 	# 		try:
 	# 			chmod(dst, S_IMODE(status.st_mode))
-	# 		except (IOError, OSError) as err:
+	# 		except OSError as err:
 	# 			print("[Directories] Error %d: Setting modes from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
 	# 		try:
 	# 			utime(dst, (status.st_atime, status.st_mtime))
-	# 		except (IOError, OSError) as err:
+	# 		except OSError as err:
 	# 			print("[Directories] Error %d: Setting times from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
-	# 	except (IOError, OSError) as err:
+	# 	except OSError as err:
 	# 		print("[Directories] Error %d: Obtaining status from '%s'!  (%s)" % (err.errno, src, err.strerror))
-	# except (IOError, OSError) as err:
+	# except OSError as err:
 	# 	print("[Directories] Error %d: Copying file '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
 	# 	return -1
 	# return 0
@@ -452,19 +446,19 @@ def copyTree(src, dst, symlinks=False):
 				copytree(srcName, dstName, symlinks)
 			else:
 				copyfile(srcName, dstName)
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Directories] Error %d: Copying tree '%s' to '%s'!  (%s)" % (err.errno, srcName, dstName, err.strerror))
 	try:
 		status = stat(src)
 		try:
 			chmod(dst, S_IMODE(status.st_mode))
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Directories] Error %d: Setting modes from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
 		try:
 			utime(dst, (status.st_atime, status.st_mtime))
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Directories] Error %d: Setting times from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Obtaining stats from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
 
 
@@ -482,7 +476,7 @@ def moveFiles(fileList):
 		for item in fileList:
 			rename(item[0], item[1])
 			movedList.append(item)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		if err.errno == EXDEV:  # EXDEV - Invalid cross-device link.
 			print("[Directories] Warning: Cannot rename across devices, trying slower move.")
 			from Tools.CopyFiles import moveFiles as extMoveFiles  # OpenViX, OpenATV, Beyonwiz
@@ -497,7 +491,7 @@ def moveFiles(fileList):
 		for item in movedList:
 			try:
 				rename(item[1], item[0])
-			except (IOError, OSError) as err:
+			except OSError as err:
 				print("[Directories] Error %d: Renaming '%s' to '%s'!  (%s)" % (err.errno, item[1], item[0], err.strerror))
 				print("[Directories] Note: Failed to undo move of '%s' to '%s'!" % (item[0], item[1]))
 
@@ -535,7 +529,7 @@ def createDir(path, makeParents=False):
 		else:
 			mkdir(path)
 		return 1
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror))
 	return 0
 
@@ -544,7 +538,7 @@ def renameDir(oldPath, newPath):
 	try:
 		rename(oldPath, newPath)
 		return 1
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Couldn't rename directory '%s' to '%s'!  (%s)" % (err.errno, oldPath, newPath, err.strerror))
 	return 0
 
@@ -553,7 +547,7 @@ def removeDir(path):
 	try:
 		rmdir(path)
 		return 1
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Couldn't remove directory '%s'!  (%s)" % (err.errno, path, err.strerror))
 	return 0
 
@@ -567,7 +561,7 @@ def fileAccess(file, mode="r"):
 	result = False
 	try:
 		result = access(file, accMode)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Couldn't determine file '%s' access mode!  (%s)" % (err.errno, file, err.strerror))
 	return result
 
@@ -597,23 +591,23 @@ def fileHas(file, content, mode="r"):
 def hasHardLinks(path):  # Test if the volume containing path supports hard links.
 	try:
 		fd, srcName = mkstemp(prefix="HardLink_", suffix=".test", dir=path, text=False)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Creating temp file!  (%s)" % (err.errno, err.strerror))
 		return False
 	dstName = "%s.link" % splitext(srcName)[0]
 	try:
 		link(srcName, dstName)
 		result = True
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Creating hard link!  (%s)" % (err.errno, err.strerror))
 		result = False
 	try:
 		remove(srcName)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Removing source file!  (%s)" % (err.errno, err.strerror))
 	try:
 		remove(dstName)
-	except (IOError, OSError) as err:
+	except OSError as err:
 		print("[Directories] Error %d: Removing destination file!  (%s)" % (err.errno, err.strerror))
 	return result
 
@@ -649,7 +643,7 @@ def lsof():  # List of open files.
 				dir = pathjoin("/proc", pid, "fd")
 				for file in [pathjoin(dir, file) for file in listdir(dir)]:
 					lsof.append((pid, prog, readlink(file)))
-			except (IOError, OSError) as err:
+			except OSError as err:
 				pass
 	return lsof
 

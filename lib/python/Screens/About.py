@@ -308,8 +308,9 @@ class About(Screen):
 		if path.exists('/boot/STARTUP'):
 			AboutText += _("Flashed:\tMultiboot active\n")
 		else:
-			AboutText += _("Flashed:\t%s\n") % convertDate(about.getFlashDateString())
+			AboutText += _("Flashed:\t%s") % about.getFlashDateString() + "\n"
 		AboutText += _("Free Flash:\t%s\n") % freeflash()
+		AboutText += _("Flash type:\t%s") % about.getFlashType() + "\n"
 		AboutText += _("Skin:\t%s (%s x %s)\n") % (config.skin.primary_skin.value.split('/')[0], getDesktop(0).size().width(), getDesktop(0).size().height())
 		AboutText += _("Last update:\t%s") % about.getEnigmaVersionString() + " to Build #" + getImageBuild() + "\n"
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
@@ -883,7 +884,6 @@ class SystemNetworkInfo(Screen):
 		self["signal"] = StaticText()
 		self["bitrate"] = StaticText()
 		self["enc"] = StaticText()
-
 		self["IFtext"] = StaticText()
 		self["IF"] = StaticText()
 		self["Statustext"] = StaticText()
@@ -911,6 +911,7 @@ class SystemNetworkInfo(Screen):
 			{
 				"cancel": self.close,
 				"ok": self.close,
+				"red": self.close,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown
 			})

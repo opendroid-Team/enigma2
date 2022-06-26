@@ -2,6 +2,7 @@ from copy import copy as shallowcopy
 from os import fsync, rename, sep
 from os.path import realpath
 from time import localtime, strftime, struct_time
+
 from enigma import getPrevAsciiCode
 
 from Components.SystemInfo import BoxInfo
@@ -445,21 +446,25 @@ class descriptionsList(choicesList):
 
 # This is the control, and base class, for triggering action settings.
 #
+# class ConfigAction(ConfigElement):
+# 	def __init__(self, action, *args):
+# 		ConfigElement.__init__(self)
+# 		self.value = "(OK)"
+# 		self.action = action
+# 		self.actionargs = args
+#
+# 	def handleKey(self, key):
+# 		if (key == ACTIONKEY_SELECT):
+# 			self.action(*self.actionargs)
+#
+# 	def getMulti(self, selected):
+# 		return ("text", _("<Press OK to perform action>") if selected else "")
 
-class ConfigAction(ConfigElement):
-	def __init__(self, action, *args):
-		ConfigElement.__init__(self)
-		self.value = "(OK)"
-		self.action = action
-		self.actionargs = args
 
-	def handleKey(self, key):
-		if (key == KEY_OK):
-			self.action(*self.actionargs)
-
-	def getMulti(self, dummy):
-		pass
-
+# This is the control, and base class, for binary decision settings.
+#
+# Several customized versions exist for different descriptions.
+#
 class ConfigBoolean(ConfigElement):
 	def __init__(self, default=False, descriptions=None, graphic=True):
 		ConfigElement.__init__(self)
@@ -1569,10 +1574,10 @@ class ConfigSlider(ConfigElement):
 				callback()
 
 	def getText(self):
-		return "%d / %d" % (self.value, self.max)
+		return "%d / %d / %d" % (self.min, self.value, self.max)
 
 	def getMulti(self, selected):
-		return ("slider", self.value, self.max)
+		return ("slider", self.value, self.min, self.max)
 
 	def fromString(self, value):
 		return int(value)
@@ -2210,7 +2215,7 @@ class Config(ConfigSubsection):
 				fd.flush()
 				fsync(fd.fileno())
 			rename("%s.writing" % filename, filename)
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Config] Error %d: Couldn't write '%s'!  (%s)" % (err.errno, filename, err.strerror))
 
 
@@ -2220,7 +2225,7 @@ class ConfigFile:
 	def load(self):
 		try:
 			config.loadFromFile(self.CONFIG_FILE, baseFile=True)
-		except (IOError, OSError) as err:
+		except OSError as err:
 			print("[Config] Error %d: Unable to load config file '%s', assuming defaults.  (%s)" % (err.errno, self.CONFIG_FILE, err.strerror))
 
 	def save(self):

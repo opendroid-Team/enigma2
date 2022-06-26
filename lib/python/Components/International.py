@@ -548,8 +548,8 @@ class International:
 		self.activeLocale = "en_US"
 		self.catalog = None
 		self.callbacks = []
-		# environ["LANG"] = "en_US.UTF-8"  # Force the environment to US English so all shell command run from Enigma2 can be parsed in English (as coded).
-		# environ["LANGUAGE"] = "en_US.UTF-8"
+		# environ["LANG"] = "C.UTF-8"  # Force the environment to US English so all shell commands run from Enigma2 can be parsed in English (as coded).
+		# environ["LANGUAGE"] = "C.UTF-8"
 		self.buildISO3166()  # This should not be required when all Enigma2 code comes here for country and language data.
 		self.initInternational()
 
@@ -662,7 +662,7 @@ class International:
 							if lang not in availablePackages:
 								availablePackages.append(lang)
 					availablePackages = sorted(availablePackages)
-			except (IOError, OSError) as err:
+			except OSError as err:
 				print("[International] getLanguagePackages Error %d: %s ('%s')" % (err.errno, err.strerror, command[0]))
 				availablePackages = []
 			print("[International] There are %d available locale/language packages in the repository '%s'." % (len(availablePackages), "', '".join(availablePackages)))
@@ -689,7 +689,7 @@ class International:
 									installedPackages.append(data[24:])
 									break
 					installedPackages = sorted(installedPackages)
-			except (IOError, OSError) as err:
+			except OSError as err:
 				print("[International] getInstalledPackages Error %d: %s ('%s')" % (err.errno, err.strerror, command[0]))
 			print("[International] There are %d installed locale/language packages '%s'." % (len(installedPackages), "', '".join(installedPackages)))
 		else:
@@ -877,7 +877,7 @@ class International:
 					statusMsg = _("Error: %s %s not %s!  Please try again later.") % (msg, ", ".join(languages), action)
 				else:
 					statusMsg = "%s %s %s." % (msg, ", ".join(languages), action)
-			except (IOError, OSError) as err:
+			except OSError as err:
 				print("[International] Error %d: %s for command '%s'!" % (err.errno, err.strerror, " ".join(cmdList)))
 				retVal = -1
 				statusMsg = _("Error: Unable to process the command!  Please try again later.")

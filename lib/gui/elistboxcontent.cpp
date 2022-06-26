@@ -56,7 +56,7 @@ int iListboxContent::currentCursorSelectable()
 DEFINE_REF(eListboxPythonStringContent);
 
 eListboxPythonStringContent::eListboxPythonStringContent()
-	:m_cursor(0), m_saved_cursor(0), m_itemheight(25)
+	:m_cursor(0), m_saved_cursor(0), m_saved_cursor_top(0), m_itemheight(25)
 {
 }
 
@@ -130,6 +130,16 @@ void eListboxPythonStringContent::cursorRestore()
 	m_cursor = m_saved_cursor;
 }
 
+void eListboxPythonStringContent::cursorSaveTop(int top)
+{
+	m_saved_cursor_top = top;
+}
+
+int eListboxPythonStringContent::cursorRestoreTop()
+{
+	return m_saved_cursor_top;
+}
+
 int eListboxPythonStringContent::size()
 {
 	if (!m_list)
@@ -181,7 +191,9 @@ void eListboxPythonStringContent::paint(gPainter &painter, eWindowStyle &style, 
 				painter.setForegroundColor(local_style->m_foreground_color);
 		}
 	}
-	if (!fnt) fnt = new gFont("Regular", 20);
+	if (!fnt) {
+		style.getFont(eWindowStyle::fontListbox, fnt);
+	}
 
 	/* if we have no transparent background */
 	if (!local_style || !local_style->m_transparent_background)
@@ -367,9 +379,10 @@ void eListboxPythonConfigContent::paint(gPainter &painter, eWindowStyle &style, 
 	}
 
 	if (!fnt)
-		fnt = new gFont("Regular", 20);
+		style.getFont(eWindowStyle::fontEntry, fnt);
+
 	if (!fnt2)
-		fnt2 = new gFont(fnt->family, fnt->pointSize - fnt->pointSize/5);
+		style.getFont(eWindowStyle::fontValue, fnt2);
 
 	if (!local_style || !local_style->m_transparent_background)
 		/* if we have no transparent background */
@@ -494,29 +507,39 @@ void eListboxPythonConfigContent::paint(gPainter &painter, eWindowStyle &style, 
 						valuesize.setWidth(valuesize.width() - 15 - labelwidth - 15);
 						painter.renderText(eRect(valueoffset, valuesize), text, flags | gPainter::RT_VALIGN_CENTER, border_color, border_size, markedpos, &m_text_offset[m_cursor]);
 					/* pvalue is borrowed */
-					} else if (!strcmp(atype, "slider"))
-					{
-						ePyObject pvalue = PyTuple_GET_ITEM(value, 1);
-						ePyObject psize = PyTuple_GET_ITEM(value, 2);
+					} else if (!strcmp(atype, "slider")) {
 
-							/* convert value to Long. fallback to -1 on error. */
-						int value = (pvalue && PyInt_Check(pvalue)) ? PyInt_AsLong(pvalue) : -1;
-						int size = (pvalue && PyInt_Check(psize)) ? PyInt_AsLong(psize) : 100;
+						ePyObject pvalue = PyTuple_GET_ITEM(value, 1);
+						ePyObject pmin = PyTuple_GET_ITEM(value, 2);
+						ePyObject pmax = PyTuple_GET_ITEM(value, 3);
+
+						int value = (pvalue && PyInt_Check(pvalue)) ? PyInt_AsLong(pvalue) : 0;
+						int min = (pmin && PyInt_Check(pmin)) ? PyInt_AsLong(pmin) : 0;
+						int max = (pmax && PyInt_Check(pmax)) ? PyInt_AsLong(pmax) : 100;
+
+						// if min < 0 and max < min -> replace min,max
+						if(min < 0 && max < min) {
+							int newmax = min;
+							min = max;
+							max = newmax;
+						}
+
+//OLD					int size = (psize && PyInt_Check(psize)) ? PyInt_AsLong(psize) : 100;
 						int value_area = 0;
 
-							/* draw value at the end of the slider */
+						/* draw value at the end of the slider */
 						if (eConfigManager::getConfigBoolValue("config.usage.show_slider_value", true))
 						{
 							value_area = 100;
 							painter.setFont(fnt2);
 							painter.renderText(eRect(ePoint(offset.x()-15, offset.y()), m_itemsize), std::to_string(value), gPainter::RT_HALIGN_RIGHT| gPainter::RT_VALIGN_CENTER, border_color, border_size);
 						}
-							/* calc. slider length */
-						int width = (m_itemsize.width() - m_seperation - 15 - value_area) * value / size;
+						/* calc. slider length */
+					    int width = (m_itemsize.width() - m_seperation - 15 - value_area) * (value - min) / (max - min);
+//OLD					int width = (m_itemsize.width() - m_seperation - 15 - value_area) * value / size;
 						int height = m_itemsize.height();
 
-
-							/* draw slider */
+						/* draw slider */
 						//painter.fill(eRect(offset.x() + m_seperation, offset.y(), width, height));
 						if (m_slider_height % 2 != height % 2)
 							m_slider_height -= 1;
@@ -539,8 +562,7 @@ void eListboxPythonConfigContent::paint(gPainter &painter, eWindowStyle &style, 
 						{
 							painter.fill(eRect(offset.x() + m_seperation, offset.y() + slider_y_offset, width, m_slider_height));
 						}
-
-							/* pvalue is borrowed */
+						/* pvalue is borrowed */
 					}
 					else if (!strcmp(atype, "pixmap"))
 					{

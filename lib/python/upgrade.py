@@ -110,7 +110,7 @@ for package in packages:
 		continue
 	elif item[0].find('-bootlogo') > -1 and not overwriteBootlogoFiles:
 		continue
-	elif item[0].find('opendroid-spinner') > -1 and not overwriteSpinnerFiles:
+	elif item[0].find('openatv-spinner') > -1 and not overwriteSpinnerFiles:
 		continue
 	else:
 		upgradePackages.append(item[0])

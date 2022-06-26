@@ -38,7 +38,7 @@ class MultiBootManager(Screen, HelpableScreen):
 		HelpableScreen.__init__(self)
 		Screen.setTitle(self, _("MultiBoot Manager"))
 		self["slotlist"] = ChoiceList([ChoiceEntryComponent("", (_("Loading slot information, please wait..."), "Loading"))])
-		self["description"] = Label(_("Press the UP/DOWN buttons to select a slot and press OK or GREEN to 'Reboot' to that image. If available, YELLOW will either 'Delete' or 'Wipe' the image. A 'Deleted' image can be 'Restored' with the BLUE button. A 'Wiped' image is completely removed can NOT be restored!"))
+		self["description"] = Label(_("Press the UP/DOWN buttons to select a slot and press OK or GREEN to reboot to that image. If available, YELLOW will either delete or wipe the image. A deleted image can be restored with the BLUE button. A wiped image is completely removed and cannot be restored!"))
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Reboot"))
 		self["key_yellow"] = StaticText()
@@ -47,12 +47,12 @@ class MultiBootManager(Screen, HelpableScreen):
 			"cancel": (self.cancel, _("Cancel the slot selection and exit")),
 			"close": (self.closeRecursive, _("Cancel the slot selection and exit all menus")),
 			"top": (self.keyTop, _("Move to first line / screen")),
-			# "pageUp": (self.keyTop, _("Move to first line")),
+			# "pageUp": (self.keyTop, _("Move up a screen")),
 			"up": (self.keyUp, _("Move up a line")),
 			# "left": (self.keyUp, _("Move up a line")),
 			# "right": (self.keyDown, _("Move down a line")),
 			"down": (self.keyDown, _("Move down a line")),
-			# "pageDown": (self.keyBottom, _("Move to last line")),
+			# "pageDown": (self.keyBottom, _("Move down a screen")),
 			"bottom": (self.keyBottom, _("Move to last line / screen"))
 		}, prio=0, description=_("MultiBoot Manager Actions"))
 		self["restartActions"] = HelpableActionMap(self, ["OkSaveActions"], {

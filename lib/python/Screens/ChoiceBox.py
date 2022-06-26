@@ -92,6 +92,7 @@ class ChoiceBox(Screen):
 					else:
 						new_keys.append(not x.isdigit() and x or "")
 				self.__keys = new_keys
+
 		for x in list:
 			strpos = str(self.__keys[pos])
 			self.list.append(ChoiceEntryComponent(key=strpos, text=x))

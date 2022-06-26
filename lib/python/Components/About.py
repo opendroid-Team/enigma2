@@ -1,16 +1,16 @@
-from sys import modules, version as pyversion
 from array import array
 from binascii import hexlify
 from fcntl import ioctl
-from re import search
-from os.path import isfile
-from struct import pack, unpack
-from socket import socket, inet_ntoa, AF_INET, SOCK_DGRAM
 from glob import glob
-from subprocess import PIPE, Popen
 from locale import format_string
-from time import localtime, strftime
 from os import popen, stat
+from os.path import isfile
+from re import search
+from socket import AF_INET, SOCK_DGRAM, inet_ntoa, socket
+from struct import pack, unpack
+from subprocess import PIPE, Popen
+from sys import maxsize, modules, version as pyversion
+from time import localtime, strftime
 
 from boxbranding import getBoxType, getMachineBuild, getImageVersion
 from Components.SystemInfo import BoxInfo
@@ -243,13 +243,10 @@ def getChipSetString():
 	elif getMachineBuild() in ('alien5',):
 		return "S905D"
 	else:
-		try:
-			f = open('/proc/stb/info/chipset', 'r')
-			chipset = f.read()
-			f.close()
-			return str(chipset.lower().replace('\n', '').replace('bcm', '').replace('brcm', '').replace('sti', ''))
-		except IOError:
-			return "unavailable"
+		chipset = fileReadLine("/proc/stb/info/chipset", source=MODULE_NAME)
+		if chipset is None:
+			return _("Undefined")
+		return str(chipset.lower().replace('\n', '').replace('bcm', '').replace('brcm', '').replace('sti', ''))
 
 
 def getCPUBrand():
@@ -346,6 +343,12 @@ def getCPUString():
 		except IOError:
 			return "unavailable"
 
+def getFlashType():
+	if BoxInfo.getItem("SmallFlash"):
+		return _("Small - Tiny image")
+	elif BoxInfo.getItem("MiddleFlash"):
+		return _("Middle - Lite image")
+	return _("Normal - Standard image")
 
 def getCpuCoresString():
 	try:
@@ -412,7 +415,7 @@ def getPythonVersionString():
 	try:
 		return pyversion.split(' ')[0]
 	except:
-		return _("unknown")
+		return _("Unknown")
 
 def getIsBroadcom():
 	try:
