@@ -22,7 +22,7 @@ from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Screens.MultiBootManager import MultiBootManager
 from Screens.Screen import Screen
-from Tools.Downloader import downloadWithProgress
+from Tools.Downloader import DownloadWithProgress
 from Tools.MultiBoot import MultiBoot
 import ssl
 import urllib.error
@@ -194,7 +194,7 @@ class FlashOnline(Screen, HelpableScreen):
 								for dir in [dir for dir in [pathjoin(subFolder, dir) for dir in listdir(subFolder)] if isdir(dir) and splitext(dir)[1] == ".unzipped"]:
 									try:
 										rmtree(dir)
-									except (IOError, OSError) as err:
+									except OSError as err:
 										print("[FlashOnline] Error %d: Unable to remove directory '%s'!  (%s)" % (err.errno, dir, err.strerror))
 		imageList = []
 		for catagory in sorted(self.imagesList.keys(), reverse=True):
@@ -290,7 +290,7 @@ class FlashOnline(Screen, HelpableScreen):
 				self.setIndex = self["list"].getSelectedIndex()
 				self.imagesList = {}
 				self.getImagesList()
-			except (IOError, OSError) as err:
+			except OSError as err:
 				self.session.open(MessageBox, _("Error %d: Unable to delete downloaded image '%s'!  (%s)" % (err.errno, currentSelection, err.strerror)), MessageBox.TYPE_ERROR, timeout=3, windowTitle=self.getTitle())
 
 	def selectionChanged(self):
@@ -389,7 +389,7 @@ class FlashImage(Screen, HelpableScreen):
 						try:
 							fs = statvfs(path)
 							return (fs.f_bavail * fs.f_frsize) / (1 << 20)
-						except (IOError, OSError) as err:
+						except OSError as err:
 							print("[FlashOnLine] checkMedia Error %d: Unable to get status for '%s'!  (%s)" % (err.errno, path, err.strerror))
 					return 0
 
@@ -431,7 +431,7 @@ class FlashImage(Screen, HelpableScreen):
 						self.startBackupSettings(choice)
 					else:
 						self.session.openWithCallback(self.startBackupSettings, MessageBox, _("Warning: There is only a network drive to store the backup. This means the auto restore will not work after the flash. Alternatively, mount the network drive after the flash and perform a manufacturer reset to auto restore."), windowTitle=self.getTitle())
-				except (IOError, OSError) as err:
+				except OSError as err:
 					self.session.openWithCallback(self.keyCancel, MessageBox, _("Error: Unable to create the required directories on the target device (e.g. USB stick or hard disk)! Please verify device and try again."), type=MessageBox.TYPE_ERROR, windowTitle=self.getTitle())
 			else:
 				self.session.openWithCallback(self.keyCancel, MessageBox, _("Error: Could not find a suitable device! Please remove some downloaded images or attach another device (e.g. USB stick) with sufficient free space and try again."), type=MessageBox.TYPE_ERROR, windowTitle=self.getTitle())
@@ -453,15 +453,35 @@ class FlashImage(Screen, HelpableScreen):
 	def flashPostAction(self, retVal=True):
 		if retVal:
 			self.recordCheck = False
-			text = "%s\n%s" % (_("Please select what to do after flashing the image:"), _("(In addition, if it exists, a local script will be executed as well at /media/hdd/images/config/myrestore.sh)"))
-			choices = [
-				(_("Upgrade (Backup, flash & restore all)"), "restoresettingsandallplugins"),
-				(_("Clean (Just flash and start clean)"), "wizard"),
-				(_("Backup, flash and restore settings and no plugins"), "restoresettingsnoplugin"),
-				(_("Backup, flash and restore settings and selected plugins (Ask user)"), "restoresettings"),
-				(_("Do not flash image"), "abort")
-			]
-			self.session.openWithCallback(self.postFlashActionCallback, MessageBox, text, list=choices, default=self.selectPrevPostFlashAction(), windowTitle=self.getTitle())
+			text = _("Please select what to do after flash of the following image:")
+			text = "%s\n%s" % (text, self.imageName)
+			if BoxInfo.getItem("distro") in self.imageName:
+				if exists("/media/hdd/images/config/myrestore.sh"):
+					text = "%s\n%s" % (text, _("(The file '/media/hdd/images/config/myrestore.sh' exists and will be run after the image is flashed.)"))
+				choices = [
+					(_("Upgrade (Flash & restore all)"), "restoresettingsandallplugins"),
+					(_("Clean (Just flash and start clean)"), "wizard"),
+					(_("Flash and restore settings and no plugins"), "restoresettingsnoplugin"),
+					(_("Flash and restore settings and selected plugins (Ask user)"), "restoresettings"),
+					(_("Do not flash image"), "abort")
+				]
+				default = self.selectPrevPostFlashAction()
+				if "backup" in self.imageName:
+					choices = [
+						(_("Only Flash Backup Image"), "nothing"),
+						# (_("Flash & restore all"), "restoresettingsandallplugins"),
+						# (_("Flash and restore settings and no plugins"), "restoresettingsnoplugin"),
+						# (_("Flash and restore settings and selected plugins (Ask user)"), "restoresettings"),
+						(_("Do not flash image"), "abort")
+					]
+					default = 0
+			else:
+				choices = [
+					(_("Clean (Just flash and start clean)"), "wizard"),
+					(_("Do not flash image"), "abort")
+				]
+				default = 0
+			self.session.openWithCallback(self.postFlashActionCallback, MessageBox, text, list=choices, default=default, windowTitle=self.getTitle())
 		else:
 			self.keyCancel()
 
@@ -496,7 +516,7 @@ class FlashImage(Screen, HelpableScreen):
 				try:
 					if not exists(rootFolder):
 						makedirs(rootFolder)
-				except (IOError, OSError) as err:
+				except OSError as err:
 					print("[FlashOnline] postFlashActionCallback Error %d: Failed to create '%s' folder!  (%s)" % (err.errno, rootFolder, err.strerror))
 				if restoreSettings:
 					filesToCreate.append("settings")
@@ -509,7 +529,7 @@ class FlashImage(Screen, HelpableScreen):
 					if fileName in filesToCreate:
 						try:
 							open(path, "w").close()
-						except (IOError, OSError) as err:
+						except OSError as err:
 							print("[FlashOnline] postFlashActionCallback Error %d: failed to create %s! (%s)" % (err.errno, path, err.strerror))
 					else:
 						if exists(path):
@@ -525,7 +545,7 @@ class FlashImage(Screen, HelpableScreen):
 								else:
 									if exists(path):
 										unlink(path)
-						except (IOError, OSError) as err:
+						except OSError as err:
 							print("[FlashOnline] postFlashActionCallback Error %d: Failed to create restore mode flag file '%s'!  (%s)" % (err.errno, path, err.strerror))
 				self.startDownload()
 			else:
@@ -550,7 +570,7 @@ class FlashImage(Screen, HelpableScreen):
 				self["header"].setText(_("Downloading Image"))
 				self["info"].setText(self.imageName)
 				self["summary_header"].setText(self["header"].getText())
-				self.downloader = downloadWithProgress(self.source, self.zippedImage)
+				self.downloader = DownloadWithProgress(self.source, self.zippedImage)
 				self.downloader.addProgress(self.downloadProgress)
 				self.downloader.addEnd(self.downloadEnd)
 				self.downloader.addError(self.downloadError)
@@ -584,7 +604,8 @@ class FlashImage(Screen, HelpableScreen):
 		try:
 			files = ZipFile(self.zippedImage, "r").extractall(self.unzippedImage)
 			self.flashImage()
-		except:
+		except Exception as err:
+			print("[FlashOnline] startUnzip Error: %s!" % str(err))
 			self.session.openWithCallback(self.keyCancel, MessageBox, _("Error unzipping image '%s'!") % self.imageName, type=MessageBox.TYPE_ERROR, windowTitle=self.getTitle())
 
 	def flashImage(self):
