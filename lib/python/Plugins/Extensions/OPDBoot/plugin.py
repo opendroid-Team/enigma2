@@ -757,7 +757,7 @@ class OPDBootImageInstall(Screen, ConfigListScreen):
                                 if fileExists(pluginpath + '/ex_init.py'):
                                         cmd1 = 'python ' + pluginpath + '/ex_init.py'
                                 else:
-                                        cmd1 = 'python ' + pluginpath + '/ex_init.pyo'
+                                        cmd1 = 'python ' + pluginpath + '/ex_init.pyc'
                                 cmd = '%s %s %s %s %s %s %s %s %s' % (cmd1,
                                                                       source,
                                  target.replace(' ', '.'),
