@@ -431,10 +431,10 @@ int eDVBTSTools::getOffset(off_t &offset, pts_t &pts, int marg)
 					 * NOTE: the bitrate calculation can be way off, especially when the pts difference is small.
 					 * So the calculated offset might be far ahead of the end of the file.
 					 * When that happens, avoid poisoning our sample list (m_samples) with an invalid value,
-					 * which could eventually cause (timeshift) playback to be stopped.
-					 * Because the file could be growing (timeshift), instead of returning the currently known end
+					 * which could eventually cause (time shift) playback to be stopped.
+					 * Because the file could be growing (time shift), instead of returning the currently known end
 					 * of file offset, we return an offset 1MB ahead of the end of the file.
-					 * This allows jumping to the live point of the timeshift, for instance.
+					 * This allows jumping to the live point of the time shift, for instance.
 					 */
 					offset = m_offset_end + 1024 * 1024;
 					return 0;
@@ -863,6 +863,14 @@ int eDVBTSTools::findFrame(off_t &_offset, size_t &len, int &direction, int fram
 
 	if (is_mpeg2)
 	{
+// First we have to get back to where we were when we set start!
+// getStructureEntryNext() has a private variable to remember where it was at
+// the end of the last call, and getStructureEntryFirst() sets it.
+		if (m_streaminfo.getStructureEntryFirst(start, longdata) != 0)
+		{
+			eDebug("[eDVBTSTools] findFrame getStructureEntryFirst for is_mpeg2 failed");
+			return -1;
+        }
 		// Seek back to sequence start (appears to be needed for e.g. a few TCM streams)
 		// length calculation changes m_streaminfo -> reset it to start offset
 		while (count_passes)
@@ -929,11 +937,39 @@ int eDVBTSTools::findNextPicture(off_t &offset, size_t &len, int &distance, int 
         }
 	while (distance > 0)
 	{
+// Save this for possible reset and 1-frame change retry.
+		off_t loop_start_frame = new_offset/m_packet_size;
+
 		int dir = direction;
 		if (findFrame(new_offset, new_len, dir, frame_types))
 		{
 //			eDebug("[eDVBTSTools] findNextPicture findFrame failed!\n");
 			return -1;
+		}
+
+// Check that we are moving in the right direction.
+// If not, try again with a 1 frame change
+// All done before we change distance...
+		int retry_frame_offset = 0;
+		off_t new_frame = new_offset/m_packet_size;
+		if (direction < 0)
+		{
+			if (loop_start_frame <= new_frame)
+			{
+				retry_frame_offset = -1;
+			}
+		}
+		else
+		{
+			if (loop_start_frame >= new_frame)
+			{
+				retry_frame_offset = 1;
+			}
+		}
+		if (retry_frame_offset != 0)
+		{
+			new_offset = (loop_start_frame + retry_frame_offset)*m_packet_size;
+			continue;
 		}
 
 		distance -= abs(dir);

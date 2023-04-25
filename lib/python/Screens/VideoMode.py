@@ -227,19 +227,19 @@ class VideoSetup(Screen, ConfigListScreen):
 			if level >= 1:
 				self.list.append(getConfigListEntry(_("WSS on 4:3"), config.av.wss, _("When enabled, content with an aspect ratio of 4:3 will be stretched to fit the screen.")))
 				if BoxInfo.getItem("ScartSwitch"):
-					self.list.append(getConfigListEntry(_("Auto scart switching"), config.av.vcrswitch, _("When enabled, your receiver will detect activity on the VCR SCART input.")))
+					self.list.append(getConfigListEntry(_("Auto SCART switching"), config.av.vcrswitch, _("When enabled, your receiver will detect activity on the VCR SCART input.")))
 
 		if not isinstance(config.av.scaler_sharpness, ConfigNothing) and not isPluginInstalled("VideoEnhancement"):
 			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness, _("This option configures the picture sharpness.")))
 
 		if BoxInfo.getItem("havecolorspace"):
-			self.list.append(getConfigListEntry(_("HDMI Colorspace"), config.av.hdmicolorspace, _("This option allows you can config the Colorspace from Auto to RGB")))
+			self.list.append(getConfigListEntry(_("HDMI color space"), config.av.hdmicolorspace, _("This option allows you can config the Colorspace from Auto to RGB")))
 
 		if BoxInfo.getItem("havecolorimetry"):
 			self.list.append(getConfigListEntry(_("HDMI Colorimetry"), config.av.hdmicolorimetry, _("This option allows you can config the Colorimetry for HDR")))
 
 		if BoxInfo.getItem("havehdmicolordepth"):
-			self.list.append(getConfigListEntry(_("HDMI Colordepth"), config.av.hdmicolordepth, _("This option allows you can config the Colordepth for UHD")))
+			self.list.append(getConfigListEntry(_("HDMI color depth"), config.av.hdmicolordepth, _("This option allows you can config the Colordepth for UHD")))
 
 		if BoxInfo.getItem("havehdmihdrtype"):
 			self.list.append(getConfigListEntry(_("HDMI HDR Type"), config.av.hdmihdrtype, _("This option allows you can force the HDR Modes for UHD")))
@@ -248,7 +248,7 @@ class VideoSetup(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Bypass HDMI EDID Check"), config.av.bypass_edid_checking, _("This option allows you to bypass HDMI EDID check")))
 
 		if BoxInfo.getItem("haveboxmode"):
-			self.list.append(getConfigListEntry(_("Change Boxmode to control Hardware Chip Modes*"), config.av.boxmode, _("Switch Mode to enable HDR Modes or PIP Functions")))
+			self.list.append(getConfigListEntry(_("Change Boxmode to control Hardware Chip Modes*"), config.av.boxmode, _("Switch Mode to enable HDR Modes or PiP Functions")))
 
 		if BoxInfo.getItem("HDRSupport"):
 			self.list.append(getConfigListEntry(_("HLG Support"), config.av.hlg_support, _("This option allows you can force the HLG Modes for UHD")))
@@ -372,7 +372,7 @@ class VideoSetup(Screen, ConfigListScreen):
 			self.reset_mode = 1
 			if autores_sd.find('1080') >= 0:
 				self.hw.setMode(port, '1080p', '50Hz')
-			elif (smart1080p == '1080p50') or (smart1080p == 'true'): # for compatibility with old ConfigEnableDisable
+			elif (smart1080p == '1080p50') or (smart1080p == 'true'):  # for compatibility with old ConfigEnableDisable
 				self.hw.setMode(port, '1080p', '50Hz')
 			elif smart1080p == '2160p50':
 				self.hw.setMode(port, '2160p', '50Hz')
@@ -893,28 +893,28 @@ class AutoVideoMode(Screen):
 				elif (mypath.find('p60.') >= 0) or (mypath.find('60p.') >= 0):
 					new_rate = '60'
 				elif new_rate in ("auto", "multi"):
-					new_rate = '' # omit frame rate specifier, e.g. '1080p' instead of '1080p50' if there is no clue
+					new_rate = ''  # omit frame rate specifier, e.g. '1080p' instead of '1080p50' if there is no clue
 				if mypath != '':
 					if mypath.endswith('.ts'):
 						print("DEBUG VIDEOMODE/ playing .ts file")
-						new_rate = '50' # for .ts files
+						new_rate = '50'  # for .ts files
 					else:
 						print("DEBUG VIDEOMODE/ playing other (non .ts) file")
 						# new_rate from above for all other videos
 				else:
 					print("DEBUG VIDEOMODE/ no path or no service reference, presumably live TV")
-					new_rate = '50' # for TV / or no service reference, then stay at 1080p50
+					new_rate = '50'  # for TV / or no service reference, then stay at 1080p50
 
 				new_rate = new_rate.replace('25', '50')
 				new_rate = new_rate.replace('30', '60')
 
-				if (config.av.smart1080p.value == '1080p50') or (config.av.smart1080p.value == 'true'): # for compatibility with old ConfigEnableDisable
+				if (config.av.smart1080p.value == '1080p50') or (config.av.smart1080p.value == 'true'):  # for compatibility with old ConfigEnableDisable
 					write_mode = '1080p' + new_rate
 				elif config.av.smart1080p.value == '2160p50':
 					write_mode = '2160p' + new_rate
 				elif config.av.smart1080p.value == '1080i50':
 					if new_rate == '24':
-						write_mode = '1080p24' # instead of 1080i24
+						write_mode = '1080p24'  # instead of 1080i24
 					else:
 						write_mode = '1080i' + new_rate
 				elif config.av.smart1080p.value == '720p50':
@@ -1004,7 +1004,7 @@ class AutoVideoMode(Screen):
 
 def autostart(session):
 	global resolutionlabel
-	if not getAutoresPlugin_enabled(): #path.exists(resolveFilename(SCOPE_PLUGINS)+'SystemPlugins/AutoResolution'):
+	if not getAutoresPlugin_enabled():  # path.exists(resolveFilename(SCOPE_PLUGINS)+'SystemPlugins/AutoResolution'):
 		if resolutionlabel is None:
 			resolutionlabel = session.instantiateDialog(AutoVideoModeLabel)
 		AutoVideoMode(session)

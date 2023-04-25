@@ -75,7 +75,7 @@ class TitleList(Screen, HelpableScreen):
 
 		self["MovieSelectionActions"] = HelpableActionMap(self, "MovieSelectionActions",
 			{
-				"contextMenu": (self.showMenu, _("menu")),
+				"contextMenu": (self.showMenu, _("Menu")),
 			})
 
 		self["actions"] = ActionMap(["OkCancelActions"],
@@ -110,7 +110,7 @@ class TitleList(Screen, HelpableScreen):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
-		self.setTitle(_("DVD Titlelist"))
+		self.setTitle(_("DVD Title list"))
 
 	def checkBackgroundJobs(self):
 		for job in job_manager.getPendingJobs():
@@ -312,10 +312,10 @@ class TitleList(Screen, HelpableScreen):
 			self["space_label"].text = "%d MB (%.2f%%)" % (size, percent)
 
 			if size > MAX_BD:
-				self["medium_label"].setText(_("Exceeds Bludisc medium!"))
+				self["medium_label"].setText(_("Exceeds Blu-ray disc medium!"))
 				self["medium_label"].setForegroundColorNum(2)
 				if self.previous_size < MAX_BD:
-					self.session.open(MessageBox, text=_("Exceeds Bludisc medium!"), type=MessageBox.TYPE_ERROR)
+					self.session.open(MessageBox, text=_("Exceeds Blu-ray disc medium!"), type=MessageBox.TYPE_ERROR)
 			elif size < MAX_BD:
 				self["medium_label"].setText(_("Required medium type:") + " " + _("BLUDISC RECORDABLE") + ", %d MB " % (MAX_BD - size) + _("free"))
 				self["medium_label"].setForegroundColorNum(1)
@@ -371,7 +371,7 @@ class TitleList(Screen, HelpableScreen):
 			text = _("The DVD standard doesn't support H.264 (HDTV) video streams.")
 
 			if all_hd == True:
-				choices.append((_("BDMV Bludisc (HDTV titles only)"), "bdmv"))
+				choices.append((_("BDMV Blu-ray disk (HDTV titles only)"), "bdmv"))
 
 			choices.append((_("Dreambox format data DVD (won't work in other DVD players)"), "data_ts"))
 			choices.append((_("Don't add this recording"), None))

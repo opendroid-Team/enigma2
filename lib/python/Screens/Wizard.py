@@ -1,5 +1,3 @@
-from __future__ import print_function
-from boxbranding import getMachineBrand, getMachineName
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
@@ -14,7 +12,8 @@ from Components.Slider import Slider
 from Components.ActionMap import NumberActionMap
 from Components.ConfigList import ConfigList
 from Components.Sources.List import List
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import getBoxDisplayName
+
 
 class WizardSummary(Screen):
 	def __init__(self, session, parent):
@@ -154,7 +153,7 @@ class Wizard(Screen):
 	def __init__(self, session, showSteps=True, showStepSlider=True, showList=True, showConfig=True):
 		Screen.__init__(self, session)
 
-		self.isLastWizard = False # can be used to skip a "goodbye"-screen in a wizard
+		self.isLastWizard = False  # can be used to skip a "goodbye"-screen in a wizard
 
 		self.stepHistory = []
 
@@ -319,7 +318,7 @@ class Wizard(Screen):
 		count = 0
 		for x in list(self.wizard.keys()):
 			if self.wizard[x]["id"] == id:
-				print("result:", count)
+				print("result: %s" % count)
 				return count
 			count += 1
 # 		print "result: nothing"
@@ -346,7 +345,7 @@ class Wizard(Screen):
 					self.currStep = self.getStepWithID(nextStep)
 
 		print_now = True
-		if (currStep == self.numSteps and self.wizard[currStep]["nextstep"] is None) or self.wizard[currStep]["id"] == "end": # wizard finished
+		if (currStep == self.numSteps and self.wizard[currStep]["nextstep"] is None) or self.wizard[currStep]["id"] == "end":  # wizard finished
 # 			print "wizard finished"
 			self.markDone()
 			self.exit()
@@ -421,7 +420,7 @@ class Wizard(Screen):
 		elif self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0:
 			self["list"].selectPrevious()
 			if "onselect" in self.wizard[self.currStep]:
-				print("current:", self["list"].current)
+				print("current: %s" % str(self["list"].current))
 				self.selection = self["list"].current[-1]
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
@@ -485,7 +484,7 @@ class Wizard(Screen):
 		elif self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0:
 			if "onselect" in self.wizard[self.currStep]:
 				self.selection = self["list"].current[-1]
-				print("self.selection:", self.selection)
+				print("self.selection: %s" % str(self.selection))
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 
 	def resetCounter(self):
@@ -499,7 +498,7 @@ class Wizard(Screen):
 		return False
 
 	def getTranslation(self, text):
-		return _(text).replace("%s %s", "%s %s" % (getMachineBrand(), getMachineName()))
+		return _(text).replace("%s %s", "%s %s" % getBoxDisplayName())
 
 	def updateText(self, firstset=False):
 		text = self.getTranslation(self.wizard[self.currStep]["text"])
@@ -532,7 +531,7 @@ class Wizard(Screen):
 		exec(self.wizard[self.currStep]["condition"])
 		if not self.condition:
 # 			print "keys*******************:", self.wizard[self.currStep].keys()
-			if "laststep" in self.wizard[self.currStep]: # exit wizard, if condition of laststep doesn't hold
+			if "laststep" in self.wizard[self.currStep]:  # exit wizard, if condition of laststep doesn't hold
 				self.markDone()
 				self.exit()
 				return
@@ -632,20 +631,19 @@ class Wizard(Screen):
 						self.session.openWithCallback(self.ok, self.wizard[self.currStep]["config"]["screen"])
 					else:
 						self["config"].instance.setZPosition(2)
-						print("wizard screen", self.wizard[self.currStep]["config"]["screen"])
+						print("wizard screen %s" % str(self.wizard[self.currStep]["config"]["screen"]))
 						if self.wizard[self.currStep]["config"]["args"] is None:
 							self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"])
 						else:
 							self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"], eval(self.wizard[self.currStep]["config"]["args"]))
-						if BoxInfo.getItem("OSDAnimation"):
-							self.configInstance.setAnimationMode(0)
+						self.configInstance.setAnimationMode(0)
 						self["config"].l.setList(self.configInstance["config"].list)
 						callbacks = self.configInstance["config"].onSelectionChanged
 						self.configInstance["config"].destroy()
-						print("clearConfigList", self.configInstance["config"], self["config"])
+						print("clearConfigList %s %s" % (str(self.configInstance["config"]), str(self["config"])))
 						self.configInstance["config"] = self["config"]
 						self.configInstance["config"].onSelectionChanged = callbacks
-						print("clearConfigList", self.configInstance["config"], self["config"])
+						print("clearConfigList %s %s" % (str(self.configInstance["config"]), str(self["config"])))
 				else:
 					self["config"].l.setList([])
 					self.handleInputHelpers()

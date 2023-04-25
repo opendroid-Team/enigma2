@@ -37,8 +37,8 @@ protected:
 
 	virtual void cursorSave()=0;
 	virtual void cursorRestore()=0;
-	virtual void cursorSaveTop(int n)=0;
-	virtual int cursorRestoreTop()=0;
+	virtual void cursorSaveLine(int n)=0;
+	virtual int cursorRestoreLine()=0;
 
 	virtual int size()=0;
 
@@ -86,7 +86,7 @@ struct eListboxStyle
 	};
 	int m_valign, m_halign, m_border_size, m_scrollbarborder_width;
 	ePtr<gFont> m_font, m_valuefont;
-	ePoint m_text_offset;
+	eRect m_text_padding;
 	bool m_use_opd_workaround;
 };
 #endif
@@ -114,12 +114,19 @@ public:
 	};
 
 	enum {
+		listVertical,
+		listHorizontal,
+		listGrid
+	};
+
+	enum {
 		DefaultScrollBarWidth = 10,
 		DefaultScrollBarOffset = 5,
 		DefaultScrollBarBorderWidth = 1,
 		DefaultScrollBarScroll = eListbox::byPage,
 		DefaultScrollBarMode = eListbox::showNever,
-		DefaultWrapAround = true
+		DefaultWrapAround = true,
+		DefaultPageSize = 0
 	};
 
 	void setScrollbarScroll(int scroll);
@@ -129,34 +136,52 @@ public:
 	void setContent(iListboxContent *content);
 
 	void allowNativeKeys(bool allow);
-
-/*	enum Movement {
-		moveUp,
-		moveDown,
-		moveTop,
-		moveEnd,
-		justCheck
-	}; */
+	void enableAutoNavigation(bool allow) { allowNativeKeys(allow); }
 
 	int getCurrentIndex();
 	void moveSelection(long how);
 	void moveSelectionTo(int index);
-	void moveToEnd();
+	void moveToEnd(); // Deprecated
 	bool atBegin();
 	bool atEnd();
+
+	void goTop() { moveSelection(moveTop); }
+	void goBottom() { moveSelection(moveBottom); }
+	void goLineUp() { moveSelection(moveUp); }
+	void goLineDown() { moveSelection(moveDown); }
+	void goPageUp() { moveSelection(movePageUp); }
+	void goPageDown() { moveSelection(movePageDown); }
+	void goLeft() { moveSelection(moveLeft); }
+	void goRight() { moveSelection(moveRight); }
+
+	// for future use
+	void goPageLeft() { moveSelection(movePageLeft); }
+	void goPageRight() { moveSelection(movePageRight); }
+	void goFirst() { moveSelection(moveFirst); }
+	void goLast() { moveSelection(moveLast); }
 
 	enum ListboxActions {
 		moveUp,
 		moveDown,
 		moveTop,
-		moveEnd,
-		pageUp,
-		pageDown,
+		moveBottom,
+		movePageUp,
+		movePageDown,
 		justCheck,
-		refresh
+		refresh,
+		moveLeft,
+		moveRight,
+		moveFirst, // for future use
+		moveLast, // for future use
+		movePageLeft, // for future use
+		movePageRight, // for future use
+		moveEnd = moveBottom, // deprecated
+		pageUp = movePageUp,  // deprecated
+		pageDown = movePageDown  // deprecated
 	};
 
 	void setItemHeight(int h);
+	void setItemWidth(int w);
 	void setSelectionEnable(int en);
 
 	void setBackgroundColor(gRGB &col);
@@ -179,21 +204,29 @@ public:
 	void setValueFont(gFont *font);
 	void setVAlign(int align);
 	void setHAlign(int align);
-	void setTextOffset(const ePoint &textoffset);
+	void setTextPadding(const eRect &padding);
 	void setUseOPDWorkaround(void);
 
 	void setScrollbarBorderColor(const gRGB &col);
 	void setScrollbarForegroundColor(gRGB &col);
 	void setScrollbarBackgroundColor(gRGB &col);
 
-	static void setDefaultScrollbarStyle(int width, int offset, int borderwidth, int scroll, int mode, bool enablewraparound) { 
+	void setPageSize(int size) { m_page_size = size; }
+
+	static void setDefaultScrollbarStyle(int width, int offset, int borderwidth, int scroll, int mode, bool enablewraparound, int pageSize) { 
 			defaultScrollBarWidth = width; 
 			defaultScrollBarOffset = offset; 
 			defaultScrollBarBorderWidth = borderwidth; 
 			defaultScrollBarScroll = scroll; 
 			defaultWrapAround = enablewraparound;
 			defaultScrollBarMode = mode;
+			defaultPageSize = pageSize;
 		}
+
+	static void setDefaultPadding(const eRect &padding) { defaultPadding = padding; }
+
+	void setOrientation(int o);
+	void setTopIndex(int idx);
 
 	bool getWrapAround() { return m_enabled_wrap_around; }
 	int getScrollbarScroll() { return m_scrollbar_scroll; }
@@ -201,7 +234,11 @@ public:
 	int getScrollbarWidth() { return m_scrollbar_width; }
 	int getScrollbarOffset() { return m_scrollbar_offset; }
 	int getScrollbarBorderWidth() { return m_scrollbar_border_width; }
+	int getPageSize() { return m_page_size; }
 	int getItemHeight() { return m_itemheight; }
+	int getItemWidth() { return m_itemwidth; }
+	int getOrientation() { return m_list_orientation; }
+	int getTopIndex() { return m_top; }
 	bool getSelectionEnable() {return m_selection_enabled; }
 	gFont* getFont() {return m_style.m_font; }
 	gFont* getEntryFont() {return m_style.m_font; }
@@ -233,9 +270,11 @@ private:
 	static int defaultScrollBarBorderWidth;
 	static int defaultScrollBarScroll;
 	static int defaultScrollBarMode;
+	static int defaultPageSize;
 	static bool defaultWrapAround;
+	static eRect defaultPadding;
 
-	int m_scrollbar_mode, m_prev_scrollbar_page, m_scrollbar_scroll;
+	int m_list_orientation,m_scrollbar_mode, m_prev_scrollbar_page, m_scrollbar_scroll;
 	bool m_content_changed;
 	bool m_enabled_wrap_around;
 
@@ -244,10 +283,14 @@ private:
 	int m_scrollbar_border_width;
 	int m_top, m_selected;
 	int m_itemheight;
+	int m_itemwidth;
 	int m_items_per_page;
 	int m_selection_enabled;
+	int m_page_size;
 
 	bool m_native_keys_bound;
+	int m_first_selectable_item;
+	int m_last_selectable_item;
 
 	ePtr<iListboxContent> m_content;
 	eSlider *m_scrollbar;

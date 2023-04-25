@@ -1,4 +1,5 @@
-from __future__ import print_function
+from os.path import isfile
+
 from enigma import ePicLoad, eTimer, getDesktop, gMainDC, eSize
 
 from Components.Pixmap import Pixmap, MovingPixmap
@@ -90,7 +91,7 @@ class picshow(Screen):
 		self["key_yellow"].setText(_("Exif"))
 
 	def showThumb(self):
-		if not self.filelist.canDescent() and self.filelist.getCurrentDirectory() and self.filelist.getFilename() and self.picload.getThumbnail(self.filelist.getCurrentDirectory() + self.filelist.getFilename()) == 1:
+		if self.filelist.getPath() and isfile(self.filelist.getPath()) and self.picload.getThumbnail(self.filelist.getPath()) == 1:
 			self.ThumbTimer.start(500, True)
 
 	def selectionChanged(self):
@@ -107,7 +108,7 @@ class picshow(Screen):
 
 	def KeyYellow(self):
 		if not self.filelist.canDescent():
-			self.session.open(Pic_Exif, self.picload.getInfo(self.filelist.getCurrentDirectory() + self.filelist.getFilename()))
+			self.session.open(Pic_Exif, self.picload.getInfo(self.filelist.getPath()))
 
 	def KeyMenu(self):
 		self.session.openWithCallback(self.setConf, Pic_Setup)
@@ -140,6 +141,7 @@ class picshow(Screen):
 		self.close()
 
 #------------------------------------------------------------------------------------------
+
 
 class Pic_Setup(Setup):
 	def __init__(self, session):
@@ -211,32 +213,36 @@ class Pic_Thumb(Screen):
 
 		self.size_w = getDesktop(0).size().width()
 		self.size_h = getDesktop(0).size().height()
-		self.thumbsX = self.size_w / (self.spaceX + self.picX) # thumbnails in X
-		self.thumbsY = self.size_h / (self.spaceY + self.picY) # thumbnails in Y
-		self.thumbsC = self.thumbsX * self.thumbsY # all thumbnails
+		self.thumbsX = self.size_w / (self.spaceX + self.picX)  # thumbnails in X
+		self.thumbsY = self.size_h / (self.spaceY + self.picY)  # thumbnails in Y
+		self.thumbsC = int(self.thumbsX * self.thumbsY)  # all thumbnails
 
 		self.positionlist = []
 		skincontent = ""
 
 		posX = -1
-		for x in list(range(self.thumbsC)):
+		for x in range(self.thumbsC):
 			posY = x / self.thumbsX
 			posX += 1
 			if posX >= self.thumbsX:
 				posX = 0
 
-			absX = self.spaceX + (posX * (self.spaceX + self.picX))
-			absY = self.spaceY + (posY * (self.spaceY + self.picY))
+			absX = self.spaceX + int(posX * (self.spaceX + self.picX))
+			absY = self.spaceY + int(posY * (self.spaceY + self.picY))
 			self.positionlist.append((absX, absY))
-			skincontent += "<widget source=\"label" + str(x) + "\" render=\"Label\" position=\"" + str(absX + 5) + "," + str(absY + self.picY - textsize) + "\" size=\"" + str(self.picX - 10) + "," + str(textsize) \
-					+ "\" font=\"Regular;" + str(thumtxt) + "\" zPosition=\"2\" transparent=\"1\" noWrap=\"1\" foregroundColor=\"" + self.textcolor + "\" />"
-			skincontent += "<widget name=\"thumb" + str(x) + "\" position=\"" + str(absX + 5) + "," + str(absY + 5) + "\" size=\"" + str(self.picX - 10) + "," + str(self.picY - (textsize * 2)) + "\" zPosition=\"2\" transparent=\"1\" alphatest=\"on\" />"
+			skincontent += f"""
+				<widget source="label{x}" render="Label" position="{absX + 5},{absY + self.picY - textsize}" size="{self.picX - 10},{textsize}" font="Regular;{thumtxt}" zPosition="2" transparent="1" noWrap="1" foregroundColor="{self.textcolor}" />
+				<widget name="thumb{x}" position="{absX + 5},{absY + 5}" size="{self.picX - 10},{self.picY - (textsize * 2)}" zPosition="2" transparent="1" alphatest="on" />
+			"""
 
 		# Screen, backgroundlabel and MovingPixmap
-		self.skin = "<screen position=\"0,0\" size=\"" + str(self.size_w) + "," + str(self.size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\"" + str(self.size_w) + "," + str(self.size_h) + "\" backgroundColor=\"" + self.color + "\" />" \
-			+ "<widget name=\"frame\" position=\"" + str(self.spaceX) + "," + str(self.spaceY) + "\" size=\"" + str(self.picX) + "," + str(self.picY) + "\" pixmap=\"" + pic_frame + "\" zPosition=\"1\" alphatest=\"on\" />" \
-			+ skincontent + "</screen>"
+		self.skin = f"""
+			<screen position="0,0" size="{self.size_w},{self.size_h}" flags="wfNoBorder">
+			<eLabel position="0,0" zPosition="0" size="{self.size_w},{self.size_h}" backgroundColor="{self.color}" />
+			<widget name="frame" position="{self.spaceX},{self.spaceY}" size="{self.picX},{self.picY}" pixmap="{pic_frame}" zPosition="1" alphatest="on" />
+			{skincontent}
+			</screen>
+		"""
 
 		Screen.__init__(self, session)
 
@@ -252,7 +258,7 @@ class Pic_Thumb(Screen):
 		}, -1)
 
 		self["frame"] = MovingPixmap()
-		for x in list(range(self.thumbsC)):
+		for x in range(self.thumbsC):
 			self["label" + str(x)] = StaticText()
 			self["thumb" + str(x)] = Pixmap()
 
@@ -267,7 +273,7 @@ class Pic_Thumb(Screen):
 		Page = 0
 		for x in piclist:
 			if not x[0][1]:
-				self.filelist.append((index, framePos, Page, x[0][0], path + x[0][0]))
+				self.filelist.append((index, framePos, Page, x[0][4], x[0][0]))
 				index += 1
 				framePos += 1
 				if framePos > (self.thumbsC - 1):
@@ -310,7 +316,7 @@ class Pic_Thumb(Screen):
 	def newPage(self):
 		self.Thumbnaillist = []
 		#clear Labels and Thumbnail
-		for x in list(range(self.thumbsC)):
+		for x in range(self.thumbsC):
 			self["label" + str(x)].setText("")
 			self["thumb" + str(x)].hide()
 		#paint Labels and fill Thumbnail-List
@@ -325,7 +331,7 @@ class Pic_Thumb(Screen):
 	def showPic(self, picInfo=""):
 		for x in list(range(len(self.Thumbnaillist))):
 			if self.Thumbnaillist[x][0] == 0:
-				if self.picload.getThumbnail(self.Thumbnaillist[x][2]) == 1: #zu tun probier noch mal
+				if self.picload.getThumbnail(self.Thumbnaillist[x][2]) == 1:  # zu tun probier noch mal
 					self.ThumbTimer.start(500, True)
 				else:
 					self.Thumbnaillist[x][0] = 1
@@ -350,13 +356,13 @@ class Pic_Thumb(Screen):
 		self.paintFrame()
 
 	def key_up(self):
-		self.index -= self.thumbsX
+		self.index -= int(self.thumbsX)
 		if self.index < 0:
 			self.index = self.maxentry
 		self.paintFrame()
 
 	def key_down(self):
-		self.index += self.thumbsX
+		self.index += int(self.thumbsX)
 		if self.index > self.maxentry:
 			self.index = 0
 		self.paintFrame()
@@ -399,11 +405,15 @@ class Pic_Full_View(Screen):
 			gMainDC.getInstance().setResolution(size_w, size_h)
 			getDesktop(0).resize(eSize(size_w, size_h))
 
-		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\"" + str(size_w) + "," + str(size_h) + "\" backgroundColor=\"" + self.bgcolor + "\" /><widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w - (space * 2)) + "," + str(size_h - (space * 2)) + "\" zPosition=\"1\" alphatest=\"on\" /> \
-			<widget name=\"point\" position=\"" + str(space + 5) + "," + str(space + 2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
-			<widget name=\"play_icon\" position=\"" + str(space + 25) + "," + str(space + 2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\"  alphatest=\"on\" /> \
-			<widget source=\"file\" render=\"Label\" position=\"" + str(space + 45) + "," + str(space) + "\" size=\"" + str(size_w - (space * 2) - 50) + ",25\" font=\"Regular;20\" borderWidth=\"1\" borderColor=\"#000000\" halign=\"left\" foregroundColor=\"" + self.textcolor + "\" zPosition=\"2\" noWrap=\"1\" transparent=\"1\" /></screen>"
+		self.skin = f"""
+			<screen position="0,0" size="{size_w},{size_h}" flags="wfNoBorder">
+			<eLabel position="0,0" zPosition="0" size="{size_w},{size_h}" backgroundColor="{self.bgcolor}"/>
+			<widget name="pic" position="{space},{space}" size="{size_w - (space * 2)},{size_h - (space * 2)}" zPosition="1" alphatest="on" />
+			<widget name="point" position="{space + 5},{space + 5}" size="20,20" zPosition="2" pixmap="skin_default/icons/record.png" alphatest="on" />
+			<widget name="play_icon" position="{space + 25},{space + 2}" size="20,20" zPosition="2" pixmap="skin_default/icons/ico_mp_play.png"  alphatest="on" />
+			<widget source="file" render="Label" position="{space + 45},{space}" size="{size_w - (space * 2) - 50},25" font="Regular;20" borderWidth="1" borderColor="#000000" halign="left" foregroundColor="{self.textcolor}" zPosition="2" noWrap="1" transparent="1" />
+			</screen>
+		"""
 
 		Screen.__init__(self, session)
 
@@ -432,17 +442,12 @@ class Pic_Full_View(Screen):
 		self.dirlistcount = 0
 
 		for x in filelist:
-			if len(filelist[0]) == 3: #orig. filelist
-				if not x[0][1]:
-					self.filelist.append(path + x[0][0])
-				else:
-					self.dirlistcount += 1
-			elif len(filelist[0]) == 2: #scanlist
+			if len(filelist[0]) in (2, 3):  # orig. filelist / scanlist
 				if not x[0][1]:
 					self.filelist.append(x[0][0])
 				else:
 					self.dirlistcount += 1
-			else: # thumbnaillist
+			else:  # thumbnaillist
 				self.filelist.append(x[T_FULL])
 
 		self.maxentry = len(self.filelist) - 1
@@ -513,7 +518,7 @@ class Pic_Full_View(Screen):
 			self.index = self.maxentry
 
 	def slidePic(self):
-		print("slide to next Picture index=" + str(self.lastindex))
+		print("slide to next Picture index=%s" % str(self.lastindex))
 		if config.pic.loop.value == False and self.lastindex == self.maxentry:
 			self.PlayPause()
 		self.shownow = True

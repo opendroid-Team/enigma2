@@ -13,7 +13,6 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
-from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave
 
 # Session.open:
 # * Push current active dialog ("current_dialog") onto stack.
@@ -249,16 +248,11 @@ class PowerKey:
 			self.shutdown()
 		elif action == "show_menu":
 			print("[StartEnigma] Show shutdown menu.")
-			root = mdom.getroot()
-			for x in root.findall("menu"):
-				y = x.find("id")
-				if y is not None:
-					id = y.get("val")
-					if id and id == "shutdown":
-						self.session.infobar = self
-						menu_screen = self.session.openWithCallback(self.MenuClosed, MainMenu, x)
-						menu_screen.setTitle(_("Standby / restart"))
-						return
+			menu = findMenu("shutdown")
+			if menu:
+				self.session.infobar = self
+				self.session.openWithCallback(self.MenuClosed, Menu, menu)
+				return
 		elif action == "standby":
 			Screens.Standby.TVinStandby.skipHdmiCecNow(False)
 			self.standby()
@@ -290,8 +284,8 @@ class PowerKey:
 			self.session.open(Screens.Standby.Standby)
 
 	def openSleepTimer(self):
-		from Screens.SleepTimerEdit import SleepTimerEdit
-		self.session.open(SleepTimerEdit)
+		from Screens.SleepTimer import SleepTimerButton
+		self.session.open(SleepTimerButton)
 
 	def setSleepTimer(self, val):
 		from PowerTimer import PowerTimerEntry
@@ -300,11 +294,11 @@ class PowerKey:
 		self.addSleepTimer(PowerTimerEntry(checkOldTimers=True, *data, timerType=val, autosleepdelay=sleeptime))
 
 	def addSleepTimer(self, timer):
-		from Screens.PowerTimerEntry import TimerEntry
-		self.session.openWithCallback(self.finishedAdd, TimerEntry, timer)
+		from Screens.Timers import PowerTimerEdit
+		self.session.openWithCallback(self.finishedAdd, PowerTimerEdit, timer)
 
 	def finishedAdd(self, answer):
-		if answer[0]:
+		if not isinstance(answer, bool) and answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.PowerTimer.record(entry)
 
@@ -408,7 +402,7 @@ def runScreenTest():
 	vol = VolumeControl(session)
 	profile("InitPowerKey")
 	power = PowerKey(session)
-	if boxtype in ("alien5", "osninopro", "osnino", "osninoplus", "alphatriple", "spycat4kmini", "tmtwin4k", "mbmicrov2", "revo4k", "force3uhd", "wetekplay", "wetekplay2", "wetekhub", "dm7020hd", "dm7020hdv2", "osminiplus", "osmega", "sf3038", "spycat", "e4hd", "e4hdhybrid", "mbmicro", "et7500", "mixosf5", "mixosf7", "mixoslumi", "gi9196m", "maram9", "ixussone", "ixusszero", "uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "sezam1000hd", "mbmini", "atemio5x00", "beyonwizt3", "9910lx", "9911lx", "9920lx", "dual") or getBrandOEM() in ("fulan",) or getMachineBuild() in ("u41", "dags7362", "dags73625", "dags5", "ustym4kpro", "beyonwizv2", "viper4k", "sf8008", "sf8008m", "sf8008opt", "cc1", "gbmv200", "sfx6008"):
+	if BoxInfo.getItem("VFDSymbols"):
 		profile("VFDSYMBOLS")
 		import Components.VfdSymbols
 		Components.VfdSymbols.SymbolsCheck(session)
@@ -420,9 +414,12 @@ def runScreenTest():
 	profile("Init:AutoVideoMode")
 	import Screens.VideoMode
 	Screens.VideoMode.autostart(session)
+	profile("Init:VolumeAdjust")
+	import Screens.VolumeAdjust
+	Screens.VolumeAdjust.autostart(session)
 	profile("RunReactor")
 	profile_final()
-	if boxtype in ("sf8", "classm", "axodin", "axodinc", "starsatlx", "genius", "evo"):
+	if BOX_TYPE in ("sf8", "classm", "axodin", "axodinc", "starsatlx", "genius", "evo"):
 		f = open("/dev/dbox/oled0", "w")
 		f.write("-E2-")
 		f.close()
@@ -438,7 +435,7 @@ def runScreenTest():
 		config.usage.shutdownOK.save()
 		configfile.save()
 	# Kill showiframe if it is running.  (sh4 hack...)
-	if getMachineBuild() in ("spark", "spark7162"):
+	if MODEL in ("spark", "spark7162"):
 		os.system("killall -9 showiframe")
 	runReactor()
 	print("[StartEnigma] Normal shutdown.")
@@ -447,8 +444,8 @@ def runScreenTest():
 	config.usage.shutdownOK.save()
 	profile("Wakeup")
 	nowTime = time()  # Get currentTime.
-	# if not config.misc.SyncTimeUsing.value == "0" or getBrandOEM() == "gigablue":
-	if not config.misc.SyncTimeUsing.value == "0" or boxtype.startswith("gb") or getBrandOEM().startswith("ini"):
+	# if config.misc.SyncTimeUsing.value != "0" or BRAND == "gigablue":
+	if config.misc.SyncTimeUsing.value != "0" or BOX_TYPE.startswith("gb") or BRAND.startswith("ini"):
 		print("[StartEnigma] DVB time sync disabled, so set RTC now to current Linux time!  (%s)" % strftime("%Y/%m/%d %H:%M", localtime(nowTime)))
 		setRTCtime(nowTime)
 	# Record timer.
@@ -542,7 +539,7 @@ def runScreenTest():
 		config.misc.nextWakeup.value = "%d,%d,%d,%d,%d,%d,%d" % (int(nowTime), wptime, startTime[0], startTime[1], setStandby, nextRecordTime, forceNextRecord)
 	else:
 		config.misc.nextWakeup.value = "%d,-1,-1,0,0,-1,0" % (int(nowTime))
-		if not boxtype.startswith("azboxm"):  # Skip for Azbox (mini)ME - setting wakeup time to past reboots box.
+		if not BOX_TYPE.startswith("azboxm"):  # Skip for Azbox (mini)ME - setting wakeup time to past reboots box.
 			setFPWakeuptime(int(nowTime) - 3600)  # Minus one hour -> overwrite old wakeup time.
 		print("[StartEnigma] No next wakeup time set.")
 	config.misc.nextWakeup.save()
@@ -666,34 +663,27 @@ profile("SystemInfo")
 from enigma import getE2Rev
 from Components.SystemInfo import BoxInfo
 
-model = BoxInfo.getItem("model")
-brand = BoxInfo.getItem("brand")
-platform = BoxInfo.getItem("platform")
-socfamily = BoxInfo.getItem("socfamily")
+BRAND = BoxInfo.getItem("brand")
+BOX_TYPE = BoxInfo.getItem("machinebuild")
+MODEL = BoxInfo.getItem("model")
+DISPLAYBRAND = BoxInfo.getItem("displaybrand")
 
-print("[StartEnigma] Receiver name = %s %s" % (BoxInfo.getItem("displaybrand"), BoxInfo.getItem("displaymodel")))
+print("[StartEnigma] Receiver name = %s %s" % (DISPLAYBRAND, BoxInfo.getItem("displaymodel")))
 print("[StartEnigma] %s version = %s" % (BoxInfo.getItem("displaydistro"), BoxInfo.getItem("imgversion")))
 print("[StartEnigma] %s revision = %s" % (BoxInfo.getItem("displaydistro"), BoxInfo.getItem("imgrevision")))
-print("[StartEnigma] Build Brand = %s" % brand)
-print("[StartEnigma] Build Model = %s" % model)
-print("[StartEnigma] Platform = %s" % platform)
-print("[StartEnigma] SoC family = %s" % socfamily)
+print("[StartEnigma] Build Brand = %s" % BRAND)
+print("[StartEnigma] Build Model = %s" % MODEL)
+print("[StartEnigma] Platform = %s" % BoxInfo.getItem("platform"))
+print("[StartEnigma] SoC family = %s" % BoxInfo.getItem("socfamily"))
 print("[StartEnigma] Enigma2 revision = %s" % getE2Rev())
 
-from boxbranding import getBoxType, getBrandOEM, getMachineBuild, getImageArch, getMachineBrand
-boxtype = getBoxType()
-
-if getImageArch() in ("aarch64"):
+if BoxInfo.getItem("architecture") in ("aarch64"):
 	import usb.core
 	import usb.backend.libusb1
 	usb.backend.libusb1.get_backend(find_library=lambda x: "/lib64/libusb-1.0.so.0")
 
 from traceback import print_exc
 from Components.config import config, ConfigYesNo, ConfigSubsection, ConfigInteger, ConfigText, ConfigOnOff, ConfigSelection
-
-profile("SetupDevices")
-import Components.SetupDevices
-Components.SetupDevices.InitSetupDevices()
 
 profile("ClientMode")
 import Components.ClientMode
@@ -705,35 +695,35 @@ profile("InternationalLocalization")
 from Components.International import international
 
 config.osd = ConfigSubsection()
-if getMachineBrand() == "Atto.TV":
-	defaultLanguage = "pt_BR"
-elif getMachineBrand() == "Zgemma":
-	defaultLanguage = "en_US"
-elif getMachineBrand() == "Beyonwiz":
-	defaultLanguage = "en_GB"
+
+if DISPLAYBRAND == "Atto.TV":
+	defaultLocale = "pt_BR"
+elif DISPLAYBRAND == "Zgemma":
+	defaultLocale = "en_US"
+elif DISPLAYBRAND == "Beyonwiz":
+	defaultLocale = "en_AU"
 else:
-	defaultLanguage = "it_IT"
-
-defaultCountry = defaultLanguage[-2:]
-defaultShortLanguage = defaultLanguage[0:2]
-
-config.osd.language = ConfigText(default=defaultLanguage)
+	defaultLocale = "it_IT"
+config.misc.locale = ConfigText(default=defaultLocale)
+config.misc.language = ConfigText(default=international.getLanguage(defaultLocale))
+config.misc.country = ConfigText(default=international.getCountry(defaultLocale))
+config.osd.language = ConfigText(default=defaultLocale)
 config.osd.language.addNotifier(localeNotifier)
-
-config.misc.country = ConfigText(default=defaultCountry)
-config.misc.language = ConfigText(default=defaultShortLanguage)
-config.misc.locale = ConfigText(default=defaultLanguage)
 # TODO
 # config.misc.locale.addNotifier(localeNotifier)
 
 # These entries should be moved back to UsageConfig.py when it is safe to bring UsageConfig init to this location in StartEnigma2.py.
 #
 config.crash = ConfigSubsection()
+config.crash.debugMultiBoot = ConfigYesNo(default=False)
 config.crash.debugActionMaps = ConfigYesNo(default=False)
 config.crash.debugKeyboards = ConfigYesNo(default=False)
 config.crash.debugOpkg = ConfigYesNo(default=False)
 config.crash.debugRemoteControls = ConfigYesNo(default=False)
 config.crash.debugScreens = ConfigYesNo(default=False)
+config.crash.debugEPG = ConfigYesNo(default=False)
+config.crash.debugDVBScan = ConfigYesNo(default=False)
+config.crash.debugTimers = ConfigYesNo(default=False)
 
 # config.plugins needs to be defined before InputDevice < HelpMenu < MessageBox < InfoBar
 config.plugins = ConfigSubsection()
@@ -781,13 +771,13 @@ profile("LOAD:skin")
 from skin import readSkin
 
 profile("LOAD:Tools")
-from Components.config import configfile, NoSave, ConfigSubsection
-from Tools.Directories import InitDefaultPaths, resolveFilename, SCOPE_PLUGINS, SCOPE_GUISKIN, SCOPE_CONFIG
+from Components.config import ConfigSubsection, NoSave, configfile
+from Tools.Directories import InitDefaultPaths, SCOPE_CONFIG, SCOPE_GUISKIN, SCOPE_PLUGINS, resolveFilename
 import Components.RecordingConfig
 InitDefaultPaths()
 
 profile("config.misc")
-config.misc.boxtype = ConfigText(default=boxtype)
+config.misc.boxtype = ConfigText(default=BOX_TYPE)
 config.misc.blackradiopic = ConfigText(default=resolveFilename(SCOPE_GUISKIN, "black.mvi"))
 radiopic = resolveFilename(SCOPE_GUISKIN, "radio.mvi")
 if os.path.exists(resolveFilename(SCOPE_CONFIG, "radio.mvi")):
@@ -796,7 +786,10 @@ config.misc.radiopic = ConfigText(default=radiopic)
 # config.misc.isNextRecordTimerAfterEventActionAuto = ConfigYesNo(default=False)
 # config.misc.isNextPowerTimerAfterEventActionAuto = ConfigYesNo(default=False)
 config.misc.nextWakeup = ConfigText(default="-1,-1,-1,0,0,-1,0")  # Last shutdown time, wakeup time, timer begins, set by (0=rectimer,1=zaptimer, 2=powertimer or 3=plugin), go in standby, next rectimer, force rectimer.
-config.misc.SyncTimeUsing = ConfigSelection(default="0", choices=[("0", _("Transponder Time")), ("1", _("NTP"))])
+config.misc.SyncTimeUsing = ConfigSelection(default="0", choices=[
+	("0", _("Transponder Time")),
+	("1", _("NTP"))
+])
 config.misc.NTPserver = ConfigText(default="pool.ntp.org", fixed_size=False)
 
 config.misc.startCounter = ConfigInteger(default=0)  # Number of e2 starts.
@@ -824,7 +817,7 @@ Screen.globalScreen = Globals()
 
 profile("Standby,PowerKey")
 import Screens.Standby
-from Screens.Menu import MainMenu, mdom
+from Screens.Menu import Menu, findMenu
 from GlobalActions import globalActionMap
 
 profile("Scart")
@@ -897,7 +890,7 @@ import Components.Lcd
 Components.Lcd.InitLcd()
 Components.Lcd.IconCheck()
 # Disable internal clock vfd for ini5000 until we can adjust it for standby.
-if boxtype in ("uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "beyonwizt3"):
+if BOX_TYPE in ("uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "beyonwizt3"):
 	try:
 		f = open("/proc/stb/fp/enable_clock", "r").readline()[:-1]
 		if f != "0":
@@ -907,7 +900,7 @@ if boxtype in ("uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "
 	except:
 		print("[StartEnigma] Error: Disable enable_clock for ini5000 boxes!")
 
-if boxtype in ("dm7080", "dm820", "dm900", "dm920", "gb7252"):
+if BOX_TYPE in ("dm7080", "dm820", "dm900", "dm920", "gb7252"):
 	f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r")
 	check = f.read()
 	f.close()
@@ -940,12 +933,12 @@ profile("Init:CI")
 import Screens.Ci
 Screens.Ci.InitCiConfig()
 
-profile("RcModel")
-import Components.RcModel
-
 if config.clientmode.enabled.value:
 	import Components.ChannelsImporter
 	Components.ChannelsImporter.autostart()
+
+from Tools.Migration import migrateSettings  # Migrate settings from older versions of enigma.
+migrateSettings()
 
 #from enigma import dump_malloc_stats
 #t = eTimer()

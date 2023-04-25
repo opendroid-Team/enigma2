@@ -19,6 +19,7 @@ class Listbox(Renderer):
 		Renderer.__init__(self)
 		self.__content = None
 		self.__selectionEnabled = True  # FIXME: The default is true already.
+		self.scale = None
 
 	GUI_WIDGET = eListbox
 
@@ -32,14 +33,18 @@ class Listbox(Renderer):
 
 	content = property(lambda self: self.__content, setContent)
 
+	def applySkin(self, desktop, parent):
+		self.scale = parent.scale
+		return Renderer.applySkin(self, desktop, parent)
+
 	def postWidgetCreate(self, instance):
 		if self.__content is not None:
 			instance.setContent(self.__content)
 		instance.selectionChanged.get().append(self.selectionChanged)
 		# Trigger property changes
-		self.wrapAround = self.wrapAround
-		self.selectionEnabled = self.selectionEnabled
-		self.scrollbarMode = self.scrollbarMode
+		self.setWrapAround(self.wrapAround)
+		self.setSelectionEnabled(self.selectionEnabled)
+		self.setScrollbarMode(self.scrollbarMode)
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)
@@ -48,7 +53,7 @@ class Listbox(Renderer):
 	def setWrapAround(self, wrapAround):
 		if self.instance is not None:
 			self.instance.setWrapAround(wrapAround)
-	
+
 	def getWrapAround(self):
 		return self.instance and self.instance.getWrapAround()
 

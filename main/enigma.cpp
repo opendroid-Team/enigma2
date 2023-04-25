@@ -349,19 +349,33 @@ int main(int argc, char **argv)
 	{
 #define MAX_SPINNER 64
 		int i = 0;
+		char filename[64];
+		std::string rfilename;
 		std::string skinpath = "${datadir}/enigma2/" + active_skin;
 		std::string defpath = "${datadir}/enigma2/spinner";
+		std::string userpath = "${sysconfdir}/enigma2/spinner";
 		bool def = (skinpath.compare(defpath) == 0);
+
+		snprintf(filename, sizeof(filename), "%s/wait%d.png", userpath.c_str(), i + 1);
+		rfilename = eEnv::resolve(filename);
+
+		struct stat st;
+		if (::stat(rfilename.c_str(), &st) == 0) {
+			def = true;
+			skinpath = userpath;
+		}
+
 		ePtr<gPixmap> wait[MAX_SPINNER];
 		while(i < MAX_SPINNER)
 		{
-			char filename[64];
-			std::string rfilename;
 			snprintf(filename, sizeof(filename), "%s/wait%d.png", skinpath.c_str(), i + 1);
 			rfilename = eEnv::resolve(filename);
-			loadPNG(wait[i], rfilename.c_str());
 
-			if (!wait[i])
+			wait[i] = 0;
+			if (::stat(rfilename.c_str(), &st) == 0)
+				loadPNG(wait[i], rfilename.c_str());
+
+			if (!wait[i]) 
 			{
 				// spinner failed
 				if (i==0)

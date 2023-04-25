@@ -8,9 +8,10 @@ from Components.ActionMap import HelpableNumberActionMap, HelpableActionMap
 from Components.config import ConfigDictionarySet, NoSave, config, configfile
 from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import BoxInfo, getBoxDisplayName
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.NimManager import nimmanager
 from Plugins.Plugin import PluginDescriptor
 from Screens.HelpMenu import HelpableScreen
 from Screens.ParentalControlSetup import ProtectedScreen
@@ -19,9 +20,6 @@ from Screens.Setup import Setup
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import SCOPE_GUISKIN, SCOPE_SKINS, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
-
-displayBrand = BoxInfo.getItem("displaybrand")
-displayModel = BoxInfo.getItem("displaymodel")
 
 MENU_TEXT = 0
 MENU_MODULE = 1
@@ -196,7 +194,6 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 		self.parentMenu = parentMenu
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
-		ProtectedScreen.__init__(self)
 		self.menuList = []
 		self["menu"] = List(self.menuList)
 		self["menu"].onSelectionChanged.append(self.selectionChanged)
@@ -214,6 +211,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 		self.selectedEntry = None
 		self.subMenuSort = None
 		self.createMenuList()
+		ProtectedScreen.__init__(self)  # ProtectedScreen needs self.menuID
 		# For the skin: first try a menu_<menuID>, then Menu.
 		self.skinName = []
 		if self.menuID is not None:
@@ -252,10 +250,6 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 				"pageUp": (self.keyPageUp, _("Move up a screen")),
 				"up": (self.keyUp, _("Move up a line")),
 				# "first": (self.keyFirst, _("Jump to first item in list or the start of text")),
-				# "left": (self.keyLeft, _("Select the previous item in list or move cursor left")),
-				"left": (self.keyPageUp, _("Move up a screen")),
-				"right": (self.keyPageDown, _("Move down a screen")),
-				# "right": (self.keyRight, _("Select the next item in list or move cursor right")),
 				# "last": (self.keyLast, _("Jump to last item in list or the end of text")),
 				"down": (self.keyDown, _("Move down a line")),
 				"pageDown": (self.keyPageDown, _("Move down a screen")),
@@ -298,7 +292,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 						self.menuList.append(data)
 		if self.menuID:
 			for plugin in plugins.getPluginsForMenu(self.menuID):  # Plugins.
-				print("[Menu] DEBUG 1: Plugin data=%s." % str(plugin))
+				# print("[Menu] DEBUG 1: Plugin data=%s." % str(plugin))
 				pluginKey = plugin[PLUGIN_KEY]  # Check if a plugin overrides an existing menu.
 				for entry in self.menuList:
 					if entry[PLUGIN_KEY] == pluginKey:
@@ -306,7 +300,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 						break
 				description = plugins.getDescriptionForMenuEntryID(self.menuID, pluginKey)  # It is assumed that description is already translated by the plugin!
 				if "%s %s" in description:
-					description = description % (displayBrand, displayModel)
+					description = description % getBoxDisplayName()
 				image = self.getMenuEntryImage(plugin[PLUGIN_KEY], lastKey)
 				if len(plugin) > PLUGIN_CLOSEALL and plugin[PLUGIN_CLOSEALL]:  # Was "len(plugin) > 4".
 					self.menuList.append((plugin[PLUGIN_TEXT], boundFunction(plugin[PLUGIN_MODULE], self.session, self.close), plugin[PLUGIN_KEY], plugin[PLUGIN_WEIGHT] or 50, description, image))
@@ -315,7 +309,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 		if config.usage.menuSortOrder.value == "user" and self.menuID == "mainmenu":
 			idList = []
 			for plugin in plugins.getPlugins([PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_EVENTINFO]):
-				print("[Menu] DEBUG 2: Plugin data=%s." % str(plugin))
+				# print("[Menu] DEBUG 2: Plugin data=%s." % str(plugin))
 				plugin.id = (plugin.name.lower()).replace(" ", "_")
 				if plugin.id not in idList:
 					idList.append(plugin.id)
@@ -411,7 +405,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 	def processDisplayedText(self, text):
 		text = _(text) if text else ""
 		if "%s %s" in text:
-			text = text % (displayBrand, displayModel)
+			text = text % getBoxDisplayName()
 		return text
 
 	def getMenuEntryImage(self, key, lastKey):
@@ -456,7 +450,6 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 		self["menu"].setList(menu)
 
 	def layoutFinished(self):
-		# self["menu"].allowNativeKeys(False)
 		self["menu"].setStyle(config.usage.menuEntryStyle.value)
 		self.selectionChanged()
 
@@ -537,7 +530,7 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 
 	def isProtected(self):
 		if config.ParentalControl.setuppinactive.value:
-			if config.ParentalControl.config_sections.main_menu.value and not(hasattr(self.session, "infobar") and self.session.infobar is None):
+			if config.ParentalControl.config_sections.main_menu.value and not (hasattr(self.session, "infobar") and self.session.infobar is None):
 				return self.menuID == "mainmenu"
 			elif config.ParentalControl.config_sections.configuration.value and self.menuID == "setup":
 				return True
@@ -706,6 +699,11 @@ class Menu(Screen, HelpableScreen, ProtectedScreen):
 			menuList.append(("", None, "dummy", 10, "", None, 10))
 		menuList.sort(key=lambda x: int(x[MENU_SORT]))
 		self.menuList = list(menuList)
+
+	def gotoStandby(self, *res):
+		from Screens.Standby import Standby2
+		self.session.open(Standby2)
+		self.close(True)
 
 
 class AnimMain(Screen):

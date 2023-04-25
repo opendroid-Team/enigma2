@@ -118,7 +118,7 @@ from OPENDROID.SwapManager import Swap, SwapAutostart
 from OPENDROID.SoftwarePanel import SoftwarePanel
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupScreen, RestoreScreen, BackupSelection, getBackupPath, getBackupFilename
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import InitConfig as BackupRestore_InitConfig
-from Plugins.SystemPlugins.SoftwareManager.plugin import SoftwareManagerSetup, Load_defaults
+from Plugins.SystemPlugins.SoftwareManager.plugin import SoftwareManagerSetup
 BoxInfo.setItem("SoftCam", Check_Softcam())
 
 if config.usage.keymap.value != eEnv.resolve("${datadir}/enigma2/keymap.xml"):

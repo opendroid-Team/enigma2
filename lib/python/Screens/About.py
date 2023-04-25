@@ -12,7 +12,7 @@ from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Console import Console
 from boxbranding import getBoxType, getMachineBuild, getMachineBrand, getMachineName, getImageVersion, getImageBuild, getDriverDate, getOEVersion, getImageType, getBrandOEM
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import BoxInfo, getBoxDisplayName, getDemodVersion
 from skin import isOPDSkin
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
@@ -36,6 +36,10 @@ from datetime import datetime
 import time
 from locale import format_string
 import six
+DISPLAY_BRAND = BoxInfo.getItem("displaybrand")
+DISPLAY_MODEL = BoxInfo.getItem("displaymodel")
+MACHINE_BUILD = BoxInfo.getItem("machinebuild")
+MODEL = BoxInfo.getItem("model")
 
 SIGN = u"\u00B0"
 
@@ -363,7 +367,7 @@ class About(Screen):
 			tempinfo = f.read()
 			f.close()
 #		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
-#			if getBoxType() in ('mutant51', 'ax51', 'zgemmah7'):
+#			if getBoxDisplayName() in ('mutant51', 'ax51', 'zgemmah7'):
 #				tempinfo = ""
 #			else:
 #				f = open('/sys/devices/virtual/thermal/thermal_zone0/temp', 'r')

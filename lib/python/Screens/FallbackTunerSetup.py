@@ -14,19 +14,19 @@ from enigma import getPeerStreamingBoxes
 import re
 
 class FallbackTunerSetup(ConfigListScreen, Screen):
-	def __init__(self, session, menu_path=""):
+	def __init__(self, session, ScreenPath=""):
 		Screen.__init__(self, session)
 		self.setup_title = screentitle = _("Fallback tuner setup")
-		if config.usage.show_menupath.value == 'large':
-			menu_path += screentitle
-			title = menu_path
-			self["menu_path_compressed"] = StaticText("")
-		elif config.usage.show_menupath.value == 'small':
+		if config.usage.showScreenPath.value == 'large':
+			ScreenPath+= screentitle
+			title = ScreenPath
+			self["ScreenPath_compressed"] = StaticText("")
+		elif config.usage.showScreenPath.value == 'small':
 			title = screentitle
-			self["menu_path_compressed"] = StaticText(menu_path + " >" if not menu_path.endswith(' / ') else menu_path[:-3] + " >" or "")
+			self["ScreenPath_compressed"] = StaticText(ScreenPath + " >" if not ScreenPath.endswith(' / ') else ScreenPath[:-3] + " >" or "")
 		else:
 			title = screentitle
-			self["menu_path_compressed"] = StaticText("")
+			self["ScreenPath_compressed"] = StaticText("")
 		Screen.setTitle(self, title)
 		self.skinName = ["FallbackTunerSetup", "Setup"]
 		self.onChangedEntry = []

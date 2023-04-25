@@ -1,17 +1,15 @@
-from __future__ import print_function
-from __future__ import absolute_import
 from Components.ActionMap import HelpableActionMap
 from Components.config import config, ConfigYesNo, getConfigListEntry, ConfigSelection
 from Components.InputDevice import inputDevices, iRcTypeControl
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.SystemInfo import BoxInfo, getBoxDisplayName
 from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Setup import Setup
 from Tools.Directories import resolveFilename, SCOPE_GUISKIN
 from Tools.LoadPixmap import LoadPixmap
-from boxbranding import getBoxType, getMachineBrand, getMachineName, getBrandOEM
 
 
 class InputDeviceSelection(Screen, HelpableScreen):
@@ -29,7 +27,7 @@ class InputDeviceSelection(Screen, HelpableScreen):
 		self["introduction"] = StaticText(self.edittext)
 
 		self.devices = [(inputDevices.getDeviceName(x), x) for x in inputDevices.getDeviceList()]
-		print("[InputDeviceSelection] found devices :->", len(self.devices), self.devices)
+		print("[InputDeviceSelection] found devices :-> %s %s" % (len(self.devices), str(self.devices)))
 
 		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
 			{
@@ -119,7 +117,7 @@ class InputDeviceSetup(Setup):
 		inputDevices.currentDevice = self.device
 		configItem = getattr(config.inputDevices, device)
 		self.enableEntry = getConfigListEntry(self.formatItemText(_("Change repeat and delay settings?")), configItem.enabled, self.formatItemDescription(configItem.enabled, _("Select 'Yes' to enable editing of this device's settings. Selecting 'No' resets the devices settings to their default values.")))
-		self.nameEntry = getConfigListEntry(self.formatItemText(_("Devicename:")), configItem.name, self.formatItemDescription(configItem.name, _("Enter a new name for this device.")))
+		self.nameEntry = getConfigListEntry(self.formatItemText(_("Device name:")), configItem.name, self.formatItemDescription(configItem.name, _("Enter a new name for this device.")))
 		self.delayEntry = getConfigListEntry(self.formatItemText(_("Delay before key repeat starts:")), configItem.delay, self.formatItemDescription(configItem.delay, _("Select the time delay before the button starts repeating.")))
 		self.repeatEntry = getConfigListEntry(self.formatItemText(_("Interval between keys when repeating:")), configItem.repeat, self.formatItemDescription(configItem.repeat, _("Select the time delay between each repeat of the button.")))
 		Setup.__init__(self, session, "InputDeviceSetup")
@@ -128,7 +126,7 @@ class InputDeviceSetup(Setup):
 		self.onClose.append(self.cleanup)
 
 		# for generating strings into .po only
-		devicenames = [_("%s %s front panel") % (getMachineBrand(), getMachineName()), _("%s %s front panel") % (getMachineBrand(), getMachineName()), _("%s %s remote control (native)") % (getMachineBrand(), getMachineName()), _("%s %s advanced remote control (native)") % (getMachineBrand(), getMachineName()), _("%s %s ir keyboard") % (getMachineBrand(), getMachineName()), _("%s %s ir mouse") % (getMachineBrand(), getMachineName())]
+		devicenames = [_("%s %s front panel") % getBoxDisplayName(), _("%s %s front panel") % getBoxDisplayName(), _("%s %s remote control (native)") % getBoxDisplayName(), _("%s %s advanced remote control (native)") % getBoxDisplayName(), _("%s %s ir keyboard") % getBoxDisplayName(), _("%s %s ir mouse") % getBoxDisplayName()]
 
 	def cleanup(self):
 		inputDevices.currentDevice = None
@@ -161,7 +159,7 @@ class InputDeviceSetup(Setup):
 
 
 class RemoteControlType(Setup):
-	if getBrandOEM() in ('broadmedia', 'octagon', 'odin', 'protek', 'ultramini') or getBoxType() in ('et7000', 'et7100', 'et7200', 'et7500', 'et7x00', 'et8500', 'et1x000', 'et13000'):
+	if BoxInfo.getItem("brand") in ('broadmedia', 'octagon', 'odin', 'protek', 'ultramini') or BoxInfo.getItem("machinebuild") in ('et7000', 'et7100', 'et7200', 'et7500', 'et7x00', 'et8500', 'et1x000', 'et13000'):
 		rcList = [
 				("0", _("Default")),
 				("3", "MaraM9"),
@@ -267,7 +265,7 @@ class RemoteControlType(Setup):
 				("24", "Axas E4HD Ultra"),
 				("25", "Zgemma H8/H0/H9/I55Plus old Model"),
 				("26", "Protek 4K UHD/HD61"),
-				("27", "HD60/HD66SE/Multibox/Multiboxse"),
+				("27", "HD60/HD66SE/Multibox/Multiboxse/Multiboxpro"),
 				("28", _("I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"))
 				]
 		defaultRcList = [
@@ -317,15 +315,17 @@ class RemoteControlType(Setup):
 				("hd66se", 27),
 				("multibox", 27),
 				("multiboxse", 27),
-				("h7", 28), # new model
-				("h9", 28), # new model
-				("h9se", 28), # new model
+				("multiboxpro", 27),
+				("h7", 28),  # new model
+				("h9", 28),  # new model
+				("h9se", 28),  # new model
 				("h9combo", 28),
 				("h9combose", 28),
 				("i55se", 28),
 				("h10", 28),
 				("h11", 28)
 				]
+
 	def __init__(self, session):
 		self.rctype = None
 		self.defaultRcType = 0
@@ -351,7 +351,7 @@ class RemoteControlType(Setup):
 		return "Default"
 
 	def getDefaultRcType(self):
-		boxtype = getBoxType()
+		boxtype = BoxInfo.getItem("machinebuild")
 		boxtypecompat = self.getBoxTypeCompatible()
 		self.defaultRcType = 0
 		#print "Boxtype is %s" % boxtype

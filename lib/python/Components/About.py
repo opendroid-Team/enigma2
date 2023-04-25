@@ -120,11 +120,17 @@ def getKernelVersionString():
 		return _("Unknown")
 	return version.split(" ", 4)[2].split("-", 2)[0]
 
-
 def getModelString():
 	model = getBoxType()
 	return model
 
+def getCPUSerial():
+	lines = fileReadLines("/proc/cpuinfo", source=MODULE_NAME)
+	if lines:
+		for line in lines:
+			if line[0:6] == "Serial":
+				return line[10:26]
+	return _("Undefined")
 
 def _getCPUSpeedMhz():
 	if getMachineBuild() in ('u41', 'u42', 'u43', 'u45'):
@@ -172,7 +178,11 @@ def getCPUInfoString():
 			cpuSpeed = fileReadLine("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", source=MODULE_NAME)
 			if cpuSpeed:
 				cpuSpeedMhz = int(cpuSpeed) / 1000
-
+			else:
+				try:
+					cpuSpeedMhz = int(int(hexlify(open("/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency", "rb").read()), 16) / 100000000) * 100
+				except:
+					cpuSpeedMhz = "1500"
 		temperature = None
 		if isfile("/proc/stb/fp/temp_sensor_avs"):
 			temperature = fileReadLine("/proc/stb/fp/temp_sensor_avs", source=MODULE_NAME)
@@ -372,43 +382,37 @@ def getCpuCoresString():
 	except IOError:
 		return "unavailable"
 
+def getDriverInstalledDate():
 
-def _ifinfo(sock, addr, ifname):
-	iface = pack('256s', bytes(ifname[:15], 'utf-8'))
-	info = ioctl(sock.fileno(), addr, iface)
-	if addr == 0x8927:
-		return ''.join(['%02x:' % ord(chr(char)) for char in info[18:24]])[:-1].upper()
-	else:
-		return inet_ntoa(info[20:24])
+	def extractDate(value):
+		match = search('[0-9]{8}', value)
+		if match:
+			return match[0]
+		else:
+			return value
 
-
-def getIfConfig(ifname):
-	ifreq = {'ifname': ifname}
-	infos = {}
-	sock = socket(AF_INET, SOCK_DGRAM)
-	# offsets defined in /usr/include/linux/sockios.h on linux 2.6
-	infos['addr'] = 0x8915 # SIOCGIFADDR
-	infos['brdaddr'] = 0x8919 # SIOCGIFBRDADDR
-	infos['hwaddr'] = 0x8927 # SIOCSIFHWADDR
-	infos['netmask'] = 0x891b # SIOCGIFNETMASK
-	try:
-		for k, v in list(infos.items()):
-			ifreq[k] = _ifinfo(sock, v, ifname)
-	except Exception as ex:
-		print("[About] getIfConfig Ex:", ex)
-		pass
-	sock.close()
-	return ifreq
-
-
-def getIfTransferredData(ifname):
-	f = open('/proc/net/dev', 'r')
-	for line in f:
-		if ifname in line:
-			data = line.split('%s:' % ifname)[1].split()
-			rx_bytes, tx_bytes = (data[0], data[8])
-			f.close()
-			return rx_bytes, tx_bytes
+	filenames = glob("/var/lib/opkg/info/*dvb-modules*.control")
+	if filenames:
+		lines = fileReadLines(filenames[0], source=MODULE_NAME)
+		if lines:
+			for line in lines:
+				if line[0:8] == "Version:":
+					return extractDate(line)
+	filenames = glob("/var/lib/opkg/info/*dvb-proxy*.control")
+	if filenames:
+		lines = fileReadLines(filenames[0], source=MODULE_NAME)
+		if lines:
+			for line in lines:
+				if line[0:8] == "Version:":
+					return extractDate(line)
+	filenames = glob("/var/lib/opkg/info/*platform-util*.control")
+	if filenames:
+		lines = fileReadLines(filenames[0], source=MODULE_NAME)
+		if lines:
+			for line in lines:
+				if line[0:8] == "Version:":
+					return extractDate(line)
+	return _("Unknown")
 
 
 def getPythonVersionString():
@@ -438,6 +442,29 @@ def getIsBroadcom():
 	except:
 		return False
 
+def GetIPsFromNetworkInterfaces():
+	structSize = 40 if maxsize > 2 ** 32 else 32
+	sock = socket(AF_INET, SOCK_DGRAM)
+	maxPossible = 8  # Initial value.
+	while True:
+		_bytes = maxPossible * structSize
+		names = array("B")
+		for index in range(_bytes):
+			names.append(0)
+		outbytes = unpack("iL", ioctl(sock.fileno(), 0x8912, pack("iL", _bytes, names.buffer_info()[0])))[0]  # 0x8912 = SIOCGIFCONF
+		if outbytes == _bytes:
+			maxPossible *= 2
+		else:
+			break
+	ifaces = []
+	for index in range(0, outbytes, structSize):
+		ifaceName = names.tobytes()[index:index + 16].decode().split("\0", 1)[0]  # PY3
+		# ifaceName = str(names.tolist[index:index + 16]).split("\0", 1)[0] # PY2
+		if ifaceName != "lo":
+			ifaces.append((ifaceName, inet_ntoa(names[index + 20:index + 24])))
+	return ifaces
+
+
 def getBoxUptime():
 	upTime = fileReadLine("/proc/uptime", source=MODULE_NAME)
 	if upTime is None:
@@ -447,11 +474,11 @@ def getBoxUptime():
 	if secs > 86400:
 		days = secs // 86400
 		secs = secs % 86400
-		times.append(ngettext("%d day", "%d days", days) % days)
+		times.append(ngettext("%d Day", "%d Days", days) % days)
 	h = secs // 3600
 	m = (secs % 3600) // 60
-	times.append(ngettext("%d hour", "%d hours", h) % h)
-	times.append(ngettext("%d minute", "%d minutes", m) % m)
+	times.append(ngettext("%d Hour", "%d Hours", h) % h)
+	times.append(ngettext("%d Minute", "%d Minutes", m) % m)
 	return " ".join(times)
 
 

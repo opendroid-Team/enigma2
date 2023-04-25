@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from Components.Sources.StreamService import StreamServiceList
 from Components.Converter.Converter import Converter
 from Components.Converter.Poll import Poll
@@ -82,11 +79,11 @@ class ClientsStreaming(Converter, Poll):
 			ips.append((ip))
 
 			if int(x[2]) == 0:
-				strtype = "Streaming: "
-				encoder = _('NO')
+				strtype = "S"
+				encoder = _('No')
 			else:
-				strtype = "Transcoding: "
-				encoder = _('YES')
+				strtype = "T"
+				encoder = _('Yes')
 
 			encoders.append((encoder))
 
@@ -127,9 +124,8 @@ class ClientsStreaming(Converter, Poll):
 		elif self.type == self.DATA:
 			return clients
 		else:
-			return _("(unknown)")
+			return "(unknown)"
 
-		return ""
 
 	text = property(getText)
 

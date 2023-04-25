@@ -37,7 +37,7 @@ class EventViewBase:
 			self.similarBroadcastTimer = eTimer()
 			self.similarBroadcastTimer.callback.append(self.getSimilarEvents)
 		self.similarEPGCB = similarEPGCB
-		self.isRecording = (not serviceRef.ref.flags & eServiceReference.isGroup) and serviceRef.ref.getPath()
+		self.isRecording = (not serviceRef.ref.flags & eServiceReference.isGroup) and serviceRef.ref.getPath() and "%3a//" not in serviceRef.ref.toString()
 		self["Service"] = ServiceEvent()
 		self["Event"] = Event()
 		self["epg_description"] = ScrollLabel()
@@ -171,6 +171,9 @@ class EventViewBase:
 
 	def finishedAdd(self, answer):
 		print("[EventView] Finished add.")
+		if isinstance(answer, bool) and answer:  # Special case for close recursive
+			self.close(True)
+			return
 		if answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.RecordTimer.record(entry)
@@ -195,7 +198,7 @@ class EventViewBase:
 					if simulTimerList is not None:
 						try:
 							from Screens.TimerEdit import TimerSanityConflict
-						except: # maybe already been imported from another module
+						except:  # maybe already been imported from another module
 							pass
 						self.session.openWithCallback(self.finishSanityCorrection, TimerSanityConflict, simulTimerList)
 			self["key_green"].setText(_("Change Timer"))
@@ -321,6 +324,7 @@ class EventViewEPGSelect(Screen, HelpableScreen, EventViewBase):
 				self.skinName.insert(0, skinName)
 			else:
 				self.skinName = skinName + self.skinName
+
 
 class EventViewMovieEvent(Screen, HelpableScreen):
 	def __init__(self, session, name=None, ext_desc=None, dur=None):

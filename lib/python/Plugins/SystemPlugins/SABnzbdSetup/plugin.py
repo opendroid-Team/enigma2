@@ -1,4 +1,3 @@
-from boxbranding import getMachineBrand, getMachineName
 import time
 import sys
 import six
@@ -10,6 +9,7 @@ from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from Components.ActionMap import ActionMap
 from Tools.Directories import fileExists
+from Components.SystemInfo import getBoxDisplayName
 
 
 class SABnzbdSetupScreen(Screen):
@@ -59,7 +59,7 @@ class SABnzbdSetupScreen(Screen):
 	def InstalldataAvail(self, str, retval, extra_args):
 		str = six.ensure_str(str)
 		if not str:
-			restartbox = self.session.openWithCallback(self.InstallPackage, MessageBox, _('Your %s %s will be restarted after the installation of service.\n\nDo you want to install now ?') % (getMachineBrand(), getMachineName()), MessageBox.TYPE_YESNO)
+			restartbox = self.session.openWithCallback(self.InstallPackage, MessageBox, _('Your %s %s will be restarted after the installation of service.\n\nDo you want to install now ?') % getBoxDisplayName(), MessageBox.TYPE_YESNO)
 			restartbox.setTitle(_('Ready to install "%s" ?') % self.service_name)
 		else:
 			self.updateService()
@@ -72,7 +72,7 @@ class SABnzbdSetupScreen(Screen):
 
 	def doInstall(self, callback, pkgname):
 		self["actions"].setEnabled(False)
-		self.message = self.session.open(MessageBox, _("please wait..."), MessageBox.TYPE_INFO)
+		self.message = self.session.open(MessageBox, _("Please wait..."), MessageBox.TYPE_INFO)
 		self.message.setTitle(_('Installing Service'))
 		self.Console.ePopen('/usr/bin/opkg install ' + pkgname + ' sync', callback)
 
@@ -87,7 +87,7 @@ class SABnzbdSetupScreen(Screen):
 	def UninstalldataAvail(self, str, retval, extra_args):
 		str = six.ensure_str(str)
 		if str:
-			restartbox = self.session.openWithCallback(self.RemovePackage, MessageBox, _('Your %s %s will be restarted after the removal of service\nDo you want to remove now ?') % (getMachineBrand(), getMachineName()), MessageBox.TYPE_YESNO)
+			restartbox = self.session.openWithCallback(self.RemovePackage, MessageBox, _('Your %s %s will be restarted after the removal of service\nDo you want to remove now ?') % getBoxDisplayName(), MessageBox.TYPE_YESNO)
 			restartbox.setTitle(_('Ready to remove "%s" ?') % self.service_name)
 		else:
 			self.updateService()
@@ -98,7 +98,7 @@ class SABnzbdSetupScreen(Screen):
 
 	def doRemove(self, callback, pkgname):
 		self["actions"].setEnabled(False)
-		self.message = self.session.open(MessageBox, _("please wait..."), MessageBox.TYPE_INFO)
+		self.message = self.session.open(MessageBox, _("Please wait..."), MessageBox.TYPE_INFO)
 		self.message.setTitle(_('Removing Service'))
 		self.Console.ePopen('/usr/bin/opkg remove ' + pkgname + ' --force-remove --autoremove sync', callback)
 

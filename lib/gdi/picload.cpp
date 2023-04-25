@@ -859,8 +859,8 @@ ePicLoad::ePicLoad():
 	m_filepara(NULL),
 	threadrunning(false),
 	m_conf(),
-	msg_thread(this,1),
-	msg_main(eApp,1)
+	msg_thread(this,1,"ePicLoad_thread"),
+	msg_main(eApp,1,"ePicLoad_main")
 {
 	CONNECT(msg_thread.recv_msg, ePicLoad::gotMessage);
 	CONNECT(msg_main.recv_msg, ePicLoad::gotMessage);
@@ -1462,21 +1462,21 @@ RESULT ePicLoad::setPara(PyObject *val)
 		return 0;
 	else {
 		ePyObject fast		= PySequence_Fast(val, "");
-		int width		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 0));
-		int height		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 1));
+		int width		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 0));
+		int height		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 1));
 
 		ePyObject pas = PySequence_Fast_GET_ITEM(fast, 2);
 
 		#if PY_VERSION_HEX >= 0x030a0000
 			double aspectRatio 	= PyFloat_Check(pas) ? PyFloat_AsDouble(pas) : PyLong_AsDouble(pas); 
 		#else
-			double aspectRatio 	= PyInt_AsLong(pas);
+			double aspectRatio 	= PyLong_AsLong(pas);
 		#endif
 		
-		int as			= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 3));
-		bool useCache		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 4));
-		int resizeType	        = PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 5));
-		const char *bg_str	= PyString_AsString(PySequence_Fast_GET_ITEM(fast, 6));
+		int as			= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 3));
+		bool useCache		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 4));
+		int resizeType	        = PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 5));
+		const char *bg_str	= PyUnicode_AsUTF8(PySequence_Fast_GET_ITEM(fast, 6));
 		return setPara(width, height, aspectRatio, as, useCache, resizeType, bg_str);
 	}
 }

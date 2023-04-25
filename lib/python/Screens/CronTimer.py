@@ -2,8 +2,6 @@ from os import listdir, mkdir, rename
 from os.path import exists
 from time import sleep
 
-from boxbranding import getMachineBrand, getMachineName
-
 from Components.ActionMap import ActionMap
 from Components.config import ConfigClock, ConfigInteger, ConfigSelection, ConfigSubsection, ConfigText, NoSave, config, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
@@ -13,12 +11,14 @@ from Components.Pixmap import Pixmap
 from Components.Sources.Boolean import Boolean
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.SystemInfo import getBoxDisplayName
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Directories import fileExists
 
 OPKGCMD = "/usr/bin/opkg"
 UPDATERC = "/usr/sbin/update-rc.d"
+
 
 class CronTimers(Screen):
 	def __init__(self, session):
@@ -76,7 +76,7 @@ class CronTimers(Screen):
 
 	def checkNetworkStateFinished(self, result, retval, extra_args=None):
 		if "bad address" in result:
-			self.session.openWithCallback(self.installPackageFailed, MessageBox, _("Your %s %s is not connected to the Internet, please check your network settings and try again.") % (getMachineBrand(), getMachineName()), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
+			self.session.openWithCallback(self.installPackageFailed, MessageBox, _("Your %s %s is not connected to the Internet, please check your network settings and try again.") % getBoxDisplayName(), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		elif ("wget returned 1" or "wget returned 255" or "404 Not Found") in result:
 			self.session.openWithCallback(self.installPackageFailed, MessageBox, _("Sorry feeds are down for maintenance, please try again later."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
 		else:
@@ -124,7 +124,7 @@ class CronTimers(Screen):
 	def doRemove(self, callback, pkgname):
 		self.message = self.session.open(MessageBox, _("Please wait..."), MessageBox.TYPE_INFO, enable_input=False)
 		self.message.setTitle(_("Removing Service"))
-		self.callOpkg(["--force-remove","--autoremove", "remove", pkgname], callback)
+		self.callOpkg(["--force-remove", "--autoremove", "remove", pkgname], callback)
 
 	def removeComplete(self, result=None, retval=None, extra_args=None):
 		self.message.close()
@@ -249,7 +249,7 @@ class CronTimers(Screen):
 				myline = mysel[1]
 				open("/etc/cron/crontabs/root.tmp", "w").writelines([l for l in open("/etc/cron/crontabs/root").readlines() if myline not in l])
 				rename("/etc/cron/crontabs/root.tmp", "/etc/cron/crontabs/root")
-				Console.ePopen(["/usr/bin/crontab", "/usr/bin/crontab", "/etc/cron/crontabs/root", "-c", "/etc/cron/crontabs"], self.doDelCronResult)
+				Console().ePopen(["/usr/bin/crontab", "/usr/bin/crontab", "/etc/cron/crontabs/root", "-c", "/etc/cron/crontabs"], self.doDelCronResult)
 
 	def doDelCronResult(self, data=None, retVal=None, extraArgs=None):
 		self.updateList()
@@ -323,7 +323,7 @@ class CronTimersConfig(Screen, ConfigListScreen):
 					predefinedlist.append((description, pkg))
 			predefinedlist.sort()
 		if not predefinedlist:
-			predefinedlist.append(("",""))
+			predefinedlist.append(("", ""))
 		config.crontimers.predefined_command = NoSave(ConfigSelection(choices=predefinedlist))
 		self.editListEntry = None
 		self.list = []
@@ -403,7 +403,7 @@ class CronTimersConfig(Screen, ConfigListScreen):
 			command = config.crontimers.user_command.value
 		with open("/etc/cron/crontabs/root", "a") as fd:
 			fd.write(newcron)
-		Console.ePopen(["/usr/bin/crontab", "/usr/bin/crontab", "/etc/cron/crontabs/root", "-c", "/etc/cron/crontabs"])
+		Console().ePopen(["/usr/bin/crontab", "/usr/bin/crontab", "/etc/cron/crontabs/root", "-c", "/etc/cron/crontabs"])
 		config.crontimers.predefined_command.value = "None"
 		config.crontimers.user_command.value = "None"
 		config.crontimers.runwhen.value = "Daily"

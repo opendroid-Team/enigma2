@@ -20,7 +20,7 @@ LIST_BLACKLIST = "blacklist"
 
 def InitParentalControl():
 	config.ParentalControl = ConfigSubsection()
-	config.ParentalControl.storeservicepin = ConfigSelection(default="never", choices=[("never", _("never")), ("5", _("5 minutes")), ("30", _("30 minutes")), ("60", _("60 minutes")), ("standby", _("until standby/restart"))])
+	config.ParentalControl.storeservicepin = ConfigSelection(default="never", choices=[("never", _("Never")), ("5", _("5 minutes")), ("30", _("30 minutes")), ("60", _("60 minutes")), ("standby", _("until standby/restart"))])
 	config.ParentalControl.configured = ConfigYesNo(default=False)
 	config.ParentalControl.setuppinactive = ConfigYesNo(default=False)
 	config.ParentalControl.retries = ConfigSubsection()
@@ -39,8 +39,9 @@ def InitParentalControl():
 	config.ParentalControl.config_sections.standby_menu = ConfigYesNo(default=False)
 	config.ParentalControl.config_sections.movie_list = ConfigYesNo(default=False)
 	config.ParentalControl.config_sections.context_menus = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.OPD_panel = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.BluePanel= ConfigYesNo(default=False)
+	config.ParentalControl.config_sections.opd_panel = ConfigYesNo(default=False)
+	config.ParentalControl.config_sections.bluePanel= ConfigYesNo(default=False)
+	config.ParentalControl.config_sections.software_update = ConfigYesNo(default=False)
 
 	#Added for backwards compatibility with some 3rd party plugins that depend on this config
 	config.ParentalControl.servicepinactive = config.ParentalControl.configured

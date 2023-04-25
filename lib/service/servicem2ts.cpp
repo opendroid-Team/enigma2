@@ -160,7 +160,7 @@ RESULT eStaticServiceM2TSInformation::getEvent(const eServiceReference &ref, ePt
 		std::string filename = ref.path;
 		filename.erase(filename.length()-4, 2);
 		filename+="eit";
-		if (!event->parseFrom(filename, (m_parser.m_ref.getTransportStreamID().get()<<16)|m_parser.m_ref.getOriginalNetworkID().get()))
+		if (!event->parseFrom(filename, (m_parser.m_ref.getTransportStreamID().get()<<16)|m_parser.m_ref.getOriginalNetworkID().get(), m_parser.m_ref.getServiceID().get()))
 		{
 			evt = event;
 			return 0;
@@ -296,7 +296,7 @@ sync:
 				eDebugNoNewLine("\n");
 				x=0;
 #else
-				eDebug("[eM2TSFile] m2ts out of sync at pos %lld, real %lld", offset + m_sync_offset, m_current_offset);
+				eDebug("[eM2TSFile] m2ts out of sync at pos %jd, real %jd", (intmax_t)(offset + m_sync_offset), (intmax_t)m_current_offset);
 #endif
 				for (; x < 192; ++x)
 				{

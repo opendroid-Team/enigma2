@@ -390,7 +390,7 @@ class PluginDownloadBrowser(Screen):
 
 	def __init__(self, session, type=0, needupdate=True):
 		Screen.__init__(self, session)
-		Screen.setTitle(self, _("Download plugins"))
+		Screen.setTitle(self, _("Download Plugins"))
 
 		self.type = type
 		self.needupdate = needupdate
@@ -502,10 +502,10 @@ class PluginDownloadBrowser(Screen):
 		else:
 			if self.type == self.DOWNLOAD:
 				mbox = self.session.openWithCallback(self.runInstall, MessageBox, _("Do you really want to download the plugin \"%s\"?") % sel.name)
-				mbox.setTitle(_("Download plugins"))
+				mbox.setTitle(_("Download Plugins"))
 			elif self.type == self.REMOVE:
 				mbox = self.session.openWithCallback(self.runInstall, MessageBox, _("Do you really want to remove the plugin \"%s\"?") % sel.name, default=False)
-				mbox.setTitle(_("Remove plugins"))
+				mbox.setTitle(_("Remove Plugins"))
 
 	def requestClose(self):
 		if self.plugins_changed:
@@ -609,9 +609,9 @@ class PluginDownloadBrowser(Screen):
 
 	def setWindowTitle(self):
 		if self.type == self.DOWNLOAD:
-			self.setTitle(_("Install plugins"))
+			self.setTitle(_("Install Plugins"))
 		elif self.type == self.REMOVE:
-			self.setTitle(_("Remove plugins"))
+			self.setTitle(_("Remove Plugins"))
 
 	def startOpkg(self, command):
 		extra = []
@@ -686,12 +686,12 @@ class PluginDownloadBrowser(Screen):
 				self["list"].instance.show()
 			else:
 				if self.type == self.DOWNLOAD:
-					self["text"].setText(_("Sorry feeds are down for maintenance"))
+					self["text"].setText(_("Sorry feeds are down for maintenance."))
 
 	def dataAvail(self, str):
 		str = six.ensure_str(str)
 		if self.type == self.DOWNLOAD and str.find('404 Not Found') >= 0:
-			self["text"].setText(_("Sorry feeds are down for maintenance"))
+			self["text"].setText(_("Sorry feeds are down for maintenance."))
 			self.run = 3
 			return
 		#prepend any remaining data from the previous call

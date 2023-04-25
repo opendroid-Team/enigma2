@@ -1,21 +1,16 @@
 from glob import glob
-from os.path import basename, dirname, isfile, join as pathjoin, splitext
+from os.path import dirname, isfile, join as pathjoin, splitext
 from os import listdir, unlink
 from xml.etree.cElementTree import Element, ElementTree, fromstring
 
 from enigma import BT_ALPHABLEND, BT_ALPHATEST, BT_HALIGN_CENTER, BT_HALIGN_LEFT, BT_HALIGN_RIGHT, BT_KEEP_ASPECT_RATIO, BT_SCALE, BT_VALIGN_BOTTOM, BT_VALIGN_CENTER, BT_VALIGN_TOP, addFont, eLabel, eListbox, ePixmap, ePoint, eRect, eSize, eSlider, eSubtitleWidget, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gMainDC, gRGB
 
-from Components.config import ConfigSubsection, ConfigText, config, ConfigSelection, ConfigNothing
-from Components.RcModel import rc_model
+from Components.config import ConfigSubsection, ConfigText, config
 from Components.SystemInfo import BoxInfo
 from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import SCOPE_LCDSKIN, SCOPE_GUISKIN, SCOPE_FONTS, SCOPE_SKINS, pathExists, resolveFilename, fileReadXML
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
-config.vfd = ConfigSubsection()
-config.vfd.show = ConfigSelection([("skin_text.xml", _("Channel Name")), ("skin_text_clock.xml", _("Clock"))], "skin_text.xml")
-if not pathExists("/usr/share/enigma2/skin_text.xml"):
-	config.vfd.show = ConfigNothing()
 
 MODULE_NAME = __name__.split(".")[-1].capitalize()
 
@@ -146,12 +141,12 @@ def loadSkin(filename, scope=SCOPE_SKINS, desktop=getDesktop(GUI_SKIN_ID), scree
 		# the other in order of ascending priority.
 		loadSingleSkinData(desktop, screenID, domSkin, filename, scope=scope)
 		resolution = resolutions.get(screenID, (0, 0, 0))
-		print("[Skin] Skin resolution is %dx%d and colour depth is %d bits." % (resolution[0], resolution[1], resolution[2]))
+		print("[Skin] Skin resolution is %dx%d and color depth is %d bits." % (resolution[0], resolution[1], resolution[2]))
 		for element in domSkin:
 			if element.tag == "screen":  # Process all screen elements.
-				name = element.attrib.get("name", None)
+				name = element.attrib.get("name")
 				if name:  # Without a name, it's useless!
-					scrnID = element.attrib.get("id", None)
+					scrnID = element.attrib.get("id")
 					if scrnID is None or scrnID == screenID:  # If there is a screen ID is it for this display.
 						res = element.attrib.get("resolution", "%s,%s" % (resolution[0], resolution[1]))
 						if res != "0,0":
@@ -162,7 +157,7 @@ def loadSkin(filename, scope=SCOPE_SKINS, desktop=getDesktop(GUI_SKIN_ID), scree
 							print("[Skin] Loading screen '%s'%s from '%s'.  (scope=%s)" % (name, msg, filename, scope))
 						domScreens[name] = (element, "%s/" % dirname(filename))
 			elif element.tag == "windowstyle":  # Process the windowstyle element.
-				scrnID = element.attrib.get("id", None)
+				scrnID = element.attrib.get("id")
 				if scrnID is not None:  # Without an scrnID, it is useless!
 					scrnID = parseInteger(scrnID)
 					domStyle = ElementTree(Element("skin"))
@@ -339,45 +334,42 @@ def parseCoordinate(value, parent, size=0, font=None, scale=(1, 1)):
 		return "".join(chars).strip()
 
 	value = value.strip()
-	if value == "center":  # For speed as this can be common case.
-		result = int((parent - size) // 2) if size else 0
-	elif value == "*":
-		return None
-	else:
+	try:
+		result = int(int(value) * scale[0] / scale[1])  # For speed try a simple number first.
+	except ValueError:
+		if value == "center":  # For speed as this can be common case.
+			return max(int((parent - size) // 2) if size else 0, 0)
+		elif value == "*":
+			return None
+		if font is None:
+			font = "Body"
+			if "w" in value or "h" in value:
+				print("[Skin] Warning: Coordinate 'w' and/or 'h' used but font is None, '%s' font ('%s', width=%d, height=%d) assumed!" % (font, fonts[font][0], fonts[font][3], fonts[font][2]))
+		val = scaleNumbers(value, scale)
+		if "center" in val:
+			val = val.replace("center", str((parent - size) / 2.0))
+		if "e" in val:
+			val = val.replace("e", str(parent))
+		if "c" in val:
+			val = val.replace("c", str(parent / 2.0))
+		if "%" in val:
+			val = val.replace("%", "*%s" % (parent / 100.0))
+		if "w" in val:
+			val = val.replace("w", "*%s" % fonts[font][3])
+		if "h" in val:
+			val = val.replace("h", "*%s" % fonts[font][2])
+		if "f" in val:
+			val = val.replace("f", "*%s" % getSkinFactor())
 		try:
-			result = int(int(value) * scale[0] / scale[1])  # For speed try a simple number first.
+			result = int(val)  # For speed try a simple number first.
 		except ValueError:
-			if font is None:
-				font = "Body"
-				if "w" in value or "h" in value:
-					print("[Skin] Warning: Coordinate 'w' and/or 'h' used but font is None, '%s' font ('%s', width=%d, height=%d) assumed!" % (font, fonts[font][0], fonts[font][3], fonts[font][2]))
-			val = scaleNumbers(value, scale)
-			if "center" in val:
-				val = val.replace("center", str((parent - size) / 2.0))
-			if "e" in val:
-				val = val.replace("e", str(parent))
-			if "c" in val:
-				val = val.replace("c", str(parent / 2.0))
-			if "%" in val:
-				val = val.replace("%", "*%s" % (parent / 100.0))
-			if "w" in val:
-				val = val.replace("w", "*%s" % fonts[font][3])
-			if "h" in val:
-				val = val.replace("h", "*%s" % fonts[font][2])
-			if "f" in val:
-				val = val.replace("f", "*%s" % getSkinFactor())
 			try:
-				result = int(val)  # For speed try a simple number first.
-			except ValueError:
-				try:
-					result = int(eval(val))
-				except Exception as err:
-					print("[Skin] Error (%s - %s): Coordinate '%s', calculated to '%s', can't be evaluated!" % (type(err).__name__, err, value, val))
-					result = 0
+				result = int(eval(val))
+			except Exception as err:
+				print("[Skin] Error (%s - %s): Coordinate '%s', calculated to '%s', can't be evaluated!" % (type(err).__name__, err, value, val))
+				result = 0
 	# print("[Skin] parseCoordinate DEBUG: value='%s', parent='%s', size=%s, font='%s', scale='%s', result='%s'." % (value, parent, size, font, scale, result))
-	if result < 0:
-		result = 0
-	return result
+	return 0 if result < 0 else result
 
 
 def parseFont(value, scale=((1, 1), (1, 1))):
@@ -446,7 +438,7 @@ def parseOrientation(value):
 # and value returned is based on the trigger.
 #
 # Usage:  *string   : The paramater is a string with the "*" is removed (Type: String).
-#         #aarrggbb : The parameter is a HEX colour string (Type: Integer).
+#         #aarrggbb : The parameter is a HEX color string (Type: Integer).
 #         0xABCD    : The parameter is a HEX integer (Type: Integer).
 #         5.3       : The parameter is a floating point number (Type: Float).
 #         red       : The parameter is a named color (Type: Integer).
@@ -476,8 +468,6 @@ def parsePixmap(path, desktop):
 	option = path.find("#")
 	if option != -1:
 		path = path[:option]
-	if basename(path) in ("rc.png", "rc0.png", "rc1.png", "rc2.png", "oldrc.png") and rc_model.rcIsDefault() is False:
-		path = rc_model.getRcImg()
 	if isfile(path):
 		pixmap = LoadPixmap(path, desktop=desktop)
 		if pixmap is None:
@@ -578,6 +568,21 @@ def parseScrollbarScroll(value):
 	return parseOptions(options, "scrollbarScroll", value, 0)
 
 
+def parseTextPadding(value):
+	if value in variables:
+		value = variables[value]
+	padding = [parseInteger(x.strip()) for x in value.split(",")]
+	count = len(padding)
+	if count == 1:
+		return padding * 4
+	elif count == 2:
+		return padding * 2
+	elif count == 4:
+		return padding
+	print("[Skin] Error: Attribute 'textPadding' with value '%s' is invalid!  Attribute must have 1, 2 or 4 values." % value)
+	return [0, 0, 0, 0]
+
+
 def parseVerticalAlignment(value):
 	options = {
 		"top": 0,
@@ -586,7 +591,7 @@ def parseVerticalAlignment(value):
 		"middle": 1,
 		"bottom": 2
 	}
-	return parseOptions(options, "horizontalAlignment", value, 1)
+	return parseOptions(options, "verticalAlignment", value, 1)
 
 
 def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), filenames=frozenset(("pixmap", "pointer", "seekPointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "sliderPixmap", "scrollbarBackgroundPixmap", "scrollbarForegroundPixmap", "scrollbarbackgroundPixmap", "scrollbarBackgroundPicture", "scrollbarSliderPicture"))):
@@ -595,12 +600,13 @@ def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), f
 	font = None
 	for attrib, value in node.items():  # Walk all attributes.
 		if attrib not in ignore:
+			newValue = value
 			if attrib in filenames:
 				# DEBUG: Why does a SCOPE_LCDSKIN image replace the GUI image?!?!?!
-				pngfile = resolveFilename(SCOPE_GUISKIN, value, path_prefix=skinPath)
-				if not isfile(pngfile) and isfile(resolveFilename(SCOPE_LCDSKIN, value, path_prefix=skinPath)):
-					pngfile = resolveFilename(SCOPE_LCDSKIN, value, path_prefix=skinPath)
-				value = pngfile
+				pngFile = resolveFilename(SCOPE_GUISKIN, value, path_prefix=skinPath)
+				if not isfile(pngFile) and isfile(resolveFilename(SCOPE_LCDSKIN, value, path_prefix=skinPath)):
+					pngFile = resolveFilename(SCOPE_LCDSKIN, value, path_prefix=skinPath)
+				newValue = pngFile
 			# Bit of a hack this, really.  When a window has a flag (e.g. wfNoBorder)
 			# it needs to be set at least before the size is set, in order for the
 			# window dimensions to be calculated correctly in all situations.
@@ -609,15 +615,14 @@ def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), f
 			# listbox; when the scrollbar setting is applied after the size, a scrollbar
 			# will not be shown until the selection moves for the first time.
 			if attrib == "size":
-				size = value
+				size = newValue
 			elif attrib == "position":
-				pos = value
+				pos = newValue
 			elif attrib == "font":
-				font = value
-				skinAttributes.append((attrib, font))
+				font = newValue
+				skinAttributes.append((attrib, newValue))
 			else:
-				value = value
-				skinAttributes.append((attrib, value))
+				skinAttributes.append((attrib, newValue))
 	if pos is not None:
 		pos, size = context.parse(pos, size, font)
 		skinAttributes.append(("position", pos))
@@ -860,8 +865,8 @@ class AttributeParser:
 		self.guiObject.setSelectionEnable(1 if parseBoolean("selection", value) else 0)
 
 	def selectionDisabled(self, value):  # This legacy definition is a redundant option and is uncharacteristic, use 'selection="0"' etc instead!
-		self.guiObject.setSelectionEnable(0)
-		attribDeprecationWarning("selectionDisabled", "selection")
+		self.guiObject.setSelectionEnable(0 if parseBoolean("selection", value) else 1)
+		# attribDeprecationWarning("selectionDisabled", "selection")
 
 	def selectionPixmap(self, value):
 		self.guiObject.setSelectionPixmap(parsePixmap(value, self.desktop))
@@ -885,10 +890,16 @@ class AttributeParser:
 		self.guiObject.setText(value)
 
 	def textOffset(self, value):
-		if value in variables:
-			value = variables[value]
-		(xOffset, yOffset) = [parseInteger(x.strip()) for x in value.split(",")]
-		self.guiObject.setTextOffset(ePoint(self.applyHorizontalScale(xOffset), self.applyVerticalScale(yOffset)))
+		self.textPadding(value)
+		attribDeprecationWarning("textOffset", "textPadding")
+
+	def textPadding(self, value):
+		leftPadding, topPadding, rightPadding, bottomPadding = parseTextPadding(value)
+		leftPadding = self.applyHorizontalScale(leftPadding)
+		topPadding = self.applyVerticalScale(topPadding)
+		rightPadding = self.applyHorizontalScale(rightPadding)
+		bottomPadding = self.applyVerticalScale(topPadding)
+		self.guiObject.setTextPadding(eRect(leftPadding, topPadding, rightPadding, bottomPadding))
 
 	def title(self, value):
 		if value:
@@ -912,6 +923,9 @@ class AttributeParser:
 	def verticalAlignment(self, value):
 		self.guiObject.setVAlign(parseVerticalAlignment(value))
 
+	def wrap(self, value):
+		self.guiObject.setNoWrap(0 if parseBoolean("wrap", value) else 1)
+
 	def zPosition(self, value):
 		self.guiObject.setZPosition(parseInteger(value))
 
@@ -931,12 +945,12 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 	assert domSkin.tag == "skin", "root element in skin must be 'skin'!"
 	global colors, fonts, menus, parameters, setups, switchPixmap, resolutions, scrollLabelStyle
 	for tag in domSkin.findall("output"):
-		scrnID = parseInteger(tag.attrib.get("id"), GUI_SKIN_ID)
+		scrnID = parseInteger(tag.attrib.get("id", GUI_SKIN_ID), GUI_SKIN_ID)
 		if scrnID == GUI_SKIN_ID:
 			for res in tag.findall("resolution"):
-				xres = parseInteger(res.attrib.get("xres"), 720)
-				yres = parseInteger(res.attrib.get("yres"), 576)
-				bpp = parseInteger(res.attrib.get("bpp"), 32)
+				xres = parseInteger(res.attrib.get("xres", 720), 720)
+				yres = parseInteger(res.attrib.get("yres", 576), 576)
+				bpp = parseInteger(res.attrib.get("bpp", 32), 32)
 				resolutions[scrnID] = (xres, yres, bpp)
 				if bpp != 32:
 					pass  # Load palette (Not yet implemented!)
@@ -987,8 +1001,8 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 		for alias in tag.findall("alias"):
 			name = alias.attrib.get("name")
 			font = alias.attrib.get("font")
-			size = parseInteger(alias.attrib.get("size"), 20)
-			height = parseInteger(alias.attrib.get("height"), 25)  # To be calculated some day.
+			size = parseInteger(alias.attrib.get("size", 20), 20)
+			height = parseInteger(alias.attrib.get("height", 25), 25)  # To be calculated some day.
 			width = parseInteger(alias.attrib.get("width", 18), 18)  # To be calculated some day.
 			if name and font and size:
 				fonts[name] = (font, size, height, width)
@@ -1045,7 +1059,7 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 				haveColor = 0
 				foregroundColor = gRGB(0x00FFFFFF)
 			borderColor = parseColor(substyle.attrib.get("borderColor", substyle.attrib.get("shadowColor")), 0x00000000)
-			borderWidth = parseInteger(substyle.attrib.get("borderWidth"), 3)  # Default: Use a subtitle border.
+			borderWidth = parseInteger(substyle.attrib.get("borderWidth", 3), 3)  # Default: Use a subtitle border.
 			eSubtitleWidget.setFontStyle(face, font, haveColor, foregroundColor, borderColor, borderWidth)
 	colorNameConversions = {
 		"LabelForeground": "Foreground",
@@ -1095,38 +1109,42 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 		for label in tag.findall("label"):
 			style.setLabelFont(parseFont(label.attrib.get("font", "Regular;20"), ((1, 1), (1, 1))))
 		for listBox in tag.findall("listbox"):
+			pageSize = parseInteger(listBox.attrib.get("pageSize", eListbox.DefaultPageSize), eListbox.DefaultPageSize)
 			enableWrapAround = parseBoolean("enableWrapAround", listBox.attrib.get("enableWrapAround", "True" if eListbox.DefaultWrapAround else "False"))
 			style.setListboxFont(parseFont(listBox.attrib.get("font", "Regular;20"), ((1, 1), (1, 1))))
-			scrollbarBorderWidth = parseInteger(listBox.attrib.get("scrollbarBorderWidth"), eListbox.DefaultScrollBarBorderWidth)
+			scrollbarBorderWidth = parseInteger(listBox.attrib.get("scrollbarBorderWidth", eListbox.DefaultScrollBarBorderWidth), eListbox.DefaultScrollBarBorderWidth)
 			if "scrollbarBorderWidth" not in scrollLabelStyle:
 				scrollLabelStyle["scrollbarBorderWidth"] = scrollbarBorderWidth
 			scrollbarMode = parseScrollbarMode(listBox.attrib.get("scrollbarMode", scrollbarModes[eListbox.DefaultScrollBarMode]))
 			if "scrollbarMode" not in scrollLabelStyle and scrollbarMode != eListbox.showNever:
 				scrollLabelStyle["scrollbarMode"] = scrollbarMode
-			scrollbarOffset = parseInteger(listBox.attrib.get("scrollbarOffset"), eListbox.DefaultScrollBarOffset)
+			scrollbarOffset = parseInteger(listBox.attrib.get("scrollbarOffset", eListbox.DefaultScrollBarOffset), eListbox.DefaultScrollBarOffset)
 			if "scrollbarOffset" not in scrollLabelStyle:
 				scrollLabelStyle["scrollbarOffset"] = scrollbarOffset
 			scrollbarScroll = parseScrollbarScroll(listBox.attrib.get("scrollbarScroll", scrollbarScrolls[eListbox.DefaultScrollBarScroll]))
 			if "scrollbarScroll" not in scrollLabelStyle:
 				scrollLabelStyle["scrollbarScroll"] = scrollbarScroll
-			scrollbarWidth = parseInteger(listBox.attrib.get("scrollbarWidth"), eListbox.DefaultScrollBarWidth)
+			scrollbarWidth = parseInteger(listBox.attrib.get("scrollbarWidth", eListbox.DefaultScrollBarWidth), eListbox.DefaultScrollBarWidth)
 			if "scrollbarWidth" not in scrollLabelStyle:
 				scrollLabelStyle["scrollbarWidth"] = scrollbarWidth
-			eListbox.setDefaultScrollbarStyle(scrollbarWidth, scrollbarOffset, scrollbarBorderWidth, scrollbarScroll, scrollbarMode, enableWrapAround)
+			eListbox.setDefaultScrollbarStyle(scrollbarWidth, scrollbarOffset, scrollbarBorderWidth, scrollbarScroll, scrollbarMode, enableWrapAround, pageSize)
 		for scrollLabel in tag.findall("scrolllabel"):
-			scrollLabelStyle["scrollbarBorderWidth"] = parseInteger(scrollLabel.attrib.get("scrollbarBorderWidth"), eListbox.DefaultScrollBarBorderWidth)
+			scrollLabelStyle["scrollbarBorderWidth"] = parseInteger(scrollLabel.attrib.get("scrollbarBorderWidth", eListbox.DefaultScrollBarBorderWidth), eListbox.DefaultScrollBarBorderWidth)
 			scrollLabelStyle["scrollbarMode"] = parseScrollbarMode(scrollLabel.attrib.get("scrollbarMode", scrollbarModes[eListbox.showOnDemand]))
-			scrollLabelStyle["scrollbarOffset"] = parseInteger(scrollLabel.attrib.get("scrollbarOffset"), eListbox.DefaultScrollBarOffset)
+			scrollLabelStyle["scrollbarOffset"] = parseInteger(scrollLabel.attrib.get("scrollbarOffset", eListbox.DefaultScrollBarOffset), eListbox.DefaultScrollBarOffset)
 			scrollLabelStyle["scrollbarScroll"] = parseScrollbarScroll(scrollLabel.attrib.get("scrollbarScroll", scrollbarScrolls[eListbox.DefaultScrollBarScroll]))
-			scrollLabelStyle["scrollbarWidth"] = parseInteger(scrollLabel.attrib.get("scrollbarWidth"), eListbox.DefaultScrollBarWidth)
+			scrollLabelStyle["scrollbarWidth"] = parseInteger(scrollLabel.attrib.get("scrollbarWidth", eListbox.DefaultScrollBarWidth), eListbox.DefaultScrollBarWidth)
 		for slider in tag.findall("slider"):
-			borderWidth = parseInteger(slider.attrib.get("borderWidth"), eSlider.DefaultBorderWidth)
+			borderWidth = parseInteger(slider.attrib.get("borderWidth", eSlider.DefaultBorderWidth), eSlider.DefaultBorderWidth)
 			eSlider.setDefaultBorderWidth(borderWidth)
+		for stringList in tag.findall("stringList"):
+			leftPadding, topPadding, rightPadding, bottomPadding = parseTextPadding(stringList.attrib.get("textPadding", "0,0,0,0"))
+			eListbox.setDefaultPadding(eRect(leftPadding, topPadding, rightPadding, bottomPadding))
 		for title in tag.findall("title"):
 			style.setTitleFont(parseFont(title.attrib.get("font", "Regular;20"), ((1, 1), (1, 1))))
 			style.setTitleOffset(parseSize(title.attrib.get("offset", "20,5"), ((1, 1), (1, 1))))
 		x = eWindowStyleManager.getInstance()
-		x.setStyle(parseInteger(tag.attrib.get("id"), GUI_SKIN_ID), style)
+		x.setStyle(parseInteger(tag.attrib.get("id", GUI_SKIN_ID), GUI_SKIN_ID), style)
 	for tag in domSkin.findall("margin"):
 		r = eRect(0, 0, 0, 0)
 		v = tag.attrib.get("left")
@@ -1304,7 +1322,7 @@ def readSkin(screen, skin, names, desktop):
 			for s in skin:
 				candidate = fromstring(s)
 				if candidate.tag == "screen":
-					screenID = candidate.attrib.get("id", None)
+					screenID = candidate.attrib.get("id")
 					if (not screenID) or (parseInteger(screenID) == DISPLAY_SKIN_ID):
 						myScreen = candidate
 						break
@@ -1574,7 +1592,16 @@ def getSkinFactor(screen=GUI_SKIN_ID):
 # have a skin based screen.  This will allow coders to know if the named
 # screen will be skinned by the skin code.  A return of None implies that the
 # code must provide its own skin for the screen to be displayed to the user.
-#
+def applySkinFactor(*d):
+	"""
+	Multiply the numeric input by the skin factor
+	and return the result as an integer.
+	"""
+	if len(d) == 1:
+		return int(d[0] * getSkinFactor())
+	return tuple([int(value * getSkinFactor()) if isinstance(value, (int, float)) else value for value in d])
+
+
 def findSkinScreen(names):
 	if not isinstance(names, list):
 		names = [names]

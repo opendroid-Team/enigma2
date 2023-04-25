@@ -17,7 +17,7 @@ class Job(object):
 		self.current_task = 0
 		self.callback = None
 		self.name = name
-		self.finished = False
+		self.finished = False  # FIXME Do we need this?
 		self.end = 100
 		self.__progress = 0
 		self.weightScale = 1
@@ -134,6 +134,8 @@ class Task(object):
 		self.cwd = "/tmp"
 		self.args = []
 		self.cmdline = None
+		self.nice = None
+		self.ionice = None
 		self.task_progress_changed = None
 		self.output_line = ""
 		job.addTask(self)
@@ -174,6 +176,10 @@ class Task(object):
 		self.container.stderrAvail.append(self.processStderr)
 		if self.cwd is not None:
 			self.container.setCWD(self.cwd)
+		if self.nice is not None:
+			self.container.setNice(self.nice)
+		if self.ionice is not None:
+			self.container.setIONice(self.ionice)
 		if not self.cmd and self.cmdline:
 			print("[Task] execute:", self.container.execute(self.cmdline), self.cmdline)
 		else:
@@ -450,7 +456,7 @@ class JobManager:
 #
 #class CreateFilesystemTask(Task):
 #	def __init__(self, device, partition = 1, largefile = True):
-#		Task.__init__(self, "Creating filesystem")
+#		Task.__init__(self, "Creating file system")
 #		self.setTool("/sbin/mkfs.ext")
 #		if largefile:
 #			self.args += ["-T", "largefile"]

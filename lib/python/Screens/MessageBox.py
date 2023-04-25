@@ -66,8 +66,6 @@ class MessageBox(Screen, HelpableScreen):
 					"pageUp": (self.pageUp, _("Move up a page")),
 					"up": (self.up, _("Move up a line")),
 					# "first": (self.top, _("Move to first line")),
-					# "left": (self.pageUp, _("Move up a page")),
-					# "right": (self.pageDown, _("Move down a page")),
 					# "last": (self.bottom, _("Move to last line")),
 					"down": (self.down, _("Move down a line")),
 					"pageDown": (self.pageDown, _("Move down a page")),
@@ -127,7 +125,7 @@ class MessageBox(Screen, HelpableScreen):
 
 	def layoutFinished(self):
 		if self.list:
-			self["list"].instance.allowNativeKeys(False)  # Override listbox navigation.
+			self["list"].instance.enableAutoNavigation(False)  # Override listbox navigation.
 			self["list"].moveToIndex(self.startIndex)
 		if self.typeIcon:
 			self["icon"].setPixmapNum(self.typeIcon - 1)

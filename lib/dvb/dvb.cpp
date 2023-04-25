@@ -266,7 +266,7 @@ void eDVBAdapterLinux::scanDevices()
 			if (ok)
 				m_frontend.push_back(ePtr<eDVBFrontend>(fe));
 		}
-		++num_fe;
+		++num_fe; // NOSONAR
 	}
 
 		// scan demux
@@ -859,9 +859,9 @@ PyObject *eDVBResourceManager::setFrontendSlotInformations(ePyObject list)
 			Enabled = PyTuple_GET_ITEM(obj, 2);
 			IsDVBS2 = PyTuple_GET_ITEM(obj, 3);
 			frontendId = PyTuple_GET_ITEM(obj, 4);
-			if (!PyInt_Check(Id) || !PyString_Check(Descr) || !PyBool_Check(Enabled) || !PyBool_Check(IsDVBS2) || !PyInt_Check(frontendId))
+			if (!PyLong_Check(Id) || !PyUnicode_Check(Descr) || !PyBool_Check(Enabled) || !PyBool_Check(IsDVBS2) || !PyLong_Check(frontendId))
 				continue;
-			if (!i->m_frontend->setSlotInfo(PyInt_AsLong(Id), PyString_AS_STRING(Descr), Enabled == Py_True, IsDVBS2 == Py_True, PyInt_AsLong(frontendId)))
+			if (!i->m_frontend->setSlotInfo(PyLong_AsLong(Id), PyUnicode_AsUTF8(Descr), Enabled == Py_True, IsDVBS2 == Py_True, PyLong_AsLong(frontendId)))
 				continue;
 			++assigned;
 			break;
@@ -884,9 +884,9 @@ PyObject *eDVBResourceManager::setFrontendSlotInformations(ePyObject list)
 			Enabled = PyTuple_GET_ITEM(obj, 2);
 			IsDVBS2 = PyTuple_GET_ITEM(obj, 3);
 			frontendId = PyTuple_GET_ITEM(obj, 4);
-			if (!PyInt_Check(Id) || !PyString_Check(Descr) || !PyBool_Check(Enabled) || !PyBool_Check(IsDVBS2) || !PyInt_Check(frontendId))
+			if (!PyLong_Check(Id) || !PyUnicode_Check(Descr) || !PyBool_Check(Enabled) || !PyBool_Check(IsDVBS2) || !PyLong_Check(frontendId))
 				continue;
-			if (!i->m_frontend->setSlotInfo(PyInt_AsLong(Id), PyString_AS_STRING(Descr), Enabled == Py_True, IsDVBS2 == Py_True, PyInt_AsLong(frontendId)))
+			if (!i->m_frontend->setSlotInfo(PyLong_AsLong(Id), PyUnicode_AsUTF8(Descr), Enabled == Py_True, IsDVBS2 == Py_True, PyLong_AsLong(frontendId)))
 				continue;
 			break;
 		}
@@ -1299,7 +1299,7 @@ RESULT eDVBResourceManager::allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBA
 			// attached to a frontend. That is, there
 			// should be one instance of dvr & demux
 			// devices more than of frontend devices.
-			// Otherwise, playback and timeshift might
+			// Otherwise, playback and time shift might
 			// interfere recording.
 			if (i->m_inuse)
 			{
@@ -2078,8 +2078,13 @@ void eDVBChannel::cueSheetEvent(int event)
 				eDebug("[eDVBChannel] skipmode ratio is %lld:90000, bitrate is %d bit/s", m_cue->m_skipmode_ratio, bitrate);
 						/* i agree that this might look a bit like black magic. */
 				m_skipmode_n = 512*1024; /* must be 1 iframe at least. */
-				m_skipmode_m = bitrate / 8 / 90000 * m_cue->m_skipmode_ratio / 8;
+// The / and * are done in order, resulting in a distinct integer
+// truncation after bitrate / 8 / 90000
+// I don't think that this is intended...
+// github.com/OpenViX/enigma2/commit/33d172b5a3ad1b22d69ce60c2102552537b77929
+//				m_skipmode_m = bitrate / 8 / 90000 * m_cue->m_skipmode_ratio / 8;
 				m_skipmode_frames = m_cue->m_skipmode_ratio / 90000;
+				m_skipmode_m = (bitrate / 8) * (m_skipmode_frames / 8);
 				m_skipmode_frames_remainder = 0;
 
 				if (m_cue->m_skipmode_ratio < 0)

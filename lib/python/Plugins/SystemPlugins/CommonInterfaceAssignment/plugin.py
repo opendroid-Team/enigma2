@@ -8,6 +8,7 @@ from Components.config import ConfigNothing
 from Components.ConfigList import ConfigList
 from Components.Label import Label
 from Components.SelectionList import SelectionList
+from Components.SystemInfo import BoxInfo, getBoxDisplayName
 from Components.MenuList import MenuList
 from ServiceReference import ServiceReference
 from Plugins.Plugin import PluginDescriptor
@@ -17,7 +18,6 @@ from Tools.CIHelper import cihelper
 from enigma import eDVBCI_UI, eDVBCIInterfaces, eEnv, eServiceCenter
 
 from os import system, path as os_path
-from boxbranding import getMachineBrand, getMachineName, getBoxType
 import os
 import six
 
@@ -47,7 +47,7 @@ class CIselectMainMenu(Screen):
 				"cancel": self.close
 			}, -1)
 
-		if getBoxType() in ('zgemmah9combo',):
+		if BoxInfo.getItem("machinebuild") in ('zgemmah9combo',):
 			NUM_CI = 1
 		else:
 			NUM_CI = eDVBCIInterfaces.getInstance() and eDVBCIInterfaces.getInstance().getNumOfSlots()
@@ -87,10 +87,10 @@ class CIselectMainMenu(Screen):
 			action = cur[2]
 			slot = cur[3]
 			if action == 1:
-				print("[CI_Wizzard] there is no CI Slot in your %s %s" % (getMachineBrand(), getMachineName()))
+				print("[CI_Wizzard] there is no CI Slot in your %s %s" % getBoxDisplayName())
 			else:
 				print("[CI_Wizzard] selected CI Slot : %d" % slot)
-				if config.usage.setup_level.index > 1: # advanced
+				if config.usage.setup_level.index > 1:  # advanced
 					self.session.open(CIconfigMenu, slot)
 				else:
 					self.session.open(easyCIconfigMenu, slot)
@@ -161,7 +161,7 @@ class CIconfigMenu(Screen):
 
 		self.loadXML()
 		# if config mode !=advanced autoselect any caid
-		if config.usage.setup_level.index <= 1: # advanced
+		if config.usage.setup_level.index <= 1:  # advanced
 			self.selectedcaid = self.caidlist
 			self.finishedCAidSelection(self.selectedcaid)
 		self.onShown.append(self.setWindowTitle)
@@ -206,14 +206,14 @@ class CIconfigMenu(Screen):
 			service_name = service_ref.getServiceName()
 			if find_in_list(self.servicelist, service_name, 0) == False:
 				split_ref = service_ref.ref.toString().split(":")
-				if split_ref[0] == "1":#== dvb service und nicht muell von None
+				if split_ref[0] == "1":  # == dvb service und nicht muell von None
 					self.servicelist.append((service_name, ConfigNothing(), 0, service_ref.ref.toString()))
 					self["ServiceList"].l.setList(self.servicelist)
 					self.setServiceListInfo()
 
 	def finishedProviderSelection(self, *args):
 		item = len(args)
-		if item > 1: # bei nix selected kommt nur 1 arg zurueck (==None)
+		if item > 1:  # bei nix selected kommt nur 1 arg zurueck (==None)
 			if item > 2 and args[2] is True:
 				for ref in args[0]:
 					service_ref = ServiceReference(ref)
@@ -454,7 +454,7 @@ class myProviderSelection(ChannelSelectionBase):
 		self.showSatellites()
 		self.setTitle(_("Select provider to add..."))
 
-	def channelSelected(self): # just return selected service
+	def channelSelected(self):  # just return selected service
 		ref = self.getCurrentSelection()
 		if ref is None:
 			return
@@ -512,7 +512,7 @@ class myProviderSelection(ChannelSelectionBase):
 					if not servicelist is None:
 						while True:
 							service = servicelist.getNext()
-							if not service.valid(): #check if end of list
+							if not service.valid():  # check if end of list
 								break
 							unsigned_orbpos = service.getUnsignedData(4) >> 16
 							orbpos = service.getData(4) >> 16
@@ -524,12 +524,12 @@ class myProviderSelection(ChannelSelectionBase):
 									# why we need this cast?
 									service_name = str(nimmanager.getSatDescription(orbpos))
 								except:
-									if unsigned_orbpos == 0xFFFF: #Cable
+									if unsigned_orbpos == 0xFFFF:  # Cable
 										service_name = _("Cable")
-									elif unsigned_orbpos == 0xEEEE: #Terrestrial
+									elif unsigned_orbpos == 0xEEEE:  # Terrestrial
 										service_name = _("Terrestrial")
 									else:
-										if orbpos > 1800: # west
+										if orbpos > 1800:  # west
 											orbpos = 3600 - orbpos
 											h = _("W")
 										else:
@@ -579,7 +579,7 @@ class myChannelSelection(ChannelSelectionBase):
 		self["key_red"] = StaticText(_("All"))
 		self["key_green"] = StaticText(_("Close"))
 		self["key_yellow"] = StaticText()
-		self["key_blue"] = StaticText(_("Favourites"))
+		self["key_blue"] = StaticText(_("Favorites"))
 		self["introduction"] = StaticText(_("Press OK to select a service."))
 
 	def __onExecCallback(self):
@@ -593,7 +593,7 @@ class myChannelSelection(ChannelSelectionBase):
 		if changeMode:
 			self.close(None)
 
-	def channelSelected(self): # just return selected service
+	def channelSelected(self):  # just return selected service
 		ref = self.getCurrentSelection()
 		if (ref.flags & 7) == 7:
 			self.enterPath(ref)
@@ -665,8 +665,8 @@ def Plugins(**kwargs):
 	if config.usage.setup_level.index > 1:
 		return [PluginDescriptor(where=PluginDescriptor.WHERE_SESSIONSTART, needsRestart=False, fnc=sessionstart),
 				PluginDescriptor(where=PluginDescriptor.WHERE_AUTOSTART, needsRestart=False, fnc=autostart),
-				PluginDescriptor(name=_("Common Interface assignment"), description=_("a gui to assign services/providers/caids to common interface modules"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=menu)]
+				PluginDescriptor(name=_("Common Interface Assignment"), description=_("a gui to assign services/providers/caids to common interface modules"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=menu)]
 	else:
 		return [PluginDescriptor(where=PluginDescriptor.WHERE_SESSIONSTART, needsRestart=False, fnc=sessionstart),
 				PluginDescriptor(where=PluginDescriptor.WHERE_AUTOSTART, needsRestart=False, fnc=autostart),
-				PluginDescriptor(name=_("Common Interface assignment"), description=_("a gui to assign services/providers to common interface modules"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=menu)]
+				PluginDescriptor(name=_("Common Interface Assignment"), description=_("a gui to assign services/providers to common interface modules"), where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=menu)]

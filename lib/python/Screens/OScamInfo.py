@@ -1,32 +1,29 @@
-from __future__ import print_function
-from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
-from Screens.ChoiceBox import ChoiceBox
-from Screens.Setup import Setup
+from operator import itemgetter
+from os.path import exists
+from time import localtime, strftime
+from urllib.error import URLError
+from urllib.parse import quote_plus
+from urllib.request import build_opener, HTTPDigestAuthHandler, HTTPHandler, HTTPPasswordMgrWithDefaultRealm, install_opener, Request, urlopen
+from xml.etree import ElementTree
+from enigma import eTimer, RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop
 
 from Components.ActionMap import ActionMap, NumberActionMap
-from Components.Sources.List import List
-from Components.Sources.StaticText import StaticText
 from Components.config import config
 from Components.MenuList import MenuList
+from Components.Sources.List import List
+from Components.Sources.StaticText import StaticText
 
-from Tools.LoadPixmap import LoadPixmap
+from Screens.ChoiceBox import ChoiceBox
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Screens.Setup import Setup
+from skin import parameters, getSkinFactor
+
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename, fileExists
-
-from enigma import eTimer, RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont, getDesktop
-from xml.etree import ElementTree
-
-from operator import itemgetter
-import os
-import time
-import skin
-
-from six.moves import urllib
-from six.moves.urllib.request import HTTPHandler, HTTPDigestAuthHandler
-
+from Tools.LoadPixmap import LoadPixmap
 
 ###global
-sf = skin.getSkinFactor()
+sf = getSkinFactor()
 sizeH = 700
 HDSKIN = False
 screenwidth = getDesktop(0).size().width()
@@ -112,7 +109,7 @@ class OscamInfo:
 
 		if webif and port is not None:
 		# oscam reports it got webif support and webif is running (Port != 0)
-			if conf is not None and os.path.exists(conf):
+			if conf is not None and exists(conf):
 				# If we have a config file, we need to investigate it further
 				with open(conf, 'r') as data:
 					for i in data:
@@ -171,21 +168,21 @@ class OscamInfo:
 		else:
 			self.url = "%s://%s:%s/%s.html?part=%s" % (self.proto, self.ip, self.port, self.api, part)
 		if part is not None and reader is not None:
-			self.url = "%s://%s:%s/%s.html?part=%s&label=%s" % (self.proto, self.ip, self.port, self.api, part, reader)
+			self.url = "%s://%s:%s/%s.html?part=%s&label=%s" % (self.proto, self.ip, self.port, self.api, part, quote_plus(reader))
 
-		opener = urllib.request.build_opener(HTTPHandler)
+		opener = build_opener(HTTPHandler)
 		if not self.username == "":
-			pwman = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+			pwman = HTTPPasswordMgrWithDefaultRealm()
 			pwman.add_password(None, self.url, self.username, self.password)
 			handlers = HTTPDigestAuthHandler(pwman)
-			opener = urllib.request.build_opener(HTTPHandler, handlers)
-			urllib.request.install_opener(opener)
-		request = urllib.request.Request(self.url)
+			opener = build_opener(HTTPHandler, handlers)
+			install_opener(opener)
+		request = Request(self.url)
 		err = False
 		try:
-			data = urllib.request.urlopen(request).read()
+			data = urlopen(request).read()
 			# print data
-		except urllib.error.URLError as e:
+		except URLError as e:
 			if hasattr(e, "reason"):
 				err = str(e.reason)
 			elif hasattr(e, "code"):
@@ -340,7 +337,7 @@ class OscamInfo:
 		else:
 			return None
 
-	def getClients(self):
+	def getClients(self):  # TODO not used ??
 		xmldata = self.openWebIF()
 		clientnames = []
 		if xmldata[0]:
@@ -357,7 +354,7 @@ class OscamInfo:
 
 	def getECMInfo(self, ecminfo):
 		result = []
-		if os.path.exists(ecminfo):
+		if exists(ecminfo):
 			data = open(ecminfo, "r").readlines()
 			for i in data:
 				if "caid" in i:
@@ -468,7 +465,7 @@ class OscamInfoMenu(Screen):
 			config.oscaminfo.userdatafromconf.save()
 			self.session.openWithCallback(self.ErrMsgCallback, MessageBox, _("File oscam.conf not found.\nPlease enter username/password manually."), MessageBox.TYPE_ERROR)
 		elif entry == 0:
-			if os.path.exists("/tmp/ecm.info"):
+			if exists("/tmp/ecm.info"):
 				self.session.open(oscECMInfo)
 			else:
 				pass
@@ -524,24 +521,24 @@ class OscamInfoMenu(Screen):
 				if fileExists(png):
 					png = LoadPixmap(png)
 				if png is not None:
-					x, y, w, h = skin.parameters.get("ChoicelistDash", (0, 2 * sf, 800 * sf, 2 * sf))
+					x, y, w, h = parameters.get("ChoicelistDash", (0, 2 * sf, 800 * sf, 2 * sf))
 					res.append((eListboxPythonMultiContent.TYPE_PIXMAP, int(x), int(y), int(w), int(h), png))
-					x, y, w, h = skin.parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
+					x, y, w, h = parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
 					res.append((eListboxPythonMultiContent.TYPE_TEXT, int(x), int(y), int(w), int(h), 0, RT_HALIGN_LEFT, t[2:]))
 					png2 = resolveFilename(SCOPE_GUISKIN, "buttons/key_" + keys[k] + ".png")
 					if fileExists(png2):
 						png2 = LoadPixmap(png2)
 					if png2 is not None:
-						x, y, w, h = skin.parameters.get("ChoicelistIcon", (5 * sf, 0, 35 * sf, 25 * sf))
+						x, y, w, h = parameters.get("ChoicelistIcon", (5 * sf, 0, 35 * sf, 25 * sf))
 						res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, x, y, w, h, png2))
 			else:
-				x, y, w, h = skin.parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
+				x, y, w, h = parameters.get("ChoicelistName", (45 * sf, 2 * sf, 800 * sf, 25 * sf))
 				res.append((eListboxPythonMultiContent.TYPE_TEXT, int(x), int(y), int(w), int(h), 0, RT_HALIGN_LEFT, t))
 				png2 = resolveFilename(SCOPE_GUISKIN, "buttons/key_" + keys[k] + ".png")
 				if fileExists(png2):
 					png2 = LoadPixmap(png2)
 				if png2 is not None:
-					x, y, w, h = skin.parameters.get("ChoicelistIcon", (5 * sf, 0, 35 * sf, 25 * sf))
+					x, y, w, h = parameters.get("ChoicelistIcon", (5 * sf, 0, 35 * sf, 25 * sf))
 					res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, int(x), int(y), int(w), int(h), png2))
 			menuentries.append(res)
 			if k < len(keys) - 1:
@@ -744,19 +741,19 @@ class oscInfo(Screen, OscamInfo):
 			ypos = -2
 		if not heading:
 			status = listentry[len(listentry) - 1]
-			colour = "0xffffff"
+			color = "0xffffff"
 			if status == "OK" or "CONNECTED" or status == "CARDOK":
-				colour = "0x389416"
+				color = "0x389416"
 			if status == "NEEDINIT" or status == "CARDOK":
-				colour = "0xbab329"
+				color = "0xbab329"
 			if status == "OFF" or status == "ERROR":
-				colour = "0xf23d21"
+				color = "0xf23d21"
 		else:
-			colour = "0xffffff"
+			color = "0xffffff"
 		for i in listentry[:-1]:
 			xsize = int(self.fieldsize[x])
 			xpos = int(self.startPos[x])
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, xpos, int(ypos * sf), xsize, int(self.itemheight * sf), useFont, RT_HALIGN_LEFT, i, int(colour, 16)))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, xpos, int(ypos * sf), xsize, int(self.itemheight * sf), useFont, RT_HALIGN_LEFT, i, int(color, 16)))
 			x += 1
 		if heading:
 			png = resolveFilename(SCOPE_GUISKIN, "div-h.png")
@@ -822,7 +819,7 @@ class oscInfo(Screen, OscamInfo):
 		if self.listchange:
 			self.listchange = False
 			self["output"].l.setItemHeight(int(self.itemheight * sf))
-			self["output"].instance.setScrollbarMode(0) #"showOnDemand"
+			self["output"].instance.setScrollbarMode(0)  # "showOnDemand"
 			self.rows = int(self["output"].instance.size().height() / (self.itemheight * sf))
 			if self.what != "l" and self.rows < len(self.out):
 				self.enableScrolling(True)
@@ -1120,7 +1117,7 @@ class oscReaderStats(Screen, OscamInfo):
 								try:
 									last_req = lastreq.split("T")[1][:-5]
 								except IndexError:
-									last_req = time.strftime("%H:%M:%S", time.localtime(float(lastreq)))
+									last_req = strftime("%H:%M:%S", localtime(float(lastreq)))
 							else:
 								last_req = ""
 						else:
@@ -1136,7 +1133,7 @@ class oscReaderStats(Screen, OscamInfo):
 							title2 = _("(Show only reader:") + "%s )" % self.reader
 
 		outlist = self.sortData(result, 7, True)
-		out = [(_("Label"), _("CAID"), _("Channel"), _("ECM avg"), _("ECM last"), _("Status"), _("Last Req."), _("Total"))]
+		out = [(_("Label"), _("CAID"), _("Channel"), _("ECM avg"), _("ECM last"), _("Status"), _("Last Request"), _("Total"))]
 		for i in outlist:
 			out.append((i[0], i[1], i[2], i[3], i[4], i[5], i[6], str(i[7])))
 
@@ -1162,4 +1159,3 @@ class OscamInfoSetup(Setup):
 		if self.msg:
 			self.setFootnote(self.msg)
 			self.msg = None
-
