@@ -496,9 +496,9 @@ class RestoreScreen(Screen, ConfigListScreen):
 				break
 
 		if startSH:
-			self.session.openWithCallback(self.restoreMetrixSkin, Console, title=_("Running Myrestore script, Please wait ..."), cmdlist=[startSH], closeOnSuccess=True)
+			self.session.openWithCallback(self.restartGUI, Console, title=_("Running Myrestore script, Please wait ..."), cmdlist=[startSH], closeOnSuccess=True)
 		else:
-			self.restoreMetrixSkin()
+			self.restartGUI()
 
 	def restartGUI(self, ret=None):
 		self.session.open(Console, title=_("Your %s %s will Restart...") % getBoxDisplayName(), cmdlist=["killall -9 enigma2"])
@@ -515,28 +515,6 @@ class RestoreScreen(Screen, ConfigListScreen):
 	def runAsync(self, finished_cb):
 		self.doRestore()
 
-class RestartNetwork(Screen):
-
-	def __init__(self, session):
-		Screen.__init__(self, session)
-		skin = """
-			<screen name="RestartNetwork" position="center,center" size="600,100" title="Restart Network Adapter">
-			<widget name="label" position="10,30" size="500,50" halign="center" font="Regular;20" transparent="1" foregroundColor="white" />
-			</screen> """
-		self.skin = skin
-		self["label"] = Label(_("Please wait while your network is restarting..."))
-		self["summary_description"] = StaticText(_("Please wait while your network is restarting..."))
-		self.onShown.append(self.setWindowTitle)
-		self.onLayoutFinish.append(self.restartLan)
-
-	def setWindowTitle(self):
-		self.setTitle(_("Restart Network Adapter"))
-
-	def restartLan(self):
-		print("[SOFTWARE MANAGER] Restart Network")
-		iNetwork.restartNetwork(self.restartLanDataAvail)
-
-	def checkSkinCallback(self, ret=None):
 		self.close()
 
 

@@ -396,20 +396,28 @@ def InitUsageConfig():
 	] + [(str(x * 60), ngettext("%d Minute", "%d Minutes", x) % x) for x in (1, 5, 10, 15, 30, 45, 60)]
 	config.usage.pip_last_service_timeout = ConfigSelection(default="-1", choices=choiceList)
 
-	defaultValue = resolveFilename(SCOPE_HDD)
-	if not exists(defaultValue):
-		try:
-			mkdir(defaultValue, 0o755)
-		except OSError as err:
-			pass
-	config.usage.default_path = ConfigSelection(default=defaultValue, choices=[(defaultValue, defaultValue)])
+	defaultPath = resolveFilename(SCOPE_HDD)
+	config.usage.default_path = ConfigSelection(default=defaultPath, choices=[(defaultPath, defaultPath)])
 	config.usage.default_path.load()
-	if config.usage.default_path.saved_value:
-		savedValue = pathjoin(config.usage.default_path.saved_value, "")
-		if savedValue and savedValue != defaultValue:
-			config.usage.default_path.setChoices([(defaultValue, defaultValue), (savedValue, savedValue)], default=defaultValue)
-			config.usage.default_path.value = savedValue
+	savedPath = config.usage.default_path.saved_value
+	if savedPath:
+		savedPath = pathjoin(savedPath, "")
+		if savedPath and savedPath != defaultPath:
+			config.usage.default_path.setChoices(default=defaultPath, choices=[(defaultPath, defaultPath), (savedPath, savedPath)])
+			config.usage.default_path.value = savedPath
 	config.usage.default_path.save()
+	currentPath = config.usage.default_path.value
+	print("[UsageConfig] Checking/Creating current movie directory '%s'." % currentPath)
+	try:
+		makedirs(currentPath, 0o755, exist_ok=True)
+	except OSError as err:
+		print("[UsageConfig] Error %d: Unable to create current movie directory '%s'!  (%s)" % (err.errno, currentPath, err.strerror))
+		if defaultPath != currentPath:
+			print("[UsageConfig] Checking/Creating default movie directory '%s'." % defaultPath)
+			try:
+				makedirs(defaultPath, 0o755, exist_ok=True)
+			except OSError as err:
+				print("[UsageConfig] Error %d: Unable to create default movie directory '%s'!  (%s)" % (err.errno, defaultPath, err.strerror))
 
 	choiceList = [
 		("<default>", "<Default>"),
@@ -1395,31 +1403,25 @@ def InitUsageConfig():
 	])
 	config.crash.gstdot = ConfigYesNo(default=False)
 
-	debugPath = [("/home/root/logs/", "/home/root/")]
-	for partition in harddiskmanager.getMountedPartitions():
-		if exists(partition.mountpoint):
-			path = normpath(partition.mountpoint)
-			if partition.mountpoint != "/":
-				debugPath.append((partition.mountpoint + "logs/", path))
-	config.crash.debug_path = ConfigSelection(default="/home/root/logs/", choices=debugPath)
-	if not exists("/home"):
-		mkdir("/home", 0o755)
-	if not exists("/home/root"):
-		mkdir("/home/root", 0o755)
+	def updateDebugPath(configElement):
+		debugPath = config.crash.debug_path.value
+		try:
+			makedirs(debugPath, 0o755, exist_ok=True)
+		except OSError as err:
+			print("[UsageConfig] Error %d: Unable to create log directory '%s'!  (%s)" % (err.errno, debugPath, err.strerror))
 
-	def updatedebug_path(configElement):
-		if not exists(config.crash.debug_path.value):
-			try:
-				mkdir(config.crash.debug_path.value, 0o755)
-			except:
-				print("Failed to create log path: %s" % config.crash.debug_path.value)
-	config.crash.debug_path.addNotifier(updatedebug_path, immediate_feedback=False)
+	choiceList = [("/home/root/logs/", "/home/root/")]
+	for partition in harddiskmanager.getMountedPartitions():
+		if exists(partition.mountpoint) and partition.mountpoint != "/":
+			choiceList.append((pathjoin(partition.mountpoint, "logs", ""), normpath(partition.mountpoint)))
+	config.crash.debug_path = ConfigSelection(default="/home/root/logs/", choices=choiceList)
+	config.crash.debug_path.addNotifier(updateDebugPath, immediate_feedback=False)
 
 	crashlogheader = _("We are really sorry. Your receiver encountered "
-		 "a software problem, and needs to be restarted.\n"
-		 "Please send the logfile %senigma2_crash_xxxxxx.log to https://droidsat.org\n"
-		 "Your receiver restarts in 10 seconds!\n"
-		 "Component: enigma2") % config.crash.debug_path.value
+		"a software problem, and needs to be restarted.\n"
+		"Please send the logfile %senigma2_crash_xxxxxx.log to https://droidsat.org\n"
+		"Your receiver restarts in 10 seconds!\n"
+		"Component: enigma2") % config.crash.debug_path.value
 	config.crash.debug_text = ConfigText(default=crashlogheader, fixed_size=False)
 	config.crash.skin_error_crash = ConfigYesNo(default=True)
 
@@ -1783,12 +1785,12 @@ def InitUsageConfig():
 	])
 	config.epgselection.graph_ok = ConfigSelection(default="Zap", choices=choiceList)
 	config.epgselection.graph_oklong = ConfigSelection(default="Zap + Exit", choices=choiceList)
-	config.epgselection.graph_info = ConfigSelection(default=" Info", choices=[
-		(" Info", _(" Info")),
+	config.epgselection.graph_info = ConfigSelection(default="Channel Info", choices=[
+		("Channel Info", _("Channel Info")),
 		("Single EPG", _("Single EPG"))
 	])
 	config.epgselection.graph_infolong = ConfigSelection(default="Single EPG", choices=[
-		(" Info", _(" Info")),
+		("Channel Info", _("Channel Info")),
 		("Single EPG", _("Single EPG"))
 	])
 	config.epgselection.graph_roundto = ConfigSelection(default="15", choices=[(str(x), _("%d Minutes") % x) for x in (15, 30, 60)])
@@ -1801,8 +1803,8 @@ def InitUsageConfig():
 	config.epgselection.graph_startmode = ConfigSelection(default="standard", choices=[
 		("standard", _("Standard")),
 		("primetime", _("Prime time")),
-		("1", _(" 1")),
-		("1+primetime", _(" 1 with Prime time"))
+		("channel1", _("Channel 1")),
+		("channel1+primetime", _("Channel 1 with Prime time"))
 	])
 	config.epgselection.graph_servfs = ConfigSelectionNumber(default=0, stepwidth=1, min=-8, max=10, wraparound=True)
 	config.epgselection.graph_eventfs = ConfigSelectionNumber(default=0, stepwidth=1, min=-8, max=10, wraparound=True)
@@ -1852,7 +1854,7 @@ def InitUsageConfig():
 	config.epgselection.graph_yellow = ConfigSelection(default="epgsearch", choices=choiceList)
 	config.epgselection.graph_blue = ConfigSelection(default="autotimer", choices=choiceList)
 
-	config.epgselection.graph_btn = ConfigSelection(default="24", choices=[
+	config.epgselection.graph_channelbtn = ConfigSelection(default="24", choices=[
 		("24", _("-24h/+24 Hours")),
 		("page", _("Previous/Next page")),
 		("bouquet", _("Previous/Next bouquet"))
@@ -1860,12 +1862,12 @@ def InitUsageConfig():
 
 	config.epgselection.vertical_itemsperpage = ConfigSelectionNumber(default=6, stepwidth=1, min=3, max=12, wraparound=True)
 	config.epgselection.vertical_eventfs = ConfigSelectionNumber(default=0, stepwidth=1, min=-10, max=10, wraparound=True)
-	config.epgselection.vertical_ok = ConfigSelection(choices=[(" Info", _(" Info")), ("Zap", _("Zap")), ("Zap + Exit", _("Zap + Exit"))], default=" Info")
-	config.epgselection.vertical_oklong = ConfigSelection(choices=[(" Info", _(" Info")), ("Zap", _("Zap")), ("Zap + Exit", _("Zap + Exit"))], default="Zap + Exit")
-	config.epgselection.vertical_info = ConfigSelection(choices=[(" Info", _(" Info")), ("Single EPG", _("Single EPG"))], default=" Info")
-	config.epgselection.vertical_infolong = ConfigSelection(choices=[(" Info", _(" Info")), ("Single EPG", _("Single EPG"))], default="Single EPG")
-	config.epgselection.vertical_btn = ConfigSelection(choices=[("page", _("Previous/Next page")), ("scroll", _("all up/down")), ("24", _("-24h/+24 Hours"))], default="page")
-	config.epgselection.vertical_btn_invert = ConfigYesNo(default=False)
+	config.epgselection.vertical_ok = ConfigSelection(choices=[("Channel Info", _("Channel Info")), ("Zap", _("Zap")), ("Zap + Exit", _("Zap + Exit"))], default="Channel Info")
+	config.epgselection.vertical_oklong = ConfigSelection(choices=[("Channel Info", _("Channel Info")), ("Zap", _("Zap")), ("Zap + Exit", _("Zap + Exit"))], default="Zap + Exit")
+	config.epgselection.vertical_info = ConfigSelection(choices=[("Channel Info", _("Channel Info")), ("Single EPG", _("Single EPG"))], default="Channel Info")
+	config.epgselection.vertical_infolong = ConfigSelection(choices=[("Channel Info", _("Channel Info")), ("Single EPG", _("Single EPG"))], default="Single EPG")
+	config.epgselection.vertical_channelbtn = ConfigSelection(choices=[("page", _("Previous/Next page")), ("scroll", _("all up/down")), ("24", _("-24h/+24 Hours"))], default="page")
+	config.epgselection.vertical_channelbtn_invert = ConfigYesNo(default=False)
 	config.epgselection.vertical_updownbtn = ConfigYesNo(default=True)
 	config.epgselection.vertical_primetimehour = ConfigSelectionNumber(default=20, stepwidth=1, min=00, max=23, wraparound=True)
 	config.epgselection.vertical_primetimemins = ConfigSelectionNumber(default=15, stepwidth=1, min=00, max=59, wraparound=True)
@@ -1873,7 +1875,7 @@ def InitUsageConfig():
 	config.epgselection.vertical_pig = ConfigYesNo(default=False)
 	config.epgselection.vertical_eventmarker = ConfigYesNo(default=False)
 	config.epgselection.vertical_showlines = ConfigYesNo(default=True)
-	config.epgselection.vertical_startmode = ConfigSelection(default="standard", choices=[("standard", _("Standard")), ("primetime", _("Prime time")), ("1", _(" 1")), ("1+primetime", _(" 1 with Prime time"))])
+	config.epgselection.vertical_startmode = ConfigSelection(default="standard", choices=[("standard", _("Standard")), ("primetime", _("Prime time")), ("channel1", _("Channel 1")), ("channel1+primetime", _("Channel 1 with Prime time"))])
 	config.epgselection.vertical_prevtime = ConfigClock(default=time())
 	choiceList = [
 		("autotimer", _("AutoTimer")),
@@ -1982,14 +1984,7 @@ def InitUsageConfig():
 	#
 	# Time shift settings.
 	#
-	defaultValue = resolveFilename(SCOPE_TIMESHIFT)
-	if not exists(defaultValue):
-		try:
-			mkdir(defaultValue, 0o755)
-		except OSError as err:
-			print("[UsageConfig] Error %d: Unable to create time shift directory '%s'!  (%s)" % (err.errno, defaultValue, err.strerror))
 	config.timeshift = ConfigSubsection()
-	config.timeshift.allowedPaths = ConfigLocations(default=[defaultValue])
 	config.timeshift.check = ConfigYesNo(default=True)
 	config.timeshift.checkEvents = ConfigSelection(default=0, choices=[(0, _("Disabled"))] + [(x, ngettext("%d Minute", "%d Minutes", x) % x) for x in (15, 30, 60, 120, 240, 480)])
 	config.timeshift.checkFreeSpace = ConfigSelection(default=0, choices=[(0, _("No"))] + [(x * 1024, _("%d GB") % x) for x in (1, 2, 4, 8)])
@@ -2004,19 +1999,6 @@ def InitUsageConfig():
 	config.timeshift.isRecording = NoSave(ConfigYesNo(default=False))
 	config.timeshift.maxEvents = ConfigSelection(default=12, choices=[(x, ngettext("%d Event", "%d Events", x) % x) for x in range(1, 999)])
 	config.timeshift.maxHours = ConfigSelection(default=12, choices=[(x, ngettext("%d Hour", "%d Hours", x) % x) for x in range(1, 999)])
-	config.usage.timeshift_path = ConfigText(default="")
-	if config.usage.timeshift_path.value:
-		defaultValue = config.usage.timeshift_path.value
-		config.usage.timeshift_path.value = config.usage.timeshift_path.default
-		config.usage.timeshift_path.save()
-	config.timeshift.path = ConfigSelection(default=defaultValue, choices=[(defaultValue, defaultValue)])
-	config.timeshift.path.load()
-	if config.timeshift.path.saved_value:
-		savedValue = pathjoin(config.timeshift.path.saved_value, "")
-		if savedValue and savedValue != defaultValue:
-			config.timeshift.path.setChoices(default=defaultValue, choices=[(defaultValue, defaultValue), (savedValue, savedValue)])
-			config.timeshift.path.value = savedValue
-	config.timeshift.path.save()
 	config.timeshift.skipreturntolive = ConfigYesNo(default=False)
 	config.timeshift.showInfoBar = ConfigYesNo(default=True)
 	config.timeshift.showLiveTVMsg = ConfigYesNo(default=True)
@@ -2025,6 +2007,35 @@ def InitUsageConfig():
 	] + [(x, ngettext("%d Second", "%d Seconds", x) % x) for x in (2, 3, 4, 5, 10, 20, 30)] + [(x * 60, ngettext("%d Minute", "%d Minutes", x) % x) for x in (1, 2, 5)]
 	config.timeshift.startDelay = ConfigSelection(default=0, choices=choiceList)
 	config.timeshift.stopWhileRecording = ConfigYesNo(default=False)
+
+	defaultPath = resolveFilename(SCOPE_TIMESHIFT)
+	config.timeshift.allowedPaths = ConfigLocations(default=[defaultPath])
+	config.usage.timeshift_path = ConfigText(default="")
+	if config.usage.timeshift_path.value:
+		defaultPath = config.usage.timeshift_path.value
+		config.usage.timeshift_path.value = config.usage.timeshift_path.default
+		config.usage.timeshift_path.save()
+	config.timeshift.path = ConfigSelection(default=defaultPath, choices=[(defaultPath, defaultPath)])
+	config.timeshift.path.load()
+	savedPath = config.timeshift.path.saved_value
+	if savedPath:
+		savedPath = pathjoin(savedPath, "")
+		if savedPath and savedPath != defaultPath:
+			config.timeshift.path.setChoices(default=defaultPath, choices=[(defaultPath, defaultPath), (savedPath, savedPath)])
+			config.timeshift.path.value = savedPath
+	config.timeshift.path.save()
+	currentPath = config.timeshift.path.value
+	print("[UsageConfig] Checking/Creating current time shift directory '%s'." % currentPath)
+	try:
+		makedirs(currentPath, 0o755, exist_ok=True)
+	except OSError as err:
+		print("[UsageConfig] Error %d: Unable to create current time shift directory '%s'!  (%s)" % (err.errno, currentPath, err.strerror))
+		if defaultPath != currentPath:
+			print("[UsageConfig] Checking/Creating default time shift directory '%s'." % defaultPath)
+			try:
+				makedirs(defaultPath, 0o755, exist_ok=True)
+			except OSError as err:
+				print("[UsageConfig] Error %d: Unable to create default time shift directory '%s'!  (%s)" % (err.errno, defaultPath, err.strerror))
 
 	# The following code temporarily maintains the deprecated timeshift_path so it is available for external plug ins.
 	config.usage.timeshift_path = NoSave(ConfigText(default=config.timeshift.path.value))
