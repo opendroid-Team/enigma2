@@ -53,7 +53,7 @@ self.session.open(GreenPanel)
 			</menu>
 			<!-- Menu / Setup / Software Management -->
 			<menu key="software_manager" level="0" text="Software Management" description="This menu offers options related managing the software on the %s %s." weight="50">
-				<item key="manage_extensions" level="0" text="Manage Extensions" description="Browse, install or remove extensions / plugins." weight="10"><plugin system="SoftwareManager" screen="PluginManager" /></item>
+				<!-- <item key="manage_extensions" level="0" text="Manage Extensions" description="Browse, install or remove extensions / plugins." weight="10"><plugin system="SoftwareManager" screen="PluginManager" /></item> -->
 				<item key="software_update" level="0" text="Software Update" description="Online update of your %s %s software." weight="11"><screen module="SoftwareUpdate" screen="SoftwareUpdate" /></item>
 				<item key="software_restore" level="0" text="Software Restore" description="Restore your %s %s with a new firmware." weight="12"><plugin system="SoftwareManager" screen="ImageWizard" /></item>
 				<item key="flash_online" level="0" text="Flash Online" description="Download and flash images on your %s %s." weight="13" requires="canImageBackup"><plugin system="SoftwareManager" screen="FlashOnline" /></item>

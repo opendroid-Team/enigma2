@@ -43,7 +43,7 @@ LANGUAGE_DATA = {
 	# Should this language table include the ISO three letter code for use in the subtitle code?
 	# Perhaps also have a flag to indicate that the language should be listed in the subtitle list?
 	#
-	# Fields: English Name, Translated Name, Localised Name, Encoding
+	# Fields: English Name, Translated Name, Localized Name, Encoding
 	# 	Character Set, (Tuple of ISO-3166 Alpha2 Country Codes).
 	#		NOTE: The first item of the tuple should be the
 	# 		default or commonly known country for the language.
@@ -56,7 +56,7 @@ LANGUAGE_DATA = {
 	# by Gstreamer.
 	#
 	# As noted above, if a language is used in more than one country then
-	# the default locale contry should be listed first.
+	# the default locale country should be listed first.
 	#
 	# https://www.loc.gov/standards/iso639-2/php/code_list.php
 	# https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes

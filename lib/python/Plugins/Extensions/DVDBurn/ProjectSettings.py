@@ -179,9 +179,9 @@ class ProjectSettings(Screen, ConfigListScreen):
 
 		self["config"].setList(self.list)
 		self.keydict = {}
-		for key, val in six.iteritems(self.settings.dict()):
+		for key, val in self.settings.dict().items():
 			self.keydict[val] = key
-		for key, val in six.iteritems(self.project.menutemplate.settings.dict()):
+		for key, val in self.project.menutemplate.settings.dict().items():
 			self.keydict[val] = key
 
 	def keyLeft(self):
