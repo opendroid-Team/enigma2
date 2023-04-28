@@ -620,23 +620,23 @@ def InitUsageConfig():
 	])
 	config.usage.servicelistpreview_mode = ConfigYesNo(default=False)
 	config.usage.tvradiobutton_mode = ConfigSelection(default="BouquetList", choices=[
-		("List", _(" List")),
+		("ChannelList", _("Channel List")),
 		("BouquetList", _("Bouquet List")),
 		("MovieList", _("Movie List"))
 	])
-	config.usage.button_mode = ConfigSelection(default="0", choices=[
-		("0", _("Just change s")),
-		("1", _(" List")),
+	config.usage.channelbutton_mode = ConfigSelection(default="0", choices=[
+		("0", _("Just change channels")),
+		("1", _("Channel List")),
 		("2", _("Bouquet List")),
 		("3", _("Just change Bouquet"))
 	])
 	config.usage.updownbutton_mode = ConfigSelection(default="1", choices=[
-		("0", _("Just change s")),
-		("1", _(" List"))
+		("0", _("Just change channels")),
+		("1", _("Channel List"))
 	])
 	config.usage.okbutton_mode = ConfigSelection(default="0", choices=[
 		("0", _("InfoBar")),
-		("1", _(" List"))
+		("1", _("Channel List"))
 	])
 	config.usage.show_bouquetalways = ConfigYesNo(default=False)
 	config.usage.show_event_progress_in_servicelist = ConfigSelection(default="barright", choices=[
@@ -648,15 +648,15 @@ def InitUsageConfig():
 		("minsright", _("Remaining minutes right")),
 		("no", _("No"))
 	])
-	config.usage.show__numbers_in_servicelist = ConfigYesNo(default=True)
-	config.usage.show__jump_in_servicelist = ConfigSelection(default="quick", choices=[
+	config.usage.show_channel_numbers_in_servicelist = ConfigYesNo(default=True)
+	config.usage.show_channel_jump_in_servicelist = ConfigSelection(default="quick", choices=[
 		("quick", _("Quick Actions")),
 		("alpha", _("Alpha")),
 		("number", _("Number"))
 	])
 
 	config.usage.show_event_progress_in_servicelist.addNotifier(refreshServiceList)
-	config.usage.show__numbers_in_servicelist.addNotifier(refreshServiceList)
+	config.usage.show_channel_numbers_in_servicelist.addNotifier(refreshServiceList)
 
 	# Standby.
 	if BoxInfo.getItem("displaytype") in ("7segment",):
@@ -671,10 +671,10 @@ def InitUsageConfig():
 
 	# In use.
 	if BoxInfo.getItem("displaytype") in ("textlcd",):
-		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="", choices=[
+		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
 			("Rec", _("REC Symbol")),
 			("RecBlink", _("Blinking REC Symbol")),
-			("", _(" name"))
+			("Channel", _("Channel name"))
 		])
 	if BoxInfo.getItem("displaytype") in ("7segment",):
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Rec", choices=[

@@ -1,5 +1,7 @@
-import os
-import sys
+from errno import ENOENT
+from os import remove
+from os.path import exists
+import sys  # This is needed for the twisted redirection access to stderr and stdout.
 from time import time
 
 from Tools.Profile import profile, profile_final  # This facilitates the start up progress counter.
@@ -13,7 +15,7 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
-
+MODULE_NAME = "StartEnigma"
 # Session.open:
 # * Push current active dialog ("current_dialog") onto stack.
 # * Call execEnd for this dialog.
@@ -58,8 +60,8 @@ class Session:
 				plugin.__call__(reason=0, session=self)
 			except:
 				print("[StartEnigma] Error: Plugin raised exception at WHERE_SESSIONSTART!")
-				import traceback
-				traceback.print_exc()
+				from traceback import print_exc
+				print_exc()
 
 	def processDelay(self):
 		callback = self.current_dialog.callback
@@ -333,26 +335,28 @@ class AutoScartControl:
 				self.scartDialog.switchToTV()
 
 
-def autorestoreLoop():
-	# Check if auto restore settings fails, just start the wizard (avoid a endless loop)
-	count = 0
-	if os.path.exists("/media/hdd/images/config/autorestore"):
-		f = open("/media/hdd/images/config/autorestore", "r")
-		try:
-			count = int(f.read())
-		except:
-			count = 0
-		f.close()
-		if count >= 3:
-			return False
-	count += 1
-	f = open("/media/hdd/images/config/autorestore", "w")
-	f.write(str(count))
-	f.close()
-	return True
-
-
 def runScreenTest():
+	def autorestoreLoop():  # Check if auto restore settings fails, just start the wizard (avoid a endless loop).
+		count = 0
+		filename = "/media/hdd/images/config/autorestore"
+		if exists(filename):
+			try:
+				with open(filename, "r") as fd:
+					line = fd.read().strip().replace("\0", "")
+					count = int(line) if isdecimal(line) else 0
+				if count >= 3:
+					return False
+			except OSError as err:
+				print("[StartEnigma] Error %d: Unable to read a line from file '%s'!  (%s)" % (err.errno, filename, err.strerror))
+		count += 1
+		try:
+			with open(filename, "w") as fd:
+				fd.write(str(count))
+		except OSError as err:
+			print("[StartEnigma] Error %d: Unable to write a line to file '%s'!  (%s)" % (err.errno, filename, err.strerror))
+			return False
+		return True
+
 	def runNextScreen(session, screensToRun, *result):
 		if result:
 			print("[StartEnigma] Exiting via quitMainloop #3.")
@@ -379,7 +383,7 @@ def runScreenTest():
 	profile("InitWizards")
 	screensToRun = []
 	RestoreSettings = None
-	if os.path.exists("/media/hdd/images/config/settings") and config.misc.firstrun.value:
+	if exists("/media/hdd/images/config/settings") and config.misc.firstrun.value:
 		if autorestoreLoop():
 			RestoreSettings = True
 			from Plugins.SystemPlugins.SoftwareManager.BackupRestore import RestoreScreen
@@ -388,8 +392,12 @@ def runScreenTest():
 			screensToRun = [p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD)]
 			screensToRun += wizardManager.getWizards()
 	else:
-		if os.path.exists("/media/hdd/images/config/autorestore"):
-			os.system("rm -f /media/hdd/images/config/autorestore")
+		filename = "/media/hdd/images/config/autorestore"
+		try:
+			remove(filename)
+		except IOError as err:
+			if err.errno != ENOENT:  # ENOENT - No such file or directory.
+				print("[StartEnigma] Error %d: Unable to delete file '%s'!  (%s)" % (err.errno, filename, err.strerror))
 		screensToRun = [p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD)]
 		screensToRun += wizardManager.getWizards()
 	screensToRun.append((100, InfoBar.InfoBar))
@@ -404,39 +412,34 @@ def runScreenTest():
 	power = PowerKey(session)
 	if BoxInfo.getItem("VFDSymbols"):
 		profile("VFDSYMBOLS")
-		import Components.VfdSymbols
-		Components.VfdSymbols.SymbolsCheck(session)
+		from Components.VfdSymbols import SymbolsCheck
+		SymbolsCheck(session)
 	# We need session.scart to access it from within menu.xml.
 	session.scart = AutoScartControl(session)
 	profile("InitTrashcan")
-	import Tools.Trashcan
-	Tools.Trashcan.init(session)
+	from Tools.Trashcan import init
+	init(session)
 	profile("Init:AutoVideoMode")
-	import Screens.VideoMode
-	Screens.VideoMode.autostart(session)
+	from Screens.VideoMode import autostart
+	autostart(session)
 	profile("Init:VolumeAdjust")
-	import Screens.VolumeAdjust
-	Screens.VolumeAdjust.autostart(session)
+	from Screens.VolumeAdjust import autostart
+	autostart(session)
 	profile("RunReactor")
 	profile_final()
 	if BOX_TYPE in ("sf8", "classm", "axodin", "axodinc", "starsatlx", "genius", "evo"):
-		f = open("/dev/dbox/oled0", "w")
-		f.write("-E2-")
-		f.close()
+		fileUpdateLine("/dev/dbox/oled0", conditionValue=None, replacementValue="-E2-", create=True, source=MODULE_NAME)
 	print("[StartEnigma] Last shutdown=%s.  (True = last shutdown was OK.)" % config.usage.shutdownOK.value)
 	print("[StartEnigma] NOK shutdown action=%s." % config.usage.shutdownNOK_action.value)
 	print("[StartEnigma] Boot action=%s." % config.usage.boot_action.value)
 	if not config.usage.shutdownOK.value and not config.usage.shutdownNOK_action.value == "normal" or not config.usage.boot_action.value == "normal":
 		print("[StartEnigma] Last shutdown=%s." % config.usage.shutdownOK.value)
-		import Screens.PowerLost
-		Screens.PowerLost.PowerLost(session)
+		from Screens.PowerLost import PowerLost
+		PowerLost(session)
 	if not RestoreSettings:
 		config.usage.shutdownOK.setValue(False)
 		config.usage.shutdownOK.save()
 		configfile.save()
-	# Kill showiframe if it is running.  (sh4 hack...)
-	if MODEL in ("spark", "spark7162"):
-		os.system("killall -9 showiframe")
 	runReactor()
 	print("[StartEnigma] Normal shutdown.")
 	config.misc.startCounter.save()
@@ -550,8 +553,8 @@ def runScreenTest():
 	session.nav.shutdown()
 	profile("configfile.save")
 	configfile.save()
-	from Screens import InfoBarGenerics
-	InfoBarGenerics.saveResumePoints()
+	from Screens.InfoBarGenerics import saveResumePoints
+	saveResumePoints()
 	return 0
 
 
@@ -599,12 +602,9 @@ def dump(dir, p=""):
 #                               #
 #################################
 
-from sys import stdout
-
-MODULE_NAME = __name__.split(".")[-1]
-
 profile("Twisted")
-try:  # Configure the twisted processor
+print("[StartEnigma] Initializing Twisted.")
+try:  # Configure the twisted processor.
 	from twisted.python.runtime import platform
 	platform.supportsThreads = lambda: True
 	from e2reactor import install
@@ -648,7 +648,7 @@ try:  # Configure the twisted logging
 		util.untilConcludes(self.write, msgStr)
 		util.untilConcludes(self.flush)
 
-	logger = log.FileLogObserver(stdout)
+	logger = log.FileLogObserver(sys.stdout)
 	log.FileLogObserver.emit = quietEmit
 	stdoutBackup = sys.stdout  # Backup stdout and stderr redirections.
 	stderrBackup = sys.stderr
@@ -658,6 +658,9 @@ try:  # Configure the twisted logging
 
 except ImportError:
 	print("[StartEnigma] Error: Twisted not available!")
+
+profile("International")
+from Components.International import international
 
 profile("SystemInfo")
 from enigma import getE2Rev
@@ -678,9 +681,8 @@ print("[StartEnigma] SoC family = %s" % BoxInfo.getItem("socfamily"))
 print("[StartEnigma] Enigma2 revision = %s" % getE2Rev())
 
 if BoxInfo.getItem("architecture") in ("aarch64"):
-	import usb.core
-	import usb.backend.libusb1
-	usb.backend.libusb1.get_backend(find_library=lambda x: "/lib64/libusb-1.0.so.0")
+	from usb.backend.libusb1 import get_backend
+	get_backend(find_library=lambda x: "/lib64/libusb-1.0.so.0")
 
 from traceback import print_exc
 from Components.config import config, ConfigYesNo, ConfigSubsection, ConfigInteger, ConfigText, ConfigOnOff, ConfigSelection
@@ -691,9 +693,6 @@ Components.ClientMode.InitClientMode()
 
 # Initialize the country, language and locale data.
 #
-profile("InternationalLocalization")
-from Components.International import international
-
 config.osd = ConfigSubsection()
 
 if DISPLAYBRAND == "Atto.TV":
@@ -715,6 +714,7 @@ config.osd.language.addNotifier(localeNotifier)
 # These entries should be moved back to UsageConfig.py when it is safe to bring UsageConfig init to this location in StartEnigma2.py.
 #
 config.crash = ConfigSubsection()
+config.crash.debugInternational = ConfigYesNo(default=False)
 config.crash.debugMultiBoot = ConfigYesNo(default=False)
 config.crash.debugActionMaps = ConfigYesNo(default=False)
 config.crash.debugKeyboards = ConfigYesNo(default=False)
@@ -761,8 +761,8 @@ if config.clientmode.enabled.value == False:
 	enigma.eDVBDB.getInstance().reloadBouquets()
 
 profile("ParentalControl")
-import Components.ParentalControl
-Components.ParentalControl.InitParentalControl()
+from Components.ParentalControl import InitParentalControl
+InitParentalControl()
 
 profile("LOAD:Navigation")
 from Navigation import Navigation
@@ -780,7 +780,7 @@ profile("config.misc")
 config.misc.boxtype = ConfigText(default=BOX_TYPE)
 config.misc.blackradiopic = ConfigText(default=resolveFilename(SCOPE_GUISKIN, "black.mvi"))
 radiopic = resolveFilename(SCOPE_GUISKIN, "radio.mvi")
-if os.path.exists(resolveFilename(SCOPE_CONFIG, "radio.mvi")):
+if exists(resolveFilename(SCOPE_CONFIG, "radio.mvi")):
 	radiopic = resolveFilename(SCOPE_CONFIG, "radio.mvi")
 config.misc.radiopic = ConfigText(default=radiopic)
 # config.misc.isNextRecordTimerAfterEventActionAuto = ConfigYesNo(default=False)
@@ -841,97 +841,78 @@ from skin import InitSkins
 InitSkins()
 
 profile("InputDevice")
-import Components.InputDevice
-Components.InputDevice.InitInputDevices()
+from Components.InputDevice import InitInputDevices
+InitInputDevices()
 import Components.InputHotplug
 
 profile("AVSwitch")
-import Components.AVSwitch
-Components.AVSwitch.InitAVSwitch()
-Components.AVSwitch.InitiVideomodeHotplug()
+from Components.AVSwitch import InitAVSwitch, InitiVideomodeHotplug
+InitAVSwitch()
+InitiVideomodeHotplug()
 
 profile("HdmiRecord")
-import Components.HdmiRecord
-Components.HdmiRecord.InitHdmiRecord()
+from Components.HdmiRecord import InitHdmiRecord
+InitHdmiRecord()
 
 profile("RecordingConfig")
-import Components.RecordingConfig
-Components.RecordingConfig.InitRecordingConfig()
+from Components.RecordingConfig import InitRecordingConfig
+InitRecordingConfig()
 
 profile("UsageConfig")
-import Components.UsageConfig
-Components.UsageConfig.InitUsageConfig()
+from Components.UsageConfig import InitUsageConfig
+InitUsageConfig()
 
 profile("TimeZones")
-import Components.Timezones
-Components.Timezones.InitTimeZones()
+from Components.Timezones import InitTimeZones
+InitTimeZones()
 
 profile("Init:DebugLogCheck")
-import Screens.LogManager
-Screens.LogManager.AutoLogManager()
+from Screens.LogManager import AutoLogManager
+AutoLogManager()
 
 profile("Init:NTPSync")
 from Components.NetworkTime import ntpSyncPoller
 ntpSyncPoller.startTimer()
 
 profile("keymapparser")
-import keymapparser
-keymapparser.readKeymap(config.usage.keymap.value)
-keymapparser.readKeymap(config.usage.keytrans.value)
-if os.path.exists(config.usage.keymap_usermod.value):
-	keymapparser.readKeymap(config.usage.keymap_usermod.value)
+from keymapparser import readKeymap
+readKeymap(config.usage.keymap.value)
+readKeymap(config.usage.keytrans.value)
+if exists(config.usage.keymap_usermod.value):
+	readKeymap(config.usage.keymap_usermod.value)
 
 profile("Network")
-import Components.Network
-Components.Network.InitNetwork()
+from Components.Network import InitNetwork
+InitNetwork()
 
 profile("LCD")
-import Components.Lcd
-Components.Lcd.InitLcd()
-Components.Lcd.IconCheck()
+from Components.Lcd import IconCheck, InitLcd
+InitLcd()
+IconCheck()
 # Disable internal clock vfd for ini5000 until we can adjust it for standby.
 if BOX_TYPE in ("uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "beyonwizt3"):
-	try:
-		f = open("/proc/stb/fp/enable_clock", "r").readline()[:-1]
-		if f != "0":
-			f = open("/proc/stb/fp/enable_clock", "w")
-			f.write("0")
-			f.close()
-	except:
-		print("[StartEnigma] Error: Disable enable_clock for ini5000 boxes!")
+	fileUpdateLine("/proc/stb/fp/enable_clock", conditionValue="1", replacementValue="0", source=MODULE_NAME)
 
 if BOX_TYPE in ("dm7080", "dm820", "dm900", "dm920", "gb7252"):
-	f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r")
-	check = f.read()
-	f.close()
-	if check.startswith("on"):
-		f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w")
-		f.write("off")
-		f.close()
-	f = open("/proc/stb/audio/hdmi_rx_monitor", "r")
-	check = f.read()
-	f.close()
-	if check.startswith("on"):
-		f = open("/proc/stb/audio/hdmi_rx_monitor", "w")
-		f.write("off")
-		f.close()
+	fileUpdateLine("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", conditionValue="on", replacementValue="off", source=MODULE_NAME)
+	fileUpdateLine("/proc/stb/audio/hdmi_rx_monitor", conditionValue="on", replacementValue="off", source=MODULE_NAME)
 
 profile("UserInterface")
-import Screens.UserInterfacePositioner
-Screens.UserInterfacePositioner.InitOsd()
+from Screens.UserInterfacePositioner import InitOsd
+InitOsd()
 
 profile("EpgCacheSched")
-import Components.EpgLoadSave
-Components.EpgLoadSave.EpgCacheSaveCheck()
-Components.EpgLoadSave.EpgCacheLoadCheck()
+from Components.EpgLoadSave import EpgCacheLoadCheck, EpgCacheSaveCheck
+EpgCacheSaveCheck()
+EpgCacheLoadCheck()
 
 profile("RFMod")
-import Components.RFmod
-Components.RFmod.InitRFmod()
+from Components.RFmod import InitRFmod
+InitRFmod()
 
 profile("Init:CI")
-import Screens.Ci
-Screens.Ci.InitCiConfig()
+from Screens.Ci import InitCiConfig
+InitCiConfig()
 
 if config.clientmode.enabled.value:
 	import Components.ChannelsImporter
@@ -953,7 +934,7 @@ try:
 except Exception:
 	print("Error: Exception in Python StartEnigma startup code:")
 	print("=" * 52)
-	print_exc(file=stdout)
+	print_exc(file=sys.stdout)
 	print("[StartEnigma] Exiting via quitMainloop #4.")
 	enigma.quitMainloop(5)  # QUIT_ERROR_RESTART
 	print("-" * 52)
