@@ -5,7 +5,7 @@
 
 ## Current OS
 
-> Ubuntu 20.04.3 LTS (Kernel 5.4.0) 64-bit
+> Ubuntu 22.04.1 LTS (Kernel 5.15.0) 64-bit
 
 ## Hardware requirements
 
@@ -17,11 +17,11 @@
 >
 > HDD:  for Single Build 250GB Free, for Multibuild 500GB or more
 
-## openDroid 7.1 is build using oe-alliance build-environment and several git repositories: ##
+## openDroid 7.3 is build using oe-alliance build-environment and several git repositories: ##
 
-> [OE Alliance Core](https://github.com/oe-alliance/oe-alliance-core/tree/5.0 "OE Alliance Core") - Core framework
+> [OE Alliance Core](https://github.com/oe-alliance/oe-alliance-core/tree/5.3 "OE Alliance Core") - Core framework
 > 
-> [https://github.com/opendroid-Team/enigma2](https://github.com/opendroid-Team/enigma2/tree/7.1 "openDroid Enigma2")
+> [https://github.com/opendroid-Team/enigma2](https://github.com/opendroid-Team/enigma2/tree/7.3 "openDroid Enigma2")
 > 
 > [https://github.com/stein17/Skins-for-openOPD/tree/python3)
 
@@ -34,7 +34,7 @@
 
 1 - Install packages on your buildserver
 
-    sudo apt-get install -y autoconf automake bison bzip2 chrpath coreutils cpio curl cvs debianutils default-jre default-jre-headless diffstat flex g++ gawk gcc gcc-8 gcc-multilib g++-multilib gettext git git-core gzip help2man info iputils-ping java-common libc6-dev libegl1-mesa libglib2.0-dev libncurses5-dev libperl4-corelibs-perl libproc-processtable-perl libsdl1.2-dev libserf-dev libtool libxml2-utils make ncurses-bin patch perl pkg-config psmisc python3 python3-git python3-jinja2 python3-pexpect python3-pip python-setuptools qemu quilt socat sshpass subversion tar texi2html texinfo unzip wget xsltproc xterm xz-utils zip zlib1g-dev zstd
+    sudo apt-get install -y autoconf automake bison bzip2 chrpath coreutils cpio curl cvs debianutils default-jre default-jre-headless diffstat flex g++ gawk gcc gcc-12 gcc-multilib g++-multilib gettext git git-core gzip help2man info iputils-ping java-common libc6-dev libegl1-mesa libglib2.0-dev libncurses5-dev libperl4-corelibs-perl libproc-processtable-perl libsdl1.2-dev libserf-dev libtool libxml2-utils make ncurses-bin patch perl pkg-config psmisc python3 python3-git python3-jinja2 python3-pexpect python3-pip python-setuptools qemu quilt socat sshpass subversion tar texi2html texinfo unzip wget xsltproc xterm xz-utils zip zlib1g-dev zstd fakeroot lz4
 
 ----------
 2 - Set python3 as preferred provider for python
@@ -87,7 +87,7 @@
 ----------
 10 - Clone oe-alliance git
 
-    git clone git://github.com/oe-alliance/build-enviroment.git -b 5.0
+    git clone git://github.com/oe-alliance/build-enviroment.git -b 5.3
 
 ----------
 11 - Switch to folder build-enviroment
