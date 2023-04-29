@@ -1,4 +1,3 @@
-from __future__ import division
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.SystemInfo import BoxInfo

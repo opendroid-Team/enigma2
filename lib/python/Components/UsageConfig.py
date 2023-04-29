@@ -125,7 +125,7 @@ def InitUsageConfig():
 		("off", _("Off"))
 	])
 	config.usage.multibouquet = ConfigYesNo(default=True)
-	config.usage.maxnumlen = ConfigSelection(default="4", choices=[(str(x), ngettext("%d Digit", "%d Digits", x) % x) for x in range(1, 6)])
+	config.usage.maxchannelnumlen = ConfigSelection(default="4", choices=[(str(x), ngettext("%d Digit", "%d Digits", x) % x) for x in range(1, 6)])
 	config.usage.numzaptimeoutmode = ConfigSelection(default="standard", choices=[
 		("standard", _("Standard")),
 		("userdefined", _("User defined")),
@@ -190,7 +190,7 @@ def InitUsageConfig():
 	])
 	config.usage.record_indicator_mode.addNotifier(refreshServiceList)
 
-	# just merge note, config.usage.servicelist_column was allready there
+	# Just merge note, config.usage.servicelist_column was already there.
 	config.usage.servicelist_column = ConfigSelection(default="-1", choices=[
 		("-1", _("Disable")),
 		("0", _("Event name only"))
@@ -258,14 +258,14 @@ def InitUsageConfig():
 	config.usage.picon_dir = ConfigDirectory(default="/usr/share/enigma2/picon")
 	config.usage.movielist_show_picon = ConfigYesNo(default=False)
 	config.usage.use_extended_pig = ConfigYesNo(default=False)
-	config.usage.use_extended_pig_selection = ConfigYesNo(default=False)
+	config.usage.use_extended_pig_channelselection = ConfigYesNo(default=False)
 	config.usage.servicelist_preview_mode = ConfigYesNo(default=False)
 	config.usage.numberzap_show_picon = ConfigYesNo(default=False)
 	config.usage.numberzap_show_servicename = ConfigYesNo(default=False)
 #####################################################
 
 	config.usage.panicbutton = ConfigYesNo(default=False)
-	config.usage.panic = ConfigInteger(default=1, limits=(1, 5000))
+	config.usage.panicchannel = ConfigInteger(default=1, limits=(1, 5000))
 	config.usage.quickzap_bouquet_change = ConfigYesNo(default=False)
 	config.usage.e1like_radio_mode = ConfigYesNo(default=True)
 
@@ -278,7 +278,7 @@ def InitUsageConfig():
 	config.usage.show_infobar_on_skip = ConfigYesNo(default=True)
 	config.usage.show_infobar_locked_on_pause = ConfigYesNo(default=True)
 	config.usage.show_infobar_on_event_change = ConfigYesNo(default=False)
-	config.usage.show_infobar__number = ConfigYesNo(default=False)
+	config.usage.show_infobar_channel_number = ConfigYesNo(default=False)
 	config.usage.show_infobar_lite = ConfigYesNo(default=False)
 	config.usage.show_infobar_do_dimming = ConfigYesNo(default=False)
 	config.usage.show_infobar_dimming_speed = ConfigSelectionNumber(min=1, max=40, stepwidth=1, default=10, wraparound=True)

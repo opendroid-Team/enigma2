@@ -4,7 +4,7 @@ from re import compile
 from struct import pack
 from socket import inet_ntoa, gethostbyname, gethostname
 from enigma import eTimer
-#import netifaces as ni
+import netifaces as ni
 from Components.config import config
 from Components.Console import Console
 from Components.Harddisk import harddiskmanager

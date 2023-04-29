@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
@@ -412,7 +410,7 @@ class SecondInfoBar(Screen):
 			"nextEvent": (self.nextEvent, _("Switch to next EPG Event")),
 			"timerAdd": (self.timerAdd, _("Add Timer")),
 			"openSimilarList": (self.openSimilarList, _("Open Similar List Channel List")),
-		}, prio=0, description=_("2nd InfoBar Actions"))
+		}, prio=-1, description=_("2nd InfoBar Actions"))
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evUpdatedEventInfo: self.getEvent
@@ -1279,6 +1277,21 @@ class InfoBarNumberZap:
 		if service:
 			self.selectAndStartService(service, bouquet)
 
+	def searchNumberHelperRecursive(self, serviceHandler, num, bouquet):
+		# print("searchNumberHelperRecursive %s" % bouquet.toString())
+		servicelist = serviceHandler.list(bouquet)
+		if servicelist:
+			serviceIterator = servicelist.getNext()
+			while serviceIterator.valid():
+				if num == serviceIterator.getChannelNum():
+					return (serviceIterator, "%s;" % bouquet.toString())
+				if serviceIterator.flags & eServiceReference.isDirectory:
+					result = self.searchNumberHelperRecursive(serviceHandler, num, serviceIterator)
+					if result[0]:
+						return (result[0], "%s;%s" % (bouquet.toString(), result[1]))
+				serviceIterator = servicelist.getNext()
+		return (None, None)
+
 	def searchNumberHelper(self, serviceHandler, num, bouquet):
 		servicelist = serviceHandler.list(bouquet)
 		if servicelist:
@@ -1289,7 +1302,8 @@ class InfoBarNumberZap:
 				serviceIterator = servicelist.getNext()
 		return None
 
-	def searchNumber(self, number, firstBouquetOnly=False, bouquet=None):
+	def searchNumber(self, number, firstBouquetOnly=False, bouquet=None, recursive=False):
+		servicepath = None
 		bouquet = bouquet or self.servicelist.getRoot()
 		service = None
 		serviceHandler = eServiceCenter.getInstance()
@@ -1302,7 +1316,10 @@ class InfoBarNumberZap:
 				bouquet = bouquetlist.getNext()
 				while bouquet.valid():
 					if bouquet.flags & eServiceReference.isDirectory:
-						service = self.searchNumberHelper(serviceHandler, number, bouquet)
+						if recursive:
+							service, servicepath = self.searchNumberHelperRecursive(serviceHandler, number, bouquet)
+						else:
+							service = self.searchNumberHelper(serviceHandler, number, bouquet)
 						if service:
 							playable = not (service.flags & (eServiceReference.isMarker | eServiceReference.isDirectory)) or (service.flags & eServiceReference.isNumberedMarker)
 							if not playable:
@@ -1311,11 +1328,17 @@ class InfoBarNumberZap:
 						if config.usage.alternative_number_mode.value or firstBouquetOnly:
 							break
 					bouquet = bouquetlist.getNext()
-		return service, bouquet
+		if servicepath:
+			return service, "%s;%s" % (self.servicelist.bouquet_root.toString(), servicepath)
+		else:
+			return service, bouquet
 
 	def selectAndStartService(self, service, bouquet):
 		if service:
-			if self.servicelist.getRoot() != bouquet:  # already in correct bouquet?
+			if isinstance(bouquet, str):
+				self.servicelist.lastroot.value = bouquet
+				self.servicelist.restoreRoot()
+			elif self.servicelist.getRoot() != bouquet:  # already in correct bouquet?
 				self.servicelist.clearPath()
 				if self.servicelist.bouquet_root != bouquet:
 					self.servicelist.enterPath(self.servicelist.bouquet_root)
