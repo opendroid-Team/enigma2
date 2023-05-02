@@ -324,6 +324,10 @@
 		<item level="2" text="Enable VOD at channel list" description="If set to 'yes' it will enable PLAY,PAUSE, SEEK on channel list movies">config.usage.enableVodMode</item>
 		<item level="2" text="VOD download Directory" description="Choose where to save VOD movies">config.usage.vod_path</item>
 	</setup>
+	<setup key="multiboot" title="Setup Imageversion">
+		<item level="2" text="Show Imageversion" description="Select witch Imageversion to Download">config.usage.mbimageversion</item>
+	</setup>
+
 		<setup key="clientmode" title="Client Mode setup" showOpenWebif="1">
 		<item text="Enable client mode" description="Enable or disable client mode.">config.clientmode.enabled</item>
 		<if conditional="config.clientmode.enabled.value">

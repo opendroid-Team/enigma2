@@ -646,6 +646,20 @@ def InitUsageConfig():
 		("0", _("InfoBar")),
 		("1", _("Channel List"))
 	])
+	config.usage.volume_instead_of_channelselection = ConfigYesNo(default = False)
+	config.usage.zap_with_arrow_buttons = ConfigYesNo(default = False)
+	config.usage.infobar_frontend_source = ConfigSelection(default="tuner", choices = [
+        ("settings", _("Settings")),
+        ("tuner", _("Tuner"))])
+	config.usage.show_picon_bkgrn = ConfigSelection(default="transparent", choices = [
+        ("none", _("Disabled")),
+        ("transparent", _("Transparent")),
+        ("blue", _("Blue")),
+        ("red", _("Red")),
+        ("black", _("Black")),
+        ("white", _("White")),
+        ("lightgrey", _("Light Grey")),
+        ("grey", _("Grey"))])
 	config.usage.show_bouquetalways = ConfigYesNo(default=False)
 	config.usage.show_event_progress_in_servicelist = ConfigSelection(default="barright", choices=[
 		("barleft", _("Progress bar left")),

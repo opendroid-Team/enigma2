@@ -54,31 +54,25 @@ class OPDChooseOnLineImage(Screen):
                 returnValue = self.sel[2]
                 if returnValue in ('opennfr', 'openhdf', 'openatv', 'pure2', 'opendroid'): 
                         from Screens.Setup import Setup
-                        MBImagelist = [("6.0", _("6.0")), ("6.1", _("6.1")), ("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4")), ("6.5", _("6.5")), ("7.0", _("7.0")), ("7.1", _("7.1"))]
+                        MBImagelist = [("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4")), ("6.5", _("6.5")), ("7.0", _("7.0")), ("7.1", _("7.1")), ("7.2", _("7.2")), ("7.3", _("7.3"))]
                         if returnValue ==  'openatv':
-                                MBImagelist.remove(("6.0", _("6.0")))
-                                MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.2", _("6.2")))
                                 MBImagelist.remove(("6.3", _("6.3")))
                                 MBImagelist.remove(("6.4", _("6.4")))
                                 MBImagelist.remove(("6.5", _("6.5")))
                         elif returnValue ==  'opendroid':
-                                MBImagelist.remove(("6.0", _("6.0")))
-                                MBImagelist.remove(("6.1", _("6.1")))
+                                MBImagelist.remove(("6.2", _("6.2")))
+                                MBImagelist.remove(("6.3", _("6.3")))
+                                MBImagelist.remove(("6.4", _("6.4")))
+                                MBImagelist.remove(("6.5", _("6.5")))
                         elif returnValue ==  'openhdf':
-                                MBImagelist.remove(("6.0", _("6.0")))
-                                MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.2", _("6.2")))
                                 MBImagelist.remove(("6.3", _("6.3")))
                         elif returnValue ==  'opennfr':
-                                MBImagelist.remove(("6.0", _("6.0")))
-                                MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.2", _("6.2")))
                                 MBImagelist.remove(("6.3", _("6.3")))
                                 MBImagelist.remove(("6.4", _("6.4")))
                         elif returnValue ==  'pure2':
-                                MBImagelist.remove(("6.0", _("6.0")))
-                                MBImagelist.remove(("6.1", _("6.1")))
                                 MBImagelist.remove(("6.4", _("6.4")))
                         if returnValue ==  'opennfr':
                                 config.usage.mbimageversion = ConfigSelection(default="6.4", choices = MBImagelist)	    
