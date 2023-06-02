@@ -24,11 +24,14 @@ to generate HTML."""
 		self.onSelectionChanged = []
 		self.disableCallbacks = False
 
+	def getList(self):
+		return self.listData
+
 	def setList(self, listData):
 		self.listData = listData
 		self.changed((self.CHANGED_ALL,))
 
-	list = property(lambda self: self.listData, setList)
+	list = property(getList, setList)
 
 	def updateList(self, listData):
 		"""Changes the list without changing the selection or emitting changed Events"""
@@ -39,13 +42,16 @@ to generate HTML."""
 		self.index = oldIndex
 		self.disableCallbacks = False
 
-	def entry_changed(self, index):
+	def entryChanged(self, index):
 		if not self.disableCallbacks:
 			self.downstream_elements.entry_changed(index)
 
+	def entry_changed(self, index):  # IanSav: Is this old name really required?
+		return self.entryChanged(index)
+
 	def modifyEntry(self, index, data):
 		self.listData[index] = data
-		self.entry_changed(index)
+		self.entryChanged(index)
 
 	def selectionChanged(self, index):
 		if self.disableCallbacks:
@@ -96,6 +102,27 @@ to generate HTML."""
 	def count(self):
 		return len(self.listData)
 
+	def enableAutoNavigation(self, value):
+		try:
+			instance = self.master.master.instance
+			instance.enableAutoNavigation(value)
+		except AttributeError:
+			return
+
+	def show(self):
+		try:
+			instance = self.master.master.instance
+			instance.show()
+		except AttributeError:
+			return
+
+	def hide(self):
+		try:
+			instance = self.master.master.instance
+			instance.hide()
+		except AttributeError:
+			return
+
 	def goTop(self):
 		try:
 			instance = self.master.master.instance
@@ -114,6 +141,20 @@ to generate HTML."""
 		try:
 			instance = self.master.master.instance
 			instance.goLineUp()
+		except AttributeError:
+			return
+
+	def goLeft(self):
+		try:
+			instance = self.master.master.instance
+			instance.goLeft()
+		except AttributeError:
+			return
+
+	def goRight(self):
+		try:
+			instance = self.master.master.instance
+			instance.goRight()
 		except AttributeError:
 			return
 
