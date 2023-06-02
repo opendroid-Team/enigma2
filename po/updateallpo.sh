@@ -7,8 +7,8 @@
 #
 # Run this script from within the po folder.
 #
-# Author: Pr2 for OpenPLi Team
-# Version: 1.1
+# Author: Pr2
+# Version: 1.2
 #
 # Retrieve languages from Makefile.am LANGS variable for backward compatibility
 #
@@ -16,11 +16,11 @@ localgsed="sed"
 findoptions=""
 
 #
-# Script only run with sed but on some distro normal sed is already sed so checking it.
+# Script only run with gsed but on some distro normal sed is already gsed so checking it.
 #
-sed --version 2> /dev/null | grep -q "GNU"
+gsed --version 2> /dev/null | grep -q "GNU"
 if [ $? -eq 0 ]; then
-	localgsed="sed"
+	localgsed="gsed"
 else
 	"$localgsed" --version | grep -q "GNU"
 	if [ $? -eq 0 ]; then
@@ -30,8 +30,15 @@ fi
 
 which python
 if [ $? -eq 1 ]; then
-	printf "python not found on this system, please install it first or ensure that it is in the PATH variable.\n"
-	exit 1
+	which python3
+	if [ $? -eq 1 ]; then
+		printf "python not found on this system, please install it first or ensure that it is in the PATH variable.\n"
+		exit 1
+	else
+		local_python="python3"
+	fi
+else
+	local_python="python"
 fi
 
 #
@@ -63,7 +70,7 @@ printf "Creating temporary file enigma2-py.pot\n"
 find $findoptions .. -name "*.py" -exec xgettext --no-wrap -L Python --from-code=UTF-8 -kpgettext:1c,2 --add-comments="TRANSLATORS:" -d enigma2 -s -o enigma2-py.pot {} \+
 $localgsed --in-place enigma2-py.pot --expression=s/CHARSET/UTF-8/
 printf "Creating temporary file enigma2-xml.pot\n"
-find $findoptions .. -name "*.xml" -exec python xml2po.py {} \+ > enigma2-xml.pot
+find $findoptions .. -name "*.xml" -exec ${local_python} xml2po.py {} \+ > enigma2-xml.pot
 printf "Merging pot files to create: enigma2.pot\n"
 cat enigma2-py.pot enigma2-xml.pot | msguniq --no-wrap --no-location -o enigma2.pot -
 OLDIFS=$IFS
@@ -83,5 +90,5 @@ done
 rm enigma2-py.pot enigma2-xml.pot
 IFS=$OLDIFS
 printf "Po files update/creation from script finished!\n"
-find -name "*.mo" -type f | xargs -L1 rm -rf
+rm -rf *.mo
 chmod 644 *.po
