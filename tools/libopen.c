@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#undef DEBUG
+//#define LIBOPEN_DEBUG
 
 int open64(const char *pathname, int flags, ...) //NOSONAR
 {
