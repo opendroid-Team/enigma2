@@ -179,8 +179,8 @@ class DiseqcTester(Screen, TuneTest, ResultParser):
 						MultiContentEntryText(pos = (10, 0), size = (330, 25), flags = RT_HALIGN_LEFT, text = 1), # index 1 is the index name,
 						MultiContentEntryText(pos = (330, 0), size = (150, 25), flags = RT_HALIGN_RIGHT, text = 2) # index 2 is the status,
 					],
-				 "fonts": [gFont("Regular", 20)],
-				 "itemHeight": 25
+					"fonts": [gFont("Regular", 20)],
+					"itemHeight": 25
 				}
 			</convert>
 		</widget>
@@ -655,8 +655,8 @@ class DiseqcTesterNimSelection(NimSelection):
 						MultiContentEntryText(pos = (10, 5), size = (360, 30), flags = RT_HALIGN_LEFT, text = 1), # index 1 is the nim name,
 						MultiContentEntryText(pos = (50, 30), size = (320, 30), font = 1, flags = RT_HALIGN_LEFT, text = 2), # index 2 is a description of the nim settings,
 					],
-				 "fonts": [gFont("Regular", 20), gFont("Regular", 15)],
-				 "itemHeight": 70
+					"fonts": [gFont("Regular", 20), gFont("Regular", 15)],
+					"itemHeight": 70
 				}
 			</convert>
 		</widget>

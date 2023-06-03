@@ -233,7 +233,7 @@ public:
 	void setVAlign(int align) { m_style.m_valign = align; }
 	void setHAlign(int align) { m_style.m_halign = align; }
 	void setTextPadding(const eRect &padding) { m_style.m_text_padding = padding; }
-	void setUseVTIWorkaround(void) { m_style.m_use_vti_workaround = 1; }
+	void setUseOPDWorkaround(void) { m_style.m_use_opd_workaround = 1; }
 
 	void setScrollbarBorderColor(const gRGB &col);
 	void setScrollbarForegroundColor(gRGB &col);
