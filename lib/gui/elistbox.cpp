@@ -410,11 +410,8 @@ int eListbox::event(int event, void *data, void *data2)
 		int itemOffset = 0;
 		if (m_orientation == orGrid)
 		{
-			if (!m_scrollbar || !m_scrollbar->isVisible() || m_item_alignment != itemAlignDefault)
-			{
-				style->setStyle(painter, eWindowStyle::styleListboxNormal);
-				painter.clear();
-			}
+			style->setStyle(painter, eWindowStyle::styleListboxNormal);
+			painter.clear();
 
 			if (m_item_alignment != itemAlignDefault)
 			{
@@ -990,6 +987,9 @@ void eListbox::moveSelection(int dir)
 	int prevSel = oldSel;
 	int newSel;
 	int pageOffset = (m_page_size > 0 && m_scrollbar_scroll == byLine) ? m_page_size : maxItems;
+	int oldRow = (isGrid && m_max_columns != 0) ? oldSel / m_max_columns : 0;
+	int oldColumn = (isGrid && m_max_columns != 0) ? oldSel % m_max_columns : 0;
+
 	bool indexChanged = dir > 100;
 	if (indexChanged)
 		dir -= 100;
@@ -999,16 +999,77 @@ void eListbox::moveSelection(int dir)
 #endif
 	switch (dir)
 	{
+	case moveFirst:
+		if (isGrid)
+		{
+			int newRow = oldRow;
+			do
+			{
+				m_content->cursorMove(-1);
+				newSel = m_content->cursorGet();
+				newRow = newSel / m_max_columns;
+				if (newRow != oldRow || !m_content->currentCursorSelectable())
+				{
+					m_content->cursorSet(prevSel);
+					break;
+				}
+				if (newSel == prevSel)
+				{
+					break;
+				}
+				prevSel = newSel;
+
+			} while (true);
+		}
+		break;
+	case moveLast:
+		if (isGrid)
+		{
+			int newRow = oldRow;
+			do
+			{
+				m_content->cursorMove(1);
+				newSel = m_content->cursorGet();
+				newRow = newSel / m_max_columns;
+				if (newRow != oldRow || !m_content->currentCursorSelectable())
+				{
+					m_content->cursorSet(prevSel);
+					break;
+				}
+				if (newSel == prevSel)
+				{
+					break;
+				}
+				prevSel = newSel;
+			} while (true);
+		}
+		break;
 	case moveBottom:
 		m_content->cursorEnd();
 		[[fallthrough]];
 	case moveUp:
-		if (isGrid)
+		if (isGrid && dir != moveBottom)
 		{
 			do
 			{
-				m_content->cursorMove(-m_max_columns);
+				if (oldRow == 0 && m_enabled_wrap_around)
+				{
+					m_content->cursorEnd();
+					int newColumn = -1;
+					do
+					{
+						m_content->cursorMove(-1);
+						newSel = m_content->cursorGet();
+						newColumn = newSel % m_max_columns;
+					} while (oldColumn != newColumn);
+					if (m_content->currentCursorSelectable())
+						break;
+				}
+				else
+					m_content->cursorMove(-m_max_columns);
+
 				newSel = m_content->cursorGet();
+
 				if (newSel == prevSel)
 				{ // cursorMove reached top and left cursor position the same. Must wrap around ?
 					if (m_enabled_wrap_around)
@@ -1030,6 +1091,12 @@ void eListbox::moveSelection(int dir)
 		}
 		[[fallthrough]];
 	case moveLeft:
+		/* upcoming new grid feature for wrap in a line
+		if (isGrid && oldColumn == 0)
+		{
+			m_content->cursorMove(m_max_columns);
+		}
+		*/
 		do
 		{
 			m_content->cursorMove(-1);
@@ -1066,7 +1133,17 @@ void eListbox::moveSelection(int dir)
 		{
 			do
 			{
-				m_content->cursorMove(m_max_columns);
+
+				bool wrap = (oldRow == (m_max_rows - 1)) || (oldSel + m_max_columns >= m_content->size());
+				if (wrap && m_enabled_wrap_around)
+				{
+					m_content->cursorHome();
+					m_content->cursorMove(oldColumn);
+					if (m_content->currentCursorSelectable())
+						break;
+				}
+				else
+					m_content->cursorMove(m_max_columns);
 				if (!m_content->cursorValid())
 				{ // cursorMove reached end and left cursor position past the list. Must wrap around ?
 					if (m_enabled_wrap_around)
@@ -1080,6 +1157,14 @@ void eListbox::moveSelection(int dir)
 		}
 		[[fallthrough]];
 	case moveRight:
+		/* upcoming new grid feature for wrap in a line
+		if (isGrid && oldColumn >= m_max_columns)
+		{
+			m_content->cursorMove(-m_max_columns);
+			newSel = m_content->cursorGet();
+			eDebug("[eListbox] moveRight newSel=%d oldColumn=%d m_max_columns=%d" , newSel, oldColumn, m_max_columns);
+		}
+		*/
 		do
 		{
 			m_content->cursorMove(1);
@@ -1265,6 +1350,10 @@ int eListbox::moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel,
 			return 0;
 		}
 		int newlinecalc = (m_selected / m_max_columns) - oldTopLeft;
+		if (doUp && m_enabled_wrap_around && oldSel == 0)
+		{
+			return newline - m_max_rows + 1;
+		}
 		if (doUp)
 		{
 			if ((oldLine > 0 && oldTopLeft > 0) || (newlinecalc > 0))
@@ -1312,7 +1401,7 @@ int eListbox::moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel,
 		m_content->cursorSet(m_selected);
 	}
 
-	if (doDown || (customPageSize && dir == movePageDown))
+	if (doDown || dir == movePageDown)
 	{
 
 		int newline = oldLine + (m_selected - oldSel);
@@ -1370,7 +1459,7 @@ int eListbox::moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel,
 			topLeft = m_selected - (maxItems / 2);
 		}
 	}
-	else if (doUp || (customPageSize && dir == movePageUp))
+	else if (doUp || dir == movePageUp)
 	{
 		if (m_first_selectable_item > 0 && m_selected == m_first_selectable_item)
 		{

@@ -199,15 +199,15 @@ class FlashOnline(Screen, HelpableScreen):
 						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s/%s' % (feedurl, version, brand, box, image)
 
 			for media in ["/media/%s" % x for x in listdir("/media")] + (["/media/net/%s" % x for x in listdir("/media/net")] if isdir("/media/net") else []):
-				# print("[FlashManager] getImagesList DEBUG: media='%s'." % media)
+				# print("[FlashOnline] getImagesList DEBUG: media='%s'." % media)
 				if not (BoxInfo.getItem("HasMMC") and "/mmc" in media) and isdir(media):
 					getImages(media, [join(media, x) for x in listdir(media) if splitext(x)[1] == ".zip" and self.box in x])
 					for folder in ["images", "downloaded_images", "imagebackups"]:
 						if folder in listdir(media):
 							subFolder = join(media, folder)
-							# print("[FlashManager] getImagesList DEBUG: subFolder='%s'." % subFolder)
+							# print("[FlashOnline] getImagesList DEBUG: subFolder='%s'." % subFolder)
 							if isdir(subFolder) and not islink(subFolder) and not ismount(subFolder):
-								# print("[FlashManager] getImagesList DEBUG: Next subFolder='%s'." % subFolder)
+								# print("[FlashOnline] getImagesList DEBUG: Next subFolder='%s'." % subFolder)
 								getImages(subFolder, [join(subFolder, x) for x in listdir(subFolder) if splitext(x)[1] == ".zip" and self.box in x])
 								for dir in [dir for dir in [join(subFolder, dir) for dir in listdir(subFolder)] if isdir(dir) and splitext(dir)[1] == ".unzipped"]:
 									try:
