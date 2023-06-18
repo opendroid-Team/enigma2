@@ -85,22 +85,28 @@ class ImageBackup(Screen):
 	def ImageList(self, imagedict):
 		self.saveImageList = imagedict
 		imageList = []
-		currentimageslot = MultiBoot.getCurrentSlotCode()
-		currentimageslot = int(currentimageslot) if currentimageslot and currentimageslot.isdecimal() else 1
-		print("[Image Backup] Current Image Slot %s, Imagelist %s" % (currentimageslot, imagedict))
+		currentImageSlot = MultiBoot.getCurrentSlotCode()
+		rootSlot = BoxInfo.getItem("HasKexecMultiboot") and currentImageSlot == "R"
+		currentImageSlot = int(currentImageSlot) if currentImageSlot and currentImageSlot.isdecimal() else 1
+		print("[Image Backup] Current Image Slot %s, Imagelist %s, rootSlot=%d" % (currentImageSlot, imagedict, rootSlot))
 		if imagedict:
 			for slotCode in sorted(imagedict.keys()):
 				if imagedict[slotCode]["status"] == "active":
-					if slotCode == "1" and currentimageslot == 1 and BoxInfo.getItem("canRecovery"):
+					if slotCode == "1" and currentImageSlot == 1 and BoxInfo.getItem("canRecovery"):
 						imageList.append(ChoiceEntryComponent("", (_("Slot %s: %s as USB Recovery") % (slotCode, imagedict[slotCode]["imagename"]), slotCode, True)))
-					imageList.append(ChoiceEntryComponent("", ((_("Slot %s: %s (Current image)") if slotCode == str(currentimageslot) else _("Slot %s: %s")) % (slotCode, imagedict[slotCode]["imagename"]), slotCode, False)))
+					if rootSlot:
+						imageList.append(ChoiceEntryComponent("", ((_("Slot %s: %s")) % (slotCode, imagedict[slotCode]["imagename"]), slotCode, False)))
+					else:
+						imageList.append(ChoiceEntryComponent("", ((_("Slot %s: %s (Current image)") if slotCode == str(currentImageSlot) else _("Slot %s: %s")) % (slotCode, imagedict[slotCode]["imagename"]), slotCode, False)))
+			if rootSlot:
+				imageList.append(ChoiceEntryComponent("", (_("Slot R: Root Slot Full Backup (Current image)"), "R", False)))
 		else:
 			if BoxInfo.getItem("canRecovery"):
 				imageList.append(ChoiceEntryComponent("", (_("Internal flash: %s %s as USB Recovery") % (DISTRO, DISTROVERSION), "slotCode", True)))
 			imageList.append(ChoiceEntryComponent("", (_("Internal flash:  %s %s ") % (DISTRO, DISTROVERSION), "slotCode", False)))
 		self["config"].setList(imageList)
 		for index, item in enumerate(imageList):
-			if item[0][1] == str(currentimageslot):
+			if item[0][1] == str(currentImageSlot):
 				break
 		self["config"].moveToIndex(index)
 
@@ -181,7 +187,11 @@ class ImageBackup(Screen):
 					bootSlots = MultiBoot.getBootSlots()
 					self.hasMultiBootMDT = bootSlots[self.SLOT].get("ubi", False)
 					self.ROOTFSSUBDIR = bootSlots[self.SLOT].get("rootsubdir", "none")
-					self.MTDKERNEL = bootSlots[self.SLOT]["kernel"].split("/")[2]
+					if BoxInfo.getItem("HasKexecMultiboot") and self.SLOT == "R":
+						self.MTDKERNEL = bootSlots[self.SLOT]["kernel"]
+						self.ROOTFSSUBDIR = "none"
+					else:
+						self.MTDKERNEL = bootSlots[self.SLOT]["kernel"].split("/")[2]
 					if self.hasMultiBootMDT:
 						self.MTDROOTFS = bootSlots[self.SLOT]["device"]
 					else:
@@ -212,11 +222,11 @@ class ImageBackup(Screen):
 				print("[Image Backup] DESTINATION = >%s< " % self.DIRECTORY)
 				print("[Image Backup] SLOT = >%s< " % self.SLOT)
 				print("[Image Backup] HasKexecMultiboot = >%s< " % self.HasKexecMultiboot)
-				print("[Image Backup] canMultiBoot = >%s< " %MultiBoot.canMultiBoot())
+				print("[Image Backup] canMultiBoot = >%s< " % MultiBoot.canMultiBoot())
 
 				isNotCurrent = MultiBoot.getCurrentSlotCode() != answer[1]
 
-				print("[Image Backup] isNotCurrent = >%s< " %isNotCurrent)
+				print("[Image Backup] isNotCurrent = >%s< " % isNotCurrent)
 
 				if self.RECOVERY and not isNotCurrent:
 					print("[Image Backup] IMAGEDISTRO = >%s<" % self.DISTRO)

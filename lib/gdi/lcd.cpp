@@ -64,6 +64,74 @@ void eLCD::unlock()
 	locked = 0;
 }
 
+const char *eLCD::get_VFD_scroll_delay() const
+{
+#if defined(HAVE_7SEGMENT)
+	return "";
+#else
+	return (access(VFD_scroll_delay_proc, W_OK) == 0) ? VFD_scroll_delay_proc : "";
+#endif
+}
+
+const char *eLCD::get_VFD_initial_scroll_delay() const
+{
+#if defined(HAVE_7SEGMENT)
+	return "";
+#else
+	return (access(VFD_initial_scroll_delay_proc, W_OK) == 0) ? VFD_initial_scroll_delay_proc : "";
+#endif
+}
+
+const char *eLCD::get_VFD_final_scroll_delay() const
+{
+#if defined(HAVE_7SEGMENT)
+	return "";
+#else
+	return (access(VFD_final_scroll_delay_proc, W_OK) == 0) ? VFD_final_scroll_delay_proc : "";
+#endif
+}
+
+const char *eLCD::get_VFD_scroll_repeats() const
+{
+#if defined(HAVE_7SEGMENT)
+	return "";
+#else
+	return (access(VFD_scroll_repeats_proc, W_OK) == 0) ? VFD_scroll_repeats_proc : "";
+#endif
+}
+
+void eLCD::set_VFD_scroll_delay(int delay) const
+{
+#ifdef LCD_SCROLL_HEX
+	CFile::writeIntHex(VFD_scroll_delay_proc, delay);
+#else
+	CFile::writeInt(VFD_scroll_delay_proc, delay);
+#endif
+}
+
+void eLCD::set_VFD_initial_scroll_delay(int delay) const
+{
+#ifdef LCD_SCROLL_HEX
+	CFile::writeIntHex(VFD_initial_scroll_delay_proc, delay);
+#else
+	CFile::writeInt(VFD_initial_scroll_delay_proc, delay);
+#endif
+}
+
+void eLCD::set_VFD_final_scroll_delay(int delay) const
+{
+#ifdef LCD_SCROLL_HEX
+	CFile::writeIntHex(VFD_final_scroll_delay_proc, delay);
+#else
+	CFile::writeInt(VFD_final_scroll_delay_proc, delay);
+#endif
+}
+
+void eLCD::set_VFD_scroll_repeats(int delay) const
+{
+	CFile::writeInt(VFD_scroll_repeats_proc, delay);
+}
+
 #if defined(HAVE_TEXTLCD) || defined(HAVE_7SEGMENT)
 void eLCD::renderText(ePoint start, const char *text)
 {
@@ -83,7 +151,6 @@ eDBoxLCD::eDBoxLCD()
 {
 	int xres = 132, yres = 64, bpp = 8;
 	flipped = false;
-	dump = false;
 	inverted = 0;
 	lcd_type = 0;
 #ifndef NO_LCD
@@ -173,10 +240,9 @@ void eDBoxLCD::setFlipped(bool onoff)
 	update();
 }
 
-void eDBoxLCD::setDump(bool onoff)
+void eDBoxLCD::setDump(bool onoff) // deprecated use dumpLCD instead
 {
-	dump = onoff;
-	dumpLCD2PNG();
+	dumpLCD(true);
 }
 
 int eDBoxLCD::setLCDContrast(int contrast)
@@ -276,88 +342,85 @@ eDBoxLCD::~eDBoxLCD()
 	}
 }
 
-void eDBoxLCD::dumpLCD2PNG(void)
+void eDBoxLCD::dumpLCD(bool png)
 {
-	if (dump)
-	{
-		int bpp = (_stride * 8) / res.width();
-		int lcd_width = res.width();
-		int lcd_hight = res.height();
-		ePtr<gPixmap> pixmap32;
-		pixmap32 = new gPixmap(eSize(lcd_width, lcd_hight), 32, gPixmap::accelAuto);
-		const uint8_t *srcptr = (uint8_t *)_buffer;
-		uint8_t *dstptr = (uint8_t *)pixmap32->surface->data;
+	int bpp = (_stride * 8) / res.width();
+	int lcd_width = res.width();
+	int lcd_hight = res.height();
+	ePtr<gPixmap> pixmap32;
+	pixmap32 = new gPixmap(eSize(lcd_width, lcd_hight), 32, gPixmap::accelAuto);
+	const uint8_t *srcptr = (uint8_t *)_buffer;
+	uint8_t *dstptr = (uint8_t *)pixmap32->surface->data;
 
-		switch (bpp)
+	switch (bpp)
+	{
+	case 8:
+	{
+		for (int y = lcd_hight; y != 0; --y)
 		{
-		case 8:
-		{
-			for (int y = lcd_hight; y != 0; --y)
+			gRGB pixel32;
+			uint8_t pixval;
+			int x = lcd_width;
+			gRGB *dst = (gRGB *)dstptr;
+			const uint8_t *src = (const uint8_t *)srcptr;
+			while (x--)
 			{
-				gRGB pixel32;
-				uint8_t pixval;
-				int x = lcd_width;
-				gRGB *dst = (gRGB *)dstptr;
-				const uint8_t *src = (const uint8_t *)srcptr;
-				while (x--)
-				{
-					pixval = *src++;
-					pixel32.a = 0xFF;
-					pixel32.r = pixval;
-					pixel32.g = pixval;
-					pixel32.b = pixval;
-					*dst++ = pixel32;
-				}
-				srcptr += _stride;
-				dstptr += pixmap32->surface->stride;
+				pixval = *src++;
+				pixel32.a = 0xFF;
+				pixel32.r = pixval;
+				pixel32.g = pixval;
+				pixel32.b = pixval;
+				*dst++ = pixel32;
 			}
-			savePNG("/tmp/lcd.png", pixmap32);
+			srcptr += _stride;
+			dstptr += pixmap32->surface->stride;
 		}
-		break;
-		case 16:
+		savePNG("/tmp/lcd.png", pixmap32);
+	}
+	break;
+	case 16:
+	{
+		for (int y = lcd_hight; y != 0; --y)
 		{
-			for (int y = lcd_hight; y != 0; --y)
+			gRGB pixel32;
+			uint16_t pixel16;
+			int x = lcd_width;
+			gRGB *dst = (gRGB *)dstptr;
+			const uint16_t *src = (const uint16_t *)srcptr;
+			while (x--)
 			{
-				gRGB pixel32;
-				uint16_t pixel16;
-				int x = lcd_width;
-				gRGB *dst = (gRGB *)dstptr;
-				const uint16_t *src = (const uint16_t *)srcptr;
-				while (x--)
-				{
 #if BYTE_ORDER == LITTLE_ENDIAN
-					pixel16 = bswap_16(*src++);
+				pixel16 = bswap_16(*src++);
 #else
-					pixel16 = *src++;
+				pixel16 = *src++;
 #endif
-					pixel32.a = 0xFF;
-					pixel32.r = (pixel16 << 3) & 0xF8;
-					pixel32.g = (pixel16 >> 3) & 0xFC;
-					pixel32.b = (pixel16 >> 8) & 0xF8;
-					*dst++ = pixel32;
-				}
-				srcptr += _stride;
-				dstptr += pixmap32->surface->stride;
+				pixel32.a = 0xFF;
+				pixel32.r = (pixel16 << 3) & 0xF8;
+				pixel32.g = (pixel16 >> 3) & 0xFC;
+				pixel32.b = (pixel16 >> 8) & 0xF8;
+				*dst++ = pixel32;
 			}
-			savePNG("/tmp/lcd.png", pixmap32);
+			srcptr += _stride;
+			dstptr += pixmap32->surface->stride;
 		}
-		break;
-		case 32:
+		savePNG("/tmp/lcd.png", pixmap32);
+	}
+	break;
+	case 32:
+	{
+		srcptr += _stride / 4;
+		dstptr += pixmap32->surface->stride / 4;
+		for (int y = lcd_hight; y != 0; --y)
 		{
-			srcptr += _stride / 4;
-			dstptr += pixmap32->surface->stride / 4;
-			for (int y = lcd_hight; y != 0; --y)
-			{
-				memcpy(dstptr, srcptr, lcd_width * bpp);
-				srcptr += _stride;
-				dstptr += pixmap32->surface->stride;
-			}
-			savePNG("/tmp/lcd.png", pixmap32);
+			memcpy(dstptr, srcptr, lcd_width * bpp);
+			srcptr += _stride;
+			dstptr += pixmap32->surface->stride;
 		}
-		break;
-		default:
-			eDebug("[eDboxLCD] %d bit not supportet yet", bpp);
-		}
+		savePNG("/tmp/lcd.png", pixmap32);
+	}
+	break;
+	default:
+		eDebug("[eDboxLCD] %d bit not supportet yet", bpp);
 	}
 }
 
@@ -366,6 +429,7 @@ void eDBoxLCD::update()
 #if !defined(HAVE_TEXTLCD) && !defined(HAVE_7SEGMENT)
 	if (lcdfd >= 0)
 	{
+		[[maybe_unused]] ssize_t ret; /* dummy value to store write return values */
 		if (lcd_type == 0 || lcd_type == 2)
 		{
 			unsigned char raw[132 * 8];
@@ -391,7 +455,7 @@ void eDBoxLCD::update()
 					}
 				}
 			}
-			write(lcdfd, raw, 132 * 8);
+			ret = write(lcdfd, raw, 132 * 8);
 		}
 		else if (lcd_type == 3)
 		{
@@ -416,7 +480,7 @@ void eDBoxLCD::update()
 						}
 					}
 				}
-				write(lcdfd, raw, _stride * height);
+				ret = write(lcdfd, raw, _stride * height);
 			}
 			else
 			{
@@ -430,7 +494,7 @@ void eDBoxLCD::update()
 					//                                             blue                         red                  green low                     green high
 					((unsigned int *)gb_buffer)[offset] = ((src >> 3) & 0x001F001F) | ((src << 3) & 0xF800F800) | ((src >> 8) & 0x00E000E0) | ((src << 8) & 0x07000700);
 				}
-				write(lcdfd, gb_buffer, _stride * res.height());
+				ret = write(lcdfd, gb_buffer, _stride * res.height());
 #elif defined(LCD_COLOR_BITORDER_RGB565)
 				// gggrrrrrbbbbbggg bit order from memory
 				// gggbbbbbrrrrrggg bit order to LCD
@@ -451,9 +515,9 @@ void eDBoxLCD::update()
 						gb_buffer[offset + 1] = (_buffer[offset + 1] & 0xE0) | ((_buffer[offset] >> 3) & 0x1F);
 					}
 				}
-				write(lcdfd, gb_buffer, _stride * res.height());
+				ret = write(lcdfd, gb_buffer, _stride * res.height());
 #else
-				write(lcdfd, _buffer, _stride * res.height());
+				ret = write(lcdfd, _buffer, _stride * res.height());
 #endif
 			}
 		}
@@ -484,9 +548,8 @@ void eDBoxLCD::update()
 					}
 				}
 			}
-			write(lcdfd, raw, 64 * 64);
+			ret = write(lcdfd, raw, 64 * 64);
 		}
 	}
-	dumpLCD2PNG();
 #endif
 }

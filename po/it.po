@@ -4507,6 +4507,9 @@ msgstr "Scegli la frequenza con cui connetterti al server IceTV per verificare l
 msgid "Choose the CI protocol operation mode for standard ci or ciplus."
 msgstr "Scegli la modalità del protocollo CI: Standard o CIplus."
 
+msgid "Choose the amount of additional slots."
+msgstr "Scegli il numero di slot aggiuntivi."
+
 msgid "Choose the display formatting style for dates. 'D' / 'DD' is the date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
 msgstr "Scegli il formato di visualizzazione delle date per lo schermo. 'D' / 'DD' identifica il giorno e 'M' / 'MM' il mese in cifre ('DD' e 'MM' mostrano lo zero iniziale per numeri ad una cifra). La visualizzazione a schermo sarà basata sulla tua scelta, a meno di impostazioni diverse della skin."
 
@@ -4584,6 +4587,9 @@ msgstr "Scegli quale livello di menu/impostazioni visualizzare. Il livello \"Esp
 
 msgid "Choose which tuner to configure."
 msgstr "Scegli quale tuner configurare."
+
+msgid "Choose the target location for the slots."
+msgstr "Scegli la posizione di destinazione per gli slot."
 
 msgid "Christmas Island"
 msgstr "Isola di Natale"
@@ -18105,6 +18111,9 @@ msgstr "Slot '%s':  %s  -  immagine attuale"
 msgid "Slot '%s': %s%s"
 msgstr "Slot '%s': %s%s"
 
+msgid "Slot Manager"
+msgstr "Gestore slot"
+
 msgid "Slovak"
 msgstr "Slovacco"
 
@@ -19118,6 +19127,9 @@ msgstr ""
 
 msgid "Tanzania, United Republic of"
 msgstr ""
+
+msgid "Target location"
+msgstr "Posizione destinazione"
 
 #, python-format
 msgid "Task '%s' ended successfully."

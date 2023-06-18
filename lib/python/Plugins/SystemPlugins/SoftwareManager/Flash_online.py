@@ -1,7 +1,7 @@
 from Plugins.Extensions.OPDBoot.plugin import *
 from json import load
 from os import W_OK, access, listdir, major, makedirs, minor, mkdir, sep, stat, statvfs, unlink, walk
-from os.path import basename, exists, isdir, isfile, islink, ismount, splitext, join as pathjoin
+from os.path import basename, exists, isdir, isfile, islink, ismount, splitext, join
 from shutil import rmtree
 from time import time
 from urllib.request import urlopen, Request
@@ -49,7 +49,8 @@ FEED_URLS = [
 	("Open8eIGHT", "http://openeight.de/json/%s", "machinebuild"),
 	("OpenDROID", "https://opendroid.org/json/%s", "machinebuild"),
 	("TeamBlue", "https://images.teamblue.tech/json/%s", "machinebuild"),
-	("EGAMI", "https://image.egami-image.com/json/%s", "machinebuild")
+	("EGAMI", "https://image.egami-image.com/json/%s", "machinebuild"),
+	("OpenSPA", "https://openspa.webhop.info/online/json.php?box=%s", "BoxName")
 ]
 
 
@@ -198,17 +199,17 @@ class FlashOnline(Screen, HelpableScreen):
 						self.imagesList[newversion][image]["link"] = '%s/%s/%s/%s/%s' % (feedurl, version, brand, box, image)
 
 			for media in ["/media/%s" % x for x in listdir("/media")] + (["/media/net/%s" % x for x in listdir("/media/net")] if isdir("/media/net") else []):
-				# print("[FlashOnline] getImagesList DEBUG: media='%s'." % media)
+				# print("[FlashManager] getImagesList DEBUG: media='%s'." % media)
 				if not (BoxInfo.getItem("HasMMC") and "/mmc" in media) and isdir(media):
-					getImages(media, [pathjoin(media, x) for x in listdir(media) if splitext(x)[1] == ".zip" and self.box in x])
+					getImages(media, [join(media, x) for x in listdir(media) if splitext(x)[1] == ".zip" and self.box in x])
 					for folder in ["images", "downloaded_images", "imagebackups"]:
 						if folder in listdir(media):
-							subFolder = pathjoin(media, folder)
-							# print("[FlashOnline] getImagesList DEBUG: subFolder='%s'." % subFolder)
+							subFolder = join(media, folder)
+							# print("[FlashManager] getImagesList DEBUG: subFolder='%s'." % subFolder)
 							if isdir(subFolder) and not islink(subFolder) and not ismount(subFolder):
-								# print("[FlashOnline] getImagesList DEBUG: Next subFolder='%s'." % subFolder)
-								getImages(subFolder, [pathjoin(subFolder, x) for x in listdir(subFolder) if splitext(x)[1] == ".zip" and self.box in x])
-								for dir in [dir for dir in [pathjoin(subFolder, dir) for dir in listdir(subFolder)] if isdir(dir) and splitext(dir)[1] == ".unzipped"]:
+								# print("[FlashManager] getImagesList DEBUG: Next subFolder='%s'." % subFolder)
+								getImages(subFolder, [join(subFolder, x) for x in listdir(subFolder) if splitext(x)[1] == ".zip" and self.box in x])
+								for dir in [dir for dir in [join(subFolder, dir) for dir in listdir(subFolder)] if isdir(dir) and splitext(dir)[1] == ".unzipped"]:
 									try:
 										rmtree(dir)
 									except OSError as err:
@@ -247,6 +248,10 @@ class FlashOnline(Screen, HelpableScreen):
 		self.close(True)
 
 	def keyOk(self):
+		def reloadImagesList():
+			self.imagesList = {}
+			self.getImagesList()
+
 		currentSelection = self["list"].getCurrent()
 		if currentSelection[0][1] == "Expanded":
 			if currentSelection[0][0] in self.expanded:
@@ -255,30 +260,30 @@ class FlashOnline(Screen, HelpableScreen):
 				self.expanded.append(currentSelection[0][0])
 			self.getImagesList()
 		elif currentSelection[0][1] != "Loading":
-			self.session.openWithCallback(self.reloadImagesList, FlashImage, currentSelection[0][0], currentSelection[0][1])
+			self.session.openWithCallback(reloadImagesList, FlashImage, currentSelection[0][0], currentSelection[0][1])
 
 	def keyTop(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveTop)
+		self["list"].instance.goTop()
 		self.selectionChanged()
 
 	def keyPageUp(self):
-		self["list"].instance.moveSelection(self["list"].instance.pageUp)
+		self["list"].instance.goPageUp()
 		self.selectionChanged()
 
 	def keyUp(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveUp)
+		self["list"].instance.goLineUp()
 		self.selectionChanged()
 
 	def keyDown(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveDown)
+		self["list"].instance.goLineDown()
 		self.selectionChanged()
 
 	def keyPageDown(self):
-		self["list"].instance.moveSelection(self["list"].instance.pageDown)
+		self["list"].instance.goPageDown()
 		self.selectionChanged()
 
 	def keyBottom(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveEnd)
+		self["list"].instance.goBottom()
 		self.selectionChanged()
 
 	def keyDistribution(self):
@@ -302,22 +307,24 @@ class FlashOnline(Screen, HelpableScreen):
 			self["list"].moveToIndex(self.setIndex)
 
 	def keyDeleteImage(self):
-		currentSelection = self["list"].getCurrent()[0][1]
-		if not ("://" in currentSelection or currentSelection in ["Expanded", "Loading"]):
-			try:
-				unlink(currentSelection)
-				currentSelection = ".".join([currentSelection[:-4], "unzipped"])
-				if isdir(currentSelection):
-					rmtree(currentSelection)
-				self.setIndex = self["list"].getSelectedIndex()
-				self.imagesList = {}
-				self.getImagesList()
-			except OSError as err:
-				self.session.open(MessageBox, _("Error %d: Unable to delete downloaded image '%s'!  (%s)" % (err.errno, currentSelection, err.strerror)), MessageBox.TYPE_ERROR, timeout=3, windowTitle=self.getTitle())
+		def keyDeleteImageCallback(result):
+			currentSelection = self["list"].getCurrent()[0][1]
+			if result:
+				try:
+					unlink(currentSelection)
+					currentSelection = ".".join([currentSelection[:-4], "unzipped"])
+					if isdir(currentSelection):
+						rmtree(currentSelection)
+					self.setIndex = self["list"].getSelectedIndex()
+					self.imagesList = {}
+					self.getImagesList()
+				except OSError as err:
+					self.session.open(MessageBox, _("Error %d: Unable to delete downloaded image '%s'!  (%s)" % (err.errno, currentSelection, err.strerror)), MessageBox.TYPE_ERROR, timeout=3, windowTitle=self.getTitle())
 
-	def reloadImagesList(self):
-		self.imagesList = {}
-		self.getImagesList()
+		currentSelection = self["list"].getCurrent()[0][1]
+		currentSelectionImage = self["list"].getCurrent()[0][0]
+		if not ("://" in currentSelection or currentSelection in ["Expanded", "Loading"]):
+			self.session.openWithCallback(keyDeleteImageCallback, MessageBox, _("Do you really want to delete '%s'?") % currentSelectionImage, MessageBox.TYPE_YESNO, default=False)
 
 	def selectionChanged(self):
 		currentSelection = self["list"].getCurrent()[0]
@@ -397,7 +404,7 @@ class FlashImage(Screen, HelpableScreen):
 		print("[FlashOnline] Current image slot is '%s'." % currentSlotCode)
 		choices = []
 		default = 0
-		for index, slotCode in enumerate(sorted(imageDictionary.keys())):
+		for index, slotCode in enumerate(sorted(imageDictionary.keys(), key=lambda x: (not x.isnumeric(), int(x) if x.isnumeric() else x))):
 			print("[FlashOnline] Image Slot '%s': %s." % (slotCode, str(imageDictionary[slotCode])))
 			if slotCode == currentSlotCode:
 				choices.append((_("Slot '%s':  %s  -  Current") % (slotCode, imageDictionary[slotCode]["imagename"]), (slotCode, True)))
@@ -448,9 +455,9 @@ class FlashImage(Screen, HelpableScreen):
 				return
 			destination, isDevice = findMedia(["/media/hdd", "/media/usb"])
 			if destination:
-				destination = pathjoin(destination, "images")
-				self.zippedImage = "://" in self.source and pathjoin(destination, self.imageName) or self.source
-				self.unzippedImage = pathjoin(destination, "%s.unzipped" % self.imageName[:-4])
+				destination = join(destination, "images")
+				self.zippedImage = "://" in self.source and join(destination, self.imageName) or self.source
+				self.unzippedImage = join(destination, "%s.unzipped" % self.imageName[:-4])
 				try:
 					if isfile(destination):
 						unlink(destination)
@@ -554,7 +561,7 @@ class FlashImage(Screen, HelpableScreen):
 				if restoreSettingsnoPlugin:
 					filesToCreate.append("noplugins")
 				for fileName in ["settings", "plugins", "noplugins"]:
-					path = pathjoin(rootFolder, fileName)
+					path = join(rootFolder, fileName)
 					if fileName in filesToCreate:
 						try:
 							open(path, "w").close()
@@ -567,7 +574,7 @@ class FlashImage(Screen, HelpableScreen):
 					if config.plugins.softwaremanager.restoremode.value is not None:
 						try:
 							for fileName in ["slow", "fast", "turbo"]:
-								path = pathjoin(rootFolder, fileName)
+								path = join(rootFolder, fileName)
 								if fileName == config.plugins.softwaremanager.restoremode.value:
 									if not exists(path):
 										open(path, "w").close()
@@ -599,7 +606,7 @@ class FlashImage(Screen, HelpableScreen):
 				self["header"].setText(_("Downloading Image"))
 				self["info"].setText(self.imageName)
 				self["summary_header"].setText(self["header"].getText())
-				self.downloader = DownloadWithProgress(self.source, self.zippedImage)
+				self.downloader = DownloadWithProgress(self.source.replace(" ", "%20"), self.zippedImage)
 				self.downloader.addProgress(self.downloadProgress)
 				self.downloader.addEnd(self.downloadEnd)
 				self.downloader.addError(self.downloadError)
@@ -652,22 +659,27 @@ class FlashImage(Screen, HelpableScreen):
 			rootSubDir = None
 			bootSlots = MultiBoot.getBootSlots()
 			if bootSlots:
-				if BoxInfo.getItem("HasKexecMultiboot"):
-					mtdKernel = bootSlots[self.slotCode]["kernel"]
-				else:
-					mtdKernel = bootSlots[self.slotCode]["kernel"].split(sep)[2]
+				mtdKernel = bootSlots[self.slotCode]["kernel"] if BoxInfo.getItem("HasKexecMultiboot") else bootSlots[self.slotCode]["kernel"].split(sep)[2]
 				mtdRootFS = bootSlots[self.slotCode]["device"] if bootSlots[self.slotCode].get("ubi") else bootSlots[self.slotCode]["device"].split(sep)[2]
 				if MultiBoot.hasRootSubdir(self.slotCode):
 					rootSubDir = bootSlots[self.slotCode]["rootsubdir"]
 			else:
 				mtdKernel = BoxInfo.getItem("mtdkernel")
 				mtdRootFS = BoxInfo.getItem("mtdrootfs")
-			if MultiBoot.canMultiBoot():  # Receiver with SD card MultiBoot if (rootSubDir) is None.
+			if BoxInfo.getItem("HasKexecMultiboot"):
+				if self.slotCode == "R":
+					cmdArgs = ["-r", "-k", "-f"]
+					Console().ePopen([UMOUNT, UMOUNT, "/proc/cmdline"])
+				else:
+					cmdArgs = ["-r%s" % mtdRootFS, "-k", "-m%s" % self.slotCode]
+					if "uuid" in bootSlots[self.slotCode] and "mmcblk" not in mtdRootFS:
+						cmdArgs.insert(2, "-s%s/linuxrootfs" % BoxInfo.getItem("model")[2:])
+			elif MultiBoot.canMultiBoot() and not self.slotCode == "R":  # Receiver with SD card MultiBoot if (rootSubDir) is None.
 				cmdArgs = ["-r%s" % mtdRootFS, "-k%s" % mtdKernel, "-m0"] if (rootSubDir) is None else ["-r", "-k", "-m%s" % self.slotCode]
-			elif BoxInfo.getItem("HasKexecMultiboot") and "mmcblk" not in mtdRootFS:
-				cmdArgs = ["-r%s" % mtdRootFS, "-kzImage", "-m%s" % self.slotCode]
 			elif BoxInfo.getItem("model") in ("dm820", "dm7080"):  # Temp solution ofgwrite auto detection not ready.
 				cmdArgs = ["-rmmcblk0p1"]
+			elif BoxInfo.getItem("model") in ("dreamone", "dreamtwo"):  # Temp solution ofgwrite auto detection not ready.
+				cmdArgs = ["-r%s" % mtdRootFS, "-k%s" % mtdKernel]
 			elif mtdKernel == mtdRootFS:  # Receiver with kernel and rootfs on one partition.
 				cmdArgs = ["-r"]
 			else:  # Normal non MultiBoot receiver.
