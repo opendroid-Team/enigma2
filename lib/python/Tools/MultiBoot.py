@@ -227,7 +227,7 @@ class MultiBootClass():
 			bootSlotsKeys = sorted(bootSlots.keys())
 			if self.debugMode:
 				for slotCode in bootSlotsKeys:
-					# print("[MultiBoot] getBootSlots DEBUG: Boot slot '%s': %s" % (slotCode, bootSlots[slotCode]))
+					# print("[MultiBoot] loadBootSlots DEBUG: Boot slot '%s': %s" % (slotCode, bootSlots[slotCode]))
 					print("[MultiBoot] Slot '%s':" % slotCode)
 					modes = bootSlots[slotCode].get("bootCodes")
 					if modes and modes != [""]:

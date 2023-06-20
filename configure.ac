@@ -11,7 +11,7 @@ AC_SYS_LARGEFILE
 
 AC_PROG_CC
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX_17
 m4_ifdef([LT_INIT], [LT_INIT], [AC_PROG_LIBTOOL])
 AC_CONFIG_MACRO_DIR([m4])
 AC_OPENMP()
@@ -42,7 +42,7 @@ AC_ARG_WITH(gstversion,
 
 PKG_CHECK_MODULES(TUXTXT, tuxbox-tuxtxt)
 PKG_CHECK_MODULES(GSTREAMER, gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR)
-PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 sigc++-2.0 libssl libcrypto])
+PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 sigc++-2.0 libssl libcrypto libcurl])
 PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
 AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
 PKG_CHECK_MODULES(AVAHI, avahi-client)
@@ -776,6 +776,10 @@ fi
 
 if test "$BOXTYPE" == "dm900" -o "$BOXTYPE" == "dm920"; then
 	AC_DEFINE(LCD_DM900_Y_OFFSET, 4,[define LCD Y offset for dm900 and dm920])
+fi
+
+if test "$BOXTYPE" == "sf4008" -o "$BOXTYPE" == "beyonwizu4"; then
+	AC_DEFINE(LCD_SCROLL_HEX, 1,[define LCD scroll values in hex])
 fi
 
 AC_ARG_WITH(libsdl,
