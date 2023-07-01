@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
@@ -274,18 +272,15 @@ class About(Screen):
 			bootname = f.readline().split('=')[1]
 			f.close()
 		if BoxInfo.getItem("canMultiBoot"):
-			slot = image = GetCurrentImage()
-			bootmode = ""
-			part = _("eMMC slot %s") % slot
-			if BoxInfo.getItem("canMode12"):
-				bootmode = _(" bootmode = %s") % GetCurrentImageMode()
-			if BoxInfo.getItem("HasHiSi") and "sda" in BoxInfo.getItem("canMultiBoot")[slot]['device']:
-				if slot > 4:
-					image -=4
-				else:
-					image -=1
-				part = "SDcard slot %s (%s) " %(image, BoxInfo.getItem("canMultiBoot")[slot]['device'])
-			AboutText += _("Selected Image:\t%s") % _("STARTUP_") + str(slot) + "  " + part + " " + bootmode + "\n"
+			slotCode, bootCode = MultiBoot.getCurrentSlotAndBootCodes()
+			device = MultiBoot.getBootDevice()
+			if BoxInfo.getItem("HasHiSi") and "sda" in device:
+				slotCode = int(slotCode)
+				image = slotCode - 4 if slotCode > 4 else slotCode - 1
+				device = _("SDcard slot %s%s") % (image, "  -  %s" % device if device else "")
+			else:
+				device = _("eMMC slot %s%s") % (slotCode, "  -  %s" % device if device else "")
+			AboutText += _("Hardware MultiBoot device:\t%s") % _("STARTUP_") + str(slotCode) + "  " + device + "\n"
 
 		if path.isfile("/etc/issue"):
 			version = open("/etc/issue").readlines()[-2].upper().strip()[:-6]

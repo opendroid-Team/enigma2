@@ -17,6 +17,9 @@ from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
 from Components.SystemInfo import BoxInfo
 from Tools.HardwareInfo import HardwareInfo
+from Components.AVSwitch import iAVSwitch
+
+DEFAULTKEYMAP = eEnv.resolve("${datadir}/enigma2/keymap.xml")
 
 
 def InitUsageConfig():
@@ -142,6 +145,7 @@ def InitUsageConfig():
 		("custom", _("Static IP / Custom")),
 		("google", _("Google DNS")),
 		("cloudflare", _("Cloudflare DNS")),
+		("quad9", _("Quad9 DNS")),
 		("opendns-familyshield", _("OpenDNS FamilyShield")),
 		("opendns-home", _("OpenDNS Home"))
 	])
@@ -165,6 +169,7 @@ def InitUsageConfig():
 	def alternativeNumberModeChange(configElement):
 		eDVBDB.getInstance().setNumberingMode(configElement.value)
 		refreshServiceList()
+
 	config.usage.alternative_number_mode.addNotifier(alternativeNumberModeChange)
 
 	config.usage.hide_number_markers = ConfigYesNo(default=True)
@@ -881,28 +886,28 @@ def InitUsageConfig():
 	else:
 		config.usage.date.dayfull = ConfigSelection(default=_("%A %-d %B %Y"), choices=choicelist)
 
-	# TRANSLATORS: long date representation short dayname daynum monthname year in strftime() format! See 'man strftime'
+	# TRANSLATORS: Long date representation short dayname daynum monthname year in strftime() format! See 'man strftime'.
 	config.usage.date.shortdayfull = ConfigText(default=_("%a %-d %B %Y"))
 
-	# TRANSLATORS: long date representation short dayname daynum short monthname year in strftime() format! See 'man strftime'
+	# TRANSLATORS: Long date representation short dayname daynum short monthname year in strftime() format! See 'man strftime'.
 	config.usage.date.daylong = ConfigText(default=_("%a %-d %b %Y"))
 
-	# TRANSLATORS: short date representation dayname daynum short monthname in strftime() format! See 'man strftime'
+	# TRANSLATORS: Short date representation dayname daynum short monthname in strftime() format! See 'man strftime'.
 	config.usage.date.dayshortfull = ConfigText(default=_("%A %-d %B"))
 
-	# TRANSLATORS: short date representation short dayname daynum short monthname in strftime() format! See 'man strftime'
+	# TRANSLATORS: Short date representation short dayname daynum short monthname in strftime() format! See 'man strftime'.
 	config.usage.date.dayshort = ConfigText(default=_("%a %-d %b"))
 
-	# TRANSLATORS: small date representation short dayname daynum in strftime() format! See 'man strftime'
+	# TRANSLATORS: Small date representation short dayname daynum in strftime() format! See 'man strftime'.
 	config.usage.date.daysmall = ConfigText(default=_("%a %-d"))
 
-	# TRANSLATORS: full date representation daynum monthname year in strftime() format! See 'man strftime'
+	# TRANSLATORS: Full date representation daynum monthname year in strftime() format! See 'man strftime'.
 	config.usage.date.full = ConfigText(default=_("%-d %B %Y"))
 
-	# TRANSLATORS: long date representation daynum short monthname year in strftime() format! See 'man strftime'
+	# TRANSLATORS: Long date representation daynum short monthname year in strftime() format! See 'man strftime'.
 	config.usage.date.long = ConfigText(default=_("%-d %b %Y"))
 
-	# TRANSLATORS: small date representation daynum short monthname in strftime() format! See 'man strftime'
+	# TRANSLATORS: Small date representation daynum short monthname in strftime() format! See 'man strftime'.
 	config.usage.date.short = ConfigText(default=_("%-d %b"))
 
 	def setDateStyles(configElement):
@@ -1216,10 +1221,18 @@ def InitUsageConfig():
 	config.epg.cacheloadtimer = ConfigSelectionNumber(default=24, stepwidth=1, min=1, max=24, wraparound=True)
 	config.epg.cachesavetimer = ConfigSelectionNumber(default=24, stepwidth=1, min=1, max=24, wraparound=True)
 
-	config.osd.dst_left = ConfigSelectionNumber(default=0, stepwidth=1, min=0, max=720, wraparound=False)
-	config.osd.dst_width = ConfigSelectionNumber(default=720, stepwidth=1, min=0, max=720, wraparound=False)
-	config.osd.dst_top = ConfigSelectionNumber(default=0, stepwidth=1, min=0, max=576, wraparound=False)
-	config.osd.dst_height = ConfigSelectionNumber(default=576, stepwidth=1, min=0, max=576, wraparound=False)
+	if BoxInfo.getItem("AmlogicFamily"):
+		limits = [int(x) for x in iAVSwitch.getWindowsAxis().split()]
+		config.osd.dst_left = ConfigSelectionNumber(default=limits[0], stepwidth=1, min=limits[0] - 255, max=limits[0] + 255, wraparound=False)
+		config.osd.dst_top = ConfigSelectionNumber(default=limits[1], stepwidth=1, min=limits[1] - 255, max=limits[1] + 255, wraparound=False)
+		config.osd.dst_width = ConfigSelectionNumber(default=limits[2], stepwidth=1, min=limits[2] - 255, max=limits[2] + 255, wraparound=False)
+		config.osd.dst_height = ConfigSelectionNumber(default=limits[3], stepwidth=1, min=limits[3] - 255, max=limits[3] + 255, wraparound=False)
+	else:
+		config.osd.dst_left = ConfigSelectionNumber(default=0, stepwidth=1, min=0, max=720, wraparound=False)
+		config.osd.dst_width = ConfigSelectionNumber(default=720, stepwidth=1, min=0, max=720, wraparound=False)
+		config.osd.dst_top = ConfigSelectionNumber(default=0, stepwidth=1, min=0, max=576, wraparound=False)
+		config.osd.dst_height = ConfigSelectionNumber(default=576, stepwidth=1, min=0, max=576, wraparound=False)
+
 	config.osd.alpha = ConfigSelectionNumber(default=255, stepwidth=1, min=0, max=255, wraparound=False)
 	config.osd.alpha_teletext = ConfigSelectionNumber(default=255, stepwidth=1, min=0, max=255, wraparound=False)
 	config.osd.alpha_webbrowser = ConfigSelectionNumber(default=255, stepwidth=1, min=0, max=255, wraparound=False)
@@ -1306,10 +1319,10 @@ def InitUsageConfig():
 		if isfile(kmfile):
 			keymapchoices.append((kmfile, KM.get(kmap)))
 
-	if not isfile(keymapdefault):  # BIG PROBLEM
-		keymapchoices.append((keymapdefault, KM.get("xml")))
+	if not isfile(DEFAULTKEYMAP):  # BIG PROBLEM
+		keymapchoices.append((DEFAULTKEYMAP, KM.get("xml")))
 
-	config.usage.keymap = ConfigSelection(default=keymapdefault, choices=keymapchoices)
+	config.usage.keymap = ConfigSelection(default=DEFAULTKEYMAP, choices=keymapchoices)
 	config.usage.keytrans = ConfigText(default=eEnv.resolve("${datadir}/enigma2/keytranslation.xml"))
 	config.usage.keymap_usermod = ConfigText(default=eEnv.resolve("${datadir}/enigma2/keymap_usermod.xml"))
 
@@ -1416,6 +1429,8 @@ def InitUsageConfig():
 		"MEMDUMP"
 	])
 	config.crash.gstdot = ConfigYesNo(default=False)
+
+	config.crash.coredump = ConfigYesNo(default=False)
 
 	def updateDebugPath(configElement):
 		debugPath = config.crash.debug_path.value

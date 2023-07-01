@@ -3,7 +3,7 @@ from Components.Sources.Source import Source
 
 
 class List(Source):
-	"""The datasource of a listbox. Currently, the format depends on the used converter. So
+	"""The data source of a listbox. Currently, the format depends on the used converter. So
 if you put a simple string list in here, you need to use a StringList converter, if you are
 using a "multi content list styled"-list, you need to use the StaticMultiList converter, and
 setup the "fonts".
@@ -17,12 +17,19 @@ to generate HTML."""
 	# use of the enableWrapAround="1" attribute in the skin. Similarly the 
 	# itemHeight and font specifications are handled by the skin.
 	#
-	def __init__(self, list=[], enableWrapAround=None, item_height=0, fonts=[]):
+	def __init__(self, list=None, enableWrapAround=None, item_height=0, fonts=None):
 		Source.__init__(self)
-		self.listData = list
+		self.listData = list or []
 		self.listStyle = "default"  # Style might be an optional string which can be used to define different visualizations in the skin.
 		self.onSelectionChanged = []
 		self.disableCallbacks = False
+
+	def enableAutoNavigation(self, enabled):
+		try:
+			instance = self.master.master.instance
+			instance.enableAutoNavigation(enabled)
+		except AttributeError:
+			return
 
 	def getList(self):
 		return self.listData
@@ -42,16 +49,8 @@ to generate HTML."""
 		self.index = oldIndex
 		self.disableCallbacks = False
 
-	def entryChanged(self, index):
-		if not self.disableCallbacks:
-			self.downstream_elements.entry_changed(index)
-
-	def entry_changed(self, index):  # IanSav: Is this old name really required?
-		return self.entryChanged(index)
-
-	def modifyEntry(self, index, data):
-		self.listData[index] = data
-		self.entryChanged(index)
+	def count(self):
+		return len(self.listData)
 
 	def selectionChanged(self, index):
 		if self.disableCallbacks:
@@ -61,6 +60,14 @@ to generate HTML."""
 				element.index = index
 		for callback in self.onSelectionChanged:
 			callback()
+
+	def entryChanged(self, index):
+		if not self.disableCallbacks:
+			self.downstream_elements.entry_changed(index)
+
+	def modifyEntry(self, index, data):
+		self.listData[index] = data
+		self.entryChanged(index)
 
 	@cached
 	def getCurrent(self):
@@ -77,16 +84,24 @@ to generate HTML."""
 			self.master.index = index
 			self.selectionChanged(index)
 
+	def setIndex(self, index):  # This method should be found and removed from all code.
+		return self.setCurrentIndex(index)
+
 	index = property(getCurrentIndex, setCurrentIndex)
 
-	def getSelectedIndex(self):
-		return self.getCurrentIndex()
+	def getTopIndex(self):
+		try:
+			instance = self.master.master.instance
+			return instance.getTopIndex()
+		except AttributeError:
+			return -1
 
-	def getIndex(self):
-		return self.getCurrentIndex()
-
-	def setIndex(self, index):
-		return self.setCurrentIndex(index)
+	def setTopIndex(self, index):
+		try:
+			instance = self.master.master.instance
+			instance.setTopIndex(index)
+		except AttributeError:
+			return
 
 	@cached
 	def getStyle(self):
@@ -98,16 +113,6 @@ to generate HTML."""
 			self.changed((self.CHANGED_SPECIFIC, "style"))
 
 	style = property(getStyle, setStyle)
-
-	def count(self):
-		return len(self.listData)
-
-	def enableAutoNavigation(self, value):
-		try:
-			instance = self.master.master.instance
-			instance.enableAutoNavigation(value)
-		except AttributeError:
-			return
 
 	def show(self):
 		try:
@@ -122,6 +127,21 @@ to generate HTML."""
 			instance.hide()
 		except AttributeError:
 			return
+
+	def setVisible(self, visble):
+		if visble:
+			self.show()
+		else:
+			self.hide()
+
+	def getVisible(self):
+		try:
+			instance = self.master.master.instance
+			return instance.isVisible()
+		except AttributeError:
+			return False
+
+	visible = property(getVisible, setVisible)
 
 	def goTop(self):
 		try:
@@ -144,6 +164,13 @@ to generate HTML."""
 		except AttributeError:
 			return
 
+	def goFirst(self):
+		try:
+			instance = self.master.master.instance
+			instance.goFirst()
+		except AttributeError:
+			return
+
 	def goLeft(self):
 		try:
 			instance = self.master.master.instance
@@ -155,6 +182,13 @@ to generate HTML."""
 		try:
 			instance = self.master.master.instance
 			instance.goRight()
+		except AttributeError:
+			return
+
+	def goLast(self):
+		try:
+			instance = self.master.master.instance
+			instance.goLast()
 		except AttributeError:
 			return
 
@@ -189,6 +223,12 @@ to generate HTML."""
 
 	# Old navigation method names.
 	#
+	def getSelectedIndex(self):
+		return self.getCurrentIndex()
+
+	def getIndex(self):
+		return self.getCurrentIndex()
+
 	def top(self):
 		self.goTop()
 
