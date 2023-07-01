@@ -55,6 +55,11 @@ class Session:
 		self.summary = None
 		self.in_exec = False
 		self.screen = SessionGlobals(self)
+
+		self.shutdown = False
+		from Components.FrontPanelLed import frontPanelLed
+		frontPanelLed.init(self)
+
 		for plugin in plugins.getPlugins(PluginDescriptor.WHERE_SESSIONSTART):
 			try:
 				plugin.__call__(reason=0, session=self)
@@ -417,8 +422,8 @@ def runScreenTest():
 	# We need session.scart to access it from within menu.xml.
 	session.scart = AutoScartControl(session)
 	profile("InitTrashcan")
-	from Tools.Trashcan import init
-	init(session)
+	from Tools.Trashcan import initTrashcan
+	initTrashcan(session)
 	profile("Init:AutoVideoMode")
 	from Screens.VideoMode import autostart
 	autostart(session)
@@ -440,7 +445,10 @@ def runScreenTest():
 		config.usage.shutdownOK.setValue(False)
 		config.usage.shutdownOK.save()
 		configfile.save()
+	from Components.FrontPanelLed import FrontPanelLed
 	runReactor()
+	session.shutdown = True
+	FrontPanelLed.shutdown()
 	print("[StartEnigma] Normal shutdown.")
 	config.misc.startCounter.save()
 	config.usage.shutdownOK.setValue(True)
@@ -542,8 +550,7 @@ def runScreenTest():
 		config.misc.nextWakeup.value = "%d,%d,%d,%d,%d,%d,%d" % (int(nowTime), wptime, startTime[0], startTime[1], setStandby, nextRecordTime, forceNextRecord)
 	else:
 		config.misc.nextWakeup.value = "%d,-1,-1,0,0,-1,0" % (int(nowTime))
-		if not BOX_TYPE.startswith("azboxm"):  # Skip for Azbox (mini)ME - setting wakeup time to past reboots box.
-			setFPWakeuptime(int(nowTime) - 3600)  # Minus one hour -> overwrite old wakeup time.
+		setFPWakeuptime(int(nowTime) - 3600)  # Minus one hour -> overwrite old wakeup time.
 		print("[StartEnigma] No next wakeup time set.")
 	config.misc.nextWakeup.save()
 	print("=" * 100)
@@ -760,10 +767,6 @@ config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
 if config.clientmode.enabled.value == False:
 	enigma.eDVBDB.getInstance().reloadBouquets()
 
-profile("ParentalControl")
-from Components.ParentalControl import InitParentalControl
-InitParentalControl()
-
 profile("LOAD:Navigation")
 from Navigation import Navigation
 
@@ -772,7 +775,7 @@ from skin import readSkin
 
 profile("LOAD:Tools")
 from Components.config import ConfigSubsection, NoSave, configfile
-from Tools.Directories import InitDefaultPaths, SCOPE_CONFIG, SCOPE_GUISKIN, SCOPE_PLUGINS, resolveFilename
+from Tools.Directories import InitDefaultPaths, SCOPE_CONFIG, SCOPE_GUISKIN, SCOPE_PLUGINS, fileUpdateLine, resolveFilename
 import Components.RecordingConfig
 InitDefaultPaths()
 
@@ -859,7 +862,7 @@ from Components.RecordingConfig import InitRecordingConfig
 InitRecordingConfig()
 
 profile("UsageConfig")
-from Components.UsageConfig import InitUsageConfig
+from Components.UsageConfig import InitUsageConfig, DEFAULTKEYMAP
 InitUsageConfig()
 
 profile("TimeZones")
@@ -875,11 +878,14 @@ from Components.NetworkTime import ntpSyncPoller
 ntpSyncPoller.startTimer()
 
 profile("keymapparser")
-from keymapparser import readKeymap
-readKeymap(config.usage.keymap.value)
-readKeymap(config.usage.keytrans.value)
+from Components.ActionMap import loadKeymap
+loadKeymap(DEFAULTKEYMAP)
+if config.usage.keymap.value != DEFAULTKEYMAP:
+	if exists(config.usage.keymap.value):
+		loadKeymap(config.usage.keymap.value, replace=True)
+loadKeymap(config.usage.keytrans.value)
 if exists(config.usage.keymap_usermod.value):
-	readKeymap(config.usage.keymap_usermod.value)
+	loadKeymap(config.usage.keymap_usermod.value)
 
 profile("Network")
 from Components.Network import InitNetwork
@@ -930,7 +936,8 @@ migrateSettings()
 try:
 	runScreenTest()  # Start running the first screen.
 	plugins.shutdown()  # Shutdown all plugins.
-	Components.ParentalControl.parentalControl.save()  # Save parental control settings.
+	from Components.ParentalControl import parentalControl
+	parentalControl.save()  # Save parental control settings.
 except Exception:
 	print("Error: Exception in Python StartEnigma startup code:")
 	print("=" * 52)

@@ -1,56 +1,57 @@
-from __future__ import absolute_import
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigPIN, ConfigYesNo, ConfigSubList, ConfigInteger
+from time import time
+
+from enigma import eDVBDB, eServiceCenter, eServiceReference, eTimer, iServiceInformation
+
+from ServiceReference import ServiceReference
+from Components.config import ConfigInteger, ConfigPIN, ConfigSelection, ConfigSubList, ConfigSubsection, ConfigYesNo, config
 from Components.ServiceList import refreshServiceList
-#from Screens.ChannelSelection import service_types_tv
 from Screens.InputBox import PinInput
 from Screens.MessageBox import MessageBox
 from Tools.BoundFunction import boundFunction
-from ServiceReference import ServiceReference
-import Tools.Notifications
-from Tools.Directories import resolveFilename, SCOPE_CONFIG
-from enigma import eTimer, eServiceCenter, iServiceInformation, eServiceReference, eDVBDB
-import time
+from Tools.Directories import SCOPE_CONFIG, fileReadLines, fileWriteLines, resolveFilename
+from Tools.Notifications import AddNotificationParentalControl, AddPopup, RemovePopup
 
+MODULE_NAME = __name__.split(".")[-1]
 
 TYPE_SERVICE = "SERVICE"
 TYPE_BOUQUETSERVICE = "BOUQUETSERVICE"
 TYPE_BOUQUET = "BOUQUET"
 LIST_BLACKLIST = "blacklist"
 
-
-def InitParentalControl():
-	config.ParentalControl = ConfigSubsection()
-	config.ParentalControl.storeservicepin = ConfigSelection(default="never", choices=[("never", _("Never")), ("5", _("5 minutes")), ("30", _("30 minutes")), ("60", _("60 minutes")), ("standby", _("until standby/restart"))])
-	config.ParentalControl.configured = ConfigYesNo(default=False)
-	config.ParentalControl.setuppinactive = ConfigYesNo(default=False)
-	config.ParentalControl.retries = ConfigSubsection()
-	config.ParentalControl.retries.servicepin = ConfigSubsection()
-	config.ParentalControl.retries.servicepin.tries = ConfigInteger(default=3)
-	config.ParentalControl.retries.servicepin.time = ConfigInteger(default=3)
-	config.ParentalControl.servicepin = ConfigSubList()
-	config.ParentalControl.servicepin.append(ConfigPIN(default=0))
-	config.ParentalControl.age = ConfigSelection(default="18", choices=[("0", _("No age block"))] + list((str(x), "%d+" % x) for x in list(range(3, 19))))
-	config.ParentalControl.hideBlacklist = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections = ConfigSubsection()
-	config.ParentalControl.config_sections.main_menu = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.configuration = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.timer_menu = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.plugin_browser = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.standby_menu = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.movie_list = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.context_menus = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.opd_panel = ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.bluePanel= ConfigYesNo(default=False)
-	config.ParentalControl.config_sections.software_update = ConfigYesNo(default=False)
-
-	#Added for backwards compatibility with some 3rd party plugins that depend on this config
-	config.ParentalControl.servicepinactive = config.ParentalControl.configured
-	config.ParentalControl.setuppin = config.ParentalControl.servicepin[0]
-	config.ParentalControl.retries.setuppin = config.ParentalControl.retries.servicepin
-	config.ParentalControl.type = ConfigSelection(default="blacklist", choices=[(LIST_BLACKLIST, _("blacklist"))])
-
-	global parentalControl
-	parentalControl = ParentalControl()
+config.ParentalControl = ConfigSubsection()
+config.ParentalControl.storeservicepin = ConfigSelection(default="never", choices=[
+	("never", _("Never")),
+	("5", _("%d Minutes") % 5),
+	("30", _("%d Minutes") % 30),
+	("60", _("%d Minutes") % 60),
+	("standby", _("Until standby/restart"))
+])
+config.ParentalControl.configured = ConfigYesNo(default=False)
+config.ParentalControl.setuppinactive = ConfigYesNo(default=False)
+config.ParentalControl.retries = ConfigSubsection()
+config.ParentalControl.retries.servicepin = ConfigSubsection()
+config.ParentalControl.retries.servicepin.tries = ConfigInteger(default=3)
+config.ParentalControl.retries.servicepin.time = ConfigInteger(default=3)
+config.ParentalControl.servicepin = ConfigSubList()
+config.ParentalControl.servicepin.append(ConfigPIN(default=0))
+config.ParentalControl.age = ConfigSelection(default="18", choices=[("0", _("No age block"))] + [(str(x), "%d+" % x) for x in range(3, 19)])
+config.ParentalControl.hideBlacklist = ConfigYesNo(default=False)
+config.ParentalControl.config_sections = ConfigSubsection()
+config.ParentalControl.config_sections.main_menu = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.configuration = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.timer_menu = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.plugin_browser = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.standby_menu = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.movie_list = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.context_menus = ConfigYesNo(default=False)
+# config.ParentalControl.config_sections.infopanel = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.quickmenu = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.software_update = ConfigYesNo(default=False)
+# Added for backwards compatibility with some 3rd party plugins that depend on this configuration.
+config.ParentalControl.servicepinactive = config.ParentalControl.configured
+config.ParentalControl.setuppin = config.ParentalControl.servicepin[0]
+config.ParentalControl.retries.setuppin = config.ParentalControl.retries.servicepin
+config.ParentalControl.type = ConfigSelection(default="blacklist", choices=[(LIST_BLACKLIST, _("Blacklist"))])
 
 
 class ParentalControl:
@@ -65,6 +66,13 @@ class ParentalControl:
 		self.sessionPinTimer = eTimer()
 		self.sessionPinTimer.callback.append(self.resetSessionPin)
 		self.getConfigValues()
+
+	def __getattr__(self, name):  # This method is called if we lack a property. I'm lazy, so I load the files when someone "hits" this code.
+		if name in ("blacklist", "whitelist"):
+			if not self.filesOpened:
+				self.open()
+				return getattr(self, name)
+		raise AttributeError(name)
 
 	def serviceMethodWrapper(self, service, method, *args):
 		#This method is used to call all functions that need a service as Parameter:
@@ -102,18 +110,17 @@ class ParentalControl:
 			age = rating and rating.getRating()
 			age = age and age <= 15 and age + 3 or 0
 		if (age and age >= int(config.ParentalControl.age.value)) or service and service in self.blacklist:
-			#Check if the session pin is cached
-			if self.sessionPinCached:
+			if self.sessionPinCached:  # Check if the session PIN is cached.
 				return True
 			self.callback = callback
-			title = 'FROM BOUQUET "userbouquet.' in service and _("this bouquet is protected by a parental control pin") or _("this service is protected by a parental control pin")
+			title = "FROM BOUQUET \"userbouquet." in service and _("This bouquet is protected by a parental control PIN!") or _("This service is protected by a parental control PIN!")
 			if session:
-				Tools.Notifications.RemovePopup("Parental control")
+				RemovePopup("Parental control")
 				if self.PinDlg:
 					self.PinDlg.close()
-				self.PinDlg = session.openWithCallback(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry=config.ParentalControl.retries.servicepin, pinList=self.getPinList(), service=ServiceReference(ref).getServiceName(), title=title, windowTitle=_("Parental control"), simple=False)
+				self.PinDlg = session.openWithCallback(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry=config.ParentalControl.retries.servicepin, pinList=self.getPinList(), service=ServiceReference(ref).getServiceName(), title=title, windowTitle=_("Parental Control"), simple=False)
 			else:
-				Tools.Notifications.AddNotificationParentalControl(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry=config.ParentalControl.retries.servicepin, pinList=self.getPinList(), service=ServiceReference(ref).getServiceName(), title=title, windowTitle=_("Parental control"))
+				AddNotificationParentalControl(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry=config.ParentalControl.retries.servicepin, pinList=self.getPinList(), service=ServiceReference(ref).getServiceName(), title=title, windowTitle=_("Parental Control"))
 			return False
 		else:
 			return True
@@ -136,13 +143,10 @@ class ParentalControl:
 		self.checkPinInterval = False
 		self.checkPinIntervalCancel = False
 		self.checkSessionPin = False
-
 		self.sessionPinCached = False
 		self.pinIntervalSeconds = 0
 		self.pinIntervalSecondsCancel = 0
-
 		self.storeServicePin = config.ParentalControl.storeservicepin.value
-
 		if self.storeServicePin == "never":
 			pass
 		elif self.storeServicePin == "standby":
@@ -162,7 +166,7 @@ class ParentalControl:
 		self.hideBlacklist()
 
 	def getCurrentTimeStamp(self):
-		return time.time()
+		return time()
 
 	def getPinList(self):
 		return [x.value for x in config.ParentalControl.servicepin]
@@ -182,43 +186,31 @@ class ParentalControl:
 		else:
 			#This is the new function of caching cancelling of service pin
 			if result is not None:
-				messageText = _("The pin code you entered is wrong.")
+				messageText = _("The PIN code entered is incorrect!")
 				if self.session:
 					self.session.open(MessageBox, messageText, MessageBox.TYPE_INFO, timeout=3)
 				else:
-					Tools.Notifications.AddPopup(messageText, MessageBox.TYPE_ERROR, timeout=3)
+					AddPopup(messageText, MessageBox.TYPE_ERROR, timeout=3)
 
 	def saveListToFile(self, sWhichList, vList):
-		#Replaces saveWhiteList and saveBlackList:
-		#I don't like to have two functions with identical code...
-		file = open(resolveFilename(SCOPE_CONFIG, sWhichList), 'w')
-		import six
-		for sService, sType in six.iteritems(vList):
-			#Only Services that are selected directly and Bouqets are saved.
-			#Services that are added by a bouquet are not saved.
-			#This is the reason for the change in self.whitelist and self.blacklist
+		lines = []
+		for sService, sType in vList.items():
+			# Only Services that are selected directly and bouquets are saved. Services that are added by a
+			# bouquet are not saved. This is the reason for the change in self.whitelist and self.blacklist.
 			if TYPE_SERVICE in sType or TYPE_BOUQUET in sType:
-				file.write(str(sService) + "\n")
-		file.close()
+				lines.append(str(sService))
+		if lines:
+			lines.append("")
+		fileWriteLines(resolveFilename(SCOPE_CONFIG, sWhichList), "\n".join(lines), source=MODULE_NAME)
 
 	def openListFromFile(self, sWhichList):
-		#Replaces openWhiteList and openBlackList:
-		#I don't like to have two functions with identical code...
 		result = {}
-		try:
-			file = open(resolveFilename(SCOPE_CONFIG, sWhichList), 'r')
-			for x in file:
-				sPlain = x.strip()
-				self.serviceMethodWrapper(sPlain, self.addServiceToList, result)
-			file.close()
-		except:
-			pass
+		lines = fileReadLines(resolveFilename(SCOPE_CONFIG, sWhichList), default=[], source=MODULE_NAME)
+		for line in lines:
+			self.serviceMethodWrapper(line.strip(), self.addServiceToList, result)
 		return result
 
 	def addServiceToList(self, service, type, vList):
-		#Replaces addWhitelistService and addBlacklistService
-		#The lists are not only lists of service references any more.
-		#They are named lists with the service as key and an array of types as value:
 		if service in vList:
 			if not type in vList[service]:
 				vList[service].append(type)
@@ -234,14 +226,11 @@ class ParentalControl:
 				del vList[service]
 
 	def readServicesFromBouquet(self, sBouquetSelection, formatstring):
-		#This method gives back a list of services for a given bouquet
 		serviceHandler = eServiceCenter.getInstance()
-		refstr = sBouquetSelection
-		root = eServiceReference(refstr)
-		list = serviceHandler.list(root)
-		if list is not None:
-			services = list.getContent("CN", True) #(servicecomparestring, name)
-			return services
+		root = eServiceReference(sBouquetSelection)
+		serviceList = serviceHandler.list(root)
+		if serviceList is not None:
+			return serviceList.getContent("CN", True)  # (ServiceCompareString, Name)
 
 	def save(self):
 		self.saveListToFile(LIST_BLACKLIST, self.blacklist)
@@ -255,15 +244,6 @@ class ParentalControl:
 			self.filesOpened = True
 			refreshServiceList()
 
-	def __getattr__(self, name):
-		# This method is called if we lack a property. I'm lazy, so
-		# I load the files when someone 'hits' this code
-		if name in ('blacklist', 'whitelist'):
-			if not self.filesOpened:
-				self.open()
-				return getattr(self, name)
-		raise AttributeError(name)
-
 	def hideBlacklist(self):
 		if self.blacklist:
 			if config.ParentalControl.servicepinactive.value and config.ParentalControl.storeservicepin.value != "never" and config.ParentalControl.hideBlacklist.value and not self.sessionPinCached:
@@ -275,3 +255,5 @@ class ParentalControl:
 					if TYPE_BOUQUET not in ref:
 						eDVBDB.getInstance().removeFlag(eServiceReference(ref), 2)
 			refreshServiceList()
+
+parentalControl = ParentalControl()
