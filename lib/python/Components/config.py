@@ -446,12 +446,13 @@ class descriptionsList(choicesList):
 
 # This is the control, and base class, for triggering action settings.
 #
-# class ConfigAction(ConfigElement):
-# 	def __init__(self, action, *args):
-# 		ConfigElement.__init__(self)
-# 		self.value = "(OK)"
-# 		self.action = action
-# 		self.actionargs = args
+
+class ConfigAction(ConfigElement):
+	def __init__(self, action, *args):
+		ConfigElement.__init__(self)
+		self.value = "(OK)"
+		self.action = action
+		self.actionargs = args
 #
 # 	def handleKey(self, key):
 # 		if (key == ACTIONKEY_SELECT):
