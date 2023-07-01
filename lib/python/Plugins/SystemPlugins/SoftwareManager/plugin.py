@@ -89,6 +89,9 @@ class ImageBackup(ImageBackup):
 
 class RestoreMenu(RestoreMenu):
     pass
+    
+class FlashOnline(FlashOnline):
+    pass
 
 
 class SoftwareManagerSetup(Setup):
