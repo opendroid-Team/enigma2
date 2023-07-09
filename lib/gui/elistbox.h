@@ -77,7 +77,7 @@ struct eListboxStyleSetted
 	bool overlay : 1;
 	bool max_rows : 1;
 	bool max_columns : 1;
-	bool use_vti_workaround : 1;
+	bool use_opd_workaround : 1;
 };
 
 struct eListboxStyle
