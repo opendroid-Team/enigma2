@@ -429,8 +429,8 @@ class SecondInfoBar(Screen):
 
 	def __Show(self):
 		if config.plisettings.ColouredButtons.value:
-			self["key_yellow"].setText(_("Extensions"))
-		self["key_red"].setText(_("EPG"))
+			self["key_yellow"].setText(_("Search"))
+		self["key_red"].setText(_("Similar"))
 		self["key_blue"].setText(_("Blue Panel"))
 		self["SecondInfoBar"].doBind()
 		self.getEvent()
@@ -1074,7 +1074,7 @@ class NumberZap(Screen):
 
 	def handleServiceName(self):
 		if self.searchNumber:
-			self.service, self.bouquet = self.searchNumber(int(self["number"].getText()))
+			self.service, self.bouquet = self.searchNumber(int(self["number"].getText()), recursive=True)
 			self["servicename"].setText(ServiceReference(self.service).getServiceName())
 			if not self.startBouquet:
 				self.startBouquet = self.bouquet
@@ -3098,7 +3098,7 @@ class InfoBarExtensions:
 		self.list = []
 
 		if config.plisettings.ColouredButtons.value:
-			self["InstantExtensionsActions"] = HelpableActionMap(self, "InfobarExtensions",{
+			self["InstantExtensionsActions"] = HelpableActionMap(self, "InfobarExtensions", {
 				"showPluginBrowser": (self.showPluginBrowser, _("Show the plugin browser..")),
 				"showEventInfo": (self.SelectopenEventView, _("Show the information on current event.")),
 				"openTimerList": (self.showTimerList, _("Show the list of timers.")),
@@ -3109,7 +3109,7 @@ class InfoBarExtensions:
 				"openDreamPlex": (self.showDreamPlex, _("Show the DreamPlex player...")),
 			}, prio=1, description=_("Extension Actions")) # lower priority
 		else:
-			self["InstantExtensionsActions"] = HelpableActionMap(self, "InfobarExtensions",{
+			self["InstantExtensionsActions"] = HelpableActionMap(self, "InfobarExtensions", {
 				"showPluginBrowser": (self.showPluginBrowser, _("Show the plugin browser..")),
 				"showDreamPlex": (self.showDreamPlex, _("Show the DreamPlex player...")),
 				"showEventInfo": (self.SelectopenEventView, _("Show the information on current event.")),
@@ -3709,10 +3709,15 @@ class InfoBarInstantRecord:
 		if isinstance(serviceref, eServiceReference):
 			serviceref = ServiceReference(serviceref)
 
+		if not limitEvent:
+			end = begin + (60 * 60 * 24)  # 24h
+
 		recording = RecordTimerEntry(serviceref, begin, end, info["name"], info["description"], info["eventid"], afterEvent=AFTEREVENT.AUTO, justplay=False, always_zap=False, dirname=preferredInstantRecordPath())
 		recording.marginBefore = 0
-		recording.marginAfter = 0
 		recording.dontSave = True
+		recording.eventBegin = recording.begin
+		recording.marginAfter = (config.recording.margin_after.value * 60) if event and limitEvent else 0
+		recording.eventEnd = recording.end - recording.marginAfter
 
 		if event is None or limitEvent == False:
 			recording.autoincrease = True
@@ -3842,12 +3847,14 @@ class InfoBarInstantRecord:
 			dlg.setTitle(_("Please change recording endtime"))
 
 	def TimeDateInputClosed(self, ret):
-		if len(ret) > 1:
-			if ret[0]:
-				if self.recording[self.selectedEntry].end != ret[1]:
-					self.recording[self.selectedEntry].autoincrease = False
-				self.recording[self.selectedEntry].end = ret[1]
-				self.session.nav.RecordTimer.timeChanged(self.recording[self.selectedEntry])
+		if len(ret) > 1 and ret[0]:
+			print("stop recording at %s " % strftime("%F %T", localtime(ret[1])))
+			entry = self.recording[self.selectedEntry]
+			if entry.end != ret[1]:
+				entry.autoincrease = False
+			entry.end = ret[1]
+			entry.eventEnd = entry.end
+			self.session.nav.RecordTimer.timeChanged(self.recording[self.selectedEntry])
 
 	def changeDuration(self, entry):
 		if entry is not None and entry >= 0:
@@ -3855,9 +3862,9 @@ class InfoBarInstantRecord:
 			self.session.openWithCallback(self.inputCallback, InputBox, title=_("How many minutes do you want to record?"), text="5  ", maxSize=True, type=Input.NUMBER)
 
 	def inputCallback(self, value):
-#		print "stopping recording after", int(value), "minutes."
 		entry = self.recording[self.selectedEntry]
 		if value is not None:
+			print("stop recording after %s minutes." % int(value))
 			value = value.replace(" ", "")
 			if value == "":
 				value = "0"
@@ -3889,8 +3896,7 @@ class InfoBarInstantRecord:
 		if not findSafeRecordPath(pirr) and not findSafeRecordPath(defaultMoviePath()):
 			if not pirr:
 				pirr = ""
-			self.session.open(MessageBox, _("Missing ") + "\n" + pirr +
-						 "\n" + _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
+			self.session.open(MessageBox, "%s\n%s\n%s" % (_("Missing "), pirr, _("No HDD found or HDD not initialized!")), MessageBox.TYPE_ERROR)
 			return
 
 		if isStandardInfoBar(self):
@@ -4108,9 +4114,9 @@ class InfoBarSubserviceSelection:
 				self.bsel = self.session.openWithCallback(self.bouquetSelClosed, BouquetSelector, self.bouquets, self.addSubserviceToBouquet)
 			elif cnt == 1:
 				self.addSubserviceToBouquet(self.bouquets[0][1])
-				self.session.open(MessageBox, _("Service has been added to the favourites."), MessageBox.TYPE_INFO, timeout=5)
+				self.session.open(MessageBox, _("Service has been added to the favorites."), MessageBox.TYPE_INFO, timeout=5)
 		else:
-			self.session.open(MessageBox, _("Service cant been added to the favourites."), MessageBox.TYPE_INFO, timeout=5)
+			self.session.open(MessageBox, _("Service cant been added to the favorites."), MessageBox.TYPE_INFO, timeout=5)
 
 	def bouquetSelClosed(self, confirmed):
 		self.bouquets = self.bsel = self.selectedSubservice = None
@@ -4307,12 +4313,14 @@ class InfoBarResolutionSelection:
 		pass
 
 	def resolutionSelection(self):
-		xRes = int(fileReadLine("/proc/stb/vmpeg/0/xres", 0, source=MODULE_NAME), 16)
-		yRes = int(fileReadLine("/proc/stb/vmpeg/0/yres", 0, source=MODULE_NAME), 16)
-		if BoxInfo.getItem("model").startswith('azbox'):
-			fps = 50.0
-		else:
-			fps = float(fileReadLine("/proc/stb/vmpeg/0/framerate", 50000, source=MODULE_NAME)) / 1000.0
+		amlogic = BoxInfo.getItem("AmlogicFamily")
+		base = 10 if amlogic else 16
+		file = "/sys/class/video/frame_width" if amlogic else "/proc/stb/vmpeg/0/xres"
+		xRes = int(fileReadLine(file, 0, source=MODULE_NAME), base)
+		file = "/sys/class/video/frame_height" if amlogic else "/proc/stb/vmpeg/0/yres"
+		yRes = int(fileReadLine(file, 0, source=MODULE_NAME), base)
+		file = "/proc/stb/vmpeg/0/frame_rate" if amlogic else "/proc/stb/vmpeg/0/framerate"
+		fps = float(fileReadLine(file, default=50000, source=MODULE_NAME)) / 1000.0
 		resList = []
 		resList.append((_("Exit"), "exit"))
 		resList.append((_("Auto(not available)"), "auto"))
@@ -4329,7 +4337,8 @@ class InfoBarResolutionSelection:
 				if videoMode[-1].isdigit():
 					video = "%sHz" % videoMode
 				resList.append((video, videoMode))
-		videoMode = fileReadLine("/proc/stb/video/videomode", "Unknown", source=MODULE_NAME)
+		file = "/sys/class/display/mode" if amlogic else "/proc/stb/video/videomode"
+		videoMode = fileReadLine(file, default="Unknown", source=MODULE_NAME)
 		keys = ["green", "yellow", "blue", "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 		selection = 0
 		for item in range(len(resList)):
@@ -4345,10 +4354,11 @@ class InfoBarResolutionSelection:
 				if videoMode[1] == "exit" or videoMode[1] == "" or videoMode[1] == "auto":
 					self.ExGreen_toggleGreen()
 				if videoMode[1] != "auto":
-					if fileWriteLine("/proc/stb/video/videomode", videoMode[1], source=MODULE_NAME):
-						print("[InfoBarGenerics] New video mode is %s." % videoMode[1])
+					file = "/sys/class/display/mode" if BoxInfo.getItem("AmlogicFamily") else "/proc/stb/video/videomode"
+					if fileWriteLine(file, videoMode[1], source=MODULE_NAME):
+						print("[InfoBarGenerics] New video mode is '%s'." % videoMode[1])
 					else:
-						print("[InfoBarGenerics] Error: Unable to set new video mode of %s!" % videoMode[1])
+						print("[InfoBarGenerics] Error: Unable to set new video mode of '%s'!" % videoMode[1])
 					# from enigma import gMainDC
 					# gMainDC.getInstance().setResolution(-1, -1)
 					self.ExGreen_doHide()

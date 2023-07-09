@@ -13,8 +13,8 @@ to generate HTML."""
 
 	# NOTE: The calling arguments enableWraparound, item_height and fonts are not
 	# used but remain here so that calling code does not need to be modified.
-	# The enableWrapAround function is correctly handles by the C++ code and the 
-	# use of the enableWrapAround="1" attribute in the skin. Similarly the 
+	# The enableWrapAround function is correctly handled by the C++ code and the
+	# use of the enableWrapAround="1" attribute in the skin. Similarly the
 	# itemHeight and font specifications are handled by the skin.
 	#
 	def __init__(self, list=None, enableWrapAround=None, item_height=0, fonts=None):
@@ -213,7 +213,7 @@ to generate HTML."""
 		except AttributeError:
 			return
 
-	# These hacks protect code that was modified to use the previous up/down hack!
+	# These hacks protect code that was modified to use the previous up/down hack!   This methods should be found and removed from all code.
 	#
 	def selectPrevious(self):
 		self.goLineUp()
@@ -221,7 +221,7 @@ to generate HTML."""
 	def selectNext(self):
 		self.goLineDown()
 
-	# Old navigation method names.
+	# Old method names. This methods should be found and removed from all code.
 	#
 	def getSelectedIndex(self):
 		return self.getCurrentIndex()

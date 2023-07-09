@@ -60,14 +60,14 @@ class PluginComponent:
 						plugin = my_import(".".join(["Plugins", pluginDirectory, pluginName, "plugin"]))
 						plugins = plugin.Plugins(path=path)
 					except Exception as err:
-						print("[PluginComponent] Error: Plugin '%s/%s' failed to load!  (%s)" % (pluginDirectory, pluginName, str(err)))
-						for filename in ("plugin.py", "plugin.pyc", "plugin.pyo"):  # Suppress errors due to missing plugin.py* files (badly removed plugin).
-							if exists(join(path, filename)):
-								self.pluginWarnings.append(("%s/%s" % (pluginDirectory, pluginName), str(err)))
-								print_exc()
-								break
-						else:
-							if not pluginName == "WebInterface":
+						if pluginName != "WebInterface":  # Ignore old WebInterface plugin
+							print("[PluginComponent] Error: Plugin '%s/%s' failed to load!  (%s)" % (pluginDirectory, pluginName, str(err)))
+							for filename in ("plugin.py", "plugin.pyc"):  # Suppress errors due to missing plugin.py* files (badly removed plugin).
+								if exists(join(path, filename)):
+									self.pluginWarnings.append(("%s/%s" % (pluginDirectory, pluginName), str(err)))
+									print_exc()
+									break
+							else:
 								print("[PluginComponent] Plugin probably removed, but not cleanly, in '%s'; trying to remove it." % path)
 								try:
 									rmtree(path)
@@ -146,7 +146,7 @@ class PluginComponent:
 		return self.pluginWarnings
 
 	warnings = property(getWarnings)
-	
+
 	def resetWarnings(self):
 		self.pluginWarnings = []
 

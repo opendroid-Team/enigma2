@@ -56,13 +56,12 @@ config.ParentalControl.type = ConfigSelection(default="blacklist", choices=[(LIS
 
 class ParentalControl:
 	def __init__(self):
-		#Do not call open on init, because bouquets are not ready at that moment
+		# Do not call open on __init__, because bouquets are not ready at that moment!
 		self.filesOpened = False
 		self.PinDlg = None
-		#This is the timer that is used to see, if the time for caching the pin is over
-		#Of course we could also work without a timer and compare the times every
-		#time we call isServicePlayable. But this might probably slow down zapping,
-		#That's why I decided to use a timer
+		# This is the timer that is used to see, if the time for caching the PIN is over. Of course we could
+		# also work without a timer and compare the times every time we call isServicePlayable. But this might
+		# probably slow down zapping, that's why I decided to use a timer.
 		self.sessionPinTimer = eTimer()
 		self.sessionPinTimer.callback.append(self.resetSessionPin)
 		self.getConfigValues()
@@ -74,11 +73,12 @@ class ParentalControl:
 				return getattr(self, name)
 		raise AttributeError(name)
 
+	# This method is used to call all functions that need a service as Parameter.
+	# It takes either a Service-Reference or a Bouquet-Reference and passes either
+	# the service or all services contained in the bouquet to the method given. That
+	# way all other functions do not need to distinguish between service and bouquet.
+	#
 	def serviceMethodWrapper(self, service, method, *args):
-		#This method is used to call all functions that need a service as Parameter:
-		#It takes either a Service- Reference or a Bouquet- Reference and passes
-		#Either the service or all services contained in the bouquet to the method given
-		#That way all other functions do not need to distinguish between service and bouquet.
 		if "FROM BOUQUET" in service:
 			method(service, TYPE_BOUQUET, *args)
 			servicelist = self.readServicesFromBouquet(service, "C")
@@ -94,8 +94,8 @@ class ParentalControl:
 		self.session = session
 		if not config.ParentalControl.servicepinactive.value:
 			return True
-		#Check if configuration has already been read or if the significant values have changed.
-		#If true: read the configuration
+		# Check if configuration has already been read or if the significant values have changed.
+		# If true:, read the configuration.
 		if self.storeServicePin != config.ParentalControl.storeservicepin.value:
 			self.getConfigValues()
 		service = ref.toCompareString()
@@ -138,8 +138,7 @@ class ParentalControl:
 	def getProtectionLevel(self, service):
 		return service not in self.blacklist and -1 or 0
 
-	def getConfigValues(self):
-		#Read all values from configuration
+	def getConfigValues(self):  # Read all values from the configuration.
 		self.checkPinInterval = False
 		self.checkPinIntervalCancel = False
 		self.checkSessionPin = False
@@ -160,8 +159,7 @@ class ParentalControl:
 	def standbyCounterCallback(self, configElement):
 		self.resetSessionPin()
 
-	def resetSessionPin(self):
-		#Reset the session pin, stop the timer
+	def resetSessionPin(self):  # Reset the session PIN, stop the timer.
 		self.sessionPinCached = False
 		self.hideBlacklist()
 
@@ -183,8 +181,7 @@ class ParentalControl:
 			self.setSessionPinCached()
 			self.hideBlacklist()
 			self.callback(ref=service)
-		else:
-			#This is the new function of caching cancelling of service pin
+		else:  # This is the new function of caching canceling of service PIN.
 			if result is not None:
 				messageText = _("The PIN code entered is incorrect!")
 				if self.session:
@@ -192,6 +189,9 @@ class ParentalControl:
 				else:
 					AddPopup(messageText, MessageBox.TYPE_ERROR, timeout=3)
 
+	# Replaces saveWhiteList and saveBlackList. (I don't like
+	# to have two functions with identical code.)
+	#
 	def saveListToFile(self, sWhichList, vList):
 		lines = []
 		for sService, sType in vList.items():
@@ -203,6 +203,9 @@ class ParentalControl:
 			lines.append("")
 		fileWriteLines(resolveFilename(SCOPE_CONFIG, sWhichList), "\n".join(lines), source=MODULE_NAME)
 
+	# Replaces openWhiteList and openBlackList. (I don't like
+	# to have two functions with identical code.)
+	#
 	def openListFromFile(self, sWhichList):
 		result = {}
 		lines = fileReadLines(resolveFilename(SCOPE_CONFIG, sWhichList), default=[], source=MODULE_NAME)
@@ -210,6 +213,9 @@ class ParentalControl:
 			self.serviceMethodWrapper(line.strip(), self.addServiceToList, result)
 		return result
 
+	# Replaces addWhitelistService and addBlacklistService. The lists are not only lists of service references
+	# any more, they are named lists with the service as key and an array of types as value:
+	#
 	def addServiceToList(self, service, type, vList):
 		if service in vList:
 			if not type in vList[service]:
@@ -217,15 +223,14 @@ class ParentalControl:
 		else:
 			vList[service] = [type]
 
-	def removeServiceFromList(self, service, type, vList):
-		#Replaces deleteWhitelistService and deleteBlacklistService
+	def removeServiceFromList(self, service, type, vList):  # Replaces deleteWhitelistService and deleteBlacklistService.
 		if service in vList:
 			if type in vList[service]:
 				vList[service].remove(type)
 			if not vList[service]:
 				del vList[service]
 
-	def readServicesFromBouquet(self, sBouquetSelection, formatstring):
+	def readServicesFromBouquet(self, sBouquetSelection, formatstring):  # This method gives back a list of services for a given bouquet.
 		serviceHandler = eServiceCenter.getInstance()
 		root = eServiceReference(sBouquetSelection)
 		serviceList = serviceHandler.list(root)
@@ -238,8 +243,7 @@ class ParentalControl:
 	def open(self):
 		self.blacklist = self.openListFromFile(LIST_BLACKLIST)
 		self.hideBlacklist()
-		if not self.filesOpened:
-			# Reset PIN cache on standby: Use StandbyCounter- Config- Callback
+		if not self.filesOpened:  # Reset PIN cache on standby. Use StandbyCounter-Config-Callback.
 			config.misc.standbyCounter.addNotifier(self.standbyCounterCallback, initial_call=False)
 			self.filesOpened = True
 			refreshServiceList()
@@ -255,5 +259,6 @@ class ParentalControl:
 					if TYPE_BOUQUET not in ref:
 						eDVBDB.getInstance().removeFlag(eServiceReference(ref), 2)
 			refreshServiceList()
+
 
 parentalControl = ParentalControl()

@@ -539,33 +539,6 @@
 		<key id="KEY_BLUE" mapto="nothingconnected" flags="b" />
 	</map>
 
-	<map context="InfobarChannelSelection">
-		<key id="KEY_LEFT" mapto="LeftPressed" flags="b" />
-		<key id="KEY_RIGHT" mapto="RightPressed" flags="b" />
-		<key id="KEY_UP" mapto="switchChannelUp" flags="m" />
-		<key id="KEY_DOWN" mapto="switchChannelDown" flags="m" />
-		<!--
-		<key id="KEY_UP" mapto="switchChannelUpLong" flags="l" />
-		<key id="KEY_DOWN" mapto="switchChannelDownLong" flags="l" />
-		-->
-		<key id="KEY_PREVIOUS" mapto="historyBack" flags="mr" />
-		<key id="KEY_NEXT" mapto="historyNext" flags="mr" />
-		<key id="KEY_BACK" mapto="historyBack" flags="b" />
-		<key id="KEY_FORWARD" mapto="historyNext" flags="mr" />
-		<key id="KEY_ARCHIVE" mapto="historyBack" flags="b" />
-		<key id="KEY_CHANNELUP" mapto="ChannelPlusPressed" flags="b" />
-		<key id="KEY_CHANNELDOWN" mapto="ChannelMinusPressed" flags="b" />
-		<!--
-		<key id="KEY_CHANNELUP" mapto="ChannelPlusPressedLong" flags="l" />
-		<key id="KEY_CHANNELDOWN" mapto="ChannelMinusPressedLong" flags="l" />
-		-->
-		<key id="BTN_0" mapto="zapUp" flags="mr" />
-		<key id="BTN_1" mapto="zapDown" flags="mr" />
-		<!--
-		<key id="KEY_SAT" mapto="openSatellites" flags="m" />
-		-->
-	</map>
-
 	<map context="InfobarHDMIActions">
 		<key id="KEY_AUX" mapto="HDMIin" flags="b" />
 		<key id="KEY_AUX" mapto="HDMIinLong" flags="l" />
@@ -671,6 +644,12 @@
 		<key id="KEY_F6" mapto="showBoxPortal" flags="b" />
 	</map>
 
+	<map context="InfobarAspectSelectionActions">
+		<key id="KEY_GREEN" mapto="aspectSelection" flags="l" />
+		<key id="KEY_MODE" mapto="aspectSelection" flags="l" />
+		<key id="KEY_MODE" mapto="aspectSelection" flags="b" />
+	</map>
+
 	<map context="InfobarAudioSelectionActions">
 		<key id="KEY_YELLOW" mapto="yellow_key" flags="b" />
 		<key id="KEY_YELLOW" mapto="yellow_key" flags="l" />
@@ -679,11 +658,33 @@
 		<key id="KEY_OPTION" mapto="audioSelection" flags="b" />
 	</map>
 
-	<map context="InfobarAspectSelectionActions">
-		<key id="KEY_GREEN" mapto="aspectSelection" flags="l" />
-		<key id="KEY_MODE" mapto="aspectSelection" flags="l" />
-		<key id="KEY_MODE" mapto="aspectSelection" flags="b" />
+	<map context="InfobarChannelSelection">
+		<key id="KEY_LEFT" mapto="LeftPressed" flags="b" />
+		<key id="KEY_RIGHT" mapto="RightPressed" flags="b" />
+		<key id="KEY_UP" mapto="switchChannelUp" flags="m" />
+		<key id="KEY_DOWN" mapto="switchChannelDown" flags="m" />
+		<!--
+		<key id="KEY_UP" mapto="switchChannelUpLong" flags="l" />
+		<key id="KEY_DOWN" mapto="switchChannelDownLong" flags="l" />
+		-->
+		<key id="KEY_PREVIOUS" mapto="historyBack" flags="mr" />
+		<key id="KEY_NEXT" mapto="historyNext" flags="mr" />
+		<key id="KEY_BACK" mapto="historyBack" flags="b" />
+		<key id="KEY_FORWARD" mapto="historyNext" flags="mr" />
+		<key id="KEY_ARCHIVE" mapto="historyBack" flags="b" />
+		<key id="KEY_CHANNELUP" mapto="ChannelPlusPressed" flags="b" />
+		<key id="KEY_CHANNELDOWN" mapto="ChannelMinusPressed" flags="b" />
+		<!--
+		<key id="KEY_CHANNELUP" mapto="ChannelPlusPressedLong" flags="l" />
+		<key id="KEY_CHANNELDOWN" mapto="ChannelMinusPressedLong" flags="l" />
+		-->
+		<key id="BTN_0" mapto="zapUp" flags="mr" />
+		<key id="BTN_1" mapto="zapDown" flags="mr" />
+		<!--
+		<key id="KEY_SAT" mapto="openSatellites" flags="m" />
+		-->
 	</map>
+
 
 	<map context="InfobarSubtitleSelectionActions">
 		<key id="KEY_SUBTITLE" mapto="subtitleSelection" flags="b" />
