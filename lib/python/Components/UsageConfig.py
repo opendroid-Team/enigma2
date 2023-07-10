@@ -1394,6 +1394,7 @@ def InitUsageConfig():
 	config.crash.debugEPG = ConfigYesNo(default=False)
 	config.crash.debugDVBScan = ConfigYesNo(default=False)
 	config.crash.debugTimers = ConfigYesNo(default=False)
+	config.crash.debugInternational = ConfigYesNo(default=False)
 	config.crash.debugloglimit = ConfigSelectionNumber(min=1, max=10, stepwidth=1, default=4, wraparound=True)
 	config.crash.daysloglimit = ConfigSelectionNumber(min=1, max=30, stepwidth=1, default=8, wraparound=True)
 	config.crash.sizeloglimit = ConfigSelectionNumber(min=1, max=250, stepwidth=1, default=10, wraparound=True)
