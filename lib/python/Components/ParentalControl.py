@@ -44,8 +44,8 @@ config.ParentalControl.config_sections.plugin_browser = ConfigYesNo(default=Fals
 config.ParentalControl.config_sections.standby_menu = ConfigYesNo(default=False)
 config.ParentalControl.config_sections.movie_list = ConfigYesNo(default=False)
 config.ParentalControl.config_sections.context_menus = ConfigYesNo(default=False)
-# config.ParentalControl.config_sections.infopanel = ConfigYesNo(default=False)
-config.ParentalControl.config_sections.quickmenu = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.opd_panel = ConfigYesNo(default=False)
+config.ParentalControl.config_sections.bluePanel= ConfigYesNo(default=False)
 config.ParentalControl.config_sections.software_update = ConfigYesNo(default=False)
 # Added for backwards compatibility with some 3rd party plugins that depend on this configuration.
 config.ParentalControl.servicepinactive = config.ParentalControl.configured
