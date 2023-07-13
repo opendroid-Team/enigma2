@@ -12,7 +12,7 @@ self.selectKey("OK")
 			<text value="Use the up/down keys on your remote control to select an option. After that, press OK." />
 			<displaytext value="Use the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
-				<listentry caption="Use the wizard to set up basic features" step="nima" />
+				<listentry caption="Use the wizard to set up basic features" step="network" />
 				<listentry caption="Exit the wizard" step="end" />
 			</list>
 			<code>
@@ -45,7 +45,7 @@ self.selectKey("OK")
 		</step>
 		<step id="networkfailed" >
 			<condition>
-self.condition = not config.misc.installwizard.ipkgloaded.value
+self.condition = not config.misc.installwizard.opkgloaded.value
 			</condition>
 			<text value="Your %s %s does not have an internet connection" />
 			<displaytext value="Your %s %s is not connected to the internet" />
@@ -73,6 +73,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimb">
 			<condition>
 from Components.NimManager import nimmanager
@@ -87,6 +88,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimc">
 			<condition>
 from Components.NimManager import nimmanager
@@ -102,6 +104,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimd">
 			<condition>
 from Components.NimManager import nimmanager
@@ -117,6 +120,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nime">
 			<condition>
 from Components.NimManager import nimmanager
@@ -145,6 +149,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimg">
 			<condition>
 from Components.NimManager import nimmanager
@@ -159,6 +164,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimh">
 			<condition>
 from Components.NimManager import nimmanager
@@ -173,6 +179,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimi">
 			<condition>
 from Components.NimManager import nimmanager
@@ -187,6 +194,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimj">
 			<condition>
 from Components.NimManager import nimmanager
@@ -247,7 +255,7 @@ self.selectKey("RIGHT")
 		<step id="channels">
 			<condition>
 from Components.NimManager import nimmanager
-self.condition = nimmanager.somethingConnected() and config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = nimmanager.somethingConnected() and nimmanager.hasNimType("DVB-S")
 			</condition>
 			<text value="Do you want to install a channel list?" />
 			<displaytext value="Do you want to install a channel list?" />
@@ -266,9 +274,6 @@ self.selectKey("RIGHT")
 from Components.NimManager import nimmanager
 self.condition = nimmanager.somethingConnected() and not config.misc.installwizard.channellistdownloaded.value
 			</condition>
-			<code>
-self.hideRc()
-			</code>
 			<list>
 				<listentry caption="No, scan later manually" step="plugins" />
 				<listentry caption="Yes, do an automatic scan now" step="scan" />
@@ -356,18 +361,18 @@ config.ParentalControl.setuppin.save()
 -->
 		<step id="plugins" nextstep="skins">
 			<condition>
-self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.opkgloaded.value
 			</condition>
-			<text value="Plugin install" />
-			<config screen="InstallWizard" module="InstallWizard" args="2" type="ConfigList" />
+			<text value="Plugin install"/>
+			<config screen="InstallWizard" module="InstallWizard" args="2" type="ConfigList"/>
 			<code>
 self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-		<step id="skins">
+		<step id="skins" nextstep="NetworkPassword">
 			<condition>
-self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.opkgloaded.value
 			</condition>
 			<text value="Skin install" />
 			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
@@ -376,6 +381,33 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
+		<step id="NetworkPassword" nextstep="timezone">
+			<condition>
+self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.opkgloaded.value
+			</condition>
+			<text value="Password setup" />
+			<config screen="InstallWizard" module="InstallWizard" args="4" type="ConfigList" />
+			<code>
+self.clearSelectedKeys()
+self.selectKey("OK")
+			</code>
+		</step>
+		<step id="timezone">
+			<text value="Please set your time options.\n\nPress YELLOW to set the time zone via geolocation."/>
+			<displaytext value="Please set your time options"/>
+			<config screen="Time" module="Time" type="ConfigList"/>
+			<code>
+self.clearSelectedKeys()
+self.selectKey("LEFT")
+self.selectKey("RIGHT")
+self.selectKey("YELLOW")
+self["key_yellow"].text = _("Use Geolocation")
+			</code>
+			<code pos="after">
+self["key_yellow"].text = ""
+			</code>
+		</step>
+
 		<step id="end" laststep="true">
 			<condition>
 self.condition = self.isLastWizard

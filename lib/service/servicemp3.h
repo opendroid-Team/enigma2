@@ -18,7 +18,7 @@ class eServiceFactoryMP3: public iServiceHandler
 public:
 	eServiceFactoryMP3();
 	virtual ~eServiceFactoryMP3();
-	enum { id = 0x1001 };
+	enum { id = eServiceReference::idServiceMP3 };
 
 		// iServiceHandler
 	RESULT play(const eServiceReference &, ePtr<iPlayableService> &ptr);
@@ -73,9 +73,7 @@ class eServiceMP3InfoContainer: public iServiceInfoContainer
 
 	unsigned char *bufferData;
 	unsigned int bufferSize;
-#if GST_VERSION_MAJOR >= 1
 	GstMapInfo map;
-#endif
 
 public:
 	eServiceMP3InfoContainer();
@@ -117,9 +115,9 @@ public:
 
 typedef struct _GstElement GstElement;
 
-typedef enum { atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC, atWMA } audiotype_t;
+typedef enum { atUnknown, atMPEG, atMP3, atAC3, atDTS, atAAC, atPCM, atOGG, atFLAC, atWMA, atDRA } audiotype_t;
 typedef enum { stUnknown, stPlainText, stSSA, stASS, stSRT, stVOB, stPGS } subtype_t;
-typedef enum { ctNone, ctMPEGTS, ctMPEGPS, ctMKV, ctAVI, ctMP4, ctVCD, ctCDA, ctASF, ctOGG, ctWEBM } containertype_t;
+typedef enum { ctNone, ctMPEGTS, ctMPEGPS, ctMKV, ctAVI, ctMP4, ctVCD, ctCDA, ctASF, ctOGG, ctWEBM, ctDRA } containertype_t;
 
 class eServiceMP3: public iPlayableService, public iPauseableService,
 	public iServiceInformation, public iSeekableService, public iAudioTrackSelection, public iAudioChannelSelection,
@@ -144,6 +142,7 @@ public:
 	RESULT subtitle(ePtr<iSubtitleOutput> &ptr);
 	RESULT audioDelay(ePtr<iAudioDelay> &ptr);
 	RESULT cueSheet(ePtr<iCueSheet> &ptr);
+	RESULT tap(ePtr<iTapService> &ptr) { ptr = 0; return -1; };
 
 		// not implemented (yet)
 	RESULT setTarget(int target, bool noaudio = false) { return -1; }
@@ -210,11 +209,6 @@ public:
 	int getPCMDelay();
 	void setAC3Delay(int);
 	void setPCMDelay(int);
-
-#if HAVE_AMLOGIC
-	void AmlSwitchAudio(int index);
-	unsigned int get_pts_pcrscr(void);
-#endif
 
 	struct audioStream
 	{
@@ -316,7 +310,6 @@ private:
 	bool m_cuesheet_loaded;
 	bool m_audiosink_not_running;
 	/* servicemMP3 chapter TOC support CVR */
-#if GST_VERSION_MAJOR >= 1
 	bool m_use_chapter_entries;
 	/* last used seek position gst-1 only */
 	gint64 m_last_seek_pos;
@@ -326,7 +319,6 @@ private:
 	gint m_last_seek_count;
 	bool m_seeking_or_paused;
 	bool m_to_paused;
-#endif
 	bufferInfo m_bufferInfo;
 	errorInfo m_errorInfo;
 	std::string m_download_buffer_path;
@@ -337,8 +329,10 @@ private:
 		stIdle, stRunning, stStopped,
 	};
 	int m_state;
+	bool m_gstdot;
 	GstElement *m_gst_playbin;
 	GstTagList *m_stream_tags;
+	bool m_coverart;
 
 	eFixedMessagePump<ePtr<GstMessageContainer> > m_pump;
 
@@ -352,13 +346,9 @@ private:
 	GstPad* gstCreateSubtitleSink(eServiceMP3* _this, subtype_t type);
 	void gstPoll(ePtr<GstMessageContainer> const &);
 	static void playbinNotifySource(GObject *object, GParamSpec *unused, gpointer user_data);
-#if GST_VERSION_MAJOR < 1
-	static gint match_sinktype(GstElement *element, gpointer type);
-#else
 /* TOC processing CVR */
 	void HandleTocEntry(GstMessage *msg);
 	static gint match_sinktype(const GValue *velement, const gchar *type);
-#endif
 	static void handleElementAdded(GstBin *bin, GstElement *element, gpointer user_data);
 
 	struct subtitle_page_t
@@ -389,10 +379,11 @@ private:
 
 	RESULT seekToImpl(pts_t to);
 
-	gint m_aspect, m_width, m_height, m_framerate, m_progressive;
+	gint m_aspect, m_width, m_height, m_framerate, m_progressive, m_gamma;
 	std::string m_useragent;
 	std::string m_extra_headers;
 	RESULT trickSeek(gdouble ratio);
+	ePtr<iTSMPEGDecoder> m_decoder; // for showSinglePic when radio
 };
 
 #endif

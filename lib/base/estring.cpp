@@ -1,27 +1,121 @@
 #include <algorithm>
+#include <regex>
 #include <cctype>
 #include <climits>
 #include <string>
+#include <sstream>
+#include <map>
 #include <lib/base/eerror.h>
 #include <lib/base/encoding.h>
 #include <lib/base/estring.h>
 #include "freesatv2.h"
 #include "big5.h"
 #include "gb18030.h"
+#include <Python.h>
 
 std::string buildShortName( const std::string &str )
 {
 	std::string tmp;
-	static char stropen[3] = { char(0xc2), char(0x86), 0x00 };
-	static char strclose[3] = { char(0xc2), char(0x87), 0x00 };
-	size_t open=std::string::npos-1;
-	while ( (open = str.find(stropen, open+2)) != std::string::npos )
+	static char stropen[] = "\xc2\x86";
+	static char strclose[] = "\xc2\x87";
+	size_t open = std::string::npos-1;
+	while ((open = str.find(stropen, open+2)) != std::string::npos)
 	{
 		size_t close = str.find(strclose, open);
-		if ( close != std::string::npos )
-			tmp+=str.substr( open+2, close-(open+2) );
+		if (close != std::string::npos)
+			tmp += str.substr(open+2, close-(open+2));
 	}
 	return tmp.length() ? tmp : str;
+}
+
+void undoAbbreviation(std::string &str1, std::string &str2)
+{
+	std::string s1 = str1;
+	std::string s2 = str2;
+
+	// minimum length of ellipsis and emphasis brackets
+	if (s1.length() <= 5 || s2.length() <= 5)
+		return;
+
+	// check if string2 prefix has ellipsis abbreviation
+	if (s2.substr(0, 3) != "...")
+		return;
+
+	// check if string1 suffix has detected abbreviation
+	std::string suffix3 = s1.substr(s1.length() - 3);
+	std::string suffix5 = s1.substr(s1.length() - 5);
+
+	if (suffix3 == "...")
+	{
+		// found ellipsis abbreviation
+	}
+	else if (suffix3 == ":..")
+	{
+		// found colon ellipsis abbreviation
+		s1 = replace_all(s1, ":..", ": ...");
+	}
+	else if (suffix5 == "...\xc2\x87")
+	{
+		// ensure ellipsis occur after close emphasis brackets
+		// "Some <EM>string1 text...</EM>"
+		// "Some <EM>string1 text</EM>..."
+		s1 = replace_all(s1, "...\xc2\x87", "\xc2\x87...");
+	}
+	else if (suffix5 == ":..\xc2\x87")
+	{
+		// ensure colon ellipsis occur after close emphasis brackets
+		// "Some <EM>string1 text:..</EM>"
+		// "Some <EM>string1 text</EM>:..."
+		s1 = replace_all(s1, ":..\xc2\x87", "\xc2\x87: ...");
+	}
+	else
+		return;
+
+	// find the end of string1 punctuation in string2
+	size_t found = s2.find_first_of(".:!?", 4);
+	if (found == std::string::npos)
+		return;
+
+	// strip off the ellipsis and any leading/trailing space
+	if (s1.substr(s1.length() - 4, 1) == " ")
+	{
+		s1 = s1.substr(0, s1.length() - 4);
+	}
+	else
+	{
+		s1 = s1.substr(0, s1.length() - 3);
+	}
+
+	if (s2.substr(3, 1) == " ")
+	{
+		s2 = s2.substr(4);
+	}
+	else
+	{
+		s2 = s2.substr(3);
+	}
+
+	found = s2.find_first_of(".:!?");
+	// check if punctuation too complex
+	if (found <= 2)
+		return;
+
+	// construct the new string1 and string2
+	if ((s2.length() - found) > 2)
+	{
+		s1 = s1 + " " + s2.substr(0, found);
+		s2 = s2.erase(0, s2.find_first_not_of(" ", found + 1));
+
+	}
+	else
+		return;
+
+	// don't undo sanity check
+	if (s1 == "" || s2 == "")
+		return;
+
+	str1 = s1;
+	str2 = s2;
 }
 
 std::string getNum(int val, int sys)
@@ -233,6 +327,7 @@ static inline unsigned int doVideoTexSuppl(int c1, int c2)
 				case 0x45: return 274;				case 0x65: return 275;
 				case 0x49: return 298;				case 0x69: return 299;
 				case 0x4f: return 332;				case 0x6f: return 333;
+				default: return 0;
 			}
 		case 0xC6: // breve
 			switch (c2)
@@ -330,85 +425,63 @@ static inline unsigned int recode(unsigned char d, int cp)
 		return d;
 	switch (cp)
 	{
-	case 0:		// ISO6937
-		return iso6937[d-0xA0];
-	case 1:		// 8859-1 <-> unicode mapping
-		return d;
-	case 2:		// 8859-2 -> unicode mapping
-		return c88592[d-0xA0];
-	case 3:		// 8859-3 -> unicode mapping
-		return c88593[d-0xA0];
-	case 4:		// 8859-2 -> unicode mapping
-		return c88594[d-0xA0];
-	case 5:		// 8859-5 -> unicode mapping
-		return c88595[d-0xA0];
-	case 6:		// 8859-6 -> unicode mapping
-		return c88596[d-0xA0];
-	case 7:		// 8859-7 -> unicode mapping
-		return c88597[d-0xA0];
-	case 8:		// 8859-8 -> unicode mapping
-		return c88598[d-0xA0];
-	case 9:		// 8859-9 -> unicode mapping
-		return c88599[d-0xA0];
-	case 10:// 8859-10 -> unicode mapping
-		return c885910[d-0xA0];
-	case 11:// 8859-11 -> unicode mapping
-		return c885911[d-0xA0];
-/*	case 12:// 8859-12 -> unicode mapping  // reserved for indian use..
-		return c885912[d-0xA0];*/
-	case 13:// 8859-13 -> unicode mapping
-		return c885913[d-0xA0];
-	case 14:// 8859-14 -> unicode mapping
-		return c885914[d-0xA0];
-	case 15:// 8859-15 -> unicode mapping
-		return c885915[d-0xA0];
-	case 16:// 8859-16 -> unicode mapping
-		return c885916[d-0xA0];
-	default:
-		return d;
+	case 0:  return iso6937[d-0xA0]; // ISO6937
+	case 1:  return d;		 // 8859-1 -> unicode mapping
+	case 2:  return c88592[d-0xA0];  // 8859-2 -> unicode mapping
+	case 3:  return c88593[d-0xA0];  // 8859-3 -> unicode mapping
+	case 4:  return c88594[d-0xA0];  // 8859-2 -> unicode mapping
+	case 5:  return c88595[d-0xA0];  // 8859-5 -> unicode mapping
+	case 6:  return c88596[d-0xA0];  // 8859-6 -> unicode mapping
+	case 7:  return c88597[d-0xA0];  // 8859-7 -> unicode mapping
+	case 8:  return c88598[d-0xA0];  // 8859-8 -> unicode mapping
+	case 9:  return c88599[d-0xA0];  // 8859-9 -> unicode mapping
+	case 10: return c885910[d-0xA0]; // 8859-10 -> unicode mapping
+	case 11: return c885911[d-0xA0]; // 8859-11 -> unicode mapping
+//	case 12: return c885912[d-0xA0]; // 8859-12 -> unicode mapping  reserved for indian use..
+	case 13: return c885913[d-0xA0]; // 8859-13 -> unicode mapping
+	case 14: return c885914[d-0xA0]; // 8859-14 -> unicode mapping
+	case 15: return c885915[d-0xA0]; // 8859-15 -> unicode mapping
+	case 16: return c885916[d-0xA0]; // 8859-16 -> unicode mapping
+	default: return d;
 	}
 }
 
-int UnicodeToUTF8(long c, char *out, int max)
+std::string UnicodeToUTF8(long c)
 {
-	if (max > 0 && c < 0x80 ) {
-		*out = c;
-		return 1;
+	if ( c < 0x80 ) {
+		char utf[2] = {static_cast<char>(c), 0};
+		return std::string(utf, 1);
 	}
-	else if (max > 1 && c < 0x800) {
-		*(out++) = 0xc0 | (c >> 6);
-		*out     = 0x80 | (c & 0x3f);
-		return 2;
+	else if ( c < 0x800) {
+		char utf[3] = { static_cast<char>(0xc0 | (c >> 6)), static_cast<char>(0x80 | (c & 0x3f)), 0};
+		return std::string(utf, 2);
 	}
-	else if (max > 2 && c < 0x10000) {
-		*(out++) = 0xe0 | (c >> 12);
-		*(out++) = 0x80 | ((c >> 6) & 0x3f);
-		*out     = 0x80 | (c & 0x3f);
-		return 3;
+	else if ( c < 0x10000) {
+		char utf[4] = { static_cast<char>(0xe0 | (c >> 12)), static_cast<char>(0x80 | ((c >> 6) & 0x3f)),
+				static_cast<char>(0x80 | (c & 0x3f)), 0};
+		return std::string(utf, 3);
 	}
-	else if (max > 3 && c < 0x200000) {
-		*(out++) = 0xf0 | (c >> 18);
-		*(out++) = 0x80 | ((c >> 12) & 0x3f);
-		*(out++) = 0x80 | ((c >> 6) & 0x3f);
-		*out     = 0x80 | (c & 0x3f);
-		return 4;
+	else if ( c < 0x200000) {
+		char utf[5] = { static_cast<char>(0xf0 | (c >> 18)), static_cast<char>(0x80 | ((c >> 12) & 0x3f)),
+				static_cast<char>(0x80 | ((c >> 6) & 0x3f)), static_cast<char>(0x80 | (c & 0x3f)), 0};
+		return std::string(utf, 4);
 	}
-	eDebug("[UnicodeToUTF8] invalid unicode character or not enough space to convert: code=0x%08x, max=%d", c, max);
-	return 0; // not enough space to convert or not a valid unicode
+	eDebug("[UnicodeToUTF8] invalid unicode character: code=0x%08lx", c); // not a valid unicode
+	return "";
 }
 
 std::string GB18030ToUTF8(const char *szIn, int len, int *pconvertedLen)
 {
-	char szOut[len * 2];
+	std::string szOut = "";
 	unsigned long code = 0;
-	int t = 0, i;
+	int i;
 
 	for (i = 0; i < len;) {
 		int cl = 0;
 
 		cl = gb18030_mbtowc((ucs4_t*)(&code), (const unsigned char *)szIn + i, len - i);
 		if (cl > 0) {
-			t += UnicodeToUTF8(code, szOut + t, len*2 - t);
+			szOut += UnicodeToUTF8(code);
 			i += cl;
 		}
 		else
@@ -417,14 +490,14 @@ std::string GB18030ToUTF8(const char *szIn, int len, int *pconvertedLen)
 
 	if (pconvertedLen)
 		*pconvertedLen = i;
-	return std::string(szOut, t);
+	return szOut;
 }
 
 std::string Big5ToUTF8(const char *szIn, int len, int *pconvertedLen)
 {
-	char szOut[len * 2];
+	std::string szOut = "";
 	unsigned long code = 0;
-	int t = 0, i = 0;
+	int i = 0;
 
 	for (;i < len; i++) {
 		if (((unsigned char)szIn[i] > 0xA0) && (unsigned char)szIn[i] <= 0xF9 &&
@@ -432,19 +505,63 @@ std::string Big5ToUTF8(const char *szIn, int len, int *pconvertedLen)
 			  (((unsigned char)szIn[i+1] >  0xA0) && ((unsigned char)szIn[i+1] < 0xFF))
 			) ) {
 			big5_mbtowc((ucs4_t*)(&code), (const unsigned char *)szIn + i, 2);
-			t += UnicodeToUTF8(code, szOut + t, len*2 - t);
+			szOut += UnicodeToUTF8(code);
 			i++;
 		}
 		else
-			szOut[t++] = szIn[i];
+			szOut += szIn[i];
 	}
-
-        if (i < len && szIn[i] && ((unsigned char)szIn[i] < 0xA0 || (unsigned char)szIn[i] > 0xF9))
-		szOut[t++] = szIn[i++];
 
 	if (pconvertedLen)
 		*pconvertedLen = i;
-	return std::string(szOut, t);
+	return szOut;
+}
+
+std::string GEOSTD8ToUTF8(const char *szIn, int len, int *pconvertedLen)
+{
+	// Each GEOSTD8 char is pair formed by prefix (0x10) and char <0xA0;0xFF> except 0xC6,<0xC8;0xCC>,0xCE,0xCF
+	// But in most cases is broadcasted without prefix due save space
+	// Conversion to UTF8 is then made without 0x10 prefixes
+
+	std::string szOut = "";
+	std::string prefix1 = "\xE1\x82";
+	std::string prefix2 = "\xE1\x83";
+
+	int i = 0;
+	int j = 0;
+
+	for (;i < len; i++)
+	{
+		// Drop 0x10 prefix, if exists
+		if ((unsigned char)szIn[i] == 0x10)
+			continue;
+		// no GEOSTD8 chars. drop it
+		if (((unsigned char)szIn[i] >= 0x80 && (unsigned char)szIn[i] < 0xA0) ||
+			(unsigned char)szIn[i] == 0xC6 ||
+			((unsigned char)szIn[i] >= 0xC8 && (unsigned char)szIn[i] <= 0xCC) ||
+			(unsigned char)szIn[i] == 0xCE || (unsigned char)szIn[i] == 0xCF)
+			continue;
+
+		if ((unsigned char)szIn[i] >= 0xA0 && (unsigned char)szIn[i] < 0xC0)
+		{
+			szOut += prefix1; j=j+2;
+			szOut += szIn[i]; j++;
+		}
+		else if ((unsigned char)szIn[i] >= 0xC0)
+		{
+			szOut += prefix2; j=j+2;
+			szOut += (unsigned char)(int(szIn[i])-0x40);j++;
+		}
+		else
+		{
+			szOut += szIn[i]; j++;
+		}
+	}
+	if (pconvertedLen)
+		*pconvertedLen = j;
+
+	szOut.resize(j);
+	return szOut;
 }
 
 std::string convertDVBUTF8(const unsigned char *data, int len, int table, int tsidonid,int *pconvertedLen)
@@ -455,122 +572,155 @@ std::string convertDVBUTF8(const unsigned char *data, int len, int table, int ts
 		return "";
 	}
 
-	int i=0, t=0;
+	int i = 0;
+	int mask_no_tableid = 0;
 	std::string output = "";
-	int no_table_id = 0;
-	if (table >= NOTABLEID){
-		no_table_id = NOTABLEID;
-		table &= ~NOTABLEID;
-	}
+	bool ignore_tableid = false;
+	int convertedLen = 0;
 
 
-	if ( tsidonid )
+	if (tsidonid)
 		encodingHandler.getTransponderDefaultMapping(tsidonid, table);
 
-	// first byte in strings may override general encoding table.
-	if (!no_table_id){
-		switch(data[0])
-		{
-			case ISO8859_5 ... ISO8859_15:
-				// For Thai providers, encoding char is present but faulty.
-				if (table != 11)
-					table = data[i] + 4;
-				++i;
-				// eDebug("[convertDVBUTF8] (1..11)text encoded in ISO-8859-%d", table);
-				break;
-			case ISO8859_xx:
-			{
-				int n = data[++i] << 8;
-				n |= (data[++i]);
-				// eDebug("[convertDVBUTF8] (0x10)text encoded in ISO-8859-%d", n);
-				++i;
-				switch(n)
-				{
-					case ISO8859_12:
-						eDebug("[convertDVBUTF8] ISO8859-12 encoding unsupported");
-						break;
-					default:
-						table = n;
-						break;
-				}
-				break;
-			}
-			case UNICODE_ENCODING: //  Basic Multilingual Plane of ISO/IEC 10646-1 enc  (UTF-16... Unicode)
-				table = UNICODE_ENCODING;
-				tsidonid = 0;
-				++i;
-				break;
-			case KSX1001_ENCODING:
-				++i;
-				eDebug("[convertDVBUTF8] KSC 5601 encing unsupported.");
-				break;
-			case GB18030_ENCODING: // GB-2312-1980 enc.
-				++i;
-				table = GB18030_ENCODING;
-				break;
-			case BIG5_ENCODING: // Big5 subset of ISO/IEC 10646-1 enc.
-				++i;
-				table = BIG5_ENCODING;
-				break;
-			case UTF8_ENCODING: // UTF-8 encoding of ISO/IEC 10646-1
-				++i;
-				table = UTF8_ENCODING;
-				break;
-			case UTF16BE_ENCODING:
-				++i;
-				table = UTF16BE_ENCODING;
-				break;
-			case UTF16LE_ENCODING:
-				++i;
-				table = UTF16LE_ENCODING;
-				break;
-			case 0x1F:
-				{
-					// Attempt to decode Freesat Huffman encoded string
-					std::string decoded_string = huffmanDecoder.decode(data, len);
-					if (!decoded_string.empty())
-						return decoded_string;
-				}
-				++i;
-				eDebug("[convertDVBUTF8] failed to decode bbc freesat huffman");
-				break;
-			case 0x0:
-			case 0xC ... 0xF:
-			case 0x18 ... 0x1E:
-				eDebug("[convertDVBUTF8] reserved %d", data[0]);
-				++i;
-				break;
-		}
+	if (table >= 0 && (table & MASK_NO_TABLEID)){
+		mask_no_tableid = MASK_NO_TABLEID;
+		table &= ~MASK_NO_TABLEID;
 	}
+
+	if (table >= 0 && (table & MASK_IGNORE_TABLEID)){
+		ignore_tableid = true;
+		table &= ~MASK_IGNORE_TABLEID;
+	}
+
+        int table_preset = table;
+
+	// first byte in strings may override general encoding table.
+	switch(data[0] | mask_no_tableid)
+	{
+		case ISO8859_5 ... ISO8859_15:
+			// For Thai providers, encoding char is present but faulty.
+			if (table != 11)
+				table = data[i] + 4;
+			++i;
+			eTrace("[convertDVBUTF8] (1..11)text encoded in ISO-8859-%d", table);
+			break;
+		case ISO8859_xx:
+		{
+			int n = data[++i] << 8;
+			n |= (data[++i]);
+			eTrace("[convertDVBUTF8] (0x10)text encoded in ISO-8859-%d", n);
+			++i;
+			switch(n)
+			{
+				case ISO8859_12:
+					eDebug("[convertDVBUTF8] ISO8859-12 encoding unsupported");
+					break;
+				default:
+					table = n;
+					break;
+			}
+			break;
+		}
+		case UNICODE_ENCODING: //  Basic Multilingual Plane of ISO/IEC 10646-1 enc  (UTF-16... Unicode)
+			table = UNICODE_ENCODING;
+			tsidonid = 0;
+			++i;
+			break;
+		case KSX1001_ENCODING:
+			++i;
+			eDebug("[convertDVBUTF8] KSC 5601 encing unsupported.");
+			break;
+		case GB18030_ENCODING: // GB-2312-1980 enc.
+			++i;
+			table = GB18030_ENCODING;
+			break;
+		case BIG5_ENCODING: // Big5 subset of ISO/IEC 10646-1 enc.
+			++i;
+			table = BIG5_ENCODING;
+			break;
+		case UTF8_ENCODING: // UTF-8 encoding of ISO/IEC 10646-1
+			++i;
+			table = UTF8_ENCODING;
+			break;
+		case UTF16BE_ENCODING:
+			++i;
+			table = UTF16BE_ENCODING;
+			break;
+		case UTF16LE_ENCODING:
+			++i;
+			table = UTF16LE_ENCODING;
+			break;
+		case GEOSTD8_ENCODING:
+			++i;
+			table = GEOSTD8_ENCODING;
+			break;
+		case HUFFMAN_ENCODING:
+			{
+				// Attempt to decode Freesat Huffman encoded string
+				std::string decoded_string = huffmanDecoder.decode(data, len);
+				if (!decoded_string.empty()){
+					table = HUFFMAN_ENCODING;
+					output = decoded_string;
+					break;
+				}
+			}
+			++i;
+			eDebug("[convertDVBUTF8] failed to decode bbc freesat huffman");
+			break;
+		case 0x0:
+		case 0xC ... 0xF:
+		case 0x18 ... 0x1D:
+			eDebug("[convertDVBUTF8] reserved %d", data[0]);
+			++i;
+			break;
+	}
+
+	if (ignore_tableid && table != UTF8_ENCODING) {
+		table = table_preset;
+	}
+
 	bool useTwoCharMapping = !table || (tsidonid && encodingHandler.getTransponderUseTwoCharMapping(tsidonid));
 
 	if (useTwoCharMapping && table == 5) { // i hope this dont break other transponders which realy use ISO8859-5 and two char byte mapping...
-//		eDebug("[convertDVBUTF8] Cyfra / Cyfrowy Polsat HACK... override given ISO8859-5 with ISO6937");
+		eTrace("[convertDVBUTF8] Cyfra / Cyfrowy Polsat HACK... override given ISO8859-5 with ISO6937");
 		table = 0;
 	}
-	else if (table <= 0)
+	else if ( table == -1 )
 		table = defaultEncodingTable;
 
 	switch(table)
 	{
+		case HUFFMAN_ENCODING:
+		{
+			if(output.empty()){
+				// Attempt to decode Freesat Huffman encoded string
+				std::string decoded_string = huffmanDecoder.decode(data, len);
+				if (!decoded_string.empty())
+					output = decoded_string;
+			}
+			if (!output.empty())
+					convertedLen += len;
+			break;
+		}
 		case UTF8_ENCODING:
 			output = std::string((char*)data + i, len - i);
-			if (pconvertedLen)
-				*pconvertedLen += len;
+			convertedLen += i;
 			break;
 		case GB18030_ENCODING:
-			output = GB18030ToUTF8((const char *)(data + i), len - i, pconvertedLen);
-			if (pconvertedLen)
-				*pconvertedLen += len;
+			output = GB18030ToUTF8((const char *)(data + i), len - i, &convertedLen);
+			convertedLen += i;
 			break;
 		case BIG5_ENCODING:
-			output = Big5ToUTF8((const char *)(data + i), len - i, pconvertedLen);
-			if (pconvertedLen)
-				*pconvertedLen += len;
+			output = Big5ToUTF8((const char *)(data + i), len - i, &convertedLen);
+			convertedLen += i;
+			break;
+		case GEOSTD8_ENCODING:
+			output = GEOSTD8ToUTF8((const char *)(data + i), len - i, &convertedLen);
+			convertedLen += i;
 			break;
 		default:
-			char res[2048];
-			while (i < len && t < sizeof(res))
+			std::string res = "";
+			while (i < len)
 			{
 				unsigned long code = 0;
 				if (useTwoCharMapping && i+1 < len && (code = doVideoTexSuppl(data[i], data[i+1])))
@@ -620,17 +770,30 @@ std::string convertDVBUTF8(const unsigned char *data, int len, int table, int ts
 
 				if (!code)
 					continue;
-				t += UnicodeToUTF8(code, res + t, sizeof(res) - t);
+				res += UnicodeToUTF8(code);
 			}
-			if (pconvertedLen)
-				*pconvertedLen = i;
-			output = std::string((char*)res, t);
+			convertedLen = i;
+			output = res;
 			break;
 	}
 
-	if (pconvertedLen && *pconvertedLen < len)
-		eDebug("[convertDVBUTF8] %d chars converted, and %d chars left..", *pconvertedLen, len-*pconvertedLen);
-	//eDebug("[convertDVBUTF8] table=0x%02X twochar=%d output:%s\n", table, useTwoCharMapping, output.c_str());
+	if (pconvertedLen)
+		*pconvertedLen = convertedLen;
+/*
+	if (convertedLen < len)
+		eTrace("[convertDVBUTF8] %d chars converted, and %d chars left..", convertedLen, len-convertedLen);
+	eTrace("[convertDVBUTF8] table=0x%02X twochar=%d output:%s\n", table, useTwoCharMapping, output.c_str());
+
+	eTrace("[convertDVBUTF8] table=0x%02X tsid:onid=0x%X:0x%X data[0..14]=%s   output:%s\n",
+		table, (unsigned int)tsidonid >> 16, tsidonid & 0xFFFFU,
+		string_to_hex(std::string((char*)data, len < 15 ? len : 15)).c_str(),
+		output.c_str());
+*/
+	// replace EIT CR/LF with standard newline:
+	output = replace_all(replace_all(output, "\xC2\x8A", "\n"), "\xEE\x82\x8A", "\n");
+	// remove character emphasis control characters:
+	output = replace_all(replace_all(replace_all(replace_all(output, "\xC2\x86", ""), "\xEE\x82\x86", ""), "\xC2\x87", ""), "\xEE\x82\x87", "");
+
 	return output;
 }
 
@@ -698,16 +861,16 @@ std::string convertUTF8DVB(const std::string &string, int table)
 
 std::string convertLatin1UTF8(const std::string &string)
 {
-	unsigned int t = 0, i = 0, len = string.size();
+	unsigned int i = 0, len = string.size();
 
-	char res[2048];
+	std::string res = "";
 
 	while (i < len)
 	{
 		unsigned long code = (unsigned char)string[i++];
-		t += UnicodeToUTF8(code, res + t, sizeof(res) - t);
+		res += UnicodeToUTF8(code);
 	}
-	return std::string((char*)res, t);
+	return res;
 }
 
 int isUTF8(const std::string &string)
@@ -749,20 +912,43 @@ int isUTF8(const std::string &string)
 	return 1; // can be UTF8 (or pure ASCII, at least no non-UTF-8 8bit characters)
 }
 
+std::string repairUTF8(const char *szIn, int len)
+{
+	Py_ssize_t sz = len;
+	PyObject * pyinput = PyUnicode_DecodeUTF8Stateful(szIn, sz, "ignore", NULL);
+	std::string res = PyUnicode_AsUTF8(pyinput);
+	Py_DECREF(pyinput);
+	return res;
+}
 
 unsigned int truncateUTF8(std::string &s, unsigned int newsize)
 {
-        unsigned int len = s.size();
+	unsigned int len = s.size();
+	// Assume s is a real UTF8 string!!!
+	unsigned int n = 0;
+	unsigned int idx = newsize - 1;
 
-        // Assume s is a real UTF8 string!!!
-        while (len > newsize) {
-                while (len-- > 0  && (s[len] & 0xC0) == 0x80)
-                        ; // remove UTF data bytes,  e.g. range 0x80 - 0xBF
-                if (len > 0)   // remove the UTF startbyte, or normal ascii character
-                         --len;
-        }
-        s.resize(len);
-        return len;
+	if (len > idx){
+		while (idx > 0) {
+			if (!(s.at(idx) & 0x80) || (s.at(idx) & 0xc0) == 0xc0){
+				if (!(s.at(idx) & 0x80))
+					idx++;
+				else if ((s.at(idx) & 0xF8) == 0xf0 && n == 3)
+					idx += n + 1;
+				else if ((s.at(idx) & 0xF0) == 0xe0 && n == 2)
+					idx += n + 1;
+				else if ((s.at(idx) & 0xE0) == 0xc0 && n == 1)
+					idx += n + 1;
+				break;
+			}
+			n++;
+			if (idx > 0)
+				idx--;
+		}
+		len = idx;
+	}
+	s.resize(len);
+	return len;
 }
 
 
@@ -805,6 +991,7 @@ std::string replace_all(const std::string &in, const std::string &entity, const 
 {
 	std::string out = in;
 	std::string::size_type loc = 0;
+
 	if( table == -1 )
 		table = defaultEncodingTable;
 
@@ -816,13 +1003,14 @@ std::string replace_all(const std::string &in, const std::string &entity, const 
 				loc += symbol.length();
 				continue;
 			}
-			if (out.at(loc) < 0x80)
+			unsigned char c = static_cast<unsigned char>(out.at(loc));
+			if (c < 0x80)
 				++loc;
-			else if ((out.at(loc) & 0xE0) == 0xC0)
+			else if ((c & 0xE0) == 0xC0)
 				loc += 2;
-			else if ((out.at(loc) & 0xF0) == 0xE0)
+			else if ((c & 0xF0) == 0xE0)
 				loc += 3;
-			else if ((out.at(loc) & 0xF8) == 0xF0)
+			else if ((c & 0xF8) == 0xF0)
 				loc += 4;
 		}
 		break;
@@ -857,7 +1045,6 @@ std::string replace_all(const std::string &in, const std::string &entity, const 
 			loc += 2;
 		}
 		break;
-
 	default:
 		while ((loc = out.find(entity, loc)) != std::string::npos)
 		{
@@ -896,3 +1083,89 @@ std::string urlDecode(const std::string &s)
 	return res;
 }
 
+std::string string_to_hex(const std::string& input)
+{
+    static const char* const lut = "0123456789ABCDEF";
+    size_t len = input.length();
+
+    std::string output;
+    output.reserve(3 * len);
+    for (size_t i = 0; i < len; ++i)
+    {
+        const unsigned char c = input[i];
+        if (i)
+		output.push_back(' ');
+        output.push_back(lut[c >> 4]);
+        output.push_back(lut[c & 15]);
+    }
+    return output;
+}
+
+std::string strip_non_graph(std::string s)
+{
+	s = std::regex_replace(s, std::regex("[[^:graph:]]"), " ");
+	s = std::regex_replace(s, std::regex("\\s{2,}"), " ");
+	s = std::regex_replace(s, std::regex("^\\s+|\\s+$"), "");
+	return s;
+}
+
+std::vector<std::string> split(std::string s, const std::string& separator)
+{
+	std::vector<std::string> tokens;
+	std::string token;
+	size_t pos, sep_len = separator.length();
+
+	while ((pos = s.find(separator)) != std::string::npos)
+	{
+		token = s.substr(0, pos);
+		if (!token.empty())
+		{
+			tokens.push_back(token);
+		}
+		s.erase(0, pos + sep_len);
+	}
+
+	if (!s.empty())
+	{
+		tokens.push_back(s);
+	}
+
+	return tokens;
+}
+
+int strcasecmp(const std::string& s1, const std::string& s2)
+{
+	return ::strcasecmp(s1.c_str(), s2.c_str());
+}
+
+std::string formatNumber(size_t size, const std::string& suffix, bool binary)
+{
+	std::map<uint8_t, std::string> unit = {
+		{  24, "Y" },
+		{  21, "Z" },
+		{  18, "E" },
+		{  15, "P" },
+		{  12, "T" },
+		{   9, "G" },
+		{   6, "M" },
+		{   3, binary ? "K" : "k" },
+		{   0, ""  }
+	};
+
+	uint8_t k = 0;
+	size_t rem = 0;
+	uint16_t base = binary ? 1024 : 1000;
+
+	while (size >= base)
+	{
+		rem = size % base;
+		k += 3;
+		size /= base;
+	}
+
+	float num = size + (rem*1.0f/base);
+
+	std::stringstream ss;
+	ss << num << " " << unit[k] << suffix;
+	return ss.str();
+}

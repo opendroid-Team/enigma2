@@ -4,7 +4,7 @@ SUBDIRS = PositionerSetup Satfinder SoftwareManager \
 	VideoTune Hotplug CableScan \
 	DefaultServicesScanner CommonInterfaceAssignment \
 	VideoEnhancement WirelessLan NetworkWizard VideoClippingSetup \
-	SatelliteEquipmentControl DiseqcTester HdmiCEC FastScan LCNScanner
+	SatelliteEquipmentControl DiseqcTester FastScan LCNScanner
 
 if HAVE_LIBVUGLES2
 SUBDIRS += AnimationSetup
@@ -15,7 +15,7 @@ SUBDIRS += AnimationSetup
 endif
 
 if DREAMBOX
-SUBDIRS += FrontprocessorUpgrade NFIFlash
+SUBDIRS += FrontprocessorUpgrade
 endif
 
 if DM900

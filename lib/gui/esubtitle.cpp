@@ -1,5 +1,6 @@
 #include <lib/gui/esubtitle.h>
 #include <lib/gdi/grc.h>
+#include <lib/gdi/font.h>
 #include <lib/base/estring.h>
 #include <lib/base/nconfig.h>
 #include <lib/gui/ewidgetdesktop.h>
@@ -30,7 +31,6 @@ void eSubtitleWidget::setPage(const eDVBTeletextSubtitlePage &p)
 	if (elements)
 	{
 		int width = size().width() - startX * 2;
-		std::string configvalue;
 		bool original_position = eConfigManager::getConfigBoolValue("config.subtitles.ttx_subtitle_original_position");
 		bool rewrap = eConfigManager::getConfigBoolValue("config.subtitles.subtitle_rewrap");
 		gRGB color;
@@ -237,11 +237,20 @@ void eSubtitleWidget::setPage(const ePangoSubtitlePage &p)
 	invalidate(m_visible_region); // invalidate new regions
 }
 
+void eSubtitleWidget::setPage(const eVobSubtitlePage &p)
+{
+	eRect r = eRect(0, 0, 720, 576);
+	ePtr<gPixmap> pixmap = p.m_pixmap;
+	setPixmap(pixmap, r, r);
+	m_hide_subtitles_timer->start(p.m_timeout, true);
+}
+
 void eSubtitleWidget::clearPage()
 {
 	m_page_ok = 0;
 	m_dvb_page_ok = 0;
 	m_pango_page_ok = 0;
+	m_pixmap = 0;
 	invalidate(m_visible_region);
 	m_visible_region.rects.clear();
 }
@@ -273,19 +282,20 @@ int eSubtitleWidget::event(int event, void *data, void *data2)
 		getStyle(style);
 		eWidget::event(event, data, data2);
 
-		std::string configvalue;
+		std::string alignmentValue;
 
 		int rt_halignment_flag;
-		configvalue = eConfigManager::getConfigValue("config.subtitles.subtitle_alignment");
-		if (configvalue == "right")
+		alignmentValue = eConfigManager::getConfigValue("config.subtitles.subtitle_alignment");
+		if (alignmentValue == "right")
 			rt_halignment_flag = gPainter::RT_HALIGN_RIGHT;
-		else if (configvalue == "left")
+		else if (alignmentValue == "left")
 			rt_halignment_flag = gPainter::RT_HALIGN_LEFT;
 		else
 			rt_halignment_flag = gPainter::RT_HALIGN_CENTER;
 
 		int borderwidth = eConfigManager::getConfigIntValue("config.subtitles.subtitle_borderwidth", 2) * getDesktop(0)->size().width()/1280;
 		int fontsize = eConfigManager::getConfigIntValue("config.subtitles.subtitle_fontsize", 34) * getDesktop(0)->size().width()/1280;
+		int bcktrans = eConfigManager::getConfigIntValue("config.subtitles.subtitles_backtrans", 255);
 
 		if (m_pixmap)
 		{
@@ -306,6 +316,34 @@ int eSubtitleWidget::event(int event, void *data, void *data2)
 				if (!element.m_text.empty())
 				{
 					eRect &area = element.m_area;
+					if (bcktrans != 255)
+					{
+						ePtr<eTextPara> para = new eTextPara(area);
+						para->setFont(subtitleStyles[Subtitle_TTX].font);
+						para->renderString(element.m_text.c_str(), RS_WRAP);
+						eRect bbox = para->getBoundBox();
+						int bboxWidth = bbox.width();
+						if (alignmentValue == "right")
+							bbox.setLeft(area.left() + area.width() - bboxWidth - borderwidth);
+						else if (alignmentValue == "left")
+							bbox.setLeft(area.left() - borderwidth);
+						else
+							bbox.setLeft(area.left() + area.width() / 2 - bboxWidth / 2 - borderwidth);
+						bbox.setWidth(bboxWidth + borderwidth * 2);
+						if (eConfigManager::getConfigBoolValue("config.subtitles.ttx_subtitle_original_position"))
+							bbox.setHeight(area.height());
+						else
+						{
+							int bboxTop = area.top() + area.height() - bbox.height() - 2 * borderwidth;
+							int bboxHeight = bbox.height() + borderwidth * 2;
+							bbox.setTop(bboxTop);
+							bbox.setHeight(bboxHeight);
+							area.setTop(area.top() - borderwidth);
+						}
+						painter.setForegroundColor(gRGB(0,0,0,bcktrans));
+						painter.fill(bbox);
+						borderwidth = 0;
+					}
 					if (!subtitleStyles[Subtitle_TTX].have_foreground_color)
 						painter.setForegroundColor(element.m_color);
 					else
@@ -331,8 +369,8 @@ int eSubtitleWidget::event(int event, void *data, void *data2)
 				text = replace_all(text, "&apos;", "'");
 				text = replace_all(text, "&quot;", "\"");
 				text = replace_all(text, "&amp;", "&");
-				text = replace_all(text, "&lt", "<");
-				text = replace_all(text, "&gt", ">");
+				text = replace_all(text, "&lt;", "<");
+				text = replace_all(text, "&gt;", ">");
 
 				if (eConfigManager::getConfigBoolValue("config.subtitles.pango_subtitle_fontswitch"))
 				{
@@ -365,10 +403,39 @@ int eSubtitleWidget::event(int event, void *data, void *data2)
 					text = replace_all(text, "<i>", "");
 					text = replace_all(text, "<b>", "");
 				}
+				text = replace_all(text, "</font>", "");
+				size_t subtitleFont = 0;
+				while ((subtitleFont = text.find("<font ", subtitleFont)) != std::string::npos)
+				{
+					size_t end = text.find('>', subtitleFont);
+					text.erase(subtitleFont, end - subtitleFont + 1);
+				}
 				subtitleStyles[face].font->pointSize=fontsize;
 				painter.setFont(subtitleStyles[face].font);
-
 				eRect &area = element.m_area;
+				if (bcktrans != 255)
+				{
+					ePtr<eTextPara> para = new eTextPara(area);
+					para->setFont(subtitleStyles[face].font);
+					para->renderString(text.c_str(), RS_WRAP);
+					eRect bbox = para->getBoundBox();
+					int bboxWidth = bbox.width();
+					if (alignmentValue == "right")
+						bbox.setLeft(area.left() + area.width() - bboxWidth - borderwidth);
+					else if (alignmentValue == "left")
+						bbox.setLeft(area.left() - borderwidth);
+					else
+						bbox.setLeft(area.left() + area.width() / 2 - bboxWidth / 2 - borderwidth);
+					bbox.setWidth(bboxWidth + borderwidth * 2);
+					int bboxTop = area.top() + area.height() - bbox.height() - 2 * borderwidth;
+					int bboxHeight = bbox.height() + borderwidth * 2;
+					bbox.setTop(bboxTop);
+					bbox.setHeight(bboxHeight);
+					area.setTop(area.top() - borderwidth);
+					painter.setForegroundColor(gRGB(0,0,0,bcktrans));
+					painter.fill(bbox);
+					borderwidth = 0;
+				}
 				if ( !subtitleStyles[face].have_foreground_color && element.m_have_color )
 					painter.setForegroundColor(element.m_color);
 				else
@@ -454,4 +521,3 @@ void eSubtitleWidget::removeHearingImpaired(std::string& str)
 	while (str[str.length() - 1] == '\n')
 		str.erase(str.length() - 1, 1);
 }
-

@@ -1,6 +1,8 @@
 #include <lib/gdi/glcddc.h>
 #include <lib/gdi/lcd.h>
+#ifdef LCD_FRAMEBUFFER_MODE
 #include <lib/gdi/fblcd.h>
+#endif
 #include <lib/base/init.h>
 #include <lib/base/init_num.h>
 
@@ -8,19 +10,12 @@ gLCDDC *gLCDDC::instance;
 
 gLCDDC::gLCDDC()
 {
-#ifndef NO_LCD
+#ifdef LCD_FRAMEBUFFER_MODE
 	lcd = new eFbLCD();
-	if (!lcd->detected())
-	{
-		delete lcd;
-		lcd = new eDBoxLCD();
-	}
 #else
-		lcd = new eDBoxLCD();
+	lcd = new eDBoxLCD();
 #endif
 	instance = this;
-
-	update = 1;
 
 	surface.x = lcd->size().width();
 	surface.y = lcd->size().height();
@@ -33,14 +28,14 @@ gLCDDC::gLCDDC()
 	{
 		surface.clut.colors = 256;
 		surface.clut.data = new gRGB[surface.clut.colors];
-		memset(surface.clut.data, 0, sizeof(*surface.clut.data)*surface.clut.colors);
+		memset(static_cast<void*>(surface.clut.data), 0, sizeof(*surface.clut.data)*surface.clut.colors);
 	}
 	else
 	{
 		surface.clut.colors = 0;
 		surface.clut.data = 0;
 	}
-	eDebug("[gLCDDC] resolution: %d x %d x %d (stride: %d)", surface.x, surface.y, surface.bpp, surface.stride);
+	eDebug("[gLCDDC] resolution: %dx%dx%d stride=%d", surface.x, surface.y, surface.bpp, surface.stride);
 
 	m_pixmap = new gPixmap(&surface);
 }
@@ -63,7 +58,7 @@ void gLCDDC::exec(const gOpcode *o)
 		lcd->setPalette(surface);
 		break;
 	}
-#ifdef HAVE_TEXTLCD
+#if defined(HAVE_TEXTLCD) || defined(HAVE_7SEGMENT)
 	case gOpcode::renderText:
 		if (o->parm.renderText->text)
 		{
@@ -75,6 +70,7 @@ void gLCDDC::exec(const gOpcode *o)
 #endif
 	case gOpcode::flush:
 		lcd->update();
+		[[fallthrough]];
 	default:
 		gDC::exec(o);
 		break;

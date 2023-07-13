@@ -20,16 +20,12 @@ dist_pkgdata_DATA = \
 	hd-testcard.mvi \
 	distro-logo.png
 
-if HAVE_TEXTLCD
 if HAVE_7SEGMENT
 SUBDIRS += 7segment
-else
-if SPARK
-SUBDIRS += displaydualtext
-else
+endif
+
+if HAVE_TEXTLCD
 SUBDIRS += displaytext
-endif
-endif
 endif
 
 if HAVE_COLORLCD3
@@ -46,6 +42,10 @@ endif
 
 if HAVE_COLORLCD220
 SUBDIRS += display220
+endif
+
+if HAVE_COLORLCD240
+SUBDIRS += display240
 endif
 
 if HAVE_COLORLCD390

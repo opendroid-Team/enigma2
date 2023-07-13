@@ -3,6 +3,7 @@
 #include <fcntl.h>
 
 #include <lib/base/cfile.h>
+#include <lib/base/wrappers.h>
 #include <lib/gdi/picload.h>
 #include <lib/gdi/picexif.h>
 
@@ -10,6 +11,12 @@ extern "C" {
 #include <jpeglib.h>
 #include <gif_lib.h>
 }
+
+#define NANOSVG_ALL_COLOR_KEYWORDS
+#define NANOSVG_IMPLEMENTATION
+#include <nanosvg.h>
+#define NANOSVGRAST_IMPLEMENTATION
+#include <nanosvgrast.h>
 
 extern const uint32_t crc32_table[256];
 
@@ -20,8 +27,8 @@ static std::string getSize(const char* file)
 	struct stat64 s;
 	if (stat64(file, &s) < 0)
 		return "";
-	char tmp[20];
-	snprintf(tmp, 20, "%ld kB", (long)s.st_size / 1024);
+	char tmp[21];
+	snprintf(tmp, 21, "%ld kB", (long)s.st_size / 1024);
 	return tmp;
 }
 
@@ -100,7 +107,7 @@ static unsigned char *color_resize(unsigned char * orgin, int ox, int oy, int dx
 	unsigned char* cr = new unsigned char[dx * dy * 3];
 	if (cr == NULL)
 	{
-		eDebug("[ePicLoad] Error malloc");
+		eDebug("[ePicLoad] resize Error malloc");
 		return orgin;
 	}
 	const int stride = 3 * dx;
@@ -132,6 +139,8 @@ static unsigned char *color_resize(unsigned char * orgin, int ox, int oy, int dx
 					b += q[2];
 				}
 			}
+			if (sq == 0) // prevent Division by zero
+				sq = 1;
 			p[0] = r / sq;
 			p[1] = g / sq;
 			p[2] = b / sq;
@@ -163,7 +172,10 @@ static void fetch_pallete(int fd, struct color pallete[], int count)
 	lseek(fd, BMP_COLOR_OFFSET, SEEK_SET);
 	for (int i = 0; i < count; i++)
 	{
-		read(fd, buff, 4);
+		if (read(fd, buff, 4) != 4) // failed to read rgb
+		{
+			break;
+		}
 		pallete[i].red = buff[2];
 		pallete[i].green = buff[1];
 		pallete[i].blue = buff[0];
@@ -177,16 +189,43 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 
 	int fd = open(file, O_RDONLY);
 	if (fd == -1) return NULL;
-	if (lseek(fd, BMP_SIZE_OFFSET, SEEK_SET) == -1) return NULL;
-	read(fd, buff, 4);
+	if (lseek(fd, BMP_SIZE_OFFSET, SEEK_SET) == -1) {
+		close(fd);
+		return NULL;
+	}
+	if (read(fd, buff, 4) != 4) // failed to read x
+	{
+		close(fd);
+		return NULL;
+	}
 	*x = buff[0] + (buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24);
-	read(fd, buff, 4);
+	if (read(fd, buff, 4) != 4) // failed to read y
+	{
+		close(fd);
+		return NULL;
+	}
 	*y = buff[0] + (buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24);
-	if (lseek(fd, BMP_TORASTER_OFFSET, SEEK_SET) == -1) return NULL;
-	read(fd, buff, 4);
+	if (lseek(fd, BMP_TORASTER_OFFSET, SEEK_SET) == -1)
+	{
+		close(fd);
+		return NULL;
+	}
+	if (read(fd, buff, 4) != 4) // failed to read raster
+	{
+		close(fd);
+		return NULL;
+	}
 	int raster = buff[0] + (buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24);
-	if (lseek(fd, BMP_BPP_OFFSET, SEEK_SET) == -1) return NULL;
-	read(fd, buff, 2);
+	if (lseek(fd, BMP_BPP_OFFSET, SEEK_SET) == -1)
+	{
+		close(fd);
+		return NULL;
+	}
+	if (read(fd, buff, 2) != 2) // failed to read bpp
+	{
+		close(fd);
+		return NULL;
+	}
 	int bpp = buff[0] + (buff[1] << 8);
 
 	unsigned char *pic_buffer = new unsigned char[(*x) * (*y) * 3];
@@ -200,11 +239,17 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 			fetch_pallete(fd, pallete, 16);
 			lseek(fd, raster, SEEK_SET);
 			unsigned char * tbuffer = new unsigned char[*x / 2 + 1];
-			if (tbuffer == NULL)
+			if (tbuffer == NULL) {
+				close(fd);
 				return NULL;
+			}
 			for (int i = 0; i < *y; i++)
 			{
-				read(fd, tbuffer, (*x) / 2 + *x % 2);
+
+				if (read(fd, tbuffer, (*x) / 2 + *x % 2) != ((*x) / 2 + *x % 2))
+				{
+					eDebug("[ePicLoad] failed to read %d bytes...", ((*x) / 2 + *x % 2));
+				}
 				int j;
 				for (j = 0; j < (*x) / 2; j++)
 				{
@@ -225,7 +270,12 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 					*wr_buffer++ = pallete[c1].blue;
 				}
 				if (skip)
-					read(fd, buff, skip);
+				{
+					if (read(fd, buff, skip) != skip)
+					{
+						eDebug("[ePicLoad] failed to read %d bytes...", skip);
+					}
+				}
 				wr_buffer -= (*x) * 6;
 			}
 			delete [] tbuffer;
@@ -237,11 +287,16 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 			fetch_pallete(fd, pallete, 256);
 			lseek(fd, raster, SEEK_SET);
 			unsigned char * tbuffer = new unsigned char[*x];
-			if (tbuffer == NULL)
+			if (tbuffer == NULL) {
+				close(fd);
 				return NULL;
+			}
 			for (int i = 0; i < *y; i++)
 			{
-				read(fd, tbuffer, *x);
+				if (read(fd, tbuffer, *x) != *x)
+				{
+					eDebug("[ePicLoad] failed to read %d bytes...", *x);
+				}
 				for (int j = 0; j < *x; j++)
 				{
 					wr_buffer[j * 3] = pallete[tbuffer[j]].red;
@@ -249,7 +304,12 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 					wr_buffer[j * 3 + 2] = pallete[tbuffer[j]].blue;
 				}
 				if (skip)
-					read(fd, buff, skip);
+				{
+					if (read(fd, buff, skip) != skip)
+					{
+						eDebug("[ePicLoad] failed to read %d bytes...", skip);
+					}
+				}
 				wr_buffer -= (*x) * 3;
 			}
 			delete [] tbuffer;
@@ -261,7 +321,7 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 			lseek(fd, raster, SEEK_SET);
 			for (int i = 0; i < (*y); i++)
 			{
-				read(fd, wr_buffer, (*x) * 3);
+				[[maybe_unused]] size_t ret = read(fd, wr_buffer, (*x) * 3);
 				for (int j = 0; j < (*x) * 3 ; j = j + 3)
 				{
 					unsigned char c = wr_buffer[j];
@@ -269,22 +329,38 @@ static unsigned char *bmp_load(const char *file,  int *x, int *y)
 					wr_buffer[j + 2] = c;
 				}
 				if (skip)
-					read(fd, buff, skip);
+				{
+					if (read(fd, buff, skip) != skip)
+					{
+						eDebug("[ePicLoad] failed to read %d bytes...", skip);
+					}
+				}
 				wr_buffer -= (*x) * 3;
 			}
 			break;
 		}
 		default:
+			delete [] pic_buffer;
 			close(fd);
 			return NULL;
 	}
 
 	close(fd);
 	return(pic_buffer);
+
 }
 
-//---------------------------------------------------------------------
-
+/**
+ * @brief Load a png
+ *
+ * If you make change to png_load, check the functionality with PngSuite  
+ * http://www.schaik.com/pngsuite/  
+ * These are test images in all standard PNG.
+ *
+ * @param filepara
+ * @param background
+ * @return void
+ */
 static void png_load(Cfilepara* filepara, unsigned int background)
 {
 	png_uint_32 width, height;
@@ -426,7 +502,7 @@ static void png_load(Cfilepara* filepara, unsigned int background)
 		for(int pass = 0; pass < number_passes; pass++)
 		{
 			fbptr = (png_byte *)pic_buffer;
-			for (int i = 0; i < height; i++, fbptr += width * bpp)
+			for (unsigned int i = 0; i < height; i++, fbptr += width * bpp)
 				png_read_row(png_ptr, fbptr, NULL);
 		}
 		png_read_end(png_ptr, info_ptr);
@@ -444,16 +520,15 @@ static void png_load(Cfilepara* filepara, unsigned int background)
 
 			unsigned char *src = pic_buffer;
 			unsigned char *dst = pic_buffer24;
-			int a, r, g, b;
 			int bg_r = (background >> 16) & 0xFF;
 			int bg_g = (background >> 8) & 0xFF;
 			int bg_b = background & 0xFF;
 			for(int i = 0; i < pixel_cnt; i++)
 			{
-				r = (int)*src++;
-				g = (int)*src++;
-				b = (int)*src++;
-				a = (int)*src++;
+				int r = (int)*src++;
+				int g = (int)*src++;
+				int b = (int)*src++;
+				int a = (int)*src++;
 
 				*dst++ = ((r-bg_r)*a)/255 + bg_r;
 				*dst++ = ((g-bg_g)*a)/255 + bg_g;
@@ -553,14 +628,14 @@ static int jpeg_save(const char * filename, int ox, int oy, unsigned char *pic_b
 
 	if (!outfile)
 	{
-		eDebug("[ePicLoad] jpeg can't write %s", filename);
+		eDebug("[ePicLoad] jpeg can't write %s: %m", filename);
 		return 1;
 	}
 
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
 
-	eDebug("[ePicLoad] save Thumbnail... %s",filename);
+	// eDebug("[ePicLoad] save Thumbnail... %s",filename);
 
 	jpeg_stdio_dest(&cinfo, outfile);
 
@@ -597,6 +672,74 @@ inline void m_rend_gif_decodecolormap(unsigned char *cmb, unsigned char *rgbb, C
 	}
 }
 
+static void svg_load(Cfilepara* filepara, bool forceRGB = false)
+{
+	NSVGimage *image = nullptr;
+	NSVGrasterizer *rast = nullptr;
+	unsigned char *pic_buffer = nullptr;
+	int w = 0;
+	int h = 0;
+	double xscale, yscale, scale;
+
+	image = nsvgParseFromFile(filepara->file, "px", 96.0f);
+	if (image == nullptr)
+	{
+		return;
+	}
+
+	rast = nsvgCreateRasterizer();
+	if (rast == nullptr)
+	{
+		nsvgDelete(image);
+		return;
+	}
+
+	xscale = ((double) filepara->max_x) / image->width;
+	yscale = ((double) filepara->max_y) / image->height;
+	scale =  xscale > yscale ? yscale : xscale;
+
+	w = image->width*scale;
+	h = image->height*scale;
+
+	pic_buffer = (unsigned char*)malloc(w*h*4);
+	if (pic_buffer == nullptr)
+	{
+		nsvgDeleteRasterizer(rast);
+		nsvgDelete(image);
+		return;
+	}
+
+	eDebug("[ePicLoad] svg_load max %dx%d from %dx%d scale %f new %dx%d", filepara->max_x, filepara->max_y, (int)image->width, (int)image->height, scale, w, h);
+	// Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
+	nsvgRasterize(rast, image, 0, 0, scale, pic_buffer, w, h, w*4);
+
+	filepara->pic_buffer = pic_buffer;
+	filepara->bits = 32;
+	filepara->ox = w;
+	filepara->oy = h;
+
+	nsvgDeleteRasterizer(rast);
+	nsvgDelete(image);
+
+	if(forceRGB) // convert 32bit RGBA to 24bit RGB
+	{
+		unsigned char *pic_buffer2 = (unsigned char*)malloc(w*h*3); // 24bit RGB
+		if (pic_buffer2 == nullptr)
+		{
+			free(pic_buffer);
+			return;
+		}
+		for (int i=0; i<w*h; i++)
+		{
+			pic_buffer2[3*i]   = pic_buffer[4*i];
+			pic_buffer2[3*i+1] = pic_buffer[4*i+1];
+			pic_buffer2[3*i+2] = pic_buffer[4*i+2];
+		}
+		filepara->bits = 24;
+		filepara->pic_buffer = pic_buffer2;
+		free(pic_buffer);
+	}
+}
 static void gif_load(Cfilepara* filepara)
 {
 	unsigned char *pic_buffer = NULL;
@@ -715,8 +858,8 @@ ePicLoad::ePicLoad():
 	m_filepara(NULL),
 	threadrunning(false),
 	m_conf(),
-	msg_thread(this,1),
-	msg_main(eApp,1)
+	msg_thread(this,1,"ePicLoad_thread"),
+	msg_main(eApp,1,"ePicLoad_main")
 {
 	CONNECT(msg_thread.recv_msg, ePicLoad::gotMessage);
 	CONNECT(msg_main.recv_msg, ePicLoad::gotMessage);
@@ -756,7 +899,7 @@ void ePicLoad::thread()
 {
 	threadrunning=true;
 	hasStarted();
-	nice(4);
+	[[maybe_unused]] int ret = nice(4);
 	runLoop();
 }
 
@@ -770,6 +913,7 @@ void ePicLoad::decodePic()
 		case F_JPEG:	m_filepara->pic_buffer = jpeg_load(m_filepara->file, &m_filepara->ox, &m_filepara->oy, m_filepara->max_x, m_filepara->max_y);	break;
 		case F_BMP:	m_filepara->pic_buffer = bmp_load(m_filepara->file, &m_filepara->ox, &m_filepara->oy);	break;
 		case F_GIF:	gif_load(m_filepara); break;
+		case F_SVG:	svg_load(m_filepara); break;
 	}
 
 	if(m_filepara->pic_buffer != NULL)
@@ -818,7 +962,7 @@ void ePicLoad::decodeThumb()
 			int c;
 			int count = 1024*100;
 			unsigned long crc32 = 0;
-			char crcstr[9];*crcstr=0;
+			char crcstr[16];*crcstr=0;
 
 			while ((c=getc(f))!=EOF)
 			{
@@ -828,10 +972,13 @@ void ePicLoad::decodeThumb()
 
 			fclose(f);
 			crc32 = ~crc32;
-			sprintf(crcstr, "%08lX", crc32);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
+			snprintf(crcstr, 16, "%08lX", crc32);
+#pragma GCC diagnostic pop
 
 			cachedir = m_filepara->file;
-			unsigned int pos = cachedir.find_last_of("/");
+			size_t pos = cachedir.find_last_of("/");
 			if (pos != std::string::npos)
 				cachedir = cachedir.substr(0, pos) + "/.Thumbnails";
 
@@ -853,6 +1000,7 @@ void ePicLoad::decodeThumb()
 		case F_JPEG:	m_filepara->pic_buffer = jpeg_load(m_filepara->file, &m_filepara->ox, &m_filepara->oy, m_filepara->max_x, m_filepara->max_y);	break;
 		case F_BMP:	m_filepara->pic_buffer = bmp_load(m_filepara->file, &m_filepara->ox, &m_filepara->oy);	break;
 		case F_GIF:	gif_load(m_filepara); break;
+		case F_SVG:	svg_load(m_filepara); break;
 	}
 
 	if(exif_thumbnail)
@@ -1000,7 +1148,7 @@ int ePicLoad::startThread(int what, const char *file, int x, int y, bool async)
 	unsigned char id[10];
 	int fd = ::open(file, O_RDONLY);
 	if (fd == -1) return -errno;
-	::read(fd, id, 10);
+	[[maybe_unused]] size_t ret = ::read(fd, id, 10);
 	::close(fd);
 
 	if(id[1] == 'P' && id[2] == 'N' && id[3] == 'G')			file_id = F_PNG;
@@ -1008,6 +1156,8 @@ int ePicLoad::startThread(int what, const char *file, int x, int y, bool async)
 	else if(id[0] == 0xff && id[1] == 0xd8 && id[2] == 0xff)		file_id = F_JPEG;
 	else if(id[0] == 'B' && id[1] == 'M' )					file_id = F_BMP;
 	else if(id[0] == 'G' && id[1] == 'I' && id[2] == 'F')			file_id = F_GIF;
+	else if(id[0] == '<' && id[1] == 's' && id[2] == 'v' && id[3] == 'g') file_id = F_SVG;
+	else if(endsWith(file, ".svg"))	file_id = F_SVG;
 
 	m_filepara = new Cfilepara(file, file_id, getSize(file));
 	m_filepara->max_x = x > 0 ? x : m_conf.max_x;
@@ -1144,16 +1294,17 @@ PyObject *ePicLoad::getInfo(const char *filename)
 
 int ePicLoad::getData(ePtr<gPixmap> &result)
 {
-	result = 0;
 	if (m_filepara == NULL)
 	{
 		eDebug("[ePicLoad] - Weird situation, I wasn't decoding anything!");
+		result = 0;
 		return 1;
 	}
 	if(m_filepara->pic_buffer == NULL)
 	{
 		delete m_filepara;
 		m_filepara = NULL;
+		result = 0;
 		return 0;
 	}
 
@@ -1313,17 +1464,23 @@ RESULT ePicLoad::setPara(PyObject *val)
 		return 0;
 	else {
 		ePyObject fast		= PySequence_Fast(val, "");
-		int width		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 0));
-		int height		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 1));
-		double aspectRatio 	= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 2));
-		int as			= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 3));
-		bool useCache		= PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 4));
-		int resizeType	        = PyInt_AsLong(PySequence_Fast_GET_ITEM(fast, 5));
-		const char *bg_str	= PyString_AsString(PySequence_Fast_GET_ITEM(fast, 6));
+		int width		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 0));
+		int height		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 1));
 
+		ePyObject pas = PySequence_Fast_GET_ITEM(fast, 2);
+
+		#if PY_VERSION_HEX >= 0x030a0000
+			double aspectRatio 	= PyFloat_Check(pas) ? PyFloat_AsDouble(pas) : PyLong_AsDouble(pas); 
+		#else
+			double aspectRatio 	= PyLong_AsLong(pas);
+		#endif
+		
+		int as			= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 3));
+		bool useCache		= PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 4));
+		int resizeType	        = PyLong_AsLong(PySequence_Fast_GET_ITEM(fast, 5));
+		const char *bg_str	= PyUnicode_AsUTF8(PySequence_Fast_GET_ITEM(fast, 6));
 		return setPara(width, height, aspectRatio, as, useCache, resizeType, bg_str);
 	}
-	return 1;
 }
 
 RESULT ePicLoad::setPara(int width, int height, double aspectRatio, int as, bool useCache, int resizeType, const char *bg_str)
@@ -1348,9 +1505,7 @@ RESULT ePicLoad::setPara(int width, int height, double aspectRatio, int as, bool
 SWIG_VOID(int) loadPic(ePtr<gPixmap> &result, std::string filename, int x, int y, int aspect, int resize_mode, int rotate, unsigned int background, std::string cachefile)
 {
 	long asp1, asp2;
-	result = 0;
 	eDebug("[ePicLoad] deprecated loadPic function used!!! please use the non blocking version! you can see demo code in Pictureplayer plugin... this function is removed in the near future!");
-	ePicLoad mPL;
 
 	switch(aspect)
 	{
@@ -1372,10 +1527,13 @@ SWIG_VOID(int) loadPic(ePtr<gPixmap> &result, std::string filename, int x, int y
 	else
 		PyTuple_SET_ITEM(tuple, 6,  PyString_FromString("#00000000"));
 
+	ePicLoad mPL;
 	mPL.setPara(tuple);
 
 	if(!mPL.startDecode(filename.c_str(), 0, 0, false))
 		mPL.getData(result);
+	else
+		result = 0;
 
 	return 0;
 }

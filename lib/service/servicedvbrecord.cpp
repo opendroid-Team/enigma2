@@ -233,10 +233,11 @@ int eDVBServiceRecord::doPrepare()
 				/*
 				* streams are considered to be descrambled by default;
 				* user can indicate a stream is scrambled, by using servicetype id + 0x100
+				* (or idDVB + idServiceIsScrambled == idDVBScrambled)
 				*/
 				bool config_descramble_client = eConfigManager::getConfigBoolValue("config.streaming.descramble_client", false);
 
-				m_descramble = (m_ref.type == eServiceFactoryDVB::id + 0x100);
+				m_descramble = (m_ref.type == eServiceReference::idDVBScrambled);
 
 				if(config_descramble_client)
 					m_descramble = true;
@@ -265,6 +266,11 @@ int eDVBServiceRecord::doPrepare()
 				f->open(m_ref.path.c_str());
 				source = ePtr<iTsSource>(f);
 			}
+			m_event((iRecordableService*)this, evPvrTuneStart);
+		}
+		else
+		{
+			m_event((iRecordableService*)this, evTuneStart);
 		}
 		return m_service_handler.tuneExt(m_ref, source, m_ref.path.c_str(), 0, m_simulate, NULL, servicetype, m_descramble);
 	}
@@ -416,6 +422,12 @@ int eDVBServiceRecord::doRecord()
 					if (i != program.audioStreams.begin())
 						eDebugNoNewLine(", ");
 					eDebugNoNewLine("%04x", i->pid);
+
+					if (i->rdsPid != -1)
+					{
+						pids_to_record.insert(i->rdsPid);
+						eDebugNoNewLine(", (RDS %04x)", i->rdsPid);
+					}
 				}
 				eDebugNoNewLine(")");
 			}
@@ -603,7 +615,7 @@ void eDVBServiceRecord::saveCutlist()
 				eDebug("[eDVBServiceRecord] fixing up PTS failed, not saving");
 				continue;
 			}
-			eDebug("[eDVBServiceRecord] fixed up %llx to %llx (offset %llx)", i->second, p, offset);
+			eDebug("[eDVBServiceRecord] fixed up %llx to %llx (offset %jx)", i->second, p, (intmax_t)offset);
 			where = htobe64(p);
 			what = htonl(2); /* mark */
 			fwrite(&where, sizeof(where), 1, f);

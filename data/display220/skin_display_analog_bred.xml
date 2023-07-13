@@ -73,6 +73,7 @@
 	</widget>
 	<widget source="session.RecordState" render="Pixmap" pixmap="/usr/share/enigma2/display/analog_bred_lcd.png" position="0,0" size="220,176" zPosition="1" transparent="1" alphatest="on" >
 		<convert type="ConditionalShowHide">Blink</convert>
+  </widget>
   </screen>
   <!--menu-->
   <screen name="MenuSummary" position="fill">

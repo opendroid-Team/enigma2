@@ -2,11 +2,12 @@
                 /* avoid warnigs :) */
 #undef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200112L
-extern "C" void init_enigma();
-extern "C" void eBaseInit(void);
-extern "C" void eConsoleInit(void);
-extern void bsodFatal(const char *component);
+extern "C" PyObject* PyInit__enigma(void);
+extern "C" PyObject* PyInit_eBaseImpl(void);
+extern "C" PyObject* PyInit_eConsoleImpl(void);
 extern void quitMainloop(int exitCode);
+extern void bsodFatal(const char *component);
+extern bool bsodRestart();
 
 #define SKIP_PART2
 #include <lib/python/python.h>
@@ -123,12 +124,12 @@ ePython::ePython()
 
 //	Py_OptimizeFlag = 1;
 
-	Py_Initialize();
-	PyEval_InitThreads();
+	PyImport_AppendInittab("_enigma", PyInit__enigma);
+	PyImport_AppendInittab("eBaseImpl", PyInit_eBaseImpl);
+	PyImport_AppendInittab("eConsoleImpl", PyInit_eConsoleImpl);
 
-	init_enigma();
-	eBaseInit();
-	eConsoleInit();
+	Py_Initialize();
+
 }
 
 ePython::~ePython()
@@ -169,7 +170,7 @@ int ePython::execute(const std::string &pythonfile, const std::string &funcname)
 			Py_DECREF(pArgs);
 			if (pValue)
 			{
-				printf("Result of call: %ld\n", PyInt_AsLong(pValue));
+				printf("Result of call: %ld\n", PyLong_AsLong(pValue));
 				Py_DECREF(pValue);
 			} else
 			{
@@ -196,8 +197,8 @@ int ePython::call(ePyObject pFunc, ePyObject pArgs)
 		pValue = PyObject_CallObject(pFunc, pArgs);
  		if (pValue)
 		{
-			if (PyInt_Check(pValue))
-				res = PyInt_AsLong(pValue);
+			if (PyLong_Check(pValue))
+				res = PyLong_AsLong(pValue);
 			else
 				res = 0;
 			Py_DECREF(pValue);
@@ -206,13 +207,14 @@ int ePython::call(ePyObject pFunc, ePyObject pArgs)
 		 	PyErr_Print();
 			ePyObject FuncStr = PyObject_Str(pFunc);
 			ePyObject ArgStr = PyObject_Str(pArgs);
-		 	eDebug("[ePyObject] (PyObject_CallObject(%s,%s) failed)", PyString_AS_STRING(FuncStr), PyString_AS_STRING(ArgStr));
+			eLog(lvlFatal, "[ePyObject] (PyObject_CallObject(%s,%s) failed)", PyUnicode_AsUTF8(FuncStr), PyUnicode_AsUTF8(ArgStr));
 			Py_DECREF(FuncStr);
 			Py_DECREF(ArgStr);
 			/* immediately show BSOD, so we have the actual error at the bottom */
 		 	bsodFatal(0);
 			/* and make sure we quit (which would also eventually cause a bsod, but with useless termination messages) */
-			quitMainloop(5);
+			if (bsodRestart())
+				quitMainloop(5);
 		}
 	}
 	return res;

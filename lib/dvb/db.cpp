@@ -18,6 +18,28 @@
 #include <dvbsi++/s2_satellite_delivery_system_descriptor.h>
 #include <dirent.h>
 
+/*
+ * Copyright (C) 2017 Marcus Metzler <mocm@metzlerbros.de>
+ *                    Ralph Metzler <rjkm@metzlerbros.de>
+ *
+ * https://github.com/DigitalDevices/dddvb/blob/master/apps/pls.c
+ */
+static int root2gold(int root)
+{
+	int x, g;
+
+	if (root < 0 || root > 0x3ffff)
+		return 0;
+
+	for (g = 0, x = 1; g < 0x3ffff; g++)
+	{
+		if (root == x)
+			return g;
+		x = (((x ^ (x >> 7)) & 1) << 17) | (x >> 1);
+	}
+	return 0;
+}
+
 DEFINE_REF(eDVBService);
 
 RESULT eBouquet::addService(const eServiceReference &ref, eServiceReference before)
@@ -70,7 +92,7 @@ RESULT eBouquet::removeService(const eServiceReference &ref, bool renameBouquet)
 
 RESULT eBouquet::moveService(const eServiceReference &ref, unsigned int pos)
 {
-	if ( pos < 0 || pos >= m_services.size() )
+	if (pos >= m_services.size())
 		return -1;
 	++pos;
 	list::iterator source=m_services.end();
@@ -93,9 +115,9 @@ RESULT eBouquet::moveService(const eServiceReference &ref, unsigned int pos)
 	while (source != dest)
 	{
 		if (forward)
-			std::iter_swap(source++, source);
+			std::iter_swap(source++, source); // NOSONAR
 		else
-			std::iter_swap(source--, source);
+			std::iter_swap(source--, source); // NOSONAR
 	}
 	eDVBDB::getInstance()->renumberBouquet();
 	return 0;
@@ -135,8 +157,18 @@ RESULT eBouquet::setListName(const std::string &name)
 	return 0;
 }
 
+const eDVBService::cacheID eDVBService::audioCacheTags[] = {
+	eDVBService::cMPEGAPID, eDVBService::cAC3PID,
+	eDVBService::cAACHEAPID, eDVBService::cDDPPID,
+	eDVBService::cDTSPID, eDVBService::cAACAPID,
+	eDVBService::cLPCMPID, eDVBService::cDTSHDPID,
+};
+
+const int eDVBService::nAudioCacheTags = sizeof(eDVBService::audioCacheTags) / sizeof(eDVBService::audioCacheTags[0]);
+
+
 eDVBService::eDVBService()
-	:m_cache(0), m_flags(0)
+	:m_cache(0), m_aus_da_flag(0), m_flags(0)
 {
 }
 
@@ -150,6 +182,8 @@ eDVBService &eDVBService::operator=(const eDVBService &s)
 	m_service_name = s.m_service_name;
 	m_service_name_sort = s.m_service_name_sort;
 	m_provider_name = s.m_provider_name;
+	m_default_authority = s.m_default_authority;
+	m_aus_da_flag = s.m_aus_da_flag;
 	m_flags = s.m_flags;
 	m_ca = s.m_ca;
 	copyCache(s.m_cache);
@@ -237,7 +271,7 @@ int eDVBService::isPlayable(const eServiceReference &ref, const eServiceReferenc
 						Py_DECREF(pArgs);
 						if (pResult != NULL)
 						{
-							is_ci_playable = PyInt_AsLong(pResult);
+							is_ci_playable = PyLong_AsLong(pResult);
 							Py_DECREF(pResult);
 							return is_ci_playable;
 						}
@@ -345,6 +379,15 @@ bool eDVBService::cacheEmpty()
 	return true;
 }
 
+bool eDVBService::cacheAudioEmpty()
+{
+	if (m_cache)
+		for (int i=0; i < nAudioCacheTags; ++i)
+			if (m_cache[audioCacheTags[i]] != -1)
+				return false;
+	return true;
+}
+
 void eDVBService::initCache()
 {
 	m_cache = new int[cacheMax];
@@ -423,6 +466,16 @@ void eDVBDB::parseServiceData(ePtr<eDVBService> s, std::string str)
 			sscanf(v.c_str(), "%x", &val);
 			s->m_ca.push_back((uint16_t)val);
 		}
+		else if (p == 'a') {
+			std::string da = urlDecode(v);
+			std::transform(da.begin(), da.end(), da.begin(), ::tolower);
+			s->m_default_authority = da;
+		}
+		else if (p == 'A') {
+			uint32_t val;
+			sscanf(v.c_str(), "%x", &val);
+			s->m_aus_da_flag = val;
+		}
 	}
 }
 
@@ -444,14 +497,15 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 				modulation=eDVBFrontendParametersSatellite::Modulation_QPSK,
 				rolloff=eDVBFrontendParametersSatellite::RollOff_alpha_0_35,
 				pilot=eDVBFrontendParametersSatellite::Pilot_Unknown,
-				is_id = 0, //NO_STREAM_ID_FILTER
-				pls_mode = eDVBFrontendParametersSatellite::PLS_Root,
-				pls_code = 1;
-
-			sscanf(line+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				is_id = eDVBFrontendParametersSatellite::No_Stream_Id_Filter,
+				pls_code = eDVBFrontendParametersSatellite::PLS_Default_Gold_Code,
+				pls_mode = eDVBFrontendParametersSatellite::PLS_Gold,
+				t2mi_plp_id = eDVBFrontendParametersSatellite::No_T2MI_PLP_Id,
+				t2mi_pid = eDVBFrontendParametersSatellite::T2MI_Default_Pid;
+			sscanf(line+2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				&frequency, &symbol_rate, &polarisation, &fec, &orbital_position,
 				&inversion, &flags, &system, &modulation, &rolloff, &pilot,
-				&is_id, &pls_code, &pls_mode);
+				&is_id, &pls_code, &pls_mode, &t2mi_plp_id, &t2mi_pid);
 			sat.frequency = frequency;
 			sat.symbol_rate = symbol_rate;
 			sat.polarisation = polarisation;
@@ -462,9 +516,6 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 			sat.modulation = modulation;
 			sat.rolloff = rolloff;
 			sat.pilot = pilot;
-			sat.is_id = is_id;
-			sat.pls_mode = pls_mode & 3;
-			sat.pls_code = pls_code & 0x3FFFF;
 			// Process optional features
 			while (options) {
 				char * next = strchr(options, ',');
@@ -477,8 +528,23 @@ static ePtr<eDVBFrontendParameters> parseFrontendData(char* line, int version)
 				//	sat.parm3 = parm3;
 				//}
 				//else ...
+				if (strncmp(options, "MIS/PLS:", 8) == 0)
+					sscanf(options+8, "%d:%d:%d", &is_id, &pls_code, &pls_mode);
+				if (strncmp(options, "T2MI:", 5) == 0)
+					sscanf(options+5, "%d:%d", &t2mi_plp_id, &t2mi_pid);
 				options = next;
 			}
+			sat.is_id = is_id;
+			sat.pls_mode = pls_mode & 3;
+			sat.pls_code = pls_code & 0x3FFFF;
+			/* convert Root to Gold */
+			if (sat.pls_mode == eDVBFrontendParametersSatellite::PLS_Root)
+			{
+				sat.pls_mode = eDVBFrontendParametersSatellite::PLS_Gold;
+				sat.pls_code = root2gold(sat.pls_code);
+			}
+			sat.t2mi_plp_id = t2mi_plp_id;
+			sat.t2mi_pid = t2mi_pid;
 			feparm->setDVBS(sat);
 			feparm->setFlags(flags);
 			break;
@@ -600,6 +666,7 @@ void eDVBDB::loadServiceListV5(FILE * f)
 	int scount = 0;
 	while (fgets(line, 1024, f)) {
 		int len = strlen(line);
+		if (!len) continue;
 		if (line[len - 1] == '\n')
 			line[len - 1] = '\0';
 		if (!strncmp(line, "t:", 2)) {		// Transponder/Channel data
@@ -736,6 +803,26 @@ void eDVBDB::loadServicelist(const char *file)
 	eDebug("[eDVBDB] loaded %d channels/transponders and %d services", tcount, scount);
 }
 
+static std::string encode(const std::string s)
+{
+	int len = s.size();
+	std::string res;
+	int i;
+	for (i=0; i<len; ++i)
+	{
+		unsigned char c = s[i];
+		if ((c == ':') || (c < 32) || (c == '%') || (c == ','))
+		{
+			res += "%";
+			char hex[8];
+			snprintf(hex, 8, "%02x", c);
+			res += hex;
+		} else
+			res += c;
+	}
+	return res;
+}
+
 void eDVBDB::saveServicelist(const char *file)
 {
 	eDebug("[eDVBDB] ---- saving lame channel db");
@@ -754,7 +841,7 @@ void eDVBDB::saveServicelist(const char *file)
 		fprintf(g, "eDVB services /5/\n");
 		fprintf(g, "# Transponders: t:dvb_namespace:transport_stream_id:original_network_id,FEPARMS\n");
 		fprintf(g, "#     DVBS  FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags\n");
-		fprintf(g, "#     DVBS2 FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags:system:modulation:rolloff:pilot\n");
+		fprintf(g, "#     DVBS2 FEPARMS:   s:frequency:symbol_rate:polarisation:fec:orbital_position:inversion:flags:system:modulation:rolloff:pilot[,MIS/PLS:is_id:pls_code:pls_mode][,T2MI:t2mi_plp_id:t2mi_pid]\n");
 		fprintf(g, "#     DVBT  FEPARMS:   t:frequency:bandwidth:code_rate_HP:code_rate_LP:modulation:transmission_mode:guard_interval:hierarchy:inversion:flags:system:plp_id\n");
 		fprintf(g, "#     DVBC  FEPARMS:   c:frequency:symbol_rate:inversion:modulation:fec_inner:flags:system\n");
 		fprintf(g, "#     ATSC  FEPARMS:   a:frequency:inversion:modulation:flags:system\n");
@@ -793,15 +880,34 @@ void eDVBDB::saveServicelist(const char *file)
 			if (sat.system == eDVBFrontendParametersSatellite::System_DVB_S2)
 			{
 				fprintf(f, ":%d:%d:%d:%d", sat.system, sat.modulation, sat.rolloff, sat.pilot);
-				if (static_cast<unsigned int>(sat.is_id) != NO_STREAM_ID_FILTER ||
-					(sat.pls_code & 0x3FFFF) != 0 ||
-					(sat.pls_mode & 3) != eDVBFrontendParametersSatellite::PLS_Root)
-				{
-					fprintf(f, ":%d:%d:%d",
-						sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
-				}
 				if (g)
 					fprintf(g, ":%d:%d:%d:%d", sat.system, sat.modulation, sat.rolloff, sat.pilot);
+
+				if (static_cast<unsigned int>(sat.is_id) != NO_STREAM_ID_FILTER ||
+					(sat.pls_code & 0x3FFFF) != 0 ||
+					(sat.pls_mode & 3) != eDVBFrontendParametersSatellite::PLS_Gold)
+				{
+					fprintf(f, ":%d:%d:%d", sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
+					if (g)
+						fprintf(g, ",MIS/PLS:%d:%d:%d", sat.is_id, sat.pls_code & 0x3FFFF, sat.pls_mode & 3);
+				}
+				else if (static_cast<unsigned int>(sat.t2mi_plp_id) != eDVBFrontendParametersSatellite::No_T2MI_PLP_Id)
+				{
+					/*
+					 * Old lamedb format cannot have multiple optional values
+					 * so we must pad lamedb with default multistream values
+					 * otherwise the t2mi values will be stored on mulistream ones
+					 */
+					fprintf(f, ":%d:%d:%d", eDVBFrontendParametersSatellite::No_Stream_Id_Filter,
+						eDVBFrontendParametersSatellite::PLS_Default_Gold_Code, eDVBFrontendParametersSatellite::PLS_Gold);
+				}
+
+				if (static_cast<unsigned int>(sat.t2mi_plp_id) != eDVBFrontendParametersSatellite::No_T2MI_PLP_Id)
+				{
+					fprintf(f, ":%d:%d", sat.t2mi_plp_id, sat.t2mi_pid);
+					if (g)
+						fprintf(g, ",T2MI:%d:%d", sat.t2mi_plp_id, sat.t2mi_pid);
+				}
 			}
 			fprintf(f, "\n");
 			if (g)
@@ -916,6 +1022,22 @@ void eDVBDB::saveServicelist(const char *file)
 			fprintf(f, ",f:%x", i->second->m_flags);
 			if (g)
 				fprintf(g, ",f:%x", i->second->m_flags);
+		}
+
+		if (!i->second->m_default_authority.empty()) {
+			std::string da = i->second->m_default_authority;
+			std::transform(da.begin(), da.end(), da.begin(), ::tolower);
+			da = encode(da);
+
+			fprintf(f, ",a:%s", da.c_str());
+			if (g)
+				fprintf(g, ",a:%s", da.c_str());
+		}
+
+		if (i->second->m_aus_da_flag) {
+			fprintf(f, ",A:%x", i->second->m_aus_da_flag);
+			if (g)
+				fprintf(g, ",A:%x", i->second->m_aus_da_flag);
 		}
 
 		fprintf(f, "\n");
@@ -1204,6 +1326,7 @@ void eDVBDB::setNumberingMode(bool numberingMode)
 
 int eDVBDB::renumberBouquet(eBouquet &bouquet, int startChannelNum)
 {
+	eDebug("[eDVBDB] Renumber %s, starting at %d", bouquet.m_bouquet_name.c_str(), startChannelNum);
 	std::list<eServiceReference> &list = bouquet.m_services;
 	for (std::list<eServiceReference>::iterator it = list.begin(); it != list.end(); ++it)
 	{
@@ -1248,23 +1371,20 @@ eDVBDB::eDVBDB()
 PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObject tp_dict)
 {
 	if (!PyDict_Check(tp_dict)) {
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readSatellites arg 2 is not a python dict");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readSatellites arg 2 is not a python dict");
+		//eDebug("[eDVBDB] readSatellites arg 2 is not a python dict");
 		return NULL;
 	}
 	else if (!PyDict_Check(sat_dict))
 	{
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readSatellites arg 1 is not a python dict");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readSatellites arg 1 is not a python dict");
+		//eDebug("[eDVBDB] readSatellites arg 1 is not a python dict");
 		return NULL;
 	}
 	else if (!PyList_Check(sat_list))
 	{
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readSatellites arg 0 is not a python list");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readSatellites arg 0 is not a python list");
+		//eDebug("[eDVBDB] readSatellites arg 0 is not a python list");
 		return NULL;
 	}
 
@@ -1283,7 +1403,7 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 	}
 
 	int tmp, *dest = NULL,
-		modulation, system, freq, sr, pol, fec, inv, pilot, rolloff, is_id, pls_code, pls_mode, tsid, onid;
+		modulation, system, freq, sr, pol, fec, inv, pilot, rolloff, is_id, pls_code, pls_mode, t2mi_plp_id, t2mi_pid, tsid, onid;
 	char *end_ptr;
 
 	xmlNode *root_element = xmlDocGetRootElement(doc);
@@ -1307,7 +1427,7 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 				tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
 				if (!*end_ptr)
 				{
-					sat_flags = PyInt_FromLong(tmp);
+					sat_flags = PyLong_FromLong(tmp);
 				}
 			}
 			else if (name == "position")
@@ -1315,7 +1435,7 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 				tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
 				if (!*end_ptr)
 				{
-					sat_pos = PyInt_FromLong(tmp < 0 ? 3600 + tmp : tmp);
+					sat_pos = PyLong_FromLong(tmp < 0 ? 3600 + tmp : tmp);
 				}
 			}
 		}
@@ -1325,7 +1445,7 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 			ePyObject tplist = PyList_New(0);
 			ePyObject tuple = PyTuple_New(3);
 			if (!sat_flags)
-				sat_flags = PyInt_FromLong(0);
+				sat_flags = PyLong_FromLong(0);
 			PyTuple_SET_ITEM(tuple, 0, sat_pos);
 			PyTuple_SET_ITEM(tuple, 1, sat_name);
 			PyTuple_SET_ITEM(tuple, 2, sat_flags);
@@ -1347,9 +1467,11 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 				inv = eDVBFrontendParametersSatellite::Inversion_Unknown;
 				pilot = eDVBFrontendParametersSatellite::Pilot_Unknown;
 				rolloff = eDVBFrontendParametersSatellite::RollOff_alpha_0_35;
-				is_id = 0; //NO_STREAM_ID_FILTER
-				pls_mode = eDVBFrontendParametersSatellite::PLS_Root;
-				pls_code = 1;
+				is_id = eDVBFrontendParametersSatellite::No_Stream_Id_Filter;
+				pls_code = eDVBFrontendParametersSatellite::PLS_Default_Gold_Code;
+				pls_mode = eDVBFrontendParametersSatellite::PLS_Gold;
+				t2mi_plp_id = eDVBFrontendParametersSatellite::No_T2MI_PLP_Id;
+				t2mi_pid = eDVBFrontendParametersSatellite::T2MI_Default_Pid;
 				tsid = -1;
 				onid = -1;
 
@@ -1368,6 +1490,8 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 					else if (name == "is_id") dest = &is_id;
 					else if (name == "pls_code") dest = &pls_code;
 					else if (name == "pls_mode") dest = &pls_mode;
+					else if (name == "t2mi_plp_id") dest = &t2mi_plp_id;
+					else if (name == "t2mi_pid") dest = &t2mi_pid;
 					else if (name == "tsid") dest = &tsid;
 					else if (name == "onid") dest = &onid;
 					else continue;
@@ -1384,22 +1508,30 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 
 				if (freq && sr && pol != -1)
 				{
-					tuple = PyTuple_New(15);
-					PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(0));
-					PyTuple_SET_ITEM(tuple, 1, PyInt_FromLong(freq));
-					PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(sr));
-					PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(pol));
-					PyTuple_SET_ITEM(tuple, 4, PyInt_FromLong(fec));
-					PyTuple_SET_ITEM(tuple, 5, PyInt_FromLong(system));
-					PyTuple_SET_ITEM(tuple, 6, PyInt_FromLong(modulation));
-					PyTuple_SET_ITEM(tuple, 7, PyInt_FromLong(inv));
-					PyTuple_SET_ITEM(tuple, 8, PyInt_FromLong(rolloff));
-					PyTuple_SET_ITEM(tuple, 9, PyInt_FromLong(pilot));
-					PyTuple_SET_ITEM(tuple, 10, PyInt_FromLong(is_id));
-					PyTuple_SET_ITEM(tuple, 11, PyInt_FromLong(pls_mode & 3));
-					PyTuple_SET_ITEM(tuple, 12, PyInt_FromLong(pls_code & 0x3FFFF));
-					PyTuple_SET_ITEM(tuple, 13, PyInt_FromLong(tsid));
-					PyTuple_SET_ITEM(tuple, 14, PyInt_FromLong(onid));
+					/* convert Root to Gold */
+					if (pls_mode == eDVBFrontendParametersSatellite::PLS_Root)
+					{
+						pls_mode = eDVBFrontendParametersSatellite::PLS_Gold;
+						pls_code = root2gold(pls_code);
+					}
+					tuple = PyTuple_New(17);
+					PyTuple_SET_ITEM(tuple, 0, PyLong_FromLong(0));
+					PyTuple_SET_ITEM(tuple, 1, PyLong_FromLong(freq));
+					PyTuple_SET_ITEM(tuple, 2, PyLong_FromLong(sr));
+					PyTuple_SET_ITEM(tuple, 3, PyLong_FromLong(pol));
+					PyTuple_SET_ITEM(tuple, 4, PyLong_FromLong(fec));
+					PyTuple_SET_ITEM(tuple, 5, PyLong_FromLong(system));
+					PyTuple_SET_ITEM(tuple, 6, PyLong_FromLong(modulation));
+					PyTuple_SET_ITEM(tuple, 7, PyLong_FromLong(inv));
+					PyTuple_SET_ITEM(tuple, 8, PyLong_FromLong(rolloff));
+					PyTuple_SET_ITEM(tuple, 9, PyLong_FromLong(pilot));
+					PyTuple_SET_ITEM(tuple, 10, PyLong_FromLong(is_id));
+					PyTuple_SET_ITEM(tuple, 11, PyLong_FromLong(pls_mode & 3));
+					PyTuple_SET_ITEM(tuple, 12, PyLong_FromLong(pls_code & 0x3FFFF));
+					PyTuple_SET_ITEM(tuple, 13, PyLong_FromLong(t2mi_plp_id));
+					PyTuple_SET_ITEM(tuple, 14, PyLong_FromLong(t2mi_pid));
+					PyTuple_SET_ITEM(tuple, 15, PyLong_FromLong(tsid));
+					PyTuple_SET_ITEM(tuple, 16, PyLong_FromLong(onid));
 					PyList_Append(tplist, tuple);
 					Py_DECREF(tuple);
 				}
@@ -1433,16 +1565,14 @@ PyObject *eDVBDB::readSatellites(ePyObject sat_list, ePyObject sat_dict, ePyObje
 PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 {
 	if (!PyDict_Check(tp_dict)) {
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readCables arg 1 is not a python dict");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readCables arg 1 is not a python dict");
+		//eDebug("[eDVBDB] readCables arg 1 is not a python dict");
 		return NULL;
 	}
 	else if (!PyList_Check(cab_list))
 	{
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readCables arg 0 is not a python list");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readCables arg 0 is not a python list");
+		//eDebug("[eDVBDB] readCables arg 0 is not a python list");
 		return NULL;
 	}
 
@@ -1482,7 +1612,7 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 			{
 				tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
 				if (!*end_ptr)
-					cab_flags = PyInt_FromLong(tmp);
+					cab_flags = PyLong_FromLong(tmp);
 			}
 			else if (name == "countrycode")
 			{
@@ -1495,7 +1625,7 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 			ePyObject tplist = PyList_New(0);
 			ePyObject tuple = PyTuple_New(3);
 			if (!cab_flags)
-				cab_flags = PyInt_FromLong(0);
+				cab_flags = PyLong_FromLong(0);
 			if (!cab_countrycode)
 				cab_countrycode = PyString_FromString("");
 			PyTuple_SET_ITEM(tuple, 0, cab_name);
@@ -1527,6 +1657,7 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 					else if (name == "inversion") dest = &inversion;
 					else if (name == "system") dest = &system;
 					else continue;
+
 					if (dest)
 					{
 						tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
@@ -1542,13 +1673,13 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 					while (freq > 999999)
 						freq /= 10;
 					tuple = PyTuple_New(7);
-					PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(1));
-					PyTuple_SET_ITEM(tuple, 1, PyInt_FromLong(freq));
-					PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(sr));
-					PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(modulation));
-					PyTuple_SET_ITEM(tuple, 4, PyInt_FromLong(fec));
-					PyTuple_SET_ITEM(tuple, 5, PyInt_FromLong(inversion));
-					PyTuple_SET_ITEM(tuple, 6, PyInt_FromLong(system));
+					PyTuple_SET_ITEM(tuple, 0, PyLong_FromLong(1));
+					PyTuple_SET_ITEM(tuple, 1, PyLong_FromLong(freq));
+					PyTuple_SET_ITEM(tuple, 2, PyLong_FromLong(sr));
+					PyTuple_SET_ITEM(tuple, 3, PyLong_FromLong(modulation));
+					PyTuple_SET_ITEM(tuple, 4, PyLong_FromLong(fec));
+					PyTuple_SET_ITEM(tuple, 5, PyLong_FromLong(inversion));
+					PyTuple_SET_ITEM(tuple, 6, PyLong_FromLong(system));
 					PyList_Append(tplist, tuple);
 					Py_DECREF(tuple);
 				}
@@ -1584,16 +1715,14 @@ PyObject *eDVBDB::readCables(ePyObject cab_list, ePyObject tp_dict)
 PyObject *eDVBDB::readTerrestrials(ePyObject ter_list, ePyObject tp_dict)
 {
 	if (!PyDict_Check(tp_dict)) {
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readTerrestrials arg 1 is not a python dict");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readTerrestrials arg 1 is not a python dict");
+		//eDebug("[eDVBDB] readTerrestrials arg 1 is not a python dict");
 		return NULL;
 	}
 	else if (!PyList_Check(ter_list))
 	{
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readTerrestrials arg 0 is not a python list");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readTerrestrials arg 0 is not a python list");
+		//eDebug("[eDVBDB] readTerrestrials arg 0 is not a python list");
 		return NULL;
 	}
 
@@ -1636,7 +1765,7 @@ PyObject *eDVBDB::readTerrestrials(ePyObject ter_list, ePyObject tp_dict)
 				tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
 				if (!*end_ptr)
 				{
-					ter_flags = PyInt_FromLong(tmp);
+					ter_flags = PyLong_FromLong(tmp);
 				}
 			}
 			else if (name == "countrycode")
@@ -1650,7 +1779,7 @@ PyObject *eDVBDB::readTerrestrials(ePyObject ter_list, ePyObject tp_dict)
 			ePyObject tplist = PyList_New(0);
 			ePyObject tuple = PyTuple_New(3);
 			if (!ter_flags)
-				ter_flags = PyInt_FromLong(0);
+				ter_flags = PyLong_FromLong(0);
 			if (!ter_countrycode)
 				ter_countrycode = PyString_FromString("");
 			PyTuple_SET_ITEM(tuple, 0, ter_name);
@@ -1721,18 +1850,18 @@ PyObject *eDVBDB::readTerrestrials(ePyObject ter_list, ePyObject tp_dict)
 					if (crl > eDVBFrontendParametersTerrestrial::FEC_8_9)
 						crl = eDVBFrontendParametersTerrestrial::FEC_Auto;
 					tuple = PyTuple_New(12);
-					PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(2));
-					PyTuple_SET_ITEM(tuple, 1, PyInt_FromLong(freq));
-					PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(bw));
-					PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(constellation));
-					PyTuple_SET_ITEM(tuple, 4, PyInt_FromLong(crh));
-					PyTuple_SET_ITEM(tuple, 5, PyInt_FromLong(crl));
-					PyTuple_SET_ITEM(tuple, 6, PyInt_FromLong(guard));
-					PyTuple_SET_ITEM(tuple, 7, PyInt_FromLong(transm));
-					PyTuple_SET_ITEM(tuple, 8, PyInt_FromLong(hierarchy));
-					PyTuple_SET_ITEM(tuple, 9, PyInt_FromLong(inv));
-					PyTuple_SET_ITEM(tuple, 10, PyInt_FromLong(system));
-					PyTuple_SET_ITEM(tuple, 11, PyInt_FromLong(plp_id));
+					PyTuple_SET_ITEM(tuple, 0, PyLong_FromLong(2));
+					PyTuple_SET_ITEM(tuple, 1, PyLong_FromLong(freq));
+					PyTuple_SET_ITEM(tuple, 2, PyLong_FromLong(bw));
+					PyTuple_SET_ITEM(tuple, 3, PyLong_FromLong(constellation));
+					PyTuple_SET_ITEM(tuple, 4, PyLong_FromLong(crh));
+					PyTuple_SET_ITEM(tuple, 5, PyLong_FromLong(crl));
+					PyTuple_SET_ITEM(tuple, 6, PyLong_FromLong(guard));
+					PyTuple_SET_ITEM(tuple, 7, PyLong_FromLong(transm));
+					PyTuple_SET_ITEM(tuple, 8, PyLong_FromLong(hierarchy));
+					PyTuple_SET_ITEM(tuple, 9, PyLong_FromLong(inv));
+					PyTuple_SET_ITEM(tuple, 10, PyLong_FromLong(system));
+					PyTuple_SET_ITEM(tuple, 11, PyLong_FromLong(plp_id));
 					PyList_Append(tplist, tuple);
 					Py_DECREF(tuple);
 				}
@@ -1768,16 +1897,14 @@ PyObject *eDVBDB::readTerrestrials(ePyObject ter_list, ePyObject tp_dict)
 PyObject *eDVBDB::readATSC(ePyObject atsc_list, ePyObject tp_dict)
 {
 	if (!PyDict_Check(tp_dict)) {
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readATSC arg 1 is not a python dict");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readATSC arg 1 is not a python dict");
+		//eDebug("[eDVBDB] readATSC arg 1 is not a python dict");
 		return NULL;
 	}
 	else if (!PyList_Check(atsc_list))
 	{
-		PyErr_SetString(PyExc_StandardError,
-			"type error");
-			eDebug("[eDVBDB] readATSC arg 0 is not a python list");
+		PyErr_SetString(PyExc_TypeError, "[eDVBDB] readATSC arg 0 is not a python list");
+		//eDebug("[eDVBDB] readATSC arg 0 is not a python list");
 		return NULL;
 	}
 
@@ -1816,7 +1943,7 @@ PyObject *eDVBDB::readATSC(ePyObject atsc_list, ePyObject tp_dict)
 			{
 				tmp = strtol((const char*)attr->children->content, &end_ptr, 10);
 				if (!*end_ptr)
-					atsc_flags = PyInt_FromLong(tmp);
+					atsc_flags = PyLong_FromLong(tmp);
 			}
 		}
 
@@ -1825,7 +1952,7 @@ PyObject *eDVBDB::readATSC(ePyObject atsc_list, ePyObject tp_dict)
 			ePyObject tplist = PyList_New(0);
 			ePyObject tuple = PyTuple_New(2);
 			if (!atsc_flags)
-				atsc_flags = PyInt_FromLong(0);
+				atsc_flags = PyLong_FromLong(0);
 			PyTuple_SET_ITEM(tuple, 0, atsc_name);
 			PyTuple_SET_ITEM(tuple, 1, atsc_flags);
 			PyList_Append(atsc_list, tuple);
@@ -1864,11 +1991,11 @@ PyObject *eDVBDB::readATSC(ePyObject atsc_list, ePyObject tp_dict)
 				if (freq)
 				{
 					tuple = PyTuple_New(5);
-					PyTuple_SET_ITEM(tuple, 0, PyInt_FromLong(3));
-					PyTuple_SET_ITEM(tuple, 1, PyInt_FromLong(freq));
-					PyTuple_SET_ITEM(tuple, 2, PyInt_FromLong(modulation));
-					PyTuple_SET_ITEM(tuple, 3, PyInt_FromLong(inversion));
-					PyTuple_SET_ITEM(tuple, 4, PyInt_FromLong(system));
+					PyTuple_SET_ITEM(tuple, 0, PyLong_FromLong(3));
+					PyTuple_SET_ITEM(tuple, 1, PyLong_FromLong(freq));
+					PyTuple_SET_ITEM(tuple, 2, PyLong_FromLong(modulation));
+					PyTuple_SET_ITEM(tuple, 3, PyLong_FromLong(inversion));
+					PyTuple_SET_ITEM(tuple, 4, PyLong_FromLong(system));
 					PyList_Append(tplist, tuple);
 					Py_DECREF(tuple);
 				}
@@ -2034,9 +2161,21 @@ PyObject *eDVBDB::getFlag(const eServiceReference &ref)
 		eServiceReferenceDVB &service = (eServiceReferenceDVB&)ref;
 		std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator it(m_services.find(service));
 		if (it != m_services.end())
-			return PyInt_FromLong(it->second->m_flags);
+			return PyLong_FromLong(it->second->m_flags);
 	}
-	return PyInt_FromLong(0);
+	return PyLong_FromLong(0);
+}
+
+PyObject *eDVBDB::getCachedPid(const eServiceReference &ref, int id)
+{
+	if (ref.type == eServiceReference::idDVB)
+	{
+		eServiceReferenceDVB &service = (eServiceReferenceDVB&)ref;
+		std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator it(m_services.find(service));
+		if (it != m_services.end())
+			return PyLong_FromLong(it->second->getCacheEntry((eDVBService::cacheID)id));
+	}
+	return PyLong_FromLong(-1);
 }
 
 bool eDVBDB::isCrypted(const eServiceReference &ref)
@@ -2107,6 +2246,15 @@ RESULT eDVBDB::removeFlag(const eServiceReference &ref, unsigned int flagmask)
 		return 0;
 	}
 	return -1;
+}
+
+void eDVBDB::removeServicesFlag(unsigned int flagmask)
+{
+	for (std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator i(m_services.begin());
+		i != m_services.end(); ++i)
+	{
+		i->second->m_flags &= ~flagmask;
+	}
 }
 
 RESULT eDVBDB::removeFlags(unsigned int flagmask, int dvb_namespace, int tsid, int onid, unsigned int orb_pos)
@@ -2280,6 +2428,22 @@ RESULT eDVBDB::startQuery(ePtr<iDVBChannelListQuery> &query, eDVBChannelQuery *q
 	return 0;
 }
 
+bool eDVBDB::isValidService(int tsid, int onid, int sid)
+{
+	eServiceID Sid(sid);
+	eTransportStreamID Tsid(tsid);
+	eOriginalNetworkID Onid(onid);
+	for (std::map<eServiceReferenceDVB, ePtr<eDVBService> >::iterator sit(m_services.begin());
+		sit != m_services.end(); ++sit)
+	{
+		if (sit->first.getTransportStreamID() == Tsid &&
+			sit->first.getOriginalNetworkID() == Onid &&
+			sit->first.getServiceID() == Sid)
+			return true;
+	}
+	return false;
+}
+
 eServiceReference eDVBDB::searchReference(int tsid, int onid, int sid)
 {
 	eServiceID Sid(sid);
@@ -2369,7 +2533,6 @@ int eDVBDBQueryBase::compareLessEqual(const eServiceReferenceDVB &a, const eServ
 	default:
 		return 1;
 	}
-	return 0;
 }
 
 eDVBDBQuery::eDVBDBQuery(eDVBDB *db, const eServiceReference &source, eDVBChannelQuery *query)

@@ -1,25 +1,23 @@
-from boxbranding import getBoxType, getMachineName
+from __future__ import print_function
+from Components.AVSwitch import iAVSwitch
+from Components.config import config, ConfigBoolean, configfile
+from Components.Pixmap import Pixmap
+from Components.SystemInfo import BoxInfo
+from Screens.HelpMenu import ShowRemoteControl
+from Screens.Screen import Screen
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
-from Screens.Rc import Rc
-from Components.AVSwitch import iAVSwitch
-from Screens.Screen import Screen
-
-from Components.Pixmap import Pixmap
-from Components.config import config, ConfigBoolean, configfile
-
-from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_ACTIVE_SKIN
+from Tools.Directories import resolveFilename, SCOPE_SKINS, SCOPE_GUISKIN
 from Tools.HardwareInfo import HardwareInfo
 
-config.misc.showtestcard = ConfigBoolean(default = False)
 
-boxtype = getBoxType()
-has_rca = False
-has_dvi = False
-if boxtype in ('zgemmah9t','zgemmah9s','zgemmah9splus','dinobot4k','dinobot4kse','dinobot4kl','zgemmah6','vipert2c','vipercombo','vipercombohdd','evoslimse','evoslimt2c','zgemmah4','spycat4kcombo','spycat4k','valalinux','formuler4ip','formuler3ip','formuler1tc','tm4ksuper','galaxy4k','zgemmah52splus','zgemmah2splus','zgemmah7','zgemmah32tc','zgemmah52tc','alphatriple','tmtwin4k','tmnanom3','tiviarmin','mbmicrov2', 'vimastec1500', 'revo4k','force3uhdplus','force3uhd','force2nano','zgemmah5ac', 'zgemmah3ac','bre2zet2c', 'e4hdcombo', 'ultrabox', 'osmega', 'tmnano3t', 'novacombo', 'novatwin', 'megaforce2', 'purehd', 'mutant11', 'sf128', 'sf138', 'xpeedlxpro', 'mbtwinplus', 'mutant51', 'ax51', 'formuler4', 'formuler4turbo', 'zgemmah5', 'zgemmah52s', 'sf98', 'evoslim', 'zgemmaslc', '9900lx', '9910lx', '9911lx', 'et7x00mini', 'tmnanosem2', 'tmnanosem2plus', 'evomini', 'evominiplus', 'zgemmahs', 'zgemmah2s', 'zgemmah2h', 't2cable', 'osmini', 'osminiplus', 'xpeedlxcs2', 'xpeedlxcc', 'odin2hybrid', 'odinplus', 'mutant500c', 'mutant530c', 'e4hd', 'e4hdhybrid' , 'mbmicro', 'beyonwizt2', 'fegasusx3', 'fegasusx5s', 'fegasusx5t', 'twinboxlcd', 'singleboxlcd', 'twinboxlcdci', 'twinboxlcdci5', 'sf3038', 'spycat', 'zgemmash1', 'zgemmash2', 'zgemmas2s', 'zgemmass' , 'formuler3', 'enibox', 'mago', 'sf108', 'x1plus', 'x2plus', 'atemio6000', 'atemio6100', 'atemio6200', 'mbminiplus', 'vp7358ci', 'xcombo', 'gbquad', 'gbquadplus', 'et5x00', 'et6000', 'et7000', 'et7100', 'et7500', 'et8500', 'et8500s', 'classm', 'axodin', 'axodinc', 'genius', 'evo', 'galaxym6', 'geniuse3hd', 'evoe3hd', 'axase3', 'axase3c', 'starsatlx', 'mixosf7', 'mixoslumi', 'tmnano', 'azboxme',  'azboxminime', 'optimussos1',  'optimussos2', 'gb800seplus', 'gb800ueplus', 'gbultrase', 'gbultraue', 'gbultraueh', 'sezam1000hd', 'ixussone', 'ixusszero', 'enfinity', 'marvel1', 'bre2ze', 'force1', 'force1plus', 'worldvisionf1', 'optimussos1plus',  'optimussos2plus',  'optimussos3plus', 'formuler1', 'tmnano2super', 'vusolose', 'vuzero', 'tyrant'):
-has_rca = True
-if boxtype == 'dm8000' or boxtype == 'dm800':
-has_dvi = True
+config.misc.showtestcard = ConfigBoolean(default=False)
+
+has_scart = BoxInfo.getItem("scart", False)
+has_rca = BoxInfo.getItem("rca", False)
+has_jack = BoxInfo.getItem("avjack", False)
+has_dvi = BoxInfo.getItem("dvi", False)
+
 
 class VideoWizardSummary(WizardSummary):
 	skin = (
@@ -42,7 +40,8 @@ class VideoWizardSummary(WizardSummary):
 	def setLCDPic(self, file):
 		self["pic"].instance.setPixmapFromFile(file)
 
-class VideoWizard(WizardLanguage, Rc):
+
+class VideoWizard(WizardLanguage, ShowRemoteControl):
 	skin = """
 		<screen position="fill" title="Welcome..." flags="wfNoBorder" >
 			<panel name="WizardMarginsTemplate"/>
@@ -68,11 +67,11 @@ class VideoWizard(WizardLanguage, Rc):
 
 	def __init__(self, session):
 		# FIXME anyone knows how to use relative paths from the plugin's directory?
-		self.xmlfile = resolveFilename(SCOPE_SKIN, "videowizard.xml")
+		self.xmlfile = resolveFilename(SCOPE_SKINS, "videowizard.xml")
 		self.hw = iAVSwitch
 
-		WizardLanguage.__init__(self, session, showSteps = False, showStepSlider = False)
-		Rc.__init__(self)
+		WizardLanguage.__init__(self, session, showSteps=False, showStepSlider=False)
+		ShowRemoteControl.__init__(self)
 		self["wizard"] = Pixmap()
 		self["HelpWindow"] = Pixmap()
 		self["HelpWindow"].hide()
@@ -95,7 +94,6 @@ class VideoWizard(WizardLanguage, Rc):
 
 	def listInputChannels(self):
 		hw_type = HardwareInfo().get_device_name()
-		has_hdmi = HardwareInfo().has_hdmi()
 		list = []
 
 		for port in self.hw.getPortList():
@@ -103,79 +101,84 @@ class VideoWizard(WizardLanguage, Rc):
 				descr = port
 				if descr == 'HDMI' and has_dvi:
 					descr = 'DVI'
-				if descr == 'Scart' and has_rca:
+				if descr == 'Scart' and has_rca and not has_scart:
 					descr = 'RCA'
+				if descr == 'Scart' and has_jack and not has_scart:
+					descr = 'Jack'
 				if port != "DVI-PC":
-					list.append((descr,port))
-		list.sort(key = lambda x: x[0])
-		print "listInputChannels:", list
+					list.append((descr, port))
+		list.sort(key=lambda x: x[0])
+		print("listInputChannels:", list)
 		return list
 
 	def inputSelectionMade(self, index):
-		print "inputSelectionMade:", index
+		print("inputSelectionMade:", index)
 		self.port = index
 		self.inputSelect(index)
 
 	def inputSelectionMoved(self):
 		hw_type = HardwareInfo().get_device_name()
-		has_hdmi = HardwareInfo().has_hdmi()
-		print "input selection moved:", self.selection
+		print("input selection moved:", self.selection)
 		self.inputSelect(self.selection)
 		if self["portpic"].instance is not None:
 			picname = self.selection
 			if picname == 'HDMI' and has_dvi:
 				picname = "DVI"
 			if picname == 'Scart' and has_rca:
-				picname = "RCA"	
-			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_ACTIVE_SKIN, "icons/" + picname + ".png"))
+				picname = "RCA"
+			if picname == 'Scart' and has_jack:
+				picname = "JACK"
+			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_GUISKIN, "icons/" + picname + ".png"))
 
 	def inputSelect(self, port):
-		print "inputSelect:", port
+		print("inputSelect:", port)
 		modeList = self.hw.getModeList(self.selection)
-		print "modeList:", modeList
+		print("modeList:", modeList)
 		self.port = port
 		if len(modeList) > 0:
 			ratesList = self.listRates(modeList[0][0])
-			self.hw.setMode(port = port, mode = modeList[0][0], rate = ratesList[0][0])
+			self.hw.setMode(port=port, mode=modeList[0][0], rate=ratesList[0][0])
 
 	def listModes(self):
 		list = []
-		print "modes for port", self.port
+		print("modes for port", self.port)
 		for mode in self.hw.getModeList(self.port):
 			#if mode[0] != "PC":
 				list.append((mode[0], mode[0]))
-		print "modeslist:", list
+		print("modeslist:", list)
 		return list
 
 	def modeSelectionMade(self, index):
-		print "modeSelectionMade:", index
+		print("modeSelectionMade:", index)
 		self.mode = index
 		self.modeSelect(index)
 
 	def modeSelectionMoved(self):
-		print "mode selection moved:", self.selection
+		print("mode selection moved:", self.selection)
 		self.modeSelect(self.selection)
 
 	def modeSelect(self, mode):
 		ratesList = self.listRates(mode)
-		print "ratesList:", ratesList
+		print("ratesList:", ratesList)
 		if self.port == "HDMI" and mode in ("720p", "1080i", "1080p"):
 			self.rate = "multi"
-			self.hw.setMode(port = self.port, mode = mode, rate = "multi")
+			self.hw.setMode(port=self.port, mode=mode, rate="multi")
 		else:
-			self.hw.setMode(port = self.port, mode = mode, rate = ratesList[0][0])
+			self.hw.setMode(port=self.port, mode=mode, rate=ratesList[0][0])
 
-	def listRates(self, querymode = None):
+	def listRates(self, querymode=None):
 		if querymode is None:
 			querymode = self.mode
 		list = []
-		print "modes for port", self.port, "and mode", querymode
+		print("modes for port", self.port, "and mode", querymode)
 		for mode in self.hw.getModeList(self.port):
-			print mode
+			print(mode)
 			if mode[0] == querymode:
 				for rate in mode[1]:
+					if rate in ("auto") and not BoxInfo.getItem("have24hz"):
+						continue
 					if self.port == "DVI-PC":
-						print "rate:", rate
+						print("rate:", rate)
 						if rate == "640x480":
 							list.insert(0, (rate, rate))
 							continue
@@ -183,28 +186,28 @@ class VideoWizard(WizardLanguage, Rc):
 		return list
 
 	def rateSelectionMade(self, index):
-		print "rateSelectionMade:", index
+		print("rateSelectionMade:", index)
 		self.rate = index
 		self.rateSelect(index)
 
 	def rateSelectionMoved(self):
-		print "rate selection moved:", self.selection
+		print("rate selection moved:", self.selection)
 		self.rateSelect(self.selection)
 
 	def rateSelect(self, rate):
-		self.hw.setMode(port = self.port, mode = self.mode, rate = rate)
+		self.hw.setMode(port=self.port, mode=self.mode, rate=rate)
 
-	def showTestCard(self, selection = None):
+	def showTestCard(self, selection=None):
 		if selection is None:
 			selection = self.selection
-		print "set config.misc.showtestcard to", {'yes': True, 'no': False}[selection]
+		print("set config.misc.showtestcard to", {'yes': True, 'no': False}[selection])
 		if selection == "yes":
 			config.misc.showtestcard.value = True
 		else:
 			config.misc.showtestcard.value = False
 
 	def keyNumberGlobal(self, number):
-		if number in (1,2,3):
+		if number in (1, 2, 3):
 			if number == 1:
 				self.hw.saveMode("HDMI", "720p", "multi")
 			elif number == 2:

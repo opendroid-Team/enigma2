@@ -3,7 +3,9 @@
 #include <png.h>
 #include <stdio.h>
 #include <lib/base/cfile.h>
+#include <lib/base/wrappers.h>
 #include <lib/gdi/epng.h>
+#include <lib/gdi/pixmapcache.h>
 #include <unistd.h>
 
 #include <map>
@@ -12,11 +14,18 @@
 
 extern "C" {
 #include <jpeglib.h>
+#include <gif_lib.h>
 }
 
+#include <nanosvg.h>
+#include <nanosvgrast.h>
+
 /* TODO: I wonder why this function ALWAYS returns 0 */
-int loadPNG(ePtr<gPixmap> &result, const char *filename, int accel)
+int loadPNG(ePtr<gPixmap> &result, const char *filename, int accel, int cached)
 {
+	if (cached && (result = PixmapCache::Get(filename)))
+		return 0;
+
 	CFile fp(filename, "rb");
 
 	if (!fp)
@@ -117,7 +126,7 @@ int loadPNG(ePtr<gPixmap> &result, const char *filename, int accel)
 	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, 0, 0, 0);
 	channels = png_get_channels(png_ptr, info_ptr);
 
-	result = new gPixmap(eSize(width, height), bit_depth * channels, accel);
+	result = new gPixmap(width, height, bit_depth * channels, cached ? PixmapCache::PixmapDisposed : NULL, accel);
 	gUnmanagedSurface *surface = result->surface;
 
 	png_bytep *rowptr = new png_bytep[height];
@@ -132,25 +141,30 @@ int loadPNG(ePtr<gPixmap> &result, const char *filename, int accel)
 		if (png_get_valid(png_ptr, info_ptr, PNG_INFO_PLTE)) {
 			png_color *palette;
 			png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette);
-			if (num_palette)
+			if (num_palette) {
 				surface->clut.data = new gRGB[num_palette];
-			else
-				surface->clut.data = 0;
-			surface->clut.colors = num_palette;
+				surface->clut.colors = num_palette;
 
-			for (int i = 0; i < num_palette; i++) {
-				surface->clut.data[i].a = 0;
-				surface->clut.data[i].r = palette[i].red;
-				surface->clut.data[i].g = palette[i].green;
-				surface->clut.data[i].b = palette[i].blue;
-			}
-			if (trns) {
-				png_byte *trans;
-				png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, 0);
-				for (int i = 0; i < num_trans; i++)
-					surface->clut.data[i].a = 255 - trans[i];
-				for (int i = num_trans; i < num_palette; i++)
+				for (int i = 0; i < num_palette; i++) {
 					surface->clut.data[i].a = 0;
+					surface->clut.data[i].r = palette[i].red;
+					surface->clut.data[i].g = palette[i].green;
+					surface->clut.data[i].b = palette[i].blue;
+				}
+
+				if (trns) {
+					png_byte *trans;
+					png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, 0);
+					for (int i = 0; i < num_trans; i++)
+						surface->clut.data[i].a = 255 - trans[i];
+					for (int i = num_trans; i < num_palette; i++)
+						surface->clut.data[i].a = 0;
+				}
+
+			}
+			else {
+				surface->clut.data = 0;
+				surface->clut.colors = num_palette;
 			}
 		}
 		else {
@@ -159,6 +173,10 @@ int loadPNG(ePtr<gPixmap> &result, const char *filename, int accel)
 		}
 		surface->clut.start = 0;
 	}
+
+	if (cached)
+		PixmapCache::Set(filename, result);
+
 	//eDebug("[ePNG] %s: after  %dx%dx%dbpcx%dchan coltyp=%d cols=%d trans=%d", filename, (int)width, (int)height, bit_depth, channels, color_type, num_palette, num_trans);
 
 	png_read_end(png_ptr, end_info);
@@ -181,8 +199,16 @@ my_error_exit (j_common_ptr cinfo)
 	longjmp(myerr->setjmp_buffer, 1);
 }
 
-int loadJPG(ePtr<gPixmap> &result, const char *filename, ePtr<gPixmap> alpha)
+int loadJPG(ePtr<gPixmap> &result, const char *filename, int cached)
 {
+	return loadJPG(result, filename, ePtr<gPixmap>(), cached);
+}
+
+int loadJPG(ePtr<gPixmap> &result, const char *filename, ePtr<gPixmap> alpha, int cached)
+{
+	if (cached && (result = PixmapCache::Get(filename)))
+		return 0;
+
 	struct jpeg_decompress_struct cinfo;
 	struct my_error_mgr jerr;
 	JSAMPARRAY buffer;
@@ -232,7 +258,7 @@ int loadJPG(ePtr<gPixmap> &result, const char *filename, ePtr<gPixmap> alpha)
 		}
 	}
 
-	result = new gPixmap(eSize(cinfo.output_width, cinfo.output_height), grayscale ? 8 : 32);
+	result = new gPixmap(cinfo.output_width, cinfo.output_height, grayscale ? 8 : 32, cached ? PixmapCache::PixmapDisposed : NULL);
 
 	row_stride = cinfo.output_width * cinfo.output_components;
 	buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -270,6 +296,10 @@ int loadJPG(ePtr<gPixmap> &result, const char *filename, ePtr<gPixmap> alpha)
 			}
 		}
 	}
+
+	if (cached)
+		PixmapCache::Set(filename, result);
+
 	(void) jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 	return 0;
@@ -343,10 +373,105 @@ static int savePNGto(FILE *fp, gPixmap *pixmap)
 	return 0;
 }
 
+int loadSVG(ePtr<gPixmap> &result, const char *filename, int cached, int width, int height, float scale)
+{
+	result = nullptr;
+	int size = 0;
+
+	if (height > 0)
+		size = height;
+	else if (scale > 0)
+		size = (int)(scale * 10);
+
+	char cachefile[strlen(filename) + 10];
+	sprintf(cachefile, "%s%d", filename, size);
+
+	if (cached && (result = PixmapCache::Get(cachefile)))
+		return 0;
+
+	NSVGimage *image = nullptr;
+	NSVGrasterizer *rast = nullptr;
+	double xscale = 1.0;
+	double yscale = 1.0;
+
+	image = nsvgParseFromFile(filename, "px", 96.0);
+	if (image == nullptr)
+		return 0;
+
+	rast = nsvgCreateRasterizer();
+	if (rast == nullptr)
+	{
+		nsvgDelete(image);
+		return 0;
+	}
+
+	if (height > 0)
+		yscale = ((double) height) / image->height;
+
+	if (width > 0)
+	{
+		xscale = ((double) width) / image->width;
+		if (height <= 0)
+		{
+			yscale = xscale;
+			height = (int)(image->height * yscale);
+		}
+	}
+	else if (height > 0)
+	{
+		xscale = yscale;
+		width = (int)(image->width * xscale);
+	}
+	else if (scale > 0)
+	{
+		xscale = (double) scale;
+		yscale = (double) scale;
+		width = (int)(image->width * scale);
+		height = (int)(image->height * scale);
+	}
+	else
+	{
+		width = (int)image->width;
+		height = (int)image->height;
+	}
+
+	result = new gPixmap(width, height, 32, cached ? PixmapCache::PixmapDisposed : NULL, -1);
+	if (result == nullptr)
+	{
+		nsvgDeleteRasterizer(rast);
+		nsvgDelete(image);
+		return 0;
+	}
+
+	eDebug("[ePNG] loadSVG %s %dx%d from %dx%d", filename, width, height, (int)image->width, (int)image->height);
+	// Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
+	nsvgRasterizeFull(rast, image, 0, 0, xscale, yscale, (unsigned char*)result->surface->data, width, height, width * 4, 1);
+
+	if (cached)
+		PixmapCache::Set(cachefile, result);
+
+	nsvgDeleteRasterizer(rast);
+	nsvgDelete(image);
+
+	return 0;
+}
+
+int loadImage(ePtr<gPixmap> &result, const char *filename, int accel, int width, int height)
+{
+	if (endsWith(filename, ".png"))
+		return loadPNG(result, filename, accel, 1);
+	else if (endsWith(filename, ".svg"))
+		return loadSVG(result, filename, 1, width, height, 0);
+	else if (endsWith(filename, ".jpg"))
+		return loadJPG(result, filename, 0);
+	else if (endsWith(filename, ".gif"))
+		return loadGIF(result, filename, accel, 0);
+	return 0;
+}
+
 int savePNG(const char *filename, gPixmap *pixmap)
 {
 	int result;
-
 	{
 		eDebug("[ePNG] saving to %s",filename);
 		CFile fp(filename, "wb");
@@ -358,3 +483,165 @@ int savePNG(const char *filename, gPixmap *pixmap)
 		::unlink(filename);
 	return result;
 }
+
+static void loadGIFFile(GifFile* filepara)
+{
+	unsigned char *pic_buffer = NULL;
+	int px, py, i, j;
+	unsigned char *fbptr;
+	unsigned char *slb=NULL;
+	GifFileType *gft;
+	GifRecordType rt;
+	GifByteType *extension;
+	ColorMapObject *cmap;
+	int cmaps;
+	int extcode;
+
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5)
+	gft = DGifOpenFileName(filepara->file);
+#else
+	{
+		int err;
+		gft = DGifOpenFileName(filepara->file, &err);
+	}
+#endif
+	if (gft == NULL)
+		return;
+	do
+	{
+		if (DGifGetRecordType(gft, &rt) == GIF_ERROR)
+			goto ERROR_R;
+		switch(rt)
+		{
+			case IMAGE_DESC_RECORD_TYPE:
+				if (DGifGetImageDesc(gft) == GIF_ERROR)
+					goto ERROR_R;
+				filepara->ox = px = gft->Image.Width;
+				filepara->oy = py = gft->Image.Height;
+				pic_buffer = new unsigned char[px * py];
+				filepara->pic_buffer = pic_buffer;
+				slb = pic_buffer;
+
+				if (pic_buffer != NULL)
+				{
+					cmap = (gft->Image.ColorMap ? gft->Image.ColorMap : gft->SColorMap);
+					cmaps = cmap->ColorCount;
+					filepara->palette_size = cmaps;
+					filepara->palette = new gRGB[cmaps];
+					for (i = 0; i != cmaps; ++i)
+					{
+						filepara->palette[i].a = 0;
+						filepara->palette[i].r = cmap->Colors[i].Red;
+						filepara->palette[i].g = cmap->Colors[i].Green;
+						filepara->palette[i].b = cmap->Colors[i].Blue;
+					}
+
+					fbptr = pic_buffer;
+					if (!(gft->Image.Interlace))
+					{
+						for (i = 0; i < py; i++, fbptr += px * 3)
+						{
+							if (DGifGetLine(gft, slb, px) == GIF_ERROR)
+								goto ERROR_R;
+							slb += px;
+						}
+					}
+					else
+					{
+						for (j = 0; j < 4; j++)
+						{
+							slb = pic_buffer;
+							for (i = 0; i < py; i++)
+							{
+								if (DGifGetLine(gft, slb, px) == GIF_ERROR)
+									goto ERROR_R;
+								slb += px;
+							}
+						}
+					}
+				}
+				break;
+			case EXTENSION_RECORD_TYPE:
+				if (DGifGetExtension(gft, &extcode, &extension) == GIF_ERROR)
+					goto ERROR_R;
+				while (extension != NULL)
+					if (DGifGetExtensionNext(gft, &extension) == GIF_ERROR)
+						goto ERROR_R;
+				break;
+			default:
+				break;
+		}
+	}
+	while (rt != TERMINATE_RECORD_TYPE);
+
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5) || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0)
+	DGifCloseFile(gft);
+#else
+	{
+		int err;
+		DGifCloseFile(gft, &err);
+	}
+#endif
+	return;
+ERROR_R:
+	eDebug("[loadGIFFile] <Error gif>");
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5) || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0)
+	DGifCloseFile(gft);
+#else
+	{
+		int err;
+		DGifCloseFile(gft, &err);
+	}
+#endif
+}
+
+int loadGIF(ePtr<gPixmap> &result, const char *filename, int accel,int cached)
+{
+
+	if (cached && (result = PixmapCache::Get(filename)))
+		return 0;
+
+	GifFile * m_filepara = new GifFile(filename);
+
+	loadGIFFile(m_filepara);
+
+	if(m_filepara->pic_buffer == NULL)
+	{
+		delete m_filepara;
+		m_filepara = NULL;
+		result = 0;
+		return 0;
+	}
+
+	result = new gPixmap(m_filepara->ox, m_filepara->oy, 8, cached ? PixmapCache::PixmapDisposed : NULL, accel);
+	gUnmanagedSurface *surface = result->surface;
+	surface->clut.data = m_filepara->palette;
+	surface->clut.colors = m_filepara->palette_size;
+	m_filepara->palette = NULL; // transfer ownership
+	int extra_stride = surface->stride - surface->x;
+
+	unsigned char *tmp_buffer=((unsigned char *)(surface->data));
+	unsigned char *origin = m_filepara->pic_buffer;
+
+	gColor background;
+	gRGB bg(0,0,0,255);
+	//gRGB bg(m_conf.background);
+	background = surface->clut.findColor(bg);
+
+	for(int a = m_filepara->oy; a > 0; --a)
+	{
+
+		memcpy(tmp_buffer, origin, m_filepara->ox);
+		tmp_buffer += m_filepara->ox;
+		origin += m_filepara->ox;
+		tmp_buffer += extra_stride;
+	}
+
+	if (cached)
+		PixmapCache::Set(filename, result);
+
+	delete m_filepara;
+	m_filepara = NULL;
+	return 0;
+}
+

@@ -17,7 +17,7 @@ class eServiceFactoryXine: public iServiceHandler
 public:
 	eServiceFactoryXine();
 	virtual ~eServiceFactoryXine();
-	enum { id = 0x1010 };
+	enum { id = eServiceReference::idServiceXINE };
 
 		// iServiceHandler
 	RESULT play(const eServiceReference &, ePtr<iPlayableService> &ptr);
@@ -71,6 +71,7 @@ public:
 	RESULT audioDelay(ePtr<iAudioDelay> &ptr) { ptr = 0; return -1; }
 	RESULT rdsDecoder(ePtr<iRdsDecoder> &ptr) { ptr = 0; return -1; }
 	RESULT keys(ePtr<iServiceKeys> &ptr) { ptr = 0; return -1; }
+	RESULT tap(ePtr<iTapService> &ptr) { ptr = 0; return -1; };
 
 		// iPausableService
 	RESULT pause();

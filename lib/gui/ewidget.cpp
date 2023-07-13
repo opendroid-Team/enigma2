@@ -5,6 +5,8 @@ extern void dumpRegion(const gRegion &region);
 
 eWidget::eWidget(eWidget *parent): m_animation(this), m_parent(parent ? parent->child() : 0)
 {
+	m_gradient_set = false;
+	m_gradient_direction = 0;
 	m_vis = 0;
 	m_layer = 0;
 	m_desktop = 0;
@@ -31,7 +33,7 @@ void eWidget::move(ePoint pos)
 	if (m_position == pos)
 		return;
 
-	/* ?? what about native move support? */
+			/* ?? what about native move support? */
 	invalidate();
 
 	m_position = pos;
@@ -106,7 +108,9 @@ void eWidget::invalidate(const gRegion &region)
 	res.moveBy(abspos);
 //	eDebug("[eWidget] region to invalidate:");
 //	dumpRegion(res);
-	root->m_desktop->invalidate(res, this, target_layer);
+	if (root && root->m_desktop){
+		root->m_desktop->invalidate(res, this, target_layer);
+	}
 }
 
 void eWidget::show()
@@ -140,11 +144,13 @@ void eWidget::show()
 		abspos += root->position();
 	}
 
-	root->m_desktop->recalcClipRegions(root);
+	if (root && root->m_desktop){
+		root->m_desktop->recalcClipRegions(root);
 
-	gRegion abs = m_visible_with_childs;
-	abs.moveBy(abspos);
-	root->m_desktop->invalidate(abs, this, target_layer);
+		gRegion abs = m_visible_with_childs;
+		abs.moveBy(abspos);
+		root->m_desktop->invalidate(abs, this, target_layer);
+	}
 }
 
 void eWidget::hide()
@@ -174,11 +180,13 @@ void eWidget::hide()
 	}
 	ASSERT(root->m_desktop);
 
-	gRegion abs = m_visible_with_childs;
-	abs.moveBy(abspos);
+        if (root && root->m_desktop){
+		gRegion abs = m_visible_with_childs;
+		abs.moveBy(abspos);
 
-	root->m_desktop->recalcClipRegions(root);
-	root->m_desktop->invalidate(abs);
+		root->m_desktop->recalcClipRegions(root);
+		root->m_desktop->invalidate(abs);
+	}
 }
 
 void eWidget::raise()
@@ -333,9 +341,13 @@ void eWidget::recalcClipRegionsWhenVisible()
 			t->m_desktop->recalcClipRegions(t);
 			break;
 		}
+		if (!t->m_parent)
+		{
+			eLogNoNewLineStart(lvlError, "[eWidget] RecalcClipRegions for widget at (%d,%d)=>(%d,%d).", this->position().x(), this->position().y(), this->size().width(), this->size().height());
+			eLogNoNewLine(lvlError, "Top level parent at (%d,%d)=>(%d,%d) has no desktop", t->position().x(), t->position().y(), t->size().width(), t->size().height());
+		}
 		t = t->m_parent;
-		ASSERT(t);
-	} while(1);
+	} while(t);
 }
 
 void eWidget::parentRemoved()
@@ -354,17 +366,21 @@ int eWidget::event(int event, void *data, void *data2)
 //		dumpRegion(*(gRegion*)data);
 		if (!isTransparent())
 		{
-			if (!m_have_background_color)
+			if (m_gradient_set)
+				painter.drawGradient(eRect(ePoint(0, 0), size()), m_gradient_startcolor, m_gradient_endcolor, m_gradient_direction, m_gradient_blend);
+			else if (!m_have_background_color)
 			{
 				ePtr<eWindowStyle> style;
 				if (!getStyle(style))
 					style->paintBackground(painter, ePoint(0, 0), size());
-			} else
+			} 
+			else
 			{
 				painter.setBackgroundColor(m_background_color);
 				painter.clear();
 			}
-		} else
+		} 
+		else
 		{
 			eWidget *w = this;
 			while (w && !w->m_have_background_color)
@@ -414,4 +430,14 @@ void eWidget::notifyShowHide()
 	event(evtParentVisibilityChanged);
 	for (ePtrList<eWidget>::iterator i(m_childs.begin()); i != m_childs.end(); ++i)
 		i->notifyShowHide();
+}
+
+void eWidget::setBackgroundGradient(const gRGB &startcolor, const gRGB &endcolor, int direction, int blend)
+{
+	m_gradient_startcolor = startcolor;
+	m_gradient_endcolor = endcolor;
+	m_gradient_direction = direction;
+	m_gradient_blend = blend;
+	m_gradient_set = true;
+	invalidate();
 }

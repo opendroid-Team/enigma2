@@ -1,8 +1,6 @@
-
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.Console import Console
-from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Label import Label
@@ -10,8 +8,7 @@ from Components.Language import language
 from Components.Button import Button
 from Components.MenuList import MenuList
 from Components.Sources.List import List
-from Screens.Standby import TryQuitMainloop
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
+from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_GUISKIN
 from os import listdir, remove, mkdir, path, access, X_OK, chmod
 import datetime, time
 
@@ -48,11 +45,11 @@ class ScriptRunner(Screen):
 		self["key_green"] = Button(_("Run"))
 		
 	def populate_List(self):
-		if not path.exists('/usr/scripts'):
-			mkdir('/usr/scripts', 0755)
+		if not path.exists('/usr/script'):
+			mkdir('/usr/script', 0o755)
 		self['lab1'].setText(_("Select a script to run:"))
 		del self.list[:]
-		f = listdir('/usr/scripts')
+		f = listdir('/usr/script')
 		for line in f:
 			parts = line.split()
 			pkg = parts[0]
@@ -69,11 +66,11 @@ class ScriptRunner(Screen):
 		else:
 			self.session.open(MessageBox, _("You have no script to run."), MessageBox.TYPE_INFO, timeout = 10)
 
-	def Run(self,answer):
+	def Run(self, answer):
 		if answer is True:
-			if not access("/usr/scripts/" + self.sel, X_OK):
-				chmod("/usr/scripts/" + self.sel, 0755)
-			cmd1 = ". /usr/scripts/" + self.sel
+			if not access("/usr/script/" + self.sel, X_OK):
+				chmod("/usr/script/" + self.sel, 0o755)
+			cmd1 = ". /usr/script/" + self.sel
 			self.session.open(Console, title=self.sel, cmdlist = [cmd1], closeOnSuccess = False)	
 					
 	def myclose(self):

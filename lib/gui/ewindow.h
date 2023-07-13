@@ -15,14 +15,15 @@ public:
 	void setTitle(const std::string &string);
 	std::string getTitle() const;
 	eWidget *child() { return m_child; }
-
 	void show();
 	void hide();
+
 	enum {
 		wfNoBorder = 1
 	};
 
 	void setBackgroundColor(const gRGB &col);
+	void setBackgroundGradient(const gRGB &startcolor, const gRGB &endcolor, int direction, int blend);
 
 	void setFlag(int flags);
 	void clearFlag(int flags);
@@ -39,6 +40,7 @@ private:
 	int m_flags;
 	eWidgetDesktop *m_desktop;
 	int m_animation_mode;
+	static int m_has_animation_mode;
 };
 
 #endif

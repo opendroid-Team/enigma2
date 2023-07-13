@@ -3,6 +3,7 @@
 import os
 import socket
 
+
 class NetlinkSocket(socket.socket):
 	def __init__(self):
 		NETLINK_KOBJECT_UEVENT = 15 # hasn't landed in socket yet, see linux/netlink.h
@@ -10,7 +11,7 @@ class NetlinkSocket(socket.socket):
 		self.bind((os.getpid(), -1))
 
 	def parse(self):
-		data = self.recv(512)
+		data = self.recv(512).decode("utf-8", "ignore")
 		event = {}
 		for item in data.split('\x00'):
 			if not item:
@@ -19,15 +20,16 @@ class NetlinkSocket(socket.socket):
 				event = {}
 			else:
 				try:
-					k,v = item.split('=', 1)
+					k, v = item.split('=', 1)
 					event[k] = v
 				except:
 					event[None] = item
 
+
 # Quick unit test (you can run this on any Linux machine)
 if __name__ == '__main__':
 	nls = NetlinkSocket()
-	print "socket no:", nls.fileno()
-	while 1:
+	print("socket no: %s" % nls.fileno())
+	while True:
 		for item in nls.parse():
-			print repr(item)
+			print(repr(item))

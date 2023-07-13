@@ -1,7 +1,8 @@
-from Source import Source
+from Components.Sources.Source import Source
 from Components.Element import cached
 from Components.OnlineUpdateCheck import versioncheck
 from enigma import eTimer
+
 
 class OnlineUpdateStableCheck(Source):
 	def __init__(self):
@@ -29,6 +30,7 @@ class OnlineUpdateStableCheck(Source):
 	def destroy(self):
 		self.check_timer.callback.remove(self.poll)
 		Source.destroy(self)
+
 
 class OnlineUpdateUnstableCheck(Source):
 	def __init__(self):

@@ -17,6 +17,7 @@ eDVBServiceStream::eDVBServiceStream()
 	m_stream_ecm = false;
 	m_stream_eit = false;
 	m_stream_ait = false;
+	m_stream_sdtbat = false;
 	m_tuned = 0;
 	m_target_fd = -1;
 }
@@ -109,6 +110,7 @@ int eDVBServiceStream::doPrepare()
 		m_stream_ecm = eConfigManager::getConfigBoolValue("config.streaming.stream_ecm");
 		m_stream_eit = eConfigManager::getConfigBoolValue("config.streaming.stream_eit");
 		m_stream_ait = eConfigManager::getConfigBoolValue("config.streaming.stream_ait");
+		m_stream_sdtbat = eConfigManager::getConfigBoolValue("config.streaming.stream_sdtbat");
 		m_pids_active.clear();
 		m_state = statePrepared;
 		eDVBServicePMTHandler::serviceType servicetype = m_stream_ecm ? eDVBServicePMTHandler::scrambled_streamserver : eDVBServicePMTHandler::streamserver;
@@ -141,7 +143,10 @@ int eDVBServiceStream::doRecord()
 			eDebug("[eDVBServiceStream] NO DEMUX available");
 			return -1;
 		}
-		demux->createTSRecorder(m_record, /*packetsize*/ 188, /*streaming*/ true);
+		if (m_ref.path.empty())
+			demux->createTSRecorder(m_record, /*packetsize*/ 188, /*streaming*/ true);
+		else
+			demux->createTSRecorder(m_record, /*packetsize*/ 188, /*streaming*/ false);
 		if (!m_record)
 		{
 			eDebug("[eDVBServiceStream] no ts recorder available.");
@@ -268,7 +273,7 @@ int eDVBServiceStream::doRecord()
 		eDebugNoNewLine(", and the pcr pid is %04x", program.pcrPid);
 		if (program.pcrPid >= 0 && program.pcrPid < 0x1fff)
 			pids_to_record.insert(program.pcrPid);
-		eDebugNoNewLineEnd(", and the text pid is %04x", program.textPid);
+		eDebugNoNewLine(", and the text pid is %04x", program.textPid);
 		if (program.textPid != -1)
 			pids_to_record.insert(program.textPid); // Videotext
 
@@ -289,6 +294,11 @@ int eDVBServiceStream::doRecord()
 		if (m_stream_eit)
 		{
 			pids_to_record.insert(0x12);
+		}
+
+		if (m_stream_sdtbat)
+		{
+			pids_to_record.insert(0x11);
 		}
 
 		/* include TDT pid, really low bandwidth, should not hurt anyone */
@@ -343,6 +353,11 @@ bool eDVBServiceStream::recordCachedPids()
 	if (m_stream_eit)
 	{
 		pids_to_record.insert(0x12);
+	}
+
+	if (m_stream_sdtbat)
+	{
+		pids_to_record.insert(0x11);
 	}
 
 	/* include TDT pid, really low bandwidth, should not hurt anyone */

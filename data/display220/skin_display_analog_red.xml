@@ -56,11 +56,11 @@
     <widget source="session.RecordState" render="FixedLabel" text="Recording" position="110,151" size="110,25" halign="Left" foregroundColor="#ff0000" font="FdLcD;22" zPosition="2" noWrap="1" valign="center">
       <convert type="ConditionalShowHide">Blink</convert>
     </widget>
-    <widget source="session.CurrentService" render="Label" position="150,34" size="70,24" font="FdLcD;24" halign="right" noWrap="1" foregroundColor="#00FF00" zPosition="2" transparent="1">
-      <convert type="XionHDFWeather">Day_0,DayTemp</convert>
+    <widget source="session.MSNWeather" render="Label" position="150,34" size="70,24" font="FdLcD;24" halign="right" noWrap="1" foregroundColor="#00FF00" zPosition="2" transparent="1">
+      <convert type="MSNWeather">temperature_current</convert>
     </widget>
-    <widget source="session.CurrentService" position="120,33" size="30,24" render="Label" font="Meteo; 26" halign="center" valign="center" foregroundColor="XionMeteoFont" backgroundColor="XionBackground" noWrap="1">
-      <convert type="XionHDFWeather">Day_0,MeteoFont</convert>
+    <widget source="session.MSNWeather" position="120,33" size="30,24" render="Label" font="Meteo; 26" halign="center" valign="center" foregroundColor="#FFFF00" backgroundColor="Background" noWrap="1">
+      <convert type="MSNWeather">temperature_text,current</convert>
     </widget>
   </screen>
 <!-- standby -->

@@ -49,10 +49,6 @@ private:
 	friend class eDVBTSRecorder;
 	friend class eDVBCAService;
 	friend class eTSMPEGDecoder;
-#ifdef HAVE_AMLOGIC
-	int m_pvr_fd;
-	friend class eAMLTSMPEGDecoder;
-#endif
 	sigc::signal1<void, int> m_event;
 
 	int openDemux(void);
@@ -98,7 +94,7 @@ public:
 class eDVBRecordFileThread: public eFilePushThreadRecorder
 {
 public:
-	eDVBRecordFileThread(int packetsize, int bufferCount);
+	eDVBRecordFileThread(int packetsize, int bufferCount, int buffersize = -1, bool sync_mode = false);
 	~eDVBRecordFileThread();
 	void setTimingPID(int pid, iDVBTSRecorder::timing_pid_type pidtype, int streamtype);
 	void startSaveMetaInformation(const std::string &filename);
@@ -118,7 +114,7 @@ protected:
 		unsigned char* buffer;
 		AsyncIO()
 		{
-			memset(&aio, 0, sizeof(struct aiocb));
+			memset(&aio, 0, sizeof(aiocb));
 			buffer = NULL;
 		}
 		int wait();
@@ -129,6 +125,7 @@ protected:
 	eMPEGStreamParserTS m_ts_parser;
 	off_t m_current_offset;
 	int m_fd_dest;
+	bool m_sync_mode;
 	typedef std::vector<AsyncIO> AsyncIOvector;
 	unsigned char* m_allocated_buffer;
 	AsyncIOvector m_aio;
@@ -139,7 +136,7 @@ protected:
 class eDVBRecordStreamThread: public eDVBRecordFileThread
 {
 public:
-	eDVBRecordStreamThread(int packetsize);
+	eDVBRecordStreamThread(int packetsize, int buffersize = -1, bool sync_mode = false);
 
 protected:
 	int writeData(int len);

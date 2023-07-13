@@ -63,8 +63,8 @@ class eDVBScan: public sigc::trackable, public iObject
 	bool m_pmt_running;
 	bool m_abort_current_pmt;
 
-	std::list<ePtr<iDVBFrontendParameters> > m_ch_toScan, m_ch_scanned, m_ch_unavailable;
-	ePtr<iDVBFrontendParameters> m_ch_current;
+	std::list<ePtr<iDVBFrontendParameters> > m_ch_toScan, m_ch_scanned, m_ch_unavailable, m_ch_blindscan;
+	ePtr<iDVBFrontendParameters> m_ch_current, m_ch_blindscan_result;
 	eDVBChannelID m_chid_current;
 	eTransportStreamID m_pat_tsid;
 
@@ -99,6 +99,8 @@ class eDVBScan: public sigc::trackable, public iObject
 	bool m_scan_debug;
 	
 	FILE *m_lcn_file;
+	std::map<eDVBChannelID, uint32_t> m_aus_da_flags;
+	std::map<eDVBChannelID, std::string> m_default_authorities;
 	void addLcnToDB(eDVBNamespace ns, eOriginalNetworkID onid, eTransportStreamID tsid, eServiceID sid, uint16_t lcn, uint32_t signal);
 public:
 	eDVBScan(iDVBChannel *channel, bool usePAT=true, bool debug=true );
@@ -108,7 +110,8 @@ public:
 		scanNetworkSearch = 1, scanSearchBAT = 2,
 		scanRemoveServices = 4, scanDontRemoveFeeds = 8,
 		scanDontRemoveUnscanned = 16,
-		clearToScanOnFirstNIT = 32, scanOnlyFree = 64 };
+		clearToScanOnFirstNIT = 32, scanOnlyFree = 64,
+		scanBlindSearch = 128 };
 
 	void start(const eSmartPtrList<iDVBFrontendParameters> &known_transponders, int flags, int networkid = 0);
 

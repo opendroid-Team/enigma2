@@ -50,6 +50,7 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/service/iservice.h>
 #include <lib/service/service.h>
 #include <lib/service/servicedvb.h>
+#include <lib/service/servicefs.h>
 #include <lib/service/servicepeer.h>
 #include <lib/gdi/fb.h>
 #include <lib/gdi/font.h>
@@ -59,10 +60,8 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/gdi/gmaindc.h>
 #include <lib/gui/ewidget.h>
 #include <lib/gui/elabel.h>
-#include <lib/gui/einput.h>
-#include <lib/gui/einputstring.h>
-#include <lib/gui/einputnumber.h>
 #include <lib/gui/epixmap.h>
+#include <lib/gui/erectangle.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/ewindow.h>
 #include <lib/gui/ewidgetdesktop.h>
@@ -99,6 +98,8 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/dvb/cablescan.h>
 #include <lib/dvb/encoder.h>
 #include <lib/dvb/streamserver.h>
+#include <lib/dvb/rtspstreamserver.h>
+#include <lib/dvb/metaparser.h>
 #include <lib/components/scan.h>
 #include <lib/components/file_eraser.h>
 #include <lib/components/tuxtxtapp.h>
@@ -114,6 +115,7 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/python/python.h>
 #include <lib/python/python_helpers.h>
 #include <lib/gdi/picload.h>
+#include <lib/dvb/fcc.h>
 %}
 
 %feature("ref")   iObject "$this->AddRef(); /* eDebug(\"AddRef (%s:%d)!\", __FILE__, __LINE__); */ "
@@ -147,6 +149,7 @@ is usually caused by not marking PSignals as immutable.
 typedef long time_t;
 %include "typemaps.i"
 %include "std_string.i"
+%include "stdint.i"
 %include <lib/python/swig.h>
 %include <lib/base/object.h>
 %include <lib/base/eenv.h>
@@ -163,6 +166,7 @@ typedef long time_t;
 %include <lib/base/smartptr.h>
 %include <lib/service/event.h>
 %include <lib/service/iservice.h>
+%include <lib/service/servicefs.h>
 %include <lib/service/service.h>
 %include <lib/base/e2avahi.h>
 %include <lib/service/servicepeer.h>
@@ -188,6 +192,7 @@ typedef long time_t;
 %immutable eHdmiCEC::addressChanged;
 %immutable ePythonMessagePump::recv_msg;
 %immutable eDVBLocalTimeHandler::m_timeUpdated;
+%immutable eFCCServiceManager::m_fcc_event;
 %immutable iCryptoInfo::clientname;
 %immutable iCryptoInfo::clientinfo;
 %immutable iCryptoInfo::verboseinfo;
@@ -210,10 +215,8 @@ typedef long time_t;
 %include <lib/gdi/esize.h>
 %include <lib/gui/ewidget.h>
 %include <lib/gui/elabel.h>
-%include <lib/gui/einput.h>
-%include <lib/gui/einputstring.h>
-%include <lib/gui/einputnumber.h>
 %include <lib/gui/epixmap.h>
+%include <lib/gui/erectangle.h>
 %include <lib/gui/ecanvas.h>
 %include <lib/gui/ebutton.h>
 %include <lib/gui/ewindow.h>
@@ -261,7 +264,10 @@ typedef long time_t;
 %include <lib/python/python.h>
 %include <lib/python/pythonconfig.h>
 %include <lib/gdi/picload.h>
+%include <lib/dvb/fcc.h>
 %include <lib/dvb/streamserver.h>
+%include <lib/dvb/rtspstreamserver.h>
+%include <lib/dvb/metaparser.h>
 /**************  eptr  **************/
 
 /**************  signals  **************/
@@ -427,13 +433,34 @@ int getLinkedSlotID(int fe)
 }
 %}
 
+void setFCCEnable(int);
+%{
+void setFCCEnable(int enable)
+{
+        eFCCServiceManager *fcc_mng = eFCCServiceManager::getInstance();
+        if (fcc_mng) setFCCEnable(enable);
+}
+%}
+
 bool isFBCLink(int);
 %{
 bool isFBCLink(int fe)
 {
         eFBCTunerManager *mgr = eFBCTunerManager::getInstance();
-        if (mgr) return mgr->isFBCLink(fe);
+        if (mgr) return mgr->IsFBCLink(fe);
         return false;
+}
+%}
+
+PyObject *getFontFaces();
+%{
+PyObject *getFontFaces()
+{
+	std::vector<std::string> v = fontRenderClass::getInstance()->getFontFaces();
+	ePyObject result = PyList_New(v.size());
+	for (size_t i = 0; i < v.size(); i++)
+		PyList_SET_ITEM(result, i, PyString_FromString(v[i].c_str()));
+        return result;
 }
 %}
 
@@ -445,28 +472,44 @@ extern void runMainloop();
 extern void quitMainloop(int exit_code);
 extern eApplication *getApplication();
 extern int getPrevAsciiCode();
+extern void setPrevAsciiCode(int code);
+extern int getBsodCounter();
+extern void resetBsodCounter();
 extern void addFont(const char *filename, const char *alias, int scale_factor, int is_replacement, int renderflags = 0);
 extern const char *getEnigmaVersionString();
+extern const char *getE2Rev();
 extern const char *getGStreamerVersionString();
 extern void dump_malloc_stats(void);
 #ifndef HAVE_OSDANIMATION
 extern void setAnimation_current(int a);
 extern void setAnimation_speed(int speed);
+extern void setAnimation_current_listbox(int a);
 #endif
+extern void pauseInit(void);
+extern void resumeInit(void);
+extern int checkInternetAccess(const char* host, int timeout = 3);
 %}
 
 extern void addFont(const char *filename, const char *alias, int scale_factor, int is_replacement, int renderflags = 0);
 extern int getPrevAsciiCode();
+extern void setPrevAsciiCode(int code);
+extern int getBsodCounter();
+extern void resetBsodCounter();
 extern void runMainloop();
 extern void quitMainloop(int exit_code);
 extern eApplication *getApplication();
 extern const char *getEnigmaVersionString();
+extern const char *getE2Rev();
 extern const char *getGStreamerVersionString();
 extern void dump_malloc_stats(void);
 #ifndef HAVE_OSDANIMATION
 extern void setAnimation_current(int a);
 extern void setAnimation_speed(int speed);
+extern void setAnimation_current_listbox(int a);
 #endif
+extern void pauseInit(void);
+extern void resumeInit(void);
+extern int checkInternetAccess(const char* host, int timeout = 3);
 
 %include <lib/python/python_console.i>
 %include <lib/python/python_base.i>
