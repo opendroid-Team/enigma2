@@ -34,10 +34,6 @@ from datetime import datetime
 import time
 from locale import format_string
 import six
-DISPLAY_BRAND = BoxInfo.getItem("displaybrand")
-DISPLAY_MODEL = BoxInfo.getItem("displaymodel")
-MACHINE_BUILD = BoxInfo.getItem("machinebuild")
-MODEL = BoxInfo.getItem("model")
 
 SIGN = u"\u00B0"
 
@@ -963,6 +959,7 @@ class SystemNetworkInfo(Screen):
 			if 'ifname' in eth0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
 			if 'netmask' in eth0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth0['netmask'] + "\n"
 			if 'hwaddr' in eth0:
@@ -976,6 +973,7 @@ class SystemNetworkInfo(Screen):
 			if 'ifname' in eth1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth1['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth1['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
 			if 'netmask' in eth1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth1['netmask'] + "\n"
 			if 'hwaddr' in eth1:
@@ -989,6 +987,7 @@ class SystemNetworkInfo(Screen):
 			if 'ifname' in ra0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + ra0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + ra0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
 			if 'netmask' in ra0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + ra0['netmask'] + "\n"
 			if 'hwaddr' in ra0:
@@ -1001,6 +1000,7 @@ class SystemNetworkInfo(Screen):
 			if 'ifname' in wlan0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
 			if 'netmask' in wlan0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan0['netmask'] + "\n"
 			if 'hwaddr' in wlan0:
@@ -1013,6 +1013,7 @@ class SystemNetworkInfo(Screen):
 			if 'ifname' in wlan1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan1['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan1['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
 			if 'netmask' in wlan1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan1['netmask'] + "\n"
 			if 'hwaddr' in wlan1:
@@ -1372,6 +1373,7 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
+				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
@@ -1389,6 +1391,7 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + '\n'
+				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
