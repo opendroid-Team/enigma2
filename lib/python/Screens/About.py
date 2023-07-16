@@ -410,6 +410,7 @@ class About(Screen):
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 #		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
+		self["key_info"] = StaticText(_("Contact Info"))
 		self["key_blue"] = Button(_("%s ") % getMachineName() + _("picture"))
 
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions", "ChannelSelectEPGActions"],
@@ -808,29 +809,29 @@ class SystemMemoryInfo(Screen):
 			})
 
 		out_lines = open("/proc/meminfo").readlines()
-		self.AboutText = _("RAM") + '\n\n'
+		self.AboutText = _("RAM") + "\n\n"
 		RamTotal = "-"
 		RamFree = "-"
 		for lidx in list(range(len(out_lines) - 1)):
 			tstLine = out_lines[lidx].split()
 			if "MemTotal:" in tstLine:
 				MemTotal = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Total Memory:")) + "\t" + MemTotal[1] + "\n"
+				self.AboutText += "{:<35}".format(_("Total Memory:")) + "\t" + MemTotal[1] + "\n"
 			if "MemFree:" in tstLine:
 				MemFree = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Free Memory:")) + "\t" + MemFree[1] + "\n"
+				self.AboutText += "{:<35}".format(_("Free Memory:")) + "\t" + MemFree[1] + "\n"
 			if "Buffers:" in tstLine:
 				Buffers = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Buffers:")) + "\t" + Buffers[1] + "\n"
+				self.AboutText += "{:<35}".format(_("Buffers:")) + "\t" + Buffers[1] + "\n"
 			if "Cached:" in tstLine:
 				Cached = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Cached:")) + "\t" + Cached[1] + "\n"
+				self.AboutText += "{:<35}".format(_("Cached:")) + "\t" + Cached[1] + "\n"
 			if "SwapTotal:" in tstLine:
 				SwapTotal = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Total Swap:")) + "\t" + SwapTotal[1] + "\n"
+				self.AboutText += "{:<35}".format(_("Total Swap:")) + "\t" + SwapTotal[1] + "\n"
 			if "SwapFree:" in tstLine:
 				SwapFree = out_lines[lidx].split()
-				self.AboutText += '{:<35}'.format(_("Free Swap:")) + "\t" + SwapFree[1] + "\n\n"
+				self.AboutText += "{:<35}".format(_("Free Swap:")) + "\t" + SwapFree[1] + "\n\n"
 
 		self["actions"].setEnabled(False)
 		self.Console = Console()
@@ -865,6 +866,7 @@ class SystemMemoryInfo(Screen):
 
 	def createSummary(self):
 		return AboutSummary
+
 
 class SystemNetworkInfo(Screen):
 	def __init__(self, session):
@@ -932,63 +934,90 @@ class SystemNetworkInfo(Screen):
 				netspeed += line
 			return str(netspeed)
 
+		def domain():
+			domain = ""
+			for line in open('/etc/resolv.conf', 'r'):
+				line = line.strip()
+				if "domain" in line:
+					domain += line.strip().replace("domain ", "")
+					return domain
+				else:
+					domain = _("no domain name found")
+					return domain
+
+		def gateway():
+			gateway = ""
+			for line in popen('ip route show'):
+				line = line.strip()
+				if "default via " in line:
+					line = line.split(' ')
+					line = line[2]
+					return line
+				else:
+					line = _("no gateway found")
+					return line
 		self.AboutText = ""
 		self.iface = "eth0"
 		eth0 = about.getIfConfig('eth0')
 		if 'addr' in eth0:
 			if 'ifname' in eth0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth0['ifname'] + "\n"
-			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + eth0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth0['addr'] + "\n"
 			if 'netmask' in eth0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth0['netmask'] + "\n"
 			if 'hwaddr' in eth0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + eth0['hwaddr'] + "\n"
 			self.AboutText += '{:<35}'.format(_("Network Speed:")) + "\t" + netspeed() + "\n"
+			self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'eth0'
 
 		eth1 = about.getIfConfig('eth1')
 		if 'addr' in eth1:
 			if 'ifname' in eth1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth1['ifname'] + "\n"
-			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + eth1['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth1['addr'] + "\n"
 			if 'netmask' in eth1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth1['netmask'] + "\n"
 			if 'hwaddr' in eth1:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + eth1['hwaddr'] + "\n"
 			self.AboutText += '{:<35}'.format(_("Network Speed:")) + "\t" + netspeed_eth1() + "\n"
+			self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'eth1'
 
 		ra0 = about.getIfConfig('ra0')
 		if 'addr' in ra0:
 			if 'ifname' in ra0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + ra0['ifname'] + "\n"
-			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + ra0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + ra0['addr'] + "\n"
 			if 'netmask' in ra0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + ra0['netmask'] + "\n"
 			if 'hwaddr' in ra0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + ra0['hwaddr'] + "\n"
+				self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'ra0'
 
 		wlan0 = about.getIfConfig('wlan0')
 		if 'addr' in wlan0:
 			if 'ifname' in wlan0:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan0['ifname'] + "\n"
-			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + wlan0['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan0['addr'] + "\n"
 			if 'netmask' in wlan0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan0['netmask'] + "\n"
 			if 'hwaddr' in wlan0:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + wlan0['hwaddr'] + "\n"
+				self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'wlan0'
 
 		wlan1 = about.getIfConfig('wlan1')
 		if 'addr' in wlan1:
 			if 'ifname' in wlan1:
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan1['ifname'] + "\n"
-			self.AboutText += '{:<35}'.format(_("IP:")) + "\t" + wlan1['addr'] + "\n"
+			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan1['addr'] + "\n"
 			if 'netmask' in wlan1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan1['netmask'] + "\n"
 			if 'hwaddr' in wlan1:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + wlan1['hwaddr'] + "\n"
+				self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'wlan1'
 
 		rx_bytes, tx_bytes = about.getIfTransferredData(self.iface)
@@ -1254,31 +1283,31 @@ class TranslationInfo(Screen):
 		if translator_name == "none":
 			translator_name = infomap.get("Last-Translator", "")
 		self["TranslatorName"] = StaticText(translator_name)
-		linfo= ""
-		linfo += _("Translations Info")		+ ":" + "\n\n"
-		linfo += _("Project")				+ ":" + infomap.get("Project-Id-Version", "") + "\n"
-		linfo += _("Language")				+ ":" + infomap.get("Language", "") + "\n"
+		linfo = ""
+		linfo += _("Translations Info") + ":" + "\n\n"
+		linfo += _("Project") + ":" + infomap.get("Project-Id-Version", "") + "\n"
+		linfo += _("Language") + ":" + infomap.get("Language", "") + "\n"
 		print(infomap.get("Language-Team", ""))
 		if infomap.get("Language-Team", "") == "" or infomap.get("Language-Team", "") == "none":
-			linfo += _("Language Team") 	+ ":" + "n/a"  + "\n"
+			linfo += _("Language Team") + ":" + "n/a" + "\n"
 		else:
-			linfo += _("Language Team") 	+ ":" + infomap.get("Language-Team", "")  + "\n"
-		linfo += _("Last Translator") 		+ ":" + translator_name + "\n"
+			linfo += _("Language Team") + ":" + infomap.get("Language-Team", "") + "\n"
+		linfo += _("Last Translator") + ":" + translator_name + "\n"
 		linfo += "\n"
-		linfo += _("Source Charset")		+ ":" + infomap.get("X-Poedit-SourceCharset", "") + "\n"
-		linfo += _("Content Type")			+ ":" + infomap.get("Content-Type", "") + "\n"
-		linfo += _("Content Encoding")		+ ":" + infomap.get("Content-Transfer-Encoding", "") + "\n"
-		linfo += _("MIME Version")			+ ":" + infomap.get("MIME-Version", "") + "\n"
+		linfo += _("Source Charset") + ":" + infomap.get("X-Poedit-SourceCharset", "") + "\n"
+		linfo += _("Content Type") + ":" + infomap.get("Content-Type", "") + "\n"
+		linfo += _("Content Encoding") + ":" + infomap.get("Content-Transfer-Encoding", "") + "\n"
+		linfo += _("MIME Version") + ":" + infomap.get("MIME-Version", "") + "\n"
 		linfo += "\n"
-		linfo += _("POT-Creation Date")		+ ":" + infomap.get("POT-Creation-Date", "") + "\n"
-		linfo += _("Revision Date")			+ ":" + infomap.get("PO-Revision-Date", "") + "\n"
+		linfo += _("POT-Creation Date") + ":" + infomap.get("POT-Creation-Date", "") + "\n"
+		linfo += _("Revision Date") + ":" + infomap.get("PO-Revision-Date", "") + "\n"
 		linfo += "\n"
-		linfo += _("Generator")				+ ":" + infomap.get("X-Generator", "") + "\n"
+		linfo += _("Generator") + ":" + infomap.get("X-Generator", "") + "\n"
 
 		if infomap.get("Report-Msgid-Bugs-To", "") != "":
-			linfo += _("Report Msgid Bugs To")	+ ":" + infomap.get("Report-Msgid-Bugs-To", "") + "\n"
+			linfo += _("Report Msgid Bugs To") + ":" + infomap.get("Report-Msgid-Bugs-To", "") + "\n"
 		else:
-			linfo += _("Report Msgid Bugs To")	+ ":" + "opendroid2013@gmail.com" + "\n"
+			linfo += _("Report Msgid Bugs To") + ":" + "opendroid2013@gmail.com" + "\n"
 		self["AboutScrollLabel"] = ScrollLabel(linfo)
 
 
@@ -1304,13 +1333,13 @@ class CommitInfo(Screen):
 
 		self.project = 0
 		self.projects = [
-#                       ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.1",        "github"),
-                       ("opendroid-Team",      "enigma2",               "opendroid-Team Enigma2",             "7.3",        "github"),
-			("stein17",      "Skins-for-openOPD",             "stein17 Skins-for-openOPD",   "python3", "github"),
-#			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.0", "github"),
-			("oe-alliance",   "oe-alliance-core",     "OE Alliance Core",             "5.3", "github"),
-			("oe-alliance",   "oe-alliance-plugins",  "OE Alliance Plugins",          "master", "github"),
-			("oe-alliance",   "enigma2-plugins",      "OE Alliance Enigma2 Plugins",  "master", "github")
+			#("opendroid-Team",  "enigma2", "opendroid-Team Enigma2", "7.1", "github"),
+			("opendroid-Team", "enigma2", "opendroid-Team Enigma2", "7.3", "github"),
+			("stein17", "Skins-for-openOPD", "stein17 Skins-for-openOPD",   "python3", "github"),
+			#("oe-alliance", "oe-alliance-core", "OE Alliance Core", "5.0", "github"),
+			("oe-alliance", "oe-alliance-core", "OE Alliance Core", "5.3", "github"),
+			("oe-alliance", "oe-alliance-plugins", "OE Alliance Plugins", "master", "github"),
+			("oe-alliance", "enigma2-plugins", "OE Alliance Enigma2 Plugins", "master", "github")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -1343,7 +1372,6 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
-				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
@@ -1361,7 +1389,6 @@ class CommitInfo(Screen):
 						pass
 					else:
 						commitlog += date + ' ' + creator + '\n' + title + '\n'
-				commitlog = six.ensure_str(commitlog)
 				self.cachedProjects[self.projects[self.project][2]] = commitlog
 			except:
 				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
@@ -1385,7 +1412,7 @@ class CommitInfo(Screen):
 class ContactInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self["actions"] = ActionMap(["SetupActions"],{"cancel": self.close,"ok": self.close})
+		self["actions"] = ActionMap(["SetupActions"], {"cancel": self.close,"ok": self.close})
 		self.setTitle(_("Contact info"))
 		self["manufacturerinfo"] = StaticText(self.getManufacturerinfo())
 
@@ -1393,6 +1420,7 @@ class ContactInfo(Screen):
 		minfo = "Opendroid Team\n"
 		minfo += "https://droidsat.org/forum\n"
 		return minfo
+
 class MemoryInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -1451,9 +1479,9 @@ class MemoryInfo(Screen):
 			self['lmemvalue'].setText(lvalue)
 			self['rmemtext'].setText(rtext)
 			self['rmemvalue'].setText(rvalue)
-			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
-			self['pfree'].setText("%.1f %s" % (100.*free/mem,'%'))
-			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem,'%'))
+			self["slide"].setValue(int(100.0 * (mem - free) / mem + 0.25))
+			self['pfree'].setText("%.1f %s" % (100. * free / mem, '%'))
+			self['pused'].setText("%.1f %s" % (100. * (mem - free) / mem, '%'))
 		except Exception as e:
 			print("[About] getMemoryInfo FAIL:", e)
 
