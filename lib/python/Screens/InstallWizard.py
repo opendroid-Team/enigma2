@@ -1,20 +1,20 @@
-import os
+from os import system
 from Screens.Screen import Screen
-from Components.ConfigList import ConfigListScreen, ConfigList
 from Components.ActionMap import ActionMap
-from Components.Sources.StaticText import StaticText
+from Components.ConfigList import ConfigListScreen
 from Components.config import config, ConfigSubsection, ConfigBoolean, getConfigListEntry, ConfigSelection, ConfigYesNo, ConfigIP
 from Components.Network import iNetwork
 from Components.Opkg import OpkgComponent
+from Components.Sources.StaticText import StaticText
 from enigma import eDVBDB
 
 config.misc.installwizard = ConfigSubsection()
 config.misc.installwizard.hasnetwork = ConfigBoolean(default=False)
-config.misc.installwizard.opkgloaded = ConfigBoolean(default=False)
+config.misc.installwizard.ipkgloaded = ConfigBoolean(default=False)
 config.misc.installwizard.channellistdownloaded = ConfigBoolean(default=False)
 
 
-class InstallWizard(ConfigListScreen, Screen):
+class InstallWizard(Screen, ConfigListScreen):
 
 	STATE_UPDATE = 0
 	STATE_CHOISE_CHANNELLIST = 1
@@ -31,17 +31,17 @@ class InstallWizard(ConfigListScreen, Screen):
 
 		if self.index == self.STATE_UPDATE:
 			config.misc.installwizard.hasnetwork.value = False
-			config.misc.installwizard.opkgloaded.value = False
+			config.misc.installwizard.ipkgloaded.value = False
 			modes = {0: " "}
 			self.enabled = ConfigSelection(choices=modes, default=0)
 			self.adapters = [(iNetwork.getFriendlyAdapterName(x), x) for x in iNetwork.getAdapterList()]
 			is_found = False
 			for x in self.adapters:
-				if x[1] == 'eth0' or x[1] == 'eth1':
-					if iNetwork.getAdapterAttribute(x[1], 'up'):
+				if x[1] in ("eth0", "eth1"):
+					if iNetwork.getAdapterAttribute(x[1], "up"):
 						self.ipConfigEntry = ConfigIP(default=iNetwork.getAdapterAttribute(x[1], "ip"))
 						iNetwork.checkNetworkState(self.checkNetworkCB)
-						if_found = True
+						is_found = True
 					else:
 						iNetwork.restartNetwork(self.checkNetworkLinkCB)
 					break
@@ -76,7 +76,7 @@ class InstallWizard(ConfigListScreen, Screen):
 	def createMenu(self):
 		try:
 			test = self.index
-		except:
+		except Exception:
 			return
 		self.list = []
 		if self.index == self.STATE_UPDATE:
@@ -148,7 +148,7 @@ class InstallWizardOpkgUpdater(Screen):
 	def opkgCallback(self, event, param):
 		if event == OpkgComponent.EVENT_DONE:
 			if self.index == InstallWizard.STATE_UPDATE:
-				config.misc.installwizard.opkgloaded.value = True
+				config.misc.installwizard.ipkgloaded.value = True
 			elif self.index == InstallWizard.STATE_CHOISE_CHANNELLIST:
 				if self.state == 0:
 					self.opkg.startCmd(OpkgComponent.CMD_INSTALL, self.pkg)
