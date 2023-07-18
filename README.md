@@ -1,4 +1,4 @@
-## Build Status - branch 7.3  develop: ##
+## Build Status - branch master  develop: ##
 [![Build Status](https://travis-ci.org/opendroid-Team/enigma2.svg?branch=master)](https://travis-ci.org/opendroid-Team/enigma2)
 
 ## Our buildserver is currently running on: ##
