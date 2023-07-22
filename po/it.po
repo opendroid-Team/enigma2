@@ -4658,7 +4658,7 @@ msgid "ClearMem Status"
 msgstr "Cancella stato memoria"
 
 msgid "ClearMem-Setup"
-msgstr "CI Configurazione assistita"
+msgstr "Cancella configurazione memoria"
 
 msgid "Click the button on your remote you want to change."
 msgstr "Premi il tasto del telecomando da personalizzare."
