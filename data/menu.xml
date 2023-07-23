@@ -127,7 +127,8 @@ self.session.open(RemoteControlCode)
 				<item key="setup_epginfobargraphical" level="2" text="Graphical InfoBar EPG Settings" weight="125"><setup setupKey="EPGInfobarGraphical" /></item>
 				<item key="setup_epggraphical" level="2" text="GraphicalEPG Settings" weight="130"><setup setupKey="EPGGraphical" /></item>
 				<item key="setup_epgvertical" level="2" text="VerticalEPG Settings" weight="135"><setup setupKey="EPGVertical" /></item>
-				<item key="loadepgcache" level="0" text="Load EPG Cache" weight="200">
+				<menu key="epgloadsave_menu" level="2" text="Load/Save/Delete" weight="200">
+					<item key="loadepgcache" level="0" text="Load EPG" weight="0">
 					<code>
 def msgClosed(ret):
 	if ret:
@@ -139,7 +140,7 @@ from Components.EpgLoadSave import EpgLoadMsg
 self.session.openWithCallback(msgClosed, EpgLoadMsg)
 					</code>
 				</item>
-				<item key="saveepgcache" level="0" text="Save EPG Cache" weight="210">
+				<item key="saveepgcache" level="0" text="Save EPG" weight="50">
 					<code>
 def msgClosed(ret):
 	if ret:
@@ -151,7 +152,7 @@ from Components.EpgLoadSave import EpgSaveMsg
 self.session.openWithCallback(msgClosed, EpgSaveMsg)
 					</code>
 				</item>
-				<item key="deleteepgcache" level="0" text="Delete EPG Cache" weight="220">
+				<item key="deleteepgcache" level="0" text="Delete EPG" weight="60">
 					<code>
 def msgClosed(ret):
 	if ret:
