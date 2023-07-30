@@ -53,10 +53,10 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.channellist_type = ConfigSelection(choices=modes, default="opendroid")
 			self.createMenu()
 		elif self.index == self.INSTALL_PLUGINS:
-			self.enabled = ConfigYesNo(default = True)
+			self.enabled = ConfigYesNo(default = False)
 			self.createMenu()
 		elif self.index == self.INSTALL_SKINS:
-			self.enabled = ConfigYesNo(default = True)
+			self.enabled = ConfigYesNo(default = False)
 			self.createMenu()
 		elif self.index == self.INSTALL_NETWORkPASSWORD:
 			self.enabled = ConfigYesNo(default = True)

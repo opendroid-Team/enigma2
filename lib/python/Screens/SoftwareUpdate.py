@@ -190,9 +190,9 @@ class SoftwareUpdate(Screen, HelpableScreen, ProtectedScreen):
 			message = ""
 			with urlopen("https://opendroid.org/ampel/index.php") as fd:
 				tmpStatus = fd.read()
-				if b"rot.png" in tmpStatus:
+				if b"red.png" in tmpStatus:
 					status = "YELLOW" if exists("/etc/.beta") else "RED"
-				elif b"gelb.png" in tmpStatus:
+				elif b"yellow.png" in tmpStatus:
 					status = "YELLOW"
 				elif b"green.png" in tmpStatus:
 					status = "GREEN"
@@ -316,8 +316,8 @@ class SoftwareUpdate(Screen, HelpableScreen, ProtectedScreen):
 
 	def keyUpdateCallback(self, answer):
 		if answer == 1:
-			from Screens.FlashManager import FlashManager  # This must be here to ensure the plugin is initialized.
-			self.session.open(FlashManager)
+			from Plugins.SystemPlugins.SoftwareManager.Flash_online import FlashOnline  # This must be here to ensure the plugin is initialized.
+			self.session.open(FlashOnline)
 		elif answer == 2:
 			self.session.open(RunSoftwareUpdate)
 		self.close()
@@ -534,8 +534,6 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 			self.opkg.stop()
 		self.opkg.removeCallback(self.opkgCallback)
 		if self.upgradeCount != 0 and self.errorCount == 0:
-			self.restoreMetrixHD()
-		else:
 			self.close()
 
 	def keyCancelCallback(self, answer):
@@ -557,22 +555,6 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 
 	def createSummary(self):
 		return RunSoftwareUpdateSummary
-
-	def restoreMetrixHD(self):  # TODO: call this only after metrix update / move this to Metrix Plugin
-		try:
-			if config.skin.primary_skin.value == "MetrixHD/skin.MySkin.xml":
-				if not exists("/usr/share/enigma2/MetrixHD/skin.MySkin.xml"):
-					from Plugins.SystemPlugins.SoftwareManager.BackupRestore import RestoreMyMetrixHD
-					self.session.openWithCallback(self.restoreMetrixHDCallback, RestoreMyMetrixHD)
-					return
-				elif config.plugins.MyMetrixLiteOther.EHDenabled.value != '0':
-					from Plugins.Extensions.MyMetrixLite.ActivateSkinSettings import ActivateSkinSettings
-					ActivateSkinSettings().RefreshIcons()
-		except:
-			pass
-		self.restoreMetrixHDCallback()
-
-	def restoreMetrixHDCallback(self, ret=None):
 		self.session.openWithCallback(self.keyCancelCallback, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s?") % getBoxDisplayName())
 
 

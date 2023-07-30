@@ -521,7 +521,7 @@ class EPGSelection(Screen, HelpableScreen):
 			if self.type == EPG_TYPE_MULTI:
 				self["list"].fillMultiEPG(self.services, self.ask_time)
 			else:
-				self["list"].fillGraphEPG(self.services, self.ask_time)
+				self["list"].fillGraphEPG(self.services, self.ask_time, current_service=serviceref)
 			self["list"].setCurrentlyPlaying(serviceref)
 			self["list"].moveToService(serviceref)
 			if self.type != EPG_TYPE_MULTI:

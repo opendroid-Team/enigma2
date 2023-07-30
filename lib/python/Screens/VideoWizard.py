@@ -160,7 +160,7 @@ class VideoWizard(WizardLanguage, ShowRemoteControl):
 	def modeSelect(self, mode):
 		ratesList = self.listRates(mode)
 		print("ratesList:", ratesList)
-		if self.port == "HDMI" and mode in ("720p", "1080i", "1080p"):
+		if self.port == "HDMI" and mode in ("720p", "1080i", "1080p", "2160p"):
 			self.rate = "multi"
 			self.hw.setMode(port=self.port, mode=mode, rate="multi")
 		else:

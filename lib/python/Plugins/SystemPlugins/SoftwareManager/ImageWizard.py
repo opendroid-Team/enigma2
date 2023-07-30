@@ -6,7 +6,7 @@ from Components.Harddisk import harddiskmanager
 from Components.Pixmap import Pixmap
 from Components.SystemInfo import BoxInfo
 from Screens.HelpMenu import ShowRemoteControl
-from Screens.Wizard import wizardManager
+from Screens.Wizard import wizardManager, Wizard
 from Screens.WizardLanguage import WizardLanguage
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
