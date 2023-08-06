@@ -241,7 +241,7 @@ class DownloadOnLineImage(Screen):
                         self.feedurl = 'http://pur-e2.club/OU/images/index.php?dir=%s' %ImageVersion 
                 elif self.distro == 'opendroid':
                         self.feed = 'opendroid'
-                        self.feedurl = 'https://opendroid.org/%s' %ImageVersion
+                        self.feedurl = 'https://opendroid.org/'
                 elif self.distro == 'openhdf':
                         self.feed = 'openhdf'
                         if ImageVersion == "6.5":
@@ -330,8 +330,8 @@ class DownloadOnLineImage(Screen):
                         except:
                                 stb = 'no Image for this Box on this Side'
                 if self.distro == 'opendroid':
-                        if box == "ax51":
-                                box = "mutant51"
+                        if box == "sf4008":
+                                box = "sf4008"
                         self.feedurl1 = self.feedurl + "/" + BRANDOEMDROID + '/index.php?open=' + MASCHINEBUILD
                         req = urllib.request.Request(self.feedurl)
                         reg1 = requests.get(self.feedurl1)
@@ -467,6 +467,8 @@ class DownloadOnLineImage(Screen):
                         self.close()
 
         def layoutFinished(self):
+                brand = getMachineBrand()
+                box = getBoxType()
                 box = self.box()[0]
                 urlbox = self.box()[1]
                 stb = self.box()[2]
@@ -481,7 +483,7 @@ class DownloadOnLineImage(Screen):
                 elif self.distro == 'openvix':
                         url = '%s/openvix-builds/%s' % (self.feedurl, box)
                 elif self.distro == 'opendroid':
-                        url = '%s/%s/index.php?open=%s' % (self.feedurl, BRANDOEMDROID, MASCHINEBUILD)			
+                        url = '%s/%s/%s' % (self.feedurl, brand,box)			
                 elif self.distro == 'opennfr':
                         url = '%s/%s' % (self.feedurl, box)
                 elif self.distro == 'openhdf':
