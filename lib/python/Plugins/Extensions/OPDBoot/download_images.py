@@ -26,6 +26,8 @@ import math
 import re
 from boxbranding import getBoxType, getMachineBuild, getImageVersion, getBrandOEM, getMachineBrand, getImageArch
 
+feedurl = 'https://opendroid.org/'
+
 class OPDChooseOnLineImage(Screen):
         skin = '<screen name="OPDChooseOnLineImage" position="center,center" size="880,620" title="OPDBoot - Download OnLine Images" >\n\t\t\t  <widget source="list" render="Listbox" position="10,0" size="870,610" scrollbarMode="showOnDemand" transparent="1">\n\t\t\t\t  <convert type="TemplatedMultiContent">\n\t\t\t\t  {"template": [\n\t\t\t\t  MultiContentEntryText(pos = (0, 10), size = (830, 30), font=0, flags = RT_HALIGN_RIGHT, text = 0),\n\t\t\t\t  MultiContentEntryPixmapAlphaBlend(pos = (10, 0), size = (480, 60), png = 1),\n\t\t\t\t  MultiContentEntryText(pos = (0, 40), size = (830, 30), font=1, flags = RT_VALIGN_TOP | RT_HALIGN_RIGHT, text = 3),\n\t\t\t\t  ],\n\t\t\t\t  "fonts": [gFont("Regular", 28),gFont("Regular", 20)],\n\t\t\t\t  "itemHeight": 65\n\t\t\t\t  }\n\t\t\t\t  </convert>\n\t\t\t  </widget>\n\t\t  </screen>'
 
@@ -52,15 +54,10 @@ class OPDChooseOnLineImage(Screen):
                 global mbimageValue
                 self.sel = self['list'].getCurrent()
                 returnValue = self.sel[2]
-                if returnValue in ('opennfr', 'openhdf', 'openatv', 'pure2', 'opendroid'): 
+                if returnValue in ('opennfr', 'openhdf', 'openatv', 'pure2'): 
                         from Screens.Setup import Setup
                         MBImagelist = [("6.2", _("6.2")), ("6.3", _("6.3")), ("6.4", _("6.4")), ("6.5", _("6.5")), ("7.0", _("7.0")), ("7.1", _("7.1")), ("7.2", _("7.2")), ("7.3", _("7.3"))]
                         if returnValue ==  'openatv':
-                                MBImagelist.remove(("6.2", _("6.2")))
-                                MBImagelist.remove(("6.3", _("6.3")))
-                                MBImagelist.remove(("6.4", _("6.4")))
-                                MBImagelist.remove(("6.5", _("6.5")))
-                        elif returnValue ==  'opendroid':
                                 MBImagelist.remove(("6.2", _("6.2")))
                                 MBImagelist.remove(("6.3", _("6.3")))
                                 MBImagelist.remove(("6.4", _("6.4")))
