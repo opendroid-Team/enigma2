@@ -8320,7 +8320,7 @@ msgid "Fallback address type"
 msgstr "Indirizzo IP del ricevitore fallback"
 
 msgid "Fallback configuration"
-msgstr "Proteggere configurazione"
+msgstr "Configurazione di fallback"
 
 msgid "Fallback receiver IP address"
 msgstr "Indirizzo IP del ricevitore fallback"
