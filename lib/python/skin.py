@@ -3,7 +3,7 @@ from os.path import dirname, isfile, join as pathjoin, splitext
 from os import listdir, unlink
 from xml.etree.cElementTree import Element, ElementTree, fromstring
 
-from enigma import BT_ALPHABLEND, BT_ALPHATEST, BT_HALIGN_CENTER, BT_HALIGN_LEFT, BT_HALIGN_RIGHT, BT_KEEP_ASPECT_RATIO, BT_SCALE, BT_VALIGN_BOTTOM, BT_VALIGN_CENTER, BT_VALIGN_TOP, addFont, eLabel, eListbox, ePixmap, ePoint, eRect, eSize, eSlider, eSubtitleWidget, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gMainDC, gRGB
+from enigma import BT_ALPHABLEND, BT_ALPHATEST, BT_HALIGN_CENTER, BT_HALIGN_LEFT, BT_HALIGN_RIGHT, BT_KEEP_ASPECT_RATIO, BT_SCALE, BT_VALIGN_BOTTOM, BT_VALIGN_CENTER, BT_VALIGN_TOP, addFont, eLabel, eListbox, ePixmap, ePoint, eRect, eRectangle, eSize, eSlider, eSubtitleWidget, eWindow, eWindowStyleManager, eWindowStyleSkinned, getDesktop, gFont, getFontFaces, gMainDC, gRGB
 
 from Components.config import ConfigSubsection, ConfigText, config
 from Components.SystemInfo import BoxInfo
@@ -76,7 +76,7 @@ runCallbacks = False
 # E.g. "MySkin/skin_display.xml"
 #
 def InitSkins():
-	global currentPrimarySkin, currentDisplaySkin
+	global currentPrimarySkin, currentDisplaySkin, resolutions
 	runCallbacks = False
 	# Add the emergency skin.  This skin should provide enough functionality
 	# to enable basic GUI functions to work.
@@ -283,12 +283,12 @@ def parseColor(value, default=0x00FFFFFF):
 		try:
 			value = gRGB(int(value[1:], 0x10))
 		except ValueError:
-			skinError("The color code '%s' must be #aarrggbb, using #00ffffff (White)" % value)
+			skinError("The color code '%s' must be #aarrggbb, using #00FFFFFF (White)" % value)
 			value = gRGB(default)
 	elif value in colors:
 		value = colors[value]
 	else:
-		skinError("The color '%s' must be #aarrggbb or valid named color, using #00ffffff (White)" % value)
+		skinError("The color '%s' must be #aarrggbb or valid named color, using #00FFFFFF (White)" % value)
 		value = gRGB(default)
 	return value
 
@@ -359,7 +359,7 @@ def parseCoordinate(value, parent, size=0, font=None, scale=(1, 1)):
 		if "h" in val:
 			val = val.replace("h", "*%s" % fonts[font][2])
 		if "f" in val:
-			val = val.replace("f", "*%s" % getSkinFactor())
+			val = val.replace("f", "%s" % getSkinFactor())
 		try:
 			result = int(val)  # For speed try a simple number first.
 		except ValueError:
@@ -379,7 +379,7 @@ def parseFont(value, scale=((1, 1), (1, 1))):
 			size = int(size)
 		except ValueError:
 			try:
-				val = size.replace("f", "*%s" % getSkinFactor())
+				val = size.replace("f", "%s" % getSkinFactor())
 				size = int(eval(val))
 			except Exception as err:
 				print("[Skin] Error (%s - %s): Font size in '%s', evaluated to '%s', can't be processed!" % (type(err).__name__, err, value, val))
@@ -401,11 +401,24 @@ def parseFont(value, scale=((1, 1), (1, 1))):
 	return gFont(name, int(size * scale[1][0] / scale[1][1]))
 
 
+def parseGradient(value):
+	data = [x.strip() for x in value.split(",")]
+	if len(data) > 2:
+		options = {
+			"horizontal": ePixmap.GRADIENT_HORIZONTAL,
+			"vertical": ePixmap.GRADIENT_VERTICAL,
+		}
+		direction = parseOptions(options, "gradient", data[2], ePixmap.GRADIENT_VERTICAL)
+		alphaBend = BT_ALPHABLEND if len(data) == 4 and parseBoolean("1", data[3]) else 0
+		return (parseColor(data[0], default=0x00000000), parseColor(data[1], 0x00FFFFFF), direction, alphaBend)
+	else:
+		skinError("The gradient '%s' must be 'startColor,endColor,direction[,blend]', using '#00000000,#00FFFFFF,vertical' (Black,White,vertical)" % value)
+		return (0x000000, 0x00FFFFFF, ePixmap.GRADIENT_VERTICAL, 0)
+
 def parseHorizontalAlignment(value):
 	options = {
 		"left": 0,
 		"center": 1,
-		"centre": 1,
 		"right": 2,
 		"block": 3
 	}
@@ -420,6 +433,33 @@ def parseInteger(value, default=0):
 		value = default
 	return value
 
+
+def parseItemAlignment(value):
+	options = {
+		"default": eListbox.itemAlignDefault,
+		"center": eListbox.itemAlignCenter,
+		"justify": eListbox.itemAlignJustify,
+	}
+	return parseOptions(options, "itemAlignment", value, eListbox.itemAlignDefault)
+
+
+def parseScrollbarLength(value, default):
+	if value and value.isdigit():
+		return int(value)
+	options = {
+		"full": 0,
+		"auto": -1
+	}
+	return options.get(value, default)
+
+
+def parseListOrientation(value):
+	options = {
+		"vertical": 0b01,
+		"horizontal": 0b10,
+		"grid": 0b11
+	}
+	return options.get(value, 0b01)
 
 def parseOrientation(value):
 	options = {
@@ -504,48 +544,68 @@ def parseValuePair(value, scale, object=None, desktop=None, size=None):
 def parseScaleFlags(value):
 	options = {
 		"none": 0,
+		"0": 0,  # Legacy scale option.
 		"scale": BT_SCALE,
+		"1": BT_SCALE,  # Legacy scale option.
+		"keepAspect": BT_SCALE | BT_KEEP_ASPECT_RATIO,
+		"leftTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_TOP,
+		"leftCenter": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
+		"leftMiddle": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
+		"leftBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
+		"centerTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_TOP,
+		"middleTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_TOP,
+		"centerScaled": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
+		"middleScaled": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
+		"centerBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+		"middleBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
+		"rightTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_TOP,
+		"rightCenter": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
+		"rightMiddle": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
+		"rightBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_BOTTOM,
+		#
+		# Deprecated scaling names.
 		"scaleKeepAspect": BT_SCALE | BT_KEEP_ASPECT_RATIO,
 		"scaleLeftTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_TOP,
 		"scaleLeftCenter": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
-		"scaleLeftCentre": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 		"scaleLeftMiddle": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 		"scaleLeftBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
 		"scaleCenterTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_TOP,
-		"scaleCentreTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_TOP,
 		"scaleMiddleTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_TOP,
 		"scaleCenter": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
-		"scaleCentre": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 		"scaleMiddle": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 		"scaleCenterBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
-		"scaleCentreBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 		"scaleMiddleBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 		"scaleRightTop": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_TOP,
 		"scaleRightCenter": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
-		"scaleRightCentre": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
 		"scaleRightMiddle": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
 		"scaleRightBottom": BT_SCALE | BT_KEEP_ASPECT_RATIO | BT_HALIGN_RIGHT | BT_VALIGN_BOTTOM,
+		#
 		"moveLeftTop": BT_HALIGN_LEFT | BT_VALIGN_TOP,
 		"moveLeftCenter": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
-		"moveLeftCentre": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 		"moveLeftMiddle": BT_HALIGN_LEFT | BT_VALIGN_CENTER,
 		"moveLeftBottom": BT_HALIGN_LEFT | BT_VALIGN_BOTTOM,
 		"moveCenterTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
-		"moveCentreTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
 		"moveMiddleTop": BT_HALIGN_CENTER | BT_VALIGN_TOP,
 		"moveCenter": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
-		"moveCentre": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 		"moveMiddle": BT_HALIGN_CENTER | BT_VALIGN_CENTER,
 		"moveCenterBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
-		"moveCentreBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 		"moveMiddleBottom": BT_HALIGN_CENTER | BT_VALIGN_BOTTOM,
 		"moveRightTop": BT_HALIGN_RIGHT | BT_VALIGN_TOP,
 		"moveRightCenter": BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
-		"moveRightCentre": BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
 		"moveRightMiddle": BT_HALIGN_RIGHT | BT_VALIGN_CENTER,
-		"moveRightBottom": BT_HALIGN_RIGHT | BT_VALIGN_BOTTOM
+		"moveRightBottom": BT_HALIGN_RIGHT | BT_VALIGN_BOTTOM,
+		#
+		# For compatibility with DreamOS and VTi skins:
+		"off": 0,  # Do not scale.
+		"on": BT_SCALE | BT_KEEP_ASPECT_RATIO,  # Scale but keep aspect ratio.
+		"aspect": BT_SCALE | BT_KEEP_ASPECT_RATIO,  # Scale but keep aspect ratio.
+		"center": BT_HALIGN_CENTER | BT_VALIGN_CENTER,  # Do not scale but center on target.
+		"width": BT_SCALE | BT_VALIGN_CENTER,  # Adjust the width to the target, the height can be too big or too small.
+		"height": BT_SCALE | BT_HALIGN_CENTER,  # Adjust height to target, width can be too big or too small.
+		"stretch": BT_SCALE,  # Adjust height and width to the target, aspect may break.
+		"fill": BT_SCALE | BT_HALIGN_CENTER | BT_VALIGN_CENTER  # Scaled so large that the target is completely filled, may be too wide OR too high, "width" or "height" is only automatically selected depending on which side is "too small".
 	}
-	return parseOptions(options, "scaleFlags", value, 0)
+	return parseOptions(options, "scale", value, 0)
 
 
 def parseScrollbarMode(value):
@@ -555,7 +615,9 @@ def parseScrollbarMode(value):
 		"showNever": eListbox.showNever,
 		"showLeft": eListbox.showLeftOnDemand,  # This value is deprecated to better allow option symmetry, use "showLeftOnDemand" instead.
 		"showLeftOnDemand": eListbox.showLeftOnDemand,
-		"showLeftAlways": eListbox.showLeftAlways
+		"showLeftAlways": eListbox.showLeftAlways,
+		"showTopOnDemand": eListbox.showTopOnDemand,
+		"showTopAlways": eListbox.showTopAlways
 	}
 	return parseOptions(options, "scrollbarMode", value, eListbox.showOnDemand)
 
@@ -587,12 +649,23 @@ def parseVerticalAlignment(value):
 	options = {
 		"top": 0,
 		"center": 1,
-		"centre": 1,
 		"middle": 1,
 		"bottom": 2
 	}
 	return parseOptions(options, "verticalAlignment", value, 1)
 
+
+def parseWrap(value):
+	options = {
+		"noWrap": 0,
+		"off": 0,
+		"0": 0,
+		"wrap": 1,
+		"on": 1,
+		"1": 1,
+		"ellipsis": 2
+	}
+	return parseOptions(options, "wrap", value, 0)
 
 def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), filenames=frozenset(("pixmap", "pointer", "seekPointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "sliderPixmap", "scrollbarBackgroundPixmap", "scrollbarForegroundPixmap", "scrollbarbackgroundPixmap", "scrollbarBackgroundPicture", "scrollbarSliderPicture"))):
 	size = None
@@ -672,6 +745,12 @@ class AttributeParser:
 	def backgroundColorSelected(self, value):
 		self.guiObject.setBackgroundColorSelected(parseColor(value, 0x00000000))
 
+	def backgroundGradient(self, value):
+		self.guiObject.setBackgroundGradient(*parseGradient(value))
+
+	def backgroundGradientSelected(self, value):
+		self.guiObject.setBackgroundGradientSelected(*parseGradient(value))
+
 	def backgroundCrypted(self, value):
 		self.guiObject.setBackgroundColor(parseColor(value, 0x00000000))
 
@@ -733,6 +812,9 @@ class AttributeParser:
 	def foregroundNotCrypted(self, value):
 		self.guiObject.setForegroundColor(parseColor(value, 0x00FFFFFF))
 
+	def gradient(self, value):
+		self.guiObject.setGradient(*parseGradient(value))
+
 	def halign(self, value):  # This legacy definition uses an inconsistent name, use 'horizontalAlignment' instead!
 		self.horizontalAlignment(value)
 		# attribDeprecationWarning("halign", "horizontalAlignment")
@@ -747,12 +829,28 @@ class AttributeParser:
 	def includes(self, value):  # Same as conditional.  Created to partner new "excludes" attribute.
 		pass
 
+	def itemAlignment(self, value):
+		self.guiObject.setItemAlignment(parseItemAlignment(value))
+
 	def itemHeight(self, value):
 		# print("[Skin] DEBUG: Scale itemHeight %d -> %d." % (int(value), self.applyVerticalScale(value)))
 		self.guiObject.setItemHeight(self.applyVerticalScale(value))
 
+	def itemSpacing(self, value):
+		if len(value.split(",")) == 1:  # These values will be stripped in parseCoordinate().
+			value = "%s,%s" % (value, value)
+		self.guiObject.setItemSpacing(parsePosition(value, self.scaleTuple, self.guiObject, self.desktop))
+
+	def itemWidth(self, value):
+		# print("[Skin] DEBUG: Scale itemWidth %d -> %d." % (int(value), self.applyHorizontalScale(value)))
+		self.guiObject.setItemWidth(self.applyHorizontalScale(value))
+
+	def listOrientation(self, value):  # Used by eListBox.
+		self.guiObject.setOrientation(parseListOrientation(value))
+
 	def noWrap(self, value):
-		self.guiObject.setNoWrap(1 if parseBoolean("nowrap", value) else 0)
+		self.wrap("0" if parseBoolean("noWrap", value) else "1")
+		# attribDeprecationWarning("noWrap", "wrap")
 
 	def objectTypes(self, value):
 		pass
@@ -783,10 +881,10 @@ class AttributeParser:
 		pass
 
 	def scale(self, value):
-		self.guiObject.setScale(1 if parseBoolean("scale", value) else 0)
+		self.guiObject.setPixmapScale(parseScale(value))
 
-	def scaleFlags(self, value):
-		self.guiObject.setPixmapScaleFlags(parseScaleFlags(value))
+	def scaleFlags(self, value):  # This is a temporary patch until the code and skins using this attribute is updated.
+		self.scale(value)
 
 	def scrollbarBackgroundPixmap(self, value):
 		self.guiObject.setScrollbarBackgroundPixmap(parsePixmap(value, self.desktop))
@@ -810,6 +908,9 @@ class AttributeParser:
 
 	def scrollbarBorderColor(self, value):
 		self.guiObject.setScrollbarBorderColor(parseColor(value, 0x00FFFFFF))
+
+	def scrollbarLength(self, value):
+		self.guiObject.setScrollbarLength(parseScrollbarLength(value, 0))
 
 	def scrollbarSliderBorderColor(self, value):  # This legacy definition uses an inconsistent name, use'scrollbarBorderColor' instead!
 		self.scrollbarBorderColor(value)
@@ -871,6 +972,12 @@ class AttributeParser:
 	def selectionPixmap(self, value):
 		self.guiObject.setSelectionPixmap(parsePixmap(value, self.desktop))
 
+	def selectionZoom(self, value):
+		value = parseInteger(value, 0)
+		if value > 500:
+			value = 500
+		self.guiObject.setSelectionZoom(float("%d.%02d" % ((value // 100) + 1, value % 100)))
+
 	def shadowColor(self, value):
 		self.guiObject.setShadowColor(parseColor(value, 0x00000000))
 
@@ -883,6 +990,9 @@ class AttributeParser:
 	def sliderPixmap(self, value):  # For compatibility same as 'scrollbarSliderPixmap', use 'scrollbarForegroundPixmap' instead.
 		self.scrollbarForegroundPixmap(value)
 		attribDeprecationWarning("sliderPixmap", "scrollbarForegroundPixmap")
+
+	def spacingColor(self, value):
+		self.guiObject.setSpacingColor(parseColor(value, 0x00000000))
 
 	def text(self, value):
 		if value:
@@ -924,7 +1034,7 @@ class AttributeParser:
 		self.guiObject.setVAlign(parseVerticalAlignment(value))
 
 	def wrap(self, value):
-		self.guiObject.setNoWrap(0 if parseBoolean("wrap", value) else 1)
+		self.guiObject.setWrap(parseWrap(value))
 
 	def zPosition(self, value):
 		self.guiObject.setZPosition(parseInteger(value))
@@ -1471,6 +1581,13 @@ def readSkin(screen, skin, names, desktop):
 		collectAttributes(w.skinAttributes, widget, context, skinPath, ignore=("name",))
 		screen.additionalWidgets.append(w)
 
+	def processRectangle(widget, context):
+		w = additionalWidget()
+		w.widget = eRectangle
+		w.skinAttributes = []
+		collectAttributes(w.skinAttributes, widget, context, skinPath, ignore=("name",))
+		screen.additionalWidgets.append(w)
+
 	def processScreen(widget, context):
 		widgets = widget
 		for w in widgets.findall('constant-widget'):
@@ -1518,6 +1635,7 @@ def readSkin(screen, skin, names, desktop):
 		"applet": processApplet,
 		"eLabel": processLabel,
 		"ePixmap": processPixmap,
+		"eRectangle": processRectangle,
 		"panel": processPanel
 	}
 
@@ -1592,16 +1710,7 @@ def getSkinFactor(screen=GUI_SKIN_ID):
 # have a skin based screen.  This will allow coders to know if the named
 # screen will be skinned by the skin code.  A return of None implies that the
 # code must provide its own skin for the screen to be displayed to the user.
-def applySkinFactor(*d):
-	"""
-	Multiply the numeric input by the skin factor
-	and return the result as an integer.
-	"""
-	if len(d) == 1:
-		return int(d[0] * getSkinFactor())
-	return tuple([int(value * getSkinFactor()) if isinstance(value, (int, float)) else value for value in d])
-
-
+#
 def findSkinScreen(names):
 	if not isinstance(names, list):
 		names = [names]
