@@ -104,7 +104,7 @@ self.session.open(RemoteControlCode)
 				<item weight="40" level="1" text="Keyboard" key="keyboard"><setup setupKey="keyboard" /></item>
 				<item weight="50" level="2" text="OSD 3D Setup" key="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item>
 			        <item weight="70" level="0" text="Language" key="locale"><screen module="LocaleSelection" /></item>
-                                <item weight="70" level="0" key="specialfeatures_menu"><setup setupKey="specialfeatures" /></item>
+                                <!--item key="specialfeatures_menu" level="0" text="Special Features Settings" weight="20"><setup setupKey="SpecialFeatures" /></item-->
 				<!-- <item weight="50" level="2" text="OSD 3D Setup" key="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item> -->
 			</menu>
 		</menu>
