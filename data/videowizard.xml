@@ -1,4 +1,3 @@
-<!--suppress XmlUnboundNsPrefix -->
 <wizard>
 	<step id="inputselection" nextstep="modesdetection" timeout="10" timeoutaction="selectnext">
 		<condition>

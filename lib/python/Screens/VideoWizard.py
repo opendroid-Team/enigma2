@@ -1,3 +1,4 @@
+from Components.AVSwitch import iAVSwitch as avSwitch
 from Components.config import ConfigBoolean, config, configfile
 from Components.SystemInfo import BoxInfo
 from Screens.HelpMenu import ShowRemoteControl
