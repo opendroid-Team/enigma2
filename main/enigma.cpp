@@ -343,11 +343,11 @@ int main(int argc, char **argv)
 	dsk_lcd.setRedrawTask(main);
 
 	std::string active_skin = getConfigCurrentSpinner("config.skin.primary_skin");
-	std::string spinnerPostion = eSimpleConfig::getString("config.misc.spinnerPosition", "90,90");
+	std::string spinnerPostion = eSimpleConfig::getString("config.misc.spinnerPosition", "100,100");
 	int spinnerPostionX, spinnerPostionY;
 	if (sscanf(spinnerPostion.c_str(), "%d,%d", &spinnerPostionX, &spinnerPostionY) != 2)
 	{
-		spinnerPostionX = spinnerPostionY = 90;
+		spinnerPostionX = spinnerPostionY = 100;
 	}
 
 	eDebug("[Enigma] Loading spinners.");
