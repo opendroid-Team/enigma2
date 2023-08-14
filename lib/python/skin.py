@@ -541,7 +541,7 @@ def parseValuePair(value, scale, object=None, desktop=None, size=None):
 	return (xValue, yValue)
 
 
-def parseScaleFlags(value):
+def parseScale(value):
 	options = {
 		"none": 0,
 		"0": 0,  # Legacy scale option.
