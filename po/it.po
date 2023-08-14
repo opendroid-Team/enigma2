@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-13 17:19+0200\n"
-"PO-Revision-Date: 2023-08-14 09:59+0200\n"
+"PO-Revision-Date: 2023-08-14 22:29+0200\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: it\n"
@@ -363,6 +363,7 @@ msgstr "%A %-d %B %Y"
 msgid "%A %-d.%-m"
 msgstr "%A %-d/%-m"
 
+#, fuzzy
 msgid "%A %-d.%-m.%Y"
 msgstr "%A %-d/%-m/%Y"
 
@@ -2373,7 +2374,7 @@ msgid "Add the current directory as a bookmark"
 msgstr "Aggiungi cartella attuale come segnalibro"
 
 msgid "Add the current service to the Volume Offsets list"
-msgstr "Aggiungi servizio attuale all'elenco offset volume"
+msgstr "Aggiungere il servizio corrente all'elenco dei set con volume disattivato"
 
 msgid "Add title"
 msgstr "Aggiungere titolo"
@@ -5603,7 +5604,7 @@ msgstr ""
 "Superiore: %s"
 
 msgid "Currently Defined Volume Offsets:"
-msgstr "Offset del volume attualmente definito:"
+msgstr "Imposta volume spento attualmente definito:"
 
 msgid "Currently the commit log cannot be retrieved - please try later again"
 msgstr "Al momento non è possibile recuperare il log del commit. Riprova più tardi"
@@ -5993,7 +5994,7 @@ msgid "Default CPU priority (nice) for executed scripts. This can reduce the sys
 msgstr "Priorità CPU predefinita (nice) per l'esecuzione degli script. Può ridurre il carico del sistema in modo che gli script non interferiscano con il resto del sistema (valori più alti = priorità più bassa)"
 
 msgid "Default Dolby Digital / Dolby AC-3 offset"
-msgstr "Offset Dolby Digital / Dolby AC-3 predefinito"
+msgstr "Compensazione predefinita Dolby Digital / Dolby AC-3"
 
 msgid "Default I/O priority (ionice) for executed scripts. This can reduce the system load so that scripts do not interfere with the rest of the system. (higher values = lower priority)"
 msgstr "Priorità CPU predefinita (ionice) per l'esecuzione degli script. Può ridurre il carico del sistema in modo che gli script non interferiscano con il resto del sistema (valori più alti = priorità più bassa)"
@@ -6040,7 +6041,7 @@ msgid "Default sort order for files in the right column."
 msgstr "Ordinamento predefinito per i file nella colonna di destra."
 
 msgid "Default volume offset"
-msgstr "Offset predefinito volume"
+msgstr "Volume predefinito disattivato"
 
 #, python-format
 msgid "Default: '%s'."
@@ -6247,7 +6248,7 @@ msgid "Delete the currently displayed log file"
 msgstr "Elimina file di registro attualmente visualizzato"
 
 msgid "Delete the currently highlighted service from the Volume Offsets list"
-msgstr "Elimina servizio attualmente evidenziato dall'elenco offset volume"
+msgstr "Elimina il servizio attualmente evidenziato dall'elenco delle impostazioni del volume disattivato"
 
 msgid "Delete the currently selected timer"
 msgstr "Elimina timer attualmente selezionato"
@@ -8941,13 +8942,13 @@ msgid "General"
 msgstr "Generale"
 
 msgid "General AC3 delay"
-msgstr ""
+msgstr "Ritardo generale AC3"
 
 msgid "General BT Audio delay"
 msgstr "Abilita audio BT"
 
 msgid "General PCM delay"
-msgstr ""
+msgstr "Ritardo PCM generale"
 
 msgid "Generator"
 msgstr "Generale"
@@ -21543,7 +21544,7 @@ msgid "Volume Adjust Settings"
 msgstr "Impostazioni di regolazione del volume"
 
 msgid "Volume display timer"
-msgstr "Timer visualizzazione volume"
+msgstr "Tempo di visualizzazione del volume"
 
 msgid "Volume down"
 msgstr "Volume giù"
@@ -23709,6 +23710,9 @@ msgstr "solo in Standby"
 
 msgid "opdBootLogo-Setup"
 msgstr "opd Configurazione BootLogo"
+
+msgid "OPDBoot-Installation"
+msgstr "Installazione-OPDBoot"
 
 msgid "opennfr"
 msgstr ""
