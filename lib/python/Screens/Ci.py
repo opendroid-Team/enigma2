@@ -1,6 +1,8 @@
-from enigma import eTimer, eDVBCI_UI, eDVBCIInterfaces
+from os import remove
+from os.path import exists
+from enigma import eTimer, eDVBCI_UI
 
-from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ActionMap import NumberActionMap
 from Components.Label import Label
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigSubList, getConfigListEntry, KEY_LEFT, KEY_RIGHT, KEY_0, ConfigNothing, ConfigPIN, ConfigYesNo, NoSave
 from Components.ConfigList import ConfigList, ConfigListScreen

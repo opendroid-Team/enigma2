@@ -259,7 +259,7 @@ def InitUsageConfig():
 	config.usage.multiepg_ask_bouquet = ConfigYesNo(default=False)
 	config.usage.showpicon = ConfigYesNo(default=True)
 
-#########  Workaround for VTI Skins   ##############
+#########  Workaround for OPD Skins   ##############
 	config.usage.picon_dir = ConfigDirectory(default="/usr/share/enigma2/picon")
 	config.usage.movielist_show_picon = ConfigYesNo(default=False)
 	config.usage.use_extended_pig = ConfigYesNo(default=False)
@@ -1872,6 +1872,7 @@ def InitUsageConfig():
 		("autotimer", _("AutoTimer")),
 		("timer", _("Add/Remove Timer")),
 		("imdb", _("IMDb Search")),
+		("tmdb", _("TMDB Search")),
 		("bouquetlist", _("Bouquet List")),
 		("showmovies", _("Show Movies List")),
 		("record", _("Record - same as record button")),
@@ -1912,6 +1913,7 @@ def InitUsageConfig():
 		("24plus", _("+24 Hours")),
 		("24minus", _("-24 Hours")),
 		("imdb", _("IMDb Search")),
+		("tmdb", _("TMDB Search")),
 		("bouquetlist", _("Bouquet List")),
 		("showmovies", _("Show Movies List")),
 		("record", _("Record - same as record button")),
