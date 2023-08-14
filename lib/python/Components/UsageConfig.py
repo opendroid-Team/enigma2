@@ -65,7 +65,7 @@ def InitUsageConfig():
 		("horzicon", _("Horizontal icons")),
 		("standard", _("Vertical menu"))
 	])
-	config.usage.menuEntryStyle = ConfigSelection(default="text", choices=[
+	config.usage.menuEntryStyle = ConfigSelection(default="both", choices=[
 		("text", _("Entry text only")),
 		("number", _("Entry number and text")),
 		("image", _("Entry image and text")),
