@@ -441,7 +441,7 @@ class OscamSmartcard(ConfigListScreen, Screen):
 	def getcurrent(self):
 		current = _("no")
 		if os.path.exists("/usr/bin/oscam_oscamsmartcard"):
-			current = popen("chmod 775 /usr/bin/oscam_oscamsmartcard && /usr/bin/oscam_oscamsmartcard -V | grep Version |awk '{print $2}'").read().strip()
+			current = os.popen("chmod 775 /usr/bin/oscam_oscamsmartcard && /usr/bin/oscam_oscamsmartcard -V | grep Version |awk '{print $2}'").read().strip()
 		if current ==_("no"):
 			return current
 		if "oscam" in current:
