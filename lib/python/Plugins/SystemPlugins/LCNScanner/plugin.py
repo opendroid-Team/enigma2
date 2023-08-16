@@ -14,7 +14,7 @@ import os
 import sys
 import re
 import shutil
-import xml.etree.cElementTree
+import xml.etree.ElementTree
 
 
 class LCN():
@@ -27,7 +27,7 @@ class LCN():
 		self.lcnlist = []
 		self.markers = []
 		self.e2services = []
-		mdom = xml.etree.cElementTree.parse(rulefile)
+		mdom = xml.etree.ElementTree.parse(rulefile)
 		self.root = None
 		for x in mdom.getroot():
 			if x.tag == "ruleset" and x.get("name") == rulename:
@@ -305,7 +305,7 @@ class LCNBuildHelper():
 			self.bouquetlist.append((x[0], x[1]))
 
 		self.rulelist = []
-		mdom = xml.etree.cElementTree.parse(os.path.dirname(sys.modules[__name__].__file__) + "/rules.xml")
+		mdom = xml.etree.ElementTree.parse(os.path.dirname(sys.modules[__name__].__file__) + "/rules.xml")
 		for x in mdom.getroot():
 			if x.tag == "ruleset":
 				self.rulelist.append((x.get("name"), x.get("name")))
