@@ -1,6 +1,6 @@
 from time import localtime, mktime
 from datetime import datetime
-import xml.etree.cElementTree
+import xml.etree.ElementTree
 from os import access, F_OK
 from os.path import exists
 
@@ -1769,7 +1769,7 @@ def InitNimManager(nimmgr, update_slots=None):
 	unicablelnbproducts = {}
 	unicablematrixproducts = {}
 	with open(eEnv.resolve("${datadir}/enigma2/unicable.xml"), 'r') as fd:
-		doc = xml.etree.cElementTree.parse(fd)
+		doc = xml.etree.ElementTree.parse(fd)
 	root = doc.getroot()
 
 	entry = root.find("lnb")
