@@ -33,15 +33,13 @@ dvb_libenigma_dvb_a_SOURCES = \
 	dvb/tstools.cpp \
 	dvb/volume.cpp \
 	dvb/streamserver.cpp \
-	dvb/rtspstreamserver.cpp \
 	dvb/pmtparse.cpp \
 	dvb/encoder.cpp \
-	dvb/atsc.cpp \
-	dvb/fcc.cpp \
-	dvb/fccdecoder.cpp
+	dvb/atsc.cpp
 
 dvbincludedir = $(pkgincludedir)/lib/dvb
 dvbinclude_HEADERS = \
+	dvb/absdiff.h \
 	dvb/cablescan.h \
 	dvb/cahandler.h \
 	dvb/crc32.h \
@@ -79,17 +77,6 @@ dvbinclude_HEADERS = \
 	dvb/tstools.h \
 	dvb/volume.h \
 	dvb/streamserver.h \
-	dvb/rtspstreamserver.h \
 	dvb/pmtparse.h \
 	dvb/encoder.h \
-	dvb/atsc.h \
-	dvb/fcc.h \
-	dvb/fccdecoder.h
-
-if DREAMNEXTGEN
-dvbinclude_HEADERS += \
-	dvb/alsa.h \
-	dvb/decoders.h \
-	dvb/ringbuffer.h \
-	dvb/tsparser.h
-endif
+	dvb/atsc.h
