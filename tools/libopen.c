@@ -8,7 +8,7 @@
 
 //#define LIBOPEN_DEBUG
 
-int open64(const char *pathname, int flags, ...) //NOSONAR
+int open64(const char *pathname, int flags, ...)
 {
 	typedef int (*FUNC_PTR) (const char* pathname, int flags, ...);
 	static FUNC_PTR libc_open64;

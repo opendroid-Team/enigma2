@@ -5,11 +5,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <net/if.h>
 #include <libsig_comp.h>
 #include <linux/dvb/version.h>
 
@@ -23,7 +18,6 @@
 #include <lib/base/esimpleconfig.h>
 #include <lib/base/init.h>
 #include <lib/base/init_num.h>
-#include <lib/base/nconfig.h>
 #include <lib/gdi/gmaindc.h>
 #include <lib/gdi/glcddc.h>
 #include <lib/gdi/grc.h>
