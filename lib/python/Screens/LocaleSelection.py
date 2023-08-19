@@ -11,7 +11,6 @@ from Screens.HelpMenu import HelpableScreen, ShowRemoteControl
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen, ScreenSummary
 from Screens.Setup import Setup
-from Screens.Standby import QUIT_RESTART, TryQuitMainloop
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 
@@ -28,6 +27,8 @@ config.locales.localesSortBy = ConfigSelection(default="2", choices=[
 	("3", _("Locale (Ascending)")),
 	("30", _("Locale (Descending)"))
 ])
+
+inWizard = False
 
 
 class LocaleSelection(Screen, HelpableScreen):
@@ -139,7 +140,6 @@ class LocaleSelection(Screen, HelpableScreen):
 		self.packageDoneTimer = eTimer()
 		self.packageDoneTimer.callback.append(self.processPackageDone)
 		self.onLayoutFinish.append(self.layoutFinished)
-		self.inWizard = False
 
 	def layoutFinished(self):
 		while len(self["icons"].pixmaps) < self.MAX_PACK:
@@ -357,11 +357,6 @@ class LocaleSelection(Screen, HelpableScreen):
 		self["locales"].bottom()
 
 	def keySave(self):
-		def keySaveCallback(result):
-			if result:
-				self.session.open(TryQuitMainloop, retvalue=QUIT_RESTART)
-			else:
-				self.close()
 		config.osd.language.value = self.currentLocale
 		config.osd.language.save()
 		config.misc.locale.value = self.currentLocale
@@ -372,10 +367,7 @@ class LocaleSelection(Screen, HelpableScreen):
 		config.misc.language.save()
 		config.misc.country.save()
 		international.activateLocale(self.currentLocale, runCallbacks=True)
-		if not self.inWizard and self.initialLocale != self.currentLocale:
-			self.session.openWithCallback(keySaveCallback, MessageBox, _("Restart GUI now?"), default=True, type=MessageBox.TYPE_YESNO, windowTitle=_("Question"))
-		else:
-			self.close()
+		self.close()
 
 	def keyCancel(self, closeParameters=()):
 		# if self["locales"].isChanged():
@@ -421,7 +413,8 @@ class LocaleWizard(LocaleSelection, ShowRemoteControl):
 	def __init__(self, session):
 		LocaleSelection.__init__(self, session)
 		ShowRemoteControl.__init__(self)
-		self.inWizard = True
+		global inWizard
+		inWizard = True
 		saveText = _("Apply the currently highlighted locale/language and exit")
 		cancelText = _("Cancel any changes to the active locale/language and exit")
 		self["selectionActions"] = HelpableActionMap(self, "LocaleSelectionActions", {
