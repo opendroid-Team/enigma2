@@ -1120,7 +1120,7 @@ int eDVBCIInterfaces::setCIEnabled(int slotid, bool enabled)
 	return -1;
 }
 
-int eDVBCIInterfaces::setCIClockRate(int slotid, const std::string &rate)
+int eDVBCIInterfaces::setCIClockRate(int slotid, int rate)
 {
 	singleLock s(m_slot_lock);
 	eDVBCISlot *slot = getSlot(slotid);
@@ -1323,8 +1323,7 @@ void eDVBCISlot::data(int what)
 
 DEFINE_REF(eDVBCISlot);
 
-eDVBCISlot::eDVBCISlot(eMainloop *context, int nr):
-	startup_timeout(eTimer::create(context))
+eDVBCISlot::eDVBCISlot(eMainloop *context, int nr)
 {
 	char configStr[255];
 	slotid = nr;
@@ -1332,15 +1331,8 @@ eDVBCISlot::eDVBCISlot(eMainloop *context, int nr):
 	state = stateDisabled;
 	snprintf(configStr, 255, "config.ci.%d.enabled", slotid);
 	bool enabled = eConfigManager::getConfigBoolValue(configStr, true);
-	int bootDelay = eConfigManager::getConfigIntValue("config.cimisc.bootDelay");
-	if (enabled) {
-		if (bootDelay) {
-			CONNECT(startup_timeout->timeout, eDVBCISlot::openDevice);
-			startup_timeout->start(1000 * bootDelay, true);
-		}
-		else
-			openDevice();
-	}
+	if (enabled)
+		openDevice();
 	else
 		/* emit */ eDVBCI_UI::getInstance()->m_messagepump.send(eDVBCIInterfaces::Message(eDVBCIInterfaces::Message::slotStateChanged, getSlotID(), 3)); // state disabled
 }
@@ -1720,11 +1712,11 @@ int eDVBCISlot::setSource(const std::string &source)
 	return 0;
 }
 
-int eDVBCISlot::setClockRate(const std::string &rate)
+int eDVBCISlot::setClockRate(int rate)
 {
 	char buf[64];
 	snprintf(buf, sizeof(buf), "/proc/stb/tsmux/ci%d_tsclk", slotid);
-	if(CFile::writeStr(buf, rate) == -1)
+	if(CFile::write(buf, rate ? "high" : "normal") == -1)
 		return -1;
 	return 0;
 }

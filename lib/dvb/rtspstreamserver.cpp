@@ -1173,11 +1173,11 @@ void eRTSPStreamClient::notifier(int what)
 		ss << "<device><deviceType>urn:ses-com:device:SatIPServer:1</deviceType>";
 		ss << "<friendlyName>" << app_name << "</friendlyName>";
 		ss << "<manufacturer>" << modelinformation.getValue("displaybrand") << "</manufacturer>";
-		ss << "<manufacturerURL>http://www.opena.tv</manufacturerURL>";
+		ss << "<manufacturerURL>https://droidsat.org</manufacturerURL>";
 		ss << "<modelDescription>" << modelinformation.getValue("displaydistro") << "</modelDescription>";
 		ss << "<modelName>" << modelinformation.getValue("displaymodel") << "</modelName>";
 		ss << "<modelNumber>1.1</modelNumber>";
-		ss << "<modelURL>http://www.opena.tv</modelURL>";
+		ss << "<modelURL>https://droidsat.org</modelURL>";
 		ss << "<serialNumber>1</serialNumber>";
 		ss << "<UDN>uuid:11223344-9999-0001-b7ae-" << modelinformation.getValue("compiledate") << "</UDN>";
 		ss << "<iconList>";
