@@ -14,7 +14,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 MODULE_NAME = __name__.split(".")[-1].capitalize()
 
-DEFAULT_SKIN = "Steampunk/skin.xml"
+DEFAULT_SKIN = "GlamourAuraSky/skin.xml"
 EMERGENCY_SKIN = "skin_default.xml"
 EMERGENCY_NAME = "Default OE-A"
 DEFAULT_DISPLAY_SKIN = "skin_display_grautec.xml" if BoxInfo.getItem("grautec") else "skin_display.xml"

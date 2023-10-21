@@ -1,9 +1,6 @@
 from json import load
 from os.path import exists
-try:
-	from urllib.request import urlopen
-except ImportError:
-	from urllib2 import urlopen
+from urllib.request import urlopen
 
 from enigma import eTimer
 
@@ -14,7 +11,7 @@ from Components.Opkg import OpkgComponent
 from Components.Pixmap import Pixmap
 from Components.ScrollLabel import ScrollLabel
 from Components.Slider import Slider
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import BoxInfo, getBoxDisplayName
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Screens.HelpMenu import HelpableScreen
@@ -25,8 +22,6 @@ from Screens.Standby import QUIT_REBOOT, TryQuitMainloop
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 
-displayBrand = BoxInfo.getItem("displaybrand")
-displayModel = BoxInfo.getItem("displaymodel")
 
 
 class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
@@ -158,6 +153,7 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 		self.feedState = self.FEED_UNKNOWN
 		self.updateFlag = True
 		self.packageCount = 0
+		self.feedOnline = False
 		self.timer = eTimer()
 		self.timer.callback.append(self.timeout)
 		self.timer.callback.append(self.checkTrafficLight)
@@ -225,6 +221,11 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 			callback()
 
 	def opkgCallback(self, event, parameter):
+		if self.updateFlag:
+			if event == OpkgComponent.EVENT_UPDATED and "opendroid-all" in parameter:
+				self.feedOnline = True
+			if event == OpkgComponent.EVENT_ERROR and self.feedOnline:  # suppress error if opendroid-all feed is online
+				event = OpkgComponent.EVENT_DONE
 		if event == OpkgComponent.EVENT_ERROR:
 			self.setStatus("error")
 			self.activity = -1
@@ -304,7 +305,7 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 			print("[SoftwareUpdate] Warning: There are %d packages available, more than the %d maximum recommended, for an update!" % (self.packageCount, updateLimit))
 			message = [
 				_("Warning: There are %d update packages!") % self.packageCount,
-				_("There is a risk that your %s %s will not boot or may malfunction after such a large on-line update.") % (displayBrand, displayModel),
+				_("There is a risk that your %s %s will not boot or may malfunction after such a large on-line update.") % getBoxDisplayName(),
 				_("You should flash a new image!"),
 				_("What would you like to do?")
 			]
@@ -342,6 +343,8 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 		self["feedstatus_green"].hide()
 		self["feedmessage"].setText("")
 		self.activity = 0
+		self.feedOnline = False
+		self.updateFlag = True
 		self["activity"].setValue(self.activity)
 		self["activity"].show()
 		self.setStatus("update")
@@ -454,10 +457,13 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 			self.timer.stop()
 			self["activity"].hide()
 		else:
-			self.activity += 1
-			if self.activity == 100:
-				self.activity = 0
-			self["activity"].setValue(self.activity)
+			if self.packageTotal and self.upgradeCount:
+				self["activity"].setValue(int(self.upgradeCount / self.packageTotal * 100))
+			else:
+				self.activity += 1
+				if self.activity == 100:
+					self.activity = 0
+				self["activity"].setValue(self.activity)
 			self.timer.start(100, True)
 		for callback in self.onTimerTick:
 			callback()
@@ -516,9 +522,9 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 					self["update"].appendText("%s\n" % ngettext("%d package was configured.", "%d packages were configured.", self.configureCount) % self.configureCount)
 					if self.deselectCount:
 						self["update"].appendText("%s\n" % ngettext("%d package was deselected.", "%d packages were deselected.", self.deselectCount) % self.deselectCount)
-						self["update"].appendText("\n%s\n" % _("Deselected packages usually occur because those packaged are incompatible with existing packages.  While this is mostly harmless it is possible that your %s %s may experience issues.") % (displayBrand, displayModel))
+						self["update"].appendText("\n%s\n" % _("Deselected packages usually occur because those packaged are incompatible with existing packages.  While this is mostly harmless it is possible that your %s %s may experience issues.") % getBoxDisplayName())
 				else:
-					error = _("Your receiver might be unusable now.  Please consult the manual for further assistance before rebooting your %s %s.") % (displayBrand, displayModel)
+					error = _("Your receiver might be unusable now.  Please consult the manual for further assistance before rebooting your %s %s.") % getBoxDisplayName()
 					if self.upgradeCount == 0:
 						error = _("No updates were available.  Please try again later.")
 					self["update"].appendText("%s: %s\n" % (_("Error"), error))
@@ -554,6 +560,8 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 
 	def createSummary(self):
 		return RunSoftwareUpdateSummary
+
+		self.session.openWithCallback(self.keyCancelCallback, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s?") % getBoxDisplayName())
 
 
 class RunSoftwareUpdateSummary(ScreenSummary):

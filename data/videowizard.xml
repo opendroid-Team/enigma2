@@ -1,6 +1,6 @@
 <!--suppress XmlUnboundNsPrefix -->
 <wizard>
-	<step id="inputselection" nextstep="modesdetection" timeout="10" timeoutaction="selectnext">
+	<step id="inputselection" nextstep="modeselection" timeout="10" timeoutaction="selectnext">
 		<condition>
 self.condition = len(self.listInputChannels()) > 1
 if len(self.listInputChannels()) == 1:
@@ -17,7 +17,7 @@ self.selectKey("OK")
 		</code>
 	</step>
 
-		<step id="modesdetection" >
+		<step id="modeselection" >
 		<condition>
 self.condition = (self.port == "DVI" or self.port == "HDMI")
 		</condition>

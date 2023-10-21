@@ -1,6 +1,6 @@
 import os
 from time import time
-from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService
+from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService, eDBoxLCD
 
 from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
@@ -269,13 +269,20 @@ class Standby2(Screen):
 		inStandby = self
 		self.session.screen["Standby"].boolean = True
 		config.misc.standbyCounter.value += 1
+		if BoxInfo.getItem("AmlogicFamily"):
+			try:
+				open("/proc/stb/lcd/oled_brightness", "w").write("0")
+			except OSError:
+				pass
 
 	def createSummary(self):
 		return StandbySummary
 
 	def stopService(self):
-		self.prev_running_service = self.session.nav.getCurrentlyPlayingServiceOrGroup()
-		self.session.nav.stopService()
+		prev_running_service = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+		if prev_running_service:
+			self.prev_running_service = prev_running_service
+			self.session.nav.stopService()
 
 
 class Standby(Standby2):
@@ -441,10 +448,10 @@ class TryQuitMainloop(MessageBox):
 				# set LCDminiTV off / fix a deep-standby-crash on some boxes / gb4k
 				print("[Standby] LCDminiTV off")
 				setLCDModeMinitTV("0")
-			if BoxInfo.getItem("machinebuild") == "vusolo4k":  #workaround for white display flash
-				open("/proc/stb/fp/oled_brightness", "w").write("0")
-			if BoxInfo.getItem("machinebuild") == "pulse4k":
-				open("/proc/stb/lcd/oled_brightness", "w").write("0")
+
+			if BoxInfo.getItem("machinebuild") in ("vusolo4k", "pulse4k"):  # Workaround for white display flash.
+				eDBoxLCD.getInstance().setLCDBrightness(0)
+
 			quitMainloop(self.retval)
 		else:
 			MessageBox.close(self, True)
@@ -458,4 +465,4 @@ class TryQuitMainloop(MessageBox):
 		inTryQuitMainloop = False
 
 	def createSummary(self):  # Suppress the normal MessageBox ScreenSummary screen.
- 		return None
+		return None
