@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-01 08:49+0100\n"
-"PO-Revision-Date: 2023-11-04 12:51+0100\n"
+"PO-Revision-Date: 2023-11-05 12:01+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: zh\n"
@@ -7092,9 +7092,8 @@ msgstr "在LCD显示屏上启用闪烁rec符号"
 msgid "Enable chapter support for video files"
 msgstr "为视频文件启用章节支持"
 
-#, fuzzy
 msgid "Enable client mode"
-msgstr "启用移动模式"
+msgstr "啟用客戶端模式"
 
 msgid "Enable command line function"
 msgstr "启用命令行功能"
@@ -7138,9 +7137,8 @@ msgstr "启用网络流量检查"
 msgid "Enable new GStreamer playback"
 msgstr ""
 
-#, fuzzy
 msgid "Enable or disable client mode."
-msgstr "启用或禁用使用HDMI-CEC."
+msgstr "啟用或停用客戶端模式."
 
 msgid "Enable or disable using HDMI-CEC."
 msgstr "启用或禁用使用HDMI-CEC."
@@ -7218,13 +7216,13 @@ msgid "Enable unlinked bouquets"
 msgstr "启用未链接的自定义组"
 
 msgid "Enable usage of tuners from another Enigma2 receiver on the local network. Remote tuners will be used when tuners are not available on this receiver. (No free tuner or service type is not available.)"
-msgstr ""
+msgstr "允許使用本地網路上另一個 Enigma2 接收器的調諧器。當調諧器在此接收器上不可用時，將使用遠端調諧器. （沒有免費調諧器或服務類型不可用.)"
 
 msgid "Enable volume control with LEFT/RIGHT arrow buttons"
-msgstr ""
+msgstr "使用向左/向右箭頭按鈕啟用音量控制"
 
 msgid "Enable zapping with UP/DOWN arrow buttons"
-msgstr ""
+msgstr "使用向上/向下箭頭按鈕啟用切換"
 
 msgid "Enabled"
 msgstr "启用"
@@ -7265,40 +7263,39 @@ msgstr "结束收藏编辑"
 msgid "End time"
 msgstr "结束时间"
 
-#, fuzzy
 msgid "Ene"
-msgstr "输入"
+msgstr "埃內"
 
 msgid "Energy Timer"
-msgstr ""
+msgstr "能量計時器"
 
 #, python-format
 msgid "Energy Timer: %d minute remains."
 msgid_plural "Energy Timer: %d minutes remain."
-msgstr[0] ""
+msgstr[0] "能量計時器:還剩 %d 分鐘."
 
 #, python-format
 msgid "Energy Timer: %d second remains."
 msgid_plural "Energy Timer: %d seconds remain."
-msgstr[0] ""
+msgstr[0] "能量計時器:還剩 %d 秒."
 
 msgid "Energy Timer: Inactive."
-msgstr ""
+msgstr "能量計時器:未激活."
 
 msgid "Energy timer"
-msgstr ""
+msgstr "能量計時器"
 
 msgid "EnergySaver action"
-msgstr ""
+msgstr "節能行動"
 
 msgid "EnergySaver activation delay"
-msgstr ""
+msgstr "節能啟動延遲"
 
 msgid "EnergyTimer Actions"
-msgstr ""
+msgstr "能量計時器操作"
 
 msgid "EnergyTimer Overview"
-msgstr ""
+msgstr "能量定時器概述"
 
 msgid "English"
 msgstr "英语"
@@ -7312,9 +7309,8 @@ msgstr "英文名称(降序)"
 msgid "Enhanced Movie Center"
 msgstr "增强电影中心"
 
-#, fuzzy
 msgid "Enigma2 Changes"
-msgstr "Enigma2版本"
+msgstr "Enigma2 的變化"
 
 msgid ""
 "Enigma2 Skinselector\n"
@@ -7331,9 +7327,9 @@ msgstr ""
 "\n"
 "© 2006 - Stephan Reichholf"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Enigma2 debug level:\t%s"
-msgstr "Enigma2调试级别"
+msgstr "Enigma2 調試級別:\t%s"
 
 msgid "Enigma2 skin selector"
 msgstr "Enigma2皮肤选择器"
@@ -7346,19 +7342,19 @@ msgstr "输入"
 
 #, python-format
 msgid "Enter DNS (Dynamic Name Server) %d's IP address."
-msgstr ""
+msgstr "輸入 DNS（動態名稱伺服器）%d 的 IP 位址."
 
 msgid "Enter PIN"
 msgstr "输入PIN"
 
 msgid "Enter a description for this timer."
-msgstr ""
+msgstr "輸入此計時器的描述."
 
 msgid "Enter a directory or process a file (play/view/edit/install/extract/run)"
-msgstr ""
+msgstr "輸入目錄或處理檔案（播放/檢視/編輯/安裝/提取/運行)"
 
 msgid "Enter a name for this timer."
-msgstr ""
+msgstr "輸入此計時器的名稱"
 
 msgid "Enter a new name for this device."
 msgstr "输入此设备的新名称."
@@ -7385,26 +7381,25 @@ msgid "Enter pin code"
 msgstr "输入PIN码"
 
 msgid "Enter the FTP password of the host receiver (required for any server running OpenDroid 7.0 or greater)."
-msgstr ""
+msgstr "輸入主機接收者的 FTP 密碼(執行 OpenDroid 7.3 或更高版本的任何伺服器都需要)."
 
 msgid "Enter the FTP port of the host receiver (normally '21')."
-msgstr ""
+msgstr "輸入主機接收器的 FTP 連接埠(通常為'21')."
 
 msgid "Enter the FTP username of the host receiver (normally 'root')."
-msgstr ""
+msgstr "輸入主機接收者的 FTP 使用者名稱(通常為“root”)."
 
-#, fuzzy
 msgid "Enter the IP address of the host receiver."
 msgstr "输入您是在东半球还是西半球."
 
 msgid "Enter the IP address of the receiver to use for fallback tuners."
-msgstr ""
+msgstr "輸入用於後備調諧器的接收器的 IP 位址."
 
 msgid "Enter the URL/IP of the fallback remote receiver, e.g. '192.168.0.1'. The other details such as 'http://' and port number will be filled in automatically when you select save."
-msgstr ""
+msgstr "輸入後備遠端接收器的 URL/IP，例如「192.168.0.1」.當您選擇儲存時，其他詳細資訊(例如「http://」和連接埠號碼)將自動填."
 
 msgid "Enter the domain of the host receiver. Do not include 'http://' or port number."
-msgstr ""
+msgstr "輸入主機接收者的網域.請勿包含“http://'或連接埠號."
 
 msgid "Enter the frequency at which you LNB switches between low band and high band. For more information consult the spec sheet of your LNB."
 msgstr "输入LNB在低频段和高频段之间切换的频率.有关更多信息,请参阅LNB的规格表."
@@ -7419,16 +7414,16 @@ msgid "Enter the service pin"
 msgstr "输入频道的PIN码"
 
 msgid "Enter the size in Megabyte of the first partition:"
-msgstr ""
+msgstr "輸入第一個分割區的大小（以兆位元組為單位）:"
 
 msgid "Enter the size in Megabyte of the second partition:"
-msgstr ""
+msgstr "輸入第二個分割區的大小（以兆位元組為單位）:"
 
 msgid "Enter the size in Megabyte of the third partition:"
-msgstr ""
+msgstr "輸入第三個分割區的大小（以兆位元組為單位）:"
 
 msgid "Enter the streaming port of the host receiver (normally '8001')."
-msgstr ""
+msgstr "輸入主機接收器的串流媒體連接埠（通常為'8001'）."
 
 msgid "Enter your current latitude. This is the number of degrees you are from the equator as a decimal."
 msgstr "输入您当前的纬度.这是您距赤道的度数(以十进制表示)."
@@ -7443,7 +7438,7 @@ msgid "Enter your low band local oscillator frequency. For more information cons
 msgstr "输入您的低频本地振荡器频率.有关更多信息,请参阅LNB的规格表."
 
 msgid "Enter your personal feed URL to allow you to select packages from your personal feed."
-msgstr ""
+msgstr "輸入您的個人 Feed URL，以允許您從個人 Feed 中選擇套件."
 
 msgid "Entertainment"
 msgstr "娱乐"
@@ -7452,16 +7447,16 @@ msgid "Entitlements"
 msgstr "授权"
 
 msgid "Entry image and text"
-msgstr ""
+msgstr "Entry image and text"
 
 msgid "Entry image, number and text"
-msgstr ""
+msgstr "參賽作品圖片、編號和文字"
 
 msgid "Entry number and text"
-msgstr ""
+msgstr "條目編號和文字"
 
 msgid "Entry text only"
-msgstr ""
+msgstr "僅輸入文字"
 
 msgid "Epg/Guide"
 msgstr "Epg/Guide键"
@@ -7480,95 +7475,89 @@ msgstr "错误"
 
 #, python-format
 msgid "Error %d: %s"
-msgstr ""
+msgstr "錯誤 %d:%s"
 
 #, python-format
 msgid "Error %d: File '%s' cannot be opened!  (%s)"
-msgstr ""
+msgstr "錯誤 %d:無法開啟檔案'%s'! （%s）"
 
 #, python-format
 msgid "Error %d: Unable to change password!  (%s)"
-msgstr ""
+msgstr "錯誤%d:無法更改密碼! （%s）"
 
 #, python-format
 msgid "Error %d: Unable to check space!  (%s)"
-msgstr ""
+msgstr "錯誤 %d：無法檢查空間！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to create directory '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d： 無法建立目錄'%s'！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to delete downloaded image '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d：無法刪除下載的圖片'%s'！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to link '%s' as '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d：無法將“%s”連結為'%s'！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to rename directory/file '%s' to '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d：無法將目錄/檔案“%s”重新命名為'%s'！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to rename related file '%s' to '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d: 無法將相關檔案「%s」重新命名為「%s」！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to set access mode on '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %d：無法設定「%s」的存取模式！ （%s）"
 
 #, python-format
 msgid "Error %d: Unable to start 'passwd' command!"
-msgstr ""
+msgstr "錯誤 %d：無法啟動“passwd”命令！"
 
 #, python-format
 msgid "Error %s: Unable to get information for '%s'!  (%s)"
-msgstr ""
+msgstr "錯誤 %s：無法取得「%s」的資訊！ （%s）"
 
 msgid "Error checking disk. The disk may be damaged"
-msgstr ""
+msgstr "檢查磁碟時出錯.磁碟可能已損壞"
 
 msgid "Error code"
 msgstr "错误代码"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Error command '%s'"
-msgstr "错误代码"
+msgstr "錯誤命令'%s'"
 
-#, fuzzy
 msgid "Error creating oscam camstart files!"
-msgstr "创建目录%s 失败."
+msgstr "建立 oscam camstart 檔案時發生錯誤！"
 
-#, fuzzy
 msgid "Error creating oscam.conf!"
-msgstr "读取广播组时出错"
+msgstr "建立 oscam.conf 時出錯！"
 
-#, fuzzy
 msgid "Error creating oscam.dvbapi!"
-msgstr "读取广播组时出错"
+msgstr "建立 oscam.dvbapi 時出錯！"
 
-#, fuzzy
 msgid "Error creating oscam.server!"
-msgstr "读取电视组时出错"
+msgstr "建立 oscam.server 時發生錯誤！"
 
-#, fuzzy
 msgid "Error creating oscam.services!"
-msgstr "读取广播组时出错"
+msgstr "建立 oscam.services 時出錯！"
 
-#, fuzzy
 msgid "Error creating oscam.user!"
-msgstr "读取网页时出错！"
+msgstr "建立 oscam.user 時發生錯誤！"
 
 #, python-format
 msgid "Error downloading image '%s'!"
-msgstr ""
+msgstr "「下載圖片『%s』時出錯！"
 
 msgid "Error executing plugin"
 msgstr "执行插件时出错"
 
 msgid "Error formatting disk. The disk may be damaged"
-msgstr ""
+msgstr "格式化磁碟時發生錯誤。磁碟可能已損壞"
 
 #, python-format
 msgid ""
@@ -7586,11 +7575,11 @@ msgid "Error reading webpage!"
 msgstr "读取网页时出错！"
 
 msgid "Error text:"
-msgstr ""
+msgstr "錯誤文字"
 
 #, python-format
 msgid "Error unzipping image '%s'!"
-msgstr ""
+msgstr "解壓縮影像'%s'時出錯！"
 
 #, python-format
 msgid ""
@@ -7605,13 +7594,13 @@ msgid "Error: %s %s not %s!  Please try again later."
 msgstr "错误: %s %s 不是 %s!  请稍后再试."
 
 msgid "Error: A location to save the recording has not been selected!"
-msgstr ""
+msgstr "錯誤：尚未選擇儲存錄音的位置！"
 
 msgid "Error: An empty filename is illegal!"
 msgstr "文件名不能为空."
 
 msgid "Error: Cannot find any images!"
-msgstr ""
+msgstr "錯誤：找不到任何圖像！"
 
 msgid "Error: Could not find a suitable device! Please remove some downloaded images or attach another device (e.g. USB stick) with sufficient free space and try again."
 msgstr "找不到合适的媒体-请删除一些下载的镜像或插入一个具有足够可用空间的媒体(如U盘),然后重试!"
@@ -7622,21 +7611,21 @@ msgstr "创建目录%s 失败."
 
 #, python-format
 msgid "Error: File '%s' cannot be opened!  (%s)"
-msgstr ""
+msgstr "錯誤：無法開啟檔案'%s'！ （%s）"
 
 #, python-format
 msgid "Error: File or directory '%s' already exists!"
-msgstr ""
+msgstr "錯誤：檔案或目錄'%s'已存在！"
 
 msgid "Error: FileCommanderData screen requires a formatting dictionary!"
-msgstr ""
+msgstr "錯誤：FileCommanderData 畫面需要格式化字典！"
 
 #, python-format
 msgid "Error: Image '%s' to install is invalid!"
-msgstr ""
+msgstr "錯誤：要安裝的映像'%s'無效！"
 
 msgid "Error: Interaction failure, unable to change password!"
-msgstr ""
+msgstr "Error: Interaction failure, unable to change password!"
 
 #, python-format
 msgid "Error: Invalid directory '%s' selected!"
@@ -7644,11 +7633,11 @@ msgstr "选定的目录无效: %s"
 
 #, python-format
 msgid "Error: It is not possible to run '%s' on '%s'!"
-msgstr ""
+msgstr "錯誤：無法在'%s'上運行'%s'！"
 
 #, python-format
 msgid "Error: Program '%s' not installed and the package containing this program is unknown!"
-msgstr ""
+msgstr "錯誤：未安裝程式'%s'，並且包含該程式的軟體包未知！"
 
 #, python-format
 msgid "Error: Removing directory '%s' failed! (Maybe the directory is not empty.)"
@@ -7656,27 +7645,27 @@ msgstr "删除目录 %s 失败.(文件夹是否为空?)"
 
 #, python-format
 msgid "Error: Script '%s' must have read permission to be able to run!"
-msgstr ""
+msgstr "錯誤：腳本 %s 必須具有讀取權限才能運作！"
 
 msgid "Error: The new password may not be blank!"
-msgstr ""
+msgstr "錯誤：新密碼不能為空！"
 
 #, python-format
 msgid "Error: The path '%s' already exists!"
 msgstr "路径 %s 已存在."
 
 msgid "Error: The root file system and system directories can't be deleted!"
-msgstr ""
+msgstr "錯誤：根檔案系統和系統目錄無法刪除!"
 
 msgid "Error: The root file system and system directories can't be moved!"
-msgstr ""
+msgstr "錯誤：根檔案系統和系統目錄無法移動！"
 
 msgid "Error: The root file system and system directories can't be renamed!"
-msgstr ""
+msgstr "錯誤：根檔案系統和系統目錄無法重新命名！"
 
 #, python-format
 msgid "Error: There was a problem writing '%s'!"
-msgstr ""
+msgstr "錯誤：寫入 %s 時出現問題！"
 
 msgid "Error: Unable to create the required directories on the target device (e.g. USB stick or hard disk)! Please verify device and try again."
 msgstr "无法在媒体(如U盘或硬盘)上创建所需的目录-请验证媒体并重试!"
@@ -7686,15 +7675,15 @@ msgstr "错误:无法处理命令.请稍后再试."
 
 #, python-format
 msgid "Error: Unable to rename directory '%s' to '%s'!"
-msgstr ""
+msgstr "錯誤：無法將目錄 %s 重新命名為 %s ！"
 
 #, python-format
 msgid "Error: You can't run '%s' on '%s'!"
-msgstr ""
+msgstr "錯誤：您無法在 %s 上運行 %s ！"
 
 #, python-format
 msgid "Error: You can't run '%s' on a directory!"
-msgstr ""
+msgstr "錯誤：您無法在目錄上運行'%s'！"
 
 msgid "Esperanto"
 msgstr "世界语"
@@ -7744,9 +7733,8 @@ msgstr "事件字体大小"
 msgid "Event name only"
 msgstr "仅事件名称"
 
-#, fuzzy
 msgid "Event view"
-msgstr "事件视图:"
+msgstr "事件視圖"
 
 msgid "Event view menu"
 msgstr "事件视图菜单"
@@ -7754,25 +7742,20 @@ msgstr "事件视图菜单"
 msgid "EventViewEPG Actions"
 msgstr "事件视图EPG操作"
 
-#, fuzzy
 msgid "Every 12 hours"
-msgstr "保存每一个(小时)"
+msgstr "每12小時一次"
 
-#, fuzzy
 msgid "Every 2 hours"
-msgstr "保存每一个(小时)"
+msgstr "每2小時一次"
 
-#, fuzzy
 msgid "Every 3 hours"
-msgstr "保存每一个(小时)"
+msgstr "每3小時一次"
 
-#, fuzzy
 msgid "Every 6 hours"
-msgstr "保存每一个(小时)"
+msgstr "每 6 小時"
 
-#, fuzzy
 msgid "Every hour"
-msgstr "任何位置"
+msgstr "每隔一小時"
 
 msgid "Everyday"
 msgstr "每天"
@@ -7808,7 +7791,7 @@ msgid "Exit EPG"
 msgstr "退出EPG"
 
 msgid "Exit File Commander"
-msgstr ""
+msgstr "退出文件命令"
 
 msgid "Exit MAC address configuration"
 msgstr "退出MAC地址配置"
@@ -7823,13 +7806,13 @@ msgid "Exit editor"
 msgstr "退出编辑器"
 
 msgid "Exit editor and discard any changes"
-msgstr ""
+msgstr "退出編輯器並放棄任何更改"
 
 msgid "Exit editor and save any changes"
-msgstr ""
+msgstr "退出編輯器並儲存所有更改"
 
 msgid "Exit image viewer"
-msgstr ""
+msgstr "退出影像檢視器"
 
 msgid "Exit input device selection."
 msgstr "退出输入设备选择."
@@ -7853,7 +7836,7 @@ msgid "Exit network adapter configuration"
 msgstr "退出网卡配置"
 
 msgid "Exit network adapter setup menu"
-msgstr ""
+msgstr "退出網路介面卡設定選單"
 
 msgid "Exit network interface list"
 msgstr "退出网络界面列表"
