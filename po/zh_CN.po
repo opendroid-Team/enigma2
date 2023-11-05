@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-01 08:49+0100\n"
-"PO-Revision-Date: 2023-11-05 12:01+0100\n"
+"PO-Revision-Date: 2023-11-05 18:45+0100\n"
 "Last-Translator: FULL NAME <Opendroid-Team <opendroid2013@gmail.com>, >\n"
 "Language-Team: Gimsy,Formiano,erminio\n"
 "Language: zh\n"
@@ -8602,9 +8602,9 @@ msgstr ""
 msgid "GStreamer debug log level *"
 msgstr ""
 
-#, fuzzy, python-format
+#, python-format
 msgid "GStreamer:\t%s"
-msgstr "GStreamer版本"
+msgstr "GStreamer:\t%s"
 
 msgid ""
 "GUI needs a restart to apply a new skin\n"
@@ -8620,13 +8620,12 @@ msgstr ""
 "GUI需要重新启动以应用新皮肤\n"
 "是否要立即重新启动GUI?"
 
-#, fuzzy
 msgid ""
 "GUI needs a restart to apply new skin.\n"
 "Do you want to Restart the GUI now?"
 msgstr ""
-"GUI需要重新启动以应用新皮肤 \n"
-"是否要立即重新启动GUI?"
+"GUI 需要重新啟動才能應用新皮膚.\n"
+"您想立即重新啟動 GUI 嗎？"
 
 #, fuzzy
 msgid ""
@@ -8668,9 +8667,8 @@ msgstr "园艺"
 msgid "Gateway"
 msgstr "网关"
 
-#, fuzzy
 msgid "Gateway:"
-msgstr "网关"
+msgstr "網關："
 
 msgid "General"
 msgstr "常规"
@@ -8684,9 +8682,8 @@ msgstr "一般BT音频延迟"
 msgid "General PCM delay"
 msgstr "一般PCM延迟"
 
-#, fuzzy
 msgid "Generator"
-msgstr "常规"
+msgstr "發電機"
 
 msgid "Generic"
 msgstr "通用"
@@ -8730,9 +8727,9 @@ msgstr "加纳"
 msgid "Gibraltar"
 msgstr "直布罗陀"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Glibc version:\t%s"
-msgstr "Glibc版本"
+msgstr "Glibc 版本:\t%s"
 
 msgid "Go down the list"
 msgstr "下拉列表"
@@ -8747,7 +8744,7 @@ msgid "Go to first movie or top of list"
 msgstr "转到第一部电影或列表顶部"
 
 msgid "Go to parent directory of the current column"
-msgstr ""
+msgstr "前往目前列的父目錄"
 
 msgid "Go to standby"
 msgstr "进入待机"
@@ -8839,9 +8836,8 @@ msgstr "希腊语"
 msgid "Green"
 msgstr "绿色"
 
-#, fuzzy
 msgid "Green Panel"
-msgstr "格陵兰岛"
+msgstr "綠色面板"
 
 msgid "Greenland"
 msgstr "格陵兰岛"
@@ -8853,7 +8849,7 @@ msgid "Grey"
 msgstr "灰色"
 
 msgid "Group"
-msgstr ""
+msgstr "團體"
 
 msgid "Grow drop"
 msgstr "自上而下"
@@ -8870,9 +8866,8 @@ msgstr "关岛"
 msgid "Guarani"
 msgstr "瓜拉尼语"
 
-#, fuzzy
 msgid "Guard interval"
-msgstr "保护间隔"
+msgstr "保護間隔"
 
 msgid "Guatemala"
 msgstr "危地马拉"
@@ -8997,28 +8992,25 @@ msgstr "硬盘"
 msgid "Harddisk Setup"
 msgstr "硬盘设置"
 
-#, fuzzy
 msgid "Harddisk standby after"
-msgstr "硬盘待机在(?分钟之后)"
+msgstr "硬碟待機後"
 
 #, python-format
 msgid "Hardware MultiBoot device:\t%s"
-msgstr ""
+msgstr "硬體多重啟動設備:\t%s"
 
 msgid "Hausa"
 msgstr "豪萨语"
 
-#, fuzzy
 msgid "HddSetup"
-msgstr "设置"
+msgstr "硬碟設定"
 
 #, python-format
 msgid "Heads: %s (max) %s (current)"
-msgstr ""
+msgstr "磁頭:%s（最大）%s（目前）"
 
-#, fuzzy
 msgid "Heads: unknown"
-msgstr "未知"
+msgstr "頭數：未知"
 
 msgid "Heard Island and McDonald Islands"
 msgstr "赫德岛和麦克唐纳群岛"
@@ -9039,10 +9031,10 @@ msgid "Help animation speed"
 msgstr "帮助指示器的动画速度"
 
 msgid "Help screen style"
-msgstr ""
+msgstr "幫助螢幕樣式"
 
 msgid "Help text uninitialized"
-msgstr ""
+msgstr "幫助文字未初始化"
 
 msgid "Helps setting up your signal"
 msgstr "帮助设置您的信号"
@@ -9051,7 +9043,7 @@ msgid "Here can set the EPG will alway open at the current channel, the first ch
 msgstr "这里可以设置EPG将始终在当前频道、第一个频道或黄金时间的两个频道之一打开.如果未选择黄金时间,则使用当前时间."
 
 msgid "Here is the list of installed images in Your STB. Please choose an image to boot."
-msgstr ""
+msgstr "以下是您的 STB 中已安裝映像的清單。請選擇啟動鏡像."
 
 msgid ""
 "Here is the list of mounted devices in Your STB\n"
@@ -9075,7 +9067,7 @@ msgid "Herero"
 msgstr "赫雷罗"
 
 msgid "Hexadecimal"
-msgstr ""
+msgstr "十六進位"
 
 msgid "HiSilicon"
 msgstr "海思"
@@ -9090,7 +9082,7 @@ msgid "Hide"
 msgstr "隐藏"
 
 msgid "Hide CI messages"
-msgstr ""
+msgstr "隱藏 CI 訊息"
 
 msgid "Hide InfoBar"
 msgstr "总是隐藏信息栏"
@@ -9102,7 +9094,7 @@ msgid "Hide any zap error messages."
 msgstr "隐藏所有的换台错误信息."
 
 msgid "Hide error messages from the Common Interface module."
-msgstr ""
+msgstr "隱藏通用介面模組中的錯誤訊息"
 
 msgid "Hide known extensions"
 msgstr "隐藏已知扩展名"
@@ -9132,7 +9124,7 @@ msgid "High bitrate support"
 msgstr "高比特率支持"
 
 msgid "Highlighted item"
-msgstr ""
+msgstr "突出顯示的項目"
 
 msgid "Hindi"
 msgstr "印地语"
@@ -9150,13 +9142,13 @@ msgid "History"
 msgstr "历史"
 
 msgid "History Zap"
-msgstr ""
+msgstr "歷史 Zap"
 
 msgid "History Zap Actions"
-msgstr ""
+msgstr "歷史 Zap 操作"
 
 msgid "History Zap Navigation Actions"
-msgstr ""
+msgstr "歷史 Zap 導航操作"
 
 msgid "History back"
 msgstr "历史回溯"
@@ -9222,31 +9214,28 @@ msgid "Horse Racing"
 msgstr "赛马"
 
 msgid "Host domain"
-msgstr ""
+msgstr "主機域"
 
 msgid "Host receiver FTP password"
-msgstr ""
+msgstr "主機接收方FTP密碼"
 
 msgid "Host receiver FTP port"
-msgstr ""
+msgstr "主機接收FTP連接埠"
 
-#, fuzzy
 msgid "Host receiver FTP username"
-msgstr "接收器名称"
+msgstr "主機接收者 FTP 使用者名稱"
 
-#, fuzzy
 msgid "Host receiver IP address"
-msgstr "配置IP地址."
+msgstr "主機接收者IP位址"
 
 msgid "Host receiver address type"
-msgstr ""
+msgstr "主機接收位址類型"
 
 msgid "Host receiver streaming port"
-msgstr ""
+msgstr "主機接收流埠"
 
-#, fuzzy
 msgid "Hostname:"
-msgstr "主机名: "
+msgstr "主機名稱:"
 
 msgid "Hostname: "
 msgstr "主机名: "
@@ -9293,9 +9282,8 @@ msgstr ""
 msgid "I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"
 msgstr "I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11新款"
 
-#, fuzzy
 msgid "IMDB Search"
-msgstr "IMDB搜索"
+msgstr "網路電影資料庫搜尋"
 
 msgid "IMDb Details"
 msgstr "IMDB详情"
@@ -9350,7 +9338,7 @@ msgstr ""
 msgid ""
 "INFORMATION: please select your CI+ Modul\n"
 "\n"
-msgstr ""
+msgstr "資訊：請選擇您的 CI+ 模組\n"
 
 msgid "INS"
 msgstr "INS"
@@ -9359,29 +9347,28 @@ msgid "IP"
 msgstr "本机地址"
 
 msgid "IP Address 1"
-msgstr ""
+msgstr "IP位址1"
 
 msgid "IP Address 2"
-msgstr ""
+msgstr "IP位址2"
 
 msgid "IP Address 3"
-msgstr ""
+msgstr "IP位址3"
 
 msgid "IP Address 4"
-msgstr ""
+msgstr "IP位址4"
 
 msgid "IP Address 5"
-msgstr ""
+msgstr "IP位址5"
 
 msgid "IP Address to be checked on timer activation."
-msgstr ""
+msgstr "定時器啟動時要檢查的 IP 位址:"
 
 msgid "IP address"
 msgstr "IP地址"
 
-#, fuzzy
 msgid "IP:"
-msgstr "本机地址"
+msgstr "智慧財產:"
 
 msgid "ISO file is too large for this file system!"
 msgstr "ISO文件对此文件系统太大!"
@@ -9390,7 +9377,7 @@ msgid "ISO path"
 msgstr "ISO路径"
 
 msgid "ISO speed rating"
-msgstr ""
+msgstr "ISO速度等級"
 
 msgid "Iceland"
 msgstr "冰岛"
@@ -9429,7 +9416,7 @@ msgid "If enabled, a log will be kept of CEC protocol traffic. The log files are
 msgstr "如果启用,将保留CEC协议流量的日志.日志文件位于其他日志文件中,但名为'Enigma2-hdmicec-[date].log'."
 
 msgid "If enabled, the new GStreamer playback engine will be used."
-msgstr ""
+msgstr "如果啟用，將使用新的 GStreamer 播放引擎."
 
 msgid "If enabled, using a time window to detect a wake up from deep standby by a timer. Default setting ist disabled and used a special signal from the receiver. But some devices set a wrong or none signal and the wake up detection can fails."
 msgstr "如果启用,使用时间窗口检测定时器从深度待机 状态唤醒.默认设置是禁用的,并使用了 来自接收器 的特殊信号.但有些设备设置错误或没有信号,唤醒检测可能会失败."
@@ -9444,7 +9431,7 @@ msgid "If set to 'Yes' the same commands will be sent to the TV for deep standby
 msgstr "如果设置为'是',则将向电视发送与在常规待机事件期间发送的深度待机事件相同的命令."
 
 msgid "If set to 'yes' it will enable PLAY,PAUSE, SEEK on channel list movies"
-msgstr ""
+msgstr "如果設定為“yes”，它將在頻道列表電影上啟用播放、暫停、搜索"
 
 msgid "If set to 'yes', allows you to use timeshift with alternative audio plugins."
 msgstr ""
@@ -9456,7 +9443,7 @@ msgid "If the free space is less than setting value, then an attempt is made to 
 msgstr "如果可用空间低于设定值,然后尝试删除旧文件移."
 
 msgid "If the text is too long to be displayed on the front panel, it will be repeated (number of times)."
-msgstr ""
+msgstr "如果文字太長而無法在前面板上顯示，則會重複(多次)."
 
 msgid "If using multiple uncommitted switches the DiSEqC commands must be sent multiple times. Set to the number of uncommitted switches in the chain minus one."
 msgstr "如果使用多个未提交的开关,则必须多次设置DISEQC命令.设置为链中未提交的开关数减去1."
@@ -9491,13 +9478,13 @@ msgstr ""
 msgid ""
 "If your usb drive is connected and mounted you have to poweroff your box, remove the usb device and reboot.\n"
 "\n"
-msgstr ""
+msgstr "如果您的 USB 隨身碟已連接並安裝，您必須關閉盒子電源，移除 USB 裝置並重新啟動.\n"
 
 msgid "Igbo"
 msgstr "伊博语"
 
 msgid "Ignore"
-msgstr ""
+msgstr "忽略"
 
 msgid "Ignore DVB-C namespace sub network"
 msgstr "忽略DVB-C命名空间的子网络"
@@ -9515,48 +9502,43 @@ msgid "Image Backup"
 msgstr "镜像备份"
 
 msgid "Image Flash Actions"
-msgstr ""
+msgstr "影像 Flash 動作"
 
-#, fuzzy
 msgid "Image Info"
-msgstr "[镜像信息]\n"
+msgstr "影像資訊"
 
-#, fuzzy
 msgid "Image Information"
-msgstr "信息"
+msgstr "影像資訊"
 
-#, fuzzy
 msgid "Image Name"
-msgstr "ushare名称"
+msgstr "圖片名稱"
 
-#, fuzzy
 msgid "Image Version"
-msgstr "FFmpeg版本"
+msgstr "圖片版本"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Image Version %s"
-msgstr "IceTV版本%s"
+msgstr "映像版本 %s"
 
 #, python-format
 msgid "Image created on: %s/%s-%s-%s-backup-%s_%s.zip"
-msgstr ""
+msgstr "映像建立於:%s/%s-%s-%s-backup-%s_%s.zip"
 
 msgid "Image creation failed - "
 msgstr "镜像创建失败 - "
 
 msgid "Image will be booted on the next STB boot!"
-msgstr ""
+msgstr "映像將在下次 STB 啟動時啟動!"
 
 msgid "Image-Flasher"
-msgstr ""
+msgstr "影像閃爍器"
 
-#, fuzzy
 msgid "Image-Version"
-msgstr "版本: "
+msgstr "圖片版本"
 
 #, python-format
 msgid "Image:\t%s"
-msgstr ""
+msgstr "圖片:\t%s"
 
 msgid "ImageWizard"
 msgstr "镜像向导"
@@ -9587,19 +9569,19 @@ msgid "In the Standby Record on the LCD Display"
 msgstr "待机录像时LCD屏显示的录制符号"
 
 msgid "Inaccessible"
-msgstr ""
+msgstr "無法進入"
 
 msgid "Inactive"
 msgstr "未激活"
 
 msgid "Inadyn Actions"
-msgstr ""
+msgstr "伊納丁行動"
 
 msgid "Inadyn Log"
 msgstr "inadyn日志"
 
 msgid "Inadyn Setting Actions"
-msgstr ""
+msgstr "Inadyn 設定操作"
 
 msgid "Inadyn Settings"
 msgstr "inadyn设置"
@@ -9614,7 +9596,7 @@ msgid "Include CI assignment"
 msgstr "包括CI的分配"
 
 msgid "Include DVB scan data"
-msgstr ""
+msgstr "包括 DVB 掃描數據"
 
 msgid "Include ECM in http streams"
 msgstr "在Http串流中包含ECM信息"
@@ -9623,19 +9605,19 @@ msgid "Include EIT in http streams"
 msgstr "在Http串流中包含EIT信息"
 
 msgid "Include EPG data"
-msgstr ""
+msgstr "包含 EPG 數據"
 
 msgid "Include MultiBoot data *"
-msgstr ""
+msgstr "包含多重啟動數據 *"
 
 msgid "Include SDT, BAT in http streams"
-msgstr ""
+msgstr "在http串流包含SDT、BAT"
 
 msgid "Include action map data"
 msgstr "包含动作映射信息"
 
 msgid "Include international data *"
-msgstr ""
+msgstr "包括國際數據"
 
 msgid "Include keyboard data"
 msgstr "包含键盘操作信息"
@@ -9650,7 +9632,7 @@ msgid "Include screen load data"
 msgstr "包含界面加载信息"
 
 msgid "Include timer data"
-msgstr ""
+msgstr "包括計時器數據"
 
 msgid "Incorrect type service for PiP!"
 msgstr "画中画频道类型不正确!"
@@ -9721,24 +9703,20 @@ msgstr "信息栏淡入淡出速度"
 msgid "InfoBar front end data source"
 msgstr "信息栏前端数据来源"
 
-#, fuzzy
 msgid "Infobar Setup"
-msgstr "调谐器设置"
+msgstr "資訊欄設定"
 
-#, fuzzy
 msgid "Infobar frontend data source"
-msgstr "信息栏前端数据来源"
+msgstr "資訊列前端資料來源"
 
-#, fuzzy
 msgid "Infobar_Setup"
-msgstr "信息栏"
+msgstr "訊息欄_設定"
 
 msgid "Information"
 msgstr "信息"
 
-#, fuzzy
 msgid "Infos"
-msgstr "信息"
+msgstr "資訊"
 
 msgid "Infotainment"
 msgstr "信息娱乐"
@@ -9761,9 +9739,8 @@ msgstr "初始化"
 msgid "Initialize"
 msgstr "初始化"
 
-#, fuzzy
 msgid "Initialize disk"
-msgstr "初始化"
+msgstr "初始化磁碟"
 
 msgid "Initializing storage device..."
 msgstr "正在初始化存储设备..."
@@ -9792,37 +9769,33 @@ msgstr "输入频道名称."
 msgid "Input config file name:"
 msgstr "输入配置文件名:"
 
-#, fuzzy
 msgid "Input devices"
-msgstr "输入设备设置"
+msgstr "輸入裝置"
 
 msgid "Input scroll position"
 msgstr "输入滚动位置"
 
 msgid "Insert Line"
-msgstr ""
+msgstr "插入行"
 
 msgid "Insert line before current line"
 msgstr "在当前行之前插入一行"
 
-#, fuzzy
 msgid "Insert mount point:"
-msgstr "挂载点"
+msgstr "插入掛載點:"
 
 msgid "Install"
 msgstr "安裝"
 
 #, python-format
 msgid "Install '%s' command"
-msgstr ""
+msgstr "安裝'%s'命令"
 
-#, fuzzy
 msgid "Install All"
-msgstr "安裝"
+msgstr "安裝全部"
 
-#, fuzzy
 msgid "Install Confirmation"
-msgstr "运行确认"
+msgstr "安裝確認"
 
 msgid "Install Failed !!"
 msgstr "安装失败!!"
@@ -9830,9 +9803,8 @@ msgstr "安装失败!!"
 msgid "Install Finished."
 msgstr "安装完成."
 
-#, fuzzy
 msgid "Install Image"
-msgstr "安裝"
+msgstr "安裝鏡像"
 
 msgid "Install Local Extension"
 msgstr "安装本地扩展"
@@ -9849,9 +9821,8 @@ msgstr "通过U盘安装新镜像"
 msgid "Install a new image with your web browser"
 msgstr "通过网页浏览器安装新镜像"
 
-#, fuzzy
 msgid "Install channel list"
-msgstr "无频道列表"
+msgstr "安裝頻道列表"
 
 msgid "Install extensions"
 msgstr "安装扩展"
@@ -9860,39 +9831,35 @@ msgid "Install extensions."
 msgstr "安装扩展."
 
 msgid "Install from /media/opdboot/OPDBootUpload"
-msgstr ""
+msgstr "從 /media/opdboot/OPDBootUpload 安裝"
 
 msgid "Install from Internet (OpenOPD,OpenATV,OpenNFR,OpenVIX,OpenHDF)"
-msgstr ""
+msgstr "從 Internet 安裝（OpenOPD、OpenATV、OpenNFR、OpenVIX、OpenHDF）"
 
-#, fuzzy
 msgid "Install lcd picons on"
-msgstr "安装插件"
+msgstr "安裝液晶圖標"
 
-#, fuzzy
 msgid "Install picons on"
-msgstr "安装插件"
+msgstr "安裝圖示"
 
-#, fuzzy
 msgid "Install settings, skins, software..."
-msgstr "正在安装软件..."
+msgstr "安裝設定、皮膚、軟體..."
 
 msgid "Install tar.gz, bh.tgz, nab.tgz"
-msgstr ""
+msgstr "安裝 tar.gz、bh.tgz、nab.tgz"
 
 msgid "Install the package"
-msgstr ""
+msgstr "安裝包"
 
-#, fuzzy
 msgid "Installation aborted !"
-msgstr "安装完成."
+msgstr "安裝中止 !"
 
 msgid "Installation finished."
 msgstr "安装完成."
 
-#, fuzzy, python-format
+#, python-format
 msgid "Installed:\t\t%s"
-msgstr "已安装"
+msgstr "已安裝:\t\t%s"
 
 msgid "Installing"
 msgstr "安装"
@@ -9907,9 +9874,9 @@ msgstr "安装服务"
 msgid "Installing Software..."
 msgstr "正在安装软件..."
 
-#, fuzzy, python-format
+#, python-format
 msgid "Installing addon %s"
-msgstr "正在安装%s (%s)..."
+msgstr "正在安裝插件 %s"
 
 msgid "Installing feeds from IPK ..."
 msgstr "正在从IPK包中安装源..."
@@ -9923,9 +9890,8 @@ msgstr "正在从IPK包安装插件..."
 msgid "Installing plugins from feed ..."
 msgstr "正在从数据源中安装插件..."
 
-#, fuzzy
 msgid "Installing software..."
-msgstr "正在安装软件..."
+msgstr "安裝軟體..."
 
 msgid "Instant record"
 msgstr "即时录像"
@@ -9939,9 +9905,8 @@ msgstr "即时录像中..."
 msgid "Interface"
 msgstr "接口"
 
-#, fuzzy
 msgid "Interface:"
-msgstr "接口: "
+msgstr "介面: "
 
 msgid "Interface: "
 msgstr "接口: "
@@ -9965,10 +9930,10 @@ msgid "Internal Flash"
 msgstr "内部闪存"
 
 msgid "Internal Reader /dev/sci0:"
-msgstr ""
+msgstr "內部讀取器 /dev/sci0:"
 
 msgid "Internal Reader /dev/sci1:"
-msgstr ""
+msgstr "內部讀取器 /dev/sci1:"
 
 msgid "Internal USB"
 msgstr "内部USB"
@@ -9978,11 +9943,11 @@ msgstr "内部闪存"
 
 #, python-format
 msgid "Internal flash:  %s %s "
-msgstr ""
+msgstr "內部快閃記憶體:  %s %s"
 
 #, python-format
 msgid "Internal flash: %s %s as USB Recovery"
-msgstr ""
+msgstr "內部快閃記憶體: %s %s 作為 USB 恢復"
 
 msgid "Internal hdd only"
 msgstr "仅内部硬盘"
@@ -10028,7 +9993,7 @@ msgid "Inverts the button function."
 msgstr "倒置按键功能."
 
 msgid "Ipk Tools"
-msgstr ""
+msgstr "IPK 工具"
 
 msgid "Ipkg"
 msgstr "Ipkg"
@@ -10048,9 +10013,8 @@ msgstr "爱尔兰"
 msgid "Irish"
 msgstr "爱尔兰语"
 
-#, fuzzy
 msgid "Is a Ci+ Module installed:"
-msgstr "当前已安装"
+msgstr "是否安裝了 Ci+ 模組:"
 
 msgid "Is this setting ok?"
 msgstr "这个设置是否可以？"
@@ -10101,16 +10065,14 @@ msgstr "爪哇语"
 msgid "Jersey"
 msgstr "泽西岛"
 
-#, fuzzy
 msgid "Job Manager"
-msgstr "日志管理"
+msgstr "職位經理"
 
 msgid "Job overview"
 msgstr "工作概述"
 
-#, fuzzy
 msgid "JobManager"
-msgstr "日志管理器"
+msgstr "職位經理"
 
 msgid "Jordan"
 msgstr "约旦"
@@ -10172,9 +10134,8 @@ msgstr "仅切换"
 msgid "KA-SAT"
 msgstr "KA-SAT"
 
-#, fuzzy
 msgid "KB"
-msgstr "B"
+msgstr "KB"
 
 msgid "Kalaallisut / Greenlandic"
 msgstr "卡拉利苏特 / 格陵兰语"
@@ -10195,11 +10156,10 @@ msgid "Kazakhstan"
 msgstr "哈萨克斯坦"
 
 msgid "Keep EPG history (in minutes)"
-msgstr ""
+msgstr "保留 EPG 歷史記錄 (以分鐘為單位)"
 
-#, fuzzy
 msgid "Keep old drive"
-msgstr "保持频道"
+msgstr "保留舊驅動器"
 
 msgid "Keep service"
 msgstr "保持频道"
@@ -10210,39 +10170,38 @@ msgstr "播放音频文件时保持电影列表的显示."
 msgid "Kenya"
 msgstr "肯尼亚"
 
-#, fuzzy
 msgid "Kernel"
-msgstr "内核文件"
+msgstr "核心"
 
 #, python-format
 msgid "Kernel (Box):\t%s"
-msgstr ""
+msgstr "內核（盒子）:\t%s"
 
 msgid "Kernel version"
 msgstr "内核版本"
 
 #, python-format
 msgid "Kernel:\t%s"
-msgstr ""
+msgstr "內核:\t%s"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Kernel: %s"
-msgstr "内核文件"
+msgstr "內核:%s"
 
 msgid "Kexec MultiBoot Actions"
-msgstr ""
+msgstr "Kexec 多重開機操作"
 
 msgid "Kexec MultiBoot Initialization in progress!"
-msgstr ""
+msgstr "Kexec MultiBoot 初始化正在進行中！"
 
 msgid "Kexec MultiBoot Manager"
-msgstr ""
+msgstr "Kexec 多重啟動管理器"
 
 msgid "Kexec MultiBoot files are missing."
-msgstr ""
+msgstr "Kexec MultiBoot 檔案遺失."
 
 msgid "Key"
-msgstr ""
+msgstr "鑰匙"
 
 msgid "Keyboard"
 msgstr "键盘"
@@ -10253,12 +10212,11 @@ msgstr "键盘设置"
 msgid "Keyboard data entry"
 msgstr "键盘数据输入"
 
-#, fuzzy
 msgid "Keymap Selection"
-msgstr "EPG选择"
+msgstr "鍵位圖選擇"
 
 msgid "Keymap changed, you need to restart the GUI"
-msgstr ""
+msgstr "鍵盤映射已更改，需要重新啟動 GUI"
 
 msgid "Kikuyu / Gikuyu"
 msgstr "基库尤"
@@ -10330,28 +10288,28 @@ msgid "LCN rules:"
 msgstr "LCN规则:"
 
 msgid "LED Brightness"
-msgstr ""
+msgstr "LED亮度"
 
 msgid "LED Color"
-msgstr ""
+msgstr "LED顏色"
 
 msgid "LED Deep Standby"
 msgstr "LED深度待机"
 
 msgid "LED Idle Brightness"
-msgstr ""
+msgstr "LED 閒置亮度"
 
 msgid "LED Idle Color"
-msgstr ""
+msgstr "LED 空閒顏色"
 
 msgid "LED Normal"
 msgstr "LED正常"
 
 msgid "LED Settings"
-msgstr ""
+msgstr "LED 設定"
 
 msgid "LED Shutdown Color"
-msgstr ""
+msgstr "LED 關閉顏色"
 
 msgid "LED Standby"
 msgstr "LED待机"
@@ -10391,9 +10349,8 @@ msgstr "已安装并选择语言 %s (%s)."
 msgid "Language %s (%s) selected."
 msgstr "已选择语言 %s (%s)."
 
-#, fuzzy
 msgid "Language Team"
-msgstr "语言"
+msgstr "語言團隊"
 
 msgid "Language already selected."
 msgstr "已选择语言."
@@ -10416,9 +10373,8 @@ msgstr "长路径"
 msgid "Last Request"
 msgstr "最后的请求."
 
-#, fuzzy
 msgid "Last Translator"
-msgstr "汉化@孤独之剑"
+msgstr "最後翻譯者"
 
 msgid "Last config"
 msgstr "最后一次正确配置"
@@ -10429,16 +10385,16 @@ msgstr "最后播放速度"
 msgid "Last update"
 msgstr "最后更新"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Last update:\t%s"
-msgstr "最后更新"
+msgstr "最後更新:\t%s"
 
-#, fuzzy, python-format
+#, python-format
 msgid "Last update: %s"
-msgstr "最后更新"
+msgstr "最後更新:%s"
 
 msgid "Last used column"
-msgstr ""
+msgstr "最後使用的列"
 
 msgid "Last used share: "
 msgstr "最后使用的共享: "
@@ -10448,7 +10404,7 @@ msgid "Later"
 msgstr "稍后"
 
 msgid "Latest Commits"
-msgstr ""
+msgstr "最新提交"
 
 msgid "Latin"
 msgstr "拉丁语"
