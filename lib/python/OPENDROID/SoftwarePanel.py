@@ -133,8 +133,6 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 			"pageUp": (self.pageUp, _("Move up a page / screen")),
 			"up": (self.up, _("Move up a line")),
 			# "first": (self.top, _("Move to first line / screen")),
-			"left": (self.pageUp, _("Move up a page / screen")),
-			"right": (self.pageDown, _("Move down a page / screen")),
 			# "last": (self.bottom, _("Move to last line / screen")),
 			"down": (self.down, _("Move down a line")),
 			"pageDown": (self.pageDown, _("Move down a page / screen")),
@@ -167,7 +165,7 @@ class SoftwarePanel(Screen, HelpableScreen, ProtectedScreen):
 			config.ParentalControl.config_sections.software_update.value
 
 	def layoutFinished(self):
-		self["list"].master.master.instance.allowNativeKeys(False)
+		self["list"].enableAutoNavigation(False)
 		self.setStatus("update")
 		self.opkg.startCmd(OpkgComponent.CMD_UPDATE)
 		self.timer.start(25, True)
@@ -424,8 +422,6 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 			"pageUp": (self.pageUp, _("Move up a page / screen")),
 			"up": (self.pageUp, _("Move up a page / screen")),
 			# "first": (self.top, _("Move to first line / screen")),
-			"left": (self.pageUp, _("Move up a page / screen")),
-			"right": (self.pageDown, _("Move down a page / screen")),
 			# "last": (self.bottom, _("Move to last line / screen")),
 			"down": (self.pageDown, _("Move down a page / screen")),
 			"pageDown": (self.pageDown, _("Move down a page / screen")),
@@ -539,6 +535,8 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 			self.opkg.stop()
 		self.opkg.removeCallback(self.opkgCallback)
 		if self.upgradeCount != 0 and self.errorCount == 0:
+			self.exit()
+		else:
 			self.close()
 
 	def keyCancelCallback(self, answer):
@@ -561,6 +559,7 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 	def createSummary(self):
 		return RunSoftwareUpdateSummary
 
+	def exit(self):
 		self.session.openWithCallback(self.keyCancelCallback, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s?") % getBoxDisplayName())
 
 

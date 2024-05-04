@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import print_function, division
 from Plugins.Plugin import PluginDescriptor
 from Screens.PluginBrowser import *
 from Screens.Opkg import Opkg

@@ -8,8 +8,18 @@ and the display skin will not be displayed
 [ E ] gui/ewindowstyle.cpp:35 getStyle [eWindowStyleManager] getStyle(style_id=1): NOT FOUND -->
 
 	<windowstyle id="1" type="skinned">
-		<color name="Background" color="#0060eb"/>
-		<color name="LabelForeground" color="#ffffff"/>
+		<color color="#000000" name="Background"/>
+		<color color="#ffffff" name="LabelForeground"/>
+		<color color="#000000" name="ListboxBackground"/>
+		<color color="#ffffff" name="ListboxForeground"/>
+		<color color="#000000" name="ListboxSelectedBackground"/>
+		<color color="#ffffff" name="ListboxSelectedForeground"/>
+		<color color="#000000" name="ListboxMarkedBackground"/>
+		<color color="#ffffff" name="ListboxMarkedForeground"/>
+		<color color="#000000" name="ListboxMarkedAndSelectedBackground"/>
+		<color color="#ffffff" name="ListboxMarkedAndSelectedForeground"/>
+		<color color="#ffffff" name="WindowTitleForeground"/>
+		<color color="#000000" name="WindowTitleBackground"/>
 	</windowstyle>
 
 <!-- ####################################################################################################### -->
@@ -20,7 +30,7 @@ and the display skin will not be displayed
 			<convert type="VfdDisplay"></convert>
 		</widget>
 	</screen>
-	
+
 <!-- MyRecPanel -->
 	<screen name="MyRecPanel">
 		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="1,1" text="REC ">
@@ -33,11 +43,6 @@ and the display skin will not be displayed
 		</widget>
 	</screen>
 
-<!-- Wizard -->
-	<screen name="WizardSummary" position="0,0" size="1,1">
-		<eLabel position="0,0" size="1,1" text=" HI " />
-	</screen>
-
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
@@ -46,17 +51,12 @@ and the display skin will not be displayed
 
 <!-- movieplayer-->
 	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="1,1">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
-			<convert type="ServicePosition">Remaining,7segment</convert>
-		</widget>
+		<panel name="MyClockPanel" />
+		<panel name="MyRecPanel" />
 	</screen>
 
 <!-- menus-->
 	<screen name="MenuSummary" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
-	</screen>
-	<screen name="GeneralMenuSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
@@ -65,34 +65,12 @@ and the display skin will not be displayed
 		<panel name="MyRecPanel" />
 	</screen>
 
-<!-- setup -->
-	<screen name="SetupSummary" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
-	</screen>
-
-<!-- About -->
-	<screen name="AboutSummary" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
-	</screen>
-
-<!-- Blindscan -->
-	<screen name="SetupSummary2" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
-	</screen>
-
 <!-- Numberzap -->    
 	<screen name="NumberZap_summary" position="0,0" size="1,1">
-		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1">
-			<convert type="VfdDisplay">Number;nozero</convert>
-		</widget>
+		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1" />
 	</screen> 
 	<screen name="NumberZapPicon_summary" position="0,0" size="1,1">
-		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1">
-			<convert type="VfdDisplay">Number;nozero</convert>
-		</widget>
+		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1" />
 	</screen>
 
 <!-- misc-->
@@ -108,34 +86,30 @@ and the display skin will not be displayed
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="MessageBoxSummary" position="0,0" size="1,1">
+	<screen name="MessageBox_summary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="MessageBoxSimpleSummary" position="0,0" size="1,1">
-		<panel name="MessageBoxSummary" />
-	</screen>
-	<screen name="PluginBrowserSummary" position="0,0" size="1,1">
+	<screen name="MessageBoxSimple_summary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
 	<screen name="JobView_summary" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
+		<widget source="parent.summary_job_progress" render="Label" position="0,0" size="1,1" >
+			<convert type="ProgressToText">InPercent</convert>
+		</widget>
 	</screen>
 
 <!-- DVD -->
 	<screen name="DVDSummary" position="0,0" size="1,1">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
-			<convert type="ServicePosition">Remaining,7segment</convert>
-		</widget>
+		<panel name="MyClockPanel" />
+		<panel name="MyRecPanel" />
 	</screen>
 
 <!-- MediaPlayer -->
 	<screen name="MediaPlayerLCDScreen" position="0,0" size="1,1">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
-			<convert type="ServicePosition">Remaining,7segment</convert>
-		</widget>
+		<panel name="MyClockPanel" />
+		<panel name="MyRecPanel" />
 	</screen>
 
 <!-- AutoTimer -->
@@ -154,19 +128,18 @@ and the display skin will not be displayed
 		<panel name="MyRecPanel" />
 	</screen>
 	<screen name="EMCMoviePlayerSummary" position="0,0" size="1,1">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
-			<convert type="ServicePosition">Remaining,7segment</convert>
-		</widget>
+		<panel name="MyClockPanel" />
+		<panel name="MyRecPanel" />
 	</screen>
 
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="1,1">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
-			<convert type="ConfigEntryTest">config.usage.show_in_standby,time</convert>
+			<convert type="ConfigEntryTest">config.usage.show_in_standby,time,CheckSourceBoolean</convert>
 			<convert type="VfdDisplay">Clock</convert>
 		</widget>
 		<widget source="session.CurrentService" render="FixedLabel" position="0,0" size="1,1" text="    ">
-			<convert type="ConfigEntryTest">config.usage.show_in_standby,nothing</convert>
+			<convert type="ConfigEntryTest">config.usage.show_in_standby,nothing,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="1,1" text="REC ">
@@ -177,7 +150,7 @@ and the display skin will not be displayed
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,Rec,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="1,1" text="    ">
+		<widget source="session.CurrentService" render="FixedLabel" position="0,0" size="1,1" text="    ">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,Nothing,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
@@ -185,12 +158,6 @@ and the display skin will not be displayed
 
 <!-- webradioFS  -->
 	<screen name="webradioFSdisplay13" position="0,0" size="1,1">
-		<panel name="MyClockPanel" />
-		<panel name="MyRecPanel" />
-	</screen>
-
-<!-- IMdb  -->
-	<screen name="IMDbLCDScreen" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>

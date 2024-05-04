@@ -534,6 +534,8 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 			self.opkg.stop()
 		self.opkg.removeCallback(self.opkgCallback)
 		if self.upgradeCount != 0 and self.errorCount == 0:
+			self.exit()
+		else:
 			self.close()
 
 	def keyCancelCallback(self, answer):
@@ -555,6 +557,8 @@ class RunSoftwareUpdate(Screen, HelpableScreen):
 
 	def createSummary(self):
 		return RunSoftwareUpdateSummary
+
+	def exit(self):
 		self.session.openWithCallback(self.keyCancelCallback, MessageBox, _("Upgrade finished.") + " " + _("Do you want to reboot your %s %s?") % getBoxDisplayName())
 
 
