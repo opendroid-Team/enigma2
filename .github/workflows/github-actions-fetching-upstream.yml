@@ -10,7 +10,7 @@ jobs:
     - name: fetch and push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        UPSTREAM: https://github.com/formiano/enigma2
+        UPSTREAM: https://github.com/opendroid-Team/enigma2
       run: |       
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@users.noreply.github.com"
@@ -31,7 +31,7 @@ jobs:
         git fetch upstream
         
         # Merge the branches and commits from the upstream
-        git merge upstream/master
+        git merge upstream/7.3
                 
         # helpful for debugging
         git show-ref
