@@ -1,12 +1,11 @@
-from __future__ import print_function
-from __future__ import absolute_import
-
 from bisect import insort
 from datetime import datetime
 from itertools import groupby
 from os import listdir
 from os.path import exists, isfile, ismount, realpath, splitext
-import pickle
+from pickle import HIGHEST_PROTOCOL, dump, load
+from re import match
+from socket import AF_UNIX, SOCK_STREAM, socket
 from sys import maxsize
 from time import localtime, strftime, time
 
@@ -225,6 +224,164 @@ def hasActiveSubservicesForCurrentChannel(current_service):
 	activeSubservices = getActiveSubservicesForCurrentChannel(current_service)
 	return bool(activeSubservices and len(activeSubservices) > 1)
 
+
+class InfoBarStreamRelay:
+	FILENAME = "/etc/enigma2/whitelist_streamrelay"
+
+	def __init__(self):
+		self.reload()
+
+	def reload(self):
+		data = fileReadLines(self.FILENAME, default=[], source=self.__class__.__name__)
+		self.__services = self.__sanitizeData(data)
+
+	def __sanitizeData(self, data: list):
+		return list(set([match(r"([0-9A-F]+:){10}", line.strip()).group(0) for line in data if line and match(r"^(?:[0-9A-F]+:){10}", line.strip())]))
+
+	def check(self, nav, service):
+		return (service or nav.getCurrentlyPlayingServiceReference()) and service.toCompareString() in self.__services
+
+	def write(self):
+		fileWriteLines(self.FILENAME, self.__services, source=self.__class__.__name__)
+
+	def toggle(self, nav, service):
+		if isinstance(service, list):
+			serviceList = service
+			serviceList = [service.toCompareString() for service in serviceList]
+			self.__services = list(set(serviceList + self.__services))
+			self.write()
+		else:
+			service = service or nav.getCurrentlyPlayingServiceReference()
+			if service:
+				servicestring = service.toCompareString()
+				if servicestring in self.__services:
+					self.__services.remove(servicestring)
+				else:
+					self.__services.append(servicestring)
+					if nav.getCurrentlyPlayingServiceReference() == service:
+						nav.restartService()
+				self.write()
+
+	def __getData(self):
+		return self.__services
+
+	def __setData(self, value):
+		self.__services = value
+		self.write()
+
+	data = property(__getData, __setData)
+
+	def streamrelayChecker(self, playref):
+		playrefstring = playref.toCompareString()
+		if "%3a//" not in playrefstring and playrefstring in self.__services:
+			url = f'http://{".".join("%d" % d for d in config.misc.softcam_streamrelay_url.value)}:{config.misc.softcam_streamrelay_port.value}/'
+			if "127.0.0.1" in url:
+				playrefmod = ":".join([("%x" % (int(x[1], 16) + 1)).upper() if x[0] == 6 else x[1] for x in enumerate(playrefstring.split(":"))])
+			else:
+				playrefmod = playrefstring
+			playref = eServiceReference("%s%s%s:%s" % (playrefmod, url.replace(":", "%3a"), playrefstring.replace(":", "%3a"), ServiceReference(playref).getServiceName()))
+			print(f"[{self.__class__.__name__}] Play service {playref.toCompareString()} via streamrelay")
+			playref.setAlternativeUrl(playrefstring)
+			return playref, True
+		return playref, False
+
+	def checkService(self, service):
+		return service and service.toCompareString() in self.__services
+
+
+streamrelay = InfoBarStreamRelay()
+
+
+class InfoBarAutoCam:
+	FILENAME = "/etc/enigma2/autocam"
+
+	def __init__(self):
+		self.currentCam = BoxInfo.getItem("CurrentSoftcam")
+		self.defaultCam = config.misc.autocamDefault.value or self.currentCam
+		self.reload()
+
+	def reload(self):
+		self.autoCam = {}
+		items = fileReadLines(self.FILENAME, default=[], source=self.__class__.__name__)
+		items = [item for item in items if item and "=" in item]
+		for item in items:
+			itemValues = item.split("=")
+			self.autoCam[itemValues[0]] = itemValues[1]
+
+	def write(self):
+		items = []
+		for key in self.autoCam.keys():
+			items.append(f"{key}={self.autoCam[key]}")
+		fileWriteLines(self.FILENAME, lines=items, source=self.__class__.__name__)
+
+	def getData(self):
+		return self.autoCam
+
+	def setData(self, value):
+		self.autoCam = value
+		self.write()
+
+	data = property(getData, setData)
+
+	def getCam(self, service):
+		return self.autoCam.get(service.toCompareString(), None)
+
+	def checkCrypt(self, service):
+		refstring = service.toCompareString()
+		if refstring.startswith("1:") and "%" not in refstring:
+			try:
+				info = eServiceCenter.getInstance().info(service)
+				return info.isCrypted()
+			except Exception:
+				pass
+		return False
+
+	def selectCam(self, nav, service, cam):
+		service = service or nav.getCurrentlyPlayingServiceReference()
+		if service:
+			servicestring = service.toCompareString()
+			if cam == "None":
+				if servicestring in self.autoCam:
+					del self.autoCam[servicestring]
+			else:
+				self.autoCam[servicestring] = cam
+			self.write()
+
+	def selectCams(self, services, cam):
+		for service in services:
+			servicestring = service.toCompareString()
+			if cam == "None":
+				if servicestring in self.autoCam:
+					del self.autoCam[servicestring]
+			else:
+				self.autoCam[servicestring] = cam
+		self.write()
+
+	def autoCamChecker(self, nav, service):
+		info = service.info()
+		playrefstring = info.getInfoString(iServiceInformation.sServiceref)
+		if playrefstring.startswith("1:"):
+			isStreamRelay = False
+			if "%" in playrefstring:
+				playrefstring, isStreamRelay = getStreamRelayRef(playrefstring)
+			if "%" not in playrefstring and (isStreamRelay or info and info.getInfo(iServiceInformation.sIsCrypted) == 1):
+				cam = self.autoCam.get(playrefstring, self.defaultCam)
+				if self.currentCam != cam:
+					if nav.getRecordings(False):
+						print("[InfoBarGenerics] InfoBarAutoCam: Switch of Softcam not possible due to an active recording.")
+						return
+					self.switchCam(cam)
+					self.currentCam = cam
+					BoxInfo.setMutableItem("CurrentSoftcam", cam)
+
+	def switchCam(self, new):
+		deamonSocket = socket(AF_UNIX, SOCK_STREAM)
+		deamonSocket.connect("/tmp/deamon.socket")
+		deamonSocket.send(f"SWITCH_SOFTCAM,{new}".encode())
+		deamonSocket.close()
+
+
+autocam = InfoBarAutoCam()
 
 class TimerSelection(Screen):
 	def __init__(self, session, list):
@@ -651,7 +808,9 @@ class InfoBarShowHide(InfoBarScreenSaver):
 		InfoBarScreenSaver.__init__(self)
 		self.__state = self.STATE_SHOWN
 		self.__locked = 0
-
+		self.autocamTimer = eTimer()
+		self.autocamTimer.timeout.get().append(self.checkAutocam)
+		self.autocamTimer_active = 0
 		self.DimmingTimer = eTimer()
 		self.DimmingTimer.callback.append(self.doDimming)
 		self.hideTimer = eTimer()
@@ -800,6 +959,10 @@ class InfoBarShowHide(InfoBarScreenSaver):
 
 	def serviceStarted(self):
 		if self.execing:
+			if self.autocamTimer_active == 1:
+				self.autocamTimer.stop()
+			self.autocamTimer.start(1000)
+			self.autocamTimer_active = 1
 			if config.usage.show_infobar_on_zap.value:
 				self.doShow()
 		self.showHideVBI()
@@ -1024,6 +1187,20 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			self.hideVBILineScreen.show()
 		else:
 			self.hideVBILineScreen.hide()
+
+	def checkStreamrelay(self, service=None):
+		return streamrelay.check(self.session.nav, service)
+
+	def checkCrypt(self, service=None):
+		return autocam.checkCrypt(service)
+
+	def checkAutocam(self):
+		self.autocamTimer.stop()
+		self.autocamTimer_active = 0
+		if config.misc.autocamEnabled.value:
+			service = self.session.nav.getCurrentService()
+			if service:
+				autocam.autoCamChecker(self.session.nav, service)
 
 
 class BufferIndicator(Screen):
@@ -3173,7 +3350,7 @@ class InfoBarExtensions:
 		if pathExists('/usr/bin/'):
 			softcams = listdir('/usr/bin/')
 		for softcam in softcams:
-			if softcam.lower().startswith('cccam') and config.cccaminfo.showInExtensions.value:
+			if softcam.lower().startswith("cccam") and config.softcam.showInExtensions.value:
 				return [((boundFunction(self.getCCname), boundFunction(self.openCCcamInfo), lambda: True), None)] or []
 		else:
 			return []
@@ -3185,7 +3362,7 @@ class InfoBarExtensions:
 		if pathExists('/usr/bin/'):
 			softcams = listdir('/usr/bin/')
 		for softcam in softcams:
-			if softcam.lower().startswith('oscam') and config.oscaminfo.showInExtensions.value:
+			if softcam.lower().startswith("oscam") and config.softcam.showInExtensions.value:
 				return [((boundFunction(self.getOSname), boundFunction(self.openOScamInfo), lambda: True), None)] or []
 		else:
 			return []
@@ -3193,7 +3370,7 @@ class InfoBarExtensions:
 	def addExtension(self, extension, key=None, type=EXTENSION_SINGLE):
 		self.list.append((type, extension, key))
 		if config.usage.sort_extensionslist.value:
-			self.list.sort()
+			print("[InfoBarExtensions] sort_extensionslist not supported yet")
 
 	def updateExtension(self, extension, key=None):
 		self.extensionsList.append(extension)
@@ -3242,7 +3419,7 @@ class InfoBarExtensions:
 				else:
 					extensionsList.remove(extension)
 		if config.usage.sort_extensionslist.value:
-			list.sort()
+			print("[InfoBarExtensions] sort_extensionslist not supported yet")
 		for x in colorlist:
 			list.append(x)
 		list.extend([(x[0](), x) for x in extensionsList])
@@ -3265,8 +3442,8 @@ class InfoBarExtensions:
 		self.session.open(CCcamInfoMain)
 
 	def openOScamInfo(self):
-		from Screens.OScamInfo import OscamInfoMenu
-		self.session.open(OscamInfoMenu)
+		from Screens.OScamInfo import OSCamInfo
+		self.session.open(OSCamInfo)
 
 	def showTimerList(self):
 		self.session.open(RecordTimerOverview)
@@ -3279,13 +3456,16 @@ class InfoBarExtensions:
 		from Screens.Setup import Setup
 		self.session.open(Setup, "OSD3D")
 
+	def openSoftcamSetup(self):
+		from Screens.BluePanel import BluePanel
+		self.session.open(BluePanel)
 
 	def openRestartNetwork(self):
 		try:
 			from OPENDROID.RestartNetwork import RestartNetwork
 			self.session.open(RestartNetwork)
-		except:
-			print('[INFOBARGENERICS] failed to restart network')
+		except Exception:
+			print("[INFOBARGENERICS] failed to restart network")
 
 	def showAutoTimerList(self):
 		if isPluginInstalled("AutoTimer"):

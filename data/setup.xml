@@ -26,6 +26,10 @@
 		<item level="1" text="Enable BT Audio" description="This Option allows you to switch Audio to BT Speakers." requires="CanBTAudio">config.av.btaudio</item>
 		<item level="1" text="General BT Audio delay" description="This option configures the general audio delay for BT Speakers." requires="CanBTAudioDelay">config.av.btaudiodelay</item>
 	</setup>
+	<setup key="AutoCam" title="AutoCam Settings">
+		<item level="0" text="Use AutoCam" description="When set to 'Yes' a specific Softcam can be assigned to each encrypted service.">config.misc.autocamEnabled</item>
+		<item level="0" text="Select AutoCam default Softcam" description="Select a Softcam from the available list as the default for AutoCam." conditional="config.misc.autocamEnabled.value">self.autocamDefault</item>
+	</setup>
 	<setup key="AutoLanguage" title="Auto Language Settings" level="1" showOpenWebif="1">
 		<item level="1" text="Audio language selection 1" description="Configure the first audio language (highest priority).">config.autolanguage.audio_autoselect1</item>
 		<item level="1" text="Audio language selection 2" description="Configure the second audio language.">config.autolanguage.audio_autoselect2</item>
@@ -46,8 +50,11 @@
 		<item level="1" text="EPG language selection 1" description="Configure the primary EPG language.">config.autolanguage.audio_epglanguage</item>
 		<item level="1" text="EPG language selection 2" description="Configure the secondary EPG language.">config.autolanguage.audio_epglanguage_alternative</item>
 	</setup>
+	<setup key="Cardserver" title="Cardserver Settings" showOpenWebif="1">
+		<item level="0" text="Select cardserver" description="Select the cardserver to be used from the list of available cardservers.">config.misc.cardservers</item>
+	</setup>
 	<setup key="CCcamLineEdit" title="CCcam Line Editor">
-		<item level="0" text="Protocol" description="Select the softcam protocol.">config.cccamlineedit.protocol</item>
+		<item level="0" text="Protocol" description="Select the Softcam protocol.">config.cccamlineedit.protocol</item>
 		<item level="0" text="Domain" description="Edit the CCcam/NewCamd server hostname.">config.cccamlineedit.domain</item>
 		<item level="0" text="Port" description="Edit the CCcam/NewCamd server port.">config.cccamlineedit.port</item>
 		<item level="0" text="Username" description="Edit the username.">config.cccamlineedit.username</item>
@@ -500,16 +507,16 @@
 		<item text="Nameserver" description="Configure the name server (DNS).">config.network.dns</item>
 		<item text="Activate network settings" description="Activate the configured network settings.">config.network.activate</item>
 	</setup>
-	<setup key="OscamInfo" title="Oscam Info Settings">
-		<item level="0" text="Read Userdata from oscam.conf" description="Read Userdata from oscam.conf">config.oscaminfo.userdatafromconf</item>
-		<if conditional="not config.oscaminfo.userdatafromconf.value">
+	<setup key="OSCamInfoSetup" title="OSCam Information Settings">
+		<item level="0" text="Read Userdata from oscam.conf" description="Read Userdata from oscam.conf">config.oscaminfo.userDataFromConf</item>
+		<if conditional="not config.oscaminfo.userDataFromConf.value">
 			<item level="0" text="Username (httpuser)" description="Username (httpuser)">config.oscaminfo.username</item>
 			<item level="0" text="Password (httpwd)" description="Password (httpuser)">config.oscaminfo.password</item>
 			<item level="0" text="IP address" description="IP address">config.oscaminfo.ip</item>
 			<item level="0" text="Port" description="Port">config.oscaminfo.port</item>
 		</if>
-		<item level="0" text="Automatically update Client/Server View" description="Automatically update Client/Server View">config.oscaminfo.autoupdate</item>
-		<item level="0" text="Update interval (in seconds)" description="Update interval (in seconds)" conditional="config.oscaminfo.autoupdate.value">config.oscaminfo.intervall</item>
+		<item level="0" text="Automatically update Client/Server View" description="Automatically update Client/Server View">config.oscaminfo.autoUpdate</item>
+		<item level="0" text="Update interval (in seconds)" description="Update interval (in seconds)" conditional="config.oscaminfo.autoUpdate.value">config.oscaminfo.intervall</item>
 	</setup>
 	<setup key="OSD3D" title="OSD 3D Settings" showOpenWebif="1">
 		<item level="0" text="3D Mode" description="This option lets you choose the 3D mode">config.osd.threeDmode</item>
@@ -756,14 +763,16 @@
 		</if>
 	</setup>
 	<setup key="Softcam" title="Softcam Settings" showOpenWebif="1">
-		<item level="0" text="Select softcam" description="Select a softcam from the available list.">config.misc.softcams</item>
-		<item level="0" text="Select cardserver" description="Select a cardserver from the available list." conditional="config.misc.cardservers.value != ''">config.misc.cardservers</item>
-		<item level="0" text="Restart" description="Reset the selected devices and save changes of your config when the GREEN button is pressed.">config.misc.restarts</item>
-		<item level="2" text="Show CCcam in extensions" description="Allows you to show/hide CCcam in extensions (BLUE button)." conditional="'cccam' in config.misc.softcams.value.lower()">config.cccaminfo.showInExtensions</item>
-		<item level="2" text="Show OScam in extensions" description="Allows you to show/hide OScam in extensions (BLUE button)." conditional="'oscam' in config.misc.softcams.value.lower()">config.oscaminfo.showInExtensions</item>
+		<item level="0" text="Select Softcam" description="Select a Softcam from the available list.">config.misc.softcams</item>
+		<item level="2" text="Show OScam/CCcam in Extension Menu" description="Allows you to show/hide OScam/CCcam in the Extension Menu screen (BLUE button).">config.softcam.showInExtensions</item>
 	</setup>
 	<setup key="SpecialFeatures" title="Special Features Settings">
 		<!-- This is just a placeholder, the 'specialfeatures' menu is currently disabled. -->
+	</setup>
+	<setup key="StreamRelay" title="Stream Relay Settings">
+		<item level="2" text="Stream Relay URL" description="IP address of the Stream Relay server used to descramble services that can only be decrypted via Stream Relay.">config.misc.softcam_streamrelay_url</item>
+		<item level="2" text="Stream Relay port" description="Port number for the Stream Relay server used to descramble services that can only be decrypted via Stream Relay.">config.misc.softcam_streamrelay_port</item>
+		<item level="2" text="Stream Relay switch delay" description="Select the delay to use when closing a Stream Relay service before reallocating the tuner for another service. Using '0' is only recommended for boxes with multiple satellite tuners.">config.misc.softcam_streamrelay_delay</item>
 	</setup>
 	<setup key="Subtitle" title="Subtitle Settings" level="2" showOpenWebif="1">
 		<item level="2" text="Teletext subtitle color" description="Configure the color of the teletext subtitles.">config.subtitles.ttx_subtitle_colors</item>
