@@ -1,6 +1,6 @@
 name: enigma2 build
 
-    on:
+on:
     push:
     branches: [ 7.3 ]
     pull_request:
