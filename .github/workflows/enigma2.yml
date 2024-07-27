@@ -2,9 +2,9 @@ name: enigma2 build
 
 on:
   push:
-    branches: [ 7.3, master ]
+    branches: [ 7.3, master, pyton-3.12 ]
   pull_request:
-    branches: [ 7.3, master ]
+    branches: [ 7.3, master, pyton-3.12 ]
 
 jobs:
   build:
@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc: [11]
-        python: ['3.11']
+        gcc: [13]
+        python: ['3.12']
     steps:
       - name: Install prerequisites
         run: |
@@ -42,13 +42,15 @@ jobs:
           sudo apt-get install libgif-dev
           sudo apt-get install libcurl4-openssl-dev
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
       - name: Build enigma2 dependencies, gcc-${{ matrix.gcc }}
+        id: depends
+        continue-on-error: true
         env:
           CC: "gcc-${{ matrix.gcc }}"
           CXX: "g++-${{ matrix.gcc }}"
@@ -78,7 +80,11 @@ jobs:
           make
           sudo make install
           popd
-
+      - name: Check on failures
+        if: steps.depends.outcome != 'success'
+        run: |
+          cat /tmp/libdvbsi/config.log
+          exit 1
       - name: Build enigma2
         env:
           CC: "gcc-${{ matrix.gcc }}"
@@ -92,10 +98,10 @@ jobs:
           python -m compileall .
           echo "checking enigma2 compiles completed"
 
-      - name: Check format PEP8
-        run: |
-          echo "checking locale format..."
-          find . -type f -name "*.po" -exec msgfmt {} -o {}.mo \;
-          echo "checking PEP8 validation..."
-          flake8 --ignore=W191,W503,W504,E128,E501,E722 . --exit-zero
-          echo "check format PEP8 completed!"
+    - name: Check format PEP8
+      run: |
+        echo "checking locale format..."
+        find . -type f -name "*.po" -exec msgfmt {} -o {}.mo \;
+        echo "checking PEP8 validation..."
+        flake8 --builtins="_,ngettext,pgettext" --ignore=W191,W503,W504,E123,E126,E128,E501,E722 . --exit-zero
+        echo "check format PEP8 completed!"
