@@ -7,7 +7,7 @@ on:
     branches: [ 7.3 ]
 
 jobs:
-  build:
+    build:
     name: Build enigma2
     runs-on: ubuntu-22.04
     strategy:
