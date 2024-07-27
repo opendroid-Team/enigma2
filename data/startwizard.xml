@@ -365,7 +365,7 @@ config.ParentalControl.setuppin.save()
 -->
 		<step id="plugins" nextstep="skins">
 			<condition>
-self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = config.misc.networkenabled.value
 			</condition>
 			<text value="Plugin install"/>
 			<config screen="InstallWizard" module="InstallWizard" args="2" type="ConfigList"/>
@@ -376,7 +376,7 @@ self.selectKey("OK")
 		</step>
 		<step id="skins" nextstep="NetworkPassword">
 			<condition>
-self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = config.misc.networkenabled.value
 			</condition>
 			<text value="Skin install" />
 			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
@@ -387,7 +387,7 @@ self.selectKey("OK")
 		</step>
 		<step id="NetworkPassword" nextstep="timezone">
 			<condition>
-self.condition = config.misc.installwizard.hasnetwork.value and config.misc.installwizard.ipkgloaded.value
+self.condition = config.misc.networkenabled.value
 			</condition>
 			<text value="Password setup" />
 			<config screen="InstallWizard" module="InstallWizard" args="4" type="ConfigList" />
@@ -396,20 +396,12 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 			</code>
 		</step>
-		<step id="timezone">
-			<text value="Please set your time options.\n\nPress YELLOW to set the time zone via geolocation."/>
-			<displaytext value="Please set your time options"/>
-			<config screen="Time" module="Time" type="ConfigList"/>
-			<code>
-self.clearSelectedKeys()
-self.selectKey("LEFT")
-self.selectKey("RIGHT")
-self.selectKey("YELLOW")
-self["key_yellow"].text = _("Use Geolocation")
-			</code>
-			<code pos="after">
-self["key_yellow"].text = ""
-			</code>
+	<step id="timezone">
+		<buttons enable="OK,UP,DOWN,LEFT,RIGHT,YELLOW,1,2,3,4,5,6,7,8,9,0,BACKSPACE,DEL" />
+		<colorButtonLabels yellow="Use Geolocation" />
+		<text value="Set the time options.\n\nPress YELLOW to set the time zone via geolocation."/>
+		<displaytext value="Set time options"/>
+		<config screen="Time" module="Time" type="ConfigList"/>
 		</step>
 
 		<step id="end" laststep="true">
