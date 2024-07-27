@@ -247,8 +247,8 @@ static NSVG_INLINE double nsvg__maxf(double a, double b) { return a > b ? a : b;
 #define NSVG_XML_MAX_ATTRIBS 256
 
 static void nsvg__parseContent(char* s,
-							   void (*contentCb)(void* ud, const char* s),
-							   void* ud)
+							void (*contentCb)(void* ud, const char* s),
+							void* ud)
 {
 	// Trim start white spaces
 	while (*s && nsvg__isspace(*s)) s++;
@@ -259,9 +259,9 @@ static void nsvg__parseContent(char* s,
 }
 
 static void nsvg__parseElement(char* s,
-							   void (*startelCb)(void* ud, const char* el, const char** attr),
-							   void (*endelCb)(void* ud, const char* el),
-							   void* ud)
+							void (*startelCb)(void* ud, const char* el, const char** attr),
+							void (*endelCb)(void* ud, const char* el),
+							void* ud)
 {
 	const char* attr[NSVG_XML_MAX_ATTRIBS];
 	int nattr = 0;
@@ -335,10 +335,10 @@ static void nsvg__parseElement(char* s,
 }
 
 static int nsvg__parseXML(char* input,
-				   void (*startelCb)(void* ud, const char* el, const char** attr),
-				   void (*endelCb)(void* ud, const char* el),
-				   void (*contentCb)(void* ud, const char* s),
-				   void* ud)
+				void (*startelCb)(void* ud, const char* el, const char** attr),
+				void (*endelCb)(void* ud, const char* el),
+				void (*contentCb)(void* ud, const char* s),
+				void* ud)
 {
 	char* s = input;
 	char* mark = s;

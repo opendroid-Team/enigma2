@@ -1,20 +1,20 @@
-from __future__ import print_function
 from os import system
 
 from enigma import eTimer
 
 from Screens.HelpMenu import ShowRemoteControl
-from Screens.WizardLanguage import WizardLanguage
+from Screens.Wizard import Wizard
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Components.Pixmap import Pixmap
 from Components.Sources.Boolean import Boolean
 from Components.Network import iNetwork
 from Components.SystemInfo import BoxInfo, getBoxDisplayName
+from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
 
-class NetworkWizard(WizardLanguage, ShowRemoteControl):
+class NetworkWizard(Wizard, ShowRemoteControl):
 	skin = """
 		<screen position="0,0" size="720,576" title="Welcome..." flags="wfNoBorder" >
 			<widget name="text" position="153,40" size="340,300" font="Regular;22" />
@@ -38,7 +38,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 
 	def __init__(self, session, interface=None):
 		self.xmlfile = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NetworkWizard/networkwizard.xml")
-		WizardLanguage.__init__(self, session, showSteps=False, showStepSlider=False)
+		Wizard.__init__(self, session, showSteps=False, showStepSlider=False)
 		ShowRemoteControl.__init__(self)
 		Screen.setTitle(self, _("NetworkWizard"))
 		self.session = session
@@ -84,12 +84,11 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 		del self.rescanTimer
 		self.checkOldInterfaceState()
 		self.exit()
-		pass
 
 	def back(self):
 		self.stopScan()
 		self.ap = None
-		WizardLanguage.back(self)
+		Wizard.back(self)
 
 	def stopScan(self):
 		self.rescanTimer.stop()
@@ -174,8 +173,11 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 				if iface in iNetwork.configuredNetworkAdapters and len(iNetwork.configuredNetworkAdapters) == 1:
 					if iNetwork.getAdapterAttribute(iface, 'up') is True:
 						self.isInterfaceUp = True
+						config.misc.networkenabled.value = True
 					else:
 						self.isInterfaceUp = False
+						config.misc.networkenabled.value = False
+					print("[NetworkWizard] networkenabled value = %s" % config.misc.networkenabled.value)
 					self.currStep = self.getStepWithID(self.NextStep)
 					self.afterAsyncCode()
 				else:
@@ -202,8 +204,11 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 		if data is True:
 			if iNetwork.getAdapterAttribute(self.selectedInterface, 'up') is True:
 				self.isInterfaceUp = True
+				config.misc.networkenabled.value = True
 			else:
 				self.isInterfaceUp = False
+				config.misc.networkenabled.value = False
+			print("[NetworkWizard] networkenabled value = %s" % config.misc.networkenabled.value)
 			self.resetRef.close(True)
 		else:
 			print("we should never come here!")
