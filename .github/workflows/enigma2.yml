@@ -1,19 +1,18 @@
-name: enigma2 build
+name: Enigma2 Python 3
 
 on:
-    push:
+  push:
     branches: [ 7.3 ]
-    pull_request:
+  pull_request:
     branches: [ 7.3 ]
 
-    jobs:
-    build:
-    name: Build enigma2
+jobs:
+  build:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc: [11]
-        python: ['3.11']
+        gcc: [13]
+        python: ['3.12']
     steps:
       - name: Install prerequisites
         run: |
