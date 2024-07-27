@@ -24,7 +24,7 @@ and the display skin will not be displayed
 
 <!-- ####################################################################################################### -->
 
-<!-- MyClockPanel -->	
+<!-- MyClockPanel -->
 	<screen name="MyClockPanel">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="1,1">
 			<convert type="VfdDisplay"></convert>
@@ -60,16 +60,16 @@ and the display skin will not be displayed
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="QuickMenu_summary" position="0,0" size="1,1">
+	<screen name="QuickMenuSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
 
-<!-- Numberzap -->    
-	<screen name="NumberZap_summary" position="0,0" size="1,1">
+<!-- Numberzap -->
+	<screen name="NumberZapSummary" position="0,0" size="1,1">
 		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1" />
-	</screen> 
-	<screen name="NumberZapPicon_summary" position="0,0" size="1,1">
+	</screen>
+	<screen name="NumberZapPiconSummary" position="0,0" size="1,1">
 		<widget source="parent.number_summary" render="Label" position="0,0" size="1,1" />
 	</screen>
 
@@ -78,23 +78,23 @@ and the display skin will not be displayed
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="SimpleSummary" position="0,0" size="1,1">
+	<screen name="ScreenSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="ChoiceBox_summary" position="0,0" size="1,1">
+	<screen name="ChoiceBoxSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="MessageBox_summary" position="0,0" size="1,1">
+	<screen name="MessageBoxSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="MessageBoxSimple_summary" position="0,0" size="1,1">
+	<screen name="MessageBoxSimpleSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
-	<screen name="JobView_summary" position="0,0" size="1,1">
+	<screen name="JobViewSummary" position="0,0" size="1,1">
 		<widget source="parent.summary_job_progress" render="Label" position="0,0" size="1,1" >
 			<convert type="ProgressToText">InPercent</convert>
 		</widget>
@@ -119,7 +119,7 @@ and the display skin will not be displayed
 	</screen>
 
 <!-- EMC  -->
-	<screen name="EMCSelection_summary" position="0,0" size="1,1">
+	<screen name="EMCSelectionSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />
 		<panel name="MyRecPanel" />
 	</screen>
