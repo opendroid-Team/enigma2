@@ -19,6 +19,7 @@ from Tools.Directories import fileReadLine, fileReadLines
 MODULE_NAME = __name__.split(".")[-1]
 
 socfamily = BoxInfo.getItem("socfamily")
+MODEL = BoxInfo.getItem("model")
 
 def getModelString():
 	model = getBoxType()
@@ -73,9 +74,9 @@ def getImageVersionString():
 
 def getFlashDateString():
 	try:
-		tm = localtime(stat("/boot").st_ctime)
+		tm = localtime(stat("/etc/version").st_mtime)
 		if tm.tm_year >= 2011:
-			return strftime(_("%Y-%m-%d"), tm)
+			return strftime(_("%d.%m.%Y - %H:%M:%S"), tm)
 		else:
 			return _("Unknown")
 	except:
@@ -458,8 +459,7 @@ def GetIPsFromNetworkInterfaces():
 			break
 	ifaces = []
 	for index in range(0, outbytes, structSize):
-		ifaceName = names.tobytes()[index:index + 16].decode().split("\0", 1)[0]  # PY3
-		# ifaceName = str(names.tolist[index:index + 16]).split("\0", 1)[0] # PY2
+		ifaceName = names.tobytes()[index:index + 16].decode().split("\0", 1)[0]
 		if ifaceName != "lo":
 			ifaces.append((ifaceName, inet_ntoa(names[index + 20:index + 24])))
 	return ifaces

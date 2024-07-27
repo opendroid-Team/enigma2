@@ -31,9 +31,18 @@ import time
 from os import path, popen, system
 from re import search
 from datetime import datetime
-import time
 from locale import format_string
 import six
+
+MODULE_NAME = __name__.split(".")[-1]
+
+DISPLAY_BRAND = BoxInfo.getItem("displaybrand")
+DISPLAY_MODEL = BoxInfo.getItem("displaymodel")
+MACHINE_BUILD = BoxInfo.getItem("machinebuild")
+MODEL = BoxInfo.getItem("model")
+
+API_GITHUB = 0
+API_GITLAB = 1
 
 SIGN = u"\u00B0"
 
@@ -233,7 +242,6 @@ class About(Screen):
 					for lines in temp:
 						lisp = lines.split(': ')
 						if lisp[0].startswith('cpu MHz'):
-							#cpuMHz = "   (" +  lisp[1].replace('\n', '') + " MHz)"
 							cpuMHz = "   (" +  str(int(float(lisp[1].replace('\n', '')))) + " MHz)"
 							break
 				except:
@@ -262,7 +270,7 @@ class About(Screen):
 		AboutText += _("OPD Version:\tV%s") % getImageVersion() + " Build " + getImageBuild() + " based on " + getOEVersion() + "\n"
 		AboutText += _("Kernel (Box):\t%s") % about.getKernelVersionString() + " (" + getBoxType() + ")" + "\n"
 		imagestarted = ""
-		bootname = ''
+		bootname = ""
 		if path.exists('/boot/bootname'):
 			f = open('/boot/bootname', 'r')
 			bootname = f.readline().split('=')[1]
@@ -275,7 +283,12 @@ class About(Screen):
 				image = slotCode - 4 if slotCode > 4 else slotCode - 1
 				device = _("SDcard slot %s%s") % (image, "  -  %s" % device if device else "")
 			else:
-				device = _("eMMC slot %s%s") % (slotCode, "  -  %s" % device if device else "")
+				if BoxInfo.getItem("HasKexecMultiboot"):
+					device = MultiBoot.bootSlots[slotCode]["device"]
+				if "mmcblk" in device:
+					device = _("eMMC slot %s%s") % (slotCode, f"  -  {device}" if device else "")
+				else:
+					device = _("USB slot %s%s") % (slotCode, f"  -  {device}" if device else "")
 			AboutText += _("Hardware MultiBoot device:\t%s") % _("STARTUP_") + str(slotCode) + "  " + device + "\n"
 
 		if path.isfile("/etc/issue"):
@@ -311,31 +324,7 @@ class About(Screen):
 		AboutText += _("E2 (re)starts:\t%s\n") % config.misc.startCounter.value
 		AboutText += _("Enigma2 debug level:\t%s") % eGetEnigmaDebugLvl() + "\n"
 		if getMachineBuild() not in ('vuduo4k','osmio4k','vuzero4k','sf5008','et13000','et1x000','hd51','hd52','vusolo4k','vuuno4k','vuuno4kse','vuultimo4k','sf4008','dm820','dm7080','dm900','dm920', 'gb7252', 'dags7252', 'vs1500','xc7439','8100s','u5','u5pvr','u52','u53','u54','u55','u56','u51','sf8008'):
-			AboutText += _("Installed:\t\t%s") % about.getFlashDateString() + "\n"
-#		AboutText += _("Network:")
-#		eth0 = about.getIfConfig('eth0')
-#		eth1 = about.getIfConfig('eth1')
-#		ra0 = about.getIfConfig('ra0')
-#		wlan0 = about.getIfConfig('wlan0')
-#		wlan1 = about.getIfConfig('wlan1')
-#		if 'addr' in eth0:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed() + ")\n"
-#		elif 'addr' in eth1:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + " (" + netspeed_eth1() + ")\n"
-#		elif 'addr' in eth0:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_ra0() + ")\n"
-#		elif 'addr' in eth0:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan0() + ")\n"
-#		elif 'addr' in eth1:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + " (~" + netspeed_wlan1() + ")\n"
-#		else:
-#			for x in about.GetIPsFromNetworkInterfaces():
-#				AboutText += "\t" + x[0] + ": " + x[1] + "\n"
+			AboutText += _("Installed:\t%s") % about.getFlashDateString() + "\n"
 
 		fp_version = getFPVersion()
 		if fp_version is None:
@@ -357,16 +346,7 @@ class About(Screen):
 			f = open('/proc/stb/sensors/temp/value', 'r')
 			tempinfo = f.read()
 			f.close()
-#		elif path.exists('/sys/devices/virtual/thermal/thermal_zone0/temp'):
-#			if getBoxDisplayName() in ('mutant51', 'ax51', 'zgemmah7'):
-#				tempinfo = ""
-#			else:
-#				f = open('/sys/devices/virtual/thermal/thermal_zone0/temp', 'r')
-#				tempinfo = f.read()
-#				tempinfo = tempinfo[:-4]
-#				f.close()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-#			mark = str('\xc2\xb0')
 			AboutText += _("System temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 
 		tempinfo = ""
@@ -399,12 +379,10 @@ class About(Screen):
 			except:
 				tempinfo = ""
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-#			mark = str('\xc2\xb0')
 			AboutText += ("Processor temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 		AboutLcdText = AboutText.replace('\t', ' ')
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
-#		self["key_red"] = Button(_("Devices"))
 		self["key_yellow"] = Button(_("Memory Info"))
 		self["key_info"] = StaticText(_("Contact Info"))
 		self["key_blue"] = Button(_("%s ") % getMachineName() + _("picture"))
@@ -887,11 +865,9 @@ class SystemNetworkInfo(Screen):
 		self["statuspic"] = MultiPixmap()
 		self["statuspic"].setPixmapNum(1)
 		self["statuspic"].show()
-
 		self.iface = None
 		self.createscreen()
 		self.iStatus = None
-
 		if iNetwork.isWirelessInterface(self.iface):
 			try:
 				from Plugins.SystemPlugins.WirelessLan.Wlan import iStatus
@@ -901,14 +877,12 @@ class SystemNetworkInfo(Screen):
 			self.resetList()
 			self.onClose.append(self.cleanup)
 		self.updateStatusbar()
-
-		self["key_red"] = StaticText(_("Close"))
-
-		self["actions"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"],
+		self["key_red"] = Label(_("Cancel"))
+		self["actions"] = ActionMap(["SetupActions", "OkCancelActions", "ColorActions", "DirectionActions"],
 			{
-				"cancel": self.close,
+				"cancel": self.cancel,
+				"red": self.cancel,
 				"ok": self.close,
-				"red": self.close,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown
 			})
@@ -929,6 +903,26 @@ class SystemNetworkInfo(Screen):
 				line = line[1].replace(' ', '')
 				netspeed += line
 			return str(netspeed)
+
+		def nameserver():
+			nameserver = ""
+			v4 = 0
+			v6 = 0
+			ns4 = ""
+			ns6 = ""
+			datei = open("/etc/resolv.conf", "r")
+			for line in datei.readlines():
+				line = line.strip()
+				if "nameserver" in line:
+					if line.count(".") == 3:
+						v4 = v4 + 1
+						ns4 += str(v4) + ".IPv4 Nameserver" + ":" + line.strip().replace("nameserver ", "")
+					if line.count(":") > 1 and line.count(":") < 8:
+						v6 = v6 + 1
+						ns6 += str(v6) + ".IPv6 Nameserver" + ":" + line.strip().replace("nameserver ", "")
+			nameserver = ns4 + ns6
+			datei.close()
+			return nameserver.strip()
 
 		def domain():
 			domain = ""
@@ -960,6 +954,7 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth0['addr'] + "\n"
 			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
+			self.AboutText += '{:<45}'.format(_("Nameserver:")) + "\t" + nameserver() + "\n"
 			if 'netmask' in eth0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth0['netmask'] + "\n"
 			if 'hwaddr' in eth0:
@@ -974,6 +969,7 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + eth1['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + eth1['addr'] + "\n"
 			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
+			self.AboutText += '{:<45}'.format(_("Nameserver:")) + "\t" + nameserver() + "\n"
 			if 'netmask' in eth1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + eth1['netmask'] + "\n"
 			if 'hwaddr' in eth1:
@@ -988,6 +984,7 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + ra0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + ra0['addr'] + "\n"
 			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
+			self.AboutText += '{:<45}'.format(_("Nameserver:")) + "\t" + nameserver() + "\n"
 			if 'netmask' in ra0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + ra0['netmask'] + "\n"
 			if 'hwaddr' in ra0:
@@ -1001,6 +998,7 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan0['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan0['addr'] + "\n"
 			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
+			self.AboutText += '{:<45}'.format(_("Nameserver:")) + "\t" + nameserver() + "\n"
 			if 'netmask' in wlan0:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan0['netmask'] + "\n"
 			if 'hwaddr' in wlan0:
@@ -1014,17 +1012,16 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += '{:<35}'.format(_('Interface:')) + "\t" + " /dev/" + wlan1['ifname'] + "\n"
 			self.AboutText += '{:<45}'.format(_("IP:")) + "\t" + wlan1['addr'] + "\n"
 			self.AboutText += '{:<45}'.format(_("Gateway:")) + "\t" + gateway() + "\n"
+			self.AboutText += '{:<45}'.format(_("Nameserver:")) + "\t" + nameserver() + "\n"
 			if 'netmask' in wlan1:
 				self.AboutText += '{:<35}'.format(_("Netmask:")) + "\t" + wlan1['netmask'] + "\n"
 			if 'hwaddr' in wlan1:
 				self.AboutText += '{:<35}'.format(_("MAC:")) + "\t" + wlan1['hwaddr'] + "\n"
 				self.AboutText += '{:<35}'.format(_("Domain:")) + "\t" + domain() + "\n"
 			self.iface = 'wlan1'
-
 		rx_bytes, tx_bytes = about.getIfTransferredData(self.iface)
 		self.AboutText += "\n" + '{:<35}'.format(_("Bytes received:")) + "\t" + rx_bytes + "\n"
 		self.AboutText += '{:<35}'.format(_("Bytes sent:")) + "\t" + tx_bytes + "\n"
-
 		hostname = open('/proc/sys/kernel/hostname').read()
 		self.AboutText += "\n" + '{:<35}'.format(_("Hostname:")) + "\t" + hostname + "\n"
 		self["AboutScrollLabel"] = ScrollLabel(self.AboutText)
@@ -1060,15 +1057,12 @@ class SystemNetworkInfo(Screen):
 						quality = str(status[self.iface]["quality"])
 						if "quality" in self:
 							self.AboutText += '{:<35}'.format(_('Link Quality:')) + '\t' + quality + '\n'
-
 						channel = str(status[self.iface]["channel"])
 						if "channel" in self:
 							self.AboutText += '{:<35}'.format(_('Channel:')) + '\t' + channel + '\n'
-
 						frequency = status[self.iface]["frequency"]
 						if "frequency" in self:
 							self.AboutText += '{:<35}'.format(_('Frequency:')) + '\t' + frequency + '\n'
-
 						frequency_norm = status[self.iface]["frequency_norm"]
 						if frequency_norm is not None:
 							self.AboutText += '{:<35}'.format(_('Frequency Norm:')) + '\t' + frequency_norm + '\n'
@@ -1083,7 +1077,6 @@ class SystemNetworkInfo(Screen):
 						signal = str(status[self.iface]["signal"]) + " dBm"
 						if "signal" in self:
 							self.AboutText += '{:<35}'.format(_('Signal Strength:')) + '\t' + signal + '\n'
-
 						if status[self.iface]["encryption"] == "off":
 							if accesspoint == "Not-Associated":
 								encryption = _("Disabled")
@@ -1093,11 +1086,9 @@ class SystemNetworkInfo(Screen):
 							encryption = _("Enabled")
 						if "enc" in self:
 							self.AboutText += '{:<35}'.format(_('Encryption:')) + '\t' + encryption + '\n'
-
 						encryption_type = status[self.iface]["encryption_type"]
 						if "encryption_type" in self:
 							self.AboutText += '{:<35}'.format(_('Encryption Type:')) + '\t' + encryption_type.upper() + '\n'
-
 						if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] is False:
 							self.LinkState = False
 							self["statuspic"].setPixmapNum(1)
@@ -1107,8 +1098,8 @@ class SystemNetworkInfo(Screen):
 							iNetwork.checkNetworkState(self.checkNetworkCB)
 						self["AboutScrollLabel"].setText(self.AboutText)
 
-	def exit(self):
-		self.close(True)
+	def cancel(self):
+		self.close()
 
 	def updateStatusbar(self):
 		self["IFtext"].setText(_("Network:"))
@@ -1189,77 +1180,10 @@ class AboutSummary(Screen):
 		elif path.exists('/proc/stb/fp/temp_sensor'):
 			tempinfo = open('/proc/stb/fp/temp_sensor', 'r').read()
 		if tempinfo and int(tempinfo.replace('\n', '')) > 0:
-#			mark = str('\xc2\xb0')
 			AboutText += _("System temperature:\t%s") % tempinfo.replace('\n', '').replace(' ', '') + SIGN + "C\n"
 
 		self["AboutText"] = StaticText(AboutText)
 
-
-class ViewGitLog(Screen):
-	def __init__(self, session, args=None):
-		Screen.__init__(self, session)
-		self.skinName = "SoftwareUpdateChanges"
-		self.setTitle(_("OE Changes"))
-		self.logtype = 'oe'
-		self["text"] = ScrollLabel()
-		self['title_summary'] = StaticText()
-		self['text_summary'] = StaticText()
-		self["key_red"] = Button(_("Close"))
-		self["key_green"] = Button(_("OK"))
-		self["key_yellow"] = Button(_("Show E2 Log"))
-		self["myactions"] = ActionMap(['ColorActions', 'OkCancelActions', 'DirectionActions'],
-		{
-			'cancel': self.closeRecursive,
-			'green': self.closeRecursive,
-			"red": self.closeRecursive,
-			"yellow": self.changelogtype,
-			"left": self.pageUp,
-			"right": self.pageDown,
-			"down": self.pageDown,
-			"up": self.pageUp
-		}, -1)
-		self.onLayoutFinish.append(self.getlog)
-
-	def changelogtype(self):
-		if self.logtype == 'e2':
-			self["key_yellow"].setText(_("Show E2 Log"))
-			self.setTitle(_("OE Changes"))
-			self.logtype = 'oe'
-		else:
-			self["key_yellow"].setText(_("Show OE Log"))
-			self.setTitle(_("Enigma2 Changes"))
-			self.logtype = 'e2'
-		self.getlog()
-
-	def pageUp(self):
-		self["text"].pageUp()
-
-	def pageDown(self):
-		self["text"].pageDown()
-
-	def getlog(self):
-		fd = open('/etc/' + self.logtype + '-git.log', 'r')
-		releasenotes = fd.read()
-		fd.close()
-		releasenotes = releasenotes.replace('\nOpendroid: build', "\n\nOpendroid: build")
-		self["text"].setText(releasenotes)
-		summarytext = releasenotes
-		try:
-			if self.logtype == 'e2':
-				self['title_summary'].setText(_("E2 Log"))
-				self['text_summary'].setText(_("Enigma2 Changes"))
-			else:
-				self['title_summary'].setText(_("OE Log"))
-				self['text_summary'].setText(_("OE Changes"))
-		except:
-			self['title_summary'].setText("")
-			self['text_summary'].setText("")
-
-	def unattendedupdate(self):
-		self.close((_("Unattended upgrade without GUI and reboot system"), "cold"))
-
-	def closeRecursive(self):
-		self.close((_("Cancel"), ""))
 
 
 class TranslationInfo(Screen):
@@ -1301,9 +1225,9 @@ class TranslationInfo(Screen):
 		linfo += _("MIME Version") + ":" + infomap.get("MIME-Version", "") + "\n"
 		linfo += "\n"
 		linfo += _("POT-Creation Date") + ":" + infomap.get("POT-Creation-Date", "") + "\n"
-		linfo += _("Revision Date") + ":" + infomap.get("PO-Revision-Date", "") + "\n"
+		linfo += _("PO-Revision Date") + ":" + infomap.get("PO-Revision-Date", "") + "\n"
 		linfo += "\n"
-		linfo += _("Generator") + ":" + infomap.get("X-Generator", "") + "\n"
+		linfo += _("X-Generator") + ":" + infomap.get("X-Generator", "") + "\n"
 
 		if infomap.get("Report-Msgid-Bugs-To", "") != "":
 			linfo += _("Report Msgid Bugs To") + ":" + infomap.get("Report-Msgid-Bugs-To", "") + "\n"
@@ -1318,6 +1242,7 @@ class CommitInfo(Screen):
 		self.setTitle(_("Latest Commits"))
 		self.skinName = ["CommitInfo", "About"]
 		self["AboutScrollLabel"] = ScrollLabel(_("Please wait"))
+		self["HintText"] = Label(_("Press up/down to scroll through the selected log\n\nPress left/right to see different log types"))
 		self["actions"] = ActionMap(["SetupActions", "DirectionActions"],
 			{
 				"cancel": self.close,
@@ -1332,15 +1257,21 @@ class CommitInfo(Screen):
 
 		self["key_red"] = Button(_("Cancel"))
 
+		try:
+			branch = "?sha=" + "-".join(about.getEnigmaVersionString().split("-")[3:])
+		except:
+			branch = ""
+		branch_e2plugins = "?sha=python3"
+
 		self.project = 0
 		self.projects = [
-			#("opendroid-Team",  "enigma2", "opendroid-Team Enigma2", "7.1", "github"),
-			("opendroid-Team", "enigma2", "opendroid-Team Enigma2", "7.3", "github"),
-			("stein17", "Skins-for-openOPD", "stein17 Skins-for-openOPD",   "python3", "github"),
-			#("oe-alliance", "oe-alliance-core", "OE Alliance Core", "5.0", "github"),
-			("oe-alliance", "oe-alliance-core", "OE Alliance Core", "5.3", "github"),
-			("oe-alliance", "oe-alliance-plugins", "OE Alliance Plugins", "master", "github"),
-			("oe-alliance", "enigma2-plugins", "OE Alliance Enigma2 Plugins", "master", "github")
+			("https://api.github.com/repos/opendroid-Team/enigma2/commits" + branch, "7.3", API_GITHUB),
+			("https://api.github.com/repos/oe-alliance/oe-alliance-core/commits" + branch, "5.5", API_GITHUB),
+			("https://api.github.com/repos/oe-alliance/oe-alliance-plugins/commits" + branch, "master", API_GITHUB),
+			("https://api.github.com/repos/oe-alliance/aio-grab/commits", "Aio Grab", API_GITHUB),
+			("https://api.github.com/repos/openpli/enigma2-plugin-extensions-epgimport/commits", "Plugin EPGImport", API_GITHUB),
+			("https://api.github.com/repos/formiano/GlamourAuraSky-skin/commits" + branch, "main", API_GITHUB),
+			("https://api.github.com/repos/oe-alliance/OpenWebif/commits", "OpenWebif", API_GITHUB),
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -1348,58 +1279,43 @@ class CommitInfo(Screen):
 		self.Timer.start(50, True)
 
 	def readGithubCommitLogs(self):
-		if self.projects[self.project][4] == "github":
-			url = 'https://api.github.com/repos/%s/%s/commits?sha=%s' % (self.projects[self.project][0], self.projects[self.project][1], self.projects[self.project][3])
-		if self.projects[self.project][4] == "gitlab":
-			url1 = 'https://gitlab.com/api/v4/projects/%s' % (self.projects[self.project][0])
-			url2 = '%2F'
-			url3 = '%s/repository/commits?ref_name=%s' % (self.projects[self.project][1], self.projects[self.project][3])
-			url = url1 + url2 + url3
+		url = self.projects[self.project][0]
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
 		from urllib.request import urlopen
-		if self.projects[self.project][4] == "github":
+		try:
+			commitlog += 80 * '-' + '\n'
+			commitlog += url.split('/')[-2] + '\n'
+			commitlog += 80 * '-' + '\n'
 			try:
-				commitlog += 80 * '-' + '\n'
-				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
-				commitlog += 'URL: https://github.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
-				commitlog += 80 * '-' + '\n'
-				for c in loads(urlopen(url, timeout=5).read()):
+				# OpenPli 5.0 uses python 2.7.11 and here we need to bypass the certificate check
+				from ssl import _create_unverified_context
+				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+			except:
+				log = loads(urlopen(url, timeout=5).read())
+
+			if self.projects[self.project][2] == API_GITHUB:
+				for c in log:
 					creator = c['commit']['author']['name']
 					title = c['commit']['message']
 					date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
-					if title.startswith("Merge "):
-						pass
-					else:
-						commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
-				commitlog = six.ensure_str(commitlog)
-				self.cachedProjects[self.projects[self.project][2]] = commitlog
-			except:
-				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		if self.projects[self.project][4] == "gitlab":
-			try:
-				commitlog += 80 * '-' + '\n'
-				commitlog += self.projects[self.project][2] + ' - ' + self.projects[self.project][1] + ' - branch ' + self.projects[self.project][3] + '\n'
-				commitlog += 'URL: https://gitlab.com/' + self.projects[self.project][0] + '/' + self.projects[self.project][1] + '/tree/' + self.projects[self.project][3] + '\n'
-				commitlog += 80 * '-' + '\n'
-				for c in loads(urlopen(url, timeout=5).read()):
+					commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
+			elif self.projects[self.project][2] == API_GITLAB:
+				for c in log:
 					creator = c['author_name']
-					title = c['message']
-					date = datetime.strptime(c['committed_date'], '%Y-%m-%dT%H:%M:%S.000+02:00').strftime('%x %X')
-					if title.startswith("Merge "):
-						pass
-					else:
-						commitlog += date + ' ' + creator + '\n' + title + '\n'
-				commitlog = six.ensure_str(commitlog)
-				self.cachedProjects[self.projects[self.project][2]] = commitlog
-			except:
-				commitlog += _("Currently the commit log cannot be retrieved - please try later again")
+					title = c['title']
+					date = datetime.strptime(c['committed_date'], '%Y-%m-%dT%H:%M:%S.000%z').strftime('%x %X')
+					commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
+
+			self.cachedProjects[self.projects[self.project][1]] = commitlog
+		except Exception as e:
+			commitlog += _("Currently the commit log cannot be retrieved - please try later again.")
 		self["AboutScrollLabel"].setText(commitlog)
 
 	def updateCommitLogs(self):
-		if self.projects[self.project][2] in self.cachedProjects:
-			self["AboutScrollLabel"].setText(self.cachedProjects[self.projects[self.project][2]])
+		if self.projects[self.project][1] in self.cachedProjects:
+			self["AboutScrollLabel"].setText(self.cachedProjects[self.projects[self.project][1]])
 		else:
 			self["AboutScrollLabel"].setText(_("Please wait"))
 			self.Timer.start(50, True)
