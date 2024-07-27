@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ 7.3 ]
 
-jobs:
+    jobs:
     build:
     name: Build enigma2
     runs-on: ubuntu-22.04
