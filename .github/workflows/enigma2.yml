@@ -3,7 +3,7 @@ name: enigma2 build
 on:
   push:
     branches: [ 7.3 ]
-  pull_request:
+    pull_request:
     branches: [ 7.3 ]
 
     jobs:
