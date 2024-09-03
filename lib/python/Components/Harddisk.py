@@ -1,5 +1,5 @@
-from __future__ import print_function
-from __future__ import absolute_import
+from os import listdir
+from os.path import exists, ismount, join
 import os
 import time
 from Tools.CList import CList
@@ -32,7 +32,7 @@ def getextdevices(ext):
 
 def getProcMounts():
 	try:
-		mounts = open("/proc/mounts", 'r')
+		mounts = open("/proc/mounts")
 		result = []
 		tmp = [line.strip().split(' ') for line in mounts]
 		mounts.close()
@@ -48,7 +48,7 @@ def getProcMounts():
 
 def isFileSystemSupported(filesystem):
 	try:
-		file = open('/proc/filesystems', 'r')
+		file = open('/proc/filesystems')
 		for fs in file:
 			if fs.strip().endswith(filesystem):
 				file.close()
@@ -190,7 +190,7 @@ class Harddisk:
 			internal = ("pci" or "ahci") in self.phys_path
 
 		if MODEL == 'sf8008':
-			internal = ("usb1/1-1/1-1.1/1-1.1:1.0") in self.phys_path
+			internal = ("usb1/1-1/1-1.1/1-1.1:1.0" in self.phys_path) or ("usb1/1-1/1-1.4/1-1.4:1.0" in self.phys_path)
 
 		if card:
 			ret += type_name
@@ -858,31 +858,25 @@ class HarddiskManager:
 				self.devices_scanned_on_init.append((blockdev, removable, is_cdrom, medium_found))
 
 	def enumerateNetworkMounts(self, refresh=False):
-		print("[Harddisk] enumerating network mounts...")
-		netmount = (os.path.exists('/media/net') and os.listdir('/media/net')) or ""
-		if len(netmount) > 0:
-			for fil in netmount:
-				if os.path.ismount('/media/net/' + fil):
-					print("[Harddisk] new Network Mount", fil, '->', os.path.join('/media/net/', fil))
-					if refresh:
-						self.addMountedPartition(device=os.path.join('/media/net/', fil + '/'), desc=fil)
-					else:
-						self.partitions.append(Partition(mountpoint=os.path.join('/media/net/', fil + '/'), description=fil))
-		autofsmount = (os.path.exists('/media/autofs') and os.listdir('/media/autofs')) or ""
-		if len(autofsmount) > 0:
-			for fil in autofsmount:
-				if os.path.ismount('/media/autofs/' + fil) or os.path.exists('/media/autofs/' + fil):
-					print("[Harddisk] new Network Mount", fil, '->', os.path.join('/media/autofs/', fil))
-					if refresh:
-						self.addMountedPartition(device=os.path.join('/media/autofs/', fil + '/'), desc=fil)
-					else:
-						self.partitions.append(Partition(mountpoint=os.path.join('/media/autofs/', fil + '/'), description=fil))
-		if os.path.ismount('/media/hdd') and '/media/hdd/' not in [p.mountpoint for p in self.partitions]:
-			print("[Harddisk] new Network Mount being used as HDD replacement -> /media/hdd/")
+		print("[Harddisk] Enumerating network mounts...")
+		for mount in ("net", "autofs"):
+			netMounts = (exists(join("/media", mount)) and listdir(join("/media", mount))) or []
+			for netMount in netMounts:
+				path = join("/media", mount, netMount, "")
+				if ismount(path):
+					partition = Partition(mountpoint=path, description=netMount)
+					if str(partition) not in [str(x) for x in self.partitions]:
+						print(f"[Harddisk] New network mount {mount}->{path}.")
+						if refresh:
+							self.addMountedPartition(device=path, desc=netMount)
+						else:
+							self.partitions.append(partition)
+		if ismount("/media/hdd") and "/media/hdd/" not in [x.mountpoint for x in self.partitions]:
+			print("[Harddisk] New network mount being used as HDD replacement -> '/media/hdd/'.")
 			if refresh:
-				self.addMountedPartition(device='/media/hdd/', desc='/media/hdd/')
+				self.addMountedPartition(device="/media/hdd/", desc="/media/hdd/")
 			else:
-				self.partitions.append(Partition(mountpoint='/media/hdd/', description='/media/hdd'))
+				self.partitions.append(Partition(mountpoint="/media/hdd/", description="/media/hdd"))
 
 	def getAutofsMountpoint(self, device):
 		r = self.getMountpoint(device)
@@ -921,8 +915,9 @@ class HarddiskManager:
 			# see if this is a harddrive
 			l = len(device)
 			if l and (not device[l - 1].isdigit() or (device.startswith('mmcblk') and not re.search(r"mmcblk\dp\d+", device))):
-				self.hdd.append(Harddisk(device, removable))
-				self.hdd.sort()
+				if device not in [hdd.device for hdd in self.hdd]:
+					self.hdd.append(Harddisk(device, removable))
+					self.hdd.sort()
 				BoxInfo.setItem("Harddisk", True)
 		return error, blacklisted, removable, is_cdrom, partitions, medium_found
 
@@ -1024,6 +1019,7 @@ class HarddiskManager:
 		return description
 
 	def addMountedPartition(self, device, desc):
+		device = join(device, "")
 		for x in self.partitions:
 			if x.mountpoint == device:
 				#already_mounted
@@ -1033,6 +1029,7 @@ class HarddiskManager:
 		self.on_partition_list_change("add", newpartion)
 
 	def removeMountedPartition(self, mountpoint):
+		mountpoint = join(mountpoint, "")
 		for x in self.partitions[:]:
 			if x.mountpoint == mountpoint:
 				self.partitions.remove(x)
@@ -1060,7 +1057,6 @@ class UnmountTask(Components.Task.LoggingTask):
 	def prepare(self):
 		try:
 			dev = self.hdd.disk_path.split('/')[-1]
-			dev = six.ensure_binary(dev)
 			open('/dev/nomount.%s' % dev, "wb").close()
 		except Exception as e:
 			print("[Harddisk] ERROR: Failed to create /dev/nomount file:", e)

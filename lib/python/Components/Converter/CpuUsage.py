@@ -1,10 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
+from os.path import isfile
 from Components.Converter.Converter import Converter
 from Components.Converter.Poll import Poll
 from Components.Element import cached
-
 
 class CpuUsage(Converter):
 	CPU_ALL = -2
@@ -17,7 +14,7 @@ class CpuUsage(Converter):
 		self.pfmt = "%3d%%"
 		if not type or type == "Total":
 			self.type = self.CPU_TOTAL
-			self.sfmt = "CPU: $0"
+			self.sfmt = "$0"
 		elif len(type) == 1 and type[0].isdigit():
 			self.type = int(type)
 			self.sfmt = "$" + type
@@ -32,9 +29,7 @@ class CpuUsage(Converter):
 					pos = self.sfmt.find("$", pos)
 					if pos == -1:
 						break
-					if pos < len(self.sfmt) - 1 and \
-						self.sfmt[pos + 1].isdigit() and \
-						int(self.sfmt[pos + 1]) > cpus:
+					if pos < len(self.sfmt) - 1 and self.sfmt[pos + 1].isdigit() and int(self.sfmt[pos + 1]) > cpus:
 						self.sfmt = self.sfmt.replace("$" + self.sfmt[pos + 1], "n/a")
 					pos += 1
 
@@ -75,7 +70,7 @@ class CpuUsage(Converter):
 	range = 100
 
 
-class CpuUsageMonitor(Poll, object):
+class CpuUsageMonitor(Poll):
 
 	def __init__(self):
 		Poll.__init__(self)
@@ -88,24 +83,19 @@ class CpuUsageMonitor(Poll, object):
 
 	def getCpusInfo(self):
 		res = []
-		try:
-			print("[CpuUsage] Read /proc/stat")
-			fd = open("/proc/stat", "r")
-			for l in fd:
-				if l.find("cpu") == 0:
-					total = busy = 0
-					# tmp = [cpu, usr, nic, sys, idle, iowait, irq, softirq, steal]
-					tmp = l.split()
-					for i in range(1, len(tmp)):
-						tmp[i] = int(tmp[i])
-						total += tmp[i]
-					# busy = total - idle - iowait
-					busy = total - tmp[4] - tmp[5]
-					# append [cpu, total, busy]
-					res.append([tmp[0], total, busy])
-			fd.close()
-		except:
-			print("[CpuUsage] Read /proc/stat failed.")
+		if isfile(file := "/proc/stat"):
+			with open(file, "r") as fd:
+				for line in fd.readlines():
+					if line.find("cpu") == 0:
+						total = busy = 0
+						# tmp = [cpu, usr, nic, sys, idle, iowait, irq, softirq, steal]
+						tmp = line.split()
+						for i in range(1, len(tmp)):
+							total += int(tmp[i])
+						# busy = total - idle - iowait
+						busy = total - int(tmp[4]) - int(tmp[5])
+						# append [cpu, total, busy]
+						res.append([tmp[0], total, busy])
 		return res
 
 	def poll(self):
@@ -115,7 +105,7 @@ class CpuUsageMonitor(Poll, object):
 			for i in range(len(self.__curr_info)):
 				# xxx% = (cur_xxx - prev_xxx) / (cur_total - prev_total) * 100
 				try:
-					p = 100 * (self.__curr_info[i][2] - prev_info[i][2]) / (self.__curr_info[i][1] - prev_info[i][1])
+					p = 100 * (self.__curr_info[i][2] - prev_info[i][2]) // (self.__curr_info[i][1] - prev_info[i][1])
 				except ZeroDivisionError:
 					p = 0
 				info.append(p)
@@ -123,7 +113,7 @@ class CpuUsageMonitor(Poll, object):
 				f(info)
 
 	def connectCallback(self, func):
-		if not func in self.__callbacks:
+		if func not in self.__callbacks:
 			self.__callbacks.append(func)
 		if not self.poll_enabled:
 			self.poll()

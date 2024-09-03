@@ -43,6 +43,11 @@ and the display skin will not be displayed
 		</widget>
 	</screen>
 
+<!-- Wizard -->
+	<screen name="WizardSummary" position="0,0" size="1,1">
+		<eLabel position="0,0" size="1,1" text=" HI " />
+	</screen>
+
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="1,1">
 		<panel name="MyClockPanel" />

@@ -1,48 +1,54 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
 from Components.config import config
-
-#for scheduler
 from time import mktime, strftime, time, localtime
 from enigma import eTimer
 
-#for downloader
-import os
+from os import path as ospath, remove, walk
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
 import re
-import urllib2
 from enigma import eServiceReference, eDVBDB
 
 autoClientModeTimer = None
 def autostart():
 	global autoClientModeTimer
-	now = int(time())
-	print("[ChannelsImporter] ClientModeScheduler ClientModeautostart AutoStart Enabled")
+	print("[ClientModeScheduler][ClientModeautostart] AutoStart Enabled")
 	if autoClientModeTimer is None:
 		autoClientModeTimer = AutoClientModeTimer()
 
+
+def getRemoteAddress():
+	if config.clientmode.serverAddressType.value == "ip":
+		return "%d.%d.%d.%d" % (config.clientmode.serverIP.value[0], config.clientmode.serverIP.value[1], config.clientmode.serverIP.value[2], config.clientmode.serverIP.value[3])
+	else:
+		return config.clientmode.serverDomain.value
+
+
 class AutoClientModeTimer:
 	instance = None
+
 	def __init__(self):
 		self.clientmodetimer = eTimer()
 		self.clientmodetimer.callback.append(self.ClientModeonTimer)
+		self.autostartscantimer = eTimer()
+		self.autostartscantimer.callback.append(self.doautostartscan)
 		self.clientmodeactivityTimer = eTimer()
 		self.clientmodeactivityTimer.timeout.get().append(self.clientmodedatedelay)
 		now = int(time())
+		self.attempts = 0
 		self.doautostartscan() # import at boot time
 
 		global ClientModeTime
 		if config.clientmode.enableSchedule.value:
-			print("[ChannelsImporter] ClientModeScheduler AutoClientModeTimer Schedule Enabled at ", strftime("%c", localtime(now)))
+			print("[ClientModeScheduler][AutoClientModeTimer] Schedule Enabled at ", strftime("%c", localtime(now)))
 			if now > 1262304000:
 				self.clientmodedate()
 			else:
-				print("[ChannelsImporter] ClientModeScheduler AutoClientModeTimer Time not yet set.")
+				print("[ClientModeScheduler][AutoClientModeTimer] Time not yet set.")
 				ClientModeTime = 0
 				self.clientmodeactivityTimer.start(36000)
 		else:
 			ClientModeTime = 0
-			print("[ChannelsImporter] ClientModeScheduler AutoClientModeTimer Schedule Disabled at", strftime("%c", localtime(now)))
+			print("[ClientModeScheduler][AutoClientModeTimer] Schedule Disabled at", strftime("%c", localtime(now)))
 			self.clientmodeactivityTimer.stop()
 
 		assert AutoClientModeTimer.instance is None, "class AutoClientModeTimer is a singleton class and just one instance of this class is allowed!"
@@ -91,7 +97,7 @@ class AutoClientModeTimer:
 			self.clientmodetimer.startLongTimer(next)
 		else:
 			ClientModeTime = -1
-		print("[ChannelsImporter] ClientModeScheduler clientmodedate Time set to", strftime("%c", localtime(ClientModeTime)), strftime("(now=%c)", localtime(now)))
+		print("[ClientModeScheduler][clientmodedate] Time set to", strftime("%c", localtime(ClientModeTime)), strftime("(now=%c)", localtime(now)))
 		return ClientModeTime
 
 	def backupstop(self):
@@ -105,41 +111,63 @@ class AutoClientModeTimer:
 		atLeast = 0
 		if wake - now < 60:
 			atLeast = 60
-			print("[ChannelsImporter] ClientModeScheduler ClientModeonTimer onTimer occurred at", strftime("%c", localtime(now)))
+			print("[ClientModeScheduler][ClientModeonTimer] onTimer occured at", strftime("%c", localtime(now)))
 			self.doClientMode(True)
 		self.clientmodedate(atLeast)
 
 	def doClientMode(self, answer):
+		self.autostartscantimer.stop()
+		self.attempts = 0
 		now = int(time())
-		self.timer = eTimer()
-		self.timer.callback.append(self.doautostartscan)
-		print("[ChannelsImporter] ClientModeScheduler doClientMode Running ClientMode", strftime("%c", localtime(now)))
-		self.timer.start(100, 1)
+		print("[ClientModeScheduler][doClientMode] Running ClientMode", strftime("%c", localtime(now)))
+		self.autostartscantimer.start(100, 1)
 
 	def doautostartscan(self):
-		ChannelsImporter()
+		self.autostartscantimer.stop()
+		if self.checkFTPconnection():
+			self.attempts = 0
+			ChannelsImporter()
+		else:
+			if self.attempts < 5:
+				print("[ChannelsImporter] attempt %d failed. Retrying..." % (self.attempts + 1,))
+				self.autostartscantimer.startLongTimer(10)
+			self.attempts += 1
+
+	def checkFTPconnection(self):
+		print("[ChannelsImporter][checkFTPconnection] Testing FTP connection...")
+		try:
+			from ftplib import FTP
+			ftp = FTP()
+			ftp.set_pasv(config.clientmode.passive.value)
+			ftp.connect(host=getRemoteAddress(), port=config.clientmode.serverFTPPort.value, timeout=5)
+			result = ftp.login(user=config.clientmode.serverFTPusername.value, passwd=config.clientmode.serverFTPpassword.value)
+			ftp.quit()
+			if result.startswith("230"):
+				print("[ChannelsImporter][checkFTPconnection] FTP connection success:", result)
+				return True
+			print("[ChannelsImporter][checkFTPconnection] FTP connection failure:", result)
+			return False
+		except Exception as err:
+			print("[ChannelsImporter][checkFTPconnection] Error:", err)
+			return False
 
 	def doneConfiguring(self):
 		now = int(time())
 		if config.clientmode.enableSchedule.value:
 			if autoClientModeTimer is not None:
-				print("[ChannelsImporter] ClientModeScheduler doneConfiguring Schedule Enabled at", strftime("%c", localtime(now)))
+				print("[ClientModeScheduler][doneConfiguring] Schedule Enabled at", strftime("%c", localtime(now)))
 				autoClientModeTimer.clientmodedate()
 		else:
 			if autoClientModeTimer is not None:
 				global ClientModeTime
 				ClientModeTime = 0
-				print("[ChannelsImporter] ClientModeScheduler doneConfiguring Schedule Disabled at", strftime("%c", localtime(now)))
+				print("[ClientModeScheduler][doneConfiguring] Schedule Disabled at", strftime("%c", localtime(now)))
 				autoClientModeTimer.backupstop()
-		if ClientModeTime > 0:
-			t = localtime(ClientModeTime)
-			clientmodetext = strftime(_("%a %e %b  %-H:%M"), t)
-		else:
-			clientmodetext = ""
 
 class ChannelsImporter():
-	DIR_ENIGMA2 = '/etc/enigma2/'
-	DIR_TMP = '/tmp/'
+	DIR_ENIGMA2 = "/etc/enigma2/"
+	DIR_TMP = "/tmp/"
+
 	def __init__(self):
 		self.fetchRemoteBouquets()
 
@@ -147,25 +175,25 @@ class ChannelsImporter():
 		print("[ChannelsImporter] Fetch bouquets.tv and bouquets.radio")
 		self.readIndex = 0
 		self.workList = []
-		self.workList.append('bouquets.tv')
-		self.workList.append('bouquets.radio')
-		print("[ChannelsImporter] fetchRemoteBouquets Downloading channel indexes...")
-		print("[ChannelsImporter] fetchRemoteBouquets %d/%d" % (self.readIndex + 1, len(self.workList)))
+		self.workList.append("bouquets.tv")
+		self.workList.append("bouquets.radio")
+		print("[ChannelsImporter][fetchRemoteBouquets] Downloading channel indexes...")
+		print("[ChannelsImporter][fetchRemoteBouquets] %d/%d" % (self.readIndex + 1, len(self.workList)))
 		result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.workList[self.readIndex], self.workList[self.readIndex])
 		if result:
 			self.fetchRemoteBouquetsCallback()
 		else:
-			print("[ChannelsImporter] fetchRemoteBouquets Error fetching. Stopping script.")
+			print("[ChannelsImporter][fetchRemoteBouquets] Error fetching. Stopping script.")
 
 	def fetchRemoteBouquetsCallback(self):
 		self.readIndex += 1
 		if self.readIndex < len(self.workList):
-			print("[ChannelsImporter] fetchRemoteBouquetsCallback %d/%d" % (self.readIndex + 1, len(self.workList)))
+			print("[ChannelsImporter][fetchRemoteBouquetsCallback] %d/%d" % (self.readIndex + 1, len(self.workList)))
 			result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.workList[self.readIndex], self.workList[self.readIndex])
 			if result:
 				self.fetchRemoteBouquetsCallback()
 			else:
-				print("[ChannelsImporter] fetchRemoteBouquetsCallback Error fetching. Stopping script.")
+				print("[ChannelsImporter][fetchRemoteBouquetsCallback] Error fetching. Stopping script.")
 		else:
 			self.readBouquets()
 
@@ -182,80 +210,80 @@ class ChannelsImporter():
 
 	def readBouquets(self):
 		bouquetFilenameList = []
-		self.getBouquetsList(bouquetFilenameList, self.DIR_TMP + 'bouquets.tv')
-		self.getBouquetsList(bouquetFilenameList, self.DIR_TMP + 'bouquets.radio')
+		self.getBouquetsList(bouquetFilenameList, self.DIR_TMP + "bouquets.tv")
+		self.getBouquetsList(bouquetFilenameList, self.DIR_TMP + "bouquets.radio")
 		self.readIndex = 0
 		self.workList = []
 		for listindex in range(len(bouquetFilenameList)):
 			self.workList.append(bouquetFilenameList[listindex])
-		self.workList.append('lamedb')
-		print("[ChannelsImporter] readBouquets Downloading bouquets...")
-		print("[ChannelsImporter] readBouquets %d/%d" % (self.readIndex + 1, len(self.workList)))
+		self.workList.append("lamedb")
+		print("[ChannelsImporter][readBouquets] Downloading bouquets...")
+		print("[ChannelsImporter][readBouquets] %d/%d" % (self.readIndex + 1, len(self.workList)))
 		result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.workList[self.readIndex], self.workList[self.readIndex])
 		if result:
 			self.readBouquetsCallback()
 		else:
-			print("[ChannelsImporter] readBouquets Error fetching. Stopping script.")
+			print("[ChannelsImporter][readBouquets] Error fetching. Stopping script.")
 
 	def readBouquetsCallback(self):
 		self.readIndex += 1
 		if self.readIndex < len(self.workList):
-			print("[ChannelsImporter] readBouquetsCallback %d/%d" % (self.readIndex + 1, len(self.workList)))
+			print("[ChannelsImporter][readBouquetsCallback] %d/%d" % (self.readIndex + 1, len(self.workList)))
 			result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.workList[self.readIndex], self.workList[self.readIndex])
 			if result:
 				self.readBouquetsCallback()
 			else:
-				print("[ChannelsImporter] readBouquetsCallback Error fetching. Stopping script.")
+				print("[ChannelsImporter][readBouquetsCallback] Error fetching. Stopping script.")
 		elif len(self.workList) > 0:
 			# Download alternatives files where services have alternatives
-			print("[ChannelsImporter] readBouquetsCallback Checking for alternatives...")
+			print("[ChannelsImporter][readBouquetsCallback] Checking for alternatives...")
 			self.findAlternatives()
 			self.alternativesCounter = 0
 			if len(self.alternatives) > 0:
-				print("[ChannelsImporter] readBouquetsCallback Downloading alternatives...")
-				print("[ChannelsImporter] readBouquetsCallback %d/%d" % (self.alternativesCounter + 1, len(self.alternatives)))
+				print("[ChannelsImporter][readBouquetsCallback] Downloading alternatives...")
+				print("[ChannelsImporter][readBouquetsCallback] %d/%d" % (self.alternativesCounter + 1, len(self.alternatives)))
 				result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.alternatives[self.alternativesCounter], self.alternatives[self.alternativesCounter])
 				if result:
 					self.downloadAlternativesCallback()
 				else:
-					print("[ChannelsImporter] readBouquetsCallback Error fetching. Stopping script.")
+					print("[ChannelsImporter][readBouquetsCallback] Error fetching. Stopping script.")
 					return
 			self.processFiles()
 		else:
-			print("[ChannelsImporter] readBouquetsCallback There were no remote bouquets to download")
+			print("[ChannelsImporter][readBouquetsCallback] There were no remote bouquets to download")
 
 	def downloadAlternativesCallback(self):
 		self.alternativesCounter += 1
 		if self.alternativesCounter < len(self.alternatives):
-			print("[ChannelsImporter] downloadAlternativesCallback %d/%d" % (self.alternativesCounter + 1, len(self.alternatives)))
+			print("[ChannelsImporter][downloadAlternativesCallback] %d/%d" % (self.alternativesCounter + 1, len(self.alternatives)))
 			result = self.FTPdownloadFile(self.DIR_ENIGMA2, self.alternatives[self.alternativesCounter], self.alternatives[self.alternativesCounter])
 			if result:
 				self.downloadAlternativesCallback()
 
 	def processFiles(self):
 		allFiles = self.workList + self.alternatives + ["bouquets.tv", "bouquets.radio"]
-		print("[ChannelsImporter] processFiles Removing current channel list...")
+		print("[ChannelsImporter][processFiles] Removing current channel list...")
 		for target in ["lamedb", "bouquets.", "userbouquet."]:
 			self.removeFiles(self.DIR_ENIGMA2, target)
-		print("[ChannelsImporter] processFiles Loading new channel list...")
+		print("[ChannelsImporter][processFiles] Loading new channel list...")
 		for filename in allFiles:
 			self.copyFile(self.DIR_TMP + filename, self.DIR_ENIGMA2 + filename)
 			self.removeFiles(self.DIR_TMP, filename)
 		db = eDVBDB.getInstance()
 		db.reloadServicelist()
 		db.reloadBouquets()
-		print("[ChannelsImporter] processFiles New channel list loaded.")
+		print("[ChannelsImporter][processFiles] New channel list loaded.")
 		self.checkEPG()
 
 	def checkEPG(self):
-		print("[ChannelsImporter] checkEPG Force EPG save on remote receiver...")
+		print("[ChannelsImporter][checkEPG] Force EPG save on remote receiver...")
 		self.forceSaveEPGonRemoteReceiver()
-		print("[ChannelsImporter] checkEPG Searching for epg.dat...")
+		print("[ChannelsImporter][checkEPG] Searching for epg.dat...")
 		result = self.FTPdownloadFile(self.DIR_ENIGMA2, "settings", "settings")
 		if result:
 			self.checkEPGCallback()
 		else:
-			print("[ChannelsImporter] checkEPG Error fetching 'settings' file. Stopping script.")
+			print("[ChannelsImporter][checkEPG] Error fetching 'settings' file. Stopping script.")
 
 	def checkEPGCallback(self):
 		file = open(self.DIR_TMP + "settings")
@@ -263,20 +291,25 @@ class ChannelsImporter():
 		file.close()
 		self.remoteEPGpath = self.DIR_ENIGMA2
 		self.remoteEPGfile = "epg"
-		self.remoteEPGfile = "%s.dat" % self.remoteEPGfile.replace('.dat', '')
+		for line in lines:
+			if "config.misc.epgcachepath" in line:
+				self.remoteEPGpath = line.strip().split("=")[1]
+			if "config.misc.epgcachefilename" in line:
+				self.remoteEPGfile = "%s" % line.strip().split("=")[1]
+		self.remoteEPGfile = "%s.dat" % self.remoteEPGfile.replace(".dat", "")
 		print("[ChannelsImporter] Remote EPG filename. '%s%s'" % (self.remoteEPGpath, self.remoteEPGfile))
 		self.removeFiles(self.DIR_TMP, "settings")
 		result = self.FTPdownloadFile(self.remoteEPGpath, self.remoteEPGfile, "epg.dat")
 		if result:
 			self.importEPGCallback()
 		else:
-			print("[ChannelsImporter] checkEPGCallback Download epg.dat from remote receiver failed. Check file exists on remote receiver.")
+			print("[ChannelsImporter][checkEPGCallback] Download epg.dat from remote receiver failed. Check file exists on remote receiver.")
 
 	def importEPGCallback(self):
-		print("[ChannelsImporter] importEPGCallback '%s%s' downloaded successfully. " % (self.remoteEPGpath, self.remoteEPGfile))
-		print("[ChannelsImporter] importEPGCallback Removing current EPG data...")
+		print("[ChannelsImporter][importEPGCallback] '%s%s' downloaded successfully. " % (self.remoteEPGpath, self.remoteEPGfile))
+		print("[ChannelsImporter][importEPGCallback] Removing current EPG data...")
 		try:
-			os.remove(config.misc.epgcache_filename.value)
+			remove(config.misc.epgcache_filename.value)
 		except OSError:
 			pass
 		self.copyFile(self.DIR_TMP + "epg.dat", config.misc.epgcache_filename.value)
@@ -284,8 +317,8 @@ class ChannelsImporter():
 		from enigma import eEPGCache
 		epgcache = eEPGCache.getInstance()
 		epgcache.load()
-		print("[ChannelsImporter] importEPGCallback New EPG data loaded...")
-		print("[ChannelsImporter] importEPGCallback Closing importer.")
+		print("[ChannelsImporter][importEPGCallback] New EPG data loaded...")
+		print("[ChannelsImporter][importEPGCallback] Closing importer.")
 
 	def findAlternatives(self):
 		print("[ChannelsImporter] Checking for alternatives")
@@ -293,9 +326,11 @@ class ChannelsImporter():
 		for filename in self.workList:
 			if filename != "lamedb":
 				try:
-					lines = open(self.DIR_TMP + filename).readlines()
+					fp = open(self.DIR_TMP + filename)
+					lines = fp.readlines()
+					fp.close()
 					for line in lines:
-						if '#SERVICE' in line and int(line.split()[1].split(":")[1]) & eServiceReference.mustDescent:
+						if "#SERVICE" in line and int(line.split()[1].split(":")[1]) & eServiceReference.mustDescent:
 							result = re.match("^.*FROM BOUQUET \"(.+)\" ORDER BY.*$", line) or re.match("[#]SERVICE[:] (?:[0-9a-f]+[:])+([^:]+[.](?:tv|radio))$", line, re.IGNORECASE)
 							if result is None:
 								continue
@@ -305,20 +340,17 @@ class ChannelsImporter():
 
 	def removeFiles(self, targetdir, target):
 		targetLen = len(target)
-		for root, dirs, files in os.walk(targetdir):
+		for root, dirs, files in walk(targetdir):
 			for name in files:
 				if target in name[:targetLen]:
-					os.remove(os.path.join(root, name))
+					remove(ospath.join(root, name))
 
 	def copyFile(self, source, dest):
 		import shutil
 		shutil.copy2(source, dest)
 
 	def getRemoteAddress(self):
-		if config.clientmode.serverAddressType.value == "ip":
-			return '%d.%d.%d.%d' % (config.clientmode.serverIP.value[0], config.clientmode.serverIP.value[1], config.clientmode.serverIP.value[2], config.clientmode.serverIP.value[3])
-		else:
-			return config.clientmode.serverDomain.value
+		return getRemoteAddress()
 
 	def FTPdownloadFile(self, sourcefolder, sourcefile, destfile):
 		print("[ChannelsImporter] Downloading remote file '%s'" % sourcefile)
@@ -329,29 +361,27 @@ class ChannelsImporter():
 			ftp.connect(host=self.getRemoteAddress(), port=config.clientmode.serverFTPPort.value, timeout=5)
 			ftp.login(user=config.clientmode.serverFTPusername.value, passwd=config.clientmode.serverFTPpassword.value)
 			ftp.cwd(sourcefolder)
-			with open(self.DIR_TMP + destfile, 'wb') as f:
-				result = ftp.retrbinary('RETR %s' % sourcefile, f.write)
+			with open(self.DIR_TMP + destfile, "wb") as f:
+				result = ftp.retrbinary("RETR %s" % sourcefile, f.write)
 				ftp.quit()
 				f.close()
 				if result.startswith("226"):
 					return True
 			return False
 		except Exception as err:
-			print("[ChannelsImporter] FTPdownloadFile Error:", err)
+			print("[ChannelsImporter][FTPdownloadFile] Error:", err)
 			return False
 
 	def forceSaveEPGonRemoteReceiver(self):
 		url = "http://%s/api/saveepg" % self.getRemoteAddress()
-		print('[ChannelsImporter] saveEPGonRemoteReceiver URL: %s' % url)
+		print("[ChannelsImporter][saveEPGonRemoteReceiver] URL: %s" % url)
 		try:
-			req = urllib2.Request(url)
-			response = urllib2.urlopen(req)
-			print('[ChannelsImporter] saveEPGonRemoteReceiver Response: %d, %s' % (response.getcode(), response.read().strip().replace("\r", "").replace("\n", "")))
-		except urllib2.HTTPError as err:
-			print('[ChannelsImporter] saveEPGonRemoteReceiver ERROR:', err)
-		except urllib2.URLError as err:
-			print('[ChannelsImporter] saveEPGonRemoteReceiver ERROR:', err.reason[0])
-		except urllib2 as err:
-			print('[ChannelsImporter] saveEPGonRemoteReceiver ERROR:', err)
+			req = Request(url)
+			response = urlopen(req)
+			print("[ChannelsImporter][saveEPGonRemoteReceiver] Response: %d, %s" % (response.getcode(), response.read().decode().strip().replace("\r", "").replace("\n", "")))
+		except HTTPError as err:
+			print("[ChannelsImporter][saveEPGonRemoteReceiver] ERROR:", err)
+		except URLError as err:
+			print("[ChannelsImporter][saveEPGonRemoteReceiver] ERROR:", err.reason)
 		except:
-			print('[ChannelsImporter] saveEPGonRemoteReceiver undefined error')
+			print("[ChannelsImporter][saveEPGonRemoteReceiver] undefined error")

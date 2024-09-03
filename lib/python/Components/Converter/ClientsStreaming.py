@@ -79,11 +79,11 @@ class ClientsStreaming(Converter, Poll):
 			ips.append((ip))
 
 			if int(x[2]) == 0:
-				strtype = "S"
-				encoder = _('No')
+				strtype = "Streaming: "
+				encoder = _('NO')
 			else:
-				strtype = "T"
-				encoder = _('Yes')
+				strtype = "Transcoding: "
+				encoder = _('YES')
 
 			encoders.append((encoder))
 
@@ -97,7 +97,7 @@ class ClientsStreaming(Converter, Poll):
 				if self.type == self.INFO_RESOLVE_SHORT:
 					ip, sep, tail = ip.partition('.')
 
-			info += ("%s %-8s %s\n") % (strtype, ip, service_name)
+			info += ("%s  %-8s  %s\n") % (strtype, ip, service_name)
 
 			clients.append((ip, service_name, encoder))
 
@@ -116,7 +116,7 @@ class ClientsStreaming(Converter, Poll):
 		elif self.type == self.EXTRA_INFO:
 			return extrainfo
 		elif self.type == self.SHORT_ALL:
-			return _("Total clients streaming: %d ( %s )") % (len(clients), ' '.join(names))
+			return _("Total clients streaming: %d (%s)") % (len(clients), ' '.join(names))
 		elif self.type == self.ALL:
 			return '\n'.join(' '.join(elems) for elems in clients)
 		elif self.type == self.INFO or self.type == self.INFO_RESOLVE or self.type == self.INFO_RESOLVE_SHORT:
@@ -124,8 +124,9 @@ class ClientsStreaming(Converter, Poll):
 		elif self.type == self.DATA:
 			return clients
 		else:
-			return "(unknown)"
+			return _("(unknown)")
 
+		return ""
 
 	text = property(getText)
 
