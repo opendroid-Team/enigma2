@@ -91,9 +91,10 @@ class CamControl:
 		if self.deamonSocket:
 			self.deamonSocket.close()
 		if self.deamonSocket.fileno() == -1:
-			self.callback()
-			print("Callback:", self.callback)
-			print("Type:", type(self.callback))
+			if callable(self.callback):
+				self.callback()
+			else:
+				print(f"Warning: Attempted to call a non-callable callback: {self.callback}")
 
 
 class CamSetupCommon(Setup):
