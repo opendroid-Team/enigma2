@@ -1116,9 +1116,8 @@ msgstr "%d.%m"
 msgid "%d.%m.%Y"
 msgstr "%d.%m.%Y"
 
-#, fuzzy
 msgid "%d.%m.%Y - %H:%M:%S"
-msgstr "%-H:%M:%S"
+msgstr "%d.%m.%Y - %H:%M:%S"
 
 msgid "%d/%-m"
 msgstr "%d/%-m"
@@ -1230,13 +1229,13 @@ msgstr "%s (%s)\n"
 msgid "%s GHz"
 msgstr "%s GHz"
 
-#, fuzzy, python-format
+#, python-format
 msgid "%s Info - Configuration"
-msgstr "Configurazione Sintonizzatore"
+msgstr "%s Informazioni - Configurazione"
 
-#, fuzzy, python-format
+#, python-format
 msgid "%s Info - Main Menu"
-msgstr "OScam Info -Menù principale"
+msgstr "%s Informazioni - Menu principale"
 
 #, python-format
 msgid "%s KSymb/s"
@@ -1265,7 +1264,7 @@ msgstr "%s è disinstallato"
 #. TRANSLATORS: The satellite with name '%s' is no longer used after a configuration change. The user is asked whether or not the satellite should be deleted.
 #, python-format
 msgid "%s is no longer used. Should it be deleted?"
-msgstr "%s non è più utilizzato. Vuoi eliminarlo?"
+msgstr "%s non è più usato. Vuoi eliminarlo?"
 
 #, python-format
 msgid "%s long"
@@ -1275,9 +1274,9 @@ msgstr "%s lunga"
 msgid "%s not available."
 msgstr "%s non disponibile."
 
-#, fuzzy, python-format
+#, python-format
 msgid "%s webif disabled"
-msgstr "OScam webif disabilitato"
+msgstr "%s webif disabilitato"
 
 #, python-format
 msgid "%s%d min"
@@ -1354,9 +1353,8 @@ msgstr "Decodifica & registra ECM: decodificare in seguito se la decodifica sull
 msgid "'required' is an invalid argument for positionals"
 msgstr "'necessario' è un argomento non valido per i posizionali"
 
-#, fuzzy
 msgid "(All readers)"
-msgstr "(Tutti i reader)"
+msgstr "(Tutti i lettori)"
 
 #, python-format
 msgid "(Attention: There will be a restart after %d crashes.)"
@@ -1371,9 +1369,9 @@ msgstr "(PiP)"
 msgid "(Radio)"
 msgstr "(Radio)"
 
-#, fuzzy, python-format
+#, python-format
 msgid "(Show only reader) (%s)"
-msgstr "(Mostra solo il reader:"
+msgstr "(Mostra solo lettore) (%s)"
 
 msgid "(TV)"
 msgstr "(TV)"
@@ -1387,9 +1385,8 @@ msgstr "(vuoto)"
 msgid "(show optional DVD audio menu)"
 msgstr "(Mostra il menu opzionale DVD audio)"
 
-#, fuzzy
 msgid "(unknown)"
-msgstr "sconosciuto"
+msgstr "(sconosciuto)"
 
 msgid "* = Restart Required"
 msgstr "* = Riavvio richiesto"
@@ -1547,7 +1544,7 @@ msgid "1536 Mb"
 msgstr "1536 Mb"
 
 msgid "16:10"
-msgstr ""
+msgstr "16:10"
 
 msgid "16:10 Letterbox"
 msgstr "16:10 Letterbox"
@@ -1593,19 +1590,19 @@ msgid "2048 Mb"
 msgstr "2048 Mb"
 
 msgid "2160p 24Hz"
-msgstr ""
+msgstr "2160p 24Hz"
 
 msgid "2160p 25Hz"
-msgstr ""
+msgstr "2160p 25Hz"
 
 msgid "2160p 30Hz"
-msgstr ""
+msgstr "2160p 30Hz"
 
 msgid "2160p 50Hz"
-msgstr ""
+msgstr "2160p 50Hz"
 
 msgid "2160p 60Hz"
-msgstr ""
+msgstr "2160p 60Hz"
 
 msgid "2160p50: 24p/50p/60p"
 msgstr ""
@@ -2291,7 +2288,7 @@ msgid "Add highlighted directory to bookmarks"
 msgstr "Aggiungi cartella selezionata ai segnalibri"
 
 msgid "Add legacy LEFT/RIGHT actions"
-msgstr "Aggiungi azioni SIN/DES legacy"
+msgstr "Aggiungi azioni SIN/DES compatibili"
 
 msgid "Add more slots"
 msgstr "Aggiungi più slot"
@@ -2326,9 +2323,8 @@ msgstr "Aggiungi servizio selezionato al bouquet o come alternativa"
 msgid "Add service"
 msgstr "Aggiungi servizio"
 
-#, fuzzy
 msgid "Add service to AutoCam"
-msgstr "Aggiungi servizio al bouquet"
+msgstr "Aggiungi servizio ad AutoCam"
 
 msgid "Add services to this bouquet?"
 msgstr "Aggiungere servizi a questo bouquet?"
@@ -2337,7 +2333,7 @@ msgid "Add the current directory as a bookmark"
 msgstr "Aggiungi cartella attuale come segnalibro"
 
 msgid "Add the current service to the Volume Offsets list"
-msgstr "Aggiungi il servizio corrente all'elenco dei set con volume disattivato"
+msgstr "Aggiungi servizio attuale all'elenco offset volume"
 
 msgid "Add title"
 msgstr "Aggiungi titolo"
@@ -2508,9 +2504,8 @@ msgstr "Tutti i satelliti 4 (USALS)"
 msgid "All services provider"
 msgstr "Tutti i fornitori di servizi"
 
-#, fuzzy
 msgid "All slots"
-msgstr "Tutti i file"
+msgstr "Tutti gli slot"
 
 msgid "All supported"
 msgstr "Tutto supportato"
@@ -2575,7 +2570,6 @@ msgstr "Consente di impostare la dimensione massima del registro di debug (MB). 
 msgid "Allows you to show/hide Log Manager in extensions (BLUE button)."
 msgstr "Consente di mostrare/nascondere Log Manager nelle estensioni (tasto BLU)."
 
-#, fuzzy
 msgid "Allows you to show/hide OScam/CCcam in the Extension Menu screen (BLUE button)."
 msgstr "Consente di mostrare/nascondere OScam nelle estensioni (tasto BLU)."
 
@@ -3035,20 +3029,17 @@ msgstr "Timeout automatico:"
 msgid "Auto video mode selected"
 msgstr "Modalità video automatica selezionata"
 
-#, fuzzy
 msgid "Auto video mode selected for the TV."
-msgstr "Modalità video automatica selezionata"
+msgstr "Modalità video automatica selezionata per la TV."
 
 msgid "Auto(not available)"
 msgstr "Automatico (non disponibile)"
 
-#, fuzzy
 msgid "AutoCam Settings"
-msgstr "Impostazioni audio"
+msgstr "Impostazioni AutoCam"
 
-#, fuzzy
 msgid "AutoCam Setup Actions"
-msgstr "Azioni di configurazione comuni"
+msgstr "Azioni di impostazione AutoCam"
 
 msgid "AutoMountManager"
 msgstr "Gestore di montaggio automatico"
@@ -3083,9 +3074,8 @@ msgstr "Attiva automaticamente i sottotitoli esterni"
 msgid "Automatically update Client/Server View"
 msgstr "Aggiorna automaticamente la vista client/server"
 
-#, fuzzy
 msgid "Automatically update Client/Server View?"
-msgstr "Aggiorna automaticamente la vista client/server"
+msgstr "Aggiornare automaticamente la vista client/server?"
 
 msgid "Autostart"
 msgstr "Avvio automatico"
@@ -3723,9 +3713,8 @@ msgstr "CAMBIA BOUQUET"
 msgid "CHANNEL +/-"
 msgstr "CANALE +/-"
 
-#, fuzzy, python-format
 msgid "CI %s enabled"
-msgstr "CI abilitato"
+msgstr "CI %s abilitato"
 
 msgid "CI (Common Interface) Setup"
 msgstr "Configurazione Common Interface"
@@ -4017,9 +4006,8 @@ msgstr "Capacità"
 msgid "Cape Verde"
 msgstr "Capo Verde"
 
-#, fuzzy
 msgid "Card info (CCcam-Reader)"
-msgstr "Info schede (CCcam-Reader)"
+msgstr "Informazioni sulla carta (lettore CCcam)"
 
 msgid "Cardreader found automatically"
 msgstr "Cardreader trovato automaticamente"
@@ -4036,9 +4024,8 @@ msgstr "Schede: 0"
 msgid "Cardserial"
 msgstr "Seriale scheda"
 
-#, fuzzy
 msgid "Cardserver Settings"
-msgstr "Configurazione DNS"
+msgstr "Impostazioni Cardserver"
 
 msgid "Cartoon"
 msgstr "Cartoni animati"
@@ -4165,9 +4152,8 @@ msgstr "Azioni menu contestuale elenco canali"
 msgid "Channel List Context Menu Navigation Actions"
 msgstr "Azioni navigazione menu contestuale elenco canali"
 
-#, fuzzy
 msgid "Channel Name"
-msgstr "Nome canale"
+msgstr "Nome del canale"
 
 msgid "Channel Selection"
 msgstr "Selezione canale"
@@ -4339,7 +4325,6 @@ msgstr "Scelta Filesystem."
 msgid "Choice where to put \"%s\""
 msgstr "Scegli dove mettere \"%s\""
 
-#, fuzzy
 msgid "Choose CCcam-Reader"
 msgstr "Scegli CCcam-Reader"
 
@@ -4355,9 +4340,8 @@ msgstr "Scegli uno schema nazionale per la decodifica delle informazioni sulla v
 msgid "Choose how much EPG history, if any, to keep in the EPG cache. This historic data can be browsed in any of the EPG views. This can be useful when you need information about an event which has recently finished."
 msgstr "Scegli quanta cronologia EPG, se presente, conservare nella cache EPG. Questi dati storici possono essere sfogliati in qualsiasi vista EPG. Questo può essere utile quando hai bisogno di informazioni su un evento che è terminato di recente."
 
-#, fuzzy
 msgid "Choose reader"
-msgstr "Seleziona reader"
+msgstr "Scegli reader"
 
 msgid "Choose the amount of additional slots."
 msgstr "Scegli il numero di slot aggiuntivi."
@@ -4515,9 +4499,9 @@ msgstr "Pulisci configurazione memoria"
 msgid "Click the button on your remote you want to change."
 msgstr "Fai clic sul tasto del telecomando che desideri modificare."
 
-#, fuzzy, python-format
+#, python-format
 msgid "Client %s-%s"
-msgstr "Clienti"
+msgstr "Client %s-%s"
 
 msgid "Client Mode setup"
 msgstr "Configurazione della modalità client"
@@ -5318,7 +5302,6 @@ msgstr "Crea una password generata casualmente"
 msgid "Create a symbolic link"
 msgstr "Crea un collegamento simbolico"
 
-#, fuzzy
 msgid "Create directory"
 msgstr "Crea una cartella"
 
@@ -5443,7 +5426,7 @@ msgstr ""
 "Superiore: %s"
 
 msgid "Currently Defined Volume Offsets:"
-msgstr "Imposta volume spento attualmente definito:"
+msgstr "Offset del volume attualmente definito:"
 
 #, fuzzy
 msgid "Currently the commit log cannot be retrieved - please try later again."
@@ -5548,10 +5531,10 @@ msgid "DUAL LAYER DVD"
 msgstr "DVD A DOPPIO STRATO"
 
 msgid "DVB CI Delay"
-msgstr ""
+msgstr "Ritardo DVB CI"
 
 msgid "DVB Subtitles PID & lang"
-msgstr "Sottotitoli DVB PID & lang"
+msgstr "PID e lingua dei sottotitoli DVB"
 
 msgid "DVB subtitle black transparency"
 msgstr "Sottotitoli DVB trasparenza nero"
@@ -5834,9 +5817,8 @@ msgstr "Tipo di registrazione predefinita"
 msgid "Default video mode selected"
 msgstr "Modalità video predefinita selezionata"
 
-#, fuzzy
 msgid "Default video mode selected for the TV."
-msgstr "Modalità video predefinita selezionata"
+msgstr "Modalità video predefinita selezionata per la TV."
 
 msgid "Default volume offset"
 msgstr "Volume predefinito disattivato"
@@ -6315,7 +6297,7 @@ msgid "Display >16:9 content as"
 msgstr "Mostra contenuti > di 16:9 come"
 
 msgid "Display Settings"
-msgstr "Impostazioni visualizzazione"
+msgstr "Visualizza impostazioni"
 
 msgid "Display context menu"
 msgstr "Visualizza menu contestuale"
@@ -6445,7 +6427,7 @@ msgstr ""
 "Tutti i dati sul dispositivo andranno persi!"
 
 msgid "Do you really want to move to trashcan ?"
-msgstr "Vuoi davvero spostare nel cestino?"
+msgstr "Vuoi davvero spostarlo nel cestino?"
 
 #, python-format
 msgid "Do you really want to permanently remove '%s' from trash can ?"
