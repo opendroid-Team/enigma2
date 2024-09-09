@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Opendroid Enigma2 Official Greek Translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-17 16:54+0200\n"
+"POT-Creation-Date: 2024-09-10 00:15+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: OPD Team <opendroid2013@gmail.com>\n"
 "Language-Team: MCelliot_g <mcelliot_g@hotmail.com>\n"
@@ -35,13 +35,6 @@ msgid ""
 "\n"
 "Partition scheme:\n"
 msgstr "Διαμερίσματα"
-
-msgid ""
-"\n"
-"Press OK on your remote control to continue."
-msgstr ""
-"\n"
-"Πιέστε ΟΚ στο τηλεχειριστήριο για συνέχεια."
 
 #, fuzzy
 msgid ""
@@ -138,15 +131,6 @@ msgstr " (Κανάλι %s)"
 msgid " (Partition %d)"
 msgstr " (Διαμέρισμα %d)"
 
-msgid " (PiP)"
-msgstr " (PiP)"
-
-msgid " (Radio)"
-msgstr " (Ραδιόφωνο)"
-
-msgid " (TV)"
-msgstr " (Τηλεόραση)"
-
 #, fuzzy
 msgid " (current channel)"
 msgstr "Εμφάνιση μπάρας πληροφοριών σε αλλαγή προγράμματος"
@@ -187,10 +171,6 @@ msgstr " και"
 msgid " as HDD ?"
 msgstr "Χρήση ως HDD"
 
-#, python-format
-msgid " bootmode = %s"
-msgstr ""
-
 #, fuzzy
 msgid ""
 " is already installed.\n"
@@ -226,17 +206,17 @@ msgstr ""
 msgid "%-I:%M:%S%^p"
 msgstr ""
 
-#. TRANSLATORS: full date representation daynum monthname year in strftime() format! See 'man strftime'
+#. TRANSLATORS: Full date representation daynum monthname year in strftime() format! See 'man strftime'.
 #, fuzzy
 msgid "%-d %B %Y"
 msgstr "%d %B %Y"
 
-#. TRANSLATORS: small date representation daynum short monthname in strftime() format! See 'man strftime'
+#. TRANSLATORS: Small date representation daynum short monthname in strftime() format! See 'man strftime'.
 #. TRANSLATORS: compact date representation (for VFD) daynum short monthname in strftime() format! See 'man strftime'
 msgid "%-d %b"
 msgstr ""
 
-#. TRANSLATORS: long date representation daynum short monthname year in strftime() format! See 'man strftime'
+#. TRANSLATORS: Long date representation daynum short monthname year in strftime() format! See 'man strftime'.
 msgid "%-d %b %Y"
 msgstr ""
 
@@ -360,7 +340,7 @@ msgstr "%2.1f δευτ."
 msgid "%A"
 msgstr "A"
 
-#. TRANSLATORS: short date representation dayname daynum short monthname in strftime() format! See 'man strftime'
+#. TRANSLATORS: Short date representation dayname daynum short monthname in strftime() format! See 'man strftime'.
 #, fuzzy
 msgid "%A %-d %B"
 msgstr "%A %d %B"
@@ -632,9 +612,6 @@ msgstr "%Y-%m-%d"
 msgid "%Y-%b-%d"
 msgstr "%Y-%m-%d"
 
-msgid "%Y-%m-%d"
-msgstr "%Y-%m-%d"
-
 msgid "%Y/%-m/%-d"
 msgstr ""
 
@@ -650,21 +627,21 @@ msgstr ""
 msgid "%a"
 msgstr ""
 
-#. TRANSLATORS: small date representation short dayname daynum in strftime() format! See 'man strftime'
+#. TRANSLATORS: Small date representation short dayname daynum in strftime() format! See 'man strftime'.
 msgid "%a %-d"
 msgstr ""
 
-#. TRANSLATORS: long date representation short dayname daynum monthname year in strftime() format! See 'man strftime'
+#. TRANSLATORS: Long date representation short dayname daynum monthname year in strftime() format! See 'man strftime'.
 #, fuzzy
 msgid "%a %-d %B %Y"
 msgstr "%a %e %B %Y"
 
-#. TRANSLATORS: short date representation short dayname daynum short monthname in strftime() format! See 'man strftime'
+#. TRANSLATORS: Short date representation short dayname daynum short monthname in strftime() format! See 'man strftime'.
 #, fuzzy
 msgid "%a %-d %b"
 msgstr "%a %e %B %Y"
 
-#. TRANSLATORS: long date representation short dayname daynum short monthname year in strftime() format! See 'man strftime'
+#. TRANSLATORS: Long date representation short dayname daynum short monthname year in strftime() format! See 'man strftime'.
 #, fuzzy
 msgid "%a %-d %b %Y"
 msgstr "%a %e %B %Y"
@@ -912,10 +889,6 @@ msgid "%a %d/%m/%Y"
 msgstr "%a %e/%m"
 
 #, fuzzy
-msgid "%a %e %b  %-H:%M"
-msgstr "%a %e/%m %-H:%M"
-
-#, fuzzy
 msgid "%a %m/%-d"
 msgstr "%a %e/%m"
 
@@ -1023,10 +996,6 @@ msgstr[1] "Ώρα"
 #, fuzzy, python-format
 msgid "%d Hours"
 msgstr "24+ Ώρες"
-
-#, python-format
-msgid "%d KB"
-msgstr "%d KB"
 
 #, python-format
 msgid "%d MB"
@@ -1276,6 +1245,10 @@ msgstr "%d.%m.   "
 msgid "%d.%m.%Y"
 msgstr "%d.%B %Y"
 
+#, fuzzy
+msgid "%d.%m.%Y - %H:%M:%S"
+msgstr "%-H:%M"
+
 msgid "%d/%-m"
 msgstr ""
 
@@ -1335,6 +1308,10 @@ msgstr ""
 msgid "%s  (%s)"
 msgstr "%s (%s)\n"
 
+#, fuzzy, python-format
+msgid "%s  -  %s    (%s%d Min)"
+msgstr "%02d.%02d - %02d.%02d (%s%d λεπτ)"
+
 #, python-format
 msgid "%s %02d.%02d."
 msgstr "%s %02d.%02d."
@@ -1379,13 +1356,17 @@ msgstr "%s (%s)\n"
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
 
-#, fuzzy, python-format
-msgid "%s - %s (%s%d min)"
-msgstr "%02d.%02d - %02d.%02d (%s%d λεπτ)"
-
 #, python-format
 msgid "%s GHz"
 msgstr ""
+
+#, fuzzy, python-format
+msgid "%s Info - Configuration"
+msgstr "Ρυθμίσεις Tuner"
+
+#, fuzzy, python-format
+msgid "%s Info - Main Menu"
+msgstr "Πληροφορίες Oscam - Κύριο Μενού"
 
 #, python-format
 msgid "%s KSymb/s"
@@ -1423,6 +1404,10 @@ msgstr "παρατεταμένο"
 #, fuzzy, python-format
 msgid "%s not available."
 msgstr "μη διαθέσιμο"
+
+#, fuzzy, python-format
+msgid "%s webif disabled"
+msgstr "ανενεργό"
 
 #, python-format
 msgid "%s%d min"
@@ -1502,7 +1487,7 @@ msgid "'required' is an invalid argument for positionals"
 msgstr ""
 
 #, fuzzy
-msgid "( All readers)"
+msgid "(All readers)"
 msgstr "(Όλοι οι αναγνώστες)"
 
 #, python-format
@@ -1513,8 +1498,21 @@ msgstr ""
 msgid "(FTA Service)"
 msgstr "Όλες οι υπηρεσίες"
 
-msgid "(Show only reader:"
+#, fuzzy
+msgid "(PiP)"
+msgstr " (PiP)"
+
+#, fuzzy
+msgid "(Radio)"
+msgstr " (Ραδιόφωνο)"
+
+#, fuzzy, python-format
+msgid "(Show only reader) (%s)"
 msgstr "(Εμφάνιση μόνο του αναγνώστη: "
+
+#, fuzzy
+msgid "(TV)"
+msgstr " (Τηλεόραση)"
 
 msgid "(The file '/media/hdd/images/config/myrestore.sh' exists and will be run after the image is flashed.)"
 msgstr ""
@@ -1524,6 +1522,10 @@ msgstr "(κενό)"
 
 msgid "(show optional DVD audio menu)"
 msgstr "(εμφάνιση προαιρετικού μενού ήχου DVD)"
+
+#, fuzzy
+msgid "(unknown)"
+msgstr "άγνωστο"
 
 msgid "* = Restart Required"
 msgstr "* = Απαιτείται Επανεκκίνηση"
@@ -1664,9 +1666,6 @@ msgstr "Ειδικές Λειτουργίες"
 msgid "12, show Latin-1 characters except for greek and cyrillic, switch to 8 if needed."
 msgstr ""
 
-msgid "128"
-msgstr "128"
-
 msgid "128 Mb"
 msgstr "128 Mb"
 
@@ -1693,9 +1692,6 @@ msgstr "15 δευτερόλεπτα"
 
 msgid "1536 Mb"
 msgstr "1536 Mb"
-
-msgid "16"
-msgstr "16"
 
 msgid "16:10"
 msgstr "16:10"
@@ -1795,9 +1791,6 @@ msgstr "24p/60p"
 msgid "25"
 msgstr "25"
 
-msgid "256"
-msgstr "256"
-
 msgid "256 Mb"
 msgstr "256 Mb"
 
@@ -1866,9 +1859,6 @@ msgstr ""
 msgid "30"
 msgstr "30"
 
-msgid "30 minutes"
-msgstr "30 λεπτά"
-
 msgid "30 seconds"
 msgstr "30 δευτερόλεπτα"
 
@@ -1890,9 +1880,6 @@ msgstr "50p/50p"
 #, fuzzy
 msgid "30p/60p"
 msgstr "50p/60p"
-
-msgid "32"
-msgstr "32"
 
 msgid "32 Mb"
 msgstr "32 Mb"
@@ -1948,9 +1935,6 @@ msgstr "4"
 msgid "5"
 msgstr "25"
 
-msgid "5 minutes"
-msgstr "5 λεπτά"
-
 msgid "5 seconds"
 msgstr "5 δευτερόλεπτα"
 
@@ -2004,9 +1988,6 @@ msgstr "64"
 msgid "6.5"
 msgstr "60"
 
-msgid "60 minutes"
-msgstr "60 λεπτά"
-
 msgid "60p/24p"
 msgstr "60p/24p"
 
@@ -2023,10 +2004,6 @@ msgstr "60p/50p"
 
 msgid "60p/60p"
 msgstr "60p/60p"
-
-#, fuzzy
-msgid "64"
-msgstr "64"
 
 msgid "64 Mb"
 msgstr "64 Mb"
@@ -2124,6 +2101,10 @@ msgid "<Last timer location>"
 msgstr "<Τελευταία τοποθεσία χρονοδιακόπτη>"
 
 #, fuzzy
+msgid "<Select a device>"
+msgstr "Επιλογή συσκευής εισόδου"
+
+#, fuzzy
 msgid "<Unknown>"
 msgstr "<άγνωστο>"
 
@@ -2136,9 +2117,6 @@ msgstr "A"
 #, fuzzy
 msgid "A background update check is in progress, please wait a few minutes and try again."
 msgstr "Εκτελείται έλεγχος για ενημερώσεις στο παρασκήνιο, περιμένετε μερικά λεπτά και ξαναδοκιμάστε."
-
-msgid "A comma separated list of extensions to be used for 'My Extension' setting of 'Filter extension'. Enter the extension names without a leading dot (.)."
-msgstr ""
 
 #, fuzzy, python-format
 msgid "A completed task wants to set your %s %s to standby. Do that now?"
@@ -2330,14 +2308,23 @@ msgstr ""
 msgid "ATSC provider"
 msgstr "Προσθήκη παρόχου"
 
-msgid "AZPlay"
-msgstr "AZPlay"
-
 msgid "Abkhazian"
 msgstr ""
 
 msgid "Abort"
 msgstr "Ακύρωση"
+
+#, fuzzy
+msgid "Abort Alternatives Edit"
+msgstr "ακύρωση επεξεργασίας εναλλακτικών"
+
+#, fuzzy
+msgid "Abort Bouquet Edit"
+msgstr "ακύρωση επεξεργασίας μπουκέτου"
+
+#, fuzzy
+msgid "Abort Favorites Edit"
+msgstr "ακύρωση επεξεργασίας αγαπημένων"
 
 msgid "Aborted a pseudo recording.\n"
 msgstr "Ματαίωση ψευδοεγγραφής.\n"
@@ -2429,6 +2416,10 @@ msgstr "Ρυθμίσεις προσαρμογέα δικτύου"
 msgid "Add"
 msgstr "Προσθήκη"
 
+#, fuzzy
+msgid "Add Alternatives"
+msgstr "προσθήκη εναλλακτικών"
+
 msgid "Add AutoTimer"
 msgstr "Προσθήκη Αυτόματου Χρονοδιακόπτη"
 
@@ -2437,21 +2428,20 @@ msgid "Add Bookmark"
 msgstr "Προσθήκη σελιδοδείκτη"
 
 #, fuzzy
+msgid "Add Bouquet"
+msgstr "προσθήκη μπουκέτου"
+
+#, fuzzy
+msgid "Add Bouquet To Parental Protection"
+msgstr "προσθήκη μπουκέτου στη γονική προστασία"
+
+#, fuzzy
 msgid "Add Current"
 msgstr "προσθήκη Τρέχοντος"
 
 #, fuzzy
-msgid "Add File Commander to Extensions Menu"
-msgstr "Εμφάνιση του Πίνακα Softcam στο Μενού Προσθέτων"
-
-msgid "Add File Commander to Main Menu"
-msgstr ""
-
-msgid "Add File Commander to the Extensions Menu list of options."
-msgstr ""
-
-msgid "Add File Commander to the Main Menu list of options."
-msgstr ""
+msgid "Add Marker"
+msgstr "προσθήκη σημειωτή"
 
 msgid "Add New Quad Channel Entry"
 msgstr ""
@@ -2460,8 +2450,20 @@ msgstr ""
 msgid "Add RecordTimer"
 msgstr "Προσθήκη αυτόματου χρονοδιακόπτη"
 
+#, fuzzy
+msgid "Add Service To Bouquet"
+msgstr "προσθήκη υπηρεσίας σε μπουκέτο"
+
+#, fuzzy
+msgid "Add Service To Favorites"
+msgstr "προσθήκη υπηρεσίας στα αγαπημένα"
+
 msgid "Add Timer"
 msgstr "Προσθήκη Χρονοδιακόπτη"
+
+#, fuzzy
+msgid "Add To Parental Protection"
+msgstr "προσθήκη στο γονικό έλεγχο"
 
 #, fuzzy
 msgid "Add Zap+RecordTimer"
@@ -2491,7 +2493,15 @@ msgstr "Προσθήκη χρονοδιακόπτη ζάπινγκ για το �
 msgid "Add a ZapTimer for next event"
 msgstr "Προσθήκη χρονοδιακόπτη ζάπινγκ για το επόμενο πρόγραμμα"
 
+#, fuzzy
+msgid "Add a bouquet"
+msgstr "προσθήκη μπουκέτου"
+
 msgid "Add a mark"
+msgstr "Προσθήκη σημαδιού"
+
+#, fuzzy
+msgid "Add a marker"
 msgstr "Προσθήκη σημαδιού"
 
 #, fuzzy
@@ -2539,6 +2549,9 @@ msgstr "Προσθήκη φακέλου στη λίστα αναπαραγωγή
 msgid "Add legacy LEFT/RIGHT actions"
 msgstr ""
 
+msgid "Add more slots"
+msgstr ""
+
 #, fuzzy
 msgid "Add new CCcam line"
 msgstr "Προσθήκη νέου τίτλου"
@@ -2566,8 +2579,20 @@ msgstr "Εγγραφή χωρίς όριο χρόνου"
 msgid "Add recording (stop after current event)"
 msgstr "Εγγραφή ως το τέλος του τρέχοντος προγράμματος"
 
+#, fuzzy
+msgid "Add selected service to bouquet or alternative"
+msgstr "προσθήκη υπηρεσίας σε μπουκέτο"
+
 msgid "Add service"
 msgstr "Προσθήκη υπηρεσίας"
+
+#, fuzzy
+msgid "Add service to AutoCam"
+msgstr "προσθήκη υπηρεσίας σε μπουκέτο"
+
+#, fuzzy
+msgid "Add services to this bouquet?"
+msgstr "προσθήκη υπηρεσίας σε μπουκέτο"
 
 msgid "Add the current directory as a bookmark"
 msgstr ""
@@ -2762,6 +2787,10 @@ msgid "All services provider"
 msgstr "Πάροχος όλων των υπηρεσιών"
 
 #, fuzzy
+msgid "All slots"
+msgstr "Όλες οι ηλικίες"
+
+#, fuzzy
 msgid "All supported"
 msgstr "δεν υποστηρίζεται"
 
@@ -2799,9 +2828,6 @@ msgstr ""
 msgid "Allows the TV remote to be used to control the receiver."
 msgstr ""
 
-msgid "Allows you schedule your image backups."
-msgstr ""
-
 #, fuzzy
 msgid "Allows you to adjust the amount of time the resolution information display on screen."
 msgstr "Σας επιτρέπει τη ρύθμιση του χρόνου εμφάνισης πληροφοριών ανάλυσης στην οθόνη."
@@ -2827,16 +2853,10 @@ msgstr ""
 msgid "Allows you to set the maximum size of the Debug log size (MB). When that size is reached, a new file will be created."
 msgstr ""
 
-msgid "Allows you to show/hide CCcam in extensions (BLUE button)."
-msgstr ""
-
 msgid "Allows you to show/hide Log Manager in extensions (BLUE button)."
 msgstr ""
 
-msgid "Allows you to show/hide OScam in extensions (BLUE button)."
-msgstr ""
-
-msgid "Allows you to tag your image backup to a box. (default is box name/type)"
+msgid "Allows you to show/hide OScam/CCcam in the Extension Menu screen (BLUE button)."
 msgstr ""
 
 msgid "Almost there... "
@@ -2867,6 +2887,10 @@ msgstr "Προσθήκη εναλλακτικών"
 
 #, fuzzy
 msgid "Alternative 2"
+msgstr "Προσθήκη εναλλακτικών"
+
+#, fuzzy
+msgid "Alternative Edit"
 msgstr "Προσθήκη εναλλακτικών"
 
 #, fuzzy
@@ -3301,10 +3325,6 @@ msgid "Auto Language Settings"
 msgstr "Αυτόματη Επιλογή Γλώσσας"
 
 #, fuzzy
-msgid "Auto Modes Selected."
-msgstr "δεν έχει επιλεγεί CAId"
-
-#, fuzzy
 msgid "Auto SCART switching"
 msgstr "Αυτόματη αλλαγή scart"
 
@@ -3349,8 +3369,24 @@ msgstr ""
 msgid "Auto timeout:"
 msgstr "Χωρίς όριο χρόνου"
 
+#, fuzzy
+msgid "Auto video mode selected"
+msgstr "δεν έχει επιλεγεί CAId"
+
+#, fuzzy
+msgid "Auto video mode selected for the TV."
+msgstr "Επιλογή χρονοδιακόπτη"
+
 msgid "Auto(not available)"
 msgstr "Αυτόματο (μη διαθέσιμο)"
+
+#, fuzzy
+msgid "AutoCam Settings"
+msgstr "Ρυθμίσεις Ήχου"
+
+#, fuzzy
+msgid "AutoCam Setup Actions"
+msgstr "Ενέργεια εκκίνησης"
 
 #, fuzzy
 msgid "AutoMountManager"
@@ -3384,6 +3420,9 @@ msgid "Automatically turn on external subtitles"
 msgstr ""
 
 msgid "Automatically update Client/Server View"
+msgstr ""
+
+msgid "Automatically update Client/Server View?"
 msgstr ""
 
 msgid "Autostart"
@@ -3519,9 +3558,6 @@ msgstr "Πίσω/Ανάκληση"
 msgid "Background"
 msgstr "Φόντο"
 
-msgid "Background color"
-msgstr "Χρώμα φόντου"
-
 #, fuzzy
 msgid "Background delete option"
 msgstr "Χρώμα φόντου"
@@ -3585,10 +3621,6 @@ msgid ""
 msgstr ""
 "Βρέθηκαν πρόσθετα εφεδρείας\n"
 "θέλετε να εγκατασταθούν τώρα;"
-
-#, fuzzy
-msgid "Backup prefix"
-msgstr "Λειτουργία Εφεδρείας"
 
 #, fuzzy, python-format
 msgid "Backup to destination: %s"
@@ -3735,6 +3767,10 @@ msgid "Black screen till locked"
 msgstr "Μαύρη οθόνη ως το κλείδωμα"
 
 #, fuzzy
+msgid "Blacklist"
+msgstr "μαύρη λίστα"
+
+#, fuzzy
 msgid "Blinking REC"
 msgstr "Αναβοσβηνόμενο Σύμβολο REC"
 
@@ -3854,18 +3890,30 @@ msgstr ""
 msgid "Bottom"
 msgstr "κάτω"
 
+#, fuzzy
+msgid "Bouquet Edit"
+msgstr "Λίστα μπουκέτων"
+
 msgid "Bouquet List"
 msgstr "Λίστα μπουκέτων"
+
+#, fuzzy
+msgid "Bouquet Selector"
+msgstr "Λίστα μπουκέτων"
+
+#, fuzzy
+msgid "Bouquet Selector Actions"
+msgstr "Ρυθμίσεις επιλογής καναλιών"
+
+#, fuzzy
+msgid "Bouquet Selector Navigation Actions"
+msgstr "Ρυθμίσεις επιλογής καναλιών"
 
 msgid "BouquetList"
 msgstr "Λίστα Μπουκέτων"
 
 msgid "Bouvet Island"
 msgstr ""
-
-#, fuzzy
-msgid "Box or driver is not support Quad PiP."
-msgstr "Ο %s %s σας δεν υποστηρίζει PiP HD"
 
 msgid "Boxing"
 msgstr ""
@@ -3968,7 +4016,7 @@ msgid "By OPD Image Team"
 msgstr "Από την ομάδα του OPD"
 
 #, fuzzy
-msgid "By openATV Image Team"
+msgid "By OpenDROID Image Team"
 msgstr "Από την ομάδα του OPD"
 
 msgid "Bypass HDMI EDID Check"
@@ -3986,12 +4034,6 @@ msgstr "C"
 
 msgid "C-Band"
 msgstr "Μπάντα C"
-
-msgid "CAID"
-msgstr "CAID"
-
-msgid "CAID:SrvID"
-msgstr ""
 
 #, fuzzy
 msgid "CCD-Width"
@@ -4090,27 +4132,6 @@ msgstr "ενεργό"
 msgid "CI (Common Interface) Setup"
 msgstr "Ρυθμίσεις CI (Κοινής Διεπαφής)"
 
-#, fuzzy
-msgid "CI Basic Settings"
-msgstr "Βασικές ρυθμίσεις"
-
-#, fuzzy
-msgid "CI Helper Settings"
-msgstr "Ρυθμίσεις CIHelper"
-
-msgid "CI Legacy"
-msgstr "CI Πιστοποίηση"
-
-#, fuzzy
-msgid "CI Operation Mode"
-msgstr "Τύπος ρύθμισης"
-
-msgid "CI Plus 1.2"
-msgstr "CI Plus 1.2"
-
-msgid "CI Plus 1.3"
-msgstr "CI Plus 1.3"
-
 msgid "CI assignment"
 msgstr "Ανάθεση CI"
 
@@ -4127,24 +4148,11 @@ msgstr ""
 msgid "CIFS/Samba Settings"
 msgstr "Ρυθμίσεις CIFS/Samba"
 
-msgid "CIHelper for SLOT CI0"
-msgstr "CIHelper για τη ΘΥΡΑ CI0"
-
-msgid "CIHelper for SLOT CI1"
-msgstr "CIHelper για τη ΘΥΡΑ CI1"
-
-#
-msgid "CIconfigMenu"
-msgstr "Μενού ρυθμίσεων CI"
-
 #, fuzzy
 msgid "CPU"
 msgstr "Επεξεργαστής:\t%s"
 
 msgid "CPU brand"
-msgstr ""
-
-msgid "CPU priority for scripts"
 msgstr ""
 
 msgid "CPU speed/cores"
@@ -4170,11 +4178,14 @@ msgstr "Καλωδιακό"
 msgid "Cable Scan"
 msgstr "Καλωδιακή Ανίχνευση"
 
-msgid "Cache thumbnails"
-msgstr "Αποθήκευση μικρογραφιών"
-
 msgid "Cached:"
 msgstr "Σε προσωρινή μνήμη:"
+
+msgid "Caid"
+msgstr ""
+
+msgid "Caid:Srvid"
+msgstr ""
 
 msgid "Calculate"
 msgstr "Υπολογισμός"
@@ -4266,6 +4277,10 @@ msgstr "Διαδικτυακή ενημέρωση λογισμικού"
 msgid "Cancel Task"
 msgstr "Ακύρωση"
 
+#, fuzzy
+msgid "Cancel and exit the context menu"
+msgstr "Μενού περιεχομένων λίστας καναλιών"
+
 msgid "Cancel any changed settings and exit"
 msgstr ""
 
@@ -4308,6 +4323,10 @@ msgstr "Επιλογή Καναλιού"
 msgid "Cancel selection and exit"
 msgstr "Επιλογή Καναλιού"
 
+#, fuzzy
+msgid "Cancel the bouquet selection"
+msgstr "Εισάγετε το pin υπηρεσίας"
+
 msgid "Cancel the flash process"
 msgstr ""
 
@@ -4322,6 +4341,10 @@ msgstr ""
 
 #, fuzzy
 msgid "Cancel the service selection"
+msgstr "Εισάγετε το pin υπηρεσίας"
+
+#, fuzzy
+msgid "Cancel the service zap"
 msgstr "Εισάγετε το pin υπηρεσίας"
 
 #, fuzzy
@@ -4387,13 +4410,15 @@ msgid ""
 "Please stop this actions/applications and try again"
 msgstr ""
 
-msgid "Capacity: "
+#, fuzzy
+msgid "Capacity"
 msgstr "Χωρητικότητα: "
 
 msgid "Cape Verde"
 msgstr ""
 
-msgid "Card infos (CCcam-Reader)"
+#, fuzzy
+msgid "Card info (CCcam-Reader)"
 msgstr "Πληροφορίες κάρτας (Αναγνώστης CCcam)"
 
 msgid "Cardreader found automatically"
@@ -4410,6 +4435,10 @@ msgstr "Κάρτες: 0"
 
 msgid "Cardserial"
 msgstr "Σειριακός αριθμός κάρτας"
+
+#, fuzzy
+msgid "Cardserver Settings"
+msgstr "Ρυθμίσεις Nameserver"
 
 msgid "Cartoon"
 msgstr ""
@@ -4429,6 +4458,9 @@ msgstr ""
 #, fuzzy
 msgid "Center"
 msgstr "κέντρο"
+
+msgid "Center DVB Subs On This Service"
+msgstr ""
 
 #, fuzzy
 msgid "Centered"
@@ -4539,6 +4571,26 @@ msgid "Channel List"
 msgstr "Λίστα Καναλιών"
 
 #, fuzzy
+msgid "Channel List Context Menu"
+msgstr "Μενού περιεχομένων λίστας καναλιών"
+
+#, fuzzy
+msgid "Channel List Context Menu Actions"
+msgstr "Μενού περιεχομένων λίστας καναλιών"
+
+#, fuzzy
+msgid "Channel List Context Menu Navigation Actions"
+msgstr "Μενού περιεχομένων λίστας καναλιών"
+
+#, fuzzy
+msgid "Channel Name"
+msgstr "Όνομα Καναλιού"
+
+#, fuzzy
+msgid "Channel Selection"
+msgstr "Επιλογή Καναλιού"
+
+#, fuzzy
 msgid "Channel Selection Settings"
 msgstr "Ρυθμίσεις επιλογής καναλιών"
 
@@ -4551,9 +4603,6 @@ msgstr ""
 
 msgid "Channel down"
 msgstr "Μετάβαση προς τα κάτω"
-
-msgid "Channel list context menu"
-msgstr "Μενού περιεχομένων λίστας καναλιών"
 
 #, fuzzy
 msgid "Channel list cursor behavior"
@@ -4730,8 +4779,9 @@ msgstr "Έλεγχος συστήματος αρχείων ..."
 msgid "Choice where to put \"%s\""
 msgstr ""
 
-msgid "Choose Bouquet"
-msgstr "Επιλογή Μπουκέτου"
+#, fuzzy
+msgid "Choose CCcam-Reader"
+msgstr "Παρακαλώ επιλέξτε αναγνώστη CCcam"
 
 msgid "Choose Tuner"
 msgstr "Επιλογή Tuner"
@@ -4742,13 +4792,14 @@ msgstr ""
 msgid "Choose a country scheme for decoding rating information in EPG events."
 msgstr ""
 
-msgid "Choose dvb wait delay for ci response."
-msgstr ""
-
 msgid "Choose how much EPG history, if any, to keep in the EPG cache. This historic data can be browsed in any of the EPG views. This can be useful when you need information about an event which has recently finished."
 msgstr ""
 
-msgid "Choose the CI protocol operation mode for standard ci or ciplus."
+#, fuzzy
+msgid "Choose reader"
+msgstr "Παρακαλώ επιλέξτε αναγνώστη"
+
+msgid "Choose the amount of additional slots."
 msgstr ""
 
 msgid "Choose the display formatting style for dates. 'D' / 'DD' is the date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
@@ -4777,6 +4828,10 @@ msgstr ""
 
 msgid "Choose the style/order in which items are displayed in help windows."
 msgstr ""
+
+#, fuzzy
+msgid "Choose the target location for the slots."
+msgstr "Ρύθμιση της αναλογίας διαστάσεων της οθόνης."
 
 msgid "Choose they way for installation!"
 msgstr ""
@@ -4868,7 +4923,8 @@ msgstr "Οριστική διαγραφή όλων των διεγραμμένω
 msgid "Clean up and remove all completed timers?"
 msgstr "Οριστική διαγραφή όλων των διεγραμμένων στοιχείων"
 
-msgid "Cleaning Trashes"
+#, fuzzy
+msgid "Cleaning Trashcan"
 msgstr "Εκκαθάριση Αχρήστων"
 
 msgid "Cleanup"
@@ -4915,9 +4971,9 @@ msgstr "Ρυθμίσεις CIHelper"
 msgid "Click the button on your remote you want to change."
 msgstr "Πιέστε το πλήκτρο που θέλετε να αλλάξετε στο τηλεχειριστήριό σας"
 
-#, python-format
-msgid "Client Info ( Oscam-Version: %s )"
-msgstr ""
+#, fuzzy, python-format
+msgid "Client %s-%s"
+msgstr "Πελάτες"
 
 #, fuzzy
 msgid "Client Mode setup"
@@ -4967,6 +5023,10 @@ msgstr "Κλείσιμο διαλόγου"
 #, fuzzy
 msgid "Close screen"
 msgstr "Πλήρης οθόνη"
+
+#, fuzzy
+msgid "Close the Kexec MultiBoot Manager"
+msgstr "Διαχείριση Αυτόματων Προσαρτήσεων"
 
 #, fuzzy
 msgid "Close the current screen"
@@ -5070,6 +5130,10 @@ msgid "Common Interface Assignment"
 msgstr "Ανάθεση Κοινής Διεπαφής"
 
 #, fuzzy
+msgid "Common Interface Settings"
+msgstr "Κοινή Διεπαφή"
+
+#, fuzzy
 msgid "Common Setup Actions"
 msgstr "Ενέργεια εκκίνησης"
 
@@ -5126,10 +5190,6 @@ msgstr ""
 msgid "Configuration tool for OScam"
 msgstr "Τύπος ρύθμισης"
 
-#, fuzzy
-msgid "Configure DNS (name servers)"
-msgstr "Ρύθμιση nameservers"
-
 msgid "Configure an additional delay to improve external subtitle synchronization."
 msgstr ""
 
@@ -5180,15 +5240,6 @@ msgstr "Ρύθμιση διεπαφής"
 msgid "Configure on which devices the background delete option should be used."
 msgstr "Ρυθμίζει ποιος τύπος σύνδεσης εξόδου εικόνας θα χρησιμοποιηθεί."
 
-#, fuzzy
-msgid ""
-"Configure or verify your DNS (name servers) by adjusting the values shown.\n"
-"\n"
-"When the settings are correct press OK to continue."
-msgstr ""
-"Παρακαλώ ρυθμίστε ή επιβεβαιώστε τους Nameservers συμπλρώνοντας τις απαιτούμενες τιμές.\n"
-"Όταν είστε έτοιμοι, πιέστε ΟΚ για συνέχεια."
-
 msgid "Configure remote control type"
 msgstr "Ρύθμιση τύπου τηλεχειριστηρίου"
 
@@ -5198,15 +5249,6 @@ msgstr ""
 #, fuzzy
 msgid "Configure the IP address."
 msgstr "Ρύθμιση διεπαφής"
-
-#, fuzzy
-msgid ""
-"Configure the Internet connection by adjusting the values shown.\n"
-"\n"
-"When the settings are correct press OK to continue."
-msgstr ""
-"Παρακαλώ ρυθμίστε τη σύνδεση στο διαδίκτυο συμπληρώνοντας τις απαιτούμενες τιμές.\n"
-"Όταν είστε έτοιμοι, πιέστε ΟΚ για συνέχεια."
 
 #, fuzzy
 msgid "Configure the alignment of events."
@@ -5259,7 +5301,7 @@ msgid "Configure the contrast level of the front panel display."
 msgstr "Ρύθμιση της αναλογίας διαστάσεων της οθόνης."
 
 #, fuzzy
-msgid "Configure the current keymap file."
+msgid "Configure the current key map file."
 msgstr "Ρύθμιση τύπου τηλεχειριστηρίου"
 
 msgid "Configure the cursor behavior in the channel selection list. When opening the channel selection list you can remain on the current service or already select up/down and you are able to revert the B+/B- buttons."
@@ -5368,10 +5410,6 @@ msgstr "Ρύθμιση nameservers"
 #, fuzzy
 msgid "Configure the netmask."
 msgstr "Ρύθμιση μάσκας δικτύου."
-
-#, fuzzy
-msgid "Configure the network again"
-msgstr "Ρύθμιση του δικτύου εκ νέου"
 
 msgid "Configure the number of days after which items are automatically removed from the trash can."
 msgstr ""
@@ -5687,6 +5725,10 @@ msgid "Copy Settings to the new Image"
 msgstr ""
 
 #, fuzzy
+msgid "Copy To Bouquets"
+msgstr "αντιγραφή στα μπουκέτα"
+
+#, fuzzy
 msgid "Copy all related files"
 msgstr "Αδυναμία διαγραφής αρχείου"
 
@@ -5803,6 +5845,10 @@ msgid "Create ISO"
 msgstr "Δημιουργία ISO"
 
 #, fuzzy
+msgid "Create Slots"
+msgstr "Δημιουργία ISO"
+
+#, fuzzy
 msgid "Create a directory"
 msgstr "Δημιουργία φακέλου"
 
@@ -5818,6 +5864,9 @@ msgstr "Δημιουργία φακέλου"
 #, fuzzy
 msgid "Create separate radio user bouquet"
 msgstr "Δημιουργία ξεχωριστού ραδιοφωνικού μπουκέτου χρήστη"
+
+msgid "Create the additional slots on the selected device"
+msgstr ""
 
 #, fuzzy
 msgid "Create:"
@@ -5946,7 +5995,7 @@ msgstr "Τρέχον Πρόγραμμα:"
 msgid "Currently Defined Volume Offsets:"
 msgstr "Αλλαγή ολίσθησης χρόνου Έντασης"
 
-msgid "Currently the commit log cannot be retrieved - please try later again"
+msgid "Currently the commit log cannot be retrieved - please try later again."
 msgstr ""
 
 msgid "Custom"
@@ -6331,16 +6380,7 @@ msgstr "Προεπιλογή (Άμεση Εγγραφή)"
 msgid "Default (Timeshift)"
 msgstr "Προεπιλογή (Χρονομετατόπιση)"
 
-msgid "Default CPU priority (nice) for executed scripts. This can reduce the system load so that scripts do not interfere with the rest of the system. (higher values = lower priority)"
-msgstr ""
-
 msgid "Default Dolby Digital / Dolby AC-3 offset"
-msgstr ""
-
-msgid "Default I/O priority (ionice) for executed scripts. This can reduce the system load so that scripts do not interfere with the rest of the system. (higher values = lower priority)"
-msgstr ""
-
-msgid "Default Modes Selected."
 msgstr ""
 
 msgid "Default Services Scanner"
@@ -6348,10 +6388,6 @@ msgstr "Ανίχνευση Προεπιλεγμένων Υπηρεσιών"
 
 msgid "Default files/folders to backup"
 msgstr "Προεπιλεγμένα αρχεία/φάκελοι προς εφεδρεία"
-
-#, fuzzy
-msgid "Default left column directory"
-msgstr "Δημιουργία φακέλου"
 
 #, fuzzy, python-format
 msgid "Default movie location (%s)"
@@ -6369,20 +6405,13 @@ msgstr ""
 msgid "Default recording type"
 msgstr "πραγματικές εγγραφές"
 
-msgid "Default right column directory"
-msgstr ""
+#, fuzzy
+msgid "Default video mode selected"
+msgstr "Επιλογή χρονοδιακόπτη"
 
-msgid "Default sort order for directories in the left column"
-msgstr ""
-
-msgid "Default sort order for directories in the right column."
-msgstr ""
-
-msgid "Default sort order for files in the left column."
-msgstr ""
-
-msgid "Default sort order for files in the right column."
-msgstr ""
+#, fuzzy
+msgid "Default video mode selected for the TV."
+msgstr "Επιλογή χρονοδιακόπτη"
 
 #, fuzzy
 msgid "Default volume offset"
@@ -6849,6 +6878,10 @@ msgstr "Απενεργοποίηση Κινούμενων Γραφικών"
 msgid "Disable MiniTV"
 msgstr "Απενεργοποίηση MiniTV"
 
+#, fuzzy
+msgid "Disable Move Mode"
+msgstr "απενεργοποίηση λειτουργίας μετακίνησης"
+
 msgid "Disable Picture in Picture"
 msgstr "Απενεργοποίηση Εικόνας σε Εικόνα"
 
@@ -6891,10 +6924,6 @@ msgstr "Θερμοκρασία συστήματος:\t%s"
 
 msgid "Disk was not found!"
 msgstr ""
-
-#, fuzzy
-msgid "Display"
-msgstr "Οθόνη"
 
 msgid "Display 16:9 content as"
 msgstr "Εμφάνιση περιεχομένου 16:9 ως"
@@ -6968,12 +6997,6 @@ msgid ""
 " "
 msgstr "Θέλετε να εγκαταστήσετε το πακέτο:\n"
 
-msgid "Do center DVB subs on this service"
-msgstr ""
-
-msgid "Do not center DVB subs on this service"
-msgstr ""
-
 msgid "Do not change"
 msgstr "Να μη γίνει αλλαγή"
 
@@ -7039,9 +7062,10 @@ msgstr "Θέλετε σίγουρα να γίνει λήψη του πρόσθε
 msgid "Do you really want to exit?"
 msgstr "Να γίνει σίγουρα έξοδος;"
 
+#, fuzzy
 msgid ""
-"Do you really want to initialize the device?\n"
-"All data on the disk will be lost!"
+"Do you really want to format the device in the Linux file system?\n"
+"All data on the device will be lost!"
 msgstr ""
 "Θέλετε σίγουρα να γίνει αρχικοποίηση της συσκευής;\n"
 "Όλα τα δεδομένα θα χαθούν!"
@@ -7211,10 +7235,16 @@ msgstr "Η ψηφιακή μίξη Dolby Digital είναι τώρα "
 msgid "Domain"
 msgstr ""
 
+msgid "Domain:"
+msgstr ""
+
 msgid "Dominica"
 msgstr ""
 
 msgid "Dominican Republic"
+msgstr ""
+
+msgid "Don't Center DVB Subs On This Service"
 msgstr ""
 
 msgid "Don't add this recording"
@@ -7367,10 +7397,6 @@ msgid "Dreambox format data DVD (won't work in other DVD players)"
 msgstr "Φορμά δεδομένων DVD Dreambox (μη συμβατό με άλλες συσκευές DVD)"
 
 #, fuzzy
-msgid "Drivers"
-msgstr "Οδηγοί:\t%s"
-
-#, fuzzy
 msgid "Drivers version"
 msgstr "Οδηγοί:\t%s"
 
@@ -7415,30 +7441,12 @@ msgstr ""
 msgid "E2 Light Multiboot"
 msgstr ""
 
-msgid "E2 Log"
-msgstr "Καταγραφή E2"
-
 #, fuzzy
 msgid "ECM Info"
 msgstr "Χωρίς πληροφορίες ECM"
 
-msgid "ECM Statistics"
-msgstr "Στατιστικά ECM"
-
-msgid "ECM Time"
-msgstr "Χρόνος ECM"
-
-msgid "ECM avg"
-msgstr "Μέσος όρος ECM"
-
 msgid "ECM data will be included in the stream. This enables a client receiver to decode it."
 msgstr ""
-
-msgid "ECM last"
-msgstr "Τελευταίο ECM"
-
-msgid "ECM-Time"
-msgstr "Χρόνος ECM"
 
 msgid "EDID decode"
 msgstr ""
@@ -7544,11 +7552,35 @@ msgstr "Ανατολικό όριο"
 msgid "EasyMedia"
 msgstr "Πολυμέσα"
 
+#, fuzzy
+msgid "Ecm Info"
+msgstr "Πληροφορίες CCcam"
+
+#, fuzzy
+msgid "Ecm Statistics"
+msgstr "Στατιστικά ECM"
+
+#, fuzzy
+msgid "Ecm Time"
+msgstr "Χρόνος ECM"
+
+#, fuzzy
+msgid "Ecm avg"
+msgstr "Μέσος όρος ECM"
+
+#, fuzzy
+msgid "Ecm last"
+msgstr "Τελευταίο ECM"
+
 msgid "Ecuador"
 msgstr ""
 
 msgid "Edit"
 msgstr "Επεξεργασία"
+
+#, fuzzy
+msgid "Edit Alternatives"
+msgstr "επεξεργασία εναλλακτικών"
 
 #, fuzzy
 msgid "Edit Mode Off"
@@ -7688,11 +7720,9 @@ msgstr "Ενεργοποίηση των 5V για την ενεργή κεραί
 msgid "Enable BT Audio"
 msgstr "Ενεργοποίηση πλήκτρου πανικού"
 
-msgid "Enable CIHelper for SLOT CI0"
-msgstr "Ενεργοποίηση CIHelper για τη ΘΥΡΑ CI0"
-
-msgid "Enable CIHelper for SLOT CI1"
-msgstr "Ενεργοποίηση CIHelper για τη ΘΥΡΑ CI1"
+#, fuzzy
+msgid "Enable Bouquet Edit"
+msgstr "ενεργοποίηση επεξεργασίας μπουκέτων"
 
 #, fuzzy
 msgid "Enable ClearMem"
@@ -7704,6 +7734,10 @@ msgstr ""
 #, fuzzy
 msgid "Enable EIT EPG"
 msgstr "Ενεργοποίηση πλήκτρου πανικού"
+
+#, fuzzy
+msgid "Enable Favorite Edit"
+msgstr "ενεργοποίηση επεξεργασίας αγαπημένων"
 
 #, fuzzy
 msgid "Enable Focus Animation"
@@ -7727,6 +7761,10 @@ msgstr "Ενεργοποίηση ViaSat EPG"
 
 msgid "Enable MiniTV"
 msgstr "Ενεργοποίηση MiniTV"
+
+#, fuzzy
+msgid "Enable Move Mode"
+msgstr "ενεργοποίηση λειτουργίας μετακίνησης"
 
 #, fuzzy
 msgid "Enable Netmed EPG"
@@ -7880,7 +7918,10 @@ msgstr ""
 msgid "Enable this option to add extra EPG data to the debug log file."
 msgstr ""
 
-msgid "Enable this option to add keyboard keymap data to the debug log file."
+msgid "Enable this option to add international language and country load information detected during system boot to the debug log file."
+msgstr ""
+
+msgid "Enable this option to add keyboard key map data to the debug log file."
 msgstr ""
 
 msgid "Enable this option to add opkg output data to the debug log file."
@@ -7958,6 +7999,18 @@ msgstr "Κωδικοποίηση:"
 msgid "End"
 msgstr "Τέλος"
 
+#, fuzzy
+msgid "End Alternatives Edit"
+msgstr "τέλος επεξεργασίας εναλλακτικών"
+
+#, fuzzy
+msgid "End Bouquet Edit"
+msgstr "τέλος επεξεργασίας μπουκέτου"
+
+#, fuzzy
+msgid "End Favorites Edit"
+msgstr "τέλος επεξεργασίας αγαπημένων"
+
 msgid "End time"
 msgstr "Ώρα τερματισμού"
 
@@ -8015,9 +8068,6 @@ msgstr ""
 #, fuzzy
 msgid "Enhanced Movie Center"
 msgstr "Enhanced Movie Center"
-
-msgid "Enigma2 Changes"
-msgstr "Αλλαγές Enigma2"
 
 msgid ""
 "Enigma2 Skinselector\n"
@@ -8093,7 +8143,7 @@ msgstr "Εισαγωγή σταθερού κωδικού PIN"
 msgid "Enter pin code"
 msgstr "Εισαγωγή κωδικού pin"
 
-msgid "Enter the FTP password of the host receiver (required for any server running OpenDroid 7.0 or greater)."
+msgid "Enter the FTP password of the host receiver (required for any server running OpenDroid 7.3 or greater)."
 msgstr ""
 
 msgid "Enter the FTP port of the host receiver (normally '21')."
@@ -8148,6 +8198,9 @@ msgid "Enter your high band local oscillator frequency. For more information con
 msgstr ""
 
 msgid "Enter your low band local oscillator frequency. For more information consult the spec sheet of your LNB."
+msgstr ""
+
+msgid "Enter your personal feed URL to allow you to select packages from your personal feed."
 msgstr ""
 
 #, fuzzy
@@ -8303,6 +8356,14 @@ msgstr "Κωδικός σφάλματος"
 #, fuzzy, python-format
 msgid "Error unzipping image '%s'!"
 msgstr "Σφάλμα στο αρχείο %s"
+
+#, fuzzy, python-format
+msgid ""
+"Error:\n"
+"%s"
+msgstr ""
+"Σφάλμα:\n"
+"%s"
 
 #, python-format
 msgid ""
@@ -8866,6 +8927,10 @@ msgid ""
 "Please unmount Fixed Mounted Devices with Device Manager Panel!"
 msgstr ""
 
+#, fuzzy
+msgid "Favorite Edit"
+msgstr "[επεξεργασία αγαπημένου]"
+
 msgid "Favorites"
 msgstr "Favorites"
 
@@ -8893,6 +8958,14 @@ msgstr "Αρχείο"
 #, python-format
 msgid "File %d of %d"
 msgstr ""
+
+#, fuzzy, python-format
+msgid ""
+"File %s.conf not found.\n"
+"Enter username/password manually."
+msgstr ""
+"Το αρχείο oscam.conf δεν βρέθηκε.\n"
+"Παρακαλώ εισάγετε το όνομα χρήστη/κωδικό χειροκίνητα."
 
 #, fuzzy
 msgid "File Commander"
@@ -8962,10 +9035,6 @@ msgstr ""
 msgid "File Commander Move"
 msgstr "Σειρά εντολών"
 
-#, fuzzy
-msgid "File Commander Settings"
-msgstr "Ρυθμίσεις Εικόνας"
-
 msgid "File Commander Text Editor"
 msgstr ""
 
@@ -8982,13 +9051,6 @@ msgstr "Έλεγχος Συστήματος Αρχείων"
 
 msgid "File appears to be busy.\n"
 msgstr "Το αρχείο είναι απασχολημένο. \n"
-
-msgid ""
-"File oscam.conf not found.\n"
-"Please enter username/password manually."
-msgstr ""
-"Το αρχείο oscam.conf δεν βρέθηκε.\n"
-"Παρακαλώ εισάγετε το όνομα χρήστη/κωδικό χειροκίνητα."
 
 msgid "File transfer was canceled by user!"
 msgstr ""
@@ -9013,13 +9075,6 @@ msgstr "Έλεγχος Συστήματος Αρχείων"
 msgid "Film-Noir"
 msgstr ""
 
-#, fuzzy
-msgid "Filter extensions"
-msgstr "εμφάνιση επεκτάσεων..."
-
-msgid "Filter files to be listed by the defined extension. Note that the symbol '(*)' will appear in the title if filtering is in effect."
-msgstr ""
-
 msgid "Final position at"
 msgstr "Τελική θέση σε"
 
@@ -9033,8 +9088,16 @@ msgstr ""
 msgid "Finance"
 msgstr "Ακύρωση"
 
+#, fuzzy
+msgid "Find Currently Playing Service"
+msgstr "εύρεση της τρέχουσας αναπαραγώμενης υπηρεσίας"
+
 msgid "Find similar events in the EPG"
 msgstr ""
+
+#, fuzzy
+msgid "Find the service currently playing"
+msgstr "Εισάγετε το pin υπηρεσίας"
 
 msgid "Fine movement"
 msgstr "Μικροκίνηση"
@@ -9170,10 +9233,6 @@ msgid "Flat by position on remote"
 msgstr "Τελική θέση σε"
 
 #, fuzzy
-msgid "Follow instructions on TV"
-msgstr "Παρακαλώ ακολουθήστε τις οδηγίες στην οθόνη"
-
-#, fuzzy
 msgid "Font size"
 msgstr "μέγεθος βήματος"
 
@@ -9197,6 +9256,10 @@ msgid "Force Legacy Signal stats"
 msgstr ""
 
 #, fuzzy
+msgid "Force OPKG clean mode"
+msgstr "Πληροφορίες Πελάτη"
+
+#, fuzzy
 msgid "Force ToneBurst"
 msgstr "Ριπή τόνου"
 
@@ -9205,6 +9268,10 @@ msgstr "Αναγκαστική αποπολυπλεξία"
 
 msgid "Format"
 msgstr "Φορμά"
+
+#, fuzzy
+msgid "Format Storage Device"
+msgstr "Συσκευές αποθήκευσης"
 
 #, fuzzy
 msgid "Format as"
@@ -9242,9 +9309,6 @@ msgstr ""
 #, fuzzy
 msgid "Frame rate"
 msgstr "Συχνότητα ανανέωσης"
-
-msgid "Frame size in full view"
-msgstr "Μέγεθος κάδρου σε πλήρη οθόνη"
 
 #, fuzzy
 msgid "France"
@@ -9366,10 +9430,6 @@ msgstr "Πλήρης οθόνη"
 msgid "Full transparency"
 msgstr "Πλήρης διαφάνεια"
 
-#, fuzzy
-msgid "Full view resolution"
-msgstr "Ανάλυση σε πλήρη οθόνη"
-
 msgid "FullHD Test"
 msgstr ""
 
@@ -9462,6 +9522,10 @@ msgstr "κηπουρική"
 msgid "Gateway"
 msgstr "Πύλη δικτύου"
 
+#, fuzzy
+msgid "Gateway:"
+msgstr "Πύλη δικτύου"
+
 msgid "General"
 msgstr "Γενικά"
 
@@ -9474,10 +9538,6 @@ msgstr "Ενεργοποίηση πλήκτρου πανικού"
 
 msgid "General PCM delay"
 msgstr ""
-
-#, fuzzy
-msgid "Generator"
-msgstr "Γενικά"
 
 #, fuzzy
 msgid "Generic"
@@ -9512,9 +9572,6 @@ msgstr "Γερμανικά"
 
 msgid "Getting Event Info failed!"
 msgstr "Αποτυχία λήψης πληροφοριών Προγράμματος!"
-
-msgid "Getting Softcam list. Please wait..."
-msgstr "Λήψη λίστας Softcam. Παρακαλώ περιμένετε..."
 
 msgid "Getting plugin information. Please wait..."
 msgstr "Λήψη πληροφοριών προσθέτου. Παρακαλώ περιμένετε..."
@@ -9820,6 +9877,10 @@ msgstr "Ρύθμιση Σκληρού Δίσκου"
 msgid "Harddisk standby after"
 msgstr "Σκληρός δίσκος σε αναμονή μετά από"
 
+#, python-format
+msgid "Hardware MultiBoot device:\t%s"
+msgstr ""
+
 msgid "Hausa"
 msgstr ""
 
@@ -9910,15 +9971,19 @@ msgid "Hide"
 msgstr ""
 
 #, fuzzy
-msgid "Hide InfoBar"
-msgstr "Μπάρα πληροφοριών"
+msgid "Hide CI messages"
+msgstr "Εμφάνιση μηνυμάτων CI"
 
-msgid "Hide VBI line for this service"
+msgid "Hide VBI Line For This Service"
 msgstr ""
 
 #, fuzzy
 msgid "Hide any zap error messages."
 msgstr "Απόκρυψη σφαλμάτων του ζάπινγκ"
+
+#, fuzzy
+msgid "Hide error messages from the Common Interface module."
+msgstr "γραφικό περιβάλλον για ανάθεση υπηρεσιών/παρόχων σε κοινή διεπαφή"
 
 #, fuzzy
 msgid "Hide known extensions"
@@ -9970,6 +10035,18 @@ msgstr "Ιστορικό_ΕΛΠ"
 #, fuzzy
 msgid "History"
 msgstr "Ιστορικό_ΕΛΠ"
+
+#, fuzzy
+msgid "History Zap"
+msgstr "Ιστορικό ζάπινγκ..."
+
+#, fuzzy
+msgid "History Zap Actions"
+msgstr "Πληροφορίες Υπηρεσίας"
+
+#, fuzzy
+msgid "History Zap Navigation Actions"
+msgstr "Λόγος Πλευρών"
 
 msgid "History back"
 msgstr "Ιστορικό πίσω"
@@ -10111,9 +10188,6 @@ msgstr "Ουγγρικά"
 msgid "I"
 msgstr "PIP"
 
-msgid "I/O priority for scripts"
-msgstr ""
-
 msgid "I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"
 msgstr ""
 
@@ -10186,6 +10260,10 @@ msgid "IP"
 msgstr "PIP"
 
 #, fuzzy
+msgid "IP Address"
+msgstr "Διεύθυνση IP"
+
+#, fuzzy
 msgid "IP Address 1"
 msgstr "Διεύθυνση IP"
 
@@ -10210,6 +10288,9 @@ msgstr ""
 
 msgid "IP address"
 msgstr "Διεύθυνση IP"
+
+msgid "IP address of the Stream Relay server used to descramble services that can only be decrypted via Stream Relay."
+msgstr ""
 
 msgid "IP:"
 msgstr "IP:"
@@ -10398,6 +10479,10 @@ msgstr "Οδηγός Image"
 msgid "Immediate shut down"
 msgstr "Άμεσος τερματισμός"
 
+#, fuzzy
+msgid "Immediately restart selected devices."
+msgstr "Μετάβαση στο επιλεγμένο κανάλι"
+
 msgid "In addition to the check at an event start, a repetitive check can be used, so that the conditions 'buffer limit in hours' or 'check free space' are detected earlier."
 msgstr ""
 
@@ -10472,6 +10557,10 @@ msgstr "Συμπερίληψη του AIT στις ροές http"
 
 #, fuzzy
 msgid "Include action map data"
+msgstr "Συμπερίληψη του AIT στις ροές http"
+
+#, fuzzy
+msgid "Include international data *"
 msgstr "Συμπερίληψη του AIT στις ροές http"
 
 #, fuzzy
@@ -10676,12 +10765,6 @@ msgstr "Εγκατάσταση"
 msgid "Install Confirmation"
 msgstr "Εκτέλεση Επιβεβαίωσης"
 
-msgid "Install Failed !!"
-msgstr "Αποτυχία Εγκατάστασης !!"
-
-msgid "Install Finished."
-msgstr "Η εγκατάσταση ολοκληρώθηκε."
-
 #, fuzzy
 msgid "Install Image"
 msgstr "Εγκατάσταση"
@@ -10692,9 +10775,6 @@ msgstr "Εγκατάσταση τοπικής επέκτασης"
 
 msgid "Install Plugins"
 msgstr "Εγκατάσταση Προσθέτων"
-
-msgid "Install Softcams"
-msgstr "Εγκατάσταση Softcams"
 
 #, fuzzy
 msgid "Install a new image with a USB stick"
@@ -10742,7 +10822,7 @@ msgid "Installation finished."
 msgstr "Η εγκατάσταση ολοκληρώθηκε."
 
 #, fuzzy, python-format
-msgid "Installed:\t\t%s"
+msgid "Installed:\t%s"
 msgstr "Εγκαταστάθηκε:\t%s"
 
 msgid "Installing"
@@ -11088,10 +11168,6 @@ msgid "Kernel (Box):\t%s"
 msgstr "Kernel:\t%s"
 
 #, fuzzy
-msgid "Kernel Modules"
-msgstr "Kernel: %s"
-
-#, fuzzy
 msgid "Kernel version"
 msgstr "Αναστροφή"
 
@@ -11107,18 +11183,16 @@ msgstr "Kernel: %s"
 msgid "Kexec MultiBoot Actions"
 msgstr "Επιλογή MultiBoot"
 
-msgid "Kexec MultiBoot Initialisation - will reboot after 10 seconds."
-msgstr ""
-
-msgid ""
-"Kexec MultiBoot Initialisation in progress!\n"
-"\n"
-"Will reboot after restoring any eMMC slots.\n"
-"This can take from 1 -> 5 minutes per slot."
-msgstr ""
+#, fuzzy
+msgid "Kexec MultiBoot Initialization in progress!"
+msgstr "Επιλογή MultiBoot"
 
 #, fuzzy
 msgid "Kexec MultiBoot Manager"
+msgstr "Διαχείριση Αυτόματων Προσαρτήσεων"
+
+#, fuzzy
+msgid "Kexec MultiBoot files are missing."
 msgstr "Διαχείριση Αυτόματων Προσαρτήσεων"
 
 msgid "Key"
@@ -11134,10 +11208,6 @@ msgstr "Ρυθμίσεις εγγραφών"
 #, fuzzy
 msgid "Keyboard data entry"
 msgstr "Ρύθμιση πληκτρολογίου"
-
-#, fuzzy
-msgid "Keyboard map"
-msgstr "Πληκτρολόγιο"
 
 msgid "Keymap Selection"
 msgstr "Επιλογή διάταξης πλήκτρων"
@@ -11219,12 +11289,35 @@ msgid "LCN rules:"
 msgstr "Κανόνες LCN:"
 
 #, fuzzy
+msgid "LED Brightness"
+msgstr "Φωτεινότητα"
+
+#, fuzzy
+msgid "LED Color"
+msgstr "Χρώμα"
+
+#, fuzzy
 msgid "LED Deep Standby"
 msgstr "Βαθιά Αναμονή"
 
 #, fuzzy
+msgid "LED Idle Brightness"
+msgstr "Φωτεινότητα"
+
+msgid "LED Idle Color"
+msgstr ""
+
+#, fuzzy
 msgid "LED Normal"
 msgstr "κανονικό"
+
+#, fuzzy
+msgid "LED Settings"
+msgstr "Ρυθμίσεις OSD"
+
+#, fuzzy
+msgid "LED Shutdown Color"
+msgstr "Τερματισμός"
 
 #, fuzzy
 msgid "LED Standby"
@@ -11291,7 +11384,7 @@ msgid "Large"
 msgstr ""
 
 #, fuzzy
-msgid "Last Request"
+msgid "Last Req."
 msgstr "Τελευταία Αιτ."
 
 #, fuzzy
@@ -11360,14 +11453,6 @@ msgstr "Αριστερά"
 #, fuzzy
 msgid "Left column"
 msgstr "Εμφάνιση στηλών"
-
-#, fuzzy
-msgid "Left column directory sort"
-msgstr "Αρχικός φάκελος"
-
-#, fuzzy
-msgid "Left column file sort"
-msgstr "Ρυθμίσεις φίλτρου Προσθέτων"
 
 #, fuzzy
 msgid "Left from service name"
@@ -11471,9 +11556,6 @@ msgstr "Λειτουργίες Λίστας EPG..."
 
 msgid "List Navigation Actions"
 msgstr ""
-
-msgid "List available networks"
-msgstr "Λίστα διαθέσιμων δικτύων"
 
 #, fuzzy
 msgid "List of Storage Devices"
@@ -11602,9 +11684,6 @@ msgstr "Τοποθεσία"
 msgid "Location Selection Actions"
 msgstr "Ρυθμίσεις επιλογής καναλιών"
 
-msgid "Location of where image backup should be saved."
-msgstr ""
-
 #, fuzzy, python-format
 msgid "Location: %s"
 msgstr "Τοποθεσία"
@@ -11615,6 +11694,10 @@ msgstr ""
 #, fuzzy
 msgid "Log"
 msgstr "Καταγραφή E2"
+
+#, python-format
+msgid "Log %s-%s"
+msgstr ""
 
 msgid "Log Manager"
 msgstr "Διαχείριση Καταγραφών"
@@ -11701,9 +11784,6 @@ msgstr "Λουξεμβουργιανά"
 #, fuzzy
 msgid "Luxembourgish / Letzeburgesch"
 msgstr "Λουξεμβουργιανά"
-
-msgid "M2k"
-msgstr ""
 
 #, fuzzy
 msgid "MAC Address Actions"
@@ -11820,9 +11900,6 @@ msgstr "Χειροκίνητη"
 msgid "Manual Scan"
 msgstr "Χειροκίνητη Ανίχνευση"
 
-msgid "Manual configuration"
-msgstr "Χειροκίνητη ρύθμιση"
-
 msgid "Manual scan"
 msgstr "Χειροκίνητη ανίχνευση"
 
@@ -11859,7 +11936,8 @@ msgstr ""
 msgid "Margin before zap"
 msgstr "Εκκαθάριση πριν την ανίχνευση"
 
-msgid "Mark service as dedicated 3D service"
+#, fuzzy
+msgid "Mark As Dedicated 3D Service"
 msgstr "Μαρκάρισμα υπηρεσίας ως σταθερή υπηρεσία 3D"
 
 #, fuzzy
@@ -11935,12 +12013,8 @@ msgid "Media Player"
 msgstr "Αναπαραγωγή Πολυμέσων"
 
 #, fuzzy
-msgid "Media Player Settings"
-msgstr "Αναπαραγωγή Πολυμέσων"
-
-#, fuzzy
-msgid "Media Portal"
-msgstr "MediaPortal"
+msgid "Media Stream"
+msgstr "Κέντρο Πολυμέσων"
 
 msgid "Media playback Remaining/Elapsed as"
 msgstr ""
@@ -12035,9 +12109,6 @@ msgstr "Μήνυμα"
 #, fuzzy
 msgid "Message Box Actions"
 msgstr "Διαχείριση επεκτάσεων"
-
-msgid "Message pop up timeout"
-msgstr ""
 
 #, fuzzy
 msgid "Message..."
@@ -12318,6 +12389,10 @@ msgstr "Μετακίνηση"
 
 msgid "Move Left/Right"
 msgstr "Μετακίνηση Αριστερά/Δεξιά"
+
+#, fuzzy
+msgid "Move Mode"
+msgstr "[λειτουργία μετακίνησης]"
 
 #, fuzzy
 msgid "Move Mode Off"
@@ -12691,6 +12766,13 @@ msgstr "Ρυθμίσεις OSD"
 msgid "NIM & Type"
 msgstr ""
 
+#, fuzzy
+msgid "NO"
+msgstr "Όχι"
+
+msgid "NOTE"
+msgstr ""
+
 #, python-format
 msgid "NOTE: The directory/file '%s' exists and will be overwritten!"
 msgstr ""
@@ -12743,6 +12825,10 @@ msgstr "Ρυθμίσεις Nameserver"
 #, fuzzy
 msgid "Nameserver setup"
 msgstr "Ρυθμίσεις Nameserver"
+
+#, fuzzy
+msgid "Nameserver:"
+msgstr "Nameserver"
 
 msgid "Namespace & Orbital pos."
 msgstr ""
@@ -12894,13 +12980,6 @@ msgstr "Έλεγχος δικτύου"
 msgid "Network test..."
 msgstr "Έλεγχος δικτύου"
 
-#, fuzzy
-msgid ""
-"Network wizard completed.\n"
-"\n"
-"Press OK to continue."
-msgstr "Παρακαλώ πιέστε ΟΚ για συνέχεια."
-
 msgid "Network:"
 msgstr "Δίκτυο:"
 
@@ -13027,6 +13106,9 @@ msgid "No Connection"
 msgstr "Δεν υπάρχει σύνδεση"
 
 msgid "No Cover"
+msgstr ""
+
+msgid "No ECM info is currently available. This is only available while decrypting."
 msgstr ""
 
 #, fuzzy
@@ -13187,6 +13269,10 @@ msgstr "διαθέσιμες ενημερώσεις."
 #, fuzzy
 msgid "No updates were available.  Please try again later."
 msgstr "Δεν υπάρχουν ενημερώσεις διαθέσιμες. Παρακαλώ δοκιμάστε αργότερα."
+
+#, fuzzy, python-format
+msgid "No valid mount for '%s' found!"
+msgstr "Δεν βρέθηκε καλωδιακό tuner!"
 
 msgid "No wireless networks found! Searching..."
 msgstr "Δεν βρέθηκαν ασύρματα δίκτυα! Αναζήτηση..."
@@ -13436,12 +13522,6 @@ msgstr ""
 msgid "Nw"
 msgstr "Νέο"
 
-msgid "OE Changes"
-msgstr "Αλλαγές ΟΕ"
-
-msgid "OE Log"
-msgstr "Καταγραφή ΟΕ"
-
 msgid "OK"
 msgstr "OK"
 
@@ -13567,8 +13647,8 @@ msgid "OPENDROID/BluePanel"
 msgstr "Μπλε παρατεταμένο"
 
 #, fuzzy
-msgid "OPKG clean mode"
-msgstr "Πληροφορίες Πελάτη"
+msgid "OSCam Information Settings"
+msgstr "Ρύθμιση Πληροφοριών CCcam"
 
 msgid "OSD"
 msgstr "OSD"
@@ -13602,10 +13682,6 @@ msgstr "Πληροφορίες OScam"
 #, fuzzy
 msgid "OScam can not be installed"
 msgstr "Λυπούμαστε, το %s δεν έχει εγκατασταθεί!"
-
-#, fuzzy
-msgid "OScam webif disabled"
-msgstr "ανενεργό"
 
 msgid "OScamInfo"
 msgstr "Πληροφορίες Oscam"
@@ -13692,10 +13768,6 @@ msgstr ""
 msgid "Only on startup"
 msgstr "Μόνο κατά την εκκίνηση"
 
-#, fuzzy
-msgid "Only provider"
-msgstr "πάροχος:"
-
 msgid "Open"
 msgstr "Άνοιγμα"
 
@@ -13715,7 +13787,7 @@ msgid "Open IMDb"
 msgstr "Άνοιγμα IMDB..."
 
 #, fuzzy
-msgid "Open MediaPortal"
+msgid "Open MediaStream"
 msgstr "Άνοιγμα MediaPortal..."
 
 msgid "Open Similar List Channel List"
@@ -13762,6 +13834,10 @@ msgstr "Άνοιγμα λίστας υπηρεσιών και επιλογή τ�
 msgid "Open service list and select previous channel for PiP"
 msgstr "Άνοιγμα λίστας υπηρεσιών και επιλογή του προηγούμενου καναλιού για PiP"
 
+#, fuzzy
+msgid "Open the Channel Selection Settings screen"
+msgstr "Ρυθμίσεις επιλογής καναλιών"
+
 msgid "Open the movie list"
 msgstr "Επιστροφή στη λίστα ταινίων"
 
@@ -13803,10 +13879,6 @@ msgstr "ύψος"
 msgid "OpenHDF"
 msgstr "Άνοιγμα"
 
-#, fuzzy
-msgid "OpenPLi"
-msgstr "Άνοιγμα"
-
 #, python-format
 msgid "OpenSSL:\t%s"
 msgstr ""
@@ -13822,10 +13894,6 @@ msgstr "Ρυθμίσεις OpenVPN"
 #, fuzzy
 msgid "OpenVPN Settings"
 msgstr "Ρυθμίσεις OpenVPN"
-
-#, fuzzy
-msgid "OpenViX"
-msgstr "Άνοιγμα"
 
 msgid "OpenVpn Log"
 msgstr "Καταγραφή OpenVPN"
@@ -13887,17 +13955,6 @@ msgid ""
 "You must this install"
 msgstr ""
 
-msgid "Oscam Info - Main Menu"
-msgstr "Πληροφορίες Oscam - Κύριο Μενού"
-
-#, fuzzy
-msgid "Oscam Info Settings"
-msgstr "Ρύθμιση Πληροφοριών CCcam"
-
-#, python-format
-msgid "Oscam Log ( Oscam-Version: %s )"
-msgstr ""
-
 msgid "Oscam binary install"
 msgstr ""
 
@@ -13905,6 +13962,9 @@ msgid "Oscam type set automatically to"
 msgstr ""
 
 msgid "Oscam will be installed with the following settings"
+msgstr ""
+
+msgid "Oscam/Ncam not running - start Cam to obtain information."
 msgstr ""
 
 msgid "OscamInfo Mainmenu"
@@ -14043,10 +14103,6 @@ msgid "PGS file"
 msgstr "Όνομα αρχείου EPG"
 
 #, fuzzy
-msgid "PID"
-msgstr "pid:"
-
-#, fuzzy
 msgid "PIN code needed"
 msgstr "Δεν απαιτείται εφεδρεία"
 
@@ -14067,6 +14123,9 @@ msgstr "Λειτουργία 3D"
 msgid "PMT PID"
 msgstr "PMT PID"
 
+msgid "PO-Revision Date"
+msgstr ""
+
 msgid "POT-Creation Date"
 msgstr ""
 
@@ -14085,9 +14144,6 @@ msgstr "Διαχείριση Πακέτων"
 
 #, fuzzy
 msgid "Package files:"
-msgstr "Λίστα πακέτων"
-
-msgid "Package list"
 msgstr "Λίστα πακέτων"
 
 msgid "Package list update"
@@ -14162,6 +14218,10 @@ msgstr ""
 #, fuzzy
 msgid "Parent Directory"
 msgstr "Γονικός φάκελος"
+
+#, fuzzy
+msgid "Parental Control"
+msgstr "Γονικός έλεγχος"
 
 msgid "Parental Guidance Recommended"
 msgstr ""
@@ -14298,6 +14358,10 @@ msgid "Permanently remove all deleted items"
 msgstr "Οριστική διαγραφή όλων των διεγραμμένων στοιχείων"
 
 #, fuzzy
+msgid "Permanently remove the MultiBoot files?"
+msgstr "Οριστική διαγραφή όλων των διεγραμμένων στοιχείων"
+
+#, fuzzy
 msgid "Permissions"
 msgstr "Έκδοση:\t%s"
 
@@ -14364,6 +14428,10 @@ msgstr "Αναπαραγωγή εικόνων"
 msgid "Pictures"
 msgstr "Αναπαραγωγή Εικόνων"
 
+#, fuzzy
+msgid "Pid"
+msgstr "PiP"
+
 #. TRANSLATORS: (aspect ratio policy: black bars on left/right) in doubt, keep english term.
 msgid "Pillarbox"
 msgstr "Μπάρες εκατέρωθεν"
@@ -14384,12 +14452,20 @@ msgstr ""
 msgid "Play"
 msgstr "Αναπαραγωγή"
 
+#, fuzzy
+msgid "Play As Picture in Picture window"
+msgstr "αναπαραγωγή ως PiP"
+
 msgid "Play DVD"
 msgstr "Αναπαραγωγή DVD"
 
 #, fuzzy
 msgid "Play DVDs"
 msgstr "Αναπαραγωγή DVD"
+
+#, fuzzy
+msgid "Play In Main window"
+msgstr "αναπαραγωγή στο κεντρικό παράθυρο"
 
 msgid "Play all audio files in the directory"
 msgstr ""
@@ -14415,6 +14491,14 @@ msgstr "Αναπαραγωγή από επόμενο σημείο ή λίστα"
 msgid "Play from previous mark or play list entry"
 msgstr "Αναπαραγωγή από προηγούμενο σημείο ή λίστα"
 
+#, fuzzy
+msgid "Play in Main"
+msgstr "αναπαραγωγή στο κεντρικό παράθυρο"
+
+#, fuzzy
+msgid "Play in PiP"
+msgstr "Αναπαραγωγή επόμενου"
+
 msgid "Play music..."
 msgstr "Αναπαραγωγή μουσικής..."
 
@@ -14433,6 +14517,19 @@ msgstr "Απαναραγωγή προγηγούμενου"
 #, fuzzy
 msgid "Play recorded movies"
 msgstr "Αναπαραγωγή εγγραφών..."
+
+msgid "Play selected service in a PiP window"
+msgstr ""
+
+#, fuzzy
+msgid "Play selected service on the main screen"
+msgstr "Επέλεξε μια υπό-υπηρεσία για εγγραφή..."
+
+msgid "Play service with Stream Relay"
+msgstr ""
+
+msgid "Play service without Stream Relay"
+msgstr ""
 
 #, fuzzy
 msgid "Play the audio file"
@@ -14473,17 +14570,11 @@ msgstr "Παρακαλώ αλλάξτε την ώρα τερματισμού"
 msgid "Please check the manual of the receiver"
 msgstr "Παρακαλώ εισάγετε όνομα νέου φάκελου"
 
-msgid "Please choose CCcam-Reader"
-msgstr "Παρακαλώ επιλέξτε αναγνώστη CCcam"
-
 msgid "Please choose an extension..."
 msgstr "Παρακαλώ επιλέξτε μία επέκταση..."
 
 msgid "Please choose he package..."
 msgstr "Παρακαλώ επιλέξτε πακέτο..."
-
-msgid "Please choose reader"
-msgstr "Παρακαλώ επιλέξτε αναγνώστη"
 
 msgid "Please connect your %s %s to the internet"
 msgstr ""
@@ -14533,12 +14624,6 @@ msgstr "Παρακαλώ εισάγετε νέο όνομα:"
 msgid "Please enter the old PIN code"
 msgstr "Εισάγετε το παλιό PIN"
 
-msgid "Please enter your personal feed URL"
-msgstr ""
-
-msgid "Please follow the instructions on the TV"
-msgstr "Παρακαλώ ακολουθήστε τις οδηγίες στην οθόνη"
-
 msgid "Please note that the previously selected media could not be accessed and therefore the default directory is being used instead."
 msgstr "Σημειώστε ότι η πρόσβαση στο προηγουμένως επιλεγμένο μέσο δεν είναι δυνατή και έτσι θα χρησιμοποιηθεί ο προεπιλεγμένος φάκελος."
 
@@ -14547,6 +14632,10 @@ msgstr "Παρακαλώ ανοίξτε το PiP πρώτα"
 
 msgid "Please press OK to continue."
 msgstr "Παρακαλώ πιέστε ΟΚ για συνέχεια."
+
+#, fuzzy
+msgid "Please press OK when ready"
+msgstr "πιέστε OK όταν είστε έτοιμοι"
 
 #, fuzzy
 msgid "Please select a backup destination"
@@ -14598,6 +14687,10 @@ msgstr "Παρακαλώ επιλέξτε μέσο που θα χρησιμοπ�
 msgid "Please select tag to filter..."
 msgstr "Παρακαλώ επιλέξτε ετικέτα προς φιλτράρισμα..."
 
+#, fuzzy
+msgid "Please select the device or Cancel to cancel the selection."
+msgstr "Επιλέξτε μία συσκευή για χρήση τοποθεσίας swap"
+
 msgid "Please select the movie path..."
 msgstr "Παρακαλώ επιλέξτε διαδρομή ταινιών..."
 
@@ -14648,40 +14741,76 @@ msgid ""
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
+#, fuzzy
+msgid "Please set up tuner E"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
+
 msgid ""
 "Please set up tuner E\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
+
+#, fuzzy
+msgid "Please set up tuner F"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
 
 msgid ""
 "Please set up tuner F\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
+#, fuzzy
+msgid "Please set up tuner G"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
+
 msgid ""
 "Please set up tuner G\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
+
+#, fuzzy
+msgid "Please set up tuner H"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
 
 msgid ""
 "Please set up tuner H\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
+#, fuzzy
+msgid "Please set up tuner I"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
+
 msgid ""
 "Please set up tuner I\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
+
+#, fuzzy
+msgid "Please set up tuner J"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
 
 msgid ""
 "Please set up tuner J\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
 
+#, fuzzy
+msgid "Please set up tuner K"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
+
+#, fuzzy
+msgid "Please set up tuner Q"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
+
 msgid ""
 "Please set up tuner Q\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
 msgstr ""
+
+#, fuzzy
+msgid "Please set up tuner R"
+msgstr "Παρακαλώ εισάγετε νέο όνομα:"
 
 msgid ""
 "Please set up tuner R\n"
@@ -14691,16 +14820,6 @@ msgstr ""
 msgid ""
 "Please set up tuner k\n"
 "For Hybrid Tuner Models switch Tuner Type with left and right keys"
-msgstr ""
-
-#, fuzzy
-msgid "Please set your time options"
-msgstr "Παρακαλώ επιλέξτε μία ανάλυση..."
-
-msgid ""
-"Please set your time options.\n"
-"\n"
-"Press YELLOW to set the time zone via geolocation."
 msgstr ""
 
 #, fuzzy
@@ -14773,13 +14892,6 @@ msgid "Please wait, loading image..."
 msgstr "περίμενετε, φορτώνεται η εικόνα..."
 
 #, fuzzy
-msgid "Please wait, restarting cardserver."
-msgstr "Παρακαλώ περιμένετε (αναβάθμιση πακέτων)"
-
-msgid "Please wait, restarting softcam and cardserver."
-msgstr ""
-
-#, fuzzy
 msgid "Please wait, restarting softcam."
 msgstr "Παρακαλώ περιμένετε καθώς συλλέγονται δεδομένα..."
 
@@ -14811,6 +14923,10 @@ msgstr "Πλοηγός Προσθέτων"
 #, fuzzy
 msgid "Plugin Browser Settings"
 msgstr "Ρυθμίσεις Πλοηγού Προσθέτων"
+
+#, fuzzy
+msgid "Plugin Browser layout"
+msgstr "Πλοηγός Προσθέτων"
 
 #, fuzzy
 msgid "Plugin Filter Settings"
@@ -14857,6 +14973,9 @@ msgstr "Πόρτα C"
 
 msgid "Port D"
 msgstr "Πόρτα D"
+
+msgid "Port number for the Stream Relay server used to descramble services that can only be decrypted via Stream Relay."
+msgstr ""
 
 #, fuzzy
 msgid "Portugal"
@@ -15020,15 +15139,10 @@ msgstr "Πιέστε OK για ανίχνευση"
 msgid "Press EXIT to return to the help screen."
 msgstr "Πιέστε OK για να ξεκινήσει η ανίχνευση"
 
-msgid "Press GREEN to remove all"
+msgid "Press GREEN to enable MultiBoot!"
 msgstr ""
 
-msgid ""
-"Press Green key to enable MultiBoot!\n"
-"\n"
-"Will reboot within 10 seconds,\n"
-"unless you have eMMC slots to restore.\n"
-"Restoring eMMC slots can take from 1 -> 5 minutes per slot."
+msgid "Press GREEN to remove all"
 msgstr ""
 
 #, fuzzy
@@ -15123,6 +15237,12 @@ msgid "Press the UP/DOWN buttons to select a slot and press OK or GREEN to reboo
 msgstr ""
 
 msgid "Press this button to emulate a long press on a button pressed afterwards (this also overrides any other actions assigned to emulation button)."
+msgstr ""
+
+msgid ""
+"Press up/down to scroll through the selected log\n"
+"\n"
+"Press left/right to see different log types"
 msgstr ""
 
 msgid "Press yellow to set this interface as the default interface."
@@ -15325,6 +15445,10 @@ msgstr ""
 msgid "Purge 'Trash' after (days)"
 msgstr ""
 
+#, fuzzy
+msgid "Purge Deleted User Bouquets"
+msgstr "εκκαθάριση διαγραμμένων μπουκέτων χρήστη"
+
 msgid "Purge all but / Add / Delete the currently highlighted locale/language"
 msgstr ""
 
@@ -15374,16 +15498,11 @@ msgstr "Κανάλι Πανικού"
 msgid "Quad PiP is not available."
 msgstr "Μη διαθέσιμο tuner."
 
-msgid "Quechua"
+msgid "Quad9 DNS"
 msgstr ""
 
-#, fuzzy
-msgid "Query before image backup starts"
-msgstr "Καθυστέρηση πριν ξεκινήσει η επανάληψη πλήκτρου:"
-
-#, fuzzy
-msgid "Query before starting image backup."
-msgstr "Επαναφορά ρυθμίσεων από αντίγραφο ασφαλείας"
+msgid "Quechua"
+msgstr ""
 
 msgid "Question"
 msgstr "Ερώτηση"
@@ -15450,6 +15569,10 @@ msgstr "Ρυθμίσεις Υποτίτλων"
 msgid "RGB"
 msgstr "RGB"
 
+#, fuzzy
+msgid "Radio"
+msgstr " (Ραδιόφωνο)"
+
 msgid "Radio Channel Selection"
 msgstr "Επιλογή Καναλιών Ραδιοφώνου"
 
@@ -15478,6 +15601,10 @@ msgstr "Μη καθορισμένη βαθμολογία"
 msgid "Re-enter new PIN"
 msgstr "Επανεισαγωγή του νέου PIN"
 
+#, python-format
+msgid "Read Userdata from %s.conf"
+msgstr ""
+
 msgid "Read Userdata from oscam.conf"
 msgstr ""
 
@@ -15500,6 +15627,10 @@ msgstr "Αναγνώστης"
 
 msgid "Reader Statistics"
 msgstr "Στατιστικά Αναγνώστη"
+
+#, fuzzy
+msgid "Reader/User"
+msgstr "Αναγνώστης"
 
 #, python-format
 msgid "Ready to install \"%s\" ?"
@@ -15549,12 +15680,6 @@ msgstr "Διαγραφή όλων των ολοκληρωμένων χρονοδ
 msgid "Really exit the subservices quickzap?"
 msgstr "Έξοδος από γρήγορο ζάπινγκ των υπό-υπηρεσιών?"
 
-#, python-format
-msgid ""
-"Really permanently delete MultiBoot files?\n"
-"%s"
-msgstr ""
-
 msgid "Really reboot into Recovery Mode?"
 msgstr "Να γίνει σίγουρα επανεκκίνηση σε Λειτουργία Αποκατάστασης;"
 
@@ -15594,11 +15719,16 @@ msgstr "Επαναδημιουργία του μπουκέτου LCN τώρα;"
 msgid "Rec"
 msgstr "Εγγρ."
 
+#, fuzzy
+msgid "Receiver does not support Quad PiP."
+msgstr "Ο %s %s σας δεν υποστηρίζει PiP HD"
+
+#, fuzzy
+msgid "Reception Lists"
+msgstr "Λίστες λήψης"
+
 msgid "Reception Settings"
 msgstr "Ρυθμίσεις Λήψης"
-
-msgid "Reception lists"
-msgstr "Λίστες λήψης"
 
 #, fuzzy
 msgid "Reception settings"
@@ -15755,10 +15885,6 @@ msgid "Refresh rate for 'Lowest Mode'"
 msgstr "Ρυθμός ανανέωσης για τη 'Χαμηλότερη Λειτουργία'"
 
 #, fuzzy
-msgid "Refresh rate selection."
-msgstr "Επιλογή συχνότητας ανανέωσης."
-
-#, fuzzy
 msgid "Refresh screen"
 msgstr "Συχνότητα ανανέωσης"
 
@@ -15800,6 +15926,10 @@ msgid "Reload Bookmarks"
 msgstr "Σελιδοδείκτες"
 
 msgid "Reload Services"
+msgstr "Επαναφόρτωση Υπηρεσιών"
+
+#, fuzzy
+msgid "Reload all services from disk"
 msgstr "Επαναφόρτωση Υπηρεσιών"
 
 #, fuzzy
@@ -15857,19 +15987,51 @@ msgid "Remove"
 msgstr "Διαγραφή"
 
 #, fuzzy
+msgid "Remove All Alternatives"
+msgstr "διαγραφή όλων των εναλλακτικών"
+
+#, fuzzy
+msgid "Remove All New Found Flags"
+msgstr "διαγραφή όλων των νέων σημαιών"
+
+#, fuzzy
 msgid "Remove Bookmark"
 msgstr "Διαγραφή σελιδοδείκτη"
 
+#, fuzzy
+msgid "Remove Bouquet From Parental Protection"
+msgstr "αφαίρεση μπουκέτου από τη γονική προστασία"
+
+#, fuzzy
+msgid "Remove Cable Services"
+msgstr "αφαίρεση καλωδιακών υπηρεσιών"
+
 msgid "Remove Confirmation"
 msgstr "Αφαίρεση Επιβεβαίωσης"
+
+#, fuzzy
+msgid "Remove Entry"
+msgstr "διαγραφή στοιχείου"
+
+#, fuzzy
+msgid "Remove Files"
+msgstr "Διαγραφή τίτλου"
 
 #, fuzzy
 msgid "Remove Finished."
 msgstr "Διαγραφή ολοκληρωμένων."
 
 #, fuzzy
+msgid "Remove From Parental Protection"
+msgstr "διαγραφή από γονικό έλεγχο"
+
+#, fuzzy
 msgid "Remove Image "
 msgstr "Διαγραφή χρονοδιακόπτη"
+
+#, fuzzy
+msgid "Remove New Found Flag"
+msgstr "διαγραφή σημαίας \"νέο\""
 
 #, fuzzy
 msgid "Remove OPDBoot"
@@ -15882,8 +16044,16 @@ msgstr "Αφαίρεση Προσθέτων"
 msgid "Remove Quad Channel Entry"
 msgstr "Διαγραφή nameserver"
 
+#, fuzzy
+msgid "Remove Satellite Services"
+msgstr "αφαίρεση καλωδιακών υπηρεσιών"
+
 msgid "Remove Service"
 msgstr "Αφαίρεση Υπηρεσίας"
+
+#, fuzzy
+msgid "Remove Terrestrial Services"
+msgstr "αφαίρεση επίγειων υπηρεσιών"
 
 #, fuzzy
 msgid "Remove a DNS entry"
@@ -15950,24 +16120,29 @@ msgstr ""
 msgid "Remove currently selected title"
 msgstr "Διαγραφή επιλεγμένου τίτλου"
 
-#, fuzzy
-msgid "Remove forever"
-msgstr "Αφαίρεση Υπηρεσίας"
-
-msgid "Remove hide VBI line for this service"
-msgstr ""
-
 msgid "Remove highlighted directory from bookmarks"
 msgstr ""
 
 msgid "Remove plugins"
 msgstr "Απεγκατάσταση προσθέτων"
 
+#, fuzzy
+msgid "Remove selected service"
+msgstr "διαγραφή επιλεγμένου δορυφόρου"
+
+#, fuzzy
+msgid "Remove service from AutoCam"
+msgstr "Αφαίρεση Υπηρεσίας"
+
 msgid "Remove texts for the hearing impaired from external subtitles (instrumental music or environmental sounds, e.g., when a doorbell rings or a gun shot is heard)."
 msgstr ""
 
 msgid "Remove the Line from CCcam.cfg"
 msgstr ""
+
+#, fuzzy
+msgid "Remove the MultiBoot files"
+msgstr "Διαγραφή τίτλου"
 
 #, fuzzy
 msgid "Remove the current bookmark"
@@ -16000,6 +16175,10 @@ msgid "Rename Directory"
 msgstr "Δημιουργία φακέλου"
 
 #, fuzzy
+msgid "Rename Entry"
+msgstr "μετονομασία στοιχείου"
+
+#, fuzzy
 msgid "Rename all related files"
 msgstr "Τρέχον εγκατεστημένο image"
 
@@ -16015,6 +16194,10 @@ msgstr ""
 
 msgid "Rename only highlighted file"
 msgstr ""
+
+#, fuzzy
+msgid "Rename selected service"
+msgstr "Μετάβαση στο επιλεγμένο κανάλι"
 
 msgid "Rename the proposed file to be created"
 msgstr ""
@@ -16044,10 +16227,6 @@ msgstr "επανάληψη λίστας αναπαραγωγής"
 #, fuzzy
 msgid "Repeat how often"
 msgstr "Πόσο συχνά να γίνεται εκτέλεση ;"
-
-#, fuzzy
-msgid "Repeat play list"
-msgstr "επανάληψη λίστας αναπαραγωγής"
 
 msgid "Repeat the sent standby and wake up commands"
 msgstr ""
@@ -16126,9 +16305,6 @@ msgstr "Μηδενισμός σταθερού κωδικού PIN"
 msgid "Reset playback position"
 msgstr "Επαναφορά σημείου αναπαραγωγής"
 
-msgid "Reset the selected devices and save changes of your config when the GREEN button is pressed."
-msgstr ""
-
 msgid "Reset video enhancement settings to system defaults?"
 msgstr "Επαναφορά ρυθμίσεων βελτίωσης εικόνας στις προρυθμισμένες τιμές;"
 
@@ -16183,16 +16359,12 @@ msgstr "Επανεκκίνηση Προσαρμογέα Δικτύου"
 msgid "Restart STB"
 msgstr "Επανεκκίνηση"
 
-#, fuzzy
-msgid "Restart both"
-msgstr "Eπανεκκίνηση ελέγχου"
-
-#, fuzzy
-msgid "Restart cardserver"
-msgstr "λήψη διακομιστή καρτών"
-
 msgid "Restart enigma"
 msgstr "Επανεκκίνηση enigma"
+
+#, fuzzy
+msgid "Restart necessary, restart GUI now?"
+msgstr "Επανεκκίνηση τώρα;"
 
 #, fuzzy
 msgid "Restart softcam"
@@ -16205,8 +16377,16 @@ msgstr "Eπανεκκίνηση ελέγχου"
 msgid "Restart your network connection and interfaces."
 msgstr "Επανεκκίνηση σύνδεσης δικτύου και διεπαφών.\n"
 
+#, fuzzy
+msgid "Restarting..."
+msgstr "Επαναφορά..."
+
 msgid "Restore"
 msgstr "Επαναφορά"
+
+#, fuzzy
+msgid "Restore Deleted User Bouquets"
+msgstr "επαναφορά διαγραμμένων μπουκέτων χρήστη"
 
 msgid "Restore Plugins"
 msgstr "Επαναφορά Προσθέτων"
@@ -16289,9 +16469,6 @@ msgstr "Αντιμετάθεση πλήκτρων μπουκέτου"
 msgid "Reverse list"
 msgstr "Αντιστροφή λίστας"
 
-msgid "Revision Date"
-msgstr ""
-
 msgid "Rewind"
 msgstr "Προώθηση προς τα πίσω"
 
@@ -16309,13 +16486,6 @@ msgstr "Δεξιά"
 #, fuzzy
 msgid "Right column"
 msgstr "Εμφάνιση στηλών"
-
-#, fuzzy
-msgid "Right column directory sort"
-msgstr "Αρχικός φάκελος"
-
-msgid "Right column file sort"
-msgstr ""
 
 #, fuzzy
 msgid "Right from service name"
@@ -16345,6 +16515,10 @@ msgstr "Ρουμανικά"
 
 msgid "Root"
 msgstr ""
+
+#, fuzzy
+msgid "Root Image"
+msgstr "Εφεδρεία Image"
 
 #, fuzzy
 msgid "Root directory"
@@ -16459,6 +16633,10 @@ msgstr ""
 
 msgid "SD"
 msgstr "SD"
+
+#, fuzzy, python-format
+msgid "SDcard slot %s%s"
+msgstr "Πόρτα DiSEqC %s: %s"
 
 msgid "SDcard switch ERROR! - H9 root files not transferred to SD card"
 msgstr ""
@@ -16638,10 +16816,6 @@ msgid "Save and stop"
 msgstr "Αποθήκευση και διακοπή"
 
 #, fuzzy
-msgid "Save directory on EXIT"
-msgstr "αποθήκευση τελευταίου φακέλου κατά την έξοδο"
-
-#, fuzzy
 msgid "Save every (in hours)"
 msgstr "Αποθήκευση κάθε (σε ώρες)"
 
@@ -16650,20 +16824,8 @@ msgid "Save image as '%s'"
 msgstr ""
 
 #, fuzzy
-msgid "Save left directory on exit"
-msgstr "αποθήκευση τελευταίου φακέλου κατά την έξοδο"
-
-#, fuzzy
 msgid "Save play list"
 msgstr "Αποθήκευση λίστας αναπαραγωγής"
-
-#, fuzzy
-msgid "Save play list on EXIT"
-msgstr "αποθήκευση λίστας αναπαραγωγής κατά την έξοδο"
-
-#, fuzzy
-msgid "Save right directory on exit"
-msgstr "αποθήκευση τελευταίου φακέλου κατά την έξοδο"
 
 #, fuzzy
 msgid "Save settings and EPG data."
@@ -16675,16 +16837,8 @@ msgid ""
 "('%s')"
 msgstr ""
 
-#, fuzzy
-msgid "Save the left column directory location on exit."
-msgstr "αποθήκευση τελευταίου φακέλου κατά την έξοδο"
-
 msgid "Save the log changes and exit"
 msgstr ""
-
-#, fuzzy
-msgid "Save the right column directory location on exit."
-msgstr "αποθήκευση τελευταίου φακέλου κατά την έξοδο"
 
 #, fuzzy
 msgid "Save time shift as movie and continue recording"
@@ -16693,9 +16847,6 @@ msgstr "Αποθήκευση χρονομετατόπισης ως ταινία 
 #, fuzzy
 msgid "Save time shift as movie and stop recording"
 msgstr "Αποθήκευση χρονομετατόπισης ως ταινία και διακοπή εγγραφής"
-
-msgid "Saved lines in script messages"
-msgstr ""
 
 msgid "Saving EPG Cache..."
 msgstr "Αποθήκευση προσωρινής μνήμης EPG..."
@@ -16713,9 +16864,6 @@ msgstr "Οξύτητα κλιμάκωσης"
 
 msgid "Scaler vertical dejagging"
 msgstr "Κάθετη ομαλοποίηση της κλιμάκωσης"
-
-msgid "Scaling mode"
-msgstr "Τύπος κλιμάκωσης"
 
 msgid "Scan"
 msgstr "Ανίχνευση"
@@ -16780,10 +16928,6 @@ msgstr "Ανίχνευση..."
 
 msgid "Scans default lamedbs sorted by satellite with a connected dish positioner"
 msgstr "Εκτελεί σάρωση των αρχικών βάσεων δεδομένων ταξινομημένων κατά δορυφόρο με συνδεδεμένο μοτέρ"
-
-#, fuzzy
-msgid "Schedule Backups"
-msgstr "Επαναφορά αντιγράφων ασφαλείας"
 
 msgid "Schedule EPG and channel list import"
 msgstr ""
@@ -16868,9 +17012,6 @@ msgstr ""
 msgid "Sectors: unknown"
 msgstr "άγνωστο"
 
-msgid "Security"
-msgstr ""
-
 msgid "Seek"
 msgstr "Αναζήτηση"
 
@@ -16923,6 +17064,9 @@ msgstr ""
 msgid "Select 'A' or 'B' if your aerial system requires this, otherwise select 'none'. If you are unsure select 'none'."
 msgstr ""
 
+msgid "Select 'Enable' to force a package clean before a package update. This is helpful to make sure the package list is up-to-date and can avoid/solve issues during the update. Only enable this when you can not update on-line."
+msgstr ""
+
 msgid "Select 'No' to make time shift use a single buffer file. Use 'Time shift checking for older files [in minutes]' and 'Time shift checking for free space?' to control the size of the buffer file."
 msgstr ""
 
@@ -16956,16 +17100,7 @@ msgstr ""
 msgid "Select 'Yes' to check if network connections are coming from nominated IP Addresses at the activation time of the timer. If so, the timer will be deactivated."
 msgstr ""
 
-msgid "Select 'Yes' to continuously display all images in a loop, or select 'No' to display all images once and then stop."
-msgstr ""
-
 msgid "Select 'Yes' to display a small TV image (PiG - Picture in Graphic) within the EPG screen."
-msgstr ""
-
-msgid "Select 'Yes' to display language/locale '.po' packages in the 'Plugin Browser' screen."
-msgstr ""
-
-msgid "Select 'Yes' to display source '.src' packages in the 'Plugin Browser' screen."
 msgstr ""
 
 msgid "Select 'Yes' to display the InfoBar when a new event starts."
@@ -16975,9 +17110,6 @@ msgid "Select 'Yes' to display the InfoBar when changing channels."
 msgstr ""
 
 msgid "Select 'Yes' to display the channel number in the InfoBar."
-msgstr ""
-
-msgid "Select 'Yes' to display unknown files in the File Commander file viewer, select 'No' to not process unknown files."
 msgstr ""
 
 msgid "Select 'Yes' to enable editing of this device's settings. Selecting 'No' resets the devices settings to their default values."
@@ -17023,16 +17155,61 @@ msgstr ""
 msgid "Select 'Yes' to remove all user customizations of skin data. Selecting this option will remove all user based skin customizations. All affected skins will return to their standard settings. This will also clear any customized boot logos and backdrops."
 msgstr ""
 
-msgid "Select 'Yes' to remove all user interface data. Selecting this option will remove all keymap, menu and setup override data and restore the default definitions."
+msgid "Select 'Yes' to remove all user interface data. Selecting this option will remove all key map, menu and setup override data and restore the default definitions."
 msgstr ""
 
 msgid "Select 'Yes' to reset network configuration to the default. This will enable the Ethernet port if it exists and set the receiver to use DHCP. All other network interfaces will be deleted."
 msgstr ""
 
-msgid "Select 'Yes' to set the cursor position to the end of the line when editing a text file.  Select 'No' to set the cursor to the start of the line."
+msgid "Select 'Yes' to show 'dev', 'staticdev', 'dbg' and 'doc' packages in the Download Plugins screen."
 msgstr ""
 
-msgid "Select 'Yes' to show directories at the top/start of the list, or select 'No' to show files first."
+msgid "Select 'Yes' to show LCD skin packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show OpenPLi packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show OpenViX packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show driver packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show extensions packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show kernel packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show m2k packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show picon packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show plugin skin packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show security packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show settings packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show skin component packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show skin packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show softcam packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show source 'src' packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to show system plugin packages in the Download Plugins screen."
 msgstr ""
 
 #, fuzzy
@@ -17045,13 +17222,10 @@ msgstr ""
 msgid "Select 'Yes' to show the channel list after switching between Radio and TV modes."
 msgstr ""
 
-msgid "Select 'Yes' to show the current directory in the list of directories. Note that File Commander must be restarted for this change to take effect."
+msgid "Select 'Yes' to show web link packages in the Download Plugins screen."
 msgstr ""
 
 msgid "Select 'Yes' to use signal values (SNR, etc) calculated from the older API V3. This API version has now been superseded."
-msgstr ""
-
-msgid "Select 'Yes' to use the number keys for quick selection of files / directories, select 'No' to use the number keys for MENU option shortcuts."
 msgstr ""
 
 msgid "Select 'Yes, to display the InfoBar when fast forwarding or rewinding during media playback."
@@ -17092,6 +17266,10 @@ msgid "Select Additional Backup Files"
 msgstr "Επιλογή επιπρόσθετων αντιγράφων ασφαλείας"
 
 #, fuzzy
+msgid "Select AutoCam default Softcam"
+msgstr "επιλογή Θύρας"
+
+#, fuzzy
 msgid "Select Backup Location"
 msgstr "Επιλογή θέσης αντιγράφου ασφαλείας"
 
@@ -17103,7 +17281,7 @@ msgid "Select CAId"
 msgstr "Επιλογή CAId"
 
 #, fuzzy
-msgid "Select Card Server"
+msgid "Select Device"
 msgstr "Επιλογή ταινίας"
 
 #, fuzzy
@@ -17162,11 +17340,19 @@ msgid "Select Your Skin"
 msgstr "Επιλογή θέματος"
 
 #, fuzzy
+msgid "Select a Softcam from the available list as the default for AutoCam."
+msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
+
+#, fuzzy
+msgid "Select a Softcam from the available list."
+msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
+
+#, fuzzy
 msgid "Select a bouquet"
 msgstr "Μετάβαση στο επόμενο μπουκέτο"
 
 #, fuzzy
-msgid "Select a cardserver from the available list."
+msgid "Select a device to use for the additional slots"
 msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
 
 #, fuzzy
@@ -17199,10 +17385,6 @@ msgstr ""
 
 msgid "Select a script to run:"
 msgstr "Επιλογή ενός script προς εκτέλεση:"
-
-#, fuzzy
-msgid "Select a softcam from the available list."
-msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
 
 #, fuzzy
 msgid "Select a tuner"
@@ -17257,13 +17439,7 @@ msgstr "Επιλογή εξαιρεμένων αντιγράφων ασφαλε�
 msgid "Select files/folders to backup"
 msgstr "Επιλογή αρχείων/φακέλων για αντίγραφα ασφαλείας"
 
-msgid "Select how long to display status messages."
-msgstr ""
-
 msgid "Select how long to display the button error pop up. Button input is still permitted while the pop up is displayed."
-msgstr ""
-
-msgid "Select how long to display the task and script message pop up."
 msgstr ""
 
 msgid "Select how long, in seconds, that the volume display is shown before it automatically hides."
@@ -17373,10 +17549,6 @@ msgstr ""
 msgid "Select service to add..."
 msgstr "Επιλογή υπηρεσίας για προσθήκη..."
 
-#, fuzzy
-msgid "Select softcam"
-msgstr "επιλογή Θύρας"
-
 msgid "Select sort method:"
 msgstr "Επιλογή τρόπου ταξινόμησης:"
 
@@ -17389,6 +17561,10 @@ msgstr ""
 #, fuzzy
 msgid "Select the No / False response"
 msgstr "Επιλογή Μεγέθους Αρχείου Swap: "
+
+#, fuzzy
+msgid "Select the Softcam protocol."
+msgstr "επιλογή Θύρας"
 
 msgid "Select the Swap File Size:"
 msgstr "Επιλογή Μεγέθους Αρχείου Swap: "
@@ -17422,6 +17598,10 @@ msgid "Select the animation speed of the button indicators in the help screens. 
 msgstr ""
 
 #, fuzzy
+msgid "Select the cardserver to be used from the list of available cardservers."
+msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
+
+#, fuzzy
 msgid "Select the channel from which to record:"
 msgstr "Ορισμός καναλιού για αυτό το χρονοδιακόπτη."
 
@@ -17438,6 +17618,14 @@ msgstr ""
 #, fuzzy
 msgid "Select the current menu item"
 msgstr "Εκτέλεση μετά το τρέχον πρόγραμμα"
+
+#, fuzzy
+msgid "Select the currently highlighted action"
+msgstr "εύρεση της τρέχουσας αναπαραγώμενης υπηρεσίας"
+
+#, fuzzy
+msgid "Select the currently highlighted bouquet"
+msgstr "εύρεση της τρέχουσας αναπαραγώμενης υπηρεσίας"
 
 msgid "Select the currently highlighted locale/language for the user interface"
 msgstr ""
@@ -17461,15 +17649,12 @@ msgstr "Επιλογή Μεγέθους Αρχείου Swap: "
 msgid "Select the day of the week that this timer will activate."
 msgstr ""
 
-msgid "Select the default directory to be used if the left column directory is not saved."
-msgstr ""
-
-msgid "Select the default directory to be used if the right column directory is not saved."
-msgstr ""
-
 #, fuzzy
 msgid "Select the delay before the timer activates."
 msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
+
+msgid "Select the delay to use when closing a Stream Relay service before reallocating the tuner for another service. Using '0' is only recommended for boxes with multiple satellite tuners."
+msgstr ""
 
 #, fuzzy
 msgid "Select the desired function and click on 'OK' to assign it. Use 'CH+/-' to toggle between the lists. Select an assigned function and click on 'OK' to deassign it. Use 'NEXT/PREVIOUS' to change the order of the assigned functions."
@@ -17519,6 +17704,9 @@ msgstr ""
 msgid "Select the last item in the list"
 msgstr "Επιλογή Μεγέθους Αρχείου Swap: "
 
+msgid "Select the layout of the installed plugins in the Plugin Browser screen. NOTE: The change is not immediate but will be seen when Plugin Browser is restarted!"
+msgstr ""
+
 #, fuzzy
 msgid "Select the locale from a menu"
 msgstr "Επιλογή αρχείων για εξαίρεση από την εφεδρεία"
@@ -17542,16 +17730,6 @@ msgstr "Επιλογή διαδρομής ταινίας"
 msgid "Select the network data rate below which the timer should activate as specified. Traffic above this rate with deactivate the timer."
 msgstr ""
 
-#, fuzzy
-msgid ""
-"Select the network interface to be used for the Internet connection.\n"
-"\n"
-"Press OK to continue."
-msgstr ""
-"Παρακαλώ επιλέξτε τη διεπαφή δικτύου που θέλετε να χρησιμοποιήσετε για το διαδίκτυο.\n"
-"\n"
-"Πιέστε ΟΚ για συνέχεια."
-
 msgid "Select the next item in list or move the cursor right"
 msgstr ""
 
@@ -17568,6 +17746,10 @@ msgstr "Μετάβαση στο προηγούμενο κανάλι στο ισ�
 
 msgid "Select the protocol used by your SCR device. Choices are 'SCR Unicable' (Unicable), or 'SCR JESS' (JESS, also known as Unicable II)."
 msgstr ""
+
+#, fuzzy
+msgid "Select the refresh rate to be used on the TV."
+msgstr "Ορισμός καναλιού για αυτό το χρονοδιακόπτη."
 
 msgid "Select the satellite which is connected to Port-A of your switch. If you are unsure select 'automatic' and the receiver will attempt to determine this for you. If nothing is connected to this port, select 'nothing connected'."
 msgstr ""
@@ -17595,14 +17777,13 @@ msgid "Select the shifted character set for the next character only"
 msgstr ""
 
 #, fuzzy
-msgid "Select the softcam protocol."
-msgstr "επιλογή Θύρας"
-
-#, fuzzy
 msgid "Select the sort order for the file lines:"
 msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
 
 msgid "Select the sort order of the Plugin Browser menu entries. User defined also allows the menu entries to be hidden."
+msgstr ""
+
+msgid "Select the sort order of the Plugin Browser menu entries. User defined also allows the plugin entries to be hidden."
 msgstr ""
 
 msgid "Select the sort order of the menu entries. User defined also allows the menu entries to be hidden."
@@ -17615,9 +17796,6 @@ msgstr "Ορισμός περιγραφής της εγγραφής."
 #, fuzzy
 msgid "Select the source of the default DNS settings."
 msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
-
-msgid "Select the starting/initial column to be activated on File Commander start up."
-msgstr ""
 
 #, fuzzy
 msgid "Select the tags that should be used for this recording."
@@ -17662,6 +17840,9 @@ msgstr ""
 msgid "Select the type of Single Cable Reception device you are using."
 msgstr ""
 
+msgid "Select the type of keyboard connected to the %s %s."
+msgstr ""
+
 msgid "Select the type of shutdown desired when the EnergySaver timer activates."
 msgstr ""
 
@@ -17673,14 +17854,8 @@ msgid "Select the type of this timer."
 msgstr "Ορισμός καναλιού για αυτό το χρονοδιακόπτη."
 
 #, fuzzy
-msgid ""
-"Select the wireless network to which you want to connect.\n"
-"\n"
-"Press OK to continue."
-msgstr ""
-"Παρακαλώ επιλέξτε το ασύρματο δίκτυο στο οποίο θα συνδεθείτε.\n"
-"\n"
-"Πιέστε ΟΚ για συνέχεια."
+msgid "Select the video mode to be used on the TV."
+msgstr "Ορισμός καναλιού για αυτό το χρονοδιακόπτη."
 
 msgid "Select to use logarithmic step size with more steps at the lower volume levels."
 msgstr ""
@@ -17689,12 +17864,12 @@ msgstr ""
 msgid "Select update source location"
 msgstr "Επιλογή Τοποθεσίας"
 
-msgid "Select video input with up/down buttons"
-msgstr ""
-
 #, fuzzy
 msgid "Select video mode"
 msgstr "Επιλογή ταινίας"
+
+msgid "Select video output port with UP/DOWN buttons"
+msgstr ""
 
 msgid "Select what action to take when reaching the end of a media file during playback."
 msgstr ""
@@ -17732,9 +17907,6 @@ msgstr ""
 msgid "Select where the recording should be saved."
 msgstr ""
 
-msgid "Select wireless network"
-msgstr "Επιλογή ασύρματου δικτύου"
-
 msgid "Select witch Imageversion to Download"
 msgstr ""
 
@@ -17770,10 +17942,6 @@ msgstr ""
 #, fuzzy
 msgid "Select/Zap to selected service"
 msgstr "Μετάβαση στο επιλεγμένο κανάλι"
-
-#, python-format
-msgid "Selected Image:\t%s"
-msgstr "Επιλεγμένο Image:\t%s"
 
 msgid "Selected mount point is already used by another drive."
 msgstr ""
@@ -17827,12 +17995,9 @@ msgstr "Σειριακός Αριθμός"
 msgid "Serial: unknown"
 msgstr "Σειριακός Αριθμός"
 
-msgid "Serv.Name"
-msgstr "Όνομα.Παρόχου"
-
-#, python-format
-msgid "Server Info ( Oscam-Version: %s )"
-msgstr ""
+#, fuzzy, python-format
+msgid "Server %s-%s"
+msgstr "Διακομιστές"
 
 msgid "Server:"
 msgstr "Διακομιστής:"
@@ -17894,14 +18059,16 @@ msgid "Service Zap Actions"
 msgstr "Πληροφορίες Υπηρεσίας"
 
 #
-msgid "Service cant been added to the favourites."
+#, fuzzy
+msgid "Service cant been added to the favorites."
 msgstr "Αδυναμία προσθήκης υπηρεσίας στα αγαπημένα."
 
 #, fuzzy
 msgid "Service font size"
 msgstr "Πληροφορίες υπηρεσίας"
 
-msgid "Service has been added to the favourites."
+#, fuzzy
+msgid "Service has been added to the favorites."
 msgstr "Η υπηρεσία προστέθηκε στα αγαπημένα."
 
 msgid "Service has been added to the selected bouquet."
@@ -18015,6 +18182,10 @@ msgid "Services may be grouped in bouquets. When enabled, you can use more than 
 msgstr ""
 
 #, fuzzy
+msgid "Set As Startup Service"
+msgstr "Ορισμός υπηρεσίας εκκίνησης"
+
+#, fuzzy
 msgid "Set Base time"
 msgstr "Χρόνος βάσης"
 
@@ -18099,15 +18270,9 @@ msgstr ""
 msgid "Set the jump-size of the seekbar."
 msgstr "Ορισμός του χρόνου όπου πρέπει να ξεκινήσει ένας χρονοδιακόπτης."
 
-msgid "Set the number of lines to be saved for 'stout' and 'sterr' output in scripts."
-msgstr ""
-
 #, fuzzy
 msgid "Set the position of the recording icons"
 msgstr "Ορισμός περιγραφής της εγγραφής."
-
-msgid "Set the repeat interval of backup schedule."
-msgstr ""
 
 #, fuzzy
 msgid "Set the repeat interval of the schedule."
@@ -18127,12 +18292,14 @@ msgid "Set the time before checking video source for resolution information."
 msgstr "Ορισμός του χρόνου πριν ελεγχθεί η πηγή βίντεο για πληροφορίες ανάλυσης."
 
 #, fuzzy
-msgid "Set the time of backup to start."
-msgstr "Ορισμός του χρόνου όπου πρέπει να ξεκινήσει ένας χρονοδιακόπτης."
-
-#, fuzzy
 msgid "Set the time of day to perform the import."
 msgstr "Ορισμός του χρόνου όπου πρέπει να ξεκινήσει ένας χρονοδιακόπτης."
+
+msgid ""
+"Set the time options.\n"
+"\n"
+"Press YELLOW to set the time zone via geolocation."
+msgstr ""
 
 #, fuzzy
 msgid "Set the time to hide the infobar."
@@ -18151,24 +18318,9 @@ msgstr ""
 msgid "Set the volume offset for the '%s' service."
 msgstr "Ορισμός του μεγέθους υπερπήδησης της μπάρας αναζήτησης."
 
-msgid "Set this to 'Yes' to automatically hide the InfoBar when the media starts playing. If set to 'No' the InfoBar will remain on screen."
-msgstr ""
-
-msgid "Set this to 'Yes' to display the Media Player menu item in the Main Menu. If set to 'No' Media Player can still be started from the Plugins list."
-msgstr ""
-
-msgid "Set this to 'Yes' to keep playing this play list in a continuously repeating loop. If set to 'No' the play list will only be played once."
-msgstr ""
-
-msgid "Set this to 'Yes' to save the current directory when exiting the Media Player."
-msgstr ""
-
-msgid "Set this to 'Yes' to save the current play list when exiting the Media Player."
-msgstr ""
-
 #, fuzzy
-msgid "Set this to 'Yes' to sort the playlists alphabetically."
-msgstr "Ταξινόμηση της λίστας Επεκτάσεων αλφαβητικά"
+msgid "Set time options"
+msgstr "Παρακαλώ επιλέξτε μία ανάλυση..."
 
 msgid "Set to 'Disabled' to replace underscore characters, '_', in file and directory names with spaces."
 msgstr ""
@@ -18236,12 +18388,6 @@ msgstr "Ρυθμίσεις Συσκευής Εισαγωγής"
 msgid "Setup Mounts"
 msgstr "Ρυθμίσεις Προσαρτήσεων"
 
-msgid "Setup Timeout for OPDBootmanager"
-msgstr ""
-
-msgid "Setup Timeout for OPDBootmanager."
-msgstr ""
-
 #, fuzzy
 msgid "Setup delay mode to zap to channels."
 msgstr "εισαγωγή αριθμού για μετάβαση στο κανάλι."
@@ -18253,12 +18399,6 @@ msgstr "Σταμάτημα στοιχείου"
 #, fuzzy
 msgid "Setup how to control the channel changing."
 msgstr "Εμφάνιση μπάρας πληροφοριών σε αλλαγή καναλιού"
-
-msgid "Setup max. backups on storage"
-msgstr ""
-
-msgid "Setup max. backups on storage 0=all"
-msgstr ""
 
 msgid "Setup menu"
 msgstr "Μενού εγκατάστασης"
@@ -18329,9 +18469,6 @@ msgstr ""
 msgid "Show"
 msgstr "Εμφάνιση EPG"
 
-msgid "Show /tmp/ecm.info"
-msgstr "Εμφάνιση /tmp/ecm.info"
-
 msgid "Show 1080p 24fps as"
 msgstr "Εμφάνιση 1080p 24fps ως"
 
@@ -18381,6 +18518,10 @@ msgstr "Εμφάνιση  480/576p 24fps ως"
 msgid "Show 720p 24fps as"
 msgstr "Εμφάνιση 720p 24fps ως"
 
+#, fuzzy
+msgid "Show Alternatives"
+msgstr "εμφάνιση εναλλακτικών"
+
 msgid "Show Audioselection"
 msgstr "Εμφάνιση επιλογής ήχου"
 
@@ -18390,10 +18531,6 @@ msgstr "Εμφάνιση Λίστας Αυτόματων Χρονοδιακοπ�
 #, fuzzy
 msgid "Show Box Portal"
 msgstr "Εμφάνιση Portal δέκτη..."
-
-#, fuzzy
-msgid "Show CCcam in extensions"
-msgstr "Εμφάνιση στη λίστα επεκτάσεων;"
 
 msgid "Show CI messages"
 msgstr "Εμφάνιση μηνυμάτων CI"
@@ -18410,11 +18547,20 @@ msgid "Show Default Backup Files"
 msgstr "Εμφάνιση προεπιλεγμένων αρχείων εφεδρείας"
 
 #, fuzzy
+msgid "Show Development packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
 msgid "Show Display Icons"
 msgstr "Εμφάνιση Εικονιδίων Οθόνης"
 
-msgid "Show E2 Log"
-msgstr "Εμφάνιση Καταγραφολογίου Ε2"
+#, fuzzy
+msgid "Show Display packages"
+msgstr "Εμφάνιση Εικονιδίων Οθόνης"
+
+#, fuzzy
+msgid "Show Driver packages"
+msgstr "χωρίς διαχείριση πόρων"
 
 #, fuzzy
 msgid "Show ECM-Info"
@@ -18430,8 +18576,16 @@ msgid "Show EPG for current channel..."
 msgstr "Εμφάνιση μπάρας πληροφοριών σε αλλαγή προγράμματος"
 
 #, fuzzy
+msgid "Show Ecm info"
+msgstr "Εμφάνιση πληροφοριών"
+
+#, fuzzy
 msgid "Show EventView"
 msgstr "Εμφάνιση Προεπισκόπησης Εκπομπών"
+
+#, fuzzy
+msgid "Show Extension packages"
+msgstr "Εμφάνιση epg"
 
 #, fuzzy
 msgid "Show Format Setup"
@@ -18488,6 +18642,10 @@ msgid "Show Information"
 msgstr "Πληροφορίες"
 
 #, fuzzy
+msgid "Show Kernel packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
 msgid "Show Live in MiniTV"
 msgstr "Εμφάνιση γραμμής πληροφοριών"
 
@@ -18499,8 +18657,8 @@ msgid "Show Log Manager in extensions list"
 msgstr "Εμφάνιση στη λίστα επεκτάσεων;"
 
 #, fuzzy
-msgid "Show Media Player in Main Menu"
-msgstr "εμφάνιση της αναπαραγωγής πολυμέσων στο κύριο μενού"
+msgid "Show M2k packages"
+msgstr "χωρίς διαχείριση πόρων"
 
 msgid "Show Media playback Remaining/Elapsed as"
 msgstr ""
@@ -18534,12 +18692,17 @@ msgstr "εμφάνιση πληροφοριών αναμεταδότη"
 msgid "Show No free tuner info"
 msgstr "Δεν υπάρχει ελεύθερο tuner!"
 
-msgid "Show OE Log"
-msgstr "Εμφάνιση Καταγραφών ΟΕ"
+#, fuzzy
+msgid "Show OScam/CCcam in Extension Menu"
+msgstr "Εμφάνιση στη λίστα επεκτάσεων;"
 
 #, fuzzy
-msgid "Show OScam in extensions"
-msgstr "Εμφάνιση στη λίστα επεκτάσεων;"
+msgid "Show OpenPLi packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
+msgid "Show OpenViX packages"
+msgstr "χωρίς διαχείριση πόρων"
 
 #, fuzzy
 msgid "Show PVR status in Movie Player"
@@ -18561,6 +18724,14 @@ msgstr "Εμφάνιση γραμμής πληροφοριών"
 msgid "Show PiP in the Front Display"
 msgstr "Εμφάνιση ραδιοφώνου..."
 
+#, fuzzy
+msgid "Show Picon packages"
+msgstr "Εμφάνιση epg"
+
+#, fuzzy
+msgid "Show Plugin Skin packages"
+msgstr "Εμφάνιση epg"
+
 msgid "Show RFmod setup..."
 msgstr "Εμφάνιση ρυθμίσεων RFmod..."
 
@@ -18578,6 +18749,10 @@ msgid "Show SD as"
 msgstr "Εμφάνιση SD ως"
 
 #, fuzzy
+msgid "Show Security packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
 msgid "Show Service invalid info"
 msgstr "Εμφάνιση λίστας υπηρεσιών"
 
@@ -18585,19 +18760,47 @@ msgstr "Εμφάνιση λίστας υπηρεσιών"
 msgid "Show Service not found info"
 msgstr "Μέγεθος γραμματοσειράς πληροφοριών υπηρεσίας"
 
+#, fuzzy
+msgid "Show Setting packages"
+msgstr "Εμφάνιση epg"
+
 msgid "Show Single EPG"
 msgstr "Εμφάνιση Μονού EPG"
+
+#, fuzzy
+msgid "Show Skin Component packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
+msgid "Show Skin packages"
+msgstr "Εμφάνιση epg"
 
 #, fuzzy
 msgid "Show SoftCam name"
 msgstr "Εμφάνιση Πακέτων Softcam"
 
 #, fuzzy
+msgid "Show Softcam packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
 msgid "Show Source Info"
 msgstr "Εμφάνιση Μπάρας Πληροφοριών"
 
+#, fuzzy
+msgid "Show Source packages"
+msgstr "χωρίς διαχείριση πόρων"
+
+#, fuzzy
+msgid "Show System Plugin packages"
+msgstr "Εμφάνιση epg"
+
 msgid "Show Timer List"
 msgstr "Εμφάνιση Λίστας Χρονοδιακοπτών"
+
+#, fuzzy
+msgid "Show Transponder Information"
+msgstr "Πληροφορίες Μετάφρασης"
 
 msgid "Show True/False as graphical switch"
 msgstr ""
@@ -18605,6 +18808,10 @@ msgstr ""
 #, fuzzy
 msgid "Show Tune failed info"
 msgstr "Εμφάνιση αναλυτικών πληροφοριών προγράμματος"
+
+#, fuzzy
+msgid "Show VBI Line For This Service"
+msgstr "Εμφάνιση EPG μίας μόνο υπηρεσίας"
 
 #, fuzzy
 msgid "Show VCR SCART on main menu"
@@ -18616,6 +18823,10 @@ msgstr "Εμφάνιση Γραφικού EPG"
 
 msgid "Show WLAN status"
 msgstr "Εμφάνιση κατάστασης ασύρματου δικτύου"
+
+#, fuzzy
+msgid "Show Web Link packages"
+msgstr "χωρίς διαχείριση πόρων"
 
 msgid "Show a spinning logo when the system is busy."
 msgstr ""
@@ -18673,10 +18884,6 @@ msgid "Show crypto info in InfoBar"
 msgstr "Εμφάνιση κρυπτοεικονιδίων"
 
 #, fuzzy
-msgid "Show current directory"
-msgstr "Γονικός φάκελος"
-
-#, fuzzy
 msgid "Show default after description"
 msgstr "Εμφάνιση εκτεταμένης περιγραφής"
 
@@ -18696,13 +18903,6 @@ msgstr "Εμφάνιση αναλυτικών πληροφοριών προγρ�
 
 msgid "Show details of highlighted task"
 msgstr ""
-
-msgid "Show development packages in opkg"
-msgstr ""
-
-#, fuzzy
-msgid "Show directories first"
-msgstr "Εμφάνιση λίστας υπηρεσιών"
 
 msgid "Show encryption information in the InfoBar (when supported by the skin)."
 msgstr ""
@@ -18741,6 +18941,9 @@ msgstr "Εμφάνιση λίστας αγαπημένων"
 msgid "Show first image"
 msgstr "Εμφάνιση πακέτων πηγής"
 
+msgid "Show free space in timer view"
+msgstr ""
+
 msgid "Show graphical multi EPG"
 msgstr "Εμφάνιση γραφικού πολλαπλού EPG"
 
@@ -18770,9 +18973,6 @@ msgstr "Εμφάνιση στη λίστα επεκτάσεων;"
 
 msgid "Show info"
 msgstr "Εμφάνιση πληροφοριών"
-
-msgid "Show info line"
-msgstr "Εμφάνιση γραμμής πληροφοριών"
 
 #, fuzzy
 msgid "Show info on screen:"
@@ -18900,13 +19100,6 @@ msgid "Show screensaver"
 msgstr "Εμφάνιση μηνυμάτων CI"
 
 #, fuzzy
-msgid "Show script messages"
-msgstr "Εμφάνιση μηνυμάτων CI"
-
-msgid "Show script messages if a background script ends. If the script has additional output then this will also be shown."
-msgstr ""
-
-#, fuzzy
 msgid "Show service list"
 msgstr "Εμφάνιση λίστας υπηρεσιών"
 
@@ -18948,10 +19141,6 @@ msgstr "Εμφάνιση μονού epg για το τρέχον κανάλι"
 msgid "Show single service EPG"
 msgstr "Εμφάνιση EPG μίας μόνο υπηρεσίας"
 
-#, fuzzy
-msgid "Show source packages"
-msgstr "χωρίς διαχείριση πόρων"
-
 msgid "Show status messages on switch to live TV"
 msgstr ""
 
@@ -18969,13 +19158,6 @@ msgstr "Εμφάνιση επιλογής υποτίτλων"
 #, fuzzy
 msgid "Show task list"
 msgstr "Ταξινόμηση λίστας:"
-
-#, fuzzy
-msgid "Show task messages"
-msgstr "Εμφάνιση μηνυμάτων CI"
-
-msgid "Show task messages if File Commander is not running and all task are completed."
-msgstr ""
 
 #, fuzzy
 msgid "Show the DreamPlex player..."
@@ -19044,10 +19226,6 @@ msgstr ""
 #, fuzzy
 msgid "Show time remaining/elapsed"
 msgstr "Εναπομείναντας και Παρελθόντας"
-
-#, fuzzy
-msgid "Show translation packages"
-msgstr "Εμφάνιση epg"
 
 #, fuzzy
 msgid "Show transponder remaining/elapsed as"
@@ -19331,22 +19509,8 @@ msgstr "Ολίσθηση από αριστερά"
 msgid "Slide left to right"
 msgstr "Ολίσθηση από αριστερά σε δεξιά"
 
-msgid "Slide picture in loop"
-msgstr "Ολίσθηση εικόνας σε επανάληψη"
-
 msgid "Slide right to left"
 msgstr "Ολίσθηση από δεξιά σε αριστερά"
-
-#, fuzzy
-msgid "Slide show delay"
-msgstr "Καθυστέρηση ύπνου"
-
-msgid "Slide show interval (sec.)"
-msgstr "Μεσοδιάστημα παρουσίασης διαφανειών (δευτ.)"
-
-#, fuzzy
-msgid "Slide show loop"
-msgstr "Ολίσθηση πτώσης"
 
 msgid "Slide top to bottom"
 msgstr "Ολίσθηση από την κορυφή στον πάτο"
@@ -19378,6 +19542,21 @@ msgstr ""
 #, fuzzy, python-format
 msgid "Slot '%s': %s%s"
 msgstr "Πόρτα DiSEqC %s: %s"
+
+#, fuzzy
+msgid "Slot Manager"
+msgstr "Διαχείριση Προσαρτήσεων"
+
+#, fuzzy
+msgid "Slot Manager Actions"
+msgstr "Επιλογή MultiBoot"
+
+msgid "Slot R: Root Slot Full Backup (Current image)"
+msgstr ""
+
+#, fuzzy
+msgid "Slot count"
+msgstr "Χωρίς προσάρτηση"
 
 msgid "Slovak"
 msgstr "Σλοβακικά"
@@ -19449,6 +19628,10 @@ msgid "Socket"
 msgstr "κλειδωμένο"
 
 #, fuzzy
+msgid "Softcam Actions"
+msgstr "Καταγραφολόγιο Samba"
+
+#, fuzzy
 msgid "Softcam Settings"
 msgstr "Ρυθμίσεις softcam"
 
@@ -19465,10 +19648,6 @@ msgstr "Ρυθμίσεις Softcam"
 
 #, fuzzy
 msgid "SoftcamSetup"
-msgstr "Ρυθμίσεις Softcam"
-
-#, fuzzy
-msgid "Softcams"
 msgstr "Ρυθμίσεις Softcam"
 
 #, fuzzy
@@ -19532,9 +19711,6 @@ msgstr "Μερικά πρόσθετα δεν είναι διαθέσιμα:\n"
 #, fuzzy
 msgid "Sorbian"
 msgstr "Σερβικά"
-
-msgid "Sorry CIHelper Config is Missing"
-msgstr "Λυπούμαστε, απουσιάζει το αρχείο ρυθμίσεων του CIHelper"
 
 msgid "Sorry Inadyn Config is Missing"
 msgstr "Λυπούμαστε, απουσιάζει το αρχείο ρυθμίσεων του Inadyn"
@@ -19650,6 +19826,10 @@ msgstr "Επεκτάσεις"
 msgid "Sort Plugin Browser"
 msgstr "Πλοηγός Προσθέτων"
 
+#, fuzzy
+msgid "Sort Plugin Browser entries"
+msgstr "Πλοηγός Προσθέτων"
+
 msgid "Sort by"
 msgstr "Ταξινόμηση ανά"
 
@@ -19669,10 +19849,6 @@ msgstr "Ταξινόμηση λίστας:"
 #, fuzzy
 msgid "Sort order for the language list."
 msgstr "Ταξινόμηση σειράς των στοιχείων του μενού"
-
-#, fuzzy
-msgid "Sort playlists"
-msgstr "ταξινόμηση λιστών αναπαραγωγής"
 
 #, python-format
 msgid "Sort: Directories by %s %s; Files by %s %s."
@@ -19750,9 +19926,6 @@ msgstr "Σειριακός Αριθμός"
 msgid "Special Features Settings"
 msgstr "Αναπαραγωγή Πολυμέσων"
 
-msgid "Specify the directory to use when starting Media Player."
-msgstr ""
-
 msgid "Split preview mode"
 msgstr "Διαχωρισμός κατάστασης επισκόπησης"
 
@@ -19810,10 +19983,6 @@ msgstr "Όπως στο ενεργό"
 msgid "Start date"
 msgstr "Έναρξη ελέγχου"
 
-#, fuzzy
-msgid "Start edit at line end"
-msgstr "Διαίρεση Οθόνης"
-
 msgid "Start from the beginning"
 msgstr "Έναρξη  από την αρχή"
 
@@ -19839,6 +20008,9 @@ msgstr "Εκκίνηση τηλεκειμένου"
 
 msgid "Start test"
 msgstr "Έναρξη ελέγχου"
+
+msgid "Start the Kexec initialization"
+msgstr ""
 
 msgid "Start time"
 msgstr "Ώρα έναρξης"
@@ -19867,16 +20039,8 @@ msgid "Starting Softcam"
 msgstr "Έναρξη από το"
 
 #, fuzzy
-msgid "Starting column"
-msgstr "Έναρξη από το"
-
-#, fuzzy
 msgid "Starting date"
 msgstr "Έναρξη από το"
-
-#, fuzzy
-msgid "Starting directory"
-msgstr "φάκελος εκκίνησης"
 
 msgid "Starting on"
 msgstr "Έναρξη από το"
@@ -19890,9 +20054,6 @@ msgstr ""
 
 msgid "Status"
 msgstr "Κατάσταση"
-
-msgid "Status message timeout"
-msgstr ""
 
 msgid "Status of the display during operation"
 msgstr ""
@@ -20026,6 +20187,24 @@ msgstr "Αποθηκευμένη θέση"
 
 msgid "Stream"
 msgstr "Ροή"
+
+#, fuzzy
+msgid "Stream Relay Settings"
+msgstr "Αναπαραγωγή Πολυμέσων"
+
+#, fuzzy
+msgid "Stream Relay Setup Actions"
+msgstr "Ρυθμίσεις ώρας"
+
+msgid "Stream Relay URL"
+msgstr ""
+
+#, fuzzy
+msgid "Stream Relay port"
+msgstr "ομαδικά αθλήματα"
+
+msgid "Stream Relay switch delay"
+msgstr ""
 
 msgid "Stream request"
 msgstr "Αίτηση ροής"
@@ -20382,7 +20561,7 @@ msgstr "Αποτυχία συγχρονισμού επιστροφή στο αρ
 msgid "Sync time using"
 msgstr "Διακοπή χρονομετατόπισης"
 
-msgid "Synchronize systemtime using transponder or Internet."
+msgid "Synchronize system time using transponder or Internet."
 msgstr ""
 
 msgid "Syrian Arab Republic"
@@ -20400,10 +20579,6 @@ msgstr "Πληροφορίες Συστήματος"
 
 msgid "System Message Check"
 msgstr "Έλεγχος για Μηνύματα Συστήματος"
-
-#, fuzzy
-msgid "System Plugins"
-msgstr "Επαναφορά Προσθέτων"
 
 #, fuzzy
 msgid "System cleaning"
@@ -20515,6 +20690,10 @@ msgstr ""
 
 msgid "Tanzania, United Republic of"
 msgstr ""
+
+#, fuzzy
+msgid "Target location"
+msgstr "Τοποθεσία"
 
 #, fuzzy, python-format
 msgid "Task '%s' ended successfully."
@@ -20669,9 +20848,6 @@ msgstr "Οθόνες δοκιμών που βοηθούν στο να μικρο
 msgid "Text"
 msgstr "Κείμενο"
 
-msgid "Text color"
-msgstr "Χρώμα κειμένου"
-
 msgid "Thai"
 msgstr "Ταϊλανδικά"
 
@@ -20702,6 +20878,10 @@ msgid ""
 "The %s %s will be now restarted to generate a new device UID.\n"
 "Don't forget to remap your device after the reboot.\n"
 "Press OK to continue"
+msgstr ""
+
+#, python-format
+msgid "The %s %s will reboot within 10 seconds, unless there are eMMC slots to restore. Restoring eMMC slots can take from 1 to 5 minutes per slot."
 msgstr ""
 
 msgid ""
@@ -20741,25 +20921,6 @@ msgstr ""
 "Το πρόσθετο IMDb δεν είναι εγκατεστημένο!\n"
 "Παρακαλώ εγκαταστήστε το."
 
-#, fuzzy
-msgid ""
-"The Internet connection appears to be working.\n"
-"\n"
-"Press OK to continue."
-msgstr ""
-"Ο %s %s σας είναι τώρα έτοιμος για χρήση.\n"
-"\n"
-"Η σύνδεση στο διαδίκτυο είναι τώρα ενεργή.\n"
-"\n"
-"Πιέστε ΟΚ για να συνεχίσετε."
-
-#, fuzzy
-msgid ""
-"The Internet connection appears to not be working!\n"
-"\n"
-"Choose what to do next."
-msgstr "Η σύνδεση στο διαδίκτυο δεν λειτουργεί! Επιλέξτε τι θέλετε να ακολουθήσει."
-
 msgid ""
 "The MediaCenter plugin is not installed!\n"
 "Please install it."
@@ -20774,11 +20935,12 @@ msgstr ""
 "Ο Αναπαραγωγός Πολυμέσων δεν είναι εγκατεστημένος!\n"
 "Παρακαλώ εγκαταστήστε τον."
 
+#, fuzzy
 msgid ""
-"The MediaPortal plugin is not installed!\n"
+"The MediaStream plugin is not installed!\n"
 "Please install it."
 msgstr ""
-"Το πρόσθετο MediaPortal δεν είναι εγκατεστημένο!\n"
+"Το πρόσθετο MediaCenter δεν είναι εγκατεστημένο!\n"
 "Παρακαλώ εγκαταστήστε το."
 
 msgid ""
@@ -20965,9 +21127,6 @@ msgstr "Το image ή ο kernel θα φλασαριστούν και θα επα
 msgid "The password can not be blank."
 msgstr ""
 
-msgid "The pin code you entered is wrong."
-msgstr "Το pin που εισάγατε είναι λάθος."
-
 #, python-format
 msgid "The results have been written to %s."
 msgstr "Τα αποτελέσματα έχουν γραφεί στο %s."
@@ -21024,27 +21183,6 @@ msgstr ""
 msgid "The width of the picture. The input will be scaled to match this value."
 msgstr ""
 
-#, fuzzy
-msgid ""
-"The wireless LAN Internet connection could not be started!\n"
-"Is the wireless LAN device connected?\n"
-"\n"
-"Choose what to do next."
-msgstr ""
-"Αδυναμία εκκίνησης της ασύρματης σύνδεσης δικτύου!\n"
-"Έχετε συνδέσει το USB στικ;\n"
-"\n"
-"Επιλέξτε τι θέλετε να γίνει μετά."
-
-#, fuzzy
-msgid ""
-"The wireless LAN plugin code is not installed!\n"
-"\n"
-"Install it and choose what to do next."
-msgstr ""
-"Το πρόσθετο ασύρματου LAN δεν είναι εγκατεστημένο!\n"
-"Παρακαλώ εγκαταστήστε το και επιλέξτε τι θέλετε να συμβεί στη συνέχεια."
-
 msgid ""
 "The wireless LAN plugin is not installed!\n"
 "Please install it."
@@ -21088,9 +21226,6 @@ msgstr ""
 msgid "There was an error downloading the update list.  Please try again."
 msgstr "Προέκυψε ένα σφάλμα κατά τη λήψη της λίστας ενημερώσεων. Παρακαλώ δοκιμάστε ξανά."
 
-msgid "There was an error downloading the updatelist. Please try again."
-msgstr "Προέκυψε ένα σφάλμα κατά τη λήψη της λίστας ενημερώσεων. Παρακαλώ δοκιμάστε ξανά."
-
 #, python-format
 msgid "This %s %s cannot decode %s streams!"
 msgstr "Αυτός ο %s %s δεν μπορεί να αποκωδικοποιήσει τις %s ροές!"
@@ -21115,49 +21250,9 @@ msgstr "Αυτή η επιλογή επιτρέπει τη ρύθμιση της
 msgid "This allows you to set the number of digits to 5, if you have more than 9999 channels."
 msgstr ""
 
-msgid "This allows you to show OpenPLi modules in downloads"
-msgstr ""
-
-msgid "This allows you to show OpenViX modules in downloads"
-msgstr ""
-
-msgid "This allows you to show drivers modules in downloads"
-msgstr ""
-
-msgid "This allows you to show extensions modules in downloads"
-msgstr ""
-
-msgid "This allows you to show kernel modules in downloads"
-msgstr ""
-
 #, fuzzy
-msgid "This allows you to show lcd skins in downloads"
-msgstr "Αυτή η επιλογή επιτρέπει την παράκαμψη του ελέγχου HDMI EDID"
-
-msgid "This allows you to show m2k modules in downloads"
-msgstr ""
-
-msgid "This allows you to show picons modules in downloads"
-msgstr ""
-
-msgid "This allows you to show security modules in downloads"
-msgstr ""
-
-#, fuzzy
-msgid "This allows you to show settings modules in downloads"
-msgstr "Αυτή η επιλογή επιτρέπει την επισκόπηση των παλιών με τις νέες ρυθμίσεις σε παράθεση."
-
-msgid "This allows you to show skin modules in downloads"
-msgstr ""
-
-msgid "This allows you to show softcams modules in downloads"
-msgstr ""
-
-msgid "This allows you to show system plugin modules in downloads"
-msgstr ""
-
-msgid "This allows you to show weblinks modules in downloads"
-msgstr ""
+msgid "This bouquet is protected by a parental control PIN!"
+msgstr "αυτό το μπουκέτο προστατεύεται με γονικό κωδικό pin"
 
 #, fuzzy, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
@@ -21415,6 +21510,10 @@ msgstr "Αυτή η επιλογή ρυθμίζει τη συμπίεση των
 msgid "This option sets up the picture sharpness, used when the picture is being upscaled."
 msgstr "Αυτή η επιλογή ρυθμίζει την οξύτητα της εικόνας, όταν γίνεται upscale."
 
+#, fuzzy
+msgid "This service is protected by a parental control PIN!"
+msgstr "αυτή η υπηρεσία είναι προστατευμένη με γονικό pin"
+
 msgid "This sets the prefix for each line in the debug log. The 'Boot time' is the number of seconds since your %s %s was last booted."
 msgstr ""
 
@@ -21551,9 +21650,6 @@ msgstr "Ρυθμίσεις Χρονομετατόπισης"
 msgid "Time Update in Minutes:"
 msgstr "Ενημέρωση Ώρας σε Λεπτά:"
 
-msgid "Time between slides in image viewer slide show."
-msgstr ""
-
 msgid "Time delay for the repeated transmission"
 msgstr ""
 
@@ -21583,9 +21679,6 @@ msgid "Time jump repeat interval for fast forward/backward"
 msgstr ""
 
 msgid "Time jump: Use normal fast forward for speeds"
-msgstr ""
-
-msgid "Time of Backup to start"
 msgstr ""
 
 msgid "Time of info message (1-10sec):"
@@ -21858,6 +21951,10 @@ msgid "Toggle item move mode on/off"
 msgstr ""
 
 #, fuzzy
+msgid "Toggle move mode selection"
+msgstr "Επιλογή χρονοδιακόπτη"
+
+#, fuzzy
 msgid "Toggle multi-selection mode"
 msgstr "Εμφάνιση επιλογής υποτίτλων"
 
@@ -21922,7 +22019,7 @@ msgid "Total cards:"
 msgstr "Σύνολο καρτών:"
 
 #, fuzzy, python-format
-msgid "Total clients streaming: %d ( %s )"
+msgid "Total clients streaming: %d (%s)"
 msgstr "Συνολικοί πελάτες σε ροή: %d (%s)"
 
 msgid "Total handled client ecm's"
@@ -21981,9 +22078,6 @@ msgstr "Τύπος αναμεταδότη"
 msgid "Trashcan"
 msgstr "Κάδος αχρήστων"
 
-msgid "Trashcan:"
-msgstr "Κάδος αχρήστων:"
-
 msgid "Travel"
 msgstr ""
 
@@ -22028,9 +22122,6 @@ msgstr ""
 #, fuzzy
 msgid "Trying to download a new packet list. Please wait..."
 msgstr "Λήψη νέας λίστας πακέτων. Παρακαλώ περιμένετε ..."
-
-msgid "Trying to download a new updatelist. Please wait..."
-msgstr "Προσπάθεια λήψης νέας λίστας ενημερώσεων. Παρακαλώ περιμένετε..."
 
 msgid "Tsonga"
 msgstr ""
@@ -22227,6 +22318,14 @@ msgstr "USALS"
 msgid "USALS automatically moves a motorized dish to the correct satellite based on the coordinates entered by the user. Without USALS each satellite will need to be setup and saved individually."
 msgstr ""
 
+#, fuzzy
+msgid "USB 2.0 (Back, inner)"
+msgstr "Πίσω, εσωτερικό USB"
+
+#, fuzzy
+msgid "USB 3.0 (Back, outer)"
+msgstr "Πίσω, εξωτερικό USB"
+
 msgid "USB Disk Format"
 msgstr ""
 
@@ -22236,6 +22335,10 @@ msgstr "Οδηγός USB στικ"
 
 msgid "USB Stick"
 msgstr "USB Στικ"
+
+#, fuzzy, python-format
+msgid "USB slot %s%s"
+msgstr "Πόρτα DiSEqC %s: %s"
 
 msgid "USB switch ERROR! - already on USB"
 msgstr ""
@@ -22263,14 +22366,11 @@ msgstr "Απεγκατάσταση"
 msgid "Unable to change password"
 msgstr ""
 
-msgid "Unable to complete - Kexec Multiboot files missing!"
+msgid "Unable to initialize Kexec MultiBoot!"
 msgstr ""
 
 msgid "Unattended upgrade without GUI"
 msgstr "Ανεπιτήρητη αναβάθμιση χωρίς γραφικό περιβάλλον"
-
-msgid "Unattended upgrade without GUI and reboot system"
-msgstr "Ανεπιτήρητη αναβάθμιση χωρίς γραφικό περιβάλλον και επανεκκίνηση"
 
 #, fuzzy
 msgid "Undefined"
@@ -22286,7 +22386,8 @@ msgstr "Χωρίς κωδικοποίηση"
 msgid "UnhandledKey"
 msgstr "διαχειρίστηκε"
 
-msgid "Unhide parental control services"
+#, fuzzy
+msgid "Unhide Parental Control Services"
 msgstr "Ακύρωση απόκρυψης των υπηρεσιών με γονικό κλείδωμα"
 
 #, fuzzy
@@ -22345,7 +22446,8 @@ msgstr "Άγνωστο"
 msgid "Unless set to 'disabled' you get a preview of channels inside the EPG list."
 msgstr ""
 
-msgid "Unmark service as dedicated 3D service"
+#, fuzzy
+msgid "Unmark As Dedicated 3D Service"
 msgstr "Αποσημείωση της υπηρεσίας ως σταθερή υπηρεσία 3D"
 
 msgid "Unmount"
@@ -22366,12 +22468,20 @@ msgstr "Αποκωδικοποίηση ροών http"
 msgid "Unscramble receiving http streams"
 msgstr "Αποκωδικοποίηση ροών http"
 
+#, fuzzy
+msgid "Unset As Startup Service"
+msgstr "ορισμός ως υπηρεσία εκκίνησης"
+
 msgid "Unsupported"
 msgstr "Δεν υποστηρίζεται"
 
 #, fuzzy
 msgid "Unsupportet CPU"
 msgstr "Δεν υποστηρίζεται"
+
+#, fuzzy
+msgid "Until standby/restart"
+msgstr "μέχρι την αναμονή/επανεκκίνηση"
 
 msgid "Unused 0x22"
 msgstr ""
@@ -22515,6 +22625,9 @@ msgstr "Χρήση"
 msgid "Use 'Trash' in movie list"
 msgstr "Επιστροφή στη λίστα ταινίων"
 
+msgid "Use AutoCam"
+msgstr ""
+
 msgid "Use Bootmanager by Booting"
 msgstr ""
 
@@ -22544,10 +22657,6 @@ msgstr "Σκληρός δίσκος σε αναμονή μετά από"
 msgid "Use Keymap"
 msgstr "Χρήση Διάταξης Πληκτρολογίου"
 
-#, fuzzy
-msgid "Use Keymap *"
-msgstr "Χρήση Διάταξης Πληκτρολογίου"
-
 msgid "Use MHW EPG information when it is available."
 msgstr ""
 
@@ -22558,10 +22667,7 @@ msgstr ""
 msgid "Use OnlineFlash in SoftwareManager"
 msgstr "Διαχείριση Λογισμικού"
 
-msgid "Use OpenTV EPG information when it is available."
-msgstr ""
-
-msgid "Use QuickSelect"
+msgid "Use OpenTV EPG. Requires tuning to specific transponder to absorb EPG."
 msgstr ""
 
 #, fuzzy
@@ -22591,10 +22697,14 @@ msgstr "τέλος επεξεργασίας εναλλακτικών"
 msgid "Use as HDD"
 msgstr "Χρήση ως HDD"
 
+#, fuzzy
+msgid "Use automatic mode detection"
+msgstr "Χρήση σταθερής διεύθυνσης"
+
 msgid ""
-"Use automatic mode detection.\n"
-" This option reads all supported modes from your TV.\n"
-" Please disable it only if you want to customize the preferred configuration."
+"Use automatic mode detection?\n"
+"\n"
+"This option reads all supported modes from your TV. Disable it only if you want to customize the preferred configuration."
 msgstr ""
 
 msgid "Use circular LNB"
@@ -22624,6 +22734,10 @@ msgstr ""
 
 msgid "Use interface"
 msgstr "Χρήση διεπαφής"
+
+#, fuzzy
+msgid "Use key map *"
+msgstr "Χρήση Διάταξης Πληκτρολογίου"
 
 msgid "Use logarithmic steps"
 msgstr ""
@@ -22706,9 +22820,6 @@ msgstr "Εμφάνιση της μπάρας πληροφοριών κατά τ�
 msgid "Use time shift SeekBar while time shifting"
 msgstr "[Χρονομετατόπιση] Επανεκκίνηση Χρονομετόπισης!"
 
-msgid "Use viewer for unknown files"
-msgstr ""
-
 msgid "Use workaround for wake up from deep-standby"
 msgstr ""
 
@@ -22721,7 +22832,8 @@ msgstr "Χρησιμοποιήθηκαν:"
 msgid "User  (keymap.usr)"
 msgstr "Χρήστης  (keymap.usr)"
 
-msgid "User - bouquets"
+#, fuzzy
+msgid "User - Bouquets"
 msgstr "Μπουκέτα χρήστη"
 
 #, fuzzy
@@ -22895,9 +23007,6 @@ msgstr "Υποδοχή tuner"
 msgid "Very very short filenames - Warning"
 msgstr "Πάρα πολύ σύντομα ονόματα αρχείου - Προσοχή"
 
-msgid "ViX EPG"
-msgstr "ViX EPG"
-
 msgid "Video"
 msgstr "Εικόνα"
 
@@ -22950,10 +23059,6 @@ msgid ""
 "\n"
 "The next input port will be automatically probed in 10 seconds."
 msgstr ""
-
-#, fuzzy
-msgid "Video mode selection."
-msgstr "Επιλογή χρονοδιακόπτη"
 
 #, python-format
 msgid "Video mode: %s"
@@ -23295,10 +23400,6 @@ msgstr "Ρυθμίσεις Δικτύου"
 msgid "Web Interface"
 msgstr "Διεπαφή Δικτύου"
 
-#, fuzzy
-msgid "Web Links"
-msgstr "Σύνδεση:"
-
 msgid "Web browser base visibility"
 msgstr "Διαφάνεια βάσης του πλοηγού δικτύου"
 
@@ -23426,6 +23527,9 @@ msgstr ""
 msgid "What would you like to do?"
 msgstr "Τι θέλετε να ανιχνεύσετε;"
 
+msgid "When 'Enabled', the timer view will show the free space on the target device. This will wake the device from sleep mode."
+msgstr ""
+
 msgid "When enabled enigma2 will load unlinked user bouquets. This means that user bouquets that are available, but not included in the bouquets.tv or bouquets.radio files, will still be loaded. This allows you for example to keep your own user bouquet while installed settings are upgraded"
 msgstr ""
 
@@ -23487,9 +23591,6 @@ msgid "When enabled, always unscramble receiving http streams. This takes up mor
 msgstr ""
 
 msgid "When enabled, authentication is required to watch http streams."
-msgstr ""
-
-msgid "When enabled, before opkg update there will be opkg clean to make sure nothing ruins the update but only enable this when you can not update online."
 msgstr ""
 
 msgid "When enabled, channel numbering will start at '1' for each bouquet."
@@ -23578,9 +23679,6 @@ msgstr ""
 msgid "When enabled, use DHCP for the IP configuration."
 msgstr ""
 
-msgid "When enabled, you will see dev, staticdev, dbg, doc, src and po packages in opkg list."
-msgstr ""
-
 #, fuzzy
 msgid "When enabled, your receiver will detect activity on the VCR SCART input."
 msgstr "Όταν είναι ενεργό, ο δέκτης θα εντοπίζει δραστηριότητα στην είσοδο του VCR SCART."
@@ -23604,6 +23702,9 @@ msgid "When set each folder will show the previous state used, when off the defa
 msgstr ""
 
 msgid "When set the PIG will return to live after a movie has stopped playing."
+msgstr ""
+
+msgid "When set to 'Yes' a specific Softcam can be assigned to each encrypted service."
 msgstr ""
 
 msgid "When the content has an aspect ratio of 16:9, choose whether to scale/stretch the picture."
@@ -23660,17 +23761,6 @@ msgstr "Ασύρματο δίκτυο"
 
 msgid "Wireless network configuration..."
 msgstr "Ρύθμιση σύνδεσης ασύρματου δικτύου..."
-
-#, fuzzy
-msgid ""
-"Wireless network connection setup.\n"
-"\n"
-"Choose what to do next."
-msgstr "Ρύθμιση σύνδεσης ασύρματου δικτύου."
-
-#, fuzzy
-msgid "Wireless network setup"
-msgstr "Κατάσταση ασύρματου δικτύου"
 
 msgid "Wireless network state"
 msgstr "Κατάσταση ασύρματου δικτύου"
@@ -23765,6 +23855,10 @@ msgid "Www"
 msgstr "Www"
 
 #, fuzzy
+msgid "X-Generator"
+msgstr "Γενικά"
+
+#, fuzzy
 msgid "X-Resolution"
 msgstr "Ανάλυση"
 
@@ -23794,6 +23888,9 @@ msgid "YELLOW button"
 msgstr ""
 
 msgid "YELLOW long"
+msgstr ""
+
+msgid "YES"
 msgstr ""
 
 msgid "YPbPr"
@@ -23826,6 +23923,10 @@ msgstr "Ναι, πάντα"
 
 msgid "Yes, and delete this movie"
 msgstr "Ναι, και διαγραφή αυτής της ταινίας"
+
+#, fuzzy
+msgid "Yes, and don't ask again for this session"
+msgstr "και να μη γίνει ερώτηση ξανά"
 
 msgid "Yes, backup my settings!"
 msgstr "Ναι, να δημιουργηθεί αντίγραφο των ρυθμίσεων!"
@@ -24116,15 +24217,6 @@ msgstr ""
 "Θα γίνει επανεκκίνηση του %s %s σας μετά την αφαίρεση της υπηρεσίας\n"
 "Είστε έτοιμοι για αφαίρεση τώρα ;"
 
-msgid "Your Hardware can detect ci mode self or work only in legacy mode."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"Your Internet connection is not working!\n"
-"Please choose what you want to do next."
-msgstr "Η σύνδεση στο διαδίκτυο δεν λειτουργεί! Επιλέξτε τι θέλετε να ακολουθήσει."
-
 #, python-format
 msgid "Your Receiver has a Software problem detected. Since the last reboot it has occurred %d times.\n"
 msgstr ""
@@ -24315,10 +24407,6 @@ msgstr ""
 msgid "[Enigma2 Settings]\n"
 msgstr "[Ρυθμίσεις Enigma2]\n"
 
-#, fuzzy
-msgid "[Favorite Edit]"
-msgstr "[επεξεργασία αγαπημένου]"
-
 msgid "[Image Info]\n"
 msgstr "[Πληροφορίες Image]\n"
 
@@ -24332,30 +24420,11 @@ msgstr "[Χρονομετατόπιση] Αποτυχία συγχώνευσης
 msgid "[Timeshift] Restarting time shift!"
 msgstr "[Χρονομετατόπιση] Επανεκκίνηση Χρονομετόπισης!"
 
-msgid "[alternative edit]"
-msgstr "[επεξεργασία εναλλακτικών]"
-
-msgid "[bouquet edit]"
-msgstr "[επεξεργασία μπουκέτου]"
-
-msgid "[move mode]"
-msgstr "[λειτουργία μετακίνησης]"
-
 msgid "a gui to assign services/providers to common interface modules"
 msgstr "γραφικό περιβάλλον για ανάθεση υπηρεσιών/παρόχων σε κοινή διεπαφή"
 
 msgid "a gui to assign services/providers/caids to common interface modules"
 msgstr "γραφικό περιβάλλον για ανάθεση υπηρεσιών/παρόχων/caids σε κοινή διεπαφή"
-
-msgid "abort alternatives edit"
-msgstr "ακύρωση επεξεργασίας εναλλακτικών"
-
-msgid "abort bouquet edit"
-msgstr "ακύρωση επεξεργασίας μπουκέτου"
-
-#, fuzzy
-msgid "abort favorites edit"
-msgstr "ακύρωση επεξεργασίας αγαπημένων"
 
 msgid "about to start"
 msgstr "έτοιμο για εκκίνηση"
@@ -24375,31 +24444,9 @@ msgstr "Ανενεργό"
 msgid "add"
 msgstr "Προσθήκη"
 
-msgid "add alternatives"
-msgstr "προσθήκη εναλλακτικών"
-
-msgid "add bouquet"
-msgstr "προσθήκη μπουκέτου"
-
-msgid "add bouquet to parental protection"
-msgstr "προσθήκη μπουκέτου στη γονική προστασία"
-
-msgid "add marker"
-msgstr "προσθήκη σημειωτή"
-
 #, fuzzy
 msgid "add partition"
 msgstr "Δημιουργία κατάτμησης"
-
-msgid "add service to bouquet"
-msgstr "προσθήκη υπηρεσίας σε μπουκέτο"
-
-#, fuzzy
-msgid "add service to favorites"
-msgstr "προσθήκη υπηρεσίας στα αγαπημένα"
-
-msgid "add to parental protection"
-msgstr "προσθήκη στο γονικό έλεγχο"
 
 msgid "added CI+"
 msgstr ""
@@ -24476,8 +24523,8 @@ msgstr ""
 msgid "an internal error has occur"
 msgstr "προέκυψε ένα εσωτερικό σφάλμα"
 
-msgid "and never ask again this session again"
-msgstr "και να μη γίνει ερώτηση ξανά"
+msgid "aqua"
+msgstr ""
 
 msgid ""
 "are you sure you want to restore\n"
@@ -24530,6 +24577,9 @@ msgstr "αυτόματη αναμονή"
 msgid "automatic"
 msgstr "αυτόματο"
 
+msgid "azure"
+msgstr ""
+
 msgid "back"
 msgstr "πίσω"
 
@@ -24558,9 +24608,6 @@ msgstr "μαύρο"
 
 msgid "black & white"
 msgstr "άσπρο & μαύρο"
-
-msgid "blacklist"
-msgstr "μαύρη λίστα"
 
 msgid "blue"
 msgstr "μπλε"
@@ -24676,9 +24723,6 @@ msgstr "μαγειρική"
 msgid "copy"
 msgstr "αντιγραφή"
 
-msgid "copy to bouquets"
-msgstr "αντιγραφή στα μπουκέτα"
-
 #, fuzzy, python-format
 msgid "create partition %s"
 msgstr "Δημιουργία κατάτμησης"
@@ -24724,9 +24768,6 @@ msgstr ""
 msgid "detective/thriller"
 msgstr "αστυνομικά/θρίλερ"
 
-msgid "disable move mode"
-msgstr "απενεργοποίηση λειτουργίας μετακίνησης"
-
 msgid "disabled"
 msgstr "ανενεργό"
 
@@ -24768,7 +24809,7 @@ msgid "eMMC"
 msgstr "eMMC"
 
 #, fuzzy, python-format
-msgid "eMMC slot %s"
+msgid "eMMC slot %s%s"
 msgstr "Θύρα CI: "
 
 msgid "eSATA"
@@ -24786,9 +24827,6 @@ msgstr "ecm.info"
 msgid "economics/social advisory"
 msgstr "οικονομία/κοινωνική συμβουλευτική"
 
-msgid "edit alternatives"
-msgstr "επεξεργασία εναλλακτικών"
-
 #, fuzzy
 msgid "education/information (general)"
 msgstr "εκπαίδευση/επιστήμη/πραγματικά θέματα (γενικά)"
@@ -24803,31 +24841,11 @@ msgstr "κενό"
 msgid "enable PiP no HDR"
 msgstr "Ενεργοποίηση PIP χωρίς HDR"
 
-msgid "enable bouquet edit"
-msgstr "ενεργοποίηση επεξεργασίας μπουκέτων"
-
-#, fuzzy
-msgid "enable favorite edit"
-msgstr "ενεργοποίηση επεξεργασίας αγαπημένων"
-
-msgid "enable move mode"
-msgstr "ενεργοποίηση λειτουργίας μετακίνησης"
-
 msgid "enabled"
 msgstr "ενεργό"
 
-msgid "end alternatives edit"
-msgstr "τέλος επεξεργασίας εναλλακτικών"
-
-msgid "end bouquet edit"
-msgstr "τέλος επεξεργασίας μπουκέτου"
-
 msgid "end cut here"
 msgstr "τέλος αποκοπής εδώ"
-
-#, fuzzy
-msgid "end favorites edit"
-msgstr "τέλος επεξεργασίας αγαπημένων"
 
 msgid "enigma2 and network"
 msgstr "enigma2 και δίκτυο"
@@ -24936,9 +24954,6 @@ msgstr "σύστημα:"
 
 msgid "film/cinema"
 msgstr "φιλμ/κινηματογράφος"
-
-msgid "find currently played service"
-msgstr "εύρεση της τρέχουσας αναπαραγώμενης υπηρεσίας"
 
 msgid "fine arts"
 msgstr "καλές τέχνες"
@@ -25190,6 +25205,9 @@ msgstr "χόμπι αναψυχής (γενικά)"
 msgid "length"
 msgstr "διάρκεια"
 
+msgid "lime"
+msgstr ""
+
 msgid "literature"
 msgstr "λογοτεχνία"
 
@@ -25227,6 +25245,10 @@ msgstr "λεπτά"
 
 msgid "mins"
 msgstr "λεπτά"
+
+#, fuzzy
+msgid "module disabled"
+msgstr "ανενεργό"
 
 msgid "month"
 msgstr "μήνας"
@@ -25327,6 +25349,14 @@ msgstr ""
 msgid "no channel list"
 msgstr "χωρίς λίστα καναλιών"
 
+#, fuzzy
+msgid "no domain name found"
+msgstr "Δεν βρέθηκαν νέα πρόσθετα"
+
+#, fuzzy
+msgid "no gateway found"
+msgstr "δεν βρέθηκε άρθρωμα"
+
 msgid "no module found"
 msgstr "δεν βρέθηκε άρθρωμα"
 
@@ -25394,6 +25424,9 @@ msgstr "η ολίσθηση χρόνου είναι"
 msgid "ok"
 msgstr ""
 
+msgid "olympic blue"
+msgstr ""
+
 msgid "on READ ONLY medium."
 msgstr "σε μέσο ΜΟΝΟ ΓΙΑ ΑΝΑΓΝΩΣΗ."
 
@@ -25432,15 +25465,16 @@ msgstr ""
 msgid "or"
 msgstr "Ώρα"
 
+#, fuzzy
+msgid "orange"
+msgstr "αλλαγή"
+
 msgid "original language"
 msgstr "αρχική γλώσσα"
 
 msgid ""
 "oscam install finished\n"
 "have fun"
-msgstr ""
-
-msgid "oscamsmartcard"
 msgstr ""
 
 #, fuzzy
@@ -25460,14 +25494,8 @@ msgstr "Αναπαραγωγή Εικόνων"
 msgid "pid:"
 msgstr "pid:"
 
-msgid "play as picture in picture"
-msgstr "αναπαραγωγή ως PiP"
-
-msgid "play in mainwindow"
-msgstr "αναπαραγωγή στο κεντρικό παράθυρο"
-
-msgid "please press OK when ready"
-msgstr "πιέστε OK όταν είστε έτοιμοι"
+msgid "pink"
+msgstr ""
 
 msgid "please wait, loading picture..."
 msgstr "περίμενετε, φορτώνεται η εικόνα..."
@@ -25497,9 +25525,8 @@ msgstr "provid:"
 msgid "provider:"
 msgstr "πάροχος:"
 
-#, fuzzy
-msgid "purge deleted user bouquets"
-msgstr "εκκαθάριση διαγραμμένων μπουκέτων χρήστη"
+msgid "purple"
+msgstr ""
 
 msgid "quit"
 msgstr ""
@@ -25526,55 +25553,21 @@ msgstr "σημαίνοντα πρόσωπα"
 msgid "remove after this position"
 msgstr "διαγραφή μετά από αυτό το σημείο"
 
-msgid "remove all alternatives"
-msgstr "διαγραφή όλων των εναλλακτικών"
-
-msgid "remove all new found flags"
-msgstr "διαγραφή όλων των νέων σημαιών"
-
 msgid "remove before this position"
 msgstr "διαγραφή πριν από αυτό το σημείο"
-
-msgid "remove bouquet from parental protection"
-msgstr "αφαίρεση μπουκέτου από τη γονική προστασία"
-
-msgid "remove cable services"
-msgstr "αφαίρεση καλωδιακών υπηρεσιών"
 
 #, fuzzy
 msgid "remove current config"
 msgstr "Ενεργοποίηση τρέχουσας ρύθμισης"
 
-msgid "remove entry"
-msgstr "διαγραφή στοιχείου"
-
-msgid "remove from parental protection"
-msgstr "διαγραφή από γονικό έλεγχο"
-
-msgid "remove new found flag"
-msgstr "διαγραφή σημαίας \"νέο\""
-
 msgid "remove reboot from oscamsmartcard"
 msgstr ""
-
-msgid "remove selected satellite"
-msgstr "διαγραφή επιλεγμένου δορυφόρου"
-
-msgid "remove terrestrial services"
-msgstr "αφαίρεση επίγειων υπηρεσιών"
 
 msgid "remove this mark"
 msgstr "διαγραφή αυτού του σημειωτή"
 
-msgid "rename entry"
-msgstr "μετονομασία στοιχείου"
-
 msgid "repeated"
 msgstr "επαναλαμβανόμενο"
-
-#, fuzzy
-msgid "restore deleted user bouquets"
-msgstr "επαναφορά διαγραμμένων μπουκέτων χρήστη"
 
 #, fuzzy
 msgid "restoring satellites.xml not possible!"
@@ -25597,6 +25590,9 @@ msgstr "ροκ/ποπ"
 
 msgid "romance"
 msgstr "ρομάντζο"
+
+msgid "rose"
+msgstr ""
 
 msgid "running..."
 msgstr "σε εκτέλεση..."
@@ -25646,9 +25642,6 @@ msgstr "PIN υπηρεσίας"
 msgid "services"
 msgstr "Υπηρεσίες"
 
-msgid "set as startup service"
-msgstr "ορισμός ως υπηρεσία εκκίνησης"
-
 msgid "share:"
 msgstr "κοινόχρηστο στοιχείο:"
 
@@ -25666,9 +25659,6 @@ msgstr "εμφάνιση όλων των καρτών"
 
 msgid "show all tags"
 msgstr "εμφάνιση όλων των ετικετών"
-
-msgid "show alternatives"
-msgstr "εμφάνιση εναλλακτικών"
 
 msgid "show cards with uphop 0"
 msgstr "εμφάνιση καρτών με uphop 0"
@@ -25718,9 +25708,6 @@ msgstr ""
 
 msgid "show this help message and exit"
 msgstr ""
-
-msgid "show transponder info"
-msgstr "εμφάνιση πληροφοριών αναμεταδότη"
 
 msgid "show/game show (general)"
 msgstr "σόου/τηλεπαιχνίδι (γενικά)"
@@ -25795,9 +25782,6 @@ msgstr "μέγεθος βήματος"
 msgid "stereo"
 msgstr "στερεοφωνικό"
 
-msgid "stop using as startup service"
-msgstr "τέλος χρήσης ως υπηρεσία εκκίνησης"
-
 msgid "successful"
 msgstr ""
 
@@ -25842,17 +25826,11 @@ msgstr "Περιεχόμενα"
 msgid "the Green button and restart the wizard.\n"
 msgstr ""
 
-msgid "this bouquet is protected by a parental control pin"
-msgstr "αυτό το μπουκέτο προστατεύεται με γονικό κωδικό pin"
-
 msgid "this info added"
 msgstr ""
 
 msgid "this recording"
 msgstr "αυτή η εγγραφή"
-
-msgid "this service is protected by a parental control pin"
-msgstr "αυτή η υπηρεσία είναι προστατευμένη με γονικό pin"
 
 msgid "to the box you have to unplug it, press\n"
 msgstr ""
@@ -25936,9 +25914,6 @@ msgstr ""
 msgid "untestable"
 msgstr "Ενεργοποίηση"
 
-msgid "until standby/restart"
-msgstr "μέχρι την αναμονή/επανεκκίνηση"
-
 msgid "update Redlight HD Card"
 msgstr ""
 
@@ -25984,6 +25959,10 @@ msgstr ""
 msgid "violet"
 msgstr ""
 
+#, fuzzy
+msgid "wait for ci..."
+msgstr "αναμονή για mmi..."
+
 msgid "wait for mmi..."
 msgstr "αναμονή για mmi..."
 
@@ -26004,6 +25983,10 @@ msgstr "εβδομαδιαία"
 
 msgid "west"
 msgstr "δυτικά"
+
+#, fuzzy
+msgid "white"
+msgstr "Λευκό"
 
 msgid "wide"
 msgstr "πλατύ"
