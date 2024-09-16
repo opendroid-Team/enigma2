@@ -798,6 +798,8 @@ config.misc.NTPserver = ConfigText(default="pool.ntp.org", fixed_size=False)
 config.misc.startCounter = ConfigInteger(default=0)  # Number of e2 starts.
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0))  # Number of standby.
 config.misc.DeepStandby = NoSave(ConfigYesNo(default=False))  # Detect deep standby.
+config.misc.autocamEnabled = ConfigYesNo(default=False)
+config.misc.autocamDefault = ConfigText(default="")
 
 profile("LOAD:Plugin")
 # Initialize autorun plugins and plugin menu entries.
