@@ -13,7 +13,7 @@ from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInform
 
 from keyids import KEYFLAGS, KEYIDNAMES, KEYIDS
 from RecordTimer import AFTEREVENT, RecordTimer, RecordTimerEntry, findSafeRecordPath, parseEvent
-from ServiceReference import ServiceReference, isPlayableForCur
+from ServiceReference import ServiceReference, getStreamRelayRef, hdmiInServiceRef, isPlayableForCur
 from Components.ActionMap import ActionMap, HelpableActionMap, HelpableNumberActionMap, NumberActionMap
 from Components.config import ConfigBoolean, ConfigClock, config, configfile
 from Components.Harddisk import findMountPoint, harddiskmanager
@@ -43,6 +43,7 @@ from Screens.Menu import Menu, findMenu
 from Screens.MessageBox import MessageBox
 from Screens.MinuteInput import MinuteInput
 from Screens.PictureInPicture import PictureInPicture
+from Screens.PiPSetup import PiPSetup
 from Screens.PVRState import PVRState, TimeshiftState
 from Screens.SubtitleDisplay import SubtitleDisplay
 from Screens.RdsDisplay import RassInteractive, RdsInfoDisplay
@@ -56,7 +57,8 @@ from Screens.Timers import RecordTimerEdit, RecordTimerOverview
 from Screens.UnhandledKey import UnhandledKey
 from Tools.Directories import SCOPE_VOD
 from Tools import Notifications
-from Tools.Directories import pathExists, fileReadLine, fileWriteLine, isPluginInstalled
+from Tools.BoundFunction import boundFunction
+from Tools.Directories import SCOPE_CONFIG, SCOPE_SKINS, fileReadLines, fileWriteLines, isPluginInstalled, pathExists, resolveFilename
 from Tools.ServiceReference import hdmiInServiceRef
 
 MODULE_NAME = __name__.split(".")[-1]
