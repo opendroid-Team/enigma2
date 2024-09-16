@@ -61,12 +61,11 @@
 
 5 . Disable apparmor profile
 
-    ```sh
     sudo apparmor_parser -R /etc/apparmor.d/unprivileged_userns
 
     sudo mv /etc/apparmor.d/unprivileged_userns /etc/apparmor.d/disable
 
-    ```sh
+
 
 6 - Add user opendroidbuilder
 
@@ -112,25 +111,24 @@
 
 * Build an image with feed (build time 5-12h)
 
-    ```sh
+
 15 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make image
     ```
 
 > Build an image without feed (build time 1-2h)
 
-    ```sh
+
 16 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make enigma2-image
     ```
 
 > Build the feeds
 
-    ```sh
+
     MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make feeds
     ```
 
 > Build specific packages
 
-    ```sh
 17 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make init
 
     cd builds/opendroid/sf4008/
