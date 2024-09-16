@@ -59,58 +59,67 @@
 
 ----------
 
-5 - Add user opendroidbuilder
+1. Disable apparmor profile
+
+    ```sh
+    sudo apparmor_parser -R /etc/apparmor.d/unprivileged_userns
+
+    sudo mv /etc/apparmor.d/unprivileged_userns /etc/apparmor.d/disable
+
+    ```sh
+
+2 - Add user opendroidbuilder
 
     sudo adduser opendroidbuilder
 
 ----------
-6 - Switch to user opendroidbuilder
+3 - Switch to user opendroidbuilder
 
     su opendroidbuilder
 
 ----------
-7 - Switch to home of openadroidbuilder
+4 - Switch to home of openadroidbuilder
 
     cd ~
 
 ----------
-8 - Create folder opendroid
+5 - Create folder opendroid
 
     mkdir -p ~/opendroid
 
 ----------
-9 - Switch to folder opendroid
+6 - Switch to folder opendroid
 
     cd opendroid
 
 ----------
-10 - Clone oe-alliance git
+7 - Clone oe-alliance git
 
     git clone git://github.com/oe-alliance/build-enviroment.git -b 5.5
 
 ----------
-11 - Switch to folder build-enviroment
+8 - Switch to folder build-enviroment
 
     cd build-enviroment
 
 ----------
-12 - Update build-enviroment
+9 - Update build-enviroment
 
     make update
 
 ----------
-13 - Finally you can start building a image
+10 - Finally you can start building a image
 
 * Build an image with feed (build time 5-12h)
 
     ```sh
- 15 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make image
+11 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make image
     ```
 
 > Build an image without feed (build time 1-2h)
 
     ```sh
- 16 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make enigma2-image
+12 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make enigma2-image
     ```
 
 > Build the feeds
@@ -122,7 +131,7 @@
 > Build specific packages
 
     ```sh
- 17 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make init
+13 -    MACHINE=sf4008 DISTRO=opendroid DISTRO_TYPE=release make init
 
     cd builds/opendroid/sf4008/
 
