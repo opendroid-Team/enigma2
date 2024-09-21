@@ -809,7 +809,7 @@ def InitAVSwitch():
 	iAVSwitch.setInput("ENCODER")  # init on startup
 	detected = BoxInfo.getItem("scart")
 	if detected:
-		if MACHINEBUILD in ('gbquad', 'gbquadplus', 'et5x00', 'axodin', 'axodinc', 'starsatlx', 'galaxym6', 'geniuse3hd', 'evoe3hd', 'axase3', 'axase3c', 'omtimussos1', 'omtimussos2', 'gb800seplus', 'gb800ueplus', 'gbultrase', 'gbultraue', 'gbultraueh', 'twinboxlcd', 'et6000'):
+		if MACHINEBUILD in ('gbquad4kpro', 'gbquad', 'gbquadplus', 'et5x00', 'axodin', 'axodinc', 'starsatlx', 'galaxym6', 'geniuse3hd', 'evoe3hd', 'axase3', 'axase3c', 'omtimussos1', 'omtimussos2', 'gb800seplus', 'gb800ueplus', 'gbultrase', 'gbultraue', 'gbultraueh', 'twinboxlcd', 'et6000'):
 			detected = False
 		else:
 			detected = eAVSwitch.getInstance().haveScartSwitch()
@@ -1274,7 +1274,7 @@ def InitAVSwitch():
 		if MACHINEBUILD in ('dm900', 'dm920', 'dm7080', 'dm800'):
 			choice_list = [("use_hdmi_caps", _("controlled by HDMI")), ("force_ac3", _("convert to AC3")), ("multichannel", _("convert to multi-channel PCM")), ("hdmi_best", _("use best / controlled by HDMI")), ("force_ddp", _("force AC3plus"))]
 			config.av.transcodeac3plus = ConfigSelection(choices=choice_list, default="force_ac3")
-		elif MACHINEBUILD in ('gbquad4k', 'gbue4k', 'gbx34k'):
+		elif MACHINEBUILD in ('gbquad4kpro', 'gbquad4k', 'gbue4k', 'gbx34k'):
 			choice_list = [("downmix", _("Downmix")), ("passthrough", _("Passthrough")), ("force_ac3", _("convert to AC3")), ("multichannel", _("convert to multi-channel PCM")), ("force_dts", _("convert to DTS"))]
 			config.av.transcodeac3plus = ConfigSelection(choices=choice_list, default="force_ac3")
 		else:
@@ -1359,7 +1359,7 @@ def InitAVSwitch():
 		if MACHINEBUILD in ('dm900', 'dm920', 'dm7080', 'dm800'):
 			choice_list = [("downmix", _("Downmix")), ("passthrough", _("Passthrough")), ("multichannel", _("convert to multi-channel PCM")), ("hdmi_best", _("use best / controlled by HDMI"))]
 			config.av.downmix_aac = ConfigSelection(choices=choice_list, default="downmix")
-		elif MACHINEBUILD in ('gbquad4k', 'gbue4k', 'gbx34k'):
+		elif MACHINEBUILD in ('gbquad4kpro', 'gbquad4k', 'gbue4k', 'gbx34k'):
 			choice_list = [("downmix", _("Downmix")), ("passthrough", _("Passthrough")), ("multichannel", _("convert to multi-channel PCM")), ("force_ac3", _("convert to AC3")), ("force_dts", _("convert to DTS")), ("use_hdmi_cacenter", _("use_hdmi_cacenter")), ("wide", _("wide")), ("extrawide", _("extrawide"))]
 			config.av.downmix_aac = ConfigSelection(choices=choice_list, default="downmix")
 		else:
