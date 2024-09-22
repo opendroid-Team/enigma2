@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from Screens.HelpMenu import ShowRemoteControl
 from Screens.Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
@@ -13,6 +12,7 @@ from Screens.LocaleSelection import LocaleWizard
 
 config.misc.firstrun = ConfigBoolean(default=True)
 config.misc.videowizardenabled = ConfigBoolean(default=True)
+config.misc.networkenabled = ConfigBoolean(default=False)
 
 
 class StartWizard(WizardLanguage, ShowRemoteControl):

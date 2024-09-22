@@ -1,4 +1,3 @@
-<!--suppress XmlUnboundNsPrefix -->
 <wizard>
 		<step id="start" nextstep="introduction">
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your %s %s.\nPress the OK button on your remote control to move to the next step." />
@@ -19,6 +18,7 @@ self.selectKey("OK")
 self.clearSelectedKeys()
 self.selectKey("UP")
 self.selectKey("DOWN")
+self["key_yellow"].text = ""
 			</code>
 		</step>
 		<step id="network">

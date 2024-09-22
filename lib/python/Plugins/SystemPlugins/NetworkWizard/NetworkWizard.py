@@ -12,6 +12,7 @@ from Components.Network import iNetwork
 from Components.SystemInfo import BoxInfo, getBoxDisplayName
 from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from Screens.WizardLanguage import WizardLanguage
 
 
 class NetworkWizard(Wizard, ShowRemoteControl):

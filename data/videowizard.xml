@@ -2,16 +2,16 @@
 <wizard>
 	<step id="inputselection" nextstep="modesdetection" timeout="10" timeoutaction="selectnext">
 		<condition>
-self.portCount = len(self.listPorts())
-self.condition = self.portCount > 1
-if self.portCount == 1:
+self.condition = len(self.listInputChannels()) > 1
+if len(self.listInputChannels()) == 1:
 	self.selection = "HDMI"
-	self.portSelectionMoved()
+	self.inputSelectionMoved()
 		</condition>
 		<text value="Video input selection\n\nPlease press OK if you can see this page on your TV (or select a different input port).\n\nThe next input port will be automatically probed in 10 seconds." />
 		<displaytext value="Select video output port with UP/DOWN buttons" />
-		<list type="dynamic" source="listPorts" evaluation="portSelectionMade" onselect="portSelectionMoved" />
+		<list type="dynamic" source="listInputChannels" evaluation="inputSelectionMade" onselect="inputSelectionMoved" />
 		<code>
+self["portpic"].show()
 self.clearSelectedKeys()
 self.selectKey("OK")
 		</code>
@@ -62,6 +62,7 @@ config.av.edid_override.save()
 self.clearSelectedKeys()
 self.selectKey("UP")
 self.selectKey("DOWN")
+self["portpic"].hide()
 		</code>
 	</step>
 	<step id="rateselection" nextstep="end" timeout="10" timeoutaction="selectnext">
@@ -79,7 +80,10 @@ self.selectKey("DOWN")
 	</step>
 	<step id="end">
 		<code>
-self.saveWizardChanges()
+self.hw.saveMode(self.port, self.mode, self.rate)
+from Components.config import configfile
+configfile.save()
+self.markDone()
 self.close()
 		</code>
 	</step>

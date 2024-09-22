@@ -13,7 +13,6 @@ self.selectInterface()
 
 	<step id="selectinterface">
 
-	<step id="welcome">
 		<text value="Select the network interface to be used for the Internet connection.\n\nPress OK to continue." />
 		<displaytext value="Select interface" />
 		<list type="dynamic" source="listInterfaces" evaluation="InterfaceSelectionMade" onselect="InterfaceSelectionMoved" />

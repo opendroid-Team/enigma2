@@ -299,7 +299,7 @@ class InfoBarAutoCam:
 
 	def __init__(self):
 		self.currentCam = BoxInfo.getItem("CurrentSoftcam")
-		self.defaultCam = config.misc.autocamDefault.value or self.currentCam
+#		self.defaultCam = config.misc.autocamDefault.value or self.currentCam
 		self.reload()
 
 	def reload(self):
