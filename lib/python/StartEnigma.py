@@ -704,8 +704,6 @@ config.osd = ConfigSubsection()
 
 if DISPLAYBRAND == "Atto.TV":
 	defaultLocale = "pt_BR"
-elif DISPLAYBRAND == "Zgemma":
-	defaultLocale = "en_US"
 elif DISPLAYBRAND == "Beyonwiz":
 	defaultLocale = "en_AU"
 else:

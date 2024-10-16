@@ -224,7 +224,7 @@ class About(Screen):
 			cpuMHz = _("   (2.0 GHz)")
 		elif getMachineBuild() in ('vuduo4k', ):
 			cpuMHz = _("   (2.1 GHz)")
-		elif getMachineBuild() in ('sf5008', 'et13000', 'et1x000', 'hd52', 'hd51', 'sf4008', 'vs1500', 'h7', 'osmio4k', 'osmio4kplus', 'osmini4k'):
+		elif getMachineBuild() in ('sf5008', 'et13000', 'et1x000', 'hd52', 'hd51', 'sf4008', 'vs1500', 'osmio4k', 'osmio4kplus', 'osmini4k'):
 			try:
 				import binascii
 				f = open('/sys/firmware/devicetree/base/cpus/cpu@0/clock-frequency', 'rb')
@@ -253,16 +253,16 @@ class About(Screen):
 		if res2:
 			bogoMIPS = "" + res2.replace("\n", "")
 
-		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'h7', 'gb7252'):
+		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'gb7252'):
 			AboutText += _("CPU:\t%s") % about.getCPUString() + cpuMHz + "\n"
 		else:
 			AboutText += _("CPU:\t%s") % about.getCPUString() + " " + cpuMHz + "\n"
 		dMIPS = 0
 		if getMachineBuild() in ('vusolo4k', 'vuultimo4k'):
 			dMIPS = "10.500"
-		elif getMachineBuild() in ('hd52', 'hd51', 'sf4008', 'dm900', 'h7', 'gb7252'):
+		elif getMachineBuild() in ('hd52', 'hd51', 'sf4008', 'dm900', 'gb7252'):
 			dMIPS = "12.000"
-		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'h7', 'gb7252'):
+		if getMachineBuild() in ('vusolo4k', 'hd51', 'hd52', 'sf4008', 'dm900', 'gb7252'):
 			AboutText += _("DMIPS:\t") + dMIPS + "\n"
 		else:
 			AboutText += _("BogoMIPS:\t%s") % bogoMIPS + "\n"

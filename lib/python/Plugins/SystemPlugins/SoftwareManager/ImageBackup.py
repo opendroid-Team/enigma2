@@ -616,7 +616,7 @@ class ImageBackup(Screen):
 			cmdlist.append('echo "This file forces a reboot after the update." > %s/reboot.update' % self.MAINDEST)
 		elif self.MODEL in ("vuzero", "vusolose", "vuuno4k", "vuzero4k"):
 			cmdlist.append('echo "This file forces the update." > %s/force.update' % self.MAINDEST)
-		elif self.MODEL in ("viperslim", "evoslimse", "evoslimt2c", "novaip", "zgemmai55", "sf98", "xpeedlxpro", "evoslim", "vipert2c"):
+		elif self.MODEL in ("viperslim", "evoslimse", "evoslimt2c", "novaip", "sf98", "xpeedlxpro", "evoslim", "vipert2c"):
 			cmdlist.append('echo "This file forces the update." > %s/force' % self.MAINDEST)
 		elif self.ROOTFSSUBDIR != "none":
 			cmdlist.append('echo "Rename the unforce_%s.txt to force_%s.txt and move it to the root of your usb-stick" > %s/force_%s_READ.ME' % (self.MACHINEBUILD, self.MACHINEBUILD, self.MAINDEST, self.MACHINEBUILD))

@@ -176,8 +176,6 @@ class RemoteControlType(Setup):
 				("17", "XP3000"),
 				("18", "F1/F3/F4/F4-TURBO/TRIPLEX"),
 				("19", "HD2400"),
-				("20", "Zgemma Star S/2S/H1/H2"),
-				("21", "Zgemma H.S/H.2S/H.2H/H5/H7"),
 				("500", "WWIO_BRE2ZE_TC"),
 				("501", "OCTAGON_SF4008"),
 				("502", "GIGABLUE Black"),
@@ -258,15 +256,10 @@ class RemoteControlType(Setup):
 				("17", "XP3000"),
 				("18", "F1/F3/F4/F4-TURBO/TRIPLEX"),
 				("19", "HD2400"),
-				("20", "Zgemma Star S/2S/H1/H2"),
-				("21", _("Zgemma H.S/H.2S/H.2H/H5/H7 old Model")),
-				("22", "Zgemma i55"),
 				("23", "WWIO 4K"),
 				("24", "Axas E4HD Ultra"),
-				("25", "Zgemma H8/H0/H9/I55Plus old Model"),
 				("26", "Protek 4K UHD/HD61"),
-				("27", "HD60/HD66SE/Multibox/Multiboxse/Multiboxpro"),
-				("28", _("I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"))
+				("27", "HD60/HD66SE/Multibox/Multiboxse/Multiboxpro")
 				]
 		defaultRcList = [
 				("default", 0),
@@ -298,32 +291,16 @@ class RemoteControlType(Setup):
 				("triplex", 18),
 				("xp1000", 14),
 				("xp3000", 17),
-				("sh1", 20),
-				("h3", 21),
-				("h5", 21),
-				#("h7", 21),# old model
-				("i55", 22),
 				("bre2ze4k", 23),
 				("e4hd", 24),
-				#("h9", 25),# old model
-				("i55plus", 25),
 				("hzero", 25),
-				("h8", 25),
 				("protek4k", 26),
 				("hd61", 26),
 				("hd60", 27),
 				("hd66se", 27),
 				("multibox", 27),
 				("multiboxse", 27),
-				("multiboxpro", 27),
-				("h7", 28),  # new model
-				("h9", 28),  # new model
-				("h9se", 28),  # new model
-				("h9combo", 28),
-				("h9combose", 28),
-				("i55se", 28),
-				("h10", 28),
-				("h11", 28)
+				("multiboxpro", 27)
 				]
 
 	def __init__(self, session):
