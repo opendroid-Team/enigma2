@@ -34,7 +34,7 @@
 	</widget>
 	<widget source="session.Event_Now" render="Label" position="200,178" zPosition="1" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		  <convert type="EventTime">Remaining</convert>
-		  <convert type="RemainingToText">inMinutes</convert>
+		  <convert type="RemainingToText"></convert>
 	</widget>
     <widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -63,8 +63,8 @@
 	</widget>
 </screen>
 
-<!--ChannelSelection_summary-->
-<screen name="ChannelSelection_summary" position="0,0" size="400,240">
+<!--ChannelSelectionSummary-->
+<screen name="ChannelSelectionSummary" position="0,0" size="400,240">
 	<widget source="parent.ServiceEvent" render="Label" position="0,12" size="400,155" font="LCD1;52" halign="center">
 		  <convert type="ServiceName">Name</convert>
 	</widget>
@@ -80,7 +80,7 @@
 	</widget>
 	<widget source="parent.ServiceEvent" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
+		<convert type="RemainingToText"></convert>
 	</widget>
 	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -92,7 +92,7 @@
 </screen>
 
 <!--AdvancedChannelSelection_summary-->
-<screen name="AdvancedChannelSelection_summary" position="0,0" size="400,240">
+<screen name="AdvancedChannelSelectionSummary" position="0,0" size="400,240">
 	<widget source="parent.ServiceEvent" render="Label" position="0,12" size="400,155" font="LCD1;52" halign="center">
 		  <convert type="ServiceName">Name</convert>
 	</widget>
@@ -108,7 +108,7 @@
 	</widget>
 	<widget source="parent.ServiceEvent" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
+		<convert type="RemainingToText"></convert>
 	</widget>
 	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -120,7 +120,7 @@
 </screen>
 
 <!--ChannelSelectionRadio_summary-->
-<screen name="ChannelSelectionRadio_summary" position="0,0" size="400,240">
+<screen name="ChannelSelectionRadioSummary" position="0,0" size="400,240">
 	<widget source="session.Event_Now" render="Label" position="0,12" size="400,155" font="LCD1;52" halign="center">
    		  <convert type="EventName">Name</convert>
 	</widget>
@@ -137,7 +137,7 @@
 	</widget>
 	<widget source="session.Event_Now" render="Label" position="200,178" zPosition="1" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		  <convert type="EventTime">Remaining</convert>
-		  <convert type="RemainingToText">inMinutes</convert>
+		  <convert type="RemainingToText"></convert>
 	</widget>
     <widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -150,19 +150,17 @@
 
 <!--MenuSummary-->
 <screen name="MenuSummary" position="0,0" size="400,240">
-	<widget source="parent.title" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000"/>
+	<widget source="Title" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000"/>
 	<ePixmap pixmap="/usr/share/enigma2/display/progress-lcd2.png" zPosition="1" position="2,80" size="396,3" />
-    <widget source="parent.menu" render="Label" position="2,95" size="396,100" font="LCD1;52" halign="center">
-		  <convert type="StringListSelection"/>
-	</widget>
+    <widget source="entry" render="Label" position="2,95" size="396,100" font="LCD1;52" halign="center"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 </screen>
 
 <!--SimpleSummary-->
-<screen name="SimpleSummary" position="0,0" size="400,240">
-	<widget source="parent.Title" render="Label" position="2,2" size="396,220" font="LCD1;52" valign="center" halign="center"/>
+<screen name="ScreenSummary" position="0,0" size="400,240">
+	<widget source="Title" render="Label" position="2,2" size="396,220" font="LCD1;52" valign="center" halign="center"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
@@ -270,7 +268,7 @@
 </screen>
 
 <!--MovieSelection_summary-->
-<screen name="MovieSelection_summary" position="0,0" size="400,240">
+<screen name="MovieSelectionSummary" position="0,0" size="400,240">
 	<ePixmap pixmap="/usr/share/enigma2/display/icon_movieplayer.png" zPosition="1" position="0,5" size="400,100" />
 	<widget source="parent.Service" render="RunningText" position="0,110" size="400,52" font="LCD1;55" halign="center" options="movetype=running,direction=left,startpoint=150,steptime=40,startdelay=2000,noWrap">
 		<convert type="ServiceName">Name</convert>
@@ -292,7 +290,7 @@
 </screen>
 
 <!--AdvancedMovieSelection_summary-->
-<screen name="AdvancedMovieSelection_summary" position="0,0" size="400,240">
+<screen name="AdvancedMovieSelectionSummary" position="0,0" size="400,240">
 	<ePixmap pixmap="/usr/share/enigma2/display/icon_movieplayer.png" zPosition="1" position="0,5" size="400,100" />
 	<widget source="parent.Movietitle" render="RunningText" position="0,110" size="400,52" font="LCD1;55" halign="center" options="movetype=running,direction=left,startpoint=150,steptime=40,startdelay=2000,noWrap"/>
     <ePixmap pixmap="/usr/share/enigma2/display/progress-lcd1.png" zPosition="1" position="0,167" size="400,14" />
@@ -313,7 +311,7 @@
 </screen>
 
 <!--AdvancedMovieSelectionEventView_summary-->
-<screen name="AdvancedMovieSelectionEventView_summary" position="0,0" size="400,240">
+<screen name="AdvancedMovieSelectionEventViewSummary" position="0,0" size="400,240">
     <widget source="parent.Service" render="Label" position="0,2" size="400,97" font="LCD1;52" halign="center" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="ServiceName">Name</convert>
 	</widget>
@@ -356,7 +354,7 @@
 </screen>
 
 <!--MoviePlayerExtended_summary-->
-<screen name="MoviePlayerExtended_summary" position="0,0" size="400,240">
+<screen name="MoviePlayerExtendedSummary" position="0,0" size="400,240">
 	<ePixmap pixmap="/usr/share/enigma2/display/icon_movieplayer.png" zPosition="1" position="0,5" size="400,100" />
 	<widget name="Title" position="0,110" size="400,50" font="LCD1;52" halign="center" />
     <widget source="session.CurrentService" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
@@ -402,10 +400,10 @@
 
 <!--SetupSummary-->
 <screen name="SetupSummary" position="0,0" size="400,240">
-	<widget source="SetupTitle" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000"/>
+	<widget source="Title" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000"/>
     <ePixmap pixmap="/usr/share/enigma2/display/progress-lcd2.png" zPosition="1" position="2,80" size="396,3" />
-	<widget source="SetupEntry" render="Label" position="18,95" size="384,52" font="LCD1;52" halign="center"/>
-	<widget source="SetupValue" render="Label" position="18,155" size="384,52" font="LCD1;52" halign="center"/>
+	<widget source="entry" render="Label" position="18,95" size="384,52" font="LCD1;52" halign="center"/>
+	<widget source="value" render="Label" position="18,155" size="384,52" font="LCD1;52" halign="center"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
@@ -413,7 +411,7 @@
 
 <!--ServiceScanSummary-->
 <screen name="ServiceScanSummary" position="0,0" size="400,240">
-	<widget name="Title" position="2,15" size="396,50" font="LCD1;50" halign="center" valign="top" foregroundColor="oled1" backgroundColor="#000000"/>
+	<widget source="Title" render="Label" position="2,15" size="396,50" font="LCD1;50" halign="center" valign="top" foregroundColor="oled1" backgroundColor="#000000"/>
     <widget name="Service" position="2,65" size="396,95" font="LCD1;50" halign="center"/>
 	<widget name="scan_progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="10,170" zPosition="2" borderWidth="1" size="380,14" backgroundColor="oledbackground1"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
@@ -422,7 +420,7 @@
 </screen>
 
 <!--ChoiceBox_summary-->
-<screen name="ChoiceBox_summary" position="0,0" size="400,240">
+<screen name="ChoiceBoxSummary" position="0,0" size="400,240">
 	<widget source="parent.summary_list" render="Label" position="2,15" size="396,202" font="LCD1;44" halign="center"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
@@ -430,17 +428,17 @@
 </screen>
 
 <!--ChoiceBoxPlus_summary-->
-<screen name="ChoiceBoxPlus_summary" position="0,0" size="400,240">
+<screen name="ChoiceBoxPlusSummary" position="0,0" size="400,240">
 	<widget source="parent.summary_list" render="Label" position="2,15" size="396,202" font="LCD1;44" halign="center"/>
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 </screen>
 
-<!--MessageBox_summary-->
-<screen name="MessageBox_summary" position="0,0" size="400,240">
-	<widget source="parent.Text" render="Label" position="2,10" size="396,165" font="LCD1;44" halign="center" valign="top" backgroundColor="oledbackground2" />
-	<widget source="parent.selectedChoice" render="Label" position="2,178" size="396,44" font="LCD1;44" halign="center" foregroundColor="#FFFFFF" />
+<!--MessageBoxSummary-->
+<screen name="MessageBoxSummary" position="0,0" size="400,240">
+	<widget source="text" render="Label" position="2,10" size="396,165" font="LCD1;44" halign="center" valign="top" backgroundColor="oledbackground2" />
+	<widget source="option" render="Label" position="2,178" size="396,44" font="LCD1;44" halign="center" foregroundColor="#FFFFFF" />
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
@@ -448,13 +446,9 @@
 
 <!--PluginBrowserSummary-->
 <screen name="PluginBrowserSummary" position="0,0" size="400,240">
-	<widget source="parent.pluginlist" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000" >
-		<convert type="StringListSelection">1</convert>
-	</widget>
 	<ePixmap pixmap="/usr/share/enigma2/display/progress-lcd2.png" zPosition="1" position="2,80" size="396,3" />
-	<widget source="parent.pluginlist" render="Label" position="2,90" size="396,130" font="LCD1;42" halign="center">
-		<convert type="StringListSelection">2</convert>
-	</widget>
+	<widget source="entry" render="Label" position="2,15" size="396,52" font="LCD1;52" halign="center" foregroundColor="oled1" backgroundColor="#000000" />
+	<widget source="value" render="Label" position="2,90" size="396,130" font="LCD1;42" halign="center" />
 	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
@@ -506,7 +500,7 @@
 </screen>
 
 <!--JobView_summary-->
-<screen name="JobView_summary" position="0,0" size="400,240">
+<screen name="TaskViewSummary" position="0,0" size="400,240">
 	<widget source="parent.summary_job_name" render="Label" position="0,15" size="400,50" font="LCD1;50" halign="center" foregroundColor="oled1" backgroundColor="#000000" />
 	<widget source="parent.summary_job_task" render="Label" position="0,70" size="400,80" font="LCD1;40" halign="center" />
 	<widget source="parent.summary_job_progress" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1"/>
@@ -523,7 +517,7 @@
 </screen>
 
 <!--Browser_summary-->
-<screen name="Browser_summary" position="0,0" size="400,240">
+<screen name="BrowserSummary" position="0,0" size="400,240">
 	<widget source="parent.Title" render="Label" position="2,5" size="396,200" font="LCD1;50" halign="center"/>
 </screen>
 
@@ -538,7 +532,7 @@
 </screen>
 
 <!--VirtualZap_summary-->
-<screen name="VirtualZap_summary" position="0,0" size="400,240">
+<screen name="VirtualZapSummary" position="0,0" size="400,240">
 	<widget source="session.CurrentService" render="RunningText" position="0,12" size="400,55" font="LCD1;52" halign="center" foregroundColor="oled1" zPosition="1" options="movetype=swimming,direction=top,repeat=0,steptime=100,startdelay=4000,pause=2000,wrap">
 		  <convert type="ServiceName">Name</convert>
 	</widget>
@@ -559,7 +553,7 @@
 	</widget>
 	<widget source="session.Event_Now" render="Label" position="200,178" zPosition="1" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		  <convert type="EventTime">Remaining</convert>
-		  <convert type="RemainingToText">inMinutes</convert>
+		  <convert type="RemainingToText"></convert>
 	</widget>
     <widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -571,7 +565,7 @@
 </screen>
 
 <!--SubservicesQuickzap_summary-->
-<screen name="SubservicesQuickzap_summary" position="0,0" size="400,240">
+<screen name="SubservicesQuickzapSummary" position="0,0" size="400,240">
     <widget source="session.CurrentService" render="Label" position="2,2" size="396,163" font="LCD1;45" halign="center" >
           <convert type="ServiceName">Name</convert>
     </widget>
@@ -583,7 +577,7 @@
 	</widget>
 	<widget source="session.Event_Now" render="Label" position="200,178" zPosition="1" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		  <convert type="EventTime">Remaining</convert>
-		  <convert type="RemainingToText">inMinutes</convert>
+		  <convert type="RemainingToText"></convert>
 	</widget>
     <widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -595,14 +589,14 @@
 </screen>
 
 <!--EMCSelection_summary-->
-<screen name="EMCSelection_summary" position="0,0" size="400,240">
+<screen name="EMCSelectionSummary" position="0,0" size="400,240">
 	<ePixmap pixmap="/usr/share/enigma2/display/icon_movieplayer.png" zPosition="1" position="0,5" size="400,100" />
 	<widget source="parent.Service" render="RunningText" position="0,110" size="400,52" zPosition="2" font="LCD1;55" options="movetype=running,direction=left,startpoint=150,steptime=40,startdelay=2000,noWrap">
 		<convert type="ServiceName">Name</convert>
 	</widget>
     <ePixmap pixmap="/usr/share/enigma2/display/progress-lcd1.png" zPosition="1" position="0,167" size="400,14" />
 	<widget source="parent.Service" render="Label" position="0,178" size="180,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="EMCServiceTime">Duration</convert>
+		 <convert type="ServiceTime">Duration</convert>
 		 <convert type="EMCClockToText">InMinutes</convert>
 	</widget>
     <widget source="parent.Service" render="Label" position="180,178" size="220,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
@@ -725,7 +719,7 @@
 </screen>
 
 <!--MyTubePlayer_summary-->
-<screen name="MyTubePlayer_summary" position="0,0" size="400,240">
+<screen name="MyTubePlayerSummary" position="0,0" size="400,240">
 	<widget source="session.CurrentService" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
 		  <convert type="ServiceName">Name</convert>
 	</widget>
@@ -757,7 +751,7 @@
 </screen>
 
 <!--NumberZapExt_summary-->
-<screen name="NumberZapExt_summary" position="0,0" size="400,240">
+<screen name="NumberZapExtSummary" position="0,0" size="400,240">
 	<eLabel text="Ext. NumberZap" position="0,55" size="400,55" font="LCD1;55" halign="center"/>
 	<ePixmap pixmap="/usr/share/enigma2/display/progress-lcd1.png" zPosition="1" position="0,167" size="400,14" />
 	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
@@ -766,7 +760,7 @@
 </screen>
 
 <!--EventView_summary-->
-<screen name="xEventView_summary" position="0,0" size="400,240">
+<screen name="xEventViewSummary" position="0,0" size="400,240">
 	<widget source="parent.Service" render="RunningText" position="0,12" size="400,55" font="LCD1;52" halign="center" foregroundColor="oled1" zPosition="1" options="movetype=swimming,direction=top,repeat=0,steptime=100,startdelay=4000,pause=2000,wrap">
 		<convert type="ServiceName">Name</convert>
 	</widget>
@@ -782,7 +776,7 @@
 	</widget>
 	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
+		<convert type="RemainingToText"></convert>
 	</widget>
 	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -793,12 +787,12 @@
 	</widget>
 </screen>
 
-<screen name="EventView_summary" position="0,0" size="400,240">
+<screen name="EventViewSummary" position="0,0" size="400,240">
     <widget source="parent.Title" render="Label" position="2,12" size="396,165" font="LCD1;52" halign="center" valign="center" />
 </screen>
 
 <!--EPGSelection_summary-->
-<screen name="EPGSelection_summary" position="0,0" size="400,240">
+<screen name="EPGSelectionSummary" position="0,0" size="400,240">
 	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" valign="center" halign="center">
 		<convert type="ServiceName">Name</convert>
 	</widget>
@@ -812,7 +806,7 @@
 	</widget>
 	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
+		<convert type="RemainingToText"></convert>
 	</widget>
 	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -823,8 +817,8 @@
 	</widget>
 </screen>
 
-<!--EPGSelectionMulti_summary-->
-<screen name="EPGSelectionMulti_summary" position="0,0" size="400,240">
+<!--EPGSelectionMultiSummary-->
+<screen name="EPGSelectionMultiSummary" position="0,0" size="400,240">
 	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" valign="center" halign="center">
 		<convert type="ServiceName">Name</convert>
 	</widget>
@@ -838,7 +832,7 @@
 	</widget>
 	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
 		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
+		<convert type="RemainingToText"></convert>
 	</widget>
 	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
 		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
@@ -889,7 +883,7 @@
 </screen>
 
 <!--PzyP4T_summary-->
-<screen name="PzyP4T_summary" position="0,0" size="400,240">
+<screen name="PzyP4TSummary" position="0,0" size="400,240">
  	<widget source="parent.ServiceEvent" render="RunningText" position="0,12" size="400,55" font="LCD1;52" halign="center" foregroundColor="oled1" zPosition="1" options="movetype=swimming,direction=top,repeat=0,steptime=100,startdelay=3000,pause=2000,wrap" >
 		  <convert type="ServiceName">Name</convert>
 	</widget>
@@ -911,8 +905,8 @@
 	</widget>
 </screen>
 
-<!--TimerEditList_summary-->
-<screen name="TimerEditList_summary" position="0,0" size="400,240">
+<!--TimerOverviewSummary-->
+<screen name="TimerOverviewSummary" position="0,0" size="400,240">
     <eLabel text="Timerlist" position="0,12" size="400,50" font="LCD1;52" halign="center" valign="top" foregroundColor="oled1" />
 	<ePixmap pixmap="/usr/share/enigma2/display/progress-lcd2.png" zPosition="1" position="2,80" size="396,3" />
 <!-- 	<widget source="session.CurrentService" render="RunningText" position="0,95" size="400,55" font="LCD1;52" halign="center" zPosition="1" options="movetype=running,startpoint=2,direction=left,repeat=0,steptime=30,startdelay=2000,noWrap">
@@ -927,398 +921,6 @@
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
     <widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-
-<!--CoolTV-->
-<screen name="CoolTVGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolMultiGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolTinyGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolNiceGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolChannelGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolChannelGuide2_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolChannelGuide3_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolInfoGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolSingleGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolSingleGuide2_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolSingleGuide3_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolEasyGuide_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolEasyGuide2_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolEasyGuide3_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-</screen>
-<screen name="CoolSearch_summary" position="0,0" size="400,240">
-	<widget source="parent.Service" render="Label" position="0,2" size="400,155" font="LCD1;52" halign="center" valign="center">
-		  <convert type="ServiceName">Name</convert>
-	</widget>
-	<widget source="parent.Service" render="LcdPicon" position="0,0" size="400,170" zPosition="2">
-	     <convert type="ServiceName2">Reference</convert>
-         <convert type="ConverterRotator"></convert>
-	</widget>
-	<widget source="parent.Service" render="Progress" pixmap="/usr/share/enigma2/display/progress-lcd1.png" position="0,167" size="400,14" borderWidth="1" zPosition="2" backgroundColor="oledbackground1">
-		<convert type="EventTime">Progress</convert>
-	</widget>
-	<widget source="global.CurrentTime" render="Label" position="0,178" size="200,50" font="LCD1;52" halign="left" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		 <convert type="ClockToText">Format:%H:%M:%S</convert>
-	</widget>
-	<widget source="parent.Service" render="Label" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" foregroundColor="oled1" backgroundColor="#000000">
-		<convert type="EventTime">Remaining</convert>
-		<convert type="RemainingToText">inMinutes</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text="REC" position="200,178" size="200,50" font="LCD1;52" halign="right" valign="top" zPosition="1" foregroundColor="#FF0000" backgroundColor="#000000" >
-		  <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-		  <convert type="ConditionalShowHide">Blink</convert>
-	</widget>
-	<widget source="session.RecordState" render="FixedLabel" text=" " position="399,239" zPosition="2" size="1,1" font="LCD1;1" halign="left" valign="top" foregroundColor="white" backgroundColor="#FF0000">
 		  <convert type="ConditionalShowHide">Blink</convert>
 	</widget>
 </screen>

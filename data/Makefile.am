@@ -5,7 +5,6 @@ dist_pkgdata_DATA = \
 	keymap.xml \
 	keymap.ntr \
 	keymap.u80 \
-	keytranslation.xml \
 	menu.xml \
 	black.mvi \
 	rcpositions.xml \
@@ -14,11 +13,12 @@ dist_pkgdata_DATA = \
 	startwizard.xml \
 	userinterfacepositionerwizard.xml \
 	videowizard.xml \
+	wizardlanguage.xml \
 	freesat.t1 \
 	freesat.t2 \
 	unicable.xml \
 	hd-testcard.mvi \
-	distro-logo.png
+	distro-logo.png 
 
 if HAVE_7SEGMENT
 SUBDIRS += 7segment

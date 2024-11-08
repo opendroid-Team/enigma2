@@ -57,7 +57,7 @@
     
   
 <!-- channelselection-->
-	<screen name="ChannelSelection_summary" position="fill">
+	<screen name="ChannelSelectionSummary" position="fill">
 		<widget source="parent.ServiceEvent" render="Label" position="top" size="*,21" font="FdLcD;20" noWrap="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
@@ -72,10 +72,8 @@
   
 <!-- menus-->
 	<screen name="MenuSummary" position="fill">
-		<widget source="parent.title" render="Label" position="top" size="*,16" font="FdLcD;14" halign="center" valign="top" noWrap="1" />
-		<widget source="parent.menu" render="Label" position="top" size="*,48" font="FdLcD;16" valign="top">
-			<convert type="StringListSelection" />
-		</widget>
+		<widget source="Title" render="Label" position="top" size="*,16" font="FdLcD;14" halign="center" valign="top" noWrap="1" />
+		<widget source="entry" render="Label" position="top" size="*,48" font="FdLcD;16" valign="top"/>
 	</screen>
 
 <!-- movieplayer-->
@@ -134,14 +132,14 @@
 
 <!-- setup-->
 	<screen name="SetupSummary" position="fill">
-		<widget source="SetupTitle" render="Label" position="top" size="*,12" font="FdLcD;12" halign="left" />
-		<widget source="SetupEntry" render="Label" position="top" size="*,40" font="FdLcD;12" halign="left" />
-		<widget source="SetupValue" render="Label" position="top" size="*,12" font="FdLcD;12" halign="left" />
+		<widget source="Title" render="Label" position="top" size="*,12" font="FdLcD;12" halign="left" />
+		<widget source="entry" render="Label" position="top" size="*,40" font="FdLcD;12" halign="left" />
+		<widget source="value" render="Label" position="top" size="*,12" font="FdLcD;12" halign="left" />
 	</screen>
 
 <!-- misc-->
-	<screen name="SimpleSummary" position="fill">
-		<widget source="parent.Title" render="Label" position="top" size="*,40" font="FdLcD;16" halign="center" valign="center" />
+	<screen name="ScreenSummary" position="fill">
+		<widget source="Title" render="Label" position="top" size="*,40" font="FdLcD;16" halign="center" valign="center" />
 		<panel position="bottom" size="*,24" name="SummaryClockPanel" />
 	</screen>
 
@@ -175,7 +173,7 @@
 	</screen>
 
 <!-- Numberzap -->    
- 	<screen name="NumberZap_summary" position="fill">
+ 	<screen name="NumberZapSummary" position="fill">
 		<widget source="parent.number_summary" render="Label" position="top" size="*,25" font="FdLcD;20" halign="center" valign="center" />
 		<widget source="parent.service_summary" render="Label" position="top" size="*,16" foregroundColor="#FFFF00" font="FdLcD;16" halign="center" valign="top" />
 		<panel name="SummaryClockPanel" />
@@ -183,13 +181,13 @@
 
 <!-- Plugin browser -->
 	<screen name="PluginBrowserSummary" position="fill">
-		<widget source="parent.Title" render="Label" position="top" size="*,16" font="FdLcD;12"  noWrap="1" />
+		<widget source="Title" render="Label" position="top" size="*,16" font="FdLcD;12"  noWrap="1" />
 		<widget source="entry" render="Label" position="top" size="*,20" font="FdLcD;18" noWrap="1" />
-		<widget source="desc" render="Label" position="fill" font="FdLcD;12" valign="top" />
+		<widget source="value" render="Label" position="fill" font="FdLcD;12" valign="top" />
 	</screen>
 
 <!-- JobView Summary -->
-	<screen name="JobView_summary" position="fill">
+	<screen name="TaskViewSummary" position="fill">
 		<widget source="parent.summary_job_name" render="Label" position="6,4" size="120,42" font="FdLcD;16" />
 		<widget source="parent.summary_job_task" render="Label" position="6,22" size="120,26" font="FdLcD;12" />
 		<widget source="parent.summary_job_progress" render="Progress" position="6,50" size="60,12" borderWidth="1" zPosition="1" />
@@ -198,43 +196,39 @@
 		</widget>
 	</screen>
 
-	<screen name="ChoiceBox_summary" position="fill">
+	<screen name="ChoiceBoxSummary" position="fill">
 		<widget source="parent.summary_list" render="Label" position="fill" font="FdLcD;11" />
 	</screen>	
 
-	<screen name="MessageBox_summary" position="fill">
-		<widget source="parent.Text" render="Label" position="top" size="*,52" font="FdLcD;11" halign="center" valign="center" />
-		<widget source="parent.selectedChoice" render="Label" position="bottom" size="*,14" font="FdLcD;14" halign="center" valign="center" />
+	<screen name="MessageBoxSummary" position="fill">
+		<widget source="text" render="Label" position="top" size="*,52" font="FdLcD;11" halign="center" valign="center" />
+		<widget source="option" render="Label" position="bottom" size="*,14" font="FdLcD;14" halign="center" valign="center" />
 	</screen>
 
-	<screen name="MessageBoxSimple_summary" position="fill">
-		<widget source="parent.Text" render="Label" position="top" size="*,52" font="FdLcD;11" halign="center" valign="center" />
-		<widget source="parent.selectedChoice" render="Label" position="bottom" size="*,14" font="FdLcD;14" halign="center" valign="center" />
+	<screen name="MessageBoxSimpleSummary" position="fill">
+		<panel name="MessageBoxSummary" />
 	</screen>
 	
 <!-- EMC -->
-	<screen name="EMCSelection_summary" position="fill">
+	<screen name="EMCSelectionSummary" position="fill">
 		<!-- Channel name -->
 		<widget source="parent.Service" render="Label" position="top" size="*,16" font="FdLcD;16" halign="center" noWrap="1">
-			<convert type="EMCMovieInfo">RecordServiceName</convert>
+			<convert type="MovieInfo">RecordServiceName</convert>
 		</widget>
 		<!-- Movie name -->
 		<widget source="parent.Service" render="Label" position="top" size="*,30" font="FdLcD;14" halign="center" valign="center">
-			<convert type="EMCEventName">Name</convert>
+			<convert type="EventName">Name</convert>
 		</widget>
 		<!-- Movie info -->
 		<panel position="bottom" size="*,16">
 			<widget source="parent.Service" render="Label" position="right" size="49,*" font="FdLcD;14" halign="right" noWrap="1">
-				<convert type="EMCMovieInfo">FileSize</convert>
+				<convert type="MovieInfo">FileSize</convert>
 			</widget>
 			<widget source="parent.Service" render="Label" position="fill" font="FdLcD;14" halign="left" transparent="1">
-				<convert type="EMCServiceTime">Duration</convert>
+				<convert type="ServiceTime">Duration</convert>
 				<convert type="EMCClockToText">InMinutes</convert>
 			</widget>
 		</panel>
-	</screen>
-	<screen name="EMCSelectionSummary" position="fill">
-		<panel name="EMCSelection_summary" />
 	</screen>
 
 	<screen name="EMCMoviePlayerSummary" position="fill">
