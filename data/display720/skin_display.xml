@@ -22,13 +22,6 @@
 		<font filename="verdana.ttf" name="FdLcDLight" scale="90"/>
 	</fonts>
 
-<!-- template -->
-	<screen name="SummaryClockPanel">
-		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50" >
-			<convert type="ClockToText">Default</convert>
-		</widget>
-	</screen>
-
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="720,576"> 
 		<widget source="session.CurrentService" render="Label" position="15,21" size="675,70" foregroundColor="#e5b243" font="FdLcD; 60" halign="center" zPosition="14">
@@ -58,9 +51,11 @@
 		</widget>
 		<widget source="session.Event_Now" render="Label" position="421,140" size="266,46" font="FdLcD;50" halign="right">
 			<convert type="EventTime">Remaining</convert>
-			<convert type="RemainingToText"></convert>
+			<convert type="RemainingToText">InMinutes</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 		<widget source="session.CurrentService" render="ChannelNumber" position="14,481" size="169,61" zPosition="8" font="FdLcD;60" halign="center" valign="top" transparent="1" />
 		<widget source="session.CurrentService" render="LcdPicon" zPosition="13" position="224,394" size="242,142" transparent="1" alphatest="blend">	
 			<convert type="ServiceName">Reference</convert>
@@ -68,7 +63,7 @@
 	</screen>
         
 <!-- normal radiomodus-->
-	<screen name="ChannelSelectionRadioSummary" position="0,0" size="720,576">
+	<screen name="ChannelSelectionRadio_summary" position="0,0" size="720,576">
 		<widget source="parent.RdsDecoder" render="Label" position="15,20" foregroundColor="#e5b243" size="670,220" font="FdLcD;60" halign="center" valign="top">
 			<convert type="RdsInfo">RtpText</convert>
 		</widget>
@@ -78,7 +73,7 @@
 	</screen>
         
 <!-- channelselection-->
-	<screen name="ChannelSelectionSummary" position="0,0" size="720,576"> 
+	<screen name="ChannelSelection_summary" position="0,0" size="720,576"> 
 		<widget source="parent.ServiceEvent" render="Label" position="15,21" size="675,70" foregroundColor="#e5b243" font="FdLcD; 60" halign="center">
 			<convert type="ServiceName">Name</convert>
 		</widget>
@@ -96,19 +91,21 @@
 			<convert type="EventTime">EndTime</convert>
 			<convert type="ClockToText">Format:- %H:%M</convert>
 		</widget>
-		<widget source="session.RecordState" render="FixedLabel" text="&#174;" position="334,140" foregroundColor="#ff0000" size="50,46" font="FdLcD;50" halign="left" valign="center" zPosition="22">
+		<widget source="parent.RecordState" render="FixedLabel" text="&#174;" position="334,140" foregroundColor="#ff0000" size="50,46" font="FdLcD;50" halign="left" valign="center" zPosition="22">
 			<convert type="ConfigEntryTest">config.usage.blinking_rec_symbol_during_recording,True,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
-		<widget source="session.RecordState" render="FixedLabel" text="&#174;" position="334,140" foregroundColor="#ff0000" size="50,46" font="FdLcD;50" halign="left" valign="center" zPosition="22">
+		<widget source="parent.RecordState" render="FixedLabel" text="&#174;" position="334,140" foregroundColor="#ff0000" size="50,46" font="FdLcD;50" halign="left" valign="center" zPosition="22">
 			<convert type="ConfigEntryTest">config.usage.blinking_rec_symbol_during_recording,False,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
 		<widget source="parent.ServiceEvent" render="Label" position="421,140" size="266,46" font="FdLcD;50" halign="right">
 			<convert type="EventTime">Remaining</convert>
-			<convert type="RemainingToText"></convert>
+			<convert type="RemainingToText">InMinutes</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 		<widget source="parent.Service" render="ChannelNumber" position="14,481" size="169,61" zPosition="8" font="FdLcD;60" halign="center" valign="top" transparent="1" />
 		<widget source="parent.Service" render="LcdPicon" zPosition="13" position="224,394" size="242,142" transparent="1" alphatest="blend">	
 			<convert type="ServiceName">Reference</convert>
@@ -116,24 +113,32 @@
 	</screen>
     
 <!-- Numberzap -->    
-	<screen name="NumberZapSummary" position="0,0" size="720,576">
+	<screen name="NumberZap_summary" position="0,0" size="720,576">
 		<widget source="parent.servicename" render="Label" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" noWrap="1" />
 		<widget source="parent.number" render="Label" position="20,190" size="670,200" font="FdLcD;90" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- menus-->
 	<screen name="MenuSummary" position="0,0" size="720,576"> 
-		<widget source="Title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" noWrap="1" />
-		<widget source="entry" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top"/>
-		<panel name="SummaryClockPanel" />
+		<widget source="parent.title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" noWrap="1" />
+		<widget source="parent.menu" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top">
+			<convert type="StringListSelection" />
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50" >
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- EtPortal -->       
-	<screen name="EtPortalScreenSummary" position="0,0" size="720,576">
+	<screen name="EtPortalScreen_summary" position="0,0" size="720,576">
 		<eLabel text="EtPortal" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" noWrap="1" />
 		<widget source="parent.label" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50" >
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- movieplayer-->
@@ -153,7 +158,9 @@
 		<widget source="session.CurrentService" render="Label" position="220,409" size="266,46" font="FdLcDLight;50" halign="center">
 			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
 	<screen name="MovieContextMenuSummary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" foregroundColor="#e5b243" size="670,223" font="FdLcD;60" halign="center" valign="center" />
@@ -172,11 +179,13 @@
 		<widget source="parent.Service" render="Label" position="504,140" size="186,46" font="FdLcD;50" halign="right" transparent="1">
 			<convert type="MovieInfo">FileSize</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
 
 <!-- EMC-->
-	<screen name="EMCSelectionSummary" position="0,0" size="720,576"> 
+	<screen name="EMCSelection_summary" position="0,0" size="720,576"> 
 		<widget source="parent.Service" render="Label" position="15,21" size="675,70" foregroundColor="#e5b243" font="FdLcD; 60" halign="center" zPosition="14">
 			<convert type="ServiceName">Name</convert>
 		</widget>
@@ -187,7 +196,9 @@
 		<widget source="parent.Service" render="Label" position="504,140" size="186,46" font="FdLcD;50" halign="right" transparent="1">
 			<convert type="MovieInfo">FileSize</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
 	<screen name="EMCMoviePlayerSummary" position="0,0" size="720,576"> 
 		<widget source="session.CurrentService" render="Label" position="15,21" size="675,244" foregroundColor="#e5b243" font="FdLcD; 60" valign="center" halign="center" zPosition="14">
@@ -205,21 +216,9 @@
 		<widget source="session.CurrentService" render="Label" position="220,409" size="266,46" font="FdLcDLight;50" halign="center">
 			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
-	</screen>
-
-<!-- Mediaplayer -->
-	<screen name="MediaPlayerLCDScreen" position="0,0" size="720,576">
-		<widget source="session.CurrentService" render="Label" position="15,21" size="675,320" foregroundColor="#e5b243" font="FdLcD;70" halign="center" valign="center" zPosition="14" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Progress" position="27,320" size="660,35" foregroundColor="#02c6ff" borderWidth="2" >
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Label" position="220,400" size="266,70" font="FdLcD;70" halign="center" foregroundColor="#02c6ff" >
-			<convert type="ServicePosition">Remaining,Negate</convert>
-		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
         
 <!-- DVD -->	
@@ -239,21 +238,27 @@
 		<widget source="session.CurrentService" render="Label" position="220,409" size="266,46" font="FdLcDLight;50" halign="center">
 			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
 
 <!-- setup-->
 	<screen name="SetupSummary" position="0,0" size="720,576"> 
-		<widget source="Title" render="Label" position="10,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;60" halign="center" valign="center" />
-		<widget source="entry" render="Label" position="22,154" size="670,200" font="FdLcD;60" halign="center" valign="top" />
-		<widget source="value" render="Label" position="22,360" foregroundColor="#65e543" size="670,128" font="FdLcDLight;50" halign="center" valign="top" />
-		<panel name="SummaryClockPanel" />
+		<widget source="SetupTitle" render="Label" position="10,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;60" halign="center" valign="center" />
+		<widget source="SetupEntry" render="Label" position="22,154" size="670,200" font="FdLcD;60" halign="center" valign="top" />
+		<widget source="SetupValue" render="Label" position="22,360" foregroundColor="#65e543" size="670,128" font="FdLcDLight;50" halign="center" valign="top" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- misc-->	
-	<screen name="ScreenSummary" position="0,0" size="720,576"> 
+	<screen name="SimpleSummary" position="0,0" size="720,576"> 
 		<widget source="parent.Title" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 	<screen name="WizardSummary" position="0,0" size="720,576"> 
@@ -261,9 +266,21 @@
 		<widget source="parent.list" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top">
 			<convert type="StringListSelection" />
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
+	<screen name="VideoWizardSummary" position="0,0" size="720,576"> 
+		<widget source="text" position="10,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;60" halign="center" valign="center" />
+		<widget source="parent.list" render="Label" position="20,190" size="670,200" font="FdLcD;60" halign="center" valign="top">
+			<convert type="StringListSelection" />
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+	</screen>
+	
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="720,576"> 
 		<widget source="global.CurrentTime" render="Label" position="20,107" size="670,182" foregroundColor="#e5b243" font="FdLcD;100" valign="center" halign="center" zPosition="14">
@@ -284,96 +301,137 @@
 	
 <!-- Plugin browser -->
 	<screen name="PluginBrowserSummary" position="0,0" size="720,576"> 
-		<widget source="Title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,150" font="FdLcD;70" halign="center" valign="top" />
+		<widget source="parent.Title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,150" font="FdLcD;70" halign="center" valign="top" />
 		<widget source="entry" render="Label" position="22,160" size="670,200" font="FdLcD;60" halign="center" valign="center" />
-		<widget source="value" render="Label" position="22,365" size="670,128" font="FdLcDLight;50" halign="center" valign="top" />
-		<panel name="SummaryClockPanel" />
+		<widget source="desc" render="Label" position="22,365" size="670,128" font="FdLcDLight;50" halign="center" valign="top" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	
 <!-- JobView Summary -->
-	<screen name="TaskViewSummary" position="0,0" size="720,576"> 
+	<screen name="JobView_summary" position="0,0" size="720,576"> 
 		<widget source="parent.summary_job_name" render="Label" position="15,21" size="675,122" foregroundColor="#e5b243" font="FdLcD; 60" valign="center" halign="center" zPosition="14" />
 		<widget source="parent.summary_job_progress" render="Progress" position="20,159" size="660,62" foregroundColor="#02c6ff" borderWidth="2" />
 		<widget source="parent.summary_job_task" render="Label" position="21,239" size="656,46" font="FdLcD;50" halign="left" transparent="1" />
 		<widget source="parent.summary_job_progress" render="Label" position="20,350" size="658,104" font="FdLcDLight;80" halign="center">
 			<convert type="ProgressToText" />
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>	
 	</screen>
         
-	<screen name="ChoiceBoxSummary" position="0,0" size="720,576">
+	<screen name="ChoiceBox_summary" position="0,0" size="720,576">
 		<widget source="parent.summary_list" render="Label" position="22,22" size="670,445" font="FdLcDLight;57" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	
-	<screen name="MessageBoxSummary" position="0,0" size="720,576"> 
-		<widget source="text" render="Label" position="10,20" size="670,376" font="FdLcD;60" halign="center" valign="center" />
-		<widget source="option" render="Label" position="22,422" size="670,63" foregroundColor="#e5b243" font="FdLcDLight;60" halign="center" valign="top" />
-		<panel name="SummaryClockPanel" />
+	<screen name="MessageBox_summary" position="0,0" size="720,576"> 
+		<widget source="parent.Text" render="Label" position="10,20" size="670,376" font="FdLcD;60" halign="center" valign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="22,422" size="670,63" foregroundColor="#e5b243" font="FdLcDLight;60" halign="center" valign="top" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	
-	<screen name="MessageBoxSimpleSummary" position="0,0" size="720,576"> 
-		<panel name="MessageBoxSummary" />
+	<screen name="MessageBoxSimple_summary" position="0,0" size="720,576"> 
+		<widget source="parent.Text" render="Label" position="10,20" size="670,376" font="FdLcD;60" halign="center" valign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="22,422" size="670,63" foregroundColor="#e5b243" font="FdLcDLight;60" halign="center" valign="top" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+	</screen>
+	
+<!-- Infopanel -->
+	<screen name="Infopanel_summary" position="0,0" size="720,576">
+		<widget source="parent.Title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" />
+		<widget source="parent.summary_description" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center"  />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	
 <!-- Quickmenü -->
-	<screen name="QuickMenuSummary" position="0,0" size="720,576">
+	<screen name="QuickMenu_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="15,20" foregroundColor="#e5b243" size="670,120" font="FdLcD;70" halign="center" valign="top" />
 		<widget source="parent.summary_description" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	
 <!-- Servicescan -->
 	<screen name="ServiceScanSummary" position="0,0" size="720,576">
-		<widget source="Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center"  />
-		<widget name="scan_progress"  position="27,400" size="660,25" foregroundColor="#02c6ff" borderWidth="2" />
-		<panel name="SummaryClockPanel" />
+		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center"  />
+		<widget name="scan_progress" render="Progress" position="27,400" size="660,25" borderWidth="2"  foregroundColor="#e5b243" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- ExtensionsList -->
-	<screen name="ExtensionsListSummary" position="0,0" size="720,576">
+	<screen name="ExtensionsList_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen> 
 
 <!-- softwaremanagment -->
-	<screen name="BackupSelectionSummary" position="0,0" size="720,576">
+	<screen name="BackupSelection_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="RestoreScreenSummary" position="0,0" size="720,576">
+	<screen name="RestoreScreen_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="installedPluginsSummary" position="0,0" size="720,576">
+	<screen name="installedPlugins_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="RestartNetworkSummary" position="0,0" size="720,576">
+	<screen name="RestartNetwork_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="RestorePluginsSummary" position="0,0" size="720,576">
+	<screen name="RestorePlugins_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="RestoreMenuSummary" position="0,0" size="720,576">
+	<screen name="RestoreMenu_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,376" font="FdLcD;70" halign="center" valign="center" foregroundColor="#e5b243" />
 		<widget source="parent.summary_description" render="Label" position="22,390" size="670,63" foregroundColor="#02c6ff" font="FdLcDLight;60" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 
 <!-- EPG -->
-	<screen name="EPGExtensionsListSummary" position="0,0" size="720,576">
+	<screen name="EPGExtensionsList_summary" position="0,0" size="720,576">
 		<widget source="parent.Title" render="Label" position="10,20" size="670,250" font="FdLcD;80" halign="center" valign="center" foregroundColor="#e5b243" />
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen> 
-	<screen name="GraphicalEPGPIGSummary" position="0,0" size="720,576">
+	<screen name="GraphicalEPGPIG_summary" position="0,0" size="720,576">
 		<eLabel text="Graphical EPG" position="15,20" size="670,80" font="FdLcD;70" halign="center" valign="center" />
 		<widget source="parent.Service" render="Label" position="15,100" size="675,100" foregroundColor="#e5b243" font="FdLcD;95" halign="center" zPosition="14">
 			<convert type="ServiceName">Name</convert>
@@ -384,16 +442,22 @@
 		<widget source="parent.Service" render="LcdPicon" zPosition="13" position="160,355" size="320,210" transparent="1" alphatest="blend">	
 			<convert type="ServiceName">Reference</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
 	<screen name="IMDbLCDScreen" position="0,0" size="720,576">
-		<eLabel text="IMDb Search" position="15,20" foregroundColor="#e5b243" size="670,500" font="FdLcD;90" halign="center" valign="center" />
-		<panel name="SummaryClockPanel" />
+		<eLabel text="IMDB Search" position="15,20" foregroundColor="#e5b243" size="670,500" font="FdLcD;90" halign="center" valign="center" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="GraphicalInfoBarEPGSummary" position="0,0" size="720,576">
+	<screen name="GraphicalInfoBarEPG_summary" position="0,0" size="720,576">
 		<eLabel text="Quick EPG" position="15,20" size="670,80" font="FdLcD;70" halign="center" valign="center" />
 		<widget source="parent.Service" render="Label" position="15,100" size="675,100" foregroundColor="#e5b243" font="FdLcD;95" halign="center" zPosition="14">
-		<panel name="SummaryClockPanel" />
+			<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 		</widget>
 		<widget source="parent.Service" render="Label" position="15,220" foregroundColor="#e5b243" size="675,120" font="FdLcDLight;55" halign="center" valign="center">
 			<convert type="EventName">Name</convert>
@@ -401,9 +465,11 @@
 		<widget source="parent.Service" render="LcdPicon" zPosition="13" position="160,355" size="320,210" transparent="1" alphatest="blend">	
 			<convert type="ServiceName">Reference</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>
-	<screen name="EPGSelectionMultiSummary" position="0,0" size="720,576">
+	<screen name="EPGSelectionMulti_summary" position="0,0" size="720,576">
 		<eLabel text="EPG Selection" position="15,20" size="670,80" font="FdLcD;70" halign="center" valign="center" />
 		<widget source="parent.Service" render="Label" position="15,100" size="675,100" foregroundColor="#e5b243" font="FdLcD;95" halign="center" zPosition="14">
 			<convert type="ServiceName">Name</convert>
@@ -414,7 +480,9 @@
 		<widget source="parent.Service" render="LcdPicon" zPosition="13" position="160,355" size="320,210" transparent="1" alphatest="blend">	
 			<convert type="ServiceName">Reference</convert>
 		</widget>
-		<panel name="SummaryClockPanel" />
+		<widget source="global.CurrentTime" render="Label" position="500,490" size="182,52" halign="right" font="FdLcD;50">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 	</screen>	
 	
 </skin>

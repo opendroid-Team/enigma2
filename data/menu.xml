@@ -18,9 +18,8 @@
 	<menu key="mainmenu" text="Main Menu" title="Main Menu">
 			<menu key="BluePanel" level="1" text="Blue Panel" weight="0">
 				<item key="softcam_settings" level="0" text="Softcam Settings" weight="50" requires="HAVEINITCAM"><screen module="BluePanel" screen="BluePanel" /></item>
-				<item key="OscamSmartcard_setup" level="0" text="OscamSmartcard Settings" weight="60"><screen module="OscamSmartcard" screen="OscamSmartcard" /></item>
-				<!--<item key="autocam_settings" level="0" text="AutoCam Settings" weight="60" requires="HAVEINITCAM"><screen module="BluePanel" screen="AutocamSetup" /></item>-->
-				<!--<item key="cardserver_settings" level="0" text="Cardserver Settings" weight="70" requires="HAVEINITCARDSERVER"><screen module="BluePanel" screen="CardserverSetup" /></item>-->
+				<item key="autocam_settings" level="0" text="AutoCam Settings" weight="60" requires="HAVEINITCAM"><screen module="BluePanel" screen="AutocamSetup" /></item>
+				<item key="cardserver_settings" level="0" text="Cardserver Settings" weight="70" requires="HAVEINITCARDSERVER"><screen module="BluePanel" screen="CardserverSetup" /></item>
 				<item key="streamrelay_settings" level="2" text="Stream Relay Settings" weight="110" requires="HAVEINITCAM"><screen module="BluePanel" screen="StreamRelaySetup" /></item>
 			</menu>
 		                <item weight="0" level="1" text="Green Panel" key="GreenPanel_selection">
@@ -50,7 +49,7 @@ self.session.open(GreenPanel)
 			<item weight="2" text="Tuner setup" key="client_mode" requires="ClientModeEnabled"><screen module="ClientMode" screen="ClientModeScreen"/></item>
 			<item weight="20" text="Automatic scan" key="auto_scan" conditional="nimmanager.somethingConnected()" requires="ClientModeDisabled"><screen module="ScanSetup" screen="ScanSimple"/></item>
 			<item weight="30" text="Manual scan" key="manual_scan" conditional="nimmanager.somethingConnected()" requires="ClientModeDisabled"><screen module="ScanSetup"/></item>
-			<item key="fallback_mode" level="0" text="Fallback Configuration" weight="100" requires="ClientModeDisabled"><screen module="FallbackTunerSetup" /></item>
+			<item weight="100" text="Fallback configuration" key="fallback_mode" requires="ClientModeDisabled"><screen  module="FallbackTunerSetup" screen="FallbackTunerSetup"/></item>
 			</menu>
 			<!-- Menu / Setup / Software Management -->
 			<menu key="software_manager" level="0" text="Software Management" description="This menu offers options related managing the software on the %s %s." weight="50">
@@ -78,7 +77,7 @@ self.session.open(GreenPanel)
 			</menu>
 		<!-- Menu / Settings / GUI -->
 		<!-- was: Menu / Settings / System -->
-                  <menu key="system" level="0" text="User Interface" weight="6">
+                  <menu key="system" level="0" text="User Interface" weight="15">
 				<!-- Menu / Setup / GUI / Display-->
 				<item key="user_interface" level="0" text="OSD Settings" weight="0"><setup setupKey="UserInterface" /></item>
 				<item key="remote_setup" level="0" text="Remote Control Button Settings" weight="5"><setup setupKey="RemoteButton" /></item>
@@ -89,7 +88,6 @@ self.session.open(GreenPanel)
 				<menu key="display" level="0" text="STB Display" weight="30" requires="Display">
 				<item key="display_setup" level="0" text="Display Settings" weight="0"><setup setupKey="Display" /></item>
 				<item key="lcd_skin_setup" level="0" text="LCD Skin Settings" weight="5" requires="LCDSKINSetup"><screen module="SkinSelector" screen="LcdSkinSelector" /></item>
-				<item requires="LCDSKINSetup" level="0" text="VFD Skin Settings" entryID="vfd_skin"><screen module="VfdSkinSelector" screen="VFDSkinSelector"/></item>
 		</menu>
 			<!-- Menu / Settings / System / Extended System / OSD settings -->
 		<menu weight="30" level="1" text="Extended GUI" key="osd_setup">
@@ -101,10 +99,13 @@ self.session.open(GreenPanel)
 					<code>
 from Plugins.SystemPlugins.RemoteControlCode.plugin import RemoteControlCode
 self.session.open(RemoteControlCode)
-					</code>
+</code>
 				</item>
-				<item key="keyboard" level="1" text="Keyboard Settings" weight="60"><screen module="InputDeviceSetup" screen="KeyboardSelection" /></item>
-				<item key="locale_setup" level="0" text="Locale / Language Settings" weight="65"><screen module="LocaleSelection" /></item>
+				<item weight="40" level="1" text="Keyboard" key="keyboard"><setup setupKey="keyboard" /></item>
+				<item weight="50" level="2" text="OSD 3D Setup" key="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item>
+			        <item weight="70" level="0" text="Language" key="locale"><screen module="LocaleSelection" /></item>
+                                <item weight="70" level="0" key="specialfeatures_menu"><setup setupKey="specialfeatures" /></item>
+				<!-- <item weight="50" level="2" text="OSD 3D Setup" key="osd3dsetup" requires="CanChange3DOsd"><screen module="UserInterfacePositioner" screen="OSD3DSetupScreen"/></item> -->
 			</menu>
 		</menu>
 
@@ -166,14 +167,14 @@ def msgClosed(ret):
 
 from Components.EpgLoadSave import EpgDeleteMsg
 self.session.openWithCallback(msgClosed, EpgDeleteMsg)
-					</code>
-				</item>
+						</code>
+					</item>
+				</menu>
 			</menu>
-		</menu>
 
 		<!-- Menu / Settings / Common interface -->
-		<menu key="cam" level="1" text="Common interface" weight="30">
-			<item key="ci_selection" level="1" text="Common Interface Settings" weight="50" requires="CommonInterface"><screen module="Ci" screen="CiSelection" /></item>
+			<menu key="cam" level="1" text="Common interface" weight="30">
+				<item key="ci_selection" level="1" text="Common Interface Settings" weight="50" requires="CommonInterface"><screen module="Ci" screen="CiSelection" /></item>
 		</menu>
 		<item weight="40" level="0" text="Parental control" key="parental_setup"><screen module="ParentalControlSetup" screen="ParentalControlSetup" /></item>
 
@@ -183,19 +184,19 @@ self.session.openWithCallback(msgClosed, EpgDeleteMsg)
 		<!-- <menu weight="95" level="0" text="Extended System" key="extended_selection"> -->
 		<menu weight="95" level="0" text="System" key="extended_selection">
 			<!-- Menu / Settings / System / Storage devices -->
-			<menu key="harddisk" level="0" text="Storage Devices" weight="45" requires="Harddisk">
-				<item key="harddisk_setup" level="1" text="Hard Disk Settings" weight="0"><setup setupKey="HardDisk" /></item>
-				<item key="harddisk_init" level="0" text="Initialization" weight="5"><screen module="HarddiskSetup" screen="HarddiskSelection" /></item>
-				<item key="harddisk_check" level="0" text="Filesystem Check" weight="10"><screen module="HarddiskSetup" screen="HarddiskFsckSelection" /></item>
-				<item key="harddisk_convert" level="0" text="Convert EXT3 File System to EXT4" weight="15" requires="ext4"><screen module="HarddiskSetup" screen="HarddiskConvertExt4Selection" /></item>
-				<item weight="3" level="0" text="USB Disk Format" key="usbdisk_init">
+				<menu key="harddisk" level="0" text="Storage Devices" weight="45" requires="Harddisk">
+					<item key="harddisk_setup" level="1" text="Hard Disk Settings" weight="0"><setup setupKey="HardDisk" /></item>
+					<item key="harddisk_init" level="0" text="Initialization" weight="5"><screen module="HarddiskSetup" screen="HarddiskSelection" /></item>
+					<item key="harddisk_check" level="0" text="Filesystem Check" weight="10"><screen module="HarddiskSetup" screen="HarddiskFsckSelection" /></item>
+					<item key="harddisk_convert" level="0" text="Convert EXT3 File System to EXT4" weight="15" requires="ext4"><screen module="HarddiskSetup" screen="HarddiskConvertExt4Selection" /></item>
+					<item weight="3" level="0" text="USB Disk Format" key="usbdisk_init">
 <code>
 from OPENDROID.MountManager import UsbFormat
 self.session.open(UsbFormat)
 </code>
 				</item>
-				<item key="mount_manager" level="0" text="Mount Manager" weight="20"><screen module="MountManager" screen="HddMount" /></item>
-				<item key="swap_manager" level="2" text="Swap Manager" weight="30"><screen module="SwapManager" screen="Swap" /></item>
+					<item key="mount_manager" level="0" text="Mount Manager" weight="20"><screen module="MountManager" screen="HddMount" /></item>
+					<item key="swap_manager" level="2" text="Swap Manager" weight="30"><screen module="SwapManager" screen="Swap" /></item>
 			</menu>
 			<!-- Menu / Settings / System / Network -->
 			<menu key="network" level="0" text="Network" weight="50">
@@ -219,8 +220,8 @@ self.session.open(UsbFormat)
 			<item key="logs_setup" level="0" text="Logs Settings" weight="70"><setup setupKey="Logs" /></item>
 			<item key="rfmod_setup" level="1" text="RF Output Settings" weight="80" requires="RfModulator"><setup setupKey="RFModulator" /></item>
 			<item key="factory_reset" level="0" text="Factory Reset" weight="99"><screen module="FactoryReset" screen="FactoryReset" /></item>
-		</menu>
-		</menu>
+				</menu>
+			</menu>
 	<!-- Menu / Information -->
 	<menu weight="10" level="0" text="Information" key="info_screen">
 		<item weight="5" level="0" text="About" key="about_screen"><screen module="About" screen="About"/></item>
@@ -233,8 +234,8 @@ self.session.open(UsbFormat)
 	</menu>
 	<!-- Menu / Timer -->
 	<menu weight="15" level="0" text="Timers" key="timer_menu">
-		<item weight="0" level="0" text="Timers" key="timer_edit"><screen module="Timers" screen="RecordTimerOverview" /></item>
-		<item weight="5" level="0" text="PowerTimers" key="powertimer_edit"><screen module="Timers" screen="RecordTimerOverview" /></item>
+		<item weight="0" level="0" text="Timers" key="timer_edit"><screen module="TimerEdit" screen="TimerEditList" /></item>
+		<item weight="5" level="0" text="PowerTimers" key="powertimer_edit"><screen module="PowerTimerEdit" screen="PowerTimerEditList" /></item>
                 <item weight="20" level="0" text="Sleep Timer" requires="DeepstandbySupport" key="sleep"><screen module="SleepTimer" screen="SleepTimer" /></item>
 		<item weight="10" level="0" text="CronTimers" key="crontimer_edit"><screen module="CronTimer" screen="CronTimers" /></item>
 	</menu>
@@ -242,7 +243,7 @@ self.session.open(UsbFormat)
 	<item weight="20" level="1" text="VCR scart" key="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 	<item weight="10" level="1" text="Plugins" key="plugin_selection"><screen module="PluginBrowser" screen="PluginBrowser" /></item>
 	<!-- Menu / Standby Restart -->
-	<menu key="shutdown" level="0" text="Standby / Restart" weight="99">
+	<menu key="standby_restart_list" level="0" text="Standby / Restart" weight="99">
 		<item key="deep_standby" level="0" text="Deep Standby" weight="0" requires="DeepstandbySupport">
 			<code>
 from Screens.MessageBox import MessageBox

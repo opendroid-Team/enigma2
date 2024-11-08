@@ -126,10 +126,13 @@
 
 	<screen name="MessageBoxTemplate">
 		<widget name="text" position="65,8" size="520,0" font="Regular;22" />
-		<widget name="icon" pixmaps="icons/input_question.png,icons/input_info.png,icons/input_warning.png,icons/input_error.png,icons/input_message.png" position="5,5" size="53,53" alphatest="blend" conditional="icon" scale="1" transparent="1" />
-		<widget name="list" position="100,100" size="480,375" conditional="list" />
+		<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="5,5" size="53,53" alphatest="on" />
+		<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="5,5" size="53,53" alphatest="on" />
+		<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="5,5" size="53,53" alphatest="on" />
+		<widget name="list" position="100,100" size="480,375" />
 		<applet type="onLayoutFinish">
 # this should be factored out into some helper code, but currently demonstrates applets.
+from __future__ import division
 from enigma import eSize, ePoint
 
 orgwidth = self.instance.size().width()
@@ -202,7 +205,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2, orgpos.y()))
 	<screen name="Mute" position="center,50" zPosition="10" size="45,45" flags="wfNoBorder" title="Mute">
 		<ePixmap pixmap="skin_default/infobar/mute.png" position="0,0" size="45,45"/>
 	</screen>
-	<screen name="SecondInfoBar" position="0,0" size="720,96" flags="wfNoBorder" title="SecondInfoBar">
+	<screen name="SecondInfoBar" position="0,0" size="720,96" flags="wfNoBorder"  title="SecondInfoBar">
 		<widget source="session.CurrentService" render="Label" position="50, 20" size="600,66" backgroundColor="transpBlack" transparent="1" zPosition="1" foregroundColor="foreground" font="Regular;16" valign="top" halign="left">
 			<convert type="PliExtraInfo">All</convert>
 		</widget>
@@ -986,12 +989,49 @@ self.autoResize()
 		<widget name="text" position="10,20" size="550,25" font="Regular;23" />
 		<widget name="input" position="10,55" size="550,25" font="Regular;20" />
 	</screen>
-	<screen name="Opkg" position="center,center" size="550,460" title="Installing Software...">
+	<screen name="Ipkg" position="center,center" size="550,460" title="Installing software...">
 		<panel name="BasicTemplate" />
 		<widget name="activityslider" position="10,10" size="540,5" pixmap="skin_default/progress_small.png" />
 		<widget name="package" position="10,30" size="540,20" font="Regular;18" />
 		<widget name="status" position="10,60" size="540,45" font="Regular;18" />
 		<widget name="slider" position="10,100" size="540,15" pixmap="skin_default/progress_big.png" borderWidth="2" borderColor="#cccccc" />
+	</screen>
+	<screen name="LanguageSelection" position="center,center" size="560,460" title="Language selection">
+		<panel name="BasicTemplate" />
+		<widget source="languages" render="Listbox" position="10,10" size="540,400" scrollbarMode="showOnDemand">
+			<convert type="TemplatedMultiContent">
+				{"template": [
+						MultiContentEntryText(pos = (80, 10), size = (200, 50), flags = RT_HALIGN_LEFT, text = 1), # index 1 is the language name,
+						MultiContentEntryPixmap(pos = (10, 5), size = (60, 40), png = 2), # index 2 is the pixmap
+					],
+				 "fonts": [gFont("Regular", 20)],
+				 "itemHeight": 50
+				}
+			</convert>
+		</widget>
+	</screen>
+	<screen name="LanguageWizard" position="fill" title="Welcome..." flags="wfNoBorder">
+		<panel name="WizardMarginsTemplate"/>
+		<panel position="left" size="110,*">
+			<panel position="top" size="*,50"/>
+		</panel>
+		<panel name="RemoteControlTemplate"/>
+		<panel position="left" size="10,*" />
+		<panel position="right" size="10,*" />
+		<panel position="fill">
+			<widget name="text" position="top" size="*,240" font="Regular;23" valign="center" />
+			<widget source="languages" render="Listbox" position="fill" scrollbarMode="showOnDemand">
+				<convert type="TemplatedMultiContent">
+					{"template": [
+							MultiContentEntryText(pos = (80, 10), size = (200, 50), flags = RT_HALIGN_LEFT, text = 1), # index 1 is the language name,
+							MultiContentEntryPixmap(pos = (10, 5), size = (60, 40), png = 2), # index 2 is the pixmap
+						],
+					"fonts": [gFont("Regular", 20)],
+					"itemHeight": 50
+					}
+				</convert>
+			</widget>
+		</panel>
 	</screen>
 	<screen name="MessageBox" position="center,center" size="600,10" title="Message">
 		<panel name= "MessageBoxTemplate" />

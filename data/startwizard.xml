@@ -18,6 +18,7 @@ self.selectKey("OK")
 self.clearSelectedKeys()
 self.selectKey("UP")
 self.selectKey("DOWN")
+self["key_yellow"].text = ""
 			</code>
 		</step>
 		<step id="network">
@@ -72,6 +73,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimb">
 			<condition>
 from Components.NimManager import nimmanager
@@ -86,6 +88,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimc">
 			<condition>
 from Components.NimManager import nimmanager
@@ -101,6 +104,7 @@ self.selectKey("LEFT")
 self.selectKey("RIGHT")
 			</code>
 		</step>
+
 		<step id="nimd">
 				<condition>
 from Components.NimManager import nimmanager

@@ -20,6 +20,9 @@
 		<!-- pick a funky name for the font, so we don't conflict  -->
 		<font filename="nmsbd.ttf" name="FdLcD" scale="100"/>
 	</fonts>
+	<parameters>
+		<parameter name="AllowUserDatesAndTimesDisplay" value="1,1" />
+	</parameters>
 
 <!-- main-->
 	<screen name="InfoBarSummary" position="0,0" size="132,64">
@@ -28,7 +31,7 @@
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,30" zPosition="1" size="120,34">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink,3000</convert>
+			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,30" zPosition="1" size="120,34">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,False,CheckSourceBoolean</convert>
@@ -36,7 +39,7 @@
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="120,25" text="  REC  ">
 			<convert type="ConfigEntryTest">config.usage.blinking_rec_symbol_during_recording,RecBlink,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink,3000</convert>
+			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="120,25" text="  REC  ">
 			<convert type="ConfigEntryTest">config.usage.blinking_rec_symbol_during_recording,Rec,CheckSourceBoolean</convert>
@@ -56,7 +59,9 @@
 
 <!-- menus-->
 	<screen name="MenuSummary" position="0,0" size="16,1">
-		<widget source="entry" render="RollerCharLCD" position="0,0" size="132,1" font="Regular;16" halign="left" valign="top"/>
+		<widget source="parent.menu" render="Label" position="0,0" size="132,1" font="Regular;16" halign="left" valign="top">
+			<convert type="StringListSelection" />
+		</widget>
 	</screen>
 
 <!-- movieplayer-->
@@ -79,61 +84,60 @@
 <!-- DVD -->
 	<screen name="DVDSummary" position="0,0" size="132,1">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="60,1" font="Regular;16">
-			<convert type="ServicePosition">Remaining,Negate</convert>
+			<convert type="ServicePosition">VFDPosition</convert>
 		</widget>
 	</screen>
 
 <!-- setup-->
 	<screen name="SetupSummary" position="0,0" size="132,64">
-		<widget source="Title" render="RollerCharLCD" position="0,0" size="120,16" font="Regular;12" />
+		<widget source="SetupTitle" render="Label" position="0,0" size="120,16" font="Regular;12" />
 <!--
 		<widget source="SetupEntry" render="Label" position="0,0" size="120,32" font="Regular;12" />
  -->
-		<widget source="value" render="Label" position="0,0" size="120,32" font="Regular;12" />
+		<widget source="SetupValue" render="Label" position="0,0" size="120,32" font="Regular;12" />
 	</screen>
 
 <!-- misc-->
 	<screen name="ScreenSummary" position="0,0" size="132,64">
-		<widget source="Title" render="RollerCharLCD" position="0,0" size="124,40" font="Regular;16" valign="center" />
+		<widget source="Title" render="Label" position="0,0" size="124,40" font="Regular;16" valign="center" />
 	</screen>
 	<screen name="ChoiceBoxSummary" position="0,0" size="132,64">
 		<widget source="parent.summary_selection" render="Label" position="0,0" size="126,64" font="Regular;11" noWrap="1" />
 	</screen>
 	<screen name="MessageBoxSummary" position="0,0" size="132,64">
-		<widget source="text" render="Label" position="0,0" size="132,52" font="Regular;11" valign="center" />
-		<widget source="option" render="Label" position="0,50" size="120,14" halign="left" noWrap="1"  />
+		<widget source="parent.Text" render="Label" position="0,0" size="132,52" font="Regular;11" valign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="0,50" size="120,14" halign="left" noWrap="1"  />
 	</screen>
 	<screen name="MessageBoxSimpleSummary" position="0,0" size="132,64">
-		<panel name="MessageBoxSummary" />
+		<widget source="parent.Text" render="Label" position="0,0" size="132,52" font="Regular;11" valign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="0,50" size="120,14" halign="left" noWrap="1"  />
 	</screen>
-	<screen name="TaskViewSummary" position="0,0" size="132,64">
-		<widget source="parent.summary_job_progress" render="Label" position="0,0" size="132,64" font="Regular;12" zPosition="2" transparent="1">
+	<screen name="JobViewSummary" position="0,0" size="132,64">
+		<widget source="parent.summary_job_name" render="Label" position="0,4" size="120,42" font="Regular;16" />
+		<widget source="parent.summary_job_task" render="Label" position="0,22" size="120,26" font="Regular;12" />
+		<widget source="parent.summary_job_progress" render="Progress" position="0,50" size="60,12" borderWidth="1" zPosition="1" />
+		<widget source="parent.summary_job_progress" render="Label" position="66,50" size="50,12" font="Regular;12" zPosition="2" transparent="1">
 			<convert type="ProgressToText" />
 		</widget>
 	</screen>
 
 	<screen name="WizardSummary" position="fill">
-		<widget source="parent.list" render="RollerCharLCD" position="fill" font="Regular;12">
+		<widget source="parent.list" render="Label" position="fill" font="Regular;12">
 			<convert type="StringListSelection" />
 		</widget>
+	</screen>
+	<screen name="VideoWizardSummary" position="fill">
+		<panel name="WizardSummary" />
 	</screen>
 
 <!-- standby -->
 	<screen name="StandbySummary" position="0,0" size="132,64">
 		<widget source="global.CurrentTime" render="Label" position="0,0" size="120,64" font="Regular;48" halign="center" valign="center">
-			<convert type="ClockToText">Format:%H:%M</convert>
+			<convert type="ClockToText">VFD12</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="0,4" zPosition="1" size="120,64" text=" ">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink,3000</convert>
-		</widget>
-		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="120,25" text="  REC  ">
-			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,RecBlink,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink,3000</convert>
-		</widget>
-		<widget source="session.RecordState" render="FixedLabel" position="0,0" size="120,25" text="  REC  ">
-			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,Rec,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide" />
+			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 	</screen>
 
@@ -155,7 +159,7 @@
 	</screen>
 	<screen name="EMCMoviePlayerSummary" position="0,0" size="132,1">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="132,1">
-			<convert type="ServicePosition">VFDPosition</convert>
+			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
 	</screen>
 	<screen name="MovieMenuSummary" position="0,0" size="132,64">
@@ -167,19 +171,30 @@
 <!-- mediaplayer -->
 	<screen name="MediaPlayerLCDScreen" position="0,0" size="132,64">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="120,25" halign="left" noWrap="1" >
-			<convert type="ServicePosition">VFDPosition</convert>
+			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
 	</screen>
 <!-- Timer -->
 	<screen name="TimerEntrySummary" position="0,0" size="132,64">
-		<widget source="parent.summary_description" render="Label" position="fill" size="120,20" font="Regular;18" />       
+		<widget source="parent.summary_description" render="Label" position="fill" size="120,20" font="Regular;18" />
 	</screen>
-	<screen name="TimerOverviewSummary" position="0,0" size="132,64">
-		<widget source="parent.Title" render="Label" position="fill" size="120,20" font="Regular;18" />       
+	<screen name="TimerEditListSummary" position="0,0" size="132,64">
+		<widget source="parent.Title" render="Label" position="fill" size="120,20" font="Regular;18" />
 	</screen>
 <!-- AutoTimer -->
 	<screen name="AutoTimerOverviewSummary" position="0,0" size="132,64">
-		<widget source="parent.Title" render="Label" position="fill" size="120,20" font="Regular;18" />       
+		<widget source="parent.Title" render="Label" position="fill" size="120,20" font="Regular;18" />
+	</screen>
+<!-- PowerTimerEditListSummary -->
+	<screen name="PowerTimerEditListSummary" position="0,0" size="132,64">
+		<widget source="parent.Title" render="Label" position="fill" size="120,20" font="Regular;18" />
+	</screen>
+<!-- LanguageSelection -->
+	<screen name="LanguageSelectionSummary" position="0,0" size="132,64">
+		<widget source="parent.summarylangsel" render="Label" position="fill" size="120,20" font="Regular;18" />
+	</screen>
+	<screen name="LanguageWizardSummary" position="0,0" size="132,64">
+		<widget source="parent.summarylangsel" render="Label" position="fill" size="120,20" font="Regular;18" />
 	</screen>
 <!-- AudioSelection -->
 	<screen name="AudioSelectionSummary" position="0,0" size="132,64">
@@ -197,6 +212,9 @@
 	<screen name="WizardSummary" position="0,0" size="132,64">
 		<widget source="entry" render="Label" position="fill" size="120,20" font="Regular;18" />
 	</screen>
+	<screen name="VideoWizardSummary" position="0,0" size="132,64">
+		<widget source="entry" render="Label" position="fill" size="120,20" font="Regular;18" />
+	</screen>
 	<screen name="CrossEPG_MenuSummary" position="0,0" size="132,64">
 		<widget source="SetupEntry" render="Label" position="0,0" size="120,20" font="Regular;18" halign="left" noWrap="1"  />
 	</screen>
@@ -210,4 +228,5 @@
 	<screen name="SHOUTcastLCDScreen" size="132,64">
 		<widget name="text2" position="0,0" size="120,20" font="Regular;18" halign="left" noWrap="1"  />
 	</screen>
+
 </skin>
