@@ -78,12 +78,6 @@ AC_ARG_WITH(oarev,
 AC_SUBST(OAREV)
 AC_DEFINE_UNQUOTED(OAREV,"$OAREV",[oa-core revision])
 
-AC_ARG_ENABLE([machine-check],
-    AS_HELP_STRING([--enable-machine-check], [Enable machine compatibility check (default: yes)]),
-    [enable_machine_check="$enableval"],
-    [enable_machine_check="yes"])
-AM_CONDITIONAL([ENABLE_MACHINE_CHECK], [test "$enable_machine_check" = "yes"])
-
 AC_ARG_WITH(boxtype,
 	[  --with-boxtype=NAME box type [[none,dm800...]]],
 	[BOXTYPE="$withval"],[BOXTYPE="dm800"])
