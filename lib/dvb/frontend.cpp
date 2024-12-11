@@ -6,7 +6,7 @@
 #include <lib/base/cfile.h>
 #include <lib/base/eerror.h>
 #include <lib/base/estring.h>
-#include <lib/base/nconfig.h> // access to python config
+#include <lib/base/esimpleconfig.h>
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -706,7 +706,7 @@ int eDVBFrontend::openFrontend()
 
 	if (!m_simulate)
 	{
-		m_need_delivery_system_workaround = eConfigManager::getConfigBoolValue("config.usage.enable_delivery_system_workaround", false);
+		m_need_delivery_system_workaround = eSimpleConfig::getBool("config.usage.enable_delivery_system_workaround", false);
 		FILE *boxtype_file;
 		char boxtype_name[20];
 		if((boxtype_file = fopen("/proc/stb/info/boxtype", "r")) != NULL)
@@ -737,9 +737,9 @@ int eDVBFrontend::openFrontend()
 		{
 			m_dvbversion = DVB_VERSION(3, 0);
 #if defined DTV_API_VERSION
-			struct dtv_property p;
+			struct dtv_property p = {};
 			memset(&p, 0, sizeof(p));
-			struct dtv_properties cmdseq;
+			struct dtv_properties cmdseq = {};
 			cmdseq.props = &p;
 			cmdseq.num = 1;
 			p.cmd = DTV_API_VERSION;
@@ -770,7 +770,7 @@ int eDVBFrontend::openFrontend()
 			struct dtv_property p[1];
 			memset(p, 0, sizeof(p));
 			p[0].cmd = DTV_ENUM_DELSYS;
-			struct dtv_properties cmdseq;
+			struct dtv_properties cmdseq = {};
 			cmdseq.num = 1;
 			cmdseq.props = p;
 			ioctlMeasureStart;
@@ -1039,7 +1039,7 @@ void eDVBFrontend::feEvent(int w)
 	}
 	while (1)
 	{
-		dvb_frontend_event event;
+		dvb_frontend_event event = {};
 		int res;
 		int state;
 		res = ::ioctl(m_fd, FE_GET_EVENT, &event);
@@ -1582,6 +1582,10 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 				break;
 		}
 	}
+	else if (!strcmp(m_description, "rs6060")) // DVB-S2X Zgemma 4K
+	{
+		ret = (int)(snr / 32.5);
+	}
 	else if (!strcmp(m_description, "AVL62X1")) // UCLAN
 	{
 		ret = snr;
@@ -1681,7 +1685,7 @@ int eDVBFrontend::readFrontendData(int type)
 				int signalquality = 0;
 				int signalqualitydb = 0;
 #if DVB_API_VERSION > 5 || DVB_API_VERSION == 5 && DVB_API_VERSION_MINOR >= 10
-				if (m_dvbversion >= DVB_VERSION(5, 10) && !eConfigManager::getConfigBoolValue(force_legacy_signal_stats, false))
+				if (m_dvbversion >= DVB_VERSION(5, 10) && !eSimpleConfig::getBool(force_legacy_signal_stats, false))
 				{
 					dtv_property prop[1];
 					prop[0].cmd = DTV_STAT_CNR;
@@ -1748,9 +1752,9 @@ int eDVBFrontend::readFrontendData(int type)
 				if (!m_simulate)
 				{
 #if DVB_API_VERSION > 5 || DVB_API_VERSION == 5 && DVB_API_VERSION_MINOR >= 10
-					if (m_dvbversion >= DVB_VERSION(5, 10) && !eConfigManager::getConfigBoolValue(force_legacy_signal_stats, false))
+					if (m_dvbversion >= DVB_VERSION(5, 10) && !eSimpleConfig::getBool(force_legacy_signal_stats, false))
 					{
-						dtv_property prop[1];
+						dtv_property prop[1] = {};
 						memset(prop, 0, sizeof(prop));
 						prop[0].cmd = DTV_STAT_SIGNAL_STRENGTH;
 						dtv_properties props;
@@ -1805,9 +1809,9 @@ int eDVBFrontend::readFrontendData(int type)
 		}
 		case iFrontendInformation_ENUMS::frequency:
 		{
-			struct dtv_property p;
+			struct dtv_property p = {};
 			memset(&p, 0, sizeof(p));
-			struct dtv_properties cmdseq;
+			struct dtv_properties cmdseq = {};
 			oparm.getSystem(type);
 			cmdseq.props = &p;
 			cmdseq.num = 1;
@@ -1834,9 +1838,9 @@ void eDVBFrontend::getFrontendStatus(ePtr<iDVBFrontendStatus> &dest)
 void eDVBFrontend::getTransponderData(ePtr<iDVBTransponderData> &dest, bool original)
 {
 	int type = -1;
-	struct dtv_property p[18];
+	struct dtv_property p[18] = {};
 	memset(p, 0, sizeof(p));
-	struct dtv_properties cmdseq;
+	struct dtv_properties cmdseq = {};
 	oparm.getSystem(type);
 	cmdseq.props = p;
 	cmdseq.num = 0;
@@ -1937,7 +1941,7 @@ int eDVBFrontend::readInputpower()
 	if (m_simulate)
 		return 0;
 	int power=m_slotid;  // this is needed for read inputpower from the correct tuner !
-	char proc_name[64];
+	char proc_name[64] = {};
 	sprintf(proc_name, "/proc/stb/frontend/%d/lnb_sense", m_slotid);
 
 	if (CFile::parseInt(&power, proc_name) == 0)
@@ -2386,7 +2390,7 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 			{
 				if (!m_simulate)
 				{
-					char proc_name[64];
+					char proc_name[64] = {};
 					sprintf(proc_name, "/proc/stb/frontend/%d/static_current_limiting", sec_fe->m_dvbid);
 					CFile f(proc_name, "w");
 					if (f) // new interface exist?
@@ -2399,7 +2403,7 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 					}
 					else if (sec_fe->m_need_rotor_workaround)
 					{
-						char dev[32];
+						char dev[32] = {};
 						int slotid = sec_fe->m_slotid;
 						// FIXMEEEEEE hardcoded i2c devices for dm8000
 						if (slotid < 2)
@@ -2599,9 +2603,9 @@ void eDVBFrontend::setFrontend(bool recvEvents)
 		if (recvEvents)
 			m_sn->start();
 		feEvent(-1); // flush events
-		struct dtv_property p[18];
+		struct dtv_property p[18] = {};
 		memset(p, 0, sizeof(p));
-		struct dtv_properties cmdseq;
+		struct dtv_properties cmdseq = {};
 		cmdseq.props = p;
 		cmdseq.num = 0;
 		p[cmdseq.num].cmd = DTV_CLEAR, cmdseq.num++;
@@ -3336,7 +3340,7 @@ RESULT eDVBFrontend::tune(const iDVBFrontendParameters &where, bool blindscan)
 		m_sec_sequence.push_back( eSecCommand(eSecCommand::START_TUNE_TIMEOUT, timeout) );
 		char configStr[256];
 		snprintf(configStr, sizeof(configStr), "config.Nims.%d.dvbt.terrestrial_5V", m_slotid);
-		if (eConfigManager::getConfigBoolValue(configStr))
+		if (eSimpleConfig::getBool(configStr, false))
 			m_sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, iDVBFrontend::voltage13) );
 		else
 			m_sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, iDVBFrontend::voltageOff) );
@@ -3729,7 +3733,7 @@ bool eDVBFrontend::changeType(int type)
 	char mode[4];
 	struct dtv_property p[2];
 	memset(p, 0, sizeof(p));
-	struct dtv_properties cmdseq;
+	struct dtv_properties cmdseq = {};
 	cmdseq.props = p;
 	cmdseq.num = 2;
 	p[0].cmd = DTV_CLEAR;
@@ -3752,7 +3756,7 @@ bool eDVBFrontend::changeType(int type)
 		{
 			char configStr[255];
 			snprintf(configStr, 255, "config.Nims.%d.dvbt.terrestrial_5V", m_slotid);
-			if (eConfigManager::getConfigBoolValue(configStr))
+			if (eSimpleConfig::getBool(configStr, false))
 				 setVoltage(iDVBFrontend::voltage13);
 			else
 				 setVoltage(iDVBFrontend::voltageOff);
@@ -3866,7 +3870,7 @@ bool eDVBFrontend::setDeliverySystem(fe_delivery_system_t delsys)
 	eTrace("[eDVBFrontend] frontend %d setDeliverySystem %d", m_slotid, delsys);
 	struct dtv_property p[2];
 	memset(p, 0, sizeof(p));
-	struct dtv_properties cmdseq;
+	struct dtv_properties cmdseq = {};
 	cmdseq.props = p;
 	cmdseq.num = 2;
 	p[0].cmd = DTV_CLEAR;
