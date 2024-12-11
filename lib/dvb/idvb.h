@@ -586,7 +586,7 @@ public:
 	virtual int closeFrontend(bool force = false, bool no_delayed = false)=0;
 	virtual void reopenFrontend()=0;
 #ifndef SWIG
-	virtual RESULT connectStateChange(const sigc::slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectStateChange(const sigc::slot<void(iDVBFrontend*)> &stateChange, ePtr<eConnection> &connection)=0;
 #endif
 	virtual RESULT getState(int &SWIG_OUTPUT)=0;
 	virtual RESULT setTone(int tone)=0;
