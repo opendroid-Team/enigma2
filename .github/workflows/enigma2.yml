@@ -2,91 +2,93 @@ name: enigma2 build
 
 on:
   push:
-    branches: [ 7.3, master ]
+    branches: [ 7.3, ]
   pull_request:
-    branches: [ 7.3, master ]
+    branches: [ 7.3, ]
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build enigma2
-    runs-on: ubuntu-22.04
+    name: Build Enigma2
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        gcc: [11]
-        python: ['3.11']
+        gcc: [13, 14]
+        python: ['3.12', '3.13']
+
     steps:
       - name: Install prerequisites
         run: |
-          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get -q update
+          sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt remove -y libunwind-14-dev
-          sudo apt-get install g++-${{ matrix.gcc }}
-          sudo apt-get install linux-libc-dev
-          sudo apt-get install git
-          sudo apt-get install build-essential
-          sudo apt-get install automake
-          sudo apt-get install libtool
-          sudo apt-get install python${{ matrix.python }}-dev
-          sudo apt-get install zlib1g-dev
-          sudo apt-get install gettext
-          sudo apt-get install swig
-          sudo apt-get install libgstreamer1.0-dev
-          sudo apt-get install libgstreamer-plugins-base1.0-dev
-          sudo apt-get install libfreetype6-dev
-          sudo apt-get install libsigc++-2.0-dev
-          sudo apt-get install libfribidi-dev
-          sudo apt-get install libssl-dev
-          sudo apt-get install libavahi-client-dev
-          sudo apt-get install libjpeg-turbo8-dev
-          sudo apt-get install libgif-dev
-          sudo apt-get install libcurl4-openssl-dev
+          sudo apt-get install -y \
+              g++-${{ matrix.gcc }} linux-libc-dev git build-essential automake autoconf libtool \
+              python${{ matrix.python }}-dev zlib1g-dev gettext swig \
+              libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libfreetype6-dev \
+              libfribidi-dev libavahi-client-dev libjpeg-turbo8-dev libgif-dev \
+              libcurl4-openssl-dev mm-common
+          
+      - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Build enigma2 dependencies, gcc-${{ matrix.gcc }}
-        env:
-          CC: "gcc-${{ matrix.gcc }}"
-          CXX: "g++-${{ matrix.gcc }}"
+      - name: Clear Python bytecode cache
         run: |
-          echo "installing libdvbsi++"
-          pushd .
-          cd /tmp
-          git clone --depth 1 https://github.com/oe-alliance/libdvbsi.git
-          cd libdvbsi
-          autoreconf -i
-          ./configure
-          make
-          sudo make install
-          popd
-          echo "installing tuxbox"
-          pushd .
-          cd /tmp
-          git clone --depth 1 https://github.com/OpenPLi/tuxtxt.git
-          cd tuxtxt/libtuxtxt
-          autoreconf -i
-          ./configure --with-boxtype=generic DVB_API_VERSION=5
-          make
-          sudo make install
-          cd ../tuxtxt
-          autoreconf -i
-          ./configure --with-boxtype=generic DVB_API_VERSION=5
-          make
-          sudo make install
-          popd
+          find . -name "*.pyc" -delete
 
-      - name: Build enigma2
+      - name: Build dependencies
+        id: depends
         env:
           CC: "gcc-${{ matrix.gcc }}"
           CXX: "g++-${{ matrix.gcc }}"
         run: |
-          pip3 install six
-          echo "compiling enigma2"
+          echo "Installing libdvbsi++"
+          git clone --depth 1 https://github.com/oe-alliance/libdvbsi.git /tmp/libdvbsi
+          (cd /tmp/libdvbsi && autoreconf -i && ./configure && make && sudo make install)
+
+          echo "Installing libsigc++-3.0"
+          git clone --depth 1 https://github.com/TwolDE2/libsigc--3.0.git /tmp/libsigc++
+          (cd /tmp/libsigc++ && autoreconf -i && ./configure && make && sudo make install)
+
+          echo "Installing tuxbox"
+          git clone --depth 1 https://github.com/oe-alliance/tuxtxt.git /tmp/tuxtxt
+          (cd /tmp/tuxtxt/libtuxtxt && autoreconf -i && ./configure --with-boxtype=generic DVB_API_VERSION=5 && make && sudo make install)
+          (cd /tmp/tuxtxt/tuxtxt && autoreconf -i && ./configure --with-boxtype=generic DVB_API_VERSION=5 && make && sudo make install)
+
+      - name: Check dependency build
+        if: steps.depends.outcome != 'success'
+        run: |
+          echo "Dependencies failed to build. Check logs:"
+          find /tmp -name "*.log" -exec cat {} \;
+          exit 1
+
+      - name: Build Enigma2
+        env:
+          CC: "gcc-${{ matrix.gcc }}"
+          CXX: "g++-${{ matrix.gcc }}"
+        run: |
+          pip install --upgrade pip six
+          echo "Compiling Enigma2"
+          sed -i "s/sigc++-2.0/sigc++-3.0/g" ./configure.ac
+          sed -i "s/sigc++-2.0/sigc++-3.0/g" ./enigma2.pc.in
           autoreconf -i
-          ./configure --with-libsdl=no --with-boxtype=nobox --enable-dependency-tracking ac_cv_prog_c_openmp=-fopenmp --with-gstversion=1.0 --with-textlcd
+          ./configure --with-libsigcversion=3.0 \
+                      --with-libsdl=no \
+                      --with-boxtype=nobox \
+                      --enable-dependency-tracking \
+                      ac_cv_prog_c_openmp=-fopenmp \
+                      --with-gstversion=1.0 \
+                      --with-textlcd
           make
           python -m compileall .
-          echo done!
+          echo "Build completed successfully!"
+
+      - name: Collect build artifacts and logs
+        if: failure()
+        run: |
+          echo "Collecting logs for debugging..."
+          find . -name "*.log" -exec cat {} \;
+
