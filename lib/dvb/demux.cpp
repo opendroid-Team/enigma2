@@ -11,7 +11,6 @@
 
 #include <lib/base/eerror.h>
 #include <lib/base/cfile.h>
-#include <lib/dvb/dvb.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/demux.h>
 #include <lib/dvb/esection.h>
@@ -54,7 +53,7 @@ static int determineBufferCount()
 	else if (megabytes > 100)
 		result = 16; // 256MB systems: Use 3MB demux buffers (dm8000, et5x00, vuduo)
 	else
-		result = 8; // Smaller boxes: Use 1.5MB buffer (dm7025)
+		result = 8; // Smaller boxes: Use 1.5MB buffer
 	return result;
 }
 
@@ -79,50 +78,18 @@ eDVBDemux::~eDVBDemux()
 
 int eDVBDemux::openDemux(void)
 {
-	char filename[32] = {};
+	char filename[32];
 	snprintf(filename, sizeof(filename), "/dev/dvb/adapter%d/demux%d", adapter, demux);
 	eDebug("[eDVBDemux] open demux %s", filename);
-	int tmp_fd = -1;
-	tmp_fd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-	/* eDebug("[eDVBDemux] Twol00 Opened tmp_fd: %d", tmp_fd); */
-	if (tmp_fd == 0)
-	{
-		::close(tmp_fd);
-		tmp_fd = -1;
-		fd0lock = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-		/* eDebug("[eDVBDemux] opening null fd returned: %d", fd0lock); */
-	}
-	if (tmp_fd != -1)
-	{
-		::close(tmp_fd);
-	}
 	return ::open(filename, O_RDWR | O_CLOEXEC);
 }
 
 int eDVBDemux::openDVR(int flags)
 {
-#ifdef HAVE_OLDPVR
-	return ::open("/dev/misc/pvr", flags);
-#else
 	char filename[32];
 	snprintf(filename, sizeof(filename), "/dev/dvb/adapter%d/dvr%d", adapter, demux);
 	eDebug("[eDVBDemux] open dvr %s", filename);
-	int tmp_fd = -1;
-	tmp_fd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-	/* eDebug("[eDVBDemux] Twol00 Opened tmp_fd: %d", tmp_fd); */
-	if (tmp_fd == 0)
-	{
-		::close(tmp_fd);
-		tmp_fd = -1;
-		fd0lock = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-		/* eDebug("[eDVBDemux] opening null fd returned: %d", fd0lock); */
-	}
-	if (tmp_fd != -1)
-	{
-		::close(tmp_fd);
-	}
 	return ::open(filename, flags);
-#endif
 }
 
 DEFINE_REF(eDVBDemux)
@@ -134,7 +101,9 @@ RESULT eDVBDemux::setSourceFrontend(int fenum)
 	int n = DMX_SOURCE_FRONT0 + fenum;
 	int res = ::ioctl(fd, DMX_SET_SOURCE, &n);
 	if (res)
+	{
 		eDebug("[eDVBDemux] DMX_SET_SOURCE Frontend%d failed: %m", fenum);
+	}
 	else
 		source = fenum;
 	::close(fd);
@@ -173,7 +142,7 @@ RESULT eDVBDemux::createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reade
 	return res;
 }
 
-RESULT eDVBDemux::createTSRecorder(ePtr<iDVBTSRecorder> &recorder, int packetsize, bool streaming)
+RESULT eDVBDemux::createTSRecorder(ePtr<iDVBTSRecorder> &recorder, unsigned int packetsize, bool streaming)
 {
 	if (m_dvr_busy)
 		return -EBUSY;
@@ -366,7 +335,7 @@ void eDVBPESReader::data(int)
 
 eDVBPESReader::eDVBPESReader(eDVBDemux *demux, eMainloop *context, RESULT &res): m_demux(demux), m_active(0)
 {
-	eDebug("[eDVBPESReader] Created. Opening demux");
+	eWarning("[eDVBPESReader] Created. Opening demux");
 	m_fd = m_demux->openDemux();
 	if (m_fd >= 0)
 	{
@@ -452,6 +421,7 @@ eDVBRecordFileThread::eDVBRecordFileThread(int packetsize, int bufferCount, int 
 	 * can't handle that and segfaults. If you want the "normal" behaviour, just use -1 (or leave it out
 	 * completely, the default declaration).
 	 */
+	// the buffer should be higher than the hardware buffer size, accounts for RTSP header
 	eFilePushThreadRecorder(
 		/*buffer*/ (unsigned char*) ::mmap(NULL, (buffersize > 0) ? (buffersize * bufferCount) : (bufferCount * packetsize * 1024), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
 		/*buffersize*/ (buffersize > 0) ? buffersize : (packetsize * 1024)),
@@ -519,7 +489,7 @@ int eDVBRecordFileThread::AsyncIO::wait()
 			int r = aio_suspend(&paio, 1, NULL);
 			if (r < 0)
 			{
-				eWarning("[eDVBRecordFileThread] aio_suspend failed: %m");
+				eDebug("[eDVBRecordFileThread] aio_suspend failed: %m");
 				return -1;
 			}
 		}
@@ -527,7 +497,7 @@ int eDVBRecordFileThread::AsyncIO::wait()
 		aio.aio_buf = NULL;
 		if (r < 0)
 		{
-			eWarning("[eDVBRecordFileThread] wait: aio_return returned failure: %m");
+			eDebug("[eDVBRecordFileThread] wait: aio_return returned failure: %m");
 			return -1;
 		}
 	}
@@ -555,7 +525,7 @@ int eDVBRecordFileThread::AsyncIO::poll()
 	aio.aio_buf = NULL;
 	if (r < 0)
 	{
-		eWarning("[eDVBRecordFileThread] poll: aio_return returned failure: %d %m", r);
+		eDebug("[eDVBRecordFileThread] poll: aio_return returned failure: %m");
 		return -1;
 	}
 	return 0;
@@ -579,8 +549,8 @@ int eDVBRecordFileThread::asyncWrite(int len)
 	suseconds_t diff;
 	gettimeofday(&starttime, NULL);
 #endif
-
-	m_ts_parser.parseData(m_current_offset, m_buffer, len);
+	if(!getProtocol())
+		m_ts_parser.parseData(m_current_offset, m_buffer, len);
 
 #ifdef SHOW_WRITE_TIME
 	gettimeofday(&now, NULL);
@@ -592,7 +562,7 @@ int eDVBRecordFileThread::asyncWrite(int len)
 	int r = m_current_buffer->start(m_fd_dest, m_current_offset, len, m_buffer);
 	if (r < 0)
 	{
-		eWarning("[eDVBRecordFileThread] aio_write failed: %m");
+		eDebug("[eDVBRecordFileThread] aio_write failed: %m");
 		return r;
 	}
 	m_current_offset += len;
@@ -685,7 +655,7 @@ void eDVBRecordFileThread::flush()
 		it->wait();
 	}
 	int bufferCount = m_aio.size();
-	eDebug("[eDVBRecordFileThread] buffer usage histogram (%d buffers of %jd kB)", bufferCount, (intmax_t)m_buffersize>>10);
+	eDebug("[eDVBRecordFileThread] buffer usage histogram (%d buffers of %lu kB)", bufferCount, m_buffersize>>10);
 	for (int i=0; i <= bufferCount; ++i)
 	{
 		if (m_buffer_use_histogram[i] != 0)
@@ -706,6 +676,7 @@ eDVBRecordStreamThread::eDVBRecordStreamThread(int packetsize, int buffersize, b
 {
 	eDebug("[eDVBRecordStreamThread] allocated %zu buffers of %zu kB", m_aio.size(), m_buffersize>>10);
 }
+
 
 int eDVBRecordStreamThread::writeData(int len)
 {
@@ -831,20 +802,6 @@ RESULT eDVBTSRecorder::start()
 
 	char filename[128];
 	snprintf(filename, 128, "/dev/dvb/adapter%d/demux%d", m_demux->adapter, m_demux->demux);
-	int tmp_fd = -1;
-	tmp_fd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-	/* eDebug("[eDVBTSRecorder] Opened tmp_fd: %d", tmp_fd); */
-	if (tmp_fd == 0)
-	{
-		::close(tmp_fd);
-		tmp_fd = -1;
-		fd0lock = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-		/* eDebug("[eDVBTSRecorder] opening null fd returned: %d", fd0lock); */
-	}
-	if (tmp_fd != -1)
-	{
-		::close(tmp_fd);
-	}
 
 #if HAVE_HISILICON
 	m_source_fd = ::open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);

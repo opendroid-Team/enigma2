@@ -513,7 +513,7 @@ void eDVBServicePMTHandler::getAITApplications(std::map<int, std::string> &aitli
 
 void eDVBServicePMTHandler::getCaIds(std::vector<int> &caids, std::vector<int> &ecmpids, std::vector<std::string> &ecmdatabytes)
 {
-	program prog = {};
+	program prog;
 
 	if (!getProgramInfo(prog))
 	{
