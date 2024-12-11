@@ -16,6 +16,9 @@
 
 #include <dvbsi++/service_description_section.h>
 
+extern int fd0lock;
+extern bool m_is_streamx;
+
 class eDVBChannel;
 
 	/* we do NOT handle resource conflicts here. instead, the allocateChannel
@@ -159,17 +162,12 @@ class eDVBResourceManager: public iObject, public sigc::trackable
 	DECLARE_REF(eDVBResourceManager);
 	int avail, busy;
 
-	enum { DM800, DM500HD, DM800SE, DM8000, DM7020HD, DM7080, DM820, DM520, DM525, DM900, DM920, DREAMONE, DREAMTWO, DREAMSEVEN, GIGABLUE, DM500HDV2, DM800SEV2};
-
-	int m_boxtype;
-
 	eSmartPtrList<iDVBAdapter> m_adapter;
 	eSmartPtrList<eDVBRegisteredDemux> m_demux;
 	eSmartPtrList<eDVBRegisteredFrontend> m_frontend, m_simulate_frontend;
 	void addAdapter(iDVBAdapter *adapter, bool front = false);
 	void setUsbTuner();
 
-public:
 	struct active_channel
 	{
 		eDVBChannelID m_channel_id;
@@ -178,21 +176,15 @@ public:
 
 		active_channel(const eDVBChannelID &chid, eDVBChannel *ch) : m_channel_id(chid), m_channel(ch) { }
 	};
-	void feStateChanged();
 
-private:
 	std::list<active_channel> m_active_channels, m_active_simulate_channels;
 
 	ePtr<iDVBChannelList> m_list;
 	ePtr<iDVBSatelliteEquipmentControl> m_sec;
 	static eDVBResourceManager *instance;
-
 	friend class eDVBChannel;
 	friend class eFBCTunerManager;
-	friend class eRTSPStreamClient;
-
 	ePtr<eFBCTunerManager> m_fbcmng;
-
 	RESULT addChannel(const eDVBChannelID &chid, eDVBChannel *ch);
 	RESULT removeChannel(eDVBChannel *ch);
 
@@ -202,6 +194,7 @@ private:
 	sigc::connection m_cached_channel_state_changed_conn;
 	ePtr<eTimer> m_releaseCachedChannelTimer;
 	void DVBChannelStateChanged(iDVBChannel*);
+	void feStateChanged();
 #ifndef SWIG
 public:
 #endif
@@ -211,7 +204,6 @@ public:
 
 	RESULT setChannelList(iDVBChannelList *list);
 	RESULT getChannelList(ePtr<iDVBChannelList> &list);
-	RESULT getActiveChannels(std::list<active_channel> &list);
 
 	enum {
 			/* errNoFrontend = -1 replaced by more spcific messages */
@@ -224,10 +216,9 @@ public:
 	};
 
 	RESULT connectChannelAdded(const sigc::slot<void(eDVBChannel*)> &channelAdded, ePtr<eConnection> &connection);
-	int canAllocateChannel(const eDVBChannelID &channelid, const eDVBChannelID &ignore, int &system, bool simulate=false);
+	int canAllocateChannel(const eDVBChannelID &channelid, const eDVBChannelID &ignore, const eDVBChannelID& ignoresr, int &system, bool simulate=false);
 
 		/* allocate channel... */
-	bool frontendPreferenceAllowsChannelUse(const eDVBChannelID &channelid, eUsePtr<iDVBChannel> channel, bool simulate);
 	RESULT allocateChannel(const eDVBChannelID &channelid, eUsePtr<iDVBChannel> &channel, bool simulate=false);
 	RESULT allocatePVRChannel(const eDVBChannelID &channelid, eUsePtr<iDVBPVRChannel> &channel);
 	static RESULT getInstance(ePtr<eDVBResourceManager> &);
@@ -239,7 +230,7 @@ public:
 
 			   there might be a priority given to certain frontend/chid
 			   combinations. this will be evaluated here. */
-	RESULT allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, ePtr<iDVBFrontendParameters> &feparm, bool simulate=false, bool returnScoreOnly=false);
+	RESULT allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, ePtr<iDVBFrontendParameters> &feparm, bool simulate=false);
 
 	RESULT allocateFrontendByIndex(ePtr<eDVBAllocatedFrontend> &fe, int slot_index);
 			/* allocate a demux able to filter on the selected frontend. */
@@ -255,8 +246,7 @@ public:
 	bool frontendIsCompatible(int index, const char *type);
 	bool frontendIsMultistream(int index);
 	std::string getFrontendCapabilities(int index);
-	void setFrontendType(int index, const char *type, bool append=false);
-	int getFrontendType(int index);
+	void setFrontendType(int index, const char *types);
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eDVBResourceManager>, eDVBResourceManager);
 SWIG_EXTEND(ePtr<eDVBResourceManager>,
@@ -282,8 +272,6 @@ public:
 
 		/* only for managed channels - effectively tunes to the channelid. should not be used... */
 		/* cannot be used for PVR channels. */
-		/* RESULT == 0: succeeded */
-		/* RESULT != 0: failed */
 	RESULT setChannel(const eDVBChannelID &id, ePtr<iDVBFrontendParameters> &feparam);
 	eDVBChannelID getChannelID() { return m_channel_id; }
 
@@ -360,7 +348,6 @@ private:
 	ePtr<iDVBDemux> m_tsid_onid_demux;
 	ePtr<eTable<ServiceDescriptionSection> > m_SDT;
 	void SDTready(int err);
-	static int m_debug;
 };
 #endif // SWIG
 

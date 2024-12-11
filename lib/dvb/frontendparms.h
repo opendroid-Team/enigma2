@@ -14,8 +14,6 @@
 
 #include <linux/dvb/frontend.h>
 
-extern int roundMulti(int value, int m);//round value to multiple of m
-
 class eDVBFrontendParametersSatellite
 {
 public:
@@ -52,25 +50,26 @@ public:
 	enum {
 		Pilot_Off, Pilot_On, Pilot_Unknown
 	};
-	enum {
-		Band_Unknown, Band_C, Band_Ka, Band_Ku
-	};
+
 	enum {
 		PLS_Root, PLS_Gold, PLS_Combo, PLS_Unknown
 	};
+
 	enum {
 		No_Stream_Id_Filter = NO_STREAM_ID_FILTER
 	};
+
 	enum {
 		PLS_Default_Gold_Code, PLS_Default_Root_Code
 	};
+
 	enum {
 		No_T2MI_PLP_Id = eDVBFrontendParametersSatellite::No_Stream_Id_Filter, T2MI_Default_Pid = 4096
 	};
+
 	bool no_rotor_command_on_tune;
-	int frequency, symbol_rate;
+	unsigned int frequency, symbol_rate;
 	int polarisation, fec, inversion, orbital_position, system, modulation, rolloff, pilot, is_id, pls_mode, pls_code, t2mi_plp_id, t2mi_pid;
-	int plp_id;
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(eDVBFrontendParametersSatellite);
 
@@ -100,7 +99,7 @@ public:
 		Modulation_Auto, Modulation_QAM16, Modulation_QAM32, Modulation_QAM64, Modulation_QAM128, Modulation_QAM256
 	};
 
-	int frequency, symbol_rate;
+	unsigned int frequency, symbol_rate;
 	int modulation, inversion, fec_inner, system;
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(eDVBFrontendParametersCable);
@@ -149,7 +148,7 @@ public:
 		Inversion_Off, Inversion_On, Inversion_Unknown
 	};
 
-	int frequency;
+	unsigned int frequency;
 	int bandwidth;
 	int code_rate_HP, code_rate_LP;
 	int modulation;
@@ -177,7 +176,7 @@ public:
 		Modulation_Auto, Modulation_QAM16, Modulation_QAM32, Modulation_QAM64, Modulation_QAM128, Modulation_QAM256, Modulation_VSB_8, Modulation_VSB_16
 	};
 
-	int frequency;
+	unsigned int frequency;
 	int modulation, inversion, system;
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(eDVBFrontendParametersATSC);
@@ -216,8 +215,8 @@ public:
 	eDVBTransponderData(struct dtv_property *dtvproperties, unsigned int propertycount, bool original);
 
 	int getInversion() const;
-	int getFrequency() const;
-	int getSymbolRate() const;
+	unsigned int getFrequency() const;
+	unsigned int getSymbolRate() const;
 	int getOrbitalPosition() const;
 	int getFecInner() const;
 	int getModulation() const;
@@ -225,7 +224,6 @@ public:
 	int getRolloff() const;
 	int getPilot() const;
 	int getSystem() const;
-	int getSystems() const;
 	int getIsId() const;
 	int getPLSMode() const;
 	int getPLSCode() const;
@@ -247,15 +245,14 @@ class eDVBSatelliteTransponderData : public eDVBTransponderData
 
 	eDVBFrontendParametersSatellite transponderParameters;
 	int frequencyOffset;
-	long spectinvCnt;
 
 public:
-	eDVBSatelliteTransponderData(struct dtv_property *dtvproperties, unsigned int propertycount, eDVBFrontendParametersSatellite &transponderparms, int frequencyoffset, long spectinvcnt, bool original);
+	eDVBSatelliteTransponderData(struct dtv_property *dtvproperties, unsigned int propertycount, eDVBFrontendParametersSatellite &transponderparms, int frequencyoffset, bool original);
 
 	std::string getTunerType() const;
 	int getInversion() const;
-	int getFrequency() const;
-	int getSymbolRate() const;
+	unsigned int getFrequency() const;
+	unsigned int getSymbolRate() const;
 	int getOrbitalPosition() const;
 	int getFecInner() const;
 	int getModulation() const;
@@ -263,7 +260,6 @@ public:
 	int getRolloff() const;
 	int getPilot() const;
 	int getSystem() const;
-	int getSystems() const;
 	int getIsId() const;
 	int getPLSMode() const;
 	int getPLSCode() const;
@@ -282,12 +278,11 @@ public:
 
 	std::string getTunerType() const;
 	int getInversion() const;
-	int getFrequency() const;
-	int getSymbolRate() const;
+	unsigned int getFrequency() const;
+	unsigned int getSymbolRate() const;
 	int getFecInner() const;
 	int getModulation() const;
 	int getSystem() const;
-	int getSystems() const;
 };
 
 class eDVBTerrestrialTransponderData : public eDVBTransponderData
@@ -301,7 +296,7 @@ public:
 
 	std::string getTunerType() const;
 	int getInversion() const;
-	int getFrequency() const;
+	unsigned int getFrequency() const;
 	int getBandwidth() const;
 	int getCodeRateLp() const;
 	int getCodeRateHp() const;
@@ -311,7 +306,6 @@ public:
 	int getHierarchyInformation() const;
 	int getPlpId() const;
 	int getSystem() const;
-	int getSystems() const;
 };
 
 class eDVBATSCTransponderData : public eDVBTransponderData
@@ -325,10 +319,9 @@ public:
 
 	std::string getTunerType() const;
 	int getInversion() const;
-	int getFrequency() const;
+	unsigned int getFrequency() const;
 	int getModulation() const;
 	int getSystem() const;
-	int getSystems() const;
 };
 
 class eDVBFrontendData : public iDVBFrontendData
