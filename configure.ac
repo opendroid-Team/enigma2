@@ -40,24 +40,12 @@ AC_ARG_WITH(gstversion,
 	AS_HELP_STRING([--with-gstversion],[use gstreamer version (major.minor)]),
 	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=0.10])
 
-AC_ARG_WITH([sigc-version],
-    AS_HELP_STRING([--with-sigc-version=VERSION], [use sigc++ version (2.0 or 3.0)]),
-    [SIGC_VERSION=$withval], [SIGC_VERSION=2.0])
-
-AS_IF([test "$SIGC_VERSION" = "3.0"], [
-    PKG_CHECK_MODULES(SIGC, sigc++-3.0, [], [AC_MSG_ERROR([sigc++-3.0 not found])])
-    ENIGMA2_SIGC="sigc++-3.0"
-], [
-    PKG_CHECK_MODULES(SIGC, sigc++-2.0, [], [AC_MSG_ERROR([sigc++-2.0 not found])])
-    ENIGMA2_SIGC="sigc++-2.0"
-])
 PKG_CHECK_MODULES(TUXTXT, tuxbox-tuxtxt)
 PKG_CHECK_MODULES(GSTREAMER, gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR)
-PKG_CHECK_MODULES(BASE, [freetype2 fribidi gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 $ENIGMA2_SIGC libssl libcrypto libcurl])
+PKG_CHECK_MODULES(BASE, [freetype2 fribidi glib-2.0 gstreamer-$GST_MAJORMINOR gstreamer-pbutils-$GST_MAJORMINOR libdvbsi++ libpng libxml-2.0 sigc++-3.0 libssl libcrypto])
 PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
 AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
 PKG_CHECK_MODULES(AVAHI, avahi-client)
-AC_SUBST(ENIGMA2_SIGC)
 AC_CHECK_LIB([udfread], [udfread_init])
 AC_CHECK_LIB([dl], [dlopen], [LIBDL_LIBS="-ldl"], [AC_MSG_ERROR([Could not find libdl])])
 AC_SUBST(LIBDL_LIBS)
@@ -65,18 +53,6 @@ AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [LIBJPEG_LIBS="-ljpeg"], [AC_MSG_ERROR
 AC_SUBST(LIBJPEG_LIBS)
 AC_CHECK_LIB([ungif], [DGifOpen], [LIBGIF_LIBS="-lungif"], [AC_CHECK_LIB([gif], [DGifOpen], [LIBGIF_LIBS="-lgif"], [AC_MSG_ERROR([Could not find libgif or libungif])])])
 AC_SUBST(LIBGIF_LIBS)
-
-AC_ARG_WITH(e2rev,
-	AS_HELP_STRING([--with-e2rev],[value of E2REV, $withval]),
-	[E2REV="$withval"],[E2REV=""])
-AC_SUBST(E2REV)
-AC_DEFINE_UNQUOTED(E2REV,"$E2REV",[enigma2 revision])
-
-AC_ARG_WITH(oarev,
-	AS_HELP_STRING([--with-oarev],[value of OAREV, $withval]),
-	[OAREV="$withval"],[OAREV=""])
-AC_SUBST(OAREV)
-AC_DEFINE_UNQUOTED(OAREV,"$OAREV",[oa-core revision])
 
 AC_ARG_WITH(boxtype,
 	[  --with-boxtype=NAME box type [[none,dm800...]]],
@@ -881,7 +857,6 @@ AX_CXX_COMPILE_STDCXX([20], [ext], [mandatory])
 
 CPPFLAGS="$CPPFLAGS $PYTHON_CPPFLAGS"
 CFLAGS="$CFLAGS -Wall"
-
 CXXFLAGS="$CXXFLAGS -Wall \
  	-Wformat=2 -Wformat-overflow=2 -Wformat-nonliteral -Wformat-security \
  	-Wimplicit-fallthrough=5 -Wdangling-else -Wno-error=stringop-truncation \
