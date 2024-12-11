@@ -28,7 +28,7 @@ enum dmx_source {
 	DMX_SOURCE_FRONT1,
 	DMX_SOURCE_FRONT2,
 	DMX_SOURCE_FRONT3,
-	DMX_SOURCE_DVR0   = 16,
+	DMX_SOURCE_DVR0 = 16,
 	DMX_SOURCE_DVR1,
 	DMX_SOURCE_DVR2,
 	DMX_SOURCE_DVR3
@@ -36,11 +36,10 @@ enum dmx_source {
 #define DMX_SET_SOURCE _IOW('o', 49, enum dmx_source)
 #endif
 
-
 //#define SHOW_WRITE_TIME
 static int determineBufferCount()
 {
-	struct sysinfo si;
+	struct sysinfo si = {};
 	if (sysinfo(&si) != 0)
 	{
 		return 6; // Default to small
@@ -79,7 +78,7 @@ eDVBDemux::~eDVBDemux()
 
 int eDVBDemux::openDemux(void)
 {
-	char filename[32];
+	char filename[32] = {};
 	snprintf(filename, sizeof(filename), "/dev/dvb/adapter%d/demux%d", adapter, demux);
 	eDebug("[eDVBDemux] open demux %s", filename);
 	return ::open(filename, O_RDWR | O_CLOEXEC);
@@ -164,7 +163,7 @@ RESULT eDVBDemux::getSTC(pts_t &pts, int num)
 	if (fd < 0)
 		return -ENODEV;
 
-	struct dmx_stc stc;
+	struct dmx_stc stc = {};
 	stc.num = num;
 	stc.base = 1;
 
@@ -191,7 +190,7 @@ RESULT eDVBDemux::flush()
 	return 0;
 }
 
-RESULT eDVBDemux::connectEvent(const sigc::slot1<void,int> &event, ePtr<eConnection> &conn)
+RESULT eDVBDemux::connectEvent(const sigc::slot<void(int)> &event, ePtr<eConnection> &conn)
 {
 	conn = new eConnection(this, m_event.connect(event));
 	return 0;
@@ -199,7 +198,7 @@ RESULT eDVBDemux::connectEvent(const sigc::slot1<void,int> &event, ePtr<eConnect
 
 void eDVBSectionReader::data(int)
 {
-	uint8_t data[4096]; // max. section size
+	uint8_t data[4096] = {}; // max. section size
 	int r;
 	r = ::read(fd, data, 4096);
 	if(r < 0)
@@ -264,7 +263,7 @@ RESULT eDVBSectionReader::start(const eDVBSectionFilterMask &mask)
 	eDebug("[eDVBSectionReader] DMX_SET_FILTER pid=%d", mask.pid);
 	notifier->start();
 
-	dmx_sct_filter_params sct;
+	dmx_sct_filter_params sct = {};
 	memset(&sct, 0, sizeof(sct));
 	sct.pid     = mask.pid;
 	sct.timeout = 0;
@@ -302,7 +301,7 @@ RESULT eDVBSectionReader::stop()
 	return 0;
 }
 
-RESULT eDVBSectionReader::connectRead(const sigc::slot1<void,const uint8_t*> &r, ePtr<eConnection> &conn)
+RESULT eDVBSectionReader::connectRead(const sigc::slot<void(const uint8_t*)> &r, ePtr<eConnection> &conn)
 {
 	conn = new eConnection(this, read.connect(r));
 	return 0;
@@ -312,7 +311,7 @@ void eDVBPESReader::data(int)
 {
 	while (1)
 	{
-		uint8_t buffer[16384];
+		uint8_t buffer[16384] = {};
 		int r;
 		r = ::read(m_fd, buffer, 16384);
 		if (!r)
@@ -377,7 +376,7 @@ RESULT eDVBPESReader::start(int pid)
 	eDebug("[eDVBPESReader] DMX_SET_PES_FILTER pid=%04x", pid);
 	m_notifier->start();
 
-	dmx_pes_filter_params flt;
+	dmx_pes_filter_params flt = {};
 	memset(&flt, 0, sizeof(flt));
 
 	flt.pes_type = DMX_PES_OTHER;
@@ -408,7 +407,7 @@ RESULT eDVBPESReader::stop()
 	return 0;
 }
 
-RESULT eDVBPESReader::connectRead(const sigc::slot2<void,const uint8_t*,int> &r, ePtr<eConnection> &conn)
+RESULT eDVBPESReader::connectRead(const sigc::slot<void(const uint8_t*,int)> &r, ePtr<eConnection> &conn)
 {
 	conn = new eConnection(this, m_read.connect(r));
 	return 0;
@@ -424,8 +423,8 @@ eDVBRecordFileThread::eDVBRecordFileThread(int packetsize, int bufferCount, int 
 	 */
 	// the buffer should be higher than the hardware buffer size, accounts for RTSP header
 	eFilePushThreadRecorder(
-		/*buffer*/ (unsigned char*) ::mmap(NULL, (buffersize > 0) ? (buffersize * bufferCount) : (bufferCount * packetsize * 1050), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
-		/*buffersize*/ (buffersize > 0) ? buffersize : (packetsize * 1050)),
+		/*buffer*/ (unsigned char*) ::mmap(NULL, (buffersize > 0) ? (buffersize * bufferCount) : (bufferCount * packetsize * 1024), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
+		/*buffersize*/ (buffersize > 0) ? buffersize : (packetsize * 1024)),
 	 m_ts_parser(packetsize),
 	 m_current_offset(0),
 	 m_fd_dest(-1),
@@ -545,8 +544,8 @@ int eDVBRecordFileThread::AsyncIO::start(int fd, off_t offset, size_t nbytes, vo
 int eDVBRecordFileThread::asyncWrite(int len)
 {
 #ifdef SHOW_WRITE_TIME
-	struct timeval starttime;
-	struct timeval now;
+	struct timeval starttime = {};
+	struct timeval now = {};
 	suseconds_t diff;
 	gettimeofday(&starttime, NULL);
 #endif
@@ -609,7 +608,7 @@ int eDVBRecordFileThread::writeData(int len)
 {
 	if(m_sync_mode)
 	{
-		struct pollfd pfd;
+		struct pollfd pfd = {};
 
 		pfd.fd = m_fd_dest;
 		pfd.events = POLLOUT;
@@ -678,12 +677,11 @@ eDVBRecordStreamThread::eDVBRecordStreamThread(int packetsize, int buffersize, b
 	eDebug("[eDVBRecordStreamThread] allocated %zu buffers of %zu kB", m_aio.size(), m_buffersize>>10);
 }
 
-
 int eDVBRecordStreamThread::writeData(int len)
 {
 	if(m_sync_mode)
 	{
-		struct pollfd pfd;
+		struct pollfd pfd = {};
 
 		pfd.fd = m_fd_dest;
 		pfd.events = POLLOUT;
@@ -818,7 +816,7 @@ RESULT eDVBTSRecorder::start()
 
 	setBufferSize(1024*1024);
 
-	dmx_pes_filter_params flt;
+	dmx_pes_filter_params flt = {};
 	memset(&flt, 0, sizeof(flt));
 
 	flt.pes_type = DMX_PES_OTHER;
@@ -975,7 +973,7 @@ RESULT eDVBTSRecorder::getFirstPTS(pts_t &pts)
 	return m_thread->getFirstPTS(pts);
 }
 
-RESULT eDVBTSRecorder::connectEvent(const sigc::slot1<void,int> &event, ePtr<eConnection> &conn)
+RESULT eDVBTSRecorder::connectEvent(const sigc::slot<void(int)> &event, ePtr<eConnection> &conn)
 {
 	conn = new eConnection(this, m_event.connect(event));
 	return 0;

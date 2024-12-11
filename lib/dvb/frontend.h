@@ -96,7 +96,7 @@ public:
 		TAKEOVER_RELEASE,
 		NUM_DATA_ENTRIES
 	};
-	sigc::signal1<void,iDVBFrontend*> m_stateChanged;
+	sigc::signal<void(iDVBFrontend*)> m_stateChanged;
 
 private:
 	DECLARE_REF(eDVBFrontend);

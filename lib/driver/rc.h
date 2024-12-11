@@ -212,7 +212,7 @@ public:
 protected:
 	std::map<std::string,eRCDevice*,lstr> devices;
 public:
-	sigc::signal1<void, const eRCKey&> keyEvent;
+	sigc::signal<void(const eRCKey&)> keyEvent;
 	eRCInput();
 	~eRCInput();
 

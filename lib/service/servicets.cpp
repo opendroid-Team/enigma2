@@ -238,7 +238,7 @@ int eServiceTS::openHttpConnection(std::string url)
 	return fd;
 }
 
-RESULT eServiceTS::connectEvent(const sigc::slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
+RESULT eServiceTS::connectEvent(const sigc::slot<void(iPlayableService*,int)> &event, ePtr<eConnection> &connection)
 {
 	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
 	return 0;
@@ -271,7 +271,7 @@ RESULT eServiceTS::start()
 	m_streamthread = new eStreamThread();
 	CONNECT(m_streamthread->m_event, eServiceTS::recv_event);
 	m_decoder->pause();
-	if (unpause() != 0) 
+	if (unpause() != 0)
 		return -1;
 	m_event(this, evStart);
 	return 0;

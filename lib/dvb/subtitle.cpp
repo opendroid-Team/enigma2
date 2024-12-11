@@ -254,6 +254,7 @@ int eDVBSubtitleParser::subtitle_process_pixel_data(subtitle_region *region, sub
 	default:
 		return -1;
 	}
+	return 0;
 }
 
 int eDVBSubtitleParser::subtitle_process_segment(uint8_t *segment)
@@ -1111,7 +1112,7 @@ int eDVBSubtitleParser::start(int pid, int composition_page_id, int ancillary_pa
 	return -1;
 }
 
-void eDVBSubtitleParser::connectNewPage(const sigc::slot1<void, const eDVBSubtitlePage&> &slot, ePtr<eConnection> &connection)
+void eDVBSubtitleParser::connectNewPage(const sigc::slot<void(const eDVBSubtitlePage&)> &slot, ePtr<eConnection> &connection)
 {
 	connection = new eConnection(this, m_new_subtitle_page.connect(slot));
 }

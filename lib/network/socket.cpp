@@ -248,7 +248,7 @@ int eSocket::connectToHost(std::string hostname, int port)
 		return(-1);
 	}
 	// FIXME use getaddrinfo
-	server=gethostbyname2(hostname.c_str(), AF_INET6); // NOSONAR
+	server=gethostbyname2(hostname.c_str(), AF_INET6);
 	if(server==NULL)
 	{
 		eDebug("[eSocket] can't resolve %s", hostname.c_str());

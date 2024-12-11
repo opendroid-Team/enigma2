@@ -897,7 +897,7 @@ void eDVBScan::channelDone()
 						unsigned long hash=0;
 						feparm->getHash(hash);
 						ns = buildNamespace(onid, tsid, hash);
-						
+
 						addChannelToScan(feparm);
 						break;
 					}
@@ -1021,16 +1021,16 @@ void eDVBScan::channelDone()
 						{
 							if (system != iDVBFrontend::feTerrestrial)
 								break; // when current locked transponder is no terrestrial transponder ignore this descriptor
-								
+
 							if (ns.get() == 0)
 								break; // invalid namespace
-								
+
 							int signal = 0;
 							ePtr<iDVBFrontend> fe;
-							
+
 							if (!m_channel->getFrontend(fe))
 								signal = fe->readFrontendData(iFrontendInformation_ENUMS::signalQuality);
-							
+
 							LogicalChannelDescriptor &d = (LogicalChannelDescriptor&)**desc;
 							for (LogicalChannelListConstIterator it = d.getChannelList()->begin(); it != d.getChannelList()->end(); it++)
 							{
@@ -1848,7 +1848,7 @@ RESULT eDVBScan::processVCT(eDVBNamespace dvbnamespace, const VirtualChannelTabl
 	return 0;
 }
 
-RESULT eDVBScan::connectEvent(const sigc::slot1<void,int> &event, ePtr<eConnection> &connection)
+RESULT eDVBScan::connectEvent(const sigc::slot<void(int)> &event, ePtr<eConnection> &connection)
 {
 	connection = new eConnection(this, m_event.connect(event));
 	return 0;

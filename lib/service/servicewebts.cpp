@@ -244,7 +244,7 @@ int eServiceWebTS::openHttpConnection(std::string url)
 	}
 
 	// FIXME use getaddrinfo
-	struct hostent* h = gethostbyname(host.c_str()); // NOSONAR
+	struct hostent* h = gethostbyname(host.c_str());
 	if (h == NULL || h->h_addr_list == NULL)
 		return -1;
 	int fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -311,7 +311,7 @@ int eServiceWebTS::openHttpConnection(std::string url)
 	return fd;
 }
 
-RESULT eServiceWebTS::connectEvent(const sigc::slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)
+RESULT eServiceWebTS::connectEvent(const sigc::slot<void(iPlayableService*,int)> &event, ePtr<eConnection> &connection)
 {
 	connection = new eConnection((iPlayableService*)this, m_event.connect(event));
 	return 0;
@@ -398,7 +398,7 @@ void eServiceWebTS::recv_event(int evt)
 			m_decoder->pause();
 			m_event(this, evStart);
 			m_decoder->play();
-			
+
 		}
 		bool wasnull = !m_audioInfo;
 		m_streamthread->getAudioInfo(m_audioInfo);
