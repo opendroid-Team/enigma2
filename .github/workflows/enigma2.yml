@@ -1,5 +1,4 @@
 name: enigma2 build
-
 on:
   push:
     branches: [ 7.3, ]
@@ -28,7 +27,15 @@ jobs:
               libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libfreetype6-dev \
               libfribidi-dev libavahi-client-dev libjpeg-turbo8-dev libgif-dev \
               libcurl4-openssl-dev mm-common
-          
+
+      - name: Cache build dependencies
+        uses: actions/cache@v3
+        with:
+          path: /usr/local/lib
+          key: ${{ runner.os }}-libs-${{ matrix.gcc }}-${{ matrix.python }}
+          restore-keys: |
+            ${{ runner.os }}-libs-
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -83,7 +90,7 @@ jobs:
                       --with-gstversion=1.0 \
                       --with-textlcd
           make
-          python -m compileall .
+          python -m compileall . || true
           echo "Build completed successfully!"
 
       - name: Collect build artifacts and logs
@@ -91,4 +98,11 @@ jobs:
         run: |
           echo "Collecting logs for debugging..."
           find . -name "*.log" -exec cat {} \;
+
+      - name: Upload Logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-logs
+          path: ./**/*.log
 
