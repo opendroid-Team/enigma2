@@ -173,7 +173,7 @@ public:
 	RESULT prepare_cable(const eDVBFrontendParametersCable &);
 	RESULT prepare_terrestrial(const eDVBFrontendParametersTerrestrial &);
 	RESULT prepare_atsc(const eDVBFrontendParametersATSC &);
-	RESULT connectStateChange(const sigc::slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection);
+	RESULT connectStateChange(const sigc::slot<void(iDVBFrontend*)> &stateChange, ePtr<eConnection> &connection);
 	RESULT getState(int &state);
 	RESULT setTone(int tone);
 	RESULT setVoltage(int voltage);
