@@ -67,5 +67,4 @@ baseinclude_HEADERS = \
 	base/httpstream.h \
 	base/wrappers.h \
 	base/esimpleconfig.h \
-	base/profile.h \
 	base/esettings.h
