@@ -18,15 +18,6 @@ public:
 	void setScale(int scale);		  // DEPRECATED
 	void setPixmapScale(int flags);
 	void setPixmapScaleFlags(int flags) { setPixmapScale(flags); } // DEPRECATED
-	void setBorderWidth(int pixel);
-	void setBorderColor(const gRGB &color);
-	void setGradient(const gRGB &startcolor, const gRGB &endcolor, int direction, int blend);
-
-	enum
-	{
-		GRADIENT_VERTICAL = 0,
-		GRADIENT_HORIZONTAL = 1
-	};
 
 protected:
 	ePtr<gPixmap> m_pixmap;
@@ -38,9 +29,6 @@ private:
 	{
 		evtChangedPixmap = evtUserWidget,
 	};
-	bool m_have_border_color, m_gradient_set;
-	int m_border_width, m_gradient_direction;
-	gRGB m_border_color, m_gradient_startcolor, m_gradient_endcolor;
 };
 
 #endif
