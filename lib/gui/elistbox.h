@@ -3,6 +3,7 @@
 
 #include <lib/gui/ewidget.h>
 #include <connection.h>
+#include <vector>
 
 class eListbox;
 class eSlider;
@@ -54,7 +55,8 @@ protected:
 
 	virtual int getItemHeight() = 0;
 	virtual int getItemWidth() { return -1; }
-	virtual int getOrientation() { return 1; }
+	virtual uint8_t getOrientation() { return 1; }
+	virtual int getMaxItemTextWidth() { return 1; }
 
 	eListbox *m_listbox;
 #endif
@@ -78,15 +80,26 @@ struct eListboxStyleSetted
 	bool max_rows : 1;
 	bool max_columns : 1;
 	bool use_opd_workaround : 1;
+	bool zoom_content : 1;
+	bool zoom_move_content : 1;
+	bool scrollbarforegroundgradient : 1;
+	bool scrollbarbackgroundgradient : 1;
+	bool background_color_rows : 1;
+	bool separator_color : 1;
+	bool header_color : 1;
 };
 
 struct eListboxStyle
 {
 	ePtr<gPixmap> m_background, m_selection, m_overlay;
-	gRGB m_background_color, m_background_color_selected, m_foreground_color, m_foreground_color_selected, m_border_color, m_scollbarborder_color, m_scrollbarforeground_color, m_scrollbarbackground_color, m_spacing_color;
+	gRGB m_background_color, m_background_color_selected, m_background_color_rows, m_foreground_color, m_foreground_color_selected, m_border_color, m_scollbarborder_color, m_scrollbarforeground_color, m_scrollbarbackground_color, m_spacing_color, m_separator_color, m_header_color;
 	int m_max_columns;
 	int m_max_rows;
 	float m_selection_zoom;
+	int m_selection_width;
+	int m_selection_height;
+	int m_scrollbar_radius;
+	uint8_t m_scrollbar_edges;
 
 	eListboxStyleSetted is_set;
 
@@ -109,8 +122,26 @@ struct eListboxStyle
 		alignBlock
 	};
 	int m_valign, m_halign, m_border_size, m_scrollbarborder_width;
-	ePtr<gFont> m_font, m_font_zoomed, m_valuefont;
+	ePtr<gFont> m_font, m_font_zoomed, m_valuefont, m_headerfont;
 	eRect m_text_padding;
+	eRect m_separator_size;
+
+	int m_itemCornerRadius[4];
+	uint8_t m_itemCornerRadiusEdges[4];
+	int cornerRadius(uint8_t mode)
+	{
+		return m_itemCornerRadius[mode];
+	}
+	int cornerRadiusEdges(uint8_t mode)
+	{
+		return m_itemCornerRadiusEdges[mode];
+	}
+
+	bool m_gradient_set[4], m_gradient_alphablend[4];
+	uint8_t m_gradient_direction[4];
+	std::vector<gRGB> m_gradient_colors[4];
+	std::vector<gRGB> m_scrollbarforegroundgradient_colors;
+	std::vector<gRGB> m_scrollbarbackgroundgradient_colors;
 };
 #endif
 
@@ -186,19 +217,22 @@ public:
 		itemAlignJustifyBottom = itemVertialAlignBottom + itemHorizontalAlignJustify,
 		itemAlignJustifyLeft = itemVertialAlignJustify + itemHorizontalAlignLeft,
 		itemAlignJustifyRight = itemVertialAlignJustify + itemHorizontalAlignRight,
-		itemAlignJustifyFull =  itemVertialAlignJustify + itemHorizontalAlignJustify,
+		itemAlignJustifyFull = itemVertialAlignJustify + itemHorizontalAlignJustify
+	};
 
-		itemAlignDefault = itemAlignLeftTop,
-		itemAlignCenter = itemAlignCenterMiddle,
-		itemAlignJustify = itemAlignJustifyFull
+	enum
+	{
+		zoomContentZoom,
+		zoomContentMove,
+		zoomContentOff
 	};
 
 	void setItemAlignment(int align);
-	void setScrollbarScroll(int scroll);
-	void setScrollbarMode(int mode);
+	void setScrollbarScroll(uint8_t scroll);
+	void setScrollbarMode(uint8_t mode);
 	void setWrapAround(bool state) { m_enabled_wrap_around = state; }
 
-	void setOrientation(int orientation);
+	void setOrientation(uint8_t orientation);
 	void setContent(iListboxContent *content);
 
 	void allowNativeKeys(bool allow);
@@ -251,21 +285,25 @@ public:
 	void setItemWidth(int w);
 	void setSelectionEnable(int en);
 
-	void setBackgroundColor(gRGB &col);
-	void setBackgroundColorSelected(gRGB &col);
-	void setForegroundColor(gRGB &col);
-	void setForegroundColorSelected(gRGB &col);
+	void setBackgroundColor(const gRGB &col) override;
+	void setBackgroundColorSelected(const gRGB &col);
+	void setForegroundColor(const gRGB &col);
+	void setForegroundColorSelected(const gRGB &col);
+	void setBackgroundColorRows(const gRGB &col);
 
-	void setSpacingColor(gRGB &col);
+	void setSpacingColor(const gRGB &col);
 	void clearSpacingColor() { m_style.is_set.spacing_color = 0; }
 
-	void clearBackgroundColor() { m_style.is_set.background_color = 0; }
+	void clearBackgroundColor() override { m_style.is_set.background_color = 0; }
 	void clearBackgroundColorSelected() { m_style.is_set.background_color_selected = 0; }
 	void clearForegroundColor() { m_style.is_set.foreground_color = 0; }
 	void clearForegroundColorSelected() { m_style.is_set.foreground_color_selected = 0; }
 
-	void setBorderColor(const gRGB &col) { m_style.m_border_color = col; }
-	void setBorderWidth(int size);
+	void setBorderColor(const gRGB &col) override { m_style.m_border_color = col; }
+	void setBorderWidth(int width) override;
+
+	void setWidgetBorderColor(const gRGB &col) override { setBorderColor(col); }
+	void setWidgetBorderWidth(int width) override { setBorderWidth(width); }
 
 	void setBackgroundPixmap(ePtr<gPixmap> &pm) { m_style.m_background = pm; }
 	void setSelectionPixmap(ePtr<gPixmap> &pm) { m_style.m_selection = pm; }
@@ -281,27 +319,72 @@ public:
 	void setScrollbarLength(int size) { m_scrollbar_length = size; }
 
 	void setFont(gFont *font);
-	void setEntryFont(gFont *font) { m_style.m_font = font; }
+	void setEntryFont(gFont *font) {m_style.m_font = font;}
 	void setValueFont(gFont *font) { m_style.m_valuefont = font; }
+	void setHeaderFont(gFont *font) { m_style.m_headerfont = font; }
 	void setVAlign(int align) { m_style.m_valign = align; }
 	void setHAlign(int align) { m_style.m_halign = align; }
-	void setTextPadding(const eRect &padding) { m_style.m_text_padding = padding; }
-	void setUseOPDWorkaround(void) { m_style.is_set.use_opd_workaround = 1; }
+	void setUseVTIWorkaround(void) { m_style.is_set.use_vti_workaround = 1; }
+
+	void setPadding(const eRect &padding) override { m_style.m_text_padding = padding; }
+	eRect getPadding() override { return m_style.m_text_padding; }
 
 	void setScrollbarBorderColor(const gRGB &col);
 	void setScrollbarForegroundColor(gRGB &col);
 	void setScrollbarBackgroundColor(gRGB &col);
 
-	void setMaxRows(int rows) {m_style.m_max_rows = rows; m_style.is_set.max_rows = 1;};
-	void setMaxColumns(int columns) {m_style.m_max_columns = columns; m_style.is_set.max_columns = 1;};
-	void setItemSpacing(const ePoint &spacing, bool innerOnly=false);
-	void setSelectionZoom(float zoom);
+	void setScrollbarForegroundGradient(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setScrollbarBackgroundGradient(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setScrollbarRadius(int radius, uint8_t edges);
 
-	void setOverlay(ePtr<gPixmap> &pm) { m_style.m_overlay = pm; m_style.is_set.overlay = 1; }
+	void setMaxRows(int rows)
+	{
+		m_style.m_max_rows = rows;
+		m_style.is_set.max_rows = 1;
+	};
+	void setMaxColumns(int columns)
+	{
+		m_style.m_max_columns = columns;
+		m_style.is_set.max_columns = 1;
+	};
+	void setItemSpacing(const ePoint &spacing, bool innerOnly = false);
+
+	void setItemCornerRadius(int radius, uint8_t edges);
+	void setItemCornerRadiusSelected(int radius, uint8_t edges);
+	void setItemCornerRadiusMarked(int radius, uint8_t edges);
+	void setItemCornerRadiusMarkedandSelected(int radius, uint8_t edges);
+
+	void setItemGradient(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setItemGradientSelected(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setItemGradientMarked(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setItemGradientMarkedandSelected(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+
+	void setSelectionZoom(float zoom, int zoomContentMode = 0);
+	void setSelectionZoomSize(int width, int height, int zoomContentMode = 0);
+
+	void setSeparatorColor(const gRGB &col) { 
+		m_style.m_separator_color = col;
+		m_style.is_set.separator_color = 1;
+	}
+
+	void setSeparatorSize(const eRect &size) { 
+		m_style.m_separator_size = size;
+	}
+
+	void setHeaderColor(const gRGB &col) { 
+		m_style.m_header_color = col;
+		m_style.is_set.header_color = 1;
+	}
+
+	void setOverlay(ePtr<gPixmap> &pm)
+	{
+		m_style.m_overlay = pm;
+		m_style.is_set.overlay = 1;
+	}
 
 	void setPageSize(int size) { m_page_size = size; }
 
-	static void setDefaultScrollbarStyle(int width, int offset, int borderwidth, int scroll, int mode, bool enablewraparound, int pageSize)
+	static void setDefaultScrollbarStyle(int width, int offset, int borderwidth, uint8_t scroll, uint8_t mode, bool enablewraparound, int pageSize)
 	{
 		defaultScrollBarWidth = width;
 		defaultScrollBarOffset = offset;
@@ -314,11 +397,38 @@ public:
 
 	static void setDefaultPadding(const eRect &padding) { defaultPadding = padding; }
 
+	static void setDefaultScrollbarRadius(int radius, uint8_t radiusEdges)
+	{
+		defaultScrollbarRadius = radius;
+		defaultScrollbarRadiusEdges = radiusEdges;
+	}
+
+	static void setDefaultItemRadius(int radius, uint8_t radiusEdges)
+	{
+		defaultItemRadius[0] = radius;
+		defaultItemRadiusEdges[0] = radiusEdges;
+	}
+	static void setDefaultItemRadiusSelected(int radius, uint8_t radiusEdges)
+	{
+		defaultItemRadius[1] = radius;
+		defaultItemRadiusEdges[1] = radiusEdges;
+	}
+	static void setDefaultItemRadiusMarked(int radius, uint8_t radiusEdges)
+	{
+		defaultItemRadius[2] = radius;
+		defaultItemRadiusEdges[2] = radiusEdges;
+	}
+	static void setDefaultItemRadiusMarkedAndSelected(int radius, uint8_t radiusEdges)
+	{
+		defaultItemRadius[3] = radius;
+		defaultItemRadiusEdges[3] = radiusEdges;
+	}
+
 	void setTopIndex(int idx);
 
 	bool getWrapAround() { return m_enabled_wrap_around; }
-	int getScrollbarScroll() { return m_scrollbar_scroll; }
-	int getScrollbarMode() { return m_scrollbar_mode; }
+	uint8_t getScrollbarScroll() { return m_scrollbar_scroll; }
+	uint8_t getScrollbarMode() { return m_scrollbar_mode; }
 	int getScrollbarWidth() { return m_scrollbar_width; }
 	int getScrollbarHeight() { return m_scrollbar_height; }
 	int getScrollbarOffset() { return m_scrollbar_offset; }
@@ -327,12 +437,56 @@ public:
 	int getPageSize() { return m_page_size; }
 	int getItemHeight() { return m_itemheight; }
 	int getItemWidth() { return m_itemwidth; }
-	int getOrientation() { return m_orientation; }
+	uint8_t getOrientation() { return m_orientation; }
 	int getTopIndex() { return m_top; }
 	bool getSelectionEnable() { return m_selection_enabled; }
 	gFont *getFont() { return m_style.m_font; }
 	gFont *getEntryFont() { return m_style.m_font; }
 	gFont *getValueFont() { return m_style.m_valuefont; }
+	gFont *getHeaderFont() { return m_style.m_headerfont; }
+	int getItemsPerPage() { 
+		if (m_orientation == orHorizontal)
+			return m_max_columns;
+		else if (m_orientation == orGrid)
+			return m_max_columns * m_max_rows;
+		else	
+			return m_max_rows;
+		}
+
+	int getCurrentPage()
+	{
+		if (m_content)
+		{
+			int max = 0;
+			if (m_orientation == orGrid)
+				max = m_max_columns * m_max_rows;
+			else
+				max = (m_orientation == orHorizontal) ? m_max_columns : m_max_rows;
+			if (max > 0)
+			{
+				return (m_content->cursorGet() / max) + 1;
+			}
+		}
+		return 0;
+	}
+
+	int getPageCount()
+	{ 
+		if (m_content)
+		{
+			int max = 0;
+			if (m_orientation == orGrid)
+				max = m_max_columns * m_max_rows;
+			else
+				max = (m_orientation == orHorizontal) ? m_max_columns : m_max_rows;
+			if (max > 0)
+			{
+				return (int)std::ceil((float)m_content->size() / (float)max);
+			}
+		}
+		return 0;
+	}
+	int getMaxItemTextWidth() { return m_content->getMaxItemTextWidth(); }
 
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
@@ -347,7 +501,7 @@ public:
 	void entryReset(bool cursorHome = true);
 
 	int getEntryTop();
-	void invalidate(const gRegion &region = gRegion::invalidRegion());
+	void invalidate(const gRegion &region = gRegion::invalidRegion()) override;
 
 protected:
 	int event(int event, void *data = 0, void *data2 = 0);
@@ -355,20 +509,28 @@ protected:
 
 private:
 	ePoint getItemPostion(int index);
-	int moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel, int oldTopLeft, int maxItems, bool indexChanged, int pageOffset, int topLeft);
+	int moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel, int oldTopLeft, int oldRow, int maxItems, bool indexChanged, int pageOffset, int topLeft);
 	void recalcSizeAlignment(bool scrollbarVisible);
 	int setScrollbarPosition();
+	void setItemCornerRadiusInternal(uint8_t index, int radius, uint8_t edges);
+	void setItemGradientInternal(uint8_t index, const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
 
 	static int defaultScrollBarWidth;
 	static int defaultScrollBarOffset;
 	static int defaultScrollBarBorderWidth;
-	static int defaultScrollBarScroll;
-	static int defaultScrollBarMode;
+	static uint8_t defaultScrollBarScroll;
+	static uint8_t defaultScrollBarMode;
 	static int defaultPageSize;
 	static bool defaultWrapAround;
 	static eRect defaultPadding;
+	static int defaultItemRadius[4];
+	static uint8_t defaultItemRadiusEdges[4];
+	static int defaultScrollbarRadius;
+	static uint8_t defaultScrollbarRadiusEdges;
 
-	int m_scrollbar_mode, m_prev_scrollbar_page, m_scrollbar_scroll;
+	int m_prev_scrollbar_page;
+	uint8_t m_scrollbar_mode;
+	uint8_t m_scrollbar_scroll;
 	bool m_content_changed;
 	bool m_enabled_wrap_around;
 	bool m_itemwidth_set;
@@ -382,7 +544,7 @@ private:
 	int m_top, m_left, m_selected;
 	int m_itemheight;
 	int m_itemwidth;
-	int m_orientation;
+	uint8_t m_orientation;
 	int m_max_columns;
 	int m_max_rows;
 	int m_selection_enabled;
@@ -390,6 +552,8 @@ private:
 	int m_item_alignment;
 	int xOffset;
 	int yOffset;
+	int m_x_itemSpace;
+	int m_y_itemSpace;
 
 	bool m_native_keys_bound;
 	int m_first_selectable_item;
@@ -397,6 +561,7 @@ private:
 	int m_scrollbar_calcsize;
 
 	ePoint m_spacing;
+	ePoint m_defined_spacing;
 	bool m_spacing_innerOnly;
 	ePtr<iListboxContent> m_content;
 	eSlider *m_scrollbar;
