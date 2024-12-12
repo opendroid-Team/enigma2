@@ -72,7 +72,7 @@ void eLCD::unlock()
 
 const char *eLCD::get_VFD_scroll_delay() const
 {
-#if defined(HAVE_7SEGMENT)
+#if defined(HAVE_7SEGMENT) || defined(HWBEYONWIZT2)
 	return "";
 #else
 	return (access(VFD_scroll_delay_proc, W_OK) == 0) ? VFD_scroll_delay_proc : "";
@@ -81,7 +81,7 @@ const char *eLCD::get_VFD_scroll_delay() const
 
 const char *eLCD::get_VFD_initial_scroll_delay() const
 {
-#if defined(HAVE_7SEGMENT)
+#if defined(HAVE_7SEGMENT) || defined(HWBEYONWIZT2)
 	return "";
 #else
 	return (access(VFD_initial_scroll_delay_proc, W_OK) == 0) ? VFD_initial_scroll_delay_proc : "";
@@ -90,7 +90,7 @@ const char *eLCD::get_VFD_initial_scroll_delay() const
 
 const char *eLCD::get_VFD_final_scroll_delay() const
 {
-#if defined(HAVE_7SEGMENT)
+#if defined(HAVE_7SEGMENT) || defined(HWBEYONWIZT2)
 	return "";
 #else
 	return (access(VFD_final_scroll_delay_proc, W_OK) == 0) ? VFD_final_scroll_delay_proc : "";
@@ -99,7 +99,7 @@ const char *eLCD::get_VFD_final_scroll_delay() const
 
 const char *eLCD::get_VFD_scroll_repeats() const
 {
-#if defined(HAVE_7SEGMENT)
+#if defined(HAVE_7SEGMENT) || defined(HWBEYONWIZT2)
 	return "";
 #else
 	return (access(VFD_scroll_repeats_proc, W_OK) == 0) ? VFD_scroll_repeats_proc : "";
@@ -136,6 +136,17 @@ void eLCD::set_VFD_final_scroll_delay(int delay) const
 void eLCD::set_VFD_scroll_repeats(int delay) const
 {
 	CFile::writeInt(VFD_scroll_repeats_proc, delay);
+}
+
+void eLCD::setLCDMode(int mode, bool apply) const
+{
+	CFile::writeInt("/proc/stb/lcd/mode", mode);
+	if (apply)
+	{
+		CFile::writeInt("/proc/stb/vmpeg/1/dst_width", 0);
+		CFile::writeInt("/proc/stb/vmpeg/1/dst_height", 0);
+		CFile::writeInt("/proc/stb/vmpeg/1/dst_apply", 1);
+	}
 }
 
 #if defined(HAVE_TEXTLCD) || defined(HAVE_7SEGMENT)
@@ -354,7 +365,7 @@ void eDBoxLCD::dumpLCD(bool png)
 	int lcd_width = res.width();
 	int lcd_hight = res.height();
 	ePtr<gPixmap> pixmap32;
-	pixmap32 = new gPixmap(eSize(lcd_width, lcd_hight), 32, gPixmap::accelAuto);
+	pixmap32 = new gPixmap(eSize(lcd_width, lcd_hight), 32, gPixmap::accelNever);
 	const uint8_t *srcptr = (uint8_t *)_buffer;
 	uint8_t *dstptr = (uint8_t *)pixmap32->surface->data;
 
@@ -414,11 +425,9 @@ void eDBoxLCD::dumpLCD(bool png)
 	break;
 	case 32:
 	{
-		srcptr += _stride / 4;
-		dstptr += pixmap32->surface->stride / 4;
 		for (int y = lcd_hight; y != 0; --y)
 		{
-			memcpy(dstptr, srcptr, lcd_width * bpp);
+			memcpy(dstptr, srcptr, lcd_width * pixmap32->surface->bypp);
 			srcptr += _stride;
 			dstptr += pixmap32->surface->stride;
 		}

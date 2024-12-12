@@ -9,6 +9,8 @@
 #include <vuplus_gles.h>
 #endif
 
+//#define GFX_DEBUG_DRAWRECT
+
 #ifdef GFX_DEBUG_DRAWRECT
 #include "../base/benchmark.h"
 #endif
