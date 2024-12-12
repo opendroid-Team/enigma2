@@ -4,9 +4,13 @@
 #include <lib/gdi/font.h>
 #include <lib/base/init.h>
 #include <lib/base/init_num.h>
-#include <lib/base/nconfig.h>
+#include <lib/base/esimpleconfig.h>
 #ifdef USE_LIBVUGLES2
 #include <vuplus_gles.h>
+#endif
+
+#ifdef GFX_DEBUG_DRAWRECT
+#include "../base/benchmark.h"
 #endif
 
 #ifndef SYNC_PAINT
@@ -179,7 +183,7 @@ void *gRC::thread()
 
 				/* when the main thread is non-idle for a too long time without any display output,
 				   we want to display a spinner. */
-				struct timespec timeout;
+				struct timespec timeout = {};
 				clock_gettime(CLOCK_REALTIME, &timeout);
 
 				if (m_spinner_enabled)
@@ -352,6 +356,47 @@ void gPainter::setForegroundColor(const gRGB &color)
 	m_rc->submit(o);
 }
 
+void gPainter::setGradient(const std::vector<gRGB> &colors, uint8_t orientation, bool alphablend, int fullSize)
+{
+	if (m_dc->islocked())
+		return;
+	gOpcode o;
+	o.opcode = gOpcode::setGradient;
+	o.dc = m_dc.grabRef();
+	o.parm.gradient = new gOpcode::para::pgradient;
+	o.parm.gradient->colors = colors;
+	o.parm.gradient->orientation = orientation;
+	o.parm.gradient->alphablend = alphablend;
+	o.parm.gradient->fullSize = fullSize;
+	m_rc->submit(o);
+}
+
+void gPainter::setRadius(int radius, uint8_t edges)
+{
+	if (m_dc->islocked())
+		return;
+	gOpcode o;
+	o.opcode = gOpcode::setRadius;
+	o.dc = m_dc.grabRef();
+	o.parm.radius = new gOpcode::para::pradius;
+	o.parm.radius->radius = radius;
+	o.parm.radius->edges = edges;
+	m_rc->submit(o);
+}
+
+void gPainter::setBorder(const gRGB &borderColor, int width)
+{
+	if (m_dc->islocked())
+		return;
+	gOpcode o;
+	o.opcode = gOpcode::setBorder;
+	o.dc = m_dc.grabRef();
+	o.parm.border = new gOpcode::para::pborder;
+	o.parm.border->color = borderColor;
+	o.parm.border->width = width;
+	m_rc->submit(o);
+}
+
 void gPainter::setFont(gFont *font)
 {
 	if (m_dc->islocked())
@@ -366,7 +411,7 @@ void gPainter::setFont(gFont *font)
 	m_rc->submit(o);
 }
 
-void gPainter::renderText(const eRect &pos, const std::string &string, int flags, gRGB bordercolor, int border, int markedpos, int *offset)
+void gPainter::renderText(const eRect &pos, const std::string &string, int flags, gRGB bordercolor, int border, int markedpos, int *offset, int tabwidth)
 {
 	if (string.empty())
 		return;
@@ -383,8 +428,9 @@ void gPainter::renderText(const eRect &pos, const std::string &string, int flags
 	o.parm.renderText->bordercolor = bordercolor;
 	o.parm.renderText->markedpos = markedpos;
 	o.parm.renderText->offset = offset;
+	o.parm.renderText->tabwidth = tabwidth;
 	if (markedpos >= 0)
-		o.parm.renderText->scrollpos = eConfigManager::getConfigIntValue("config.usage.cursorscroll");
+		o.parm.renderText->scrollpos = eSimpleConfig::getInt("config.usage.cursorscroll");
 	m_rc->submit(o);
 }
 
@@ -471,22 +517,16 @@ void gPainter::blit(gPixmap *pixmap, const eRect &pos, const eRect &clip, int fl
 	m_rc->submit(o);
 }
 
-void gPainter::drawGradient(const eRect &area, const gRGB &startcolor, const gRGB &endcolor, int orientation, int flag)
-{
+void gPainter::drawRectangle(const eRect &area) {
 	if ( m_dc->islocked() )
 		return;
 	gOpcode o;
-	o.opcode=gOpcode::gradient;
+	o.opcode=gOpcode::rectangle;
 	o.dc = m_dc.grabRef();
-	o.parm.gradient = new gOpcode::para::pgradient;
-	o.parm.gradient->area = area;
-	o.parm.gradient->gradientStartColor = startcolor;
-	o.parm.gradient->gradientEndColor = endcolor;
-	o.parm.gradient->orientation = orientation;
-	o.parm.gradient->flag = flag;
+	o.parm.rectangle = new gOpcode::para::prectangle;
+	o.parm.rectangle->area = area;
 	m_rc->submit(o);
 }
-
 
 void gPainter::setPalette(gRGB *colors, int start, int len)
 {
@@ -738,6 +778,12 @@ void gPainter::setView(eSize size)
 gDC::gDC()
 {
 	m_spinner_pic = 0;
+	m_border_width = 0;
+	m_radius = 0;
+	m_radius_edges = 0;
+	m_gradient_orientation = 0;
+	m_gradient_alphablend = false;
+	m_gradient_fullSize = 0;
 }
 
 gDC::gDC(gPixmap *pixmap) : m_pixmap(pixmap)
@@ -781,8 +827,26 @@ void gDC::exec(const gOpcode *o)
 		o->parm.setFont->font->Release();
 		delete o->parm.setFont;
 		break;
+	case gOpcode::setGradient:
+		m_gradient_colors = o->parm.gradient->colors;
+		m_gradient_orientation = o->parm.gradient->orientation;
+		m_gradient_alphablend = o->parm.gradient->alphablend;
+		m_gradient_fullSize = o->parm.gradient->fullSize;
+		delete o->parm.gradient;
+		break;
+	case gOpcode::setRadius:
+		m_radius = o->parm.radius->radius;
+		m_radius_edges = o->parm.radius->edges;
+		delete o->parm.radius;
+		break;
+	case gOpcode::setBorder:
+		m_border_color = o->parm.border->color;
+		m_border_width = o->parm.border->width;
+		delete o->parm.border;
+		break;
 	case gOpcode::renderText:
 	{
+		const char *ellipsis = reinterpret_cast<const char *>(u8"…");
 		ePtr<eTextPara> para = new eTextPara(o->parm.renderText->area);
 		int flags = o->parm.renderText->flags;
 		int border = o->parm.renderText->border;
@@ -791,14 +855,14 @@ void gDC::exec(const gOpcode *o)
 		if (markedpos != -1)
 			border = 0;
 		ASSERT(m_current_font);
-		para->setFont(m_current_font);
+		para->setFont(m_current_font, o->parm.renderText->tabwidth);
 
 		if (flags & gPainter::RT_ELLIPSIS)
 		{
 			if (flags & gPainter::RT_WRAP) // Remove wrap
 				flags -= gPainter::RT_WRAP;
 			std::string text = o->parm.renderText->text;
-			text += u8"…";
+			text += ellipsis;
 
 			eTextPara testpara(o->parm.renderText->area);
 			testpara.setFont(m_current_font);
@@ -813,7 +877,7 @@ void gDC::exec(const gOpcode *o)
 				if ((int)text.size() > ns)
 				{
 					text.resize(ns);
-					text += u8"…";
+					text += ellipsis;
 				}
 				if (o->parm.renderText->text)
 					free(o->parm.renderText->text);
@@ -858,7 +922,7 @@ void gDC::exec(const gOpcode *o)
 			int correction = o->parm.renderText->area.height() - bbox.height() - 2;
 			offset += ePoint(0, correction);
 		}
-		if (markedpos != -1)
+		if (markedpos != -1 || flags & gPainter::RT_UNDERLINE)
 		{
 			int glyphs = para->size();
 			int left, width = 0;
@@ -904,6 +968,18 @@ void gDC::exec(const gOpcode *o)
 						top += height;
 				}
 			}
+			else if(flags & gPainter::RT_UNDERLINE)
+			{
+				if (glyphs > 0)
+				{
+					bbox = para->getBoundBox();
+					left = bbox.left();
+					width = bbox.width();
+					top = height - 1;
+					height = 1;
+				}
+			}
+
 			if (width)
 			{
 				bbox = eRect(left, top, width, height);
@@ -917,6 +993,9 @@ void gDC::exec(const gOpcode *o)
 					m_pixmap->fill(clip, m_foreground_color_rgb);
 			}
 		}
+
+		para->setBlend(flags & gPainter::RT_BLEND);
+
 		if (border)
 		{
 			para->blit(*this, offset, m_background_color_rgb, o->parm.renderText->bordercolor, true);
@@ -968,6 +1047,9 @@ void gDC::exec(const gOpcode *o)
 		break;
 	case gOpcode::blit:
 	{
+#ifdef GFX_DEBUG_DRAWRECT
+		Stopwatch s;
+#endif
 		gRegion clip;
 		// this code should be checked again but i'm too tired now
 
@@ -980,18 +1062,50 @@ void gDC::exec(const gOpcode *o)
 		}
 		else
 			clip = m_current_clip;
-
-		m_pixmap->blit(*o->parm.blit->pixmap, o->parm.blit->position, clip, o->parm.blit->flags);
+		if (!o->parm.blit->pixmap->surface->transparent)
+			o->parm.blit->flags &=~(gPixmap::blitAlphaTest|gPixmap::blitAlphaBlend);
+		m_pixmap->blit(*o->parm.blit->pixmap, o->parm.blit->position, clip, m_radius, m_radius_edges, o->parm.blit->flags);
+#ifdef GFX_DEBUG_DRAWRECT
+		if(m_radius)
+		{
+			s.stop();
+			FILE *handle = fopen("/tmp/drawRectangle.perf", "a");
+			if (handle) {
+				fprintf(handle, "%dx%dx%d|%u\n", o->parm.blit->pixmap->size().width(), o->parm.blit->pixmap->size().height(),o->parm.blit->pixmap->surface->bpp, s.elapsed_us());
+				fclose(handle);
+			}
+		}
+#endif
+		m_radius = 0;
+		m_radius_edges = 0;
 		o->parm.blit->pixmap->Release();
 		delete o->parm.blit;
 		break;
 	}
-	case gOpcode::gradient:
+	case gOpcode::rectangle:
 	{
-		o->parm.gradient->area.moveBy(m_current_offset);
-		gRegion clip = m_current_clip & o->parm.gradient->area;
-		m_pixmap->drawGradient(clip, o->parm.gradient->area, o->parm.gradient->gradientStartColor, o->parm.gradient->gradientEndColor, o->parm.gradient->orientation, o->parm.gradient->flag);
-		delete o->parm.gradient;
+#ifdef GFX_DEBUG_DRAWRECT
+		Stopwatch s;
+#endif
+		o->parm.rectangle->area.moveBy(m_current_offset);
+		gRegion clip = m_current_clip & o->parm.rectangle->area;
+		m_pixmap->drawRectangle(clip, o->parm.rectangle->area, m_background_color_rgb, m_border_color, m_border_width, m_gradient_colors, m_gradient_orientation, m_radius, m_radius_edges, m_gradient_alphablend, m_gradient_fullSize);
+		m_border_width = 0;
+		m_radius = 0;
+		m_radius_edges = 0;
+		m_gradient_orientation = 0;
+		m_gradient_fullSize = 0;
+		m_gradient_alphablend = false;
+#ifdef GFX_DEBUG_DRAWRECT
+		s.stop();
+		FILE *handle = fopen("/tmp/drawRectangle.perf", "a");
+		if (handle) {
+			eRect area = o->parm.rectangle->area;
+			fprintf(handle, "%dx%dx%dx%d|%u\n", area.left(), area.top(), area.width(), area.height(), s.elapsed_us());
+			fclose(handle);
+		}
+#endif
+		delete o->parm.rectangle;
 		break;
 	}
 	case gOpcode::setPalette:
@@ -1092,25 +1206,32 @@ gRGB gDC::getRGB(gColor col)
 
 void gDC::enableSpinner()
 {
-	ASSERT(m_spinner_saved);
+	ASSERT(m_spinner_saved_HD);
+	ASSERT(m_spinner_saved_FHD);
 
 	/* save the background to restore it later. We need to negative position because we want to blit from the middle of the screen. */
-	m_spinner_saved->blit(*m_pixmap, eRect(-m_spinner_pos.topLeft(), eSize()), gRegion(eRect(ePoint(0, 0), m_spinner_saved->size())), 0);
+	m_spinner_saved_FHD->blit(*m_pixmap, eRect(-m_spinner_pos_FHD.topLeft(), eSize()), gRegion(eRect(ePoint(0, 0), m_spinner_saved_FHD->size())), 0, 0 ,0);
+	m_spinner_saved_HD->blit(*m_pixmap, eRect(-m_spinner_pos_HD.topLeft(), eSize()), gRegion(eRect(ePoint(0, 0), m_spinner_saved_HD->size())), 0, 0 ,0);
 
 	incrementSpinner();
 }
 
 void gDC::disableSpinner()
 {
-	ASSERT(m_spinner_saved);
+	ASSERT(m_spinner_saved_HD);
+	ASSERT(m_spinner_saved_FHD);
 
 	/* restore background */
-	m_pixmap->blit(*m_spinner_saved, eRect(m_spinner_pos.topLeft(), eSize()), gRegion(m_spinner_pos), 0);
+	if (size().width() == 1920)
+		m_pixmap->blit(*m_spinner_saved_FHD, eRect(m_spinner_pos_FHD.topLeft(), eSize()), gRegion(m_spinner_pos_FHD), 0, 0, 0);
+	else
+		m_pixmap->blit(*m_spinner_saved_HD, eRect(m_spinner_pos_HD.topLeft(), eSize()), gRegion(m_spinner_pos_HD), 0, 0, 0);
 }
 
 void gDC::incrementSpinner()
 {
-	ASSERT(m_spinner_saved);
+	ASSERT(m_spinner_saved_HD);
+	ASSERT(m_spinner_saved_FHD);
 
 	static int blub;
 	blub++;
@@ -1120,8 +1241,8 @@ void gDC::incrementSpinner()
 
 	for (i = 0; i < 5; ++i)
 	{
-		int x = i * 20 + m_spinner_pos.left();
-		int y = m_spinner_pos.top();
+		int x = i * 20 + m_spinner_pos_HD.left();
+		int y = m_spinner_pos_HD.top();
 
 		int col = ((blub - i) * 30) % 256;
 
@@ -1129,12 +1250,27 @@ void gDC::incrementSpinner()
 	}
 #endif
 
-	m_spinner_temp->blit(*m_spinner_saved, eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos.size()));
+	if (size().width() == 1920)
+	{
+		m_spinner_temp_FHD->blit(*m_spinner_saved_FHD, eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos_FHD.size()), 0, 0, 0);
 
-	if (m_spinner_pic[m_spinner_i])
-		m_spinner_temp->blit(*m_spinner_pic[m_spinner_i], eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos.size()), gPixmap::blitAlphaBlend);
+		if (m_spinner_pic[m_spinner_i])
+			m_spinner_temp_FHD->blit(*m_spinner_pic[m_spinner_i], eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos_FHD.size()), 0, 0, gPixmap::blitAlphaBlend);
 
-	m_pixmap->blit(*m_spinner_temp, eRect(m_spinner_pos.topLeft(), eSize()), gRegion(m_spinner_pos), 0);
+		m_pixmap->blit(*m_spinner_temp_FHD, eRect(m_spinner_pos_FHD.topLeft(), eSize()), gRegion(m_spinner_pos_FHD), 0, 0, 0);
+
+	}
+	else
+	{
+		m_spinner_temp_HD->blit(*m_spinner_saved_HD, eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos_HD.size()), 0, 0, 0);
+
+		if (m_spinner_pic[m_spinner_i])
+			m_spinner_temp_HD->blit(*m_spinner_pic[m_spinner_i], eRect(0, 0, 0, 0), eRect(ePoint(0, 0), m_spinner_pos_HD.size()), 0, 0, gPixmap::blitAlphaBlend);
+
+		m_pixmap->blit(*m_spinner_temp_HD, eRect(m_spinner_pos_HD.topLeft(), eSize()), gRegion(m_spinner_pos_HD), 0, 0, 0);
+
+	}
+
 	m_spinner_i++;
 	m_spinner_i %= m_spinner_num;
 }
@@ -1143,9 +1279,14 @@ void gDC::setSpinner(eRect pos, ePtr<gPixmap> *pic, int len)
 {
 	ASSERT(m_pixmap);
 	ASSERT(m_pixmap->surface);
-	m_spinner_saved = new gPixmap(pos.size(), m_pixmap->surface->bpp);
-	m_spinner_temp = new gPixmap(pos.size(), m_pixmap->surface->bpp);
-	m_spinner_pos = pos;
+	m_spinner_saved_HD = new gPixmap(pos.size(), m_pixmap->surface->bpp);
+	m_spinner_temp_HD = new gPixmap(pos.size(), m_pixmap->surface->bpp);
+	m_spinner_saved_FHD = new gPixmap(pos.size(), m_pixmap->surface->bpp);
+	m_spinner_temp_FHD = new gPixmap(pos.size(), m_pixmap->surface->bpp);
+	m_spinner_pos_HD = pos;
+	int x = (int)(float)pos.x() * 1.5;
+	int y = (int)(float)pos.y() * 1.5;
+	m_spinner_pos_FHD = eRect(ePoint(x, y), pos.size());
 
 	m_spinner_i = 0;
 	m_spinner_num = len;
