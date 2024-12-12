@@ -25,6 +25,18 @@ static std::string encode(const std::string s)
 	return res;
 }
 
+RESULT eServiceReference::parseNameAndProviderFromName(std::string &sourceName, std::string& name, std::string& prov) {
+	prov = "";
+	if (!sourceName.empty()) {
+		std::vector<std::string> name_split = split(sourceName, "•");
+		name = name_split[0];
+		if (name_split.size() > 1) {
+			prov = name_split[1];
+		}
+	}
+	return 0;
+}
+
 eServiceReference::eServiceReference(const std::string &string)
 {
 	const char *c=string.c_str();
@@ -43,7 +55,7 @@ eServiceReference::eServiceReference(const std::string &string)
 
 	if (pathl)
 	{
-		const char *pathstr = c+pathl;
+		const char *pathstr = c + pathl;
 		const char *namestr = strchr(pathstr, ':');
 		if (namestr)
 		{
@@ -76,21 +88,30 @@ eServiceReference::eServiceReference(const std::string &string)
 		{
 			path=pathstr;
 		}
-	}
 
-	path = urlDecode(path);
-	name = urlDecode(name);
+		path = urlDecode(path);
+		name = urlDecode(name);
+
+		if(!name.empty())
+		{
+			std::string res_name = "";
+			std::string res_provider = "";
+			eServiceReference::parseNameAndProviderFromName(name, res_name, res_provider);
+			name = res_name;
+			prov = res_provider;
+		}
+	}
 }
 
 std::string eServiceReference::toString() const
 {
 	std::string ret;
-	ret.reserve((6 * sizeof(data)/sizeof(*data)) + 8 + path.length() + name.length()); /* Estimate required space */
+	ret.reserve((6 * sizeof(data) / sizeof(*data)) + 8 + path.length() + name.length()); /* Estimate required space */
 
 	ret += getNum(type);
 	ret += ':';
-	ret += getNum(flags);
-	for (unsigned int i = 0; i < sizeof(data)/sizeof(*data); ++i)
+	ret += getNum(flags & ~eDVBService::dxIntIsinBouquet); // ignore dxIntIsinBouquet because this is only for internal use
+	for (unsigned int i = 0; i < sizeof(data) / sizeof(*data); ++i)
 	{
 		ret += ':';
 		ret += getNum(data[i], 0x10);
@@ -101,6 +122,11 @@ std::string eServiceReference::toString() const
 	{
 		ret += ':';
 		ret += encode(name);
+	}
+	if (!prov.empty()) {
+		std::string provPart = "•" + prov;
+		if (ret.find(provPart) == std::string::npos)
+			ret += provPart;
 	}
 	return ret;
 }
@@ -119,6 +145,35 @@ std::string eServiceReference::toCompareString() const
 	}
 	ret += ':';
 	ret += encode(path);
+	return ret;
+}
+
+std::string eServiceReference::toReferenceString() const
+{
+	std::string ret;
+	ret.reserve((6 * sizeof(data)/sizeof(*data)) + 8); /* Estimate required space */
+
+	ret += getNum(type);
+	ret += ":0";
+	for (unsigned int i=0; i<sizeof(data)/sizeof(*data); ++i)
+	{
+		ret += ':';
+		ret += getNum(data[i], 0x10);
+	}
+	ret += ':';
+	return ret;
+}
+
+std::string eServiceReference::toLCNReferenceString(bool trailing) const
+{
+    std::string ret;
+    ret.reserve(24); /* Estimate required space */
+    char buf[24];
+    if(trailing)
+        snprintf(buf, 24, "%X:%X:%X:%X:", data[1], data[2], data[3], data[4]);
+    else
+        snprintf(buf, 24, "%X:%X:%X:%X", data[1], data[2], data[3], data[4]);
+    ret.assign(buf);
 	return ret;
 }
 
@@ -149,7 +204,7 @@ RESULT eServiceCenter::play(const eServiceReference &ref, ePtr<iPlayableService>
 	std::map<int,ePtr<iServiceHandler> >::iterator i = handler.find(ref.type);
 	if (i == handler.end())
 	{
-		ptr = 0;
+		ptr = nullptr;
 		return -1;
 	}
 	return i->second->play(ref, ptr);
@@ -160,7 +215,7 @@ RESULT eServiceCenter::record(const eServiceReference &ref, ePtr<iRecordableServ
 	std::map<int,ePtr<iServiceHandler> >::iterator i = handler.find(ref.type);
 	if (i == handler.end())
 	{
-		ptr = 0;
+		ptr = nullptr;
 		return -1;
 	}
 	return i->second->record(ref, ptr);
@@ -171,7 +226,7 @@ RESULT eServiceCenter::list(const eServiceReference &ref, ePtr<iListableService>
 	std::map<int,ePtr<iServiceHandler> >::iterator i = handler.find(ref.type);
 	if (i == handler.end())
 	{
-		ptr = 0;
+		ptr = nullptr;
 		return -1;
 	}
 	return i->second->list(ref, ptr);
@@ -182,7 +237,7 @@ RESULT eServiceCenter::info(const eServiceReference &ref, ePtr<iStaticServiceInf
 	std::map<int,ePtr<iServiceHandler> >::iterator i = handler.find(ref.type);
 	if (i == handler.end())
 	{
-		ptr = 0;
+		ptr = nullptr;
 		return -1;
 	}
 	return i->second->info(ref, ptr);
@@ -193,7 +248,7 @@ RESULT eServiceCenter::offlineOperations(const eServiceReference &ref, ePtr<iSer
 	std::map<int,ePtr<iServiceHandler> >::iterator i = handler.find(ref.type);
 	if (i == handler.end())
 	{
-		ptr = 0;
+		ptr = nullptr;
 		return -1;
 	}
 	return i->second->offlineOperations(ref, ptr);
@@ -257,7 +312,7 @@ int eServiceCenter::getServiceTypeForExtension(const std::string &str)
 	/* default handlers */
 RESULT iServiceHandler::info(const eServiceReference &, ePtr<iStaticServiceInformation> &ptr)
 {
-	ptr = 0;
+	ptr = nullptr;
 	return -1;
 }
 

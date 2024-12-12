@@ -4,6 +4,7 @@
 #include <lib/python/swig.h>
 #include <lib/python/python.h>
 #include <lib/base/object.h>
+#include <lib/base/estring.h>
 #include <string>
 #include <connection.h>
 #include <list>
@@ -59,14 +60,18 @@ public:
 
 	inline int getSortKey() const { return (flags & hasSortKey) ? data[3] : ((flags & sort1) ? 1 : 0); }
 
+	static RESULT parseNameAndProviderFromName(std::string &sourceName, std::string& name, std::string& prov);
+
 #ifndef SWIG
 	int data[8];
 	std::string path;
 	std::string alternativeurl;
+	std::string suburi;
 #endif
 	std::string getPath() const { return path; }
 	void setPath( const std::string &n ) { path=n; }
 	void setAlternativeUrl( const std::string &n ) { alternativeurl=n; }
+	void setSubUri( const std::string &n ) { suburi=n; }
 
 	unsigned int getUnsignedData(unsigned int num) const
 	{
@@ -98,10 +103,13 @@ public:
 // real existing service ( for dvb eServiceDVB )
 #ifndef SWIG
 	std::string name;
+	std::string prov;
 	int number;
 #endif
 	std::string getName() const { return name; }
+	std::string getProvider() const { return prov; }
 	void setName( const std::string &n ) { name=n; }
+	void setProvider( const std::string &s ) { prov=s; }
 	int getChannelNum() const { return number; }
 	void setChannelNum(const int n) { number = n; }
 
@@ -174,6 +182,8 @@ public:
 	eServiceReference(const std::string &string);
 	std::string toString() const;
 	std::string toCompareString() const;
+	std::string toReferenceString() const;
+	std::string toLCNReferenceString(bool trailing=true) const;
 #ifndef SWIG
 	operator bool() const
 	{
@@ -182,7 +192,7 @@ public:
 #endif
 	bool operator==(const eServiceReference &c) const
 	{
-		if (type != c.type)
+		if (!c || type != c.type)
 			return 0;
 		return (memcmp(data, c.data, sizeof(int)*8)==0) && (path == c.path);
 	}
@@ -192,6 +202,8 @@ public:
 	}
 	bool operator<(const eServiceReference &c) const
 	{
+		if (!c) return 0;
+
 		if (type < c.type)
 			return 1;
 
@@ -408,6 +420,7 @@ public:
 		sCenterDVBSubs,
 
 		sGamma,
+		sVideoInfo,
 
 		sUser = 0x100
 	};
@@ -444,7 +457,7 @@ public:
 	virtual ePtr<iServiceInfoContainer> getInfoObject(int w);
 	virtual ePtr<iDVBTransponderData> getTransponderData();
 	virtual void getAITApplications(std::map<int, std::string> &aitlist) {};
-	virtual PyObject *getHbbTVApplications() {return getHbbTVApplications();};  // NOSONAR
+	virtual PyObject *getHbbTVApplications() {return getHbbTVApplications();};
 	virtual void getCaIds(std::vector<int> &caids, std::vector<int> &ecmpids, std::vector<std::string> &ecmdatabytes);
 	virtual long long getFileSize();
 
@@ -742,6 +755,7 @@ public:
 		int page_number;
 		int magazine_number;
 		std::string language_code;
+		std::string title;
 	};
 
 	virtual RESULT enableSubtitles(iSubtitleUser *user, SubtitleTrack &track) = 0;
