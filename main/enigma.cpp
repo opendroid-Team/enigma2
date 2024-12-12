@@ -83,7 +83,7 @@ void keyEvent(const eRCKey &key)
 	/*eDebug("key.code : %02x \n", key.code);*/
 
 	int flags = key.flags;
-	int long_press_emulation_key = eConfigManager::getConfigIntValue("config.usage.long_press_emulation_key");
+	int long_press_emulation_key = ptr->getLongPressedEmulationKey();
 	if ((long_press_emulation_key > 0) && (key.code == long_press_emulation_key))
 	{
 		long_press_emulation_pushed = true;
@@ -258,7 +258,7 @@ static void sigterm_handler(int num)
 
 void catchTermSignal()
 {
-	struct sigaction act;
+	struct sigaction act = {};
 
 	act.sa_handler = sigterm_handler;
 	act.sa_flags = SA_RESTART;
@@ -294,6 +294,7 @@ int main(int argc, char **argv)
 	eLog(0, "[Enigma] Python path is '%s'.", getenv("PYTHONPATH"));
 	eLog(0, "[Enigma] DVB API version %d, DVB API version minor %d.", DVB_API_VERSION, DVB_API_VERSION_MINOR);
 	eLog(0, "[Enigma] Enigma debug level %d.", debugLvl);
+	eLog(0, "[Enigma] sourcedate %s / %s %s.", enigma2_date, enigma2_branch, E2REV);
 
 	ePython python;
 	eMain main;
@@ -343,11 +344,11 @@ int main(int argc, char **argv)
 	dsk_lcd.setRedrawTask(main);
 
 	std::string active_skin = getConfigCurrentSpinner("config.skin.primary_skin");
-	std::string spinnerPostion = eSimpleConfig::getString("config.misc.spinnerPosition", "75,75");
+	std::string spinnerPostion = eSimpleConfig::getString("config.misc.spinnerPosition", "50,50");
 	int spinnerPostionX, spinnerPostionY;
 	if (sscanf(spinnerPostion.c_str(), "%d,%d", &spinnerPostionX, &spinnerPostionY) != 2)
 	{
-		spinnerPostionX = spinnerPostionY = 75;
+		spinnerPostionX = spinnerPostionY = 50;
 	}
 
 	eDebug("[Enigma] Loading spinners.");
@@ -364,7 +365,7 @@ int main(int argc, char **argv)
 		snprintf(filename, sizeof(filename), "%s/wait%d.png", userpath.c_str(), i + 1);
 		rfilename = eEnv::resolve(filename);
 
-		struct stat st;
+		struct stat st = {};
 		if (::stat(rfilename.c_str(), &st) == 0)
 		{
 			def = true;
@@ -399,11 +400,13 @@ int main(int argc, char **argv)
 			}
 			i++;
 		}
-		eDebug("[Enigma] Found %d spinners.", i);
+		eDebug("[Enigma] Found %d spinners. Position x=%d y=%d", i, spinnerPostionX, spinnerPostionY);
 		if (i == 0)
 			my_dc->setSpinner(eRect(spinnerPostionX, spinnerPostionY, 0, 0), wait, 1);
 		else
+		{
 			my_dc->setSpinner(eRect(ePoint(spinnerPostionX, spinnerPostionY), wait[0]->size()), wait, i);
+		}
 	}
 
 	gRC::getInstance()->setSpinnerDC(my_dc);
@@ -411,6 +414,8 @@ int main(int argc, char **argv)
 	eRCInput::getInstance()->keyEvent.connect(sigc::ptr_fun(&keyEvent));
 
 	eDebug("[Enigma] Executing StartEnigma.py");
+
+	eProfile::getInstance().write("StartPython");
 
 	bsodCatchSignals();
 	catchTermSignal();
@@ -474,9 +479,57 @@ const char *getOARev()
 	return OAREV;
 }
 
+int getVFDSymbolsPoll()
+{
+	return VFDSymbolsPoll;
+}
+
 const char *getGStreamerVersionString()
 {
 	return gst_version_string();
+}
+
+int getE2Flags()
+{
+	return 1;
+}
+
+bool checkLogin(const char *user, const char *password)
+{
+	bool authenticated = false;
+
+	if (user && password)
+	{
+		char *buffer = (char *)malloc(4096);
+		if (buffer)
+		{
+			struct passwd pwd = {};
+			struct passwd *pwdresult = NULL;
+			std::string crypt;
+			getpwnam_r(user, &pwd, buffer, 4096, &pwdresult);
+			if (pwdresult)
+			{
+				struct crypt_data cryptdata = {};
+				char *cryptresult = NULL;
+				cryptdata.initialized = 0;
+				crypt = pwd.pw_passwd;
+				if (crypt == "*" || crypt == "x")
+				{
+					struct spwd spwd = {};
+					struct spwd *spwdresult = NULL;
+					getspnam_r(user, &spwd, buffer, 4096, &spwdresult);
+					if (spwdresult)
+					{
+						crypt = spwd.sp_pwdp;
+					}
+				}
+				cryptresult = crypt_r(password, crypt.c_str(), &cryptdata);
+				authenticated = cryptresult && cryptresult == crypt;
+			}
+			free(buffer);
+		}
+	}
+	return authenticated;
 }
 
 #include <malloc.h>
@@ -510,136 +563,3 @@ void setAnimation_speed(int speed) {}
 void setAnimation_current_listbox(int a) {}
 #endif
 #endif
-
-std::string getActiveAdapter()
-{
-	std::string ret = "";
-	struct ifaddrs *ifaddr, *ifa;
-	int status;
-	// Get the list of network interfaces
-	status = getifaddrs(&ifaddr);
-	if (status != 0)
-	{
-		eDebug("[Enigma] getActiveAdapter: Failed to get network interfaces.");
-		return "";
-	}
-	// Iterate through the network interfaces
-	for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
-	{
-		if (ifa->ifa_addr == nullptr)
-			continue;
-		if (ifa->ifa_flags & IFF_LOOPBACK) // ignore loopback
-			continue;
-		// Check if the interface is active and has an IP address
-		if ((ifa->ifa_flags & IFF_UP) && (ifa->ifa_addr->sa_family == AF_INET ||
-										  ifa->ifa_addr->sa_family == AF_INET6))
-		{
-
-			if (strstr(ifa->ifa_name, "eth") || strstr(ifa->ifa_name, "wlan"))
-			{
-				eDebug("[Enigma] getActiveAdapter: Active network interface: %s.", ifa->ifa_name);
-				ret = ifa->ifa_name;
-				break;
-			}
-		}
-	}
-	freeifaddrs(ifaddr);
-	return ret;
-}
-
-int checkLinkStatus()
-{
-	std::string interface = getActiveAdapter();
-	if (interface.empty())
-	{
-		eDebug("[Enigma] checkLinkStatus: No valid active network adapter.");
-		return 4;
-	}
-
-	int sock;
-	struct ifreq ifr;
-	// Create a socket
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sock < 0)
-	{
-		eDebug("[Enigma] checkLinkStatus: Failed to create socket.");
-		return 3;
-	}
-	// Set the interface name
-	strncpy(ifr.ifr_name, interface.c_str(), IFNAMSIZ);
-	// Get the interface flags
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) < 0)
-	{
-		eDebug("[Enigma] checkLinkStatus: Failed to get interface flags.");
-		close(sock);
-		return 3;
-	}
-	int ret = (ifr.ifr_flags & IFF_RUNNING) ? 0 : 3;
-	close(sock);
-	return ret;
-}
-
-#include <curl/curl.h>
-#include <curl/easy.h>
-
-size_t curl_ignore_output(void *ptr, size_t size, size_t nmemb, void *stream) // NOSONAR
-{
-	(void)ptr;
-	(void)stream;
-	return size * nmemb;
-}
-
-int checkInternetAccess(const char *host, int timeout = 3)
-{
-
-	int link = checkLinkStatus();
-	if (link != 0)
-	{
-		eDebug("[Enigma] checkInternetAccess: No Active link.");
-		return link;
-	}
-
-	CURL *curl;
-	CURLcode res;
-	int ret = 0; // SUCCESS
-	curl = curl_easy_init();
-	if (curl)
-	{
-		eDebug("[Enigma] checkInternetAccess: Check host:'%s' with timeout:%d.", host, timeout);
-		curl_easy_setopt(curl, CURLOPT_URL, host);
-		curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
-		curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &curl_ignore_output);
-		while ((res = curl_easy_perform(curl)) != CURLE_OK)
-		{
-			switch (res)
-			{
-			case CURLE_COULDNT_RESOLVE_HOST:
-				eDebug("[Enigma] checkInternetAccess: Failed to resolve host.");
-				ret = 1;
-				break;
-			case CURLE_COULDNT_CONNECT:
-			case CURLE_COULDNT_RESOLVE_PROXY:
-				eDebug("[Enigma] checkInternetAccess: Failed.");
-				ret = 2;
-				break;
-			default:
-				eDebug("[Enigma] checkInternetAccess: Failed with error (%s).", curl_easy_strerror(res));
-				ret = 2;
-				break;
-			}
-			if (ret > 0)
-				break;
-		}
-		curl_easy_cleanup(curl);
-	}
-	else
-	{
-		eDebug("[Enigma] checkInternetAccess: Failed to init curl.");
-		return 2;
-	}
-	if (ret == 0)
-		eDebug("[Enigma] checkInternetAccess: Success.");
-	return ret;
-}

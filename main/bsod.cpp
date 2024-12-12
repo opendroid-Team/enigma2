@@ -218,7 +218,6 @@ void bsodFatal(const char *component)
 
 		eModelInformation &modelinformation = eModelInformation::getInstance();
 
-		std::ifstream in(eEnv::resolve("${libdir}/enigma.info").c_str());
 		const std::list<std::string> enigmainfovalues {
 			"model",
 			"machinebuild",
