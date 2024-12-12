@@ -10,7 +10,7 @@ public:
 	void setText(const std::string &string);
 	void setMarkedPos(int markedPos);
 	void setFont(gFont *font);
-	gFont *getFont();
+	gFont *getFont() { return m_font; }
 
 	enum
 	{
@@ -28,16 +28,20 @@ public:
 
 	void setForegroundColor(const gRGB &col);
 	void setShadowColor(const gRGB &col);
-	void setShadowOffset(const ePoint &offset);
-	void setBorderColor(const gRGB &col);
-	void setBorderWidth(int size);
+	void setShadowOffset(const ePoint &offset) { m_shadow_offset = offset; }
+	void setBorderColor(const gRGB &col) override { setTextBorderColor(col); } // WILL BE CHANGED !!!!
+	void setBorderWidth(int width) override { setTextBorderWidth(width); } // WILL BE CHANGED !!!!
+	void setTextBorderColor(const gRGB &col);
+	void setTextBorderWidth(int width) { m_text_border_width = width; }
 	void setWrap(int wrap);
 	void setNoWrap(int nowrap) { setWrap((nowrap == 1) ? 0 : 1); } // DEPRECATED
+	void setUnderline(bool underline);
 	void clearForegroundColor();
 	int getWrap() const { return m_wrap; }
 	int getNoWrap() const { return (m_wrap == 0) ? 1 : 0; } // DEPRECATED
-	void setTextPadding(const eRect &padding) { m_padding = padding; }
-
+	void setAlphatest(int alphatest);
+	void setTabWidth(int width);
+	gRGB getForegroundColor(int styleID = 0 );
 	eSize calculateSize();
 	static eSize calculateTextSize(gFont *font, const std::string &string, eSize targetSize, bool nowrap = false);
 
@@ -47,15 +51,19 @@ protected:
 	std::string m_text;
 	int event(int event, void *data = 0, void *data2 = 0);
 	int m_pos;
-	int m_text_offset;
+	int m_text_offset = 0;
+	int m_text_shaddowoffset = 0;
 
 private:
-	int m_have_foreground_color, m_have_shadow_color;
-	gRGB m_foreground_color, m_shadow_color, m_border_color;
+	int m_have_foreground_color = 0;
+	int m_have_shadow_color = 0;
+	gRGB m_foreground_color, m_shadow_color, m_text_border_color;
 	ePoint m_shadow_offset;
-	eRect m_padding = eRect(0, 0, 0, 0);
-	int m_border_size;
-	int m_wrap;
+	int m_text_border_width = 0;
+	int m_wrap = 1;
+	bool m_blend = false;
+	bool m_underline = false;
+	int m_tab_width = -1;
 
 	enum eLabelEvent
 	{

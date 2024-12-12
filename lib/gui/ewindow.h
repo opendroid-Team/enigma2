@@ -22,8 +22,9 @@ public:
 		wfNoBorder = 1
 	};
 
-	void setBackgroundColor(const gRGB &col);
-	void setBackgroundGradient(const gRGB &startcolor, const gRGB &endcolor, int direction, int blend);
+	void setBackgroundColor(const gRGB &col) override;
+	void setBackgroundGradient(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend);
+	void setCornerRadius(int radius, uint8_t edges);
 
 	void setFlag(int flags);
 	void clearFlag(int flags);

@@ -3,14 +3,13 @@
 
 extern void dumpRegion(const gRegion &region);
 
-eWidget::eWidget(eWidget *parent): m_animation(this), m_parent(parent ? parent->child() : 0)
+eWidget::eWidget(eWidget *parent) : m_animation(this), m_parent(parent ? parent->child() : 0)
 {
 	m_gradient_set = false;
 	m_gradient_direction = 0;
 	m_vis = 0;
 	m_layer = 0;
 	m_desktop = 0;
-	m_have_background_color = 0;
 	m_z_position = 0;
 	m_lowered = 0;
 	m_client_offset = eSize(0, 0);
@@ -25,6 +24,11 @@ eWidget::eWidget(eWidget *parent): m_animation(this), m_parent(parent ? parent->
 	m_current_focus = 0;
 	m_focus_owner = 0;
 	m_notify_child_on_position_change = 1;
+	m_cornerRadius = 0;
+	m_cornerRadiusEdges = 0;
+	m_have_border_color = false;
+	m_border_width = 0;
+	m_padding = eRect(0, 0, 0, 0);
 }
 
 void eWidget::move(ePoint pos)
@@ -59,6 +63,17 @@ void eWidget::resize(eSize size)
 	eSize old_offset = m_client_offset;
 	m_client_size = size;
 	m_client_offset = eSize(0, 0);
+	if (m_cornerRadius > 0)
+	{
+		const int w = size.width();
+		const int h = size.height();
+		// eDebug("[eWidget] resize m_cornerRadius %d / w %d / h %d / w half %d / w even %d", m_cornerRadius, w, h, w / 2, w % 2);
+		if (w > -1 && w == h && (w % 2 != 0) && m_cornerRadius >= w / 2)
+		{
+			size = eSize(w - 1, h - 1);
+			m_client_size = size;
+		}
+	}
 	event(evtWillChangeSize, &size, &m_client_offset);
 	if (old_size == m_size)
 		return;
@@ -70,7 +85,8 @@ void eWidget::resize(eSize size)
 		for (ePtrList<eWidget>::iterator i(m_childs.begin()); i != m_childs.end(); ++i)
 			i->event(evtParentChangedPosition); /* position/size is the same here */
 
-	recalcClipRegionsWhenVisible();	invalidate();
+	recalcClipRegionsWhenVisible();
+	invalidate();
 }
 
 void eWidget::invalidate(const gRegion &region)
@@ -108,7 +124,8 @@ void eWidget::invalidate(const gRegion &region)
 	res.moveBy(abspos);
 //	eDebug("[eWidget] region to invalidate:");
 //	dumpRegion(res);
-	if (root && root->m_desktop){
+	if (root && root->m_desktop)
+	{
 		root->m_desktop->invalidate(res, this, target_layer);
 	}
 }
@@ -122,7 +139,7 @@ void eWidget::show()
 //	eDebug("[eWidget] show widget %p", this);
 	notifyShowHide();
 
-		/* TODO: optimize here to only recalc what's required. possibly merge with hide. */
+	/* TODO: optimize here to only recalc what's required. possibly merge with hide. */
 	eWidget *root = this;
 	ePoint abspos = position();
 	int target_layer = m_layer;
@@ -144,7 +161,8 @@ void eWidget::show()
 		abspos += root->position();
 	}
 
-	if (root && root->m_desktop){
+	if (root && root->m_desktop)
+	{
 		root->m_desktop->recalcClipRegions(root);
 
 		gRegion abs = m_visible_with_childs;
@@ -180,7 +198,8 @@ void eWidget::hide()
 	}
 	ASSERT(root->m_desktop);
 
-        if (root && root->m_desktop){
+	if (root && root->m_desktop)
+	{
 		gRegion abs = m_visible_with_childs;
 		abs.moveBy(abspos);
 
@@ -191,7 +210,8 @@ void eWidget::hide()
 
 void eWidget::raise()
 {
-	if (m_lowered <= 0) return;
+	if (m_lowered <= 0)
+		return;
 	m_lowered--;
 	setZPosition(m_z_position + 1);
 }
@@ -212,12 +232,7 @@ void eWidget::destruct()
 void eWidget::setBackgroundColor(const gRGB &col)
 {
 	m_background_color = col;
-	m_have_background_color = 1;
-}
-
-void eWidget::clearBackgroundColor()
-{
-	m_have_background_color = 0;
+	m_have_background_color = true;
 }
 
 void eWidget::setZPosition(int z)
@@ -236,7 +251,7 @@ void eWidget::setTransparent(int transp)
 		if (transp)
 			m_vis |= wVisTransparent;
 		else
-			m_vis &=~wVisTransparent;
+			m_vis &= ~wVisTransparent;
 		recalcClipRegionsWhenVisible();
 	}
 }
@@ -347,7 +362,7 @@ void eWidget::recalcClipRegionsWhenVisible()
 			eLogNoNewLine(lvlError, "Top level parent at (%d,%d)=>(%d,%d) has no desktop", t->position().x(), t->position().y(), t->size().width(), t->size().height());
 		}
 		t = t->m_parent;
-	} while(t);
+	} while (t);
 }
 
 void eWidget::parentRemoved()
@@ -361,25 +376,58 @@ int eWidget::event(int event, void *data, void *data2)
 	{
 	case evtPaint:
 	{
-		gPainter &painter = *(gPainter*)data2;
-	//		eDebug("[eWidget] evtPaint");
-//		dumpRegion(*(gRegion*)data);
+		gPainter &painter = *(gPainter *)data2;
+		// eDebug("[eWidget] evtPaint");
+		// dumpRegion(*(gRegion*)data);
 		if (!isTransparent())
 		{
+			bool drawborder = (m_have_border_color && m_border_width);
+
 			if (m_gradient_set)
-				painter.drawGradient(eRect(ePoint(0, 0), size()), m_gradient_startcolor, m_gradient_endcolor, m_gradient_direction, m_gradient_blend);
-			else if (!m_have_background_color)
+				painter.setGradient(m_gradient_colors, m_gradient_direction, m_gradient_alphablend);
+			if (m_have_background_color)
+				painter.setBackgroundColor(m_background_color);
+			const int r = getCornerRadius();
+			if (r || m_gradient_set)
 			{
-				ePtr<eWindowStyle> style;
-				if (!getStyle(style))
-					style->paintBackground(painter, ePoint(0, 0), size());
-			} 
+				if (r)
+					painter.setRadius(r, m_cornerRadiusEdges);
+				if (r && drawborder)
+				{
+					painter.setBackgroundColor(m_border_color);
+					painter.drawRectangle(eRect(ePoint(0, 0), size()));
+					if (r)
+						painter.setRadius(r, m_cornerRadiusEdges);
+					painter.setBackgroundColor(m_have_background_color ? m_background_color : gRGB(0, 0, 0));
+					painter.drawRectangle(eRect(m_border_width, m_border_width, size().width() - m_border_width * 2, size().height() - m_border_width * 2));
+					drawborder = false;
+				}
+				else
+					painter.drawRectangle(eRect(ePoint(0, 0), size()));
+			}
 			else
 			{
-				painter.setBackgroundColor(m_background_color);
-				painter.clear();
+				if (!m_have_background_color)
+				{
+					ePtr<eWindowStyle> style;
+					if (!getStyle(style))
+						style->paintBackground(painter, ePoint(0, 0), size());
+				}
+				else
+				{
+					painter.clear();
+				}
 			}
-		} 
+			if (drawborder)
+			{
+				painter.setForegroundColor(m_border_color);
+				eSize s(size());
+				painter.fill(eRect(0, 0, s.width(), m_border_width));
+				painter.fill(eRect(0, m_border_width, m_border_width, s.height() - m_border_width));
+				painter.fill(eRect(m_border_width, s.height() - m_border_width, s.width() - m_border_width, m_border_width));
+				painter.fill(eRect(s.width() - m_border_width, m_border_width, m_border_width, s.height() - m_border_width));
+			}
+		}
 		else
 		{
 			eWidget *w = this;
@@ -394,17 +442,17 @@ int eWidget::event(int event, void *data, void *data2)
 	case evtKey:
 		break;
 	case evtWillChangeSize:
-		m_size = *static_cast<eSize*>(data);
+		m_size = *static_cast<eSize *>(data);
 		break;
 	case evtChangedSize:
-		m_clip_region = gRegion(eRect(ePoint(0, 0),  m_size));
+		m_clip_region = gRegion(eRect(ePoint(0, 0), m_size));
 		break;
 	case evtParentChangedPosition:
 		for (ePtrList<eWidget>::iterator i(m_childs.begin()); i != m_childs.end(); ++i)
 			i->event(evtParentChangedPosition);
 		break;
 	case evtFocusGot:
-		m_focus_owner = (eWidget*)data;
+		m_focus_owner = (eWidget *)data;
 		break;
 	case evtFocusLost:
 		m_focus_owner = 0;
@@ -432,12 +480,37 @@ void eWidget::notifyShowHide()
 		i->notifyShowHide();
 }
 
-void eWidget::setBackgroundGradient(const gRGB &startcolor, const gRGB &endcolor, int direction, int blend)
+void eWidget::setBackgroundGradient(const gRGB &startcolor, const gRGB &midcolor, const gRGB &endcolor, uint8_t direction, bool alphablend)
 {
-	m_gradient_startcolor = startcolor;
-	m_gradient_endcolor = endcolor;
+	m_gradient_colors = {startcolor, midcolor, endcolor};
 	m_gradient_direction = direction;
-	m_gradient_blend = blend;
+	m_gradient_alphablend = alphablend;
 	m_gradient_set = true;
 	invalidate();
+}
+
+void eWidget::setCornerRadius(int radius, uint8_t edges)
+{
+	m_cornerRadius = radius;
+	m_cornerRadiusEdges = edges;
+	invalidate();
+}
+
+int eWidget::getCornerRadius()
+{
+	int r = m_cornerRadius;
+	if (r)
+	{
+		const int w = m_size.width();
+		const int h = m_size.height();
+		if (w && h)
+		{
+			int minDimension = (w < h) ? w : h;
+			if (r > minDimension / 2)
+			{
+				r = minDimension / 2;
+			}
+		}
+	}
+	return r;
 }

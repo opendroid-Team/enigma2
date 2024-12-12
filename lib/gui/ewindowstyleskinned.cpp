@@ -245,6 +245,9 @@ RESULT eWindowStyleSkinned::getFont(int what, ePtr<gFont> &fnt)
 	case fontValue:
 		fnt = m_valuefnt;
 		break;
+	case fontHeader:
+		fnt = m_headerfnt ? m_headerfnt : m_entryfnt;
+		break;
 	case fontButton:
 		fnt = new gFont("Regular", 20);
 		break;
@@ -311,6 +314,26 @@ void eWindowStyleSkinned::setColor(int what, const gRGB &col)
 		m_color[what] = col;
 }
 
+gRGB eWindowStyleSkinned::getColor(int what)
+{
+	if ((what < colMax) && (what >= 0))
+		return m_color[what];
+	return nullptr;
+}
+
+void eWindowStyleSkinned::setValue(int what, int value)
+{
+	if ((what < valueMax) && (what >= 0))
+		m_values[what] = value;
+}
+
+int eWindowStyleSkinned::getValue(int what)
+{
+	if ((what < valueMax) && (what >= 0))
+		return m_values[what];
+	return 0;
+}
+
 void eWindowStyleSkinned::setTitleOffset(const eSize &offset)
 {
 	m_title_offset = offset;
@@ -339,4 +362,9 @@ void eWindowStyleSkinned::setEntryFont(gFont *fnt)
 void eWindowStyleSkinned::setValueFont(gFont *fnt)
 {
 	m_valuefnt = fnt;
+}
+
+void eWindowStyleSkinned::setHeaderFont(gFont *fnt)
+{
+	m_headerfnt = fnt;
 }

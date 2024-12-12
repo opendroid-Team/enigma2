@@ -1,5 +1,6 @@
 #include <lib/gui/elabel.h>
 #include <lib/gdi/font.h>
+#include <lib/gui/ewindowstyleskinned.h>
 
 eLabel::eLabel(eWidget *parent, int markedPos) : eWidget(parent)
 {
@@ -12,14 +13,6 @@ eLabel::eLabel(eWidget *parent, int markedPos) : eWidget(parent)
 	/* default to topleft alignment */
 	m_valign = alignTop;
 	m_halign = alignBidi;
-
-	m_have_foreground_color = 0;
-	m_have_shadow_color = 0;
-
-	m_wrap = 1;
-	m_border_size = 0;
-
-	m_text_offset = 0;
 }
 
 int eLabel::event(int event, void *data, void *data2)
@@ -66,6 +59,12 @@ int eLabel::event(int event, void *data, void *data2)
 		else if (m_wrap == 2)
 			flags |= gPainter::RT_ELLIPSIS;
 
+		if (m_underline)
+			flags |= gPainter::RT_UNDERLINE;
+
+		if (isGradientSet() || m_blend)
+			flags |= gPainter::RT_BLEND;
+
 		int x = m_padding.x();
 		int y = m_padding.y();
 
@@ -75,7 +74,7 @@ int eLabel::event(int event, void *data, void *data2)
 		auto position = eRect(x, y, w, h);
 		/* if we don't have shadow, m_shadow_offset will be 0,0 */
 		auto shadowposition = eRect(position.x() - m_shadow_offset.x(), position.y() - m_shadow_offset.y(), position.width() - m_shadow_offset.x(), position.height() - m_shadow_offset.y());
-		painter.renderText(shadowposition, m_text, flags, m_border_color, m_border_size, m_pos, &m_text_offset);
+		painter.renderText(shadowposition, m_text, flags, m_text_border_color, m_text_border_width, m_pos, &m_text_offset, m_tab_width);
 
 		if (m_have_shadow_color)
 		{
@@ -83,8 +82,11 @@ int eLabel::event(int event, void *data, void *data2)
 				style->setStyle(painter, eWindowStyle::styleLabel);
 			else
 				painter.setForegroundColor(m_foreground_color);
+
 			painter.setBackgroundColor(m_shadow_color);
-			painter.renderText(position, m_text, flags, gRGB(), 0, m_pos);
+
+			painter.renderText(position, m_text, flags, gRGB(), 0, m_pos, &m_text_shaddowoffset, m_tab_width);
+
 		}
 
 		return 0;
@@ -120,11 +122,6 @@ void eLabel::setFont(gFont *font)
 	event(evtChangedFont);
 }
 
-gFont *eLabel::getFont()
-{
-	return m_font;
-}
-
 void eLabel::setVAlign(int align)
 {
 	m_valign = align;
@@ -147,6 +144,25 @@ void eLabel::setForegroundColor(const gRGB &col)
 	}
 }
 
+gRGB eLabel::getForegroundColor(int styleID)
+{
+	if (m_have_foreground_color)
+		return m_foreground_color;
+
+	ePtr<eWindowStyleManager> mgr;
+	eWindowStyleManager::getInstance(mgr);
+
+	if (mgr) {
+		ePtr<eWindowStyle> style;
+		mgr->getStyle(styleID, style);
+		if(style)
+		{
+			return style->getColor(eWindowStyleSkinned::colForeground);
+		}
+	}
+	return gRGB(0xFFFFFF);
+}
+
 void eLabel::setShadowColor(const gRGB &col)
 {
 	if ((!m_have_shadow_color) || (m_shadow_color != col))
@@ -157,23 +173,13 @@ void eLabel::setShadowColor(const gRGB &col)
 	}
 }
 
-void eLabel::setShadowOffset(const ePoint &offset)
+void eLabel::setTextBorderColor(const gRGB &col)
 {
-	m_shadow_offset = offset;
-}
-
-void eLabel::setBorderColor(const gRGB &col)
-{
-	if (m_border_color != col)
+	if (m_text_border_color != col)
 	{
-		m_border_color = col;
+		m_text_border_color = col;
 		invalidate();
 	}
-}
-
-void eLabel::setBorderWidth(int size)
-{
-	m_border_size = size;
 }
 
 void eLabel::setWrap(int wrap)
@@ -185,12 +191,46 @@ void eLabel::setWrap(int wrap)
 	}
 }
 
+void eLabel::setUnderline(bool underline)
+{
+	if (m_underline != underline)
+	{
+		m_underline = underline;
+		invalidate();
+	}
+}
+
+void eLabel::setAlphatest(int alphatest)
+{
+	bool blend = (alphatest > 0); // blend if BT_ALPHATEST or BT_ALPHABLEND
+	if (m_blend != blend)
+	{
+		m_blend = blend;
+		invalidate();
+	}
+}
+
 void eLabel::clearForegroundColor()
 {
 	if (m_have_foreground_color)
 	{
 		m_have_foreground_color = 0;
 		invalidate();
+	}
+}
+
+void eLabel::setTabWidth(int width)
+{ 
+	if (width == -1)
+	{
+		eTextPara para(eRect(0, 0, 1000, 1000));
+		para.setFont(m_font);
+		para.renderString("W", 0);
+		m_tab_width = para.getBoundBox().size().width() * 8;
+	}
+	else
+	{
+		m_tab_width = width;
 	}
 }
 
