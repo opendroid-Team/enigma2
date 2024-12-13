@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-10 00:15+0200\n"
+"POT-Creation-Date: 2024-12-13 12:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7552,9 +7552,6 @@ msgid "Hungarian"
 msgstr ""
 
 msgid "Hungary"
-msgstr ""
-
-msgid "I55SE/H7/H9/H9SE/H9COMBO/H9COMBOSE/H10/H11 new Model"
 msgstr ""
 
 msgid "IMDb Details"
@@ -17173,9 +17170,6 @@ msgstr ""
 msgid "Zap+Record next"
 msgstr ""
 
-msgid "Zgemma H.S/H.2S/H.2H/H5/H7 old Model"
-msgstr ""
-
 msgid "Zhuang / Chuang"
 msgstr ""
 
@@ -18801,9 +18795,6 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-msgid "Installing software..."
-msgstr ""
-
 msgid "Job overview"
 msgstr ""
 
@@ -19136,9 +19127,6 @@ msgstr ""
 msgid "Your %s %s is not connected to the internet"
 msgstr ""
 
-msgid "No Cover"
-msgstr ""
-
 msgid "C"
 msgstr ""
 
@@ -19146,6 +19134,9 @@ msgid "D"
 msgstr ""
 
 msgid "TUNER:"
+msgstr ""
+
+msgid "MediaStream"
 msgstr ""
 
 msgid "Advanced Restore"
@@ -19158,9 +19149,6 @@ msgid "Audio Settings"
 msgstr ""
 
 msgid "Auto Language Settings"
-msgstr ""
-
-msgid "AutoCam Settings"
 msgstr ""
 
 msgid "Automatic scan"
@@ -19182,9 +19170,6 @@ msgid "Button setup"
 msgstr ""
 
 msgid "CIFS/Samba Settings"
-msgstr ""
-
-msgid "Cardserver Settings"
 msgstr ""
 
 msgid "Channel Selection Settings"
@@ -19235,7 +19220,7 @@ msgstr ""
 msgid "Extended GUI"
 msgstr ""
 
-msgid "Fallback configuration"
+msgid "Fallback Configuration"
 msgstr ""
 
 msgid "Filesystem Check"
@@ -19277,10 +19262,16 @@ msgstr ""
 msgid "Install Local Extension"
 msgstr ""
 
+msgid "Keyboard Settings"
+msgstr ""
+
 msgid "Load EPG"
 msgstr ""
 
 msgid "Load/Save/Delete"
+msgstr ""
+
+msgid "Locale / Language Settings"
 msgstr ""
 
 msgid "Logs Settings"
@@ -19298,9 +19289,6 @@ msgstr ""
 msgid "MultiEPG Settings"
 msgstr ""
 
-msgid "OSD 3D Setup"
-msgstr ""
-
 msgid "OSD Position"
 msgstr ""
 
@@ -19308,6 +19296,9 @@ msgid "OSD Settings"
 msgstr ""
 
 msgid "Online update of your %s %s software."
+msgstr ""
+
+msgid "OscamSmartcard Settings"
 msgstr ""
 
 msgid "Package Manager"
@@ -19433,6 +19424,9 @@ msgstr ""
 msgid "VCR scart"
 msgstr ""
 
+msgid "VFD Skin Settings"
+msgstr ""
+
 msgid "VOD settings"
 msgstr ""
 
@@ -19457,6 +19451,9 @@ msgstr ""
 msgid "by hmmmdada"
 msgstr ""
 
+msgid "-"
+msgstr ""
+
 msgid "E "
 msgstr ""
 
@@ -19472,22 +19469,13 @@ msgstr ""
 msgid "I"
 msgstr ""
 
-msgid "IMDB Search"
-msgstr ""
-
 msgid "J"
-msgstr ""
-
-msgid "Quick EPG"
-msgstr ""
-
-msgid "-"
 msgstr ""
 
 msgid "EtPortal"
 msgstr ""
 
-msgid "1,1"
+msgid "  REC  "
 msgstr ""
 
 msgid "Configure interface"
@@ -19542,6 +19530,9 @@ msgid ""
 "The next input port will be automatically probed in 10 seconds."
 msgstr ""
 
+msgid "Quick EPG"
+msgstr ""
+
 msgid "Enigmalight"
 msgstr ""
 
@@ -19576,6 +19567,18 @@ msgid "2nd InfoBar timeout"
 msgstr ""
 
 msgid "AC3 plus transcoding"
+msgstr ""
+
+msgid "AI-Powered translation color"
+msgstr ""
+
+msgid "AI-Powered translation enabled"
+msgstr ""
+
+msgid "AI-Powered translation language"
+msgstr ""
+
+msgid "AI-Powered translation subscription code"
 msgstr ""
 
 msgid "Action at end of media"
@@ -19674,7 +19677,16 @@ msgstr ""
 msgid "Allows you to show/hide OScam/CCcam in the Extension Menu screen (BLUE button)."
 msgstr ""
 
-msgid "Alternative numbering mode"
+msgid "Also import at reboot/restart enigma2"
+msgstr ""
+
+msgid "Also import from the extension menu"
+msgstr ""
+
+msgid "Also import when box is leaving standby"
+msgstr ""
+
+msgid "Alternative URLs for DVB-T/C or ATSC"
 msgstr ""
 
 msgid "Alternative radio mode"
@@ -19713,10 +19725,7 @@ msgstr ""
 msgid "Audio language selection 4"
 msgstr ""
 
-msgid "Audio volume step size"
-msgstr ""
-
-msgid "Audio volume step size fast mode"
+msgid "AutoCam Settings"
 msgstr ""
 
 msgid "Automatically put the TV in standby whenever the receiver goes into standby or deep standby."
@@ -19788,7 +19797,16 @@ msgstr ""
 msgid "CHANNEL +/-"
 msgstr ""
 
+msgid "CI Boot Delay"
+msgstr ""
+
+msgid "CI+ Helper*"
+msgstr ""
+
 msgid "Can be used for different fps between external subtitles and video."
+msgstr ""
+
+msgid "Cardserver Settings"
 msgstr ""
 
 msgid "Change bouquets in quickzap"
@@ -19798,6 +19816,12 @@ msgid "Channel +/- button mode"
 msgstr ""
 
 msgid "Channel / Service"
+msgstr ""
+
+msgid "Channel Selection List"
+msgstr ""
+
+msgid "Channel Selection Screen"
 msgstr ""
 
 msgid "Channel buttons"
@@ -19860,6 +19884,9 @@ msgstr ""
 msgid "Choose the display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes and 'ss' is the seconds.  ('HH' and 'hh' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
 msgstr ""
 
+msgid "Choose the fallback font."
+msgstr ""
+
 msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is the date and 'M' / 'MM' is the month in digits.  ('DD' and 'MM' have leading zeros for single digit values.) The screen display will be based on your choice but can be influenced by the skin."
 msgstr ""
 
@@ -19876,6 +19903,12 @@ msgid "Choose the name of the file that holds the EPG data when the %s %s is shu
 msgstr ""
 
 msgid "Choose the option to correct invalid EPG data."
+msgstr ""
+
+msgid "Choose the skin to be used for the GUI interface. Press 'GREEN' to activate the skin."
+msgstr ""
+
+msgid "Choose the skin to be used for the LCD/front panel interface. Press 'GREEN' to activate the skin."
 msgstr ""
 
 msgid "Choose the style/order in which items are displayed in help windows."
@@ -19941,6 +19974,9 @@ msgstr ""
 msgid "Close PiP on exit"
 msgstr ""
 
+msgid "Common Settings"
+msgstr ""
+
 msgid "Composition of the recording filenames"
 msgstr ""
 
@@ -19974,6 +20010,9 @@ msgstr ""
 msgid "Configure if and how wide the service name column will be shown in the channel selection list."
 msgstr ""
 
+msgid "Configure if crypto icons will be shown in the channel selection list."
+msgstr ""
+
 msgid "Configure if epg.dat should be saved at all."
 msgstr ""
 
@@ -19983,10 +20022,16 @@ msgstr ""
 msgid "Configure if service picons will be shown in the service list."
 msgstr ""
 
-msgid "Configure if the subtitle should switch between normal, italic, bold and bold italic"
+msgid "Configure if service type icons will be shown."
+msgstr ""
+
+msgid "Configure if the subtitle should switch between normal, italic, bold and bold italic."
 msgstr ""
 
 msgid "Configure on which devices the background delete option should be used."
+msgstr ""
+
+msgid "Configure the AI-Powered translation language."
 msgstr ""
 
 msgid "Configure the DiSEqC mode for this LNB."
@@ -20028,6 +20073,9 @@ msgstr ""
 msgid "Configure the brightness level of the front panel display for standby."
 msgstr ""
 
+msgid "Configure the color of the AI-Powered translations."
+msgstr ""
+
 msgid "Configure the color of the external subtitles, alternative (normal in white, italic in yellow, bold in cyan, underscore in green), white or yellow."
 msgstr ""
 
@@ -20061,9 +20109,6 @@ msgstr ""
 msgid "Configure the end coordinate in y of the teletext display area."
 msgstr ""
 
-msgid "Configure the fast mode audio volume step size (limit 1-10). Activated when volume key permanent press or press fast in a row."
-msgstr ""
-
 msgid "Configure the first audio language (highest priority)."
 msgstr ""
 
@@ -20095,9 +20140,6 @@ msgid "Configure the function of the < and > buttons."
 msgstr ""
 
 msgid "Configure the gateway."
-msgstr ""
-
-msgid "Configure the general audio volume step size (limit 1-10)."
 msgstr ""
 
 msgid "Configure the hard disk drive to go to standby after the specified idle time when the box is in standby."
@@ -20292,6 +20334,9 @@ msgstr ""
 msgid "Custom skip time for '7'/'9' buttons"
 msgstr ""
 
+msgid "Customize OpenWebIF settings for fallback tuner"
+msgstr ""
+
 msgid "DNS Settings"
 msgstr ""
 
@@ -20361,7 +20406,19 @@ msgstr ""
 msgid "Delivery system workaround"
 msgstr ""
 
-msgid "Detail of GStreamer log"
+msgid "Destination of fallback remote receiver"
+msgstr ""
+
+msgid "Destination of fallback remote receiver for ATSC"
+msgstr ""
+
+msgid "Destination of fallback remote receiver for DVB-C"
+msgstr ""
+
+msgid "Destination of fallback remote receiver for DVB-T"
+msgstr ""
+
+msgid "Detail of GStreamer log."
 msgstr ""
 
 msgid "DiSEqC"
@@ -20376,7 +20433,7 @@ msgstr ""
 msgid "Disable background scanning"
 msgstr ""
 
-msgid "Disable the HDD Process on VFD"
+msgid "Disable the HDD Process on VFD."
 msgstr ""
 
 msgid "Display message before playing next movie"
@@ -20433,6 +20490,9 @@ msgstr ""
 msgid "Edit the username."
 msgstr ""
 
+msgid "Enable AI-Powered translation for all teletext and DVB subtitles."
+msgstr ""
+
 msgid "Enable Dolby Digital / Dolby AC-3 offsets"
 msgstr ""
 
@@ -20457,7 +20517,7 @@ msgstr ""
 msgid "Enable OpenTV EPG"
 msgstr ""
 
-msgid "Enable Up / Down buttons for the 'all up / down' function? (at the beginning / end of the column)"
+msgid "Enable Up/Down buttons for the 'all up/down' functions (at the beginning/end of the column)?"
 msgstr ""
 
 msgid "Enable VOD at channel list"
@@ -20472,7 +20532,10 @@ msgstr ""
 msgid "Enable and set the duration of the second InfoBar (press 'OK' twice) that may include additional information."
 msgstr ""
 
-msgid "Enable blinking rec symbol on the LCD Display"
+msgid "Enable blinking rec symbol on the LCD Display in Standby."
+msgstr ""
+
+msgid "Enable blinking rec symbol on the LCD Display."
 msgstr ""
 
 msgid "Enable chapter support for video files"
@@ -20503,6 +20566,9 @@ msgid "Enable debug log *"
 msgstr ""
 
 msgid "Enable freesat EPG"
+msgstr ""
+
+msgid "Enable import timer from fallback tuner"
 msgstr ""
 
 msgid "Enable multiple bouquets"
@@ -20571,16 +20637,10 @@ msgstr ""
 msgid "Enable to display setup entries alphabetically."
 msgstr ""
 
-msgid "Enable to display the Extension menu entries alphabetically."
-msgstr ""
-
 msgid "Enable to display the current value of the slider at end of the slider bar."
 msgstr ""
 
-msgid "Enable to show the 'Restart Network' entry in the Extensions menu."
-msgstr ""
-
-msgid "Enable unlinked bouquets"
+msgid "Enable to show the 'Restart Network' entry in the Extension Menu screen."
 msgstr ""
 
 msgid "Enables a feature so that the receiver can decrypt streams (if the ECM data is included in the stream and a valid card is available)."
@@ -20598,7 +20658,7 @@ msgstr ""
 msgid "Enter a name for this timer."
 msgstr ""
 
-msgid "Enter the FTP password of the host receiver (required for any server running OpenDroid 7.3 or greater)."
+msgid "Enter the FTP password of the host receiver (required for any server running openDroid 7.5 or greater)."
 msgstr ""
 
 msgid "Enter the FTP port of the host receiver (normally '21')."
@@ -20617,6 +20677,9 @@ msgid "Enter the streaming port of the host receiver (normally '8001')."
 msgstr ""
 
 msgid "Enter your personal feed URL to allow you to select packages from your personal feed."
+msgstr ""
+
+msgid "Enter your subscription code, the unified code for trial is 15."
 msgstr ""
 
 msgid "Even if TV has another input active?"
@@ -20652,6 +20715,30 @@ msgstr ""
 msgid "Fade the InfoBar on hide"
 msgstr ""
 
+msgid "Fallback Font *"
+msgstr ""
+
+msgid "Fallback Timer"
+msgstr ""
+
+msgid "Fallback remote receiver"
+msgstr ""
+
+msgid "Fallback remote receiver IP"
+msgstr ""
+
+msgid "Fallback remote receiver Port"
+msgstr ""
+
+msgid "Fallback remote receiver for ATSC"
+msgstr ""
+
+msgid "Fallback remote receiver for DVB-C"
+msgstr ""
+
+msgid "Fallback remote receiver for DVB-T"
+msgstr ""
+
 msgid "Fast forward speeds"
 msgstr ""
 
@@ -20671,9 +20758,6 @@ msgid "Force LNB Tuner Power settings."
 msgstr ""
 
 msgid "Force LNB Tuner ToneBurst settings."
-msgstr ""
-
-msgid "Force OPKG clean mode"
 msgstr ""
 
 msgid "Force ToneBurst"
@@ -20698,6 +20782,9 @@ msgid "GStreamer debug log category *"
 msgstr ""
 
 msgid "GStreamer debug log level *"
+msgstr ""
+
+msgid "GUI Skin *"
 msgstr ""
 
 msgid "General AC3 delay"
@@ -20757,10 +20844,10 @@ msgstr ""
 msgid "Hide known extensions"
 msgstr ""
 
-msgid "Hide mute notification"
+msgid "Hide number markers"
 msgstr ""
 
-msgid "Hide number markers"
+msgid "Hide softcam servername"
 msgstr ""
 
 msgid "History buttons mode"
@@ -20814,6 +20901,9 @@ msgstr ""
 msgid "IP address of the Stream Relay server used to descramble services that can only be decrypted via Stream Relay."
 msgstr ""
 
+msgid "IP of fallback remote receiver"
+msgstr ""
+
 msgid "If 'never', will force restart despite that after 100 crashes."
 msgstr ""
 
@@ -20833,9 +20923,6 @@ msgid "If enabled, using a time window to detect a wake up from deep standby by 
 msgstr ""
 
 msgid "If logs are using the set maximum space used the eldest will be deleted."
-msgstr ""
-
-msgid "If muted, hide mute icon or mute information after few seconds."
 msgstr ""
 
 msgid "If set to 'Yes' the same commands will be sent to the TV for deep standby events as are sent during regular standby events."
@@ -20868,6 +20955,21 @@ msgstr ""
 msgid "Ignore unexpectedly wake up and stay in standby"
 msgstr ""
 
+msgid "Import channels and/or EPG from remote receiver URL also when the receiver is getting out of standby"
+msgstr ""
+
+msgid "Import channels and/or EPG from remote receiver URL when receiver is booted"
+msgstr ""
+
+msgid "Import channels and/or EPG from remote receiver URL when receiver or enigma2 is restarted"
+msgstr ""
+
+msgid "Import from remote receiver URL"
+msgstr ""
+
+msgid "Import remote receiver URL"
+msgstr ""
+
 msgid "In addition to the check at an event start, a repetitive check can be used, so that the conditions 'buffer limit in hours' or 'check free space' are detected earlier."
 msgstr ""
 
@@ -20875,9 +20977,6 @@ msgid "In expert mode, configure which tuners will be preferred for recordings, 
 msgstr ""
 
 msgid "In most cases this should be set to No. Only enable if you have a very specific need."
-msgstr ""
-
-msgid "In the Standby Record on the LCD Display"
 msgstr ""
 
 msgid "Include DVB scan data"
@@ -20964,10 +21063,10 @@ msgstr ""
 msgid "Keeps MovieList open whilst playing audio files."
 msgstr ""
 
-msgid "Keyboard Settings"
+msgid "LCD scroll speed"
 msgstr ""
 
-msgid "LCD scroll speed"
+msgid "LCD/Front panel *"
 msgstr ""
 
 msgid "LED Brightness"
@@ -21039,10 +21138,16 @@ msgstr ""
 msgid "Long press emulation with button"
 msgstr ""
 
-msgid "Lower Framerate save CPU Time"
+msgid "Long press volume steps"
+msgstr ""
+
+msgid "Lower Framerate saves CPU Time."
 msgstr ""
 
 msgid "Lower limit (in kilobits per seconds)"
+msgstr ""
+
+msgid "Make it possible to manually initiate the channels import and/or EPG via the extension menu"
 msgstr ""
 
 msgid "Margin after recording"
@@ -21147,13 +21252,16 @@ msgstr ""
 msgid "Option to disable picons on the Infobar"
 msgstr ""
 
-msgid "Option to enable the Hardware Standby Timer"
+msgid "Option to enable the Hardware Standby Timer."
 msgstr ""
 
 msgid "Panic channel"
 msgstr ""
 
 msgid "Password (httpuser)"
+msgstr ""
+
+msgid "Picon install location"
 msgstr ""
 
 msgid "Picon width"
@@ -21175,6 +21283,9 @@ msgid "Plugin Browser layout"
 msgstr ""
 
 msgid "Port number for the Stream Relay server used to descramble services that can only be decrypted via Stream Relay."
+msgstr ""
+
+msgid "Port of fallback remote receiver"
 msgstr ""
 
 msgid "Position of finished Timers in Timerlist"
@@ -21357,7 +21468,7 @@ msgstr ""
 msgid "Repeat the standby commands"
 msgstr ""
 
-msgid "Replace `- ` in dialogs with colored text per speaker (like teletext subtitles for the hearing impaired)"
+msgid "Replace `- ` in dialogs with colored text per speaker (like teletext subtitles for the hearing impaired)."
 msgstr ""
 
 msgid "Require authentication for http streams"
@@ -21411,7 +21522,7 @@ msgstr ""
 msgid "Seekbar sensibility"
 msgstr ""
 
-msgid "Select 'Enable' to force a package clean before a package update. This is helpful to make sure the package list is up-to-date and can avoid/solve issues during the update. Only enable this when you can not update on-line."
+msgid "Select 'Enable' to start the CI+ helper."
 msgstr ""
 
 msgid "Select 'No' to make time shift use a single buffer file. Use 'Time shift checking for older files [in minutes]' and 'Time shift checking for free space?' to control the size of the buffer file."
@@ -21462,10 +21573,16 @@ msgstr ""
 msgid "Select 'Yes' to enable preview of channels while in the EPG list. Press 'OK' to preview the currently selected channel. Press 'OK' again to exit the EPG and zap to the selected channel. Press 'EXIT' to exit the EPG and return to the previously selected channel."
 msgstr ""
 
+msgid "Select 'Yes' to enable the loading of unlinked user bouquets. That is, user bouquets that are not included in the bouquets.tv or bouquets.radio files will be loaded. This allows you to, for example, create bouquets that do not conflict with, or get replaced by, bouquets that came from settings packages."
+msgstr ""
+
 msgid "Select 'Yes' to enable use of the LEFT/RIGHT buttons to move PageUp/PageDown when the LEFT/RIGHT buttons are otherwise undefined. This provides legacy navigation for users who prefer it."
 msgstr ""
 
 msgid "Select 'Yes' to hide channels without EPG data."
+msgstr ""
+
+msgid "Select 'Yes' to hide the server name and IP address of the server."
 msgstr ""
 
 msgid "Select 'Yes' to remove all main settings configuration data. Selecting this option will set all Enigma2 settings back to their default values. This will also cause Enigma2 to run the Welcome Wizard on restart."
@@ -21513,6 +21630,9 @@ msgstr ""
 msgid "Select 'Yes' to show OpenViX packages in the Download Plugins screen."
 msgstr ""
 
+msgid "Select 'Yes' to show Softcam packages in the Download Plugins screen."
+msgstr ""
+
 msgid "Select 'Yes' to show driver packages in the Download Plugins screen."
 msgstr ""
 
@@ -21543,10 +21663,10 @@ msgstr ""
 msgid "Select 'Yes' to show skin packages in the Download Plugins screen."
 msgstr ""
 
-msgid "Select 'Yes' to show softcam packages in the Download Plugins screen."
+msgid "Select 'Yes' to show source 'src' packages in the Download Plugins screen."
 msgstr ""
 
-msgid "Select 'Yes' to show source 'src' packages in the Download Plugins screen."
+msgid "Select 'Yes' to show subscription packages in the Download Plugins screen."
 msgstr ""
 
 msgid "Select 'Yes' to show system plugin packages in the Download Plugins screen."
@@ -21562,6 +21682,9 @@ msgid "Select 'Yes' to show the channel list after switching between Radio and T
 msgstr ""
 
 msgid "Select 'Yes' to show web link packages in the Download Plugins screen."
+msgstr ""
+
+msgid "Select 'Yes' to use alternate GitHub feed IP addresses. This can be helpful if you use a VPN and the normal feeds can't be accessed via the published DNS names."
 msgstr ""
 
 msgid "Select 'Yes, to display the InfoBar when fast forwarding or rewinding during media playback."
@@ -21585,7 +21708,7 @@ msgstr ""
 msgid "Select how long to display the button error pop up. Button input is still permitted while the pop up is displayed."
 msgstr ""
 
-msgid "Select how long, in seconds, that the volume display is shown before it automatically hides."
+msgid "Select how long, in seconds, that the volume and mute displays are shown before they automatically hide."
 msgstr ""
 
 msgid "Select how often this timer is to be repeated."
@@ -21681,19 +21804,40 @@ msgstr ""
 msgid "Select the display options for each menu entry item. If menu numbers are available then the number buttons can be used to select the numbered menu entries directly."
 msgstr ""
 
+msgid "Select the display sequence of previously visited services."
+msgstr ""
+
 msgid "Select the function to be assigned to this button."
 msgstr ""
 
 msgid "Select the initial position of the timeline marker. The marker is the vertical line drawn on the EPG that shows the current time. The larger the value the more the marker will move to the right showing more history and less of upcoming events."
 msgstr ""
 
+msgid "Select the layout of the information in the services list, from the options provided by the skin, displayed within the ChannelSelection screen."
+msgstr ""
+
 msgid "Select the layout of the installed plugins in the Plugin Browser screen. NOTE: The change is not immediate but will be seen when Plugin Browser is restarted!"
+msgstr ""
+
+msgid "Select the location where the picon files will be installed."
 msgstr ""
 
 msgid "Select the method of restoring screen resolution and framebuffer when leaving teletext."
 msgstr ""
 
 msgid "Select the network data rate below which the timer should activate as specified. Traffic above this rate with deactivate the timer."
+msgstr ""
+
+msgid "Select the screen layout, from the options provided by the skin, to be used for the ChannelSelection screen."
+msgstr ""
+
+msgid "Select the size of the volume step when the VOLUME buttons are pressed."
+msgstr ""
+
+msgid "Select the size of the volume steps when the VOLUME buttons are held down."
+msgstr ""
+
+msgid "Select the sort order of the Extension Menu entries."
 msgstr ""
 
 msgid "Select the sort order of the Plugin Browser menu entries. User defined also allows the menu entries to be hidden."
@@ -21726,6 +21870,9 @@ msgstr ""
 msgid "Select the time zone within the area or region."
 msgstr ""
 
+msgid "Select the timer from the fallback tuner by default"
+msgstr ""
+
 msgid "Select the type of keyboard connected to the %s %s."
 msgstr ""
 
@@ -21736,9 +21883,6 @@ msgid "Select the type of shutdown desired when the SleepTimer activates."
 msgstr ""
 
 msgid "Select the type of this timer."
-msgstr ""
-
-msgid "Select to use logarithmic step size with more steps at the lower volume levels."
 msgstr ""
 
 msgid "Select what action to take when reaching the end of a media file during playback."
@@ -21810,7 +21954,13 @@ msgstr ""
 msgid "Services may be grouped in bouquets. When enabled, you can use more than one bouquet."
 msgstr ""
 
+msgid "Set CI Boot delay."
+msgstr ""
+
 msgid "Set CI assignment for detection of available services."
+msgstr ""
+
+msgid "Set DVB CI delay."
 msgstr ""
 
 msgid "Set Framerate for MiniTV"
@@ -21819,7 +21969,13 @@ msgstr ""
 msgid "Set action for 'Info' key"
 msgstr ""
 
+msgid "Set alternative fallback tuners for DVB-T/C or ATSC"
+msgstr ""
+
 msgid "Set fps for external subtitles"
+msgstr ""
+
+msgid "Set the User ID of the OpenWebif from your fallback tuner"
 msgstr ""
 
 msgid "Set the aspect ratio of the service picons."
@@ -21846,7 +22002,13 @@ msgstr ""
 msgid "Set the jump-size of the seekbar."
 msgstr ""
 
-msgid "Set the position of the recording icons"
+msgid "Set the password of the OpenWebif from your fallback tuner"
+msgstr ""
+
+msgid "Set the port of the OpenWebif from your fallback tuner"
+msgstr ""
+
+msgid "Set the position of the recording icons."
 msgstr ""
 
 msgid "Set the repeat interval of the schedule."
@@ -21933,7 +22095,7 @@ msgstr ""
 msgid "Show HDD progress"
 msgstr ""
 
-msgid "Show HDMI Output Resolution"
+msgid "Show HDMI Output Resolution."
 msgstr ""
 
 msgid "Show HDMI-Output Res"
@@ -22012,6 +22174,9 @@ msgid "Show Softcam packages"
 msgstr ""
 
 msgid "Show Source packages"
+msgstr ""
+
+msgid "Show Subscription packages"
 msgstr ""
 
 msgid "Show System Plugin packages"
@@ -22107,6 +22272,18 @@ msgstr ""
 msgid "Show movie lengths in movie list"
 msgstr ""
 
+msgid "Show notification when import channels and/or EPG from remote receiver URL did not complete"
+msgstr ""
+
+msgid "Show notification when import channels and/or EPG from remote receiver URL is completed"
+msgstr ""
+
+msgid "Show notification when import channels was not successful"
+msgstr ""
+
+msgid "Show notification when import channels was successful"
+msgstr ""
+
 msgid "Show or hide the extended description, (skin dependent)."
 msgstr ""
 
@@ -22120,6 +22297,12 @@ msgid "Show persistent InfoBar while paused"
 msgstr ""
 
 msgid "Show picon background color"
+msgstr ""
+
+msgid "Show picons in quickzap"
+msgstr ""
+
+msgid "Show picons in service list"
 msgstr ""
 
 msgid "Show positioner movement"
@@ -22147,6 +22330,9 @@ msgid "Show setup default value"
 msgstr ""
 
 msgid "Show status messages on switch to live TV"
+msgstr ""
+
+msgid "Show subservices *"
 msgstr ""
 
 msgid "Show the EIT Now/Next data in the InfoBar."
@@ -22212,7 +22398,7 @@ msgstr ""
 msgid "Some TVs can't switch to the correct input if another HDMI port is active. This setting sets the TV to standby before the switch. (If the TV does not turn back on it may require a slower transmission interval or the repetition of the wake-up command.)"
 msgstr ""
 
-msgid "Sort Extensions menu"
+msgid "Sort Extension Menu"
 msgstr ""
 
 msgid "Sort Plugin Browser"
@@ -22317,7 +22503,7 @@ msgstr ""
 msgid "Swap SNR in '%' with SNR in 'db'"
 msgstr ""
 
-msgid "Switch BLUE short (QuickMenu) with BLUE long (Extensions)"
+msgid "Switch BLUE short (BluePanel) with BLUE long (Extension Menu)."
 msgstr ""
 
 msgid "Switch TV to correct input"
@@ -22425,7 +22611,7 @@ msgstr ""
 msgid "This Option allows you to switch Audio to BT Speakers."
 msgstr ""
 
-msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
+msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size."
 msgstr ""
 
 msgid "This allows you change the number of rows shown."
@@ -22443,13 +22629,7 @@ msgstr ""
 msgid "This offset will only be used if the channel does not have its own volume offset."
 msgstr ""
 
-msgid "This option allows you choose how to display elapsed time as + or -"
-msgstr ""
-
 msgid "This option allows you choose how to display remaining time, or elapsed time, or both."
-msgstr ""
-
-msgid "This option allows you choose how to display the Time or nothing in Standby"
 msgstr ""
 
 msgid "This option allows you choose how to display the remaining/elapsed time for live tv."
@@ -22458,7 +22638,13 @@ msgstr ""
 msgid "This option allows you choose how to display the remaining/elapsed time for media playback."
 msgstr ""
 
+msgid "This option allows you choose if the display shows the time or nothing in Standby."
+msgstr ""
+
 msgid "This option allows you choose the background color of transparent picons."
+msgstr ""
+
+msgid "This option allows you choose the option for Subservice indicator or selection."
 msgstr ""
 
 msgid "This option allows you set the layout view (Text or Graphics)."
@@ -22471,6 +22657,9 @@ msgid "This option allows you to change the virtual loudspeaker position."
 msgstr ""
 
 msgid "This option allows you to choose from the two channel lists that are available."
+msgstr ""
+
+msgid "This option allows you to choose how to display elapsed time, as + or -."
 msgstr ""
 
 msgid "This option allows you to choose what the first button press jumps to in channel list screen, (so pressing '2' jumps to 'A' or '2' first), when 'Quick Actions' preset actions are performed. "
@@ -22503,7 +22692,7 @@ msgstr ""
 msgid "This sets the prefix for each line in the debug log. The 'Boot time' is the number of seconds since your %s %s was last booted."
 msgstr ""
 
-msgid "This will go fast forward/backward with time frames of x secs"
+msgid "This will go fast forward/backward with time frames of x secs."
 msgstr ""
 
 msgid "Time delay for the repeated transmission"
@@ -22590,7 +22779,7 @@ msgstr ""
 msgid "Try to prevent reboots for software errors and maintain of the availability for the receiver."
 msgstr ""
 
-msgid "Try to send repeated commands if not all commands are executed. (e.g. TV wake up, but not switched to correct input.)"
+msgid "Try to send repeated commands if not all commands were executed (e.g. TV wake up, but not switched to correct input)."
 msgstr ""
 
 msgid "Tuner slot"
@@ -22617,13 +22806,13 @@ msgstr ""
 msgid "Up/Down button mode"
 msgstr ""
 
-msgid "Up/Down buttons also for 'all up/down'"
+msgid "Up/Down buttons also for 'all up/down'."
 msgstr ""
 
 msgid "Update delay for Events in List"
 msgstr ""
 
-msgid "Update delay for Events in List. Scrolling in List is faster with higher delay, especially on big Lists !"
+msgid "Update delay for events in list. Scrolling in list is faster with higher delay, especially on big lists!"
 msgstr ""
 
 msgid "Use 'Trash' in movie list"
@@ -22665,19 +22854,19 @@ msgstr ""
 msgid "Use Zap timer end time"
 msgstr ""
 
+msgid "Use alternate GitHub DNS"
+msgstr ""
+
 msgid "Use an alternative smaller screen."
 msgstr ""
 
 msgid "Use extended List"
 msgstr ""
 
-msgid "Use for load only x days in EPG"
+msgid "Use for load only x days in EPG."
 msgstr ""
 
 msgid "Use key map *"
-msgstr ""
-
-msgid "Use logarithmic steps"
 msgstr ""
 
 msgid "Use original DVB subtitle position"
@@ -22710,6 +22899,9 @@ msgstr ""
 msgid "User Feed URL"
 msgstr ""
 
+msgid "User ID"
+msgstr ""
+
 msgid "User defined delay when you press another button to zap to the channel."
 msgstr ""
 
@@ -22737,10 +22929,13 @@ msgstr ""
 msgid "Volume Adjust Settings"
 msgstr ""
 
-msgid "Volume display timer"
+msgid "Volume keys on the receiver remote will control the TV volume. If this feature is not supported the volume keys have no function!"
 msgstr ""
 
-msgid "Volume keys on the receiver remote will control the TV volume. If this feature is not supported the volume keys have no function!"
+msgid "Volume steps"
+msgstr ""
+
+msgid "Volume/Mute display timer"
 msgstr ""
 
 msgid "WMA Pro"
@@ -22779,13 +22974,19 @@ msgstr ""
 msgid "When enabled the receiver will automatically wake from standby when the TV is turned on."
 msgstr ""
 
+msgid "When enabled the timer from the fallback tuner is imported"
+msgstr ""
+
+msgid "When enabled the timer from the fallback tuner is the default timer"
+msgstr ""
+
+msgid "When enabled you can customize the OpenWebIf settings for the fallback tuner"
+msgstr ""
+
 msgid "When enabled, AIT data will be included in http streams. This allows a client receiver to use HbbTV."
 msgstr ""
 
 msgid "When enabled, EIT data will be included in http streams. This allows a client receiver to show EPG."
-msgstr ""
-
-msgid "When enabled, Enigma2 will load unlinked bouquets. This means that bouquets that are available, but not included in the bouquets.tv or bouquets.radio files, will still be loaded. This allows you for example to keep your own user bouquet while installed settings are upgraded"
 msgstr ""
 
 msgid "When enabled, SDT, BAT data will be included in http streams."
@@ -22819,9 +23020,6 @@ msgid "When enabled, always unscramble receiving http streams. This takes up mor
 msgstr ""
 
 msgid "When enabled, authentication is required to watch http streams."
-msgstr ""
-
-msgid "When enabled, channel numbering will start at '1' for each bouquet."
 msgstr ""
 
 msgid "When enabled, continue to the next bouquet when the last channel of the current bouquet is reached while changing channels."
@@ -22965,10 +23163,10 @@ msgstr ""
 msgid "Yellow DVB subtitles"
 msgstr ""
 
-msgid "You can Display MiniTV with or without OSD Menu"
+msgid "You can Display MiniTV with or without OSD Menu."
 msgstr ""
 
-msgid "You can Display PiP with or without OSD Menu"
+msgid "You can Display PiP with or without OSD Menu."
 msgstr ""
 
 msgid "You can have the list sorted by time or alphanumerical."
@@ -22977,13 +23175,10 @@ msgstr ""
 msgid "You can skip this function and turn off the TV when you wake the receiver from standby and immediately switch back to standby."
 msgstr ""
 
+msgid "Zap history sequence"
+msgstr ""
+
 msgid "Zap mode"
-msgstr ""
-
-msgid "show picons in quickzap"
-msgstr ""
-
-msgid "show picons in service list"
 msgstr ""
 
 msgid "standard"
@@ -22995,7 +23190,7 @@ msgstr ""
 msgid "userdefined"
 msgstr ""
 
-msgid "  REC  "
+msgid "1,1"
 msgstr ""
 
 msgid "[REC]"
@@ -23157,4 +23352,378 @@ msgid ""
 "Turbo: One reboot after flash\n"
 "Fast: One reboot after flash, one reboot after restore\n"
 "Slow: One reboot after flash, one reboot after restore in GUI"
+msgstr ""
+
+msgid "Configure DNS (name servers)"
+msgstr ""
+
+msgid ""
+"Configure or verify your DNS (name servers) by adjusting the values shown.\n"
+"\n"
+"When the settings are correct press OK to continue."
+msgstr ""
+
+msgid ""
+"Configure the Internet connection by adjusting the values shown.\n"
+"\n"
+"When the settings are correct press OK to continue."
+msgstr ""
+
+msgid "Configure the network again"
+msgstr ""
+
+msgid "Follow instructions on TV"
+msgstr ""
+
+msgid "List available networks"
+msgstr ""
+
+msgid "Manual configuration"
+msgstr ""
+
+msgid ""
+"Network wizard completed.\n"
+"\n"
+"Press OK to continue."
+msgstr ""
+
+msgid "Please follow the instructions on the TV"
+msgstr ""
+
+msgid ""
+"Select the network interface to be used for the Internet connection.\n"
+"\n"
+"Press OK to continue."
+msgstr ""
+
+msgid ""
+"Select the wireless network to which you want to connect.\n"
+"\n"
+"Press OK to continue."
+msgstr ""
+
+msgid "Select wireless network"
+msgstr ""
+
+msgid ""
+"The Internet connection appears to be working.\n"
+"\n"
+"Press OK to continue."
+msgstr ""
+
+msgid ""
+"The Internet connection appears to not be working!\n"
+"\n"
+"Choose what to do next."
+msgstr ""
+
+msgid ""
+"The wireless LAN Internet connection could not be started!\n"
+"Is the wireless LAN device connected?\n"
+"\n"
+"Choose what to do next."
+msgstr ""
+
+msgid ""
+"The wireless LAN plugin code is not installed!\n"
+"\n"
+"Install it and choose what to do next."
+msgstr ""
+
+msgid ""
+"Welcome.\n"
+"\n"
+"This wizard will guide you through the basic network setup of the %s %s.\n"
+"\n"
+"Press OK to start configuring the network."
+msgstr ""
+
+msgid ""
+"Wireless network connection setup.\n"
+"\n"
+"Choose what to do next."
+msgstr ""
+
+msgid "Wireless network setup"
+msgstr ""
+
+msgid ""
+"Your Internet connection is not working!\n"
+"Please choose what you want to do next."
+msgstr ""
+
+msgid "Hide InfoBar"
+msgstr ""
+
+msgid "Media Player Settings"
+msgstr ""
+
+msgid "Repeat play list"
+msgstr ""
+
+msgid "Save directory on EXIT"
+msgstr ""
+
+msgid "Save play list on EXIT"
+msgstr ""
+
+msgid "Set this to 'Yes' to automatically hide the InfoBar when the media starts playing. If set to 'No' the InfoBar will remain on screen."
+msgstr ""
+
+msgid "Set this to 'Yes' to display the Media Player menu item in the Main Menu. If set to 'No' Media Player can still be started from the Plugins list."
+msgstr ""
+
+msgid "Set this to 'Yes' to keep playing this play list in a continuously repeating loop. If set to 'No' the play list will only be played once."
+msgstr ""
+
+msgid "Set this to 'Yes' to save the current directory when exiting the Media Player."
+msgstr ""
+
+msgid "Set this to 'Yes' to save the current play list when exiting the Media Player."
+msgstr ""
+
+msgid "Set this to 'Yes' to sort the playlists alphabetically."
+msgstr ""
+
+msgid "Show Media Player in Main Menu"
+msgstr ""
+
+msgid "Sort playlists"
+msgstr ""
+
+msgid "Specify the directory to use when starting Media Player."
+msgstr ""
+
+msgid "Starting directory"
+msgstr ""
+
+msgid "A comma separated list of extensions to be used for 'My Extension' setting of 'Filter extension'. Enter the extension names without a leading dot (.)."
+msgstr ""
+
+msgid "Add File Commander to Extensions Menu"
+msgstr ""
+
+msgid "Add File Commander to Main Menu"
+msgstr ""
+
+msgid "Add File Commander to the Extensions Menu list of options."
+msgstr ""
+
+msgid "Add File Commander to the Main Menu list of options."
+msgstr ""
+
+msgid "CPU priority for scripts"
+msgstr ""
+
+msgid "Default CPU priority (nice) for executed scripts. This can reduce the system load so that scripts do not interfere with the rest of the system. (higher values = lower priority)"
+msgstr ""
+
+msgid "Default I/O priority (ionice) for executed scripts. This can reduce the system load so that scripts do not interfere with the rest of the system. (higher values = lower priority)"
+msgstr ""
+
+msgid "Default left column directory"
+msgstr ""
+
+msgid "Default right column directory"
+msgstr ""
+
+msgid "Default sort order for directories in the left column"
+msgstr ""
+
+msgid "Default sort order for directories in the right column."
+msgstr ""
+
+msgid "Default sort order for files in the left column."
+msgstr ""
+
+msgid "Default sort order for files in the right column."
+msgstr ""
+
+msgid "File Commander Settings"
+msgstr ""
+
+msgid "Filter extensions"
+msgstr ""
+
+msgid "Filter files to be listed by the defined extension. Note that the symbol '(*)' will appear in the title if filtering is in effect."
+msgstr ""
+
+msgid "I/O priority for scripts"
+msgstr ""
+
+msgid "Left column directory sort"
+msgstr ""
+
+msgid "Left column file sort"
+msgstr ""
+
+msgid "Message pop up timeout"
+msgstr ""
+
+msgid "Right column directory sort"
+msgstr ""
+
+msgid "Right column file sort"
+msgstr ""
+
+msgid "Save left directory on exit"
+msgstr ""
+
+msgid "Save right directory on exit"
+msgstr ""
+
+msgid "Save the left column directory location on exit."
+msgstr ""
+
+msgid "Save the right column directory location on exit."
+msgstr ""
+
+msgid "Saved lines in script messages"
+msgstr ""
+
+msgid "Select 'Yes' to continuously display all images in a loop, or select 'No' to display all images once and then stop."
+msgstr ""
+
+msgid "Select 'Yes' to display unknown files in the File Commander file viewer, select 'No' to not process unknown files."
+msgstr ""
+
+msgid "Select 'Yes' to set the cursor position to the end of the line when editing a text file.  Select 'No' to set the cursor to the start of the line."
+msgstr ""
+
+msgid "Select 'Yes' to show directories at the top/start of the list, or select 'No' to show files first."
+msgstr ""
+
+msgid "Select 'Yes' to show the current directory in the list of directories. Note that File Commander must be restarted for this change to take effect."
+msgstr ""
+
+msgid "Select 'Yes' to use the number keys for quick selection of files / directories, select 'No' to use the number keys for MENU option shortcuts."
+msgstr ""
+
+msgid "Select how long to display status messages."
+msgstr ""
+
+msgid "Select how long to display the task and script message pop up."
+msgstr ""
+
+msgid "Select the default directory to be used if the left column directory is not saved."
+msgstr ""
+
+msgid "Select the default directory to be used if the right column directory is not saved."
+msgstr ""
+
+msgid "Select the starting/initial column to be activated on File Commander start up."
+msgstr ""
+
+msgid "Set the number of lines to be saved for 'stout' and 'sterr' output in scripts."
+msgstr ""
+
+msgid "Show current directory"
+msgstr ""
+
+msgid "Show directories first"
+msgstr ""
+
+msgid "Show script messages"
+msgstr ""
+
+msgid "Show script messages if a background script ends. If the script has additional output then this will also be shown."
+msgstr ""
+
+msgid "Show task messages"
+msgstr ""
+
+msgid "Show task messages if File Commander is not running and all task are completed."
+msgstr ""
+
+msgid "Slide show delay"
+msgstr ""
+
+msgid "Slide show loop"
+msgstr ""
+
+msgid "Start edit at line end"
+msgstr ""
+
+msgid "Starting column"
+msgstr ""
+
+msgid "Status message timeout"
+msgstr ""
+
+msgid "Time between slides in image viewer slide show."
+msgstr ""
+
+msgid "Use QuickSelect"
+msgstr ""
+
+msgid "Use viewer for unknown files"
+msgstr ""
+
+msgid "Background color"
+msgstr ""
+
+msgid "Cache thumbnails"
+msgstr ""
+
+msgid "Frame size in full view"
+msgstr ""
+
+msgid "Full view resolution"
+msgstr ""
+
+msgid "Scaling mode"
+msgstr ""
+
+msgid "Show info line"
+msgstr ""
+
+msgid "Slide picture in loop"
+msgstr ""
+
+msgid "Slide show interval (sec.)"
+msgstr ""
+
+msgid "Text color"
+msgstr ""
+
+msgid "Allows you schedule your image backups."
+msgstr ""
+
+msgid "Allows you to tag your image backup to a box. (default is box name/type)"
+msgstr ""
+
+msgid "Backup prefix"
+msgstr ""
+
+msgid "Location of where image backup should be saved."
+msgstr ""
+
+msgid "Query before image backup starts"
+msgstr ""
+
+msgid "Query before starting image backup."
+msgstr ""
+
+msgid "Schedule Backups"
+msgstr ""
+
+msgid "Set the repeat interval of backup schedule."
+msgstr ""
+
+msgid "Set the time of backup to start."
+msgstr ""
+
+msgid "Setup Timeout for OPDBootmanager"
+msgstr ""
+
+msgid "Setup Timeout for OPDBootmanager."
+msgstr ""
+
+msgid "Setup max. backups on storage"
+msgstr ""
+
+msgid "Setup max. backups on storage 0=all"
+msgstr ""
+
+msgid "Time of Backup to start"
 msgstr ""

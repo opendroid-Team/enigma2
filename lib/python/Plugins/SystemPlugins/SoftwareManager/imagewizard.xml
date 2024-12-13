@@ -137,7 +137,7 @@ self.selectKey("DOWN")
 	</step>
 
 	<step id="upgrade">
-		<text value="You need a PC connected to your %s %s. Visit the website https://www.opena.tv/ for further instructions.\nThe %s %s will now be halted. After you have performed the update instructions from the website, the new firmware will ask you to restore the settings." />
+		<text value="You need a PC connected to your %s %s. Visit the website https://droidsat.org/ for further instructions.\nThe %s %s will now be halted. After you have performed the update instructions from the website, the new firmware will ask you to restore the settings." />
 		<displaytext value="Perform the upgrade?" />
 		<list>
 			<listentry caption="Yes, shut down now." step="shutdown" />
