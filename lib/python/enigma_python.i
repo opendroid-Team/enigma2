@@ -116,6 +116,8 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/python/python_helpers.h>
 #include <lib/gdi/picload.h>
 #include <lib/dvb/fcc.h>
+#include <lib/gdi/accel.h>
+#include <lib/base/esettings.h>
 %}
 
 %feature("ref")   iObject "$this->AddRef(); /* eDebug(\"AddRef (%s:%d)!\", __FILE__, __LINE__); */ "
@@ -268,6 +270,9 @@ typedef long time_t;
 %include <lib/dvb/streamserver.h>
 %include <lib/dvb/rtspstreamserver.h>
 %include <lib/dvb/metaparser.h>
+%include <lib/gdi/accel.h>
+%include <lib/base/esettings.h>
+
 /**************  eptr  **************/
 
 /**************  signals  **************/
@@ -459,10 +464,47 @@ PyObject *getFontFaces()
 	std::vector<std::string> v = fontRenderClass::getInstance()->getFontFaces();
 	ePyObject result = PyList_New(v.size());
 	for (size_t i = 0; i < v.size(); i++)
-		PyList_SET_ITEM(result, i, PyString_FromString(v[i].c_str()));
+		PyList_SET_ITEM(result, i, PyUnicode_FromString(v[i].c_str()));
         return result;
 }
 %}
+
+void setACCELDebug(int);
+%{
+void setACCELDebug(int enable)
+{
+	gAccel::getInstance()->setAccelDebug(enable);
+}
+%}
+
+PyObject *getDeviceDB();
+%{
+PyObject *getDeviceDB()
+{
+	ePyObject result = PyDict_New();
+	for (const auto & [ key, value ] : HardwareDB) {
+		PutToDict(result, key.c_str(), value.c_str());
+	}
+    return result;
+}
+%}
+
+void eProfileDone();
+%{
+void eProfileDone()
+{
+	eProfile::getInstance().close();
+}
+%}
+
+void eProfileWrite(const char*);
+%{
+void eProfileWrite(const char* checkPoint)
+{
+	eProfile::getInstance().write(checkPoint);
+}
+%}
+
 
 /************** temp *****************/
 
@@ -488,6 +530,9 @@ extern void setAnimation_current_listbox(int a);
 extern void pauseInit(void);
 extern void resumeInit(void);
 extern int checkInternetAccess(const char* host, int timeout = 3);
+extern int getVFDSymbolsPoll();
+extern int getE2Flags();
+extern bool checkLogin(const char *user, const char *pwd);
 %}
 
 extern void addFont(const char *filename, const char *alias, int scale_factor, int is_replacement, int renderflags = 0);
@@ -510,6 +555,9 @@ extern void setAnimation_current_listbox(int a);
 extern void pauseInit(void);
 extern void resumeInit(void);
 extern int checkInternetAccess(const char* host, int timeout = 3);
+extern int getVFDSymbolsPoll();
+extern int getE2Flags();
+extern bool checkLogin(const char *user, const char *pwd);
 
 %include <lib/python/python_console.i>
 %include <lib/python/python_base.i>
