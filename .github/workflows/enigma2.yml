@@ -28,14 +28,6 @@ jobs:
               libfribidi-dev libavahi-client-dev libjpeg-turbo8-dev libgif-dev \
               libcurl4-openssl-dev mm-common
 
-      - name: Cache build dependencies
-        uses: actions/cache@v3
-        with:
-          path: /usr/local/lib
-          key: ${{ runner.os }}-libs-${{ matrix.gcc }}-${{ matrix.python }}
-          restore-keys: |
-            ${{ runner.os }}-libs-
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -98,11 +90,4 @@ jobs:
         run: |
           echo "Collecting logs for debugging..."
           find . -name "*.log" -exec cat {} \;
-
-      - name: Upload Logs
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-logs
-          path: ./**/*.log
 
