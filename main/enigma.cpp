@@ -1,7 +1,13 @@
 #include <unistd.h>
 #include <iostream>
 #include <fstream>
-#include <fcntl.h>
+#include <pwd.h>
+#include <shadow.h>
+#include <crypt.h>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <iostream>#include <fcntl.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -487,50 +493,42 @@ const char *getGStreamerVersionString()
 	return gst_version_string();
 }
 
-int getE2Flags()
-{
-	return 1;
-}
-
 bool checkLogin(const char *user, const char *password)
 {
-	bool authenticated = false;
+    if (!user || !password) return false;
 
-	if (user && password)
-	{
-		char *buffer = (char *)malloc(4096);
-		if (buffer)
-		{
-			struct passwd pwd = {};
-			struct passwd *pwdresult = NULL;
-			std::string crypt;
-			getpwnam_r(user, &pwd, buffer, 4096, &pwdresult);
-			if (pwdresult)
-			{
-				struct crypt_data cryptdata = {};
-				char *cryptresult = NULL;
-				cryptdata.initialized = 0;
-				crypt = pwd.pw_passwd;
-				if (crypt == "*" || crypt == "x")
-				{
-					struct spwd spwd = {};
-					struct spwd *spwdresult = NULL;
-					getspnam_r(user, &spwd, buffer, 4096, &spwdresult);
-					if (spwdresult)
-					{
-						crypt = spwd.sp_pwdp;
-					}
-				}
-				cryptresult = crypt(password, crypt.c_str(), &cryptdata);
-				authenticated = cryptresult && cryptresult == crypt;
-			}
-			free(buffer);
-		}
-	}
-	return authenticated;
-}
+    bool authenticated = false;
+    std::vector<char> buffer(4096);
+    struct passwd pwd = {};
+    struct passwd *pwdresult = nullptr;
 
-#include <malloc.h>
+    if (getpwnam_r(user, &pwd, buffer.data(), buffer.size(), &pwdresult) == 0 && pwdresult)
+    {
+        std::string cryptedPassword = pwd.pw_passwd;
+
+
+        if (cryptedPassword == "*" || cryptedPassword == "x")
+        {
+            struct spwd spwd = {};
+            struct spwd *spwdresult = nullptr;
+            if (getspnam_r(user, &spwd, buffer.data(), buffer.size(), &spwdresult) == 0 && spwdresult)
+            {
+                cryptedPassword = spwd.sp_pwdp;
+            }
+        }
+
+        struct crypt_data cryptdata = {};
+        cryptdata.initialized = 0;
+        char *cryptResult = crypt_r(password, cryptedPassword.c_str(), &cryptdata);
+
+        if (cryptResult && cryptedPassword == cryptResult)
+        {
+            authenticated = true;
+        }
+    }
+
+    return authenticated;
+}#include <malloc.h>
 
 void dump_malloc_stats(void)
 {
