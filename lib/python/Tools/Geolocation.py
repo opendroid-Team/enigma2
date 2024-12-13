@@ -1,7 +1,6 @@
 from json import loads
-from requests import exceptions, get
-from enigma import checkInternetAccess
-
+from urllib.request import urlopen
+from urllib.error import URLError
 
 # Data available from http://ip-api.com/json/:
 #
@@ -39,6 +38,7 @@ from enigma import checkInternetAccess
 # 	proxy		Proxy, VPN or Tor exit address		true			bool
 # 	hosting		Hosting, colocated or data center	true			bool
 # 	query		IP used for the query			173.194.67.94		string
+
 geolocationFields = {
 	"country": 0x00000001,
 	"countryCode": 0x00000002,
@@ -72,50 +72,37 @@ geolocationFields = {
 class Geolocation:
 	def __init__(self):
 		self.geolocation = {}
-		# Enable this line to force load the geolocation data on initialization.
-		# NOT: Doing this without user consent may violate privacy laws!
 		# self.getGeolocationData(fields=None)
 
-	def getGeolocationData(self, fields=None, useCache=True):
+	def getGeolocationData(self, fields=None):
 		fields = self.fieldsToNumber(fields)
-		if useCache and self.checkGeolocationData(fields):
-			print("[Geolocation] Using cached data.")
-			return self.geolocation
-		internetAccess = checkInternetAccess("ip-api.com", 3)
-		if internetAccess == 0:  # 0=Site reachable, 1=DNS error, 2=Other network error, 3=No link, 4=No active adapter.
-			try:
-				response = get("http://ip-api.com/json/?fields=%s" % fields, timeout=(3, 2))
-				if response.status_code == 200 and response.content:
-					geolocation = loads(response.content)
-					status = geolocation.get("status", "unknown/undefined")
-					if status and status == "success":
-						print("[Geolocation] Geolocation data retrieved.")
-						for key in geolocation.keys():
-							self.geolocation[key] = geolocation[key]
-						return self.geolocation
-					else:
-						print("[Geolocation] Error: Geolocation lookup returned '%s' status!  Message '%s' returned." % (status, geolocation.get("message", None)))
-				else:
-					print("[Geolocation] Error: Geolocation lookup returned a status code of %d!" % response.status_code)
-			except exceptions.RequestException as err:
-				print("[Geolocation] Error: Geolocation server connection failure! (%s)" % str(err))
-			except ValueError:
-				print("[Geolocation] Error: Geolocation data returned can not be processed!")
-			except Exception as err:
-				print("[Geolocation] Error: Unexpected error!  (%s)" % str(err))
-		elif internetAccess == 1:
-			print("[Geolocation] Error: Geolocation server DNS error!")
-		elif internetAccess == 2:
-			print("[Geolocation] Error: Internet access error!")
-		elif internetAccess == 3:
-			print("[Geolocation] Error: Network adapter not connected to a network!")
-		elif internetAccess == 4:
-			print("[Geolocation] Error: No network adapter enabled/available!")
+		try:
+			response = urlopen("http://ip-api.com/json/?fields=%s" % fields, data=None, timeout=10).read()
+			# print("[Geolocation] DEBUG: '%s'." % str(response))
+			if response:
+				geolocation = loads(response)
+			status = geolocation.get("status", None)
+			if status and status == "success":
+				print("[Geolocation] Geolocation data retreived.")
+				for key in geolocation:
+					self.geolocation[key] = geolocation[key]
+				return self.geolocation
+			else:
+				print("[Geolocation] Error: Geolocation lookup returned a '%s' status!  Message '%s' returned." % (status, geolocation.get("message", None)))
+		except URLError as err:
+			if hasattr(err, 'code'):
+				print("[Geolocation] Error: Geolocation data not available! (Code: %s)" % err.code)
+			if hasattr(err, 'reason'):
+				print("[Geolocation] Error: Geolocation data not available! (Reason: %s)" % err.reason)
+		except ValueError:
+			print("[Geolocation] Error: Geolocation data returned can not be processed!")
+		except Exception:
+			print("[Geolocation] Error: Geolocation network connection failed!")
 		return {}
 
 	def fieldsToNumber(self, fields):
 		if fields is None:
-			fields = [x for x in geolocationFields.keys() if x not in ("message", "reverse", "status")]  # Don't include "reverse" by default as there is a performance hit!
+			fields = [x for x in geolocationFields]
 		elif isinstance(fields, str):
 			fields = [x.strip() for x in fields.split(",")]
 		if isinstance(fields, int):
@@ -128,19 +115,7 @@ class Geolocation:
 					number |= value
 				else:
 					print("[Geolocation] Warning: Ignoring invalid geolocation field '%s'!" % field)
-		# print("[Geolocation] DEBUG: fields='%s' -> number=%d." % (sorted(fields), number))
-		return number | 0x0000C000  # Always get "status" and "message".
-
-	def checkGeolocationData(self, fields):
-		keys = list(self.geolocation.keys())
-		for field in [x for x in geolocationFields.keys() if x != "message"]:
-			value = geolocationFields[field]
-			# print("[Geolocation] DEBUG: field '%s', value=%d, fields=%d, match=%d." % (field, value, fields, fields & value))
-			if fields & value and field not in keys:
-				# print("[Geolocation] DEBUG: Required value not in cache.")
-				return False
-		# print("[Geolocation] DEBUG: Required value(s) in cache.")
-		return True
+		return number
 
 	def clearGeolocationData(self):
 		self.geolocation = {}
