@@ -154,6 +154,7 @@ public:
 		flagLong=3,
 			/* but this is. */
 		flagAscii=4,
+		flagStop=5
 	};
 
 	bool operator<(const eRCKey &r) const
