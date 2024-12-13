@@ -123,7 +123,7 @@ void eStreamClient::notifier(int what)
 									crypt = spwd.sp_pwdp;
 								}
 							}
-							cryptresult = crypt_r(password.c_str(), crypt.c_str(), &cryptdata);
+							cryptresult = crypt(password.c_str(), crypt.c_str(), &cryptdata);
 							authenticated = cryptresult && cryptresult == crypt;
 						}
 						free(buffer);

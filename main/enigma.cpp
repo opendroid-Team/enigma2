@@ -521,7 +521,7 @@ bool checkLogin(const char *user, const char *password)
 						crypt = spwd.sp_pwdp;
 					}
 				}
-				cryptresult = crypt_r(password, crypt.c_str(), &cryptdata);
+				cryptresult = crypt(password, crypt.c_str(), &cryptdata);
 				authenticated = cryptresult && cryptresult == crypt;
 			}
 			free(buffer);
