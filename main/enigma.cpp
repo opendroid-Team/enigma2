@@ -1,21 +1,13 @@
 #include <unistd.h>
 #include <iostream>
 #include <fstream>
-#include <pwd.h>
-#include <shadow.h>
-#include <crypt.h>
-#include <cstring>
-#include <string>
-#include <vector>
-#include <iostream>#include <fcntl.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <net/if.h>
+#include <shadow.h>
+#include <crypt.h>
+#include <pwd.h>
 #include <libsig_comp.h>
 #include <linux/dvb/version.h>
 
@@ -493,6 +485,11 @@ const char *getGStreamerVersionString()
 	return gst_version_string();
 }
 
+int getE2Flags()
+{
+	return 1;
+}
+
 bool checkLogin(const char *user, const char *password)
 {
     if (!user || !password) return false;
@@ -528,7 +525,9 @@ bool checkLogin(const char *user, const char *password)
     }
 
     return authenticated;
-}#include <malloc.h>
+}
+
+#include <malloc.h>
 
 void dump_malloc_stats(void)
 {
