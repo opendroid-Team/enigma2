@@ -487,6 +487,7 @@ PyObject *getDeviceDB()
 	}
     return result;
 }
+%}
 
 /************** temp *****************/
 
