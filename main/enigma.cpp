@@ -415,8 +415,6 @@ int main(int argc, char **argv)
 
 	eDebug("[Enigma] Executing StartEnigma.py");
 
-	eProfile::getInstance().write("StartPython");
-
 	bsodCatchSignals();
 	catchTermSignal();
 

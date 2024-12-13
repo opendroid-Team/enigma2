@@ -487,24 +487,6 @@ PyObject *getDeviceDB()
 	}
     return result;
 }
-%}
-
-void eProfileDone();
-%{
-void eProfileDone()
-{
-	eProfile::getInstance().close();
-}
-%}
-
-void eProfileWrite(const char*);
-%{
-void eProfileWrite(const char* checkPoint)
-{
-	eProfile::getInstance().write(checkPoint);
-}
-%}
-
 
 /************** temp *****************/
 
