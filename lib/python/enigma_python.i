@@ -477,17 +477,6 @@ void setACCELDebug(int enable)
 }
 %}
 
-PyObject *getDeviceDB();
-%{
-PyObject *getDeviceDB()
-{
-	ePyObject result = PyDict_New();
-	for (const auto & [ key, value ] : HardwareDB) {
-		PutToDict(result, key.c_str(), value.c_str());
-	}
-    return result;
-}
-%}
 
 /************** temp *****************/
 
