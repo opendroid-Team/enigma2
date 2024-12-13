@@ -123,8 +123,8 @@ void eStreamClient::notifier(int what)
 									crypt = spwd.sp_pwdp;
 								}
 							}
-							cryptresult = crypt(password.c_str(), crypt.c_str(), &cryptdata);
-							authenticated = cryptresult && cryptresult == crypt;
+								cryptresult = crypt(password.c_str(), crypt.c_str());
+								authenticated = cryptresult && (std::string(cryptresult) == crypt);
 						}
 						free(buffer);
 					}
