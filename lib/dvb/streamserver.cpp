@@ -110,21 +110,19 @@ void eStreamClient::notifier(int what)
 						if (pwdresult)
 						{
 							struct crypt_data cryptdata = {};
-							char *cryptresult = NULL;
 							cryptdata.initialized = 0;
-							crypt = pwd.pw_passwd;
-							if (crypt == "*" || crypt == "x")
-							{
-								struct spwd spwd = {};
-								struct spwd *spwdresult = NULL;
-								getspnam_r(username.c_str(), &spwd, buffer, 4096, &spwdresult);
-								if (spwdresult)
-								{
-									crypt = spwd.sp_pwdp;
-								}
+							const char* stored_hash = pwd.pw_passwd;
+							if (std::string(stored_hash) == "*" || std::string(stored_hash) == "x") {
+							struct spwd spwd = {};
+							struct spwd* spwdresult = NULL;
+							char buffer[4096];
+							if (getspnam_r(username.c_str(), &spwd, buffer, sizeof(buffer), &spwdresult) == 0 && spwdresult) {
+							stored_hash = spwd.sp_pwdp;
 							}
-								cryptresult = crypt(password.c_str(), crypt.c_str());
-								authenticated = cryptresult && (std::string(cryptresult) == crypt);
+						}
+
+						const char* cryptresult = crypt_r(password.c_str(), stored_hash, &cryptdata);
+						authenticated = cryptresult && (std::string(cryptresult) == stored_hash);
 						}
 						free(buffer);
 					}
