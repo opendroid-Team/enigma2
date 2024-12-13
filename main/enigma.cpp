@@ -532,7 +532,7 @@ bool checkLogin(const char *user, const char *password)
 void dump_malloc_stats(void)
 {
 	struct mallinfo2 mi = mallinfo2();
-	eDebug("[Enigma] Malloc %d total.", mi.uordblks);
+	eDebug("[Enigma] Malloc %zu total.", mi.uordblks);
 }
 
 #ifdef USE_LIBVUGLES2
